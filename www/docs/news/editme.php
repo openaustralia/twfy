@@ -4,6 +4,17 @@
 
 $all_news = array(
 
+1 => array('Birth of an Australian TheyWorkForYou', <<<EOT
+By hacking, levering, doing terrible things while nobody is looking,
+pummeling and other things in that general direction, we've managed
+to somehow get a very crude version of an Australian version of
+TheyWorkForYou up and running. All credit goes to the UK guys for
+putting so much love and labour into a codebase that made this all
+really surprisingly straightforward. Thank you!
+EOT
+, '2007-11-22 17:46:00', 'Matthew'),
+
+
 );
 
 // General news functions
