@@ -64,12 +64,12 @@ CREATE TABLE `hansard` (
   KEY `section_id` (`section_id`),
   KEY `hdate` (`hdate`),
   KEY `speaker_id` (`speaker_id`),
-  KEY `hansard_speaker_id_hdate_hpos` (`speaker_id`,`hdate`,`hpos`)
+  KEY `hansard_speaker_id_hdate_hpos` (`speaker_id`,`hdate`,`hpos`),
   KEY `major` (`major`),
   KEY `htype` (`htype`),
   KEY `majorhdate` (`major`,`hdate`),
   KEY `modified` (`modified`),
-  KEY `source_url` (`source_url`),
+  KEY `source_url` (`source_url`)
 );
 
 CREATE TABLE `member` (

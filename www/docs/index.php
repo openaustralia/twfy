@@ -109,9 +109,9 @@ function search_bullet_point() {
 // Sign up to be emailed when 'mouse' is mentioned in Parliament
 function email_alert_bullet_point() {
 	if (get_http_var("keyword")) { ?>
-		<li><p><a href="/alert?keyword=<?=htmlspecialchars(get_http_var('keyword'))?>&only=1"><strong>Sign up to be emailed when '<?=htmlspecialchars(get_http_var('keyword'))?>' is mentioned in Parliament</strong></a></p></li>
+		<li><p><a href="<?=WEBPATH."alert?keyword=".htmlspecialchars(get_http_var('keyword'))?>&only=1"><strong>Sign up to be emailed when '<?=htmlspecialchars(get_http_var('keyword'))?>' is mentioned in Parliament</strong></a></p></li>
 	<? } else { ?>
-		<li><p><a href="/alert/"><strong>Sign up to be emailed when something relevant to you happens in Parliament</strong></a></p></li>
+		<li><p><a href="<?=WEBPATH."alert/"?>"><strong>Sign up to be emailed when something relevant to you happens in Parliament</strong></a></p></li>
 	<? } 
 } 
 
