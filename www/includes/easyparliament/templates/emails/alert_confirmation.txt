@@ -1,5 +1,5 @@
-Subject: Please confirm your TheyWorkForYou.com alert
-You have asked to subscribe to an alert at TheyWorkForYou.com
+Subject: Please confirm your OpenAustralia.org alert
+You have asked to subscribe to an alert at OpenAustralia.org
 for the following criteria:
 
 {CRITERIA}
@@ -14,11 +14,11 @@ browser, and then press 'enter' or 'return' on your keyboard.
 
 If you have not tried to register for this alert then someone else
 entered your address. If you think this has been done maliciously
-then let us know at volunteers@theyworkforyou.com
+then let us know at matthew@openaustralia.org
 
 And don't forget to let your friends and family know about
-TheyWorkForYou.com 
+OpenAustralia.org
 
 Best wishes,
 
-- The TheyWorkForYou.com Volunteers
+- The OpenAustralia.org Volunteers

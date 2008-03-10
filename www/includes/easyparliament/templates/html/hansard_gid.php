@@ -295,10 +295,10 @@ if (isset ($data['rows'])) {
 #			}
 			
 			$PAGE->stripe_end(array(
-				array (
-					'type' => 'html',
-					'content' => $video_content
-				),
+				#array (
+				#	'type' => 'html',
+				#	'content' => $video_content
+				#),
 				array (
 					'type' => 'html',
 					'content' => $sidebarhtml

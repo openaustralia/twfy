@@ -234,7 +234,7 @@ class PAGE {
 type="text/javascript">
 </script>
 <script type="text/javascript">
-_uacct = "UA-660910-1";
+_uacct = "UA-3107958-1";
 if (typeof urchinTracker == 'function') urchinTracker();
 </script>
 
@@ -331,12 +331,12 @@ if (typeof urchinTracker == 'function') urchinTracker();
 		// we're within that section.
 		$items = array (
 			'home' 		=> array ('sitenews', 'comments_recent', 'api_front'),
-			'hansard' 	=> array ('debatesfront', 'wransfront', 'whallfront', 'wmsfront', 'lordsdebatesfront', 'nidebatesfront','spdebatesfront','spwransfront'),
+			'hansard' 	=> array ('debatesfront'),
 			'yourmp'	=> array (),
 			'mps'           => array (),
-			'peers'		=> array (),
-			'mlas'          => array (),
-			'msps'          => array (),
+#			'peers'		=> array (),
+#			'mlas'          => array (),
+#			'msps'          => array (),
 #			'help_us_out'	=> array (), 
 /*			'help_us_out'	=> array ('glossary_addterm'),  */
 			'help'		=> array ()
@@ -930,7 +930,7 @@ pr()//-->
 		?>
 				<br>
 <?php
-		$this->block_start(array('id'=>'mp', 'title'=>'Find out about your MP'));
+		$this->block_start(array('id'=>'mp', 'title'=>'Find out about your Representative'));
 		?>
 						<form action="<?php echo $MPURL->generate(); ?>" method="get">
 <?php
@@ -945,9 +945,9 @@ pr()//-->
 <?php
 		}
 		?>
-						<p><strong>Enter your UK postcode: </strong>
+						<p><strong>Enter your Australian postcode: </strong>
 
-						<input type="text" name="pc" value="<?php echo htmlentities(get_http_var('pc')); ?>" maxlength="10" size="10"> <input type="submit" value="GO" class="submit"> <small>(e.g. BS3 1QP)</small>
+						<input type="text" name="pc" value="<?php echo htmlentities(get_http_var('pc')); ?>" maxlength="10" size="10"> <input type="submit" value="GO" class="submit"> <small>(e.g. 2340)</small>
 						</p>
 						<input type="hidden" name="ch" value="t">
 						</form>
@@ -1204,8 +1204,6 @@ pr()//-->
 <?php
 		} elseif ($member['current_member'][1]) {
 			?>
-						<li><a href="http://www.writetothem.com/"><strong>Send a message to your MP</strong></a> <small>(via WriteToThem.com)</small></li>
-						<li><a href="http://www.hearfromyourmp.com/"><strong>Sign up to <em>HearFromYourMP</em></strong></a> to get messages from your MP</li>
 <?php
 		} elseif ($member['current_member'][3]) {
 			?>
@@ -1228,7 +1226,6 @@ pr()//-->
 						
 						<ul class="jumpers">
 <? if ((in_array(1, $member['houses']) && $member['party']!='Sinn Fein') || in_array(2, $member['houses'])) { ?>
-						<li><a href="#votingrecord">Voting record</a></li>
 <?		if (in_array(1, $member['houses'])) { ?>
 						<li><a href="#topics">Committees and topics of interest</a></li>
 <?		} ?>
@@ -1255,7 +1252,7 @@ pr()//-->
 		$this->block_end();
 
 # Big don't-print for SF MPs
-if ((in_array(1, $member['houses']) && $member['party']!='Sinn Fein') || in_array(2, $member['houses'])) {
+if (0) {
 
 		// Voting Record.
 		?> <a name="votingrecord"></a> <?php
@@ -1518,7 +1515,7 @@ and has had no written questions answered for which we know the department or su
 			$minister = true;
 		if (isset($extra_info['Lwrans_answered_inlastyear']) && $extra_info['Lwrans_answered_inlastyear'] > 0 && $extra_info['Lwrans_asked_inlastyear'] == 0)
 			$Lminister = true;
-		$displayed_stuff |= display_stats_line('wrans_asked_inlastyear', 'Has received answers to <a href="' . $MOREURL->generate() . '">', 'written question', '</a> ' . $since_text, '', $extra_info, $minister, $Lminister);
+#		$displayed_stuff |= display_stats_line('wrans_asked_inlastyear', 'Has received answers to <a href="' . $MOREURL->generate() . '">', 'written question', '</a> ' . $since_text, '', $extra_info, $minister, $Lminister);
 		}
 
 		if (isset($extra_info['select_committees'])) {
@@ -1530,17 +1527,17 @@ and has had no written questions answered for which we know the department or su
 			print '.</li>';
 		}
 
-		$wtt_displayed = display_writetothem_numbers(2006, $extra_info);
-		$displayed_stuff |= $wtt_displayed;
-		if (!$wtt_displayed)
-			$displayed_stuff |= display_writetothem_numbers(2005, $extra_info);
+#		$wtt_displayed = display_writetothem_numbers(2006, $extra_info);
+#		$displayed_stuff |= $wtt_displayed;
+#		if (!$wtt_displayed)
+# 			$displayed_stuff |= display_writetothem_numbers(2005, $extra_info);
 
 		$after_stuff = ' <small>(From Public Whip)</small>';
 		if ($member['party'] == 'Scottish National Party') {
 			$after_stuff .= '<br><em>Note SNP MPs do not vote on legislation not affecting Scotland.</em>';
 		}
 		if ($member['party'] != 'Sinn Fein') {
-			$displayed_stuff |= display_stats_line('public_whip_division_attendance', 'Has voted in <a href="http://www.publicwhip.org.uk/mp.php?id=uk.org.publicwhip/member/' . $member['member_id'] . '&amp;showall=yes#divisions" title="See more details at Public Whip">', 'of vote', '</a> in parliament', $after_stuff, $extra_info);
+#			$displayed_stuff |= display_stats_line('public_whip_division_attendance', 'Has voted in <a href="http://www.publicwhip.org.uk/mp.php?id=uk.org.publicwhip/member/' . $member['member_id'] . '&amp;showall=yes#divisions" title="See more details at Public Whip">', 'of vote', '</a> in parliament', $after_stuff, $extra_info);
 
 			$displayed_stuff |= display_stats_line('comments_on_speeches', 'People have made <a href="' . WEBPATH . 'comments/recent/?pid='.$member['person_id'].'">', 'comment', "</a> on this MP's speeches", '', $extra_info);
 			$displayed_stuff |= display_stats_line('reading_age', 'This MP\'s speeches are understandable to an average ', '', ' year old, going by the <a href="http://en.wikipedia.org/wiki/Flesch-Kincaid_Readability_Test">Flesch-Kincaid Grade Level</a> score', '', $extra_info);

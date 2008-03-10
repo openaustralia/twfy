@@ -59,12 +59,12 @@ function your_mp_bullet_point() {
 
 	if ($pc_form) { ?>
 		<form action="<?php echo $MPURL->generate(); ?>" method="get">
-		<p><strong>Find out more about your MP</strong><br>
-		<label for="pc">Enter your UK postcode here:</label>&nbsp; <input type="text" name="pc" id="pc" size="8" maxlength="10" value="<?php echo htmlentities($THEUSER->postcode()); ?>" class="text">&nbsp;&nbsp;<input type="submit" value=" GO " class="submit"></p>
+		<p><strong>Find out more about your Representative</strong><br>
+		<label for="pc">Enter your Australian postcode here:</label>&nbsp; <input type="text" name="pc" id="pc" size="8" maxlength="10" value="<?php echo htmlentities($THEUSER->postcode()); ?>" class="text">&nbsp;&nbsp;<input type="submit" value=" GO " class="submit"></p>
 		</form>
 	<?php
 		if (!defined("POSTCODE_SEARCH_DOMAIN") || !POSTCODE_SEARCH_DOMAIN) {
-			print '<p align="right"><em>Postcodes are being mapped to a random MP</em></p>';
+			print '<p align="right"><em>Postcodes are being mapped to a random Representative</em></p>';
 		}
 	}
 	print "</li>";

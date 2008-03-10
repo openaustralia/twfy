@@ -328,7 +328,7 @@ function check_input ($details) {
 	
 	// Check postcode (which is not a compulsory field).
 	if ($details["postcode"] != "" && !validate_postcode($details["postcode"])) {
-		$errors["postcode"] = "Sorry, this isn't a valid UK postcode.";
+		$errors["postcode"] = "Sorry, this isn't a valid Australian postcode.";
 	}
 
 	// No checking of URL.
@@ -613,7 +613,7 @@ function display_form ( $details = array(), $errors = array() ) {
 	}
 ?>
 				<div class="row">
-				<span class="label"><label for="postcode">Your UK postcode:</label></span>
+				<span class="label"><label for="postcode">Your Australian postcode:</label></span>
 				<span class="formw"><input type="postcode" name="postcode" id="postcode" value="<?php if (isset($details["postcode"])) { echo htmlentities($details["postcode"]); } ?>" maxlength="10" size="10" class="form"> <small>Optional and not public</small></span>
 				</div>
 

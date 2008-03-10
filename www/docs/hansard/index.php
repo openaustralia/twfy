@@ -82,7 +82,7 @@ if ($message != '') {
 $PAGE->stripe_end();
 $PAGE->stripe_start();
 ?>
-				<h3>Busiest House of Commons debates from the most recent week</h3>
+				<h3>Busiest House of Representatives debates from the most recent week</h3>
 <?php
 $DEBATELIST = new DEBATELIST;
 $DEBATELIST->display('biggest_debates', array('days'=>7, 'num'=>$number_of_debates_to_show));
@@ -104,124 +104,5 @@ $PAGE->stripe_end(array(
 	)
 ));
 
-$PAGE->stripe_start();
-?>
-				<h3>Busiest House of Lords debates from the most recent week</h3>
-<?php
-$DEBATELIST = new LORDSDEBATELIST;
-$DEBATELIST->display('biggest_debates', array('days'=>7, 'num'=>$number_of_debates_to_show));
-
-$MOREURL = new URL('lordsdebatesfront');
-$anchor = $number_of_debates_to_show + 1;
-?>
-				<p><strong><a href="<?php echo $MOREURL->generate(); ?>#d<?php echo $anchor; ?>">See more debates</a></strong></p>
-<?php
-
-$PAGE->stripe_end(array(
-	array (
-		'type' => 'include',
-		'content' => "holdebates_short"
-	),
-	array (
-		'type' => 'include',
-		'content' => "calendar_holdebates"
-	)
-));
-
-$PAGE->stripe_start();
-?>
-				<h3>Some recent written answers</h3>
-<?php
-
-$WRANSLIST = new WRANSLIST;
-$WRANSLIST->display('recent_wrans', array('days'=>7, 'num'=>$number_of_wrans_to_show));
-
-$MOREURL = new URL('wransfront');
-?>
-				<p><strong><a href="<?php echo $MOREURL->generate(); ?>">See more written answers</a></strong></p>
-<?php
-
-$PAGE->stripe_end(array(
-	array (
-		'type' => 'include',
-		'content' => "wrans_short"
-	),
-	array (
-		'type' => 'include',
-		'content' => "calendar_wrans"
-	)
-));
-
-$PAGE->stripe_start();
-
-?>
-				<h3>Busiest Westminster Hall debates from the most recent week</h3>
-<?php
-$WHALLLIST = new WHALLLIST;
-$WHALLLIST->display('biggest_debates', array('days'=>7, 'num'=>$number_of_debates_to_show));
-
-$MOREURL = new URL('whallfront');
-$anchor = $number_of_debates_to_show + 1;
-?>
-				<p><strong><a href="<?php echo $MOREURL->generate(); ?>#d<?php echo $anchor; ?>">See more debates</a></strong></p>
-<?php
-
-$PAGE->stripe_end(array(
-	array (
-		'type' => 'include',
-		'content' => "whalldebates_short"
-	),
-	array (
-		'type' => 'include',
-		'content' => "calendar_whalldebates"
-	)
-));
-
-$PAGE->stripe_start();
-
-?>
-				<h3>Some recent Written Ministerial Statements</h3>
-<?php
-$WMSLIST = new WMSLIST;
-$WMSLIST->display('recent_wms', array('days'=>7, 'num'=>$number_of_wrans_to_show));
-$MOREURL = new URL('wmsfront');
-?>
-				<p><strong><a href="<?php echo $MOREURL->generate(); ?>">See more written ministerial statements</a></strong></p>
-<?php
-$PAGE->stripe_end(array(
-	array( 'type' => 'include', 'content' => 'wms_short' ),
-	array( 'type' => 'include', 'content' => 'calendar_wms' )
-));
-
-$PAGE->stripe_start();
-?>
-	<h3>Busiest Northern Ireland Assembly debates from the most recent month</h3>
-<?php
-$DEBATELIST = new NILIST;
-$DEBATELIST->display('biggest_debates', array('days'=>30, 'num'=>$number_of_debates_to_show));
-
-$MOREURL = new URL('nidebatesfront');
-$anchor = $number_of_debates_to_show + 1;
-?>
-		<p><strong><a href="<?php echo $MOREURL->generate(); ?>#d<?php echo $anchor; ?>">See more debates</a></strong></p>
-<?php
-
-$PAGE->stripe_end(array(
-	array (
-		'type' => 'include',
-		'content' => "nidebates_short"
-	),
-	array (
-		'type' => 'include',
-		'content' => "calendar_nidebates"
-	)
-));
-$PAGE->stripe_start();
-?>
-
-<p>Still to come: Select Committees, and much more...</p>
-
-<?php
-$PAGE->stripe_end();
 $PAGE->page_end();
 ?>

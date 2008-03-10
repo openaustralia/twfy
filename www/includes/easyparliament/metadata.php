@@ -282,11 +282,11 @@ $this->page = array (
 	),			
 	'debatesfront' => array (
 		'menu'			=> array (
-			'text'			=> 'Commons Debates',
-			'title'			=> "House of Commons debates"
+			'text'			=> 'House Debates',
+			'title'			=> "House debates"
 		),
 		'parent'		=> 'hansard',
-		'title'			=> 'House of Commons debates',
+		'title'			=> 'House debates',
 		'track'			=> true,
 		'rss'			=> 'debates/debates.rss',
 		'url'			=> 'debates/'
@@ -341,15 +341,15 @@ $this->page = array (
 	'hansard' => array (
 		'menu'			=> array (
 			'text'			=> 'Hansard',
-			'title'			=> "House of Commons debates and Written Answers"
+			'title'			=> "House debates"
 		),
-		'title'			=> 'House of Commons, House of Lords, Northern Ireland Assembly, and the Scottish Parliament',
+		'title'			=> 'House of Representatives',
 		'track'			=> true,
 		'url'			=> 'hansard/'
 	),	
 	'hansard_date' => array (
 		'parent'		=> 'hansard',
-		'title'			=> 'House of Commons, House of Lords, Northern Ireland Assembly, and the Scottish Parliament',
+		'title'			=> 'House of Representatives',
 		'track'			=> true,
 		'url'			=> 'hansard/'
 	),	
@@ -377,7 +377,7 @@ $this->page = array (
 			'text'			=> 'Home',
 			'title'			=> "The front page of the site"
 		),
-		'title'			=> "Are your MPs and Peers working for you in the UK's Parliament?",
+		'title'			=> "Are your Representatives and Senators working for you in Australia's Parliament?",
 		'track'			=> true,
 		'rss'			=> 'news/index.rdf',
 		'url'			=> ''
@@ -501,10 +501,10 @@ $this->page = array (
 
 	'mps' => array (
 		 'menu'			=> array (
-			'text'			=> 'All MPs',
-			'title'			=> "List of all MPs"
+			'text'			=> 'All Representatives',
+			'title'			=> "List of all Members of the House of Representatives"
 		),
-		'title'			=> 'All MPs',
+		'title'			=> 'All Members of the House of Representatives',
 		'track'			=> true,
 		'url'			=> 'mps/'
 	),
@@ -937,8 +937,8 @@ $this->page = array (
 
 	'yourmp' => array (
 		'menu'			=> array (
-			'text'			=> 'Your MP',
-			'title'			=> "Find out about your Member of Parliament"
+			'text'			=> 'Your Representative',
+			'title'			=> "Find out about your Member of the House of Representatives"
 		),
 		'sidebar'		=> 'yourmp',
 		'title'			=> 'Your MP',
