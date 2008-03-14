@@ -11,6 +11,8 @@ DocumentRoot /var/www/openaustralia/twfy/www/docs/
 
 DirectoryIndex index.php
 
+ErrorDocument 404 /404.php
+
 RewriteEngine on
 
 # Links in emails
