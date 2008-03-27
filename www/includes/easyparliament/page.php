@@ -276,7 +276,7 @@ if (typeof urchinTracker == 'function') urchinTracker();
 		
 		//$img = '<img src="' . IMAGEPATH . 'theyworkforyoucom.gif" width="293" height="28" alt="OpenAustralia.org">';
 
-		$img = '<img src="' . IMAGEPATH . 'theyworkforyoucombeta.gif" width="320" height="28" alt="OpenAustralia.org beta">';
+		$img = '<img src="' . IMAGEPATH . 'openaustraliaorgbeta.gif" width="320" height="28" alt="OpenAustralia.org beta">';
 		
 		//isn't this very hacky? shouldn't we be cobranding cleverly using METADATA? ( I've repeated this below however -stef"
 		if (get_http_var('c4')) {
