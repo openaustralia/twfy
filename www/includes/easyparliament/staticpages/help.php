@@ -5,8 +5,8 @@
 <li><a href="#cookie">What is your Cookie Policy?</a></li>
 <li><a href="#extreme">What's that weird 'extreme tracker' and 'urchin' javascript I spy in your page source?</a></li>
 <li><a href="#rss">What is RSS?</a></li>
-<!--><li><a href="#votingrecord">How is the voting record decided?</a></li><-->
-<li><a href="#numbers">Why should I read in more depth than just the numbers?</a></li>
+<!--><li><a href="#votingrecord">How is the voting record decided?</a></li>
+<li><a href="#numbers">Why should I read in more depth than just the numbers?</a></li><-->
 <li><a href="#api">Do you have the data as a spreadsheet file, XML or in an API?</a></li>
 </ul>
 
@@ -87,7 +87,6 @@ parties. Since the Whip is secret, we have to assume, <a
 href="http://www.openaustralia.org/debate/?id=2005-02-07.1200.2">like the
 Speaker</a>, that all votes are free.  </P>
 </dd>
-<-->
 
 <dt><a name="numbers"></a>Why should I read in more depth than just the numbers?</dt>
 
@@ -123,6 +122,7 @@ useful, send them to the <a href="mailto:beta&#64;openaustralia.org">usual
 address</a>. We've got a few ideas ourselves, to keep you on your toes.
 
 </dd>
+<-->
 
 <!-- end old faq entry -->
 

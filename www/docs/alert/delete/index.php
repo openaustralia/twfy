@@ -61,7 +61,7 @@ function delete_success () {
 	<p>You will no longer receive this alert though any others you have requested will be unaffected. If you wish to delete any more
 	alerts you will have to do this individually.  If you wish to set new alerts then please visit openaustralia again.</p>
 
-	<p><strong>If you didn't mean to do this, <a href="/alert/undelete/?t=<?=get_http_var('t') ?>">undelete this alert</a></strong></p>
+	<p><strong>If you didn't mean to do this, <a href="<?= WEBPATH ?>/alert/undelete/?t=<?=get_http_var('t') ?>">undelete this alert</a></strong></p>
 
 
 <?php

@@ -140,7 +140,7 @@ if (get_http_var("d") != "") {
 		),
 		array (
 			'type' => 'html',
-			'content' => '<div class="block"><h4><a href="/' . $rssurl . '">RSS feed of most recent debates</a></h4></div>'
+			'content' => '<div class="block"><h4><a href="'.WEBPATH.'/' . $rssurl . '">RSS feed of most recent debates</a></h4></div>'
 		)
 	));
 	

@@ -974,7 +974,7 @@ function display_user ($user_id="") {
 				<div class="row">
 				<span class="label">Name</span>
 				<span class="formw"><?php
-				if (substr($name, -3) == ' MP') print '<a href="/mp/' . make_member_url(substr($name, 0, -3)) . '">';
+				if (substr($name, -3) == ' MP') print '<a href="'.WEBPATH.'/mp/' . make_member_url(substr($name, 0, -3)) . '">';
 				echo htmlentities($name);
 				if (substr($name, -3) == ' MP') print '</a>';
 			?></span>
@@ -1093,7 +1093,7 @@ function display_user ($user_id="") {
 				}
 				$out .= '<tr><td>'.$criteria.'</td><td>'.$action.'</td></tr>';
 			}
-			print '<p>To add a new alert, simply visit an MP or Peer\'s page or conduct a search &#8212; to be given the option of turning them into alerts automatically &#8212; or visit <a href="/alert/">the manual addition page</a>.</p>';
+			print '<p>To add a new alert, simply visit an MP or Peer\'s page or conduct a search &#8212; to be given the option of turning them into alerts automatically &#8212; or visit <a href="'.WEBPATH.'/alert/">the manual addition page</a>.</p>';
 			if ($out) {
 				print '<p>Here are your email alerts:</p>';
 				print '<table cellpadding="3" cellspacing="0"><tr><th>Criteria</th><th>Action</th></tr>' . $out . '</table>';

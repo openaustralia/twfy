@@ -21,7 +21,7 @@ if ($MEMBER->person_id()) {
 		<br><label for="sendmail">Your email:</label> <input type="text" id="sendmail" name="sender_mail" value="" size="17">
 		<br><label for="sendname">Your name:</label> <input type="text" id="sendname" name="sender_name" value="" size="17">
 	<input type="hidden" name="pid" value="<?php echo $pid; ?>">
-		<br>(<a href="/privacy/">privacy policy</a>)
+		<br>(<a href="<?= WEBPATH ?>/privacy/">privacy policy</a>)
 	<input type="submit" class="submit" value="Send"></p>
 	</form>
 

@@ -29,7 +29,7 @@ if (!$dept) {
 		order by body');
 	print '<ul>';
 	for ($i=0; $i<$q->rows(); $i++) {
-		print '<li><a href="/wms/?id=' . fix_gid_from_db($q->field($i, 'gid')). '">' . $q->field($i, 'body'). '</a>';
+		print '<li><a href="'.WEBPATH.'/wms/?id=' . fix_gid_from_db($q->field($i, 'gid')). '">' . $q->field($i, 'body'). '</a>';
 		print '</li>';
 	}
 	print '</ul>';
