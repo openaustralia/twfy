@@ -10,6 +10,6 @@ EOF
 cat <<EOF
 Content-Type: text/plain
 
-TheyWorkForYou morning update job scheduled.
+OpenAustralia morning update job scheduled.
 EOF
 

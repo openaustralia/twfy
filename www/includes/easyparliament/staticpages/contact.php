@@ -8,9 +8,9 @@
 <h3>Contact a Lord</h3>
 <p>Use <a href="http://www.writetothem.com/lords">WriteToThem Lords</a> to contact a lord.</p>
 
-<h3>Contact the TheyWorkForYou team</h3>
+<h3>Contact the OpenAustralia team</h3>
 <p>
-Please tell us what you think about <strong>TheyWorkForYou.com</strong>
+Please tell us what you think about <strong>OpenAustralia.org</strong>
 </p>
 <ul>
 <li>Did it work?</li>
@@ -20,4 +20,4 @@ Please tell us what you think about <strong>TheyWorkForYou.com</strong>
 <p>
 We seek responses to all these questions.
 </p>
-<p><strong>We are not your MP</strong>. To contact your MP <a href="http://www.writetothem.com">click here</a>. The email address of TheyWorkForYou.com, which is run by <strong>a charity</strong>, is: <a href="mailto:<?php echo str_replace('@', '&#64;', CONTACTEMAIL); ?>"><?php echo str_replace('@', '&#64;', CONTACTEMAIL); ?></a></p>
+<p><strong>We are not your MP</strong>. To contact your MP <a href="http://www.writetothem.com">click here</a>. The email address of OpenAustralia.org, which is run by <strong>a charity</strong>, is: <a href="mailto:<?php echo str_replace('@', '&#64;', CONTACTEMAIL); ?>"><?php echo str_replace('@', '&#64;', CONTACTEMAIL); ?></a></p>

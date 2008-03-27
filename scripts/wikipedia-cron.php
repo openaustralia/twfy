@@ -5,7 +5,7 @@
 # from Parliament, political party IP addresses etc.
 # (the stuff for Wikipedia title links is elsewhere)
 
-$dir = '/data/vhost/www.theyworkforyou.com/docs/wikipedia/cache/';
+$dir = '/data/vhost/www.openaustralia.org/docs/wikipedia/cache/';
 contributions('194.60.38.10'); # Parliament
 contributions('194.203.158.97'); # Conservative
 contributions('217.207.36.186'); # PC

@@ -7,7 +7,7 @@
 
 ini_set('memory_limit', -1);
 
-include '/data/vhost/staging.theyworkforyou.com/includes/easyparliament/init.php';
+include '/data/vhost/staging.openaustralia.org/includes/easyparliament/init.php';
 include INCLUDESPATH . 'easyparliament/member.php';
 
 $nomail = 1;
@@ -78,7 +78,7 @@ function write_and_send_email($email, $user_id, $data) {
 	global $globalsuccess, $out, $sentemails, $nomail;
 
 	if ($user_id) {
-		$data = "As a registered user, visit http://www.theyworkforyou.com/user/\nto manage your alerts.\n\n" . $data;
+		$data = "As a registered user, visit http://www.openaustralia.org/user/\nto manage your alerts.\n\n" . $data;
 	} else {
 		$data = "If you register on the site, you will be able to manage your\nalerts there as well as post comments. :)\n\n" . $data;
 	}

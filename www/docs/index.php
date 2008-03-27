@@ -19,7 +19,7 @@ if ($message != '') {
 
 $HANSARDURL = new URL('hansard');
 $MPURL = new URL('yourmp');
-$PAGE->block_start(array ('id'=>'intro', 'title'=>'At TheyWorkForYou.com you can:'));
+$PAGE->block_start(array ('id'=>'intro', 'title'=>'At OpenAustralia.org you can:'));
 ?>
 						<ol>
 

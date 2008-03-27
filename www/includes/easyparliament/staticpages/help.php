@@ -17,7 +17,7 @@
 
 <dt><a name="moderation"></a>How do you moderate comments?</dt>
 <dd>
-<p>Ideally, we won't. If everyone keeps to the <a href="http://www.theyworkforyou.com/houserules/" title="link to House Rules">House Rules</a>, that is. But we're not naive enough to think that life online is that simple. TheyWorkForYou.com operates a 'reactive moderation' policy. We will only check whether a comment breaches our House Rules if someone lets us know of their concerns via the 'Report this Comment' link,  which can be found next to every comment. If we decide that the comment has breached our House Rules, we will delete it and let the original author know via email. We will also give them opportunity to rephrase and resubmit their orginal comment. If we deem the comment to be legit, we'll leave it up, and email the complainant to let them know why. We will do our utmost to respond to reports of potential breaches of our House Rules within forty-eight hours, but please bear in mind that this service is run by volunteers, and sometimes it might take us slightly longer.</p>
+<p>Ideally, we won't. If everyone keeps to the <a href="http://www.openaustralia.org/houserules/" title="link to House Rules">House Rules</a>, that is. But we're not naive enough to think that life online is that simple. OpenAustralia.org operates a 'reactive moderation' policy. We will only check whether a comment breaches our House Rules if someone lets us know of their concerns via the 'Report this Comment' link,  which can be found next to every comment. If we decide that the comment has breached our House Rules, we will delete it and let the original author know via email. We will also give them opportunity to rephrase and resubmit their orginal comment. If we deem the comment to be legit, we'll leave it up, and email the complainant to let them know why. We will do our utmost to respond to reports of potential breaches of our House Rules within forty-eight hours, but please bear in mind that this service is run by volunteers, and sometimes it might take us slightly longer.</p>
 </dd>
 <!-- end old faq entry -->
 
@@ -82,7 +82,7 @@ you want the complete, definitive record, go to the <a href="http://www.parliame
 based on these votes.  Follow the "votes" link next to each topic for details.
 Additionally, in many votes, MPs and Peers are told how to vote ('whipped') by their
 parties. Since the Whip is secret, we have to assume, <a
-href="http://www.theyworkforyou.com/debate/?id=2005-02-07.1200.2">like the
+href="http://www.openaustralia.org/debate/?id=2005-02-07.1200.2">like the
 Speaker</a>, that all votes are free.  </P>
 </dd>
 
@@ -112,11 +112,11 @@ And we've removed the absolute rankings. Instead of saying an MP is exactly
 
 <p>Our advice &mdash; when you're judging your MP, read some of their speeches,
 check out their website, even go to a local meeting and ask them a question.
-Use TheyWorkForYou as a gateway, rather than a simple place to find a number
+Use OpenAustralia as a gateway, rather than a simple place to find a number
 measuring competence.
 
 <p>If you have suggestions for other metrics we could add which would be
-useful, send them to the <a href="mailto:beta&#64;theyworkforyou.com">usual
+useful, send them to the <a href="mailto:beta&#64;openaustralia.org">usual
 address</a>. We've got a few ideas ourselves, to keep you on your toes.
 
 </dd>
@@ -131,7 +131,7 @@ gives you the power to do almost anything with our data.
 Alternatively, you can <a href="http://ukparse.kforge.net/parlparse">get XML files</a>,
 which can be loaded into many spreadsheets. If you just need a spreadsheet of
 MPs, you'll find one on the right hand side of <a href="/mps">this page</a>. 
-Please <a href="mailto:beta&#64;theyworkforyou.com">mail us</a> if you want help 
+Please <a href="mailto:beta&#64;openaustralia.org">mail us</a> if you want help 
 working out how to use the data, or want to hire us to make something specific
 for you.
 </dd>

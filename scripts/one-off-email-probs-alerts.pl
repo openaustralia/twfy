@@ -37,7 +37,7 @@ foreach (@$alerts) {
 		my $name = $dbh->selectrow_array("select concat(first_name,' ',last_name) from member where person_id=? limit 1", {}, $1);
 		$criteria =~ s/speaker:\d+/spoken by $name/;
 	}
-	my $url = "http://theyworkforyou.com/alert/confirm/?t=$id"."::$token";
+	my $url = "http://openaustralia.org/alert/confirm/?t=$id"."::$token";
 	$out{$email}{$criteria} = $url;
 }
 
@@ -52,7 +52,7 @@ foreach my $email (sort keys %out) {
 	}
 	$out = "Hi,
 
-In the last few weeks, you tried to create an alert on TheyWorkForYou.
+In the last few weeks, you tried to create an alert on OpenAustralia.
 We've just found and fixed a bug that meant confirmation emails weren't
 being sent out, which means you could never confirm your alert. We're
 very sorry about that, and so are resending your confirmation link so
@@ -63,16 +63,16 @@ ${out}Again, apologies for the confusion. If you have any questions,
 please just reply to this email.
 
 Yours,
-Matthew, TheyWorkForYou
+Matthew, OpenAustralia
 ";
 	# Send email
 	my $message = mySociety::Email::construct_email({
 		_body_ => $out,
-		From => ['beta@theyworkforyou.com', 'TheyWorkForYou.com'],
-	Subject => 'Your recent TheyWorkForYou email alert subscription',
+		From => ['beta@openaustralia.org', 'OpenAustralia.org'],
+	Subject => 'Your recent OpenAustralia email alert subscription',
 		To => $email
 	});
-	my $result = mySociety::EmailUtil::send_email($message, 'beta@theyworkforyou.com', $email);
+	my $result = mySociety::EmailUtil::send_email($message, 'beta@openaustralia.org', $email);
 	if ($result != mySociety::EmailUtil::EMAIL_SUCCESS) {
 		print "Failed to send email to $email\n";
 	}

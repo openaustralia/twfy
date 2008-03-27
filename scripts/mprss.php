@@ -2,7 +2,7 @@
 
 // Generates the RSS feeds for currently sitting MPs.
 
-include '/data/vhost/www.theyworkforyou.com/includes/easyparliament/init.php';
+include '/data/vhost/www.openaustralia.org/includes/easyparliament/init.php';
 include INCLUDESPATH . 'easyparliament/member.php';
 
 // Where all the RSS feeds go.
@@ -85,11 +85,11 @@ for ($personrow=0; $personrow<$q->rows(); $personrow++) {
   xmlns:content="http://purl.org/rss/1.0/modules/content/">
 		
 <channel rdf:about="http://' . DOMAIN . $mpurl . '">
-<title>' . str_replace('&Ouml;', 'O', $MEMBER->full_name()) . '\'s Recent Appearances (TheyWorkForYou.com)</title>
+<title>' . str_replace('&Ouml;', 'O', $MEMBER->full_name()) . '\'s Recent Appearances (OpenAustralia.org)</title>
 <link>http://' . DOMAIN . $mpurl . '</link>
 <description></description>
 <dc:language>en-gb</dc:language>
-<dc:creator>TheyWorkForYou.com, mprss.php script</dc:creator>
+<dc:creator>OpenAustralia.org, mprss.php script</dc:creator>
 <dc:date>' . $datenow . '</dc:date>
 
 <items>

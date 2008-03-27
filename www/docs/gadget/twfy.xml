@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <Module>
     <ModulePrefs
-        title="TheyWorkForYou"
-        title_url='http://www.theyworkforyou.com/'
-        description='Information on MPs from TheyWorkForYou.com'
+        title="OpenAustralia"
+        title_url='http://www.openaustralia.org/'
+        description='Information on MPs from OpenAustralia.org'
         author='Matthew Somerville'
         author_affiliation='mySociety'
         author_location='UK'
-	author_email='beta@theyworkforyou.com'
-	screenshot='http://www.theyworkforyou.com/gadget/screenshot.png'
-	thumbnail='http://www.theyworkforyou.com/gadget/thumbnail.png'
+	author_email='beta@openaustralia.org'
+	screenshot='http://www.openaustralia.org/gadget/screenshot.png'
+	thumbnail='http://www.openaustralia.org/gadget/thumbnail.png'
 	height='300'
         scrolling='true'>
 	<!-- <Require feature="dynamic-height"/> -->
@@ -41,7 +41,7 @@
     function showLoading(id) {
         var p = document.createElement('p');
         p.setAttribute('align', 'center');
-        var image = _IG_GetImage('http://www.theyworkforyou.com/gadget/pleasewait.gif');
+        var image = _IG_GetImage('http://www.openaustralia.org/gadget/pleasewait.gif');
         p.appendChild(image);
         _gel(id).innerHTML = '';
         _gel(id).appendChild(p);
@@ -62,7 +62,7 @@
 // Main fetching functions
 
     function fetchPersonID(pc, callback) {
-        _IG_FetchContent('http://www.theyworkforyou.com/gadget/pc.php?pc=' + encodeURIComponent(pc),
+        _IG_FetchContent('http://www.openaustralia.org/gadget/pc.php?pc=' + encodeURIComponent(pc),
             function(r) {
                 prefs.set('stored_pc', pc);
                 var a = r.split(',');
@@ -105,7 +105,7 @@
             return;
         }
         showLoading('info-tab');
-        _IG_FetchXmlContent('http://www.theyworkforyou.com/gadget/dat.php?pid=' + pid, function(response){
+        _IG_FetchXmlContent('http://www.openaustralia.org/gadget/dat.php?pid=' + pid, function(response){
             if (response == null || typeof(response) != 'object' || response.firstChild == null) {
                 _gel('info-tab').innerHTML = '<i>Could not fetch data.</i>';
                 return;
@@ -120,7 +120,7 @@
             var pw       = getValue(response, 'pw_data');
 
             if (image) {
-                image = _IG_GetImage('http://www.theyworkforyou.com' + image);
+                image = _IG_GetImage('http://www.openaustralia.org' + image);
                 image.setAttribute('align', 'left');
             }
 
@@ -133,11 +133,11 @@
             }
 
 	    var html = ['<p><big><strong>', name, ' MP</strong></big><br/>',
-		    party, ', ', cons, '<br/>Majority: ', majority, '. <a href="http://www.theyworkforyou.com/mp/?p=', pid, '" target="_blank">more</a></p>']
+		    party, ', ', cons, '<br/>Majority: ', majority, '. <a href="http://www.openaustralia.org/mp/?p=', pid, '" target="_blank">more</a></p>']
 	    // html.push('<p>Majority: ', majority, '</p>') // , ', ', swing, '% swing to lose</p>')
 
             _gel('recent-header').innerHTML = '';
-            var logo = _IG_GetImage('http://www.theyworkforyou.com/gadget/twfy.png');
+            var logo = _IG_GetImage('http://www.openaustralia.org/gadget/twfy.png');
             logo.setAttribute('align', 'right');
             _gel('recent-header').appendChild(logo);
             if (image) _gel('recent-header').appendChild(image);
@@ -180,7 +180,7 @@
 	if (!infoDisplayed) {
 	    fetchInfo();
 	}
-        _IG_FetchFeedAsJSON('http://www.theyworkforyou.com/rss/mp/' + pid + '.rdf', function(response) {
+        _IG_FetchFeedAsJSON('http://www.openaustralia.org/rss/mp/' + pid + '.rdf', function(response) {
             if (response == null) {
                 _gel('recent-things').innerHTML = '<i>Could not fetch data</i>';
                 return;
@@ -216,7 +216,7 @@
     function doSearch() {
         var s = _gel('search').value;
         showLoading('search-results');
-       _IG_FetchFeedAsJSON('http://www.theyworkforyou.com/search/rss/?s=' + encodeURIComponent(s),
+       _IG_FetchFeedAsJSON('http://www.openaustralia.org/search/rss/?s=' + encodeURIComponent(s),
             function(response) {
                 if (response == null) {
                     _gel('search-results').innerHTML = '<i>Could not fetch data</i>';
@@ -246,8 +246,8 @@
     function calendarTabCallback() {
         _gel('settings').style.display = 'none';
         showLoading('calendar-tab');
-        _IG_FetchContent('http://www.theyworkforyou.com/gadget/cal.php', function(r) {
-            var logo = _IG_GetImage('http://www.theyworkforyou.com/gadget/twfy.png');
+        _IG_FetchContent('http://www.openaustralia.org/gadget/cal.php', function(r) {
+            var logo = _IG_GetImage('http://www.openaustralia.org/gadget/twfy.png');
             logo.setAttribute('align', 'right');
 	    _gel('calendar-tab').innerHTML = '';
 	    _gel('calendar-tab').appendChild(logo);
@@ -301,9 +301,9 @@
 
     function loadDay(d) {
         showLoading('calendar-tab');
-	_IG_FetchContent('http://www.theyworkforyou.com/gadget/debateday.php?d='
+	_IG_FetchContent('http://www.openaustralia.org/gadget/debateday.php?d='
 	    + encodeURIComponent(d), function(r) {
-            var logo = _IG_GetImage('http://www.theyworkforyou.com/gadget/twfy.png');
+            var logo = _IG_GetImage('http://www.openaustralia.org/gadget/twfy.png');
             logo.setAttribute('align', 'right');
 	    _gel('calendar-tab').innerHTML = '';
 	    _gel('calendar-tab').appendChild(logo);
@@ -416,7 +416,7 @@
 </style>
 
 <div id="settings" style="display:none">
-	<form action="http://www.theyworkforyou.com/mp/" method="get" target="_blank"
+	<form action="http://www.openaustralia.org/mp/" method="get" target="_blank"
 		onsubmit="doPC(this); return false;">
 		<p><label for="pc">Enter your UK postcode to learn about your MP and get
 	a constantly updated feed of
@@ -440,7 +440,7 @@
     <div id="recent-things"></div>
 </div>
 <div id="search-tab" style="display:none">
-    <form action="http://www.theyworkforyou.com/search/" method="get"
+    <form action="http://www.openaustralia.org/search/" method="get"
         onsubmit="doSearch(); return false;" target="_blank">
         <p><label for="search">Search UK parliament
         debates, written answers, and

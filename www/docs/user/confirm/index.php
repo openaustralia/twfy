@@ -31,13 +31,13 @@ if (get_http_var('welcome') == 't') {
 		if ($THEUSER->isloggedin()) {
 			?>
 		
-	<p>Hi, and welcome to TheyWorkForYou.com! You are now logged in.</p>
+	<p>Hi, and welcome to OpenAustralia.org! You are now logged in.</p>
 
-	<p><strong>TheyWorkForYou.com</strong> helps make sense of this vital democratic resource and, crucially, allows you to scribble all over the margins.</p>
+	<p><strong>OpenAustralia.org</strong> helps make sense of this vital democratic resource and, crucially, allows you to scribble all over the margins.</p>
 
 	<p>Feel free to use it to keep an eye on <strong>your MP</strong>, Peers, add <strong>comments</strong> next to speeches, or help others by contributing your own <strong>links</strong>.</p>
 
-	<p><strong>TheyWorkForYou.com</strong> is currently being <strong>beta tested</strong>, so <a href="mailto:<?php echo CONTACTEMAIL; ?>">let us know</a> if you find a bug, or have a suggestion.</p>
+	<p><strong>OpenAustralia.org</strong> is currently being <strong>beta tested</strong>, so <a href="mailto:<?php echo CONTACTEMAIL; ?>">let us know</a> if you find a bug, or have a suggestion.</p>
 	
 <?php
 		} else {

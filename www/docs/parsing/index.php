@@ -7,7 +7,7 @@ $PAGE->stripe_start();
 $notloaded = '';
 ?>
 <p>This page shows a brief summary of things to do with the parser used to provide
-data for PublicWhip and TheyWorkForYou.</p>
+data for PublicWhip and OpenAustralia.</p>
 <h4>HTML that hasn't been parsed into XML</h4>
 <ul>
 <?

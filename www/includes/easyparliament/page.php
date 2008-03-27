@@ -223,7 +223,7 @@ class PAGE {
 		if ($rssurl = $DATA->page_metadata($this_page, 'rss')) {
 			// If this page has an RSS feed set.
 			?>
-	<link rel="alternate" type="application/rss+xml" title="TheyWorkForYou RSS" href="http://<?php echo DOMAIN . WEBPATH . $rssurl; ?>">
+	<link rel="alternate" type="application/rss+xml" title="OpenAustralia RSS" href="http://<?php echo DOMAIN . WEBPATH . $rssurl; ?>">
 <?php
 		}
 				
@@ -259,7 +259,7 @@ if (typeof urchinTracker == 'function') urchinTracker();
 		
 		print "\t<a name=\"top\"></a>\n\n";
 		if (defined('OPTION_GAZE_URL') && OPTION_GAZE_URL && (gaze_get_country_from_ip($_SERVER["REMOTE_ADDR"]) == 'NZ' || get_http_var('nz'))) {
-			print '<p align="center"><strong>New!</strong> You\'re in New Zealand, so check out <a href="http://www.theyworkforyou.co.nz">TheyWorkForYou.co.nz</a></p>';
+			print '<p align="center"><strong>New!</strong> You\'re in New Zealand, so check out <a href="http://www.theyworkforyou.co.nz">OpenAustralia.co.nz</a></p>';
 		}
 
 		$this->title_bar();
@@ -274,15 +274,15 @@ if (typeof urchinTracker == 'function') urchinTracker();
 		// The title bit of the page, with possible search box.
 		global $this_page;
 		
-		//$img = '<img src="' . IMAGEPATH . 'theyworkforyoucom.gif" width="293" height="28" alt="TheyWorkForYou.com">';
+		//$img = '<img src="' . IMAGEPATH . 'theyworkforyoucom.gif" width="293" height="28" alt="OpenAustralia.org">';
 
-		$img = '<img src="' . IMAGEPATH . 'theyworkforyoucombeta.gif" width="320" height="28" alt="TheyWorkForYou.com beta">';
+		$img = '<img src="' . IMAGEPATH . 'theyworkforyoucombeta.gif" width="320" height="28" alt="OpenAustralia.org beta">';
 		
 		//isn't this very hacky? shouldn't we be cobranding cleverly using METADATA? ( I've repeated this below however -stef"
 		if (get_http_var('c4')) {
-			$img = '<img src="/images/c4banner.gif" alt="TheyWorkForYou.com with Channel 4">';
+			$img = '<img src="/images/c4banner.gif" alt="OpenAustralia.org with Channel 4">';
 		} elseif (get_http_var('c4x')) {
-			$img = '<img src="/images/c4Xbanner.gif" alt="TheyWorkForYou.com with Channel 4">';
+			$img = '<img src="/images/c4Xbanner.gif" alt="OpenAustralia.org with Channel 4">';
 		}
 
 		if ($this_page != 'home') {
@@ -872,9 +872,9 @@ if (typeof urchinTracker == 'function') urchinTracker();
 
 
 
-		// This makes the tracker appear on all sections, but only actually on theyworkforyou.com
+		// This makes the tracker appear on all sections, but only actually on openaustralia.org
 				//if ($DATA->page_metadata($this_page, 'track') ) {
-		if (substr(DOMAIN, -18) == "theyworkforyou.com" && substr(DOMAIN, 0, 7)!= "staging")  {
+		if (substr(DOMAIN, -18) == "openaustralia.org" && substr(DOMAIN, 0, 7)!= "staging")  {
 					// We want to track this page.
 			// Kind of fake URLs needed for the tracker.
 			$url = urlencode('http://' . DOMAIN . '/' . $this_page);
@@ -1004,9 +1004,9 @@ pr()//-->
 			later.</p>
 
 			<p>Even if this bill is amended to exclude expenses, exemption from the
-			Freedom of Information Act may prevent TheyWorkForYou from adding
+			Freedom of Information Act may prevent OpenAustralia from adding
 			useful information of new sorts in the future. The Bill is not backed
-			or opposed by a specific party, and TheyWorkForYou remains strictly
+			or opposed by a specific party, and OpenAustralia remains strictly
 			neutral on all issues that do not affect our ability to serve the
 			public.</p>
 
@@ -1027,7 +1027,7 @@ pr()//-->
 		if ($rssurl = $DATA->page_metadata($this_page, 'rss')) {
 			$title = '<a href="' . WEBPATH . $rssurl . '"><img src="' . WEBPATH . 'images/rss.gif" alt="RSS feed" border="0" align="right"></a> ' . $title;
 		}
-		print '<p class="printonly">This data was produced by TheyWorkForYou from a variety of sources.</p>';
+		print '<p class="printonly">This data was produced by OpenAustralia from a variety of sources.</p>';
 		$this->block_start(array('id'=>'mp', 'title'=>$title));
 		list($image,$sz) = find_rep_image($member['person_id']);
 		if ($image) {
@@ -2233,7 +2233,7 @@ elseif ($member['house_disp']==0) print $member['full_name']; ?> speaks<?php
 		?>
 		<form action="<?php echo $add_link; ?>" method="get">
 		<?php echo $type; ?>
-		<p>Help make TheyWorkForYou.com better by adding a definition:<br>
+		<p>Help make OpenAustralia.org better by adding a definition:<br>
 		<label for="g"><input type="text" name="g" value="<?php echo $formcontent; ?>" size="45">
 		<input type="submit" value="Search" class="submit"></label>
 		</p>

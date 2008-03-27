@@ -1,6 +1,6 @@
 <ul>
 
-<li>TheyWorkForYou.com Search is case-insensitive, and tries to match all the search terms within a document. </li>
+<li>OpenAustralia.org Search is case-insensitive, and tries to match all the search terms within a document. </li>
 
 <li>To exclude a word from your search, put a minus ("-") sign in front,
 for example to find documents containing the word "representation" but not the word "taxation":<br>
@@ -20,7 +20,7 @@ for example to find documents containing the word "representation" but not the w
 $user_agent = ( isset( $_SERVER['HTTP_USER_AGENT'] ) ) ? strtolower( $_SERVER['HTTP_USER_AGENT'] ) : '';
 if (stristr($user_agent, 'Firefox/')) {
 ?>
-	 <li>You can also add TheyWorkForYou to <a href="http://mycroft.mozdev.org/download.html?name=theyworkforyou">Firefox's search box</a>.</li>
+	 <li>You can also add OpenAustralia to <a href="http://mycroft.mozdev.org/download.html?name=theyworkforyou">Firefox's search box</a>.</li>
 <?php
 }
 ?>

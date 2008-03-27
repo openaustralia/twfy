@@ -7,6 +7,6 @@ $LIST = new DEBATELIST;
 ob_start();
 $LIST->display('calendar', array('months' => 1));
 $cal = ob_get_clean();
-$cal = preg_replace('#<a href="/debates/\?d=(.*?)"#', '<a onclick="return loadDay(\'$1\');" target="_blank" href="http://www.theyworkforyou.com/debates/?d=$1"', $cal);
+$cal = preg_replace('#<a href="/debates/\?d=(.*?)"#', '<a onclick="return loadDay(\'$1\');" target="_blank" href="http://www.openaustralia.org/debates/?d=$1"', $cal);
 print $cal;
 

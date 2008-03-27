@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 # vim:sw=4:ts=4:et:nowrap
 
-# Indexer of TheyWorkForYou.com using Xapian.
+# Indexer of OpenAustralia.org using Xapian.
 
 use strict;
 use Carp;

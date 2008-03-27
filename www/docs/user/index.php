@@ -659,7 +659,7 @@ function display_form ( $details = array(), $errors = array() ) {
 				
 				
 				<div class="row">
-				&nbsp;<br>Do <?php if ($this_page == "otheruseredit") { echo "they"; } else { echo "you"; } ?> wish to receive occasional update emails about TheyWorkForYou.com?
+				&nbsp;<br>Do <?php if ($this_page == "otheruseredit") { echo "they"; } else { echo "you"; } ?> wish to receive occasional update emails about OpenAustralia.org?
 				</div>
 
 <?php
@@ -756,7 +756,7 @@ function display_form ( $details = array(), $errors = array() ) {
 	if ($this_page == "useredit" || $this_page == "otheruseredit") {
 		$submittext = "Update details";
 	} else {
-		$submittext = "Join TheyWorkForYou.com";
+		$submittext = "Join OpenAustralia.org";
 	}
 	
 	$TERMSURL = new URL('disclaimer');
@@ -1030,7 +1030,7 @@ function display_user ($user_id="") {
 		}
 		if (isset($optin)) {
 			?>
-				<div class="row">Receive TheyWorkForYou.com emails? <strong><?php echo htmlentities($optin); ?></strong></div>
+				<div class="row">Receive OpenAustralia.org emails? <strong><?php echo htmlentities($optin); ?></strong></div>
 
 <?php
 		}

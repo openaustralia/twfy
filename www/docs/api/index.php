@@ -11,7 +11,7 @@ $methods = array(
 	'convertURL' => array(
 		'parameters' => array('url'),
 		'required' => true,
-		'help' => 'Converts a parliament.uk Hansard URL into a TheyWorkForYou one, if possible',
+		'help' => 'Converts a parliament.uk Hansard URL into a OpenAustralia one, if possible',
 	),
 	'getConstituency' => array(
 		'new' => true,
@@ -156,7 +156,7 @@ function api_documentation_front($method, $explorer) {
 	$PAGE->page_start();
 	$PAGE->stripe_start();
 	include_once 'api_' . $method . '.php';
-	print '<p align="center"><strong>http://www.theyworkforyou.com/api/' . $method . '</strong></p>';
+	print '<p align="center"><strong>http://www.openaustralia.org/api/' . $method . '</strong></p>';
 	api_call_user_func_or_error('api_' . $method . '_front', null, 'No documentation yet', 'html');
 ?>
 <h4>Explorer</h4>
@@ -191,7 +191,7 @@ Output:
 				$qs[] = htmlspecialchars(rawurlencode($parameter) . '=' . urlencode(get_http_var($parameter)));
 		}
 		print '<h4><a name="output"></a>Output</h4>';
-		print '<p>URL for this: <strong>http://www.theyworkforyou.com/api/';
+		print '<p>URL for this: <strong>http://www.openaustralia.org/api/';
 		print $method . '?' . join('&amp;', $qs) . '&amp;output='.get_http_var('output').'</strong></p>';
 		print '<pre>' . htmlspecialchars($explorer) . '</pre>';
 	}
@@ -209,13 +209,13 @@ function api_front_page($error = '') {
 		print "<p style='color: #cc0000'>$error</p>";
 	}
 ?>
-<p>Welcome to TheyWorkForYou's API section, where you can learn how to query our database for information.</p>
+<p>Welcome to OpenAustralia's API section, where you can learn how to query our database for information.</p>
 
 <h3>Overview</h3>
 
 <p>All requests take a number of parameters. <em>output</em> is optional, and defaults to <kbd>js</kbd>.</p>
 
-<p align="center"><strong>http://www.theyworkforyou.com/api/<em>function</em>?output=<em>output</em>&<em>other_variables</em></strong></p>
+<p align="center"><strong>http://www.openaustralia.org/api/<em>function</em>?output=<em>output</em>&<em>other_variables</em></strong></p>
 
 <p>The current version of the API is <em>1.0.0</em>. If we make changes
 to the API,
@@ -263,19 +263,8 @@ to use the service on a large scale.
 
 <p>If anyone wishes to write bindings for the API in any language, please
 do so, let us know and we'll link to it here. You might want to
-<a href="https://secure.mysociety.org/admin/lists/mailman/listinfo/developers-public">join our public developer mailing list</a>
+<a href="https://secure.mysociety.org/admin/lists/mailman/listinfo/developers-public">join the UK OpenAustralia public developer mailing list</a>
 to discuss things.</p>
-
-<h3>Examples</h3>
-
-<ul>
-<li><a href="http://www.dracos.co.uk/work/theyworkforyou/api/postcode/">Postcode to constituency lookup, with no server side code</a> - use this to add constituency or MP lookup to a form on your website.
-<li><a href="http://www.dracos.co.uk/work/theyworkforyou/api/map/">Map showing location of all 646 constituencies, with no server side code</a> - example code using JavaScript and Google Maps.
-<li><a href="javascript:function foo(r){if(r.twfy.url)window.location=r.twfy.url;};(function(){var s=document.createElement('script');s.setAttribute('src','http://theyworkforyou.com/api/convertURL?callback=foo&url='+encodeURIComponent(window.location));s.setAttribute('type','text/javascript');document.getElementsByTagName('head')[0].appendChild(s);})()">Hansard prettifier</a> - drag this bookmarklet to your bookmarks bar, or bookmark it. Then if you ever find yourself on the official site, clicking this will try and take you to the equivalent page on TheyWorkForYou. (Tested in IE, Firefox, Opera.)</li>
-<li><a href="http://www.dracos.co.uk/work/theyworkforyou/api/fabfarts/">Matthew's MP Fab Farts</a> - every technology has the capacity to be used for fun.
-<li><a href="telnet://seagrass.goatchurch.org.uk:646/">Francis' MP Fight telnet text adventure</a> (<s>and <a href="http://caesious.beasts.org/~chris/scripts/mpfight">Chris' web version</a></s>) - battle your way to Sedgefield!
-<li><a href="http://www.straw-dogs.co.uk/10/15/your-mp-google-desktop-gadget/">Your MP - Google Desktop Gadget</a> - with GPL source code
-</ul>
 
 <?
 	$sidebar = api_sidebar();

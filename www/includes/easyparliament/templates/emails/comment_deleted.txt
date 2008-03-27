@@ -1,11 +1,11 @@
 Subject:One of your comments has been deleted
 Hi {FIRSTNAME},
 
-Thanks for taking the time to contribute to TheyWorkForYou.com. 
+Thanks for taking the time to contribute to OpenAustralia.org. 
 
-Unfortunately, another user has indicated that the comment copied at the bottom of this email might be in breach of the House Rules listed here http://www.theyworkforyou.com/houserules/ 
+Unfortunately, another user has indicated that the comment copied at the bottom of this email might be in breach of the House Rules listed here http://www.openaustralia.org/houserules/ 
 
-We have removed your comment from TheyWorkForYou.com for the following reason: 
+We have removed your comment from OpenAustralia.org for the following reason: 
 
 {DELETEDREASON}.
 
@@ -13,7 +13,7 @@ Sorry if this sounds all a bit bossy and strict. We want as many people as possi
 
 Best wishes,
 
-- The TheyWorkForYou.com Volunteers
+- The OpenAustralia.org Volunteers
 
 
 PS  If you're still in the mood, we'd be delighted if you wanted to redraft your comment so it meets our House Rules. Just visit this address

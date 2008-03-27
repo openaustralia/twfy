@@ -5,7 +5,7 @@
  * $Id: dobs.php,v 1.1 2006/04/27 14:20:20 twfy-live Exp $
  */
 
-include '/data/vhost/www.theyworkforyou.com/includes/easyparliament/init.php';
+include '/data/vhost/www.openaustralia.org/includes/easyparliament/init.php';
 include INCLUDESPATH . 'easyparliament/member.php';
 $db = new ParlDB;
 $f = file('../../DoBs.csv');

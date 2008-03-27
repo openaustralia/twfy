@@ -74,7 +74,7 @@ span.hi {
 	content: " ( " attr(href) " )";
 }
 #hansard #moreappear a:after {
-	content: " ( http://www.theyworkforyou.com" attr(href) " )";
+	content: " ( http://www.openaustralia.org" attr(href) " )";
 }
 .printonly {
 	display: block;

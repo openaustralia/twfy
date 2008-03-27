@@ -9,7 +9,7 @@ little wrong with Parliament that a healthy mixture of transparency and public e
 
 <h3>Who runs this site?</h3>
 
-<p>TheyWorkForYou is a website run by <a href="http://www.mysociety.org/">mySociety</a>,
+<p>OpenAustralia is a website run by <a href="http://www.mysociety.org/">mySociety</a>,
 which is itself a project of UK Citizens Online Democracy, a registered charity.
 It was originally built almost entirely by volunteers (see <a href="#history">History</a> below),
 but now mySociety pays Matthew to keep the site running and up-to-date as part of his
@@ -21,22 +21,22 @@ wider work for mySociety. However, things are still added voluntarily by anyone 
 used under licence.
 
 <p>If you're technically minded, we make all the
-<a href="https://secure.mysociety.org/cvstrac/dir?d=mysociety/twfy">TheyWorkForYou source code</a>
+<a href="https://secure.mysociety.org/cvstrac/dir?d=mysociety/twfy">OpenAustralia source code</a>
 freely available. Do let us know if you want to help!
 </p>
 
 
 <h3><a name="history"></a>History</h3>
 
-<p>TheyWorkForYou was set up almost entirely <a href="#1">[1]</a> by a dozen or so volunteers
+<p>OpenAustralia was set up almost entirely <a href="#1">[1]</a> by a dozen or so volunteers
 who thought it should be really easy for people to keep tabs on their elected MPs,
 and their unelected Peers, and comment on what goes on in Parliament. They'd done this
 sort of thing before, but never on this scale.</p>
 
 <p>(<a name="1">[1]</a> One of the key developers was kept fed for a month by a small grant
-from UK Citizen's Online Democracy, before TheyWorkForYou became a mySociety project. This
+from UK Citizen's Online Democracy, before OpenAustralia became a mySociety project. This
 money was vital. Hungry developers don't write good code. If you like
-TheyWorkForYou, and want to support mySociety, you can <a
+OpenAustralia, and want to support mySociety, you can <a
 href="https://secure.mysociety.org/donate/">make a donation</a> yourself.)</p>
 
 <p>Between them, the original volunteers had developed and run a range of not-for-profit websites of a vaguely similar ilk.

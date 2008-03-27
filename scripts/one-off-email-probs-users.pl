@@ -31,33 +31,33 @@ foreach (@$alerts) {
 	my $email = $_->[1];
 	my $name = $_->[2];
 	my $token = $_->[3];
-	my $url = "http://theyworkforyou.com/user/confirm/?t=$id"."::$token";
+	my $url = "http://openaustralia.org/user/confirm/?t=$id"."::$token";
 	my $out = "Hi $name,
 
-In the last few weeks, you tried to join TheyWorkForYou. We've just
+In the last few weeks, you tried to join OpenAustralia. We've just
 found and fixed a bug that meant confirmation emails weren't being sent
 out, which means you could never confirm your registration. We're very
 sorry about that, and are resending your confirmation link so you can
 confirm, if you still wish to do so (if you don't, just ignore this
 email).
 
-To confirm your registration with TheyWorkForYou, please click this link:
+To confirm your registration with OpenAustralia, please click this link:
     $url
 
 Again, apologies for the confusion. If you have any questions,
 please just reply to this email.
 
 Yours,
-Matthew, TheyWorkForYou
+Matthew, OpenAustralia
 ";
 	# Send email
 	my $message = mySociety::Email::construct_email({
 		_body_ => $out,
-		From => ['beta@theyworkforyou.com', 'TheyWorkForYou.com'],
-	Subject => 'Your recent TheyWorkForYou joining',
+		From => ['beta@openaustralia.org', 'OpenAustralia.org'],
+	Subject => 'Your recent OpenAustralia joining',
 		To => [[$email, $name]]
 	});
-	my $result = mySociety::EmailUtil::send_email($message, 'beta@theyworkforyou.com', $email);
+	my $result = mySociety::EmailUtil::send_email($message, 'beta@openaustralia.org', $email);
 	if ($result != mySociety::EmailUtil::EMAIL_SUCCESS) {
 		print "Failed to send email to $email\n";
 	}

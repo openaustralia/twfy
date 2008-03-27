@@ -104,7 +104,7 @@ if (get_http_var("submitterm") != '') {
 
 	// We just arrived here empty handed...
 	
-	print "<p>Help make TheyWorkForYou.com better. Add an external URL to the parliamentary record. Webify parliament!</p>";
+	print "<p>Help make OpenAustralia.org better. Add an external URL to the parliamentary record. Webify parliament!</p>";
 	print "<h3>Step 1: Search for a phrase</h3>";
 	
 	$PAGE->glossary_search_form($args);

@@ -103,7 +103,7 @@ if ($bill_id && !$id) {
 			'type' => 'html',
 			'content' => '<div class="block">
 <h4>RSS feed</h4>
-<p><a href="' . WEBPATH . $rssurl . '"><img alt="RSS feed" border="0" align="middle" src="http://www.theyworkforyou.com/images/rss.gif"></a>
+<p><a href="' . WEBPATH . $rssurl . '"><img alt="RSS feed" border="0" align="middle" src="http://www.openaustralia.org/images/rss.gif"></a>
 <a href="' . WEBPATH . $rssurl . '">RSS feed of most recent committee debates</a></p>
 </div>'
 		)

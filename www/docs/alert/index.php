@@ -54,7 +54,7 @@ if (!sizeof($errors) && ( (get_http_var('submitted') && ($details['keyword'] || 
 } else {
 	$PAGE->page_start();
 	$PAGE->stripe_start();
-	$PAGE->block_start(array ('id'=>'alerts', 'title'=>'Request a TheyWorkForYou.com Email Alert'));
+	$PAGE->block_start(array ('id'=>'alerts', 'title'=>'Request an OpenAustralia.org Email Alert'));
 	display_form($details, $errors);
 	$PAGE->block_end();	
 	$end = array();
@@ -185,7 +185,7 @@ function display_form ( $details = array(), $errors = array() ) {
 	$ACTIONURL->reset();
 ?>
 
-<p>This page allows you to request an email alert from TheyWorkForYou.com.</p>
+<p>This page allows you to request an email alert from OpenAustralia.org.</p>
 
 <?	if (!get_http_var('only')) { ?>
 <ul>

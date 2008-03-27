@@ -2,7 +2,7 @@
 
 // NOTE: This is now the master copy, the file postcode.php here:
 // http://cvs.sourceforge.net/viewcvs.py/publicwhip/publicwhip/website/
-// is copied from this theyworkforyou.com version.
+// is copied from this openaustralia.org version.
 
 include_once INCLUDESPATH."constituencies.inc";
 

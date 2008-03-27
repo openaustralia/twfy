@@ -71,7 +71,7 @@ $this->page = array (
 	'default' => array (
 		'parent'	=> '',
 		'session_vars' => array('super_debug'),
-		'sitetitle'		=> 'TheyWorkForYou.com',
+		'sitetitle'		=> 'OpenAustralia.org',
 		//deprecated   'track'		=> false
 	),
 	
@@ -171,7 +171,7 @@ $this->page = array (
 			'sidebar'		=> 'alert'
 
 		),
-		'title'			=> 'TheyWorkForYou.com Email Alerts',
+		'title'			=> 'OpenAustralia.org Email Alerts',
 		'url'			=> 'alert/',
 	),		
 	'alertconfirm' => array (
@@ -224,7 +224,7 @@ $this->page = array (
 			'text'			=> 'API',
 			'title'			=> 'Access our data'
 		),
-		'title'			=> 'TheyWorkForYou API',
+		'title'			=> 'OpenAustralia API',
 		'url'			=> 'api/'
 	),
 	'api_doc_front'		=> array (
@@ -258,7 +258,7 @@ $this->page = array (
 	),
 
 	'contact' => array (
-		'title'			=> 'Contact TheyWorkForYou.com',
+		'title'			=> 'Contact OpenAustralia.org',
 		'url'			=> 'contact/'
 	),
 	
@@ -302,7 +302,7 @@ $this->page = array (
 
 	'gadget' => array(
 		'url'			=> 'gadget/',
-		'title'			=> 'TheyWorkForYou Google gadget',
+		'title'			=> 'OpenAustralia Google gadget',
 	),
 
 	'glossary' => array (
@@ -641,13 +641,13 @@ $this->page = array (
 	
 	'sitenews'		=> array (
 		'menu'			=> array (
-			'text'			=> 'TheyWorkForYou news',
+			'text'			=> 'OpenAustralia news',
 			'title'			=> "News about changes to this website"
 		),
 		'parent'		=> 'home',
 		'rss'			=> 'news/index.rdf',
 		'sidebar'		=> 'sitenews',
-		'title'			=> 'TheyWorkForYou news',
+		'title'			=> 'OpenAustralia news',
 		'track'			=> true,
 		'url'			=> 'news/'
 	),
@@ -773,7 +773,7 @@ $this->page = array (
 	),
 	'userconfirmed' => array (
 		'sidebar'		=> 'userconfirmed',
-		'title'			=> 'Welcome to TheyWorkForYou.com!',
+		'title'			=> 'Welcome to OpenAustralia.org!',
 	//deprecated 	'track'			=> true,
 		'url'			=> 'user/confirm/'
 	),
@@ -793,18 +793,18 @@ $this->page = array (
                 ),
                 'pg'                    => 'join',
                 'sidebar'               => 'userjoin',
-                'title'                 => 'Join TheyWorkForYou.com',
+                'title'                 => 'Join OpenAustralia.org',
         //deprecated    'track'                 => true,
                 'url'                   => 'user/'
         ),  	
 	'getinvolved' => array (
 		'menu'			=> array (
 			'text'			=> 'Get involved',
-			'title'			=> "Contribute to TheyWorkForYou.com"
+			'title'			=> "Contribute to OpenAustralia.org"
 		),
 		'pg'			=> 'getinvolved',
 		'sidebar'		=> 'userjoin',
-		'title'			=> 'Contribute to TheyWorkForYou.com',
+		'title'			=> 'Contribute to OpenAustralia.org',
 	//deprecated 	'track'			=> true,
 		'url'			=> 'getinvolved/'
 	),		
@@ -991,7 +991,7 @@ $this->section = array (
 		'title' 	=> 'Search'
 	),
 	'sitenews' => array (
-		'title' 	=> 'TheyWorkForYou news'
+		'title' 	=> 'OpenAustralia news'
 	),
 	'wrans' => array (
 		'title' 	=> 'Written Answers'

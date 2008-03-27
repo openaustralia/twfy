@@ -62,7 +62,7 @@ if (sizeof($errors)) {
 
 	$success = send_template_email($data, $merge);
 	if ($success) {
-		print "<p>Your email has been sent successfully. Thank you for using TheyWorkForYou.</p> <p><a href=\"$url\">Return to ".$MEMBER->full_name()."'s page</a></p>";
+		print "<p>Your email has been sent successfully. Thank you for using OpenAustralia.</p> <p><a href=\"$url\">Return to ".$MEMBER->full_name()."'s page</a></p>";
 	} else {
 		print "<p>Sorry, something went wrong trying to send an email. Please wait a few minutes and try again.</p>";
 	}

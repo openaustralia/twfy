@@ -2,12 +2,12 @@
 
 function api_convertURL_front() {
 ?>
-<p><big>Converts a parliament.uk Hansard URL into a TheyWorkForYou one, if possible.</big></p>
+<p><big>Converts an aph.gov.au Hansard URL into an OpenAustralia one, if possible.</big></p>
 
 <h4>Arguments</h4>
 <dl>
 <dt>url (required)</dt>
-<dd>The parliament.uk URL you wish to convert, e.g.
+<dd>The aph.gov.au URL you wish to convert, e.g.
 <?	$db = new ParlDB;
 	$q = $db->query('SELECT source_url FROM hansard WHERE major=1 AND hdate>"2006-07-01" ORDER BY RAND() LIMIT 1');
 	print $q->field(0, 'source_url');
@@ -17,13 +17,13 @@ function api_convertURL_front() {
 <h4>Example Response</h4>
 <pre>{
     gid : "uk.org.publicwhip/debate/2006-07-11a.1352.2",
-    url : "http://www.theyworkforyou.com/debates/?id=2006-07-11a.1311.0#g1352.2"
+    url : "http://www.openaustralia.org/debates/?id=2006-07-11a.1311.0#g1352.2"
 }</pre>
 
 <h4>Example Use</h4>
 <p>This probably counts as "AJAX", though it doesn't use XMLHTTP, asynchronicity, or XML, only cross-site JavaScript... It's definitely Web 2.1, at least.</p>
 
-<ul><li><a href="javascript:function foo(r){if(r.url)window.location=r.url;};(function(){var s=document.createElement('script');s.setAttribute('src','http://theyworkforyou.com/api/convertURL?callback=foo&url='+encodeURIComponent(window.location));s.setAttribute('type','text/javascript');document.getElementsByTagName('head')[0].appendChild(s);})()">Hansard prettifier</a> - drag this bookmarklet to your bookmarks bar, or bookmark it. Then if you ever find yourself on the official site, clicking this will try and take you to the equivalent page on TheyWorkForYou. (Tested in IE, Firefox, Opera.)</li></ul>
+<ul><li><a href="javascript:function foo(r){if(r.url)window.location=r.url;};(function(){var s=document.createElement('script');s.setAttribute('src','http://openaustralia.org/api/convertURL?callback=foo&url='+encodeURIComponent(window.location));s.setAttribute('type','text/javascript');document.getElementsByTagName('head')[0].appendChild(s);})()">Hansard prettifier</a> - drag this bookmarklet to your bookmarks bar, or bookmark it. Then if you ever find yourself on the official site, clicking this will try and take you to the equivalent page on OpenAustralia. (Tested in IE, Firefox, Opera.)</li></ul>
 <?	
 }
 
@@ -64,7 +64,7 @@ function api_converturl_url_output($q) {
 	$url = get_listurl($q);
 	$output = array(
 		'gid' => $gid,
-		'url' => 'http://www.theyworkforyou.com' . $url
+		'url' => 'http://www.openaustralia.org' . $url
 	);
 	api_output($output);
 }

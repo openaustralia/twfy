@@ -9,7 +9,7 @@ function mlog($message) {
 	print $message;
 }
 
-include '/data/vhost/www.theyworkforyou.com/includes/easyparliament/init.php';
+include '/data/vhost/www.openaustralia.org/includes/easyparliament/init.php';
 ini_set('memory_limit', -1);
 include INCLUDESPATH . 'easyparliament/member.php';
 
@@ -165,7 +165,7 @@ foreach ($alertdata as $alertitem) {
 				if (isset($row['speaker']) && count($row['speaker'])) $body = html_entity_decode(member_full_name($row['speaker']['house'], $row['speaker']['title'], $row['speaker']['first_name'], $row['speaker']['last_name'], $row['speaker']['constituency'])) . ': ' . $body;
 
 				$body = wordwrap($body, 72);
-				$o[$major] .= $parentbody . ' (' . format_date($row['hdate'], SHORTDATEFORMAT) . ")\nhttp://www.theyworkforyou.com" . $row['listurl'] . "\n";
+				$o[$major] .= $parentbody . ' (' . format_date($row['hdate'], SHORTDATEFORMAT) . ")\nhttp://www.openaustralia.org" . $row['listurl'] . "\n";
 				$o[$major] .= $body . "\n\n";
 			}
 			$total++;
@@ -181,12 +181,12 @@ foreach ($alertdata as $alertitem) {
 					$heading = $deschead . ' : ' . $count[$major] . ' ' . $sects[$major] . ($count[$major]!=1?'s':'');
 					$email_text .= "$heading\n".str_repeat('=',strlen($heading))."\n\n";
 					if ($count[$major] > 3) {
-						$email_text .= "There are more results than we have shown here. See more:\nhttp://www.theyworkforyou.com/search/?s=".urlencode($criteria_raw)."+section:".$sects_short[$major]."&o=d\n\n";
+						$email_text .= "There are more results than we have shown here. See more:\nhttp://www.openaustralia.org/search/?s=".urlencode($criteria_raw)."+section:".$sects_short[$major]."&o=d\n\n";
 					}
 					$email_text .= $body;
 				}
 			}
-			$email_text .= "To cancel your alert for items " . $desc . ", please use:\nhttp://www.theyworkforyou.com/D/" . $alertitem['alert_id'] . '-' . $alertitem['registrationtoken'] . "\n\n";
+			$email_text .= "To cancel your alert for items " . $desc . ", please use:\nhttp://www.openaustralia.org/D/" . $alertitem['alert_id'] . '-' . $alertitem['registrationtoken'] . "\n\n";
 		}
 	}
 }
@@ -228,7 +228,7 @@ function write_and_send_email($email, $user_id, $data) {
 
 	$data .= '===================='."\n\n";
 	if ($user_id) {
-		$data .= "As a registered user, visit http://www.theyworkforyou.com/user/\nto manage your alerts.\n";
+		$data .= "As a registered user, visit http://www.openaustralia.org/user/\nto manage your alerts.\n";
 	} else {
 		$data .= "If you register on the site, you will be able to manage your\nalerts there as well as post comments. :)\n";
 	}

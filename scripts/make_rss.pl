@@ -18,8 +18,8 @@ my $dbh = DBI->connect($dsn, mySociety::Config::get('DB_USER'), mySociety::Confi
 
 my $dc = {
     subject => '',
-    creator => 'TheyWorkForYou.com',
-    publisher => 'TheyWorkForYou.com',
+    creator => 'OpenAustralia.org',
+    publisher => 'OpenAustralia.org',
     rights => 'Parliamentary Copyright',
     language => 'en-gb',
     ttl => 600
@@ -53,8 +53,8 @@ sub debates_rss {
     my $rss = new XML::RSS (version => '1.0');
     $rss->channel(
         title => $title,
-        link => "http://www.theyworkforyou.com/$url",
-        description => "$title via TheyWorkForYou.com - http://www.theyworkforyou.com/",
+        link => "http://www.openaustralia.org/$url",
+        description => "$title via OpenAustralia.org - http://www.openaustralia.org/",
         dc => $dc,
         syn => $syn,
     );
@@ -62,11 +62,11 @@ sub debates_rss {
     my $body = '';
     while (my $result = $query->fetchrow_hashref) {
         my ($id) = $result->{gid} =~ m#\/([^/]+)$#;
-        $body .= "<li><a href=\"http://www.theyworkforyou.com/$url?id=$id\">$result->{body}</a></li>\n";
+        $body .= "<li><a href=\"http://www.openaustralia.org/$url?id=$id\">$result->{body}</a></li>\n";
     }
     $rss->add_item(
         title => "$title for $date",
-        link => "http://www.theyworkforyou.com/$url?d=$date",
+        link => "http://www.openaustralia.org/$url?d=$date",
         description => "<ul>\n\n$body\n\n</ul>\n"
     );
 
@@ -93,8 +93,8 @@ sub wms_rss {
     my $rss = new XML::RSS (version => '1.0');
     $rss->channel(
         title => "Written Ministerial Statements",
-        link => "http://www.theyworkforyou.com/wms/",
-        description => "Written Ministerial Statements via TheyWorkForYou.com - http://www.theyworkforyou.com/",
+        link => "http://www.openaustralia.org/wms/",
+        description => "Written Ministerial Statements via OpenAustralia.org - http://www.openaustralia.org/",
         dc => $dc,
         syn => $syn,
     );
@@ -113,7 +113,7 @@ sub wms_rss {
         my ($id) = $result->{gid} =~ m#\/([^/]+)$#;
         $rss->add_item(
             title => $title,
-            link => 'http://www.theyworkforyou.com/wms/?id=' . $id,
+            link => 'http://www.openaustralia.org/wms/?id=' . $id,
             description => $result->{body}
         );
     }
@@ -132,8 +132,8 @@ sub wrans_rss {
     my $rss = new XML::RSS (version => '1.0');
     $rss->channel(
         title => "Written Answers",
-        link => "http://www.theyworkforyou.com/wrans/",
-        description => "Written Answers via TheyWorkForYou.com- http://www.theyworkforyou.com/ .",
+        link => "http://www.openaustralia.org/wrans/",
+        description => "Written Answers via OpenAustralia.org- http://www.openaustralia.org/ .",
         dc => $dc,
         syn => $syn,
     );
@@ -148,7 +148,7 @@ sub wrans_rss {
 
         $rss->add_item(
             title => $title,
-            link => 'http://www.theyworkforyou.com/wrans/?id=' . $id,
+            link => 'http://www.openaustralia.org/wrans/?id=' . $id,
             description => $result->{body}
         );
     }
@@ -164,8 +164,8 @@ sub pbc_rss {
     my $rss = new XML::RSS (version => '1.0');
     $rss->channel(
         title => "Public Bill Committee debates",
-        link => "http://www.theyworkforyou.com/pbc/",
-        description => "Public Bill Committee debates via TheyWorkForYou.com- http://www.theyworkforyou.com/ .",
+        link => "http://www.openaustralia.org/pbc/",
+        description => "Public Bill Committee debates via OpenAustralia.org- http://www.openaustralia.org/ .",
         dc => $dc,
         syn => $syn,
     );
@@ -178,7 +178,7 @@ sub pbc_rss {
         $u_title =~ s/%20/+/g;
         $rss->add_item(
                 title => "$title, $sitting sitting",
-                link => "http://www.theyworkforyou.com/pbc/$session/$u_title",
+                link => "http://www.openaustralia.org/pbc/$session/$u_title",
                 #description => $result->{body
         );
     }

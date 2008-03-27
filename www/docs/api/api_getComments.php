@@ -2,7 +2,7 @@
 
 function api_getComments_front() {
 ?>
-<p><big>Fetch comments left on TheyWorkForYou.</big></p>
+<p><big>Fetch comments left on OpenAustralia.</big></p>
 
 <p>With no arguments, returns most recent comments in reverse date order.</p>
 

@@ -2,7 +2,7 @@
 
 include_once "../../../includes/easyparliament/init.php";
 include_once "../../../includes/easyparliament/member.php";
-$DATA->set_page_metadata($this_page, 'heading', 'MPs photo status on TheyWorkForYou');
+$DATA->set_page_metadata($this_page, 'heading', 'MPs photo status on OpenAustralia');
 $PAGE->page_start();
 $PAGE->stripe_start();
 $db = new ParlDB;

@@ -89,7 +89,7 @@ sub make_structure_and_output{
 		$output->{'points'}->{'point'}[$index]->{'group'}= $member->{$mp}->{'memberdata'}->{'party'};
 		$output->{'points'}->{'point'}[$index]->{'pointsize'}= 3;
 		$output->{'points'}->{'point'}[$index]->{'colour'}= &get_colour($member->{$mp}->{'memberdata'}->{'party'}) || '000000';
-		$output->{'points'}->{'point'}[$index]->{'link'}= 'http://www.theyworkforyou.com/mp/?m=' . $mp;
+		$output->{'points'}->{'point'}[$index]->{'link'}= 'http://www.openaustralia.org/mp/?m=' . $mp;
 
 		foreach my $data_key (keys %{$member->{$mp}->{'values'}}){ 
 			my $skip=0;
