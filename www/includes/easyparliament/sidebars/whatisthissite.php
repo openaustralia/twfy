@@ -10,11 +10,10 @@ $URL = new URL('help');
 $helpurl = $URL->generate();
 ?>
 
-<p><a href="https://secure.mysociety.org/donate/"><img src="<?=WEBPATH."/images/donate_red_flatL.gif"?>" width="100" height="35" border="0" align="right" hspace="4" vspace="5" alt="Donate"></a>
+<p><a href="http://blog.openaustralia.org/how-can-i-help/"><img src="<?=WEBPATH."/images/donate_red_flatL.gif"?>" width="100" height="35" border="0" align="right" hspace="4" vspace="5" alt="Donate"></a>
 <a href="<?php echo $abouturl; ?>" title="link to About Us page">OpenAustralia.org</a>
 is a non-partisan website run by a charity which aims to
-make it easy for people to keep tabs on their elected and
-unelected representatives in Parliament, and other assemblies.</p>
+make it easy for people to keep tabs on their representatives in Parliament.</p>
 
 <?php
 $this->block_end();

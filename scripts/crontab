@@ -2,7 +2,7 @@
 
 # m h dom mon dow command
 
-MAILTO=fawkes@lists.mysociety.org
+MAILTO=matthew@openaustralia.org
 
 # daily update at night for MP data (regmem, data from Public Whip etc.)
 37 1 * * * $HOME/fawkes/scripts/dailyupdate

@@ -6,7 +6,7 @@
 #
 # $Id: crontab.ugly,v 1.1 2008/01/23 17:29:43 twfy-staging Exp $
 
-MAILTO=fawkes@lists.mysociety.org
+MAILTO=matthew@openaustralia.org
 
 # XXX All commented out for now
 

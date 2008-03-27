@@ -846,11 +846,11 @@ if (typeof urchinTracker == 'function') urchinTracker();
 			}
 		}
 		$links[] = '<a href="' . WEBPATH . 'api">API</a> / <a href="http://ukparse.kforge.net/parlparse">XML</a>';
-		$links[] = '<a href="https://secure.mysociety.org/cvstrac/dir?d=mysociety/twfy">Source code</a>';
+		$links[] = '<a href="http://software.openaustralia.org">Source code</a>';
 
-		$user_agent = ( isset( $_SERVER['HTTP_USER_AGENT'] ) ) ? strtolower( $_SERVER['HTTP_USER_AGENT'] ) : '';
-		if (stristr($user_agent, 'Firefox/'))
-			$links[] = '<a href="http://mycroft.mozdev.org/download.html?name=theyworkforyou">Add search to Firefox</a>';
+#		$user_agent = ( isset( $_SERVER['HTTP_USER_AGENT'] ) ) ? strtolower( $_SERVER['HTTP_USER_AGENT'] ) : '';
+#		if (stristr($user_agent, 'Firefox/'))
+#			$links[] = '<a href="http://mycroft.mozdev.org/download.html?name=theyworkforyou">Add search to Firefox</a>';
 		?>
 	
 		<div id="footer">
