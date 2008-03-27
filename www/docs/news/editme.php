@@ -4,11 +4,12 @@
 
 $all_news = array(
 
-1 => array('Birth of an Australian OpenAustralia', <<<EOT
+1 => array('Birth of OpenAustralia', <<<EOT
 By hacking, levering, doing terrible things while nobody is looking,
 pummeling and other things in that general direction, we've managed
-to somehow get a very crude version of an Australian version of
-OpenAustralia up and running. All credit goes to the UK guys for
+to somehow get a very crude version of
+OpenAustralia up and running. All credit goes to the UK guys behind
+TheyWorkForYou.com for
 putting so much love and labour into a codebase that made this all
 really surprisingly straightforward. Thank you!
 EOT
