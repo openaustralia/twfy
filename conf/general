@@ -47,8 +47,8 @@ define ("DEBUGTAG", 'debug');
 define ("TIMEZONE", "Australia/Sydney");
 
 // XML files and other scraped data stored as files
-define ("RAWDATA", "/Users/matthewl/hg/openaustralia-parser/pwdata/");
-define ('PWMEMBERS', '/Users/matthewl/hg/openaustralia-parser/pwdata/members/');
+define ("RAWDATA", "/Users/matthewl/git/openaustralia-parser/pwdata/");
+define ('PWMEMBERS', '/Users/matthewl/git/openaustralia-parser/pwdata/members/');
 
 // *******************************************************************************
 // If you've unpacked the tar file normally, and set the paths correctly above, 
