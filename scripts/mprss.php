@@ -85,7 +85,7 @@ for ($personrow=0; $personrow<$q->rows(); $personrow++) {
   xmlns:content="http://purl.org/rss/1.0/modules/content/">
 		
 <channel rdf:about="http://' . DOMAIN . $mpurl . '">
-<title>' . str_replace('&Ouml;', 'O', $MEMBER->full_name()) . '\'s Recent Appearances (OpenAustralia.org)</title>
+<title>' . entities_to_numbers($MEMBER->full_name()) . '\'s recent appearances (OpenAustralia.org)</title>
 <link>http://' . DOMAIN . $mpurl . '</link>
 <description></description>
 <dc:language>en-gb</dc:language>
