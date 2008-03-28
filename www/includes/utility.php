@@ -894,10 +894,12 @@ function prettify_office($pos, $dept) {
 		'Parliamentary Secretary to the Treasury, HM Treasury'
 			=> 'Parliamentary Secretary to the Treasury, i.e. Chief Whip',
 	);
-	if ($pos) { # Government post, or Chairman of Select Committee
+	if ($pos && $dept) { # Government post, or Chairman of Select Committee
 		$pretty = "$pos, $dept";
 		if (array_key_exists($pretty, $lookup))
 			$pretty = $lookup[$pretty];
+	} elseif ($pos) {
+		$pretty = $pos;
 	} else { # Member of Select Committee
 		$pretty = "Member, $dept";
 	}
