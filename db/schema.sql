@@ -127,7 +127,7 @@ CREATE TABLE `personinfo` (
 CREATE TABLE `postcode_lookup` (
   `postcode` varchar(10) NOT NULL default '',
   `name` varchar(100) NOT NULL default '',
-  PRIMARY KEY  (`postcode`)
+  KEY  (`postcode`)
 );
 
 -- each time we index, we increment the batch number;
