@@ -118,12 +118,31 @@ if (is_numeric(get_http_var('m'))) {
 	$pc = preg_replace('#[^a-z0-9 ]#i', '', $pc);
 	if (validate_postcode($pc)) {
 		twfy_debug ('MP', "MP lookup by postcode");
-		$constituency = strtolower(postcode_to_constituency($pc));
+		$constituency = postcode_to_constituency($pc);
 		if ($constituency == "connection_timed_out") {
 			$errors['pc'] = "Sorry, we couldn't check your postcode right now, as our postcode lookup server is under quite a lot of load. Please use the 'All MPs' link above to browse all the MPs.";
 		} elseif ($constituency == "") {
 			$errors['pc'] = "Sorry, ".htmlentities($pc) ." isn't a known postcode";
 			twfy_debug ('MP', "Can't display an MP, as submitted postcode didn't match a constituency");
+		} elseif (is_array($constituency)) {
+			$PAGE->page_start();
+			$PAGE->stripe_start();
+			print '<p>There are several electoral divisions within your postcode. Please select from the following:</p><ul>';
+			foreach ($constituency as $c) {
+				$member = new MEMBER(array('constituency' => $c));
+				print '<li><a href="' . WEBPATH . 'mp/?pid='.$member->person_id().'">' . ucwords(strtolower($member->full_name())) . ', ' . $member->constituency() . '</a></li>';
+			}
+			print '</ul>';
+
+			$MPSURL = new URL('mps');
+			$sidebar = array(
+				'type' => 'html',
+				'content' => '<div class="block">
+						<h4><a href="' . $MPSURL->generate() . '">Browse all MPs</a></h4>
+					</div>'
+			);
+
+			$PAGE->stripe_end(array($sidebar));
 		} else {
 			// Redirect to the canonical MP page, with a person id.
 			$MEMBER = new MEMBER(array('constituency' => $constituency));
