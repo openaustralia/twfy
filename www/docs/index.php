@@ -63,9 +63,6 @@ function your_mp_bullet_point() {
 		<label for="pc">Enter your Australian postcode here:</label>&nbsp; <input type="text" name="pc" id="pc" size="8" maxlength="10" value="<?php echo htmlentities($THEUSER->postcode()); ?>" class="text">&nbsp;&nbsp;<input type="submit" value=" GO " class="submit"></p>
 		</form>
 	<?php
-		if (!defined("POSTCODE_SEARCH_DOMAIN") || !POSTCODE_SEARCH_DOMAIN) {
-			print '<p align="right"><em>Postcodes are being mapped to a random Representative</em></p>';
-		}
 	}
 	print "</li>";
 }
