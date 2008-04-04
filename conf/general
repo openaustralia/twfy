@@ -93,13 +93,6 @@ define ("BUGSLIST", CONTACTEMAIL);
 // Email addresses that alertmailer.php sends stats to
 define('ALERT_STATS_EMAILS', CONTACTEMAIL);
 
-// Postcode lookup
-// Not defined on dev copies, causes postcode lookups to be random but deterministic
-//define ("POSTCODE_SEARCH_DOMAIN", "www.somedomain.com");
-define ("POSTCODE_SEARCH_PORT", "80");
-define ("POSTCODE_SEARCH_PATH", "somescript.php?postcode=");
-
-
 // *******************************************************************************
 // mySociety user-tracking.
 

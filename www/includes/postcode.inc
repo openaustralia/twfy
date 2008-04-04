@@ -19,9 +19,9 @@ function postcode_to_constituency($postcode) {
     global $last_postcode;
     global $last_postcode_value;
 
-    if(!defined("POSTCODE_SEARCH_DOMAIN") || !POSTCODE_SEARCH_DOMAIN) {
-        return fake_postcode($postcode);
-    }
+    #if(!defined("POSTCODE_SEARCH_DOMAIN") || !POSTCODE_SEARCH_DOMAIN) {
+    #    return fake_postcode($postcode);
+    #}
 
     $postcode = canonicalise_postcode($postcode);
 
@@ -61,59 +61,17 @@ function postcode_to_constituency_internal($postcode) {
 	$db = new ParlDB;
 
 	$q = $db->query('select name from postcode_lookup where postcode = "'. mysql_escape_string($postcode).'"');
-	if ($q->rows > 0) {
+	if ($q->rows == 1) {
 		$name = $q->field(0, 'name');
 		return $name;
 	}
-
-# Otherwise hit the server (URL is private)
-
-	$pid = getmypid();
-	# $tracefn = '/tmp/apache.ktrace.' . getmicrotime();
-	# system("/home/fawkes/bin/ktracewrap -p $pid -f " . $tracefn);
-
-	$filename = POSTCODE_SEARCH_PATH .  urlencode($postcode);
-	$ch = curl_init('http://' . POSTCODE_SEARCH_DOMAIN . $filename);
-	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-	curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 20);
-	curl_setopt($ch, CURLOPT_TIMEOUT, 10);
-	$file = curl_exec($ch);
-	# system("/home/fawkes/bin/ktracewrap -c -p $pid");
-	if (curl_errno($ch)) {
-		$errno = curl_errno($ch);
-		trigger_error("Postcode database: " . $errno . ' ' . curl_error($ch), E_USER_WARNING);
-		return 'CONNECTION_TIMED_OUT';
+	elseif ($q->rows > 1) {
+		for ($i=0; $i < $q->rows; $i++)
+			$name[] = $q->field($i, 'name');
+		return $name;
 	}
-	curl_close($ch);
-	#unlink($tracefn);
-
-  // Back to the original code.
-  $file = str_replace("&", "&amp;", $file);
-  $file = str_replace("&amp;amp;", "&amp;", $file);
-  
-  global $tags, $constituency;
-  $tags = array();
-  $constituency = null;
-
-  if (!preg_match('#<FAXYOURMP>#', $file, $m)) {
-      trigger_error("Postcode database is not working. Content:\n".$file.", request: ". $filename, E_USER_WARNING);
-      return '';
-  }
-  if (!preg_match('#<CONSTITUENCY_NAME>(.*?)</CONSTITUENCY_NAME>#', $file, $m)) {
-      return '';
-    }
-  $constituency = str_replace("  ", " ", $m[1]);
-  
-# Convert to canonical name
-#    print "<pre>$file</pre><br>$constituency<br>";
-    $normalised = normalise_constituency_name(strtolower($constituency));
-    if ($normalised) {
-	$db->query('replace into postcode_lookup values("'. mysql_escape_string($postcode).'", "'.mysql_escape_string($normalised).'")');
-        return $normalised;
-    }
-    else
-        return '';
-
+	else
+		return '';
 }
 
 function canonicalise_postcode($pc) {
