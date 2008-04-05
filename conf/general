@@ -12,8 +12,8 @@ define ("DB_NAME", "twfy-australia");
 // *******************************************************************************
 // Domains.
 // Set this to the domain you are hosting on. If you're running locally, this will be "localhost" 
-define ("DOMAIN", "localhost");
-define ("COOKIEDOMAIN", "localhost");
+define ("DOMAIN", "dev.openaustralia.org");
+define ("COOKIEDOMAIN", "dev.openaustralia.org");
 
 // General 'Contact us' type email address. Point this at a real address if you 
 // want the site generated email to come to you. Can be overridden for other mails below.
@@ -26,7 +26,7 @@ define ("BASEDIR","/Library/WebServer/Documents/openaustralia-app/twfy/www/docs/
 // Webserver path to 'top' directory of the site (possibly just "/"). For example,
 // if the site is at 'http://www.yourdomain.com/public/theyworkforyou', 
 // this would be '/public/theyworkforyou'
-define ("WEBPATH", "/openaustralia-app/twfy/www/docs/");
+define ("WEBPATH", "/");
 
 // *******************************************************************************
 // Stop Here. In a basic developer configuration you shouldn't need to edit 
