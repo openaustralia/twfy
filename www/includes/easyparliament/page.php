@@ -1199,8 +1199,6 @@ pr()//-->
 		if ($member['the_users_mp'] == true) {
 			$pc = $THEUSER->postcode();
 			?>
-						<li><a href="http://www.writetothem.com/?a=WMC&amp;pc=<?php echo htmlentities(urlencode($pc)); ?>"><strong>Send a message to <?php echo $member['full_name']; ?></strong></a> (only use this for <em>your</em> MP) <small>(via WriteToThem.com)</small></li>
-						<li><a href="http://www.hearfromyourmp.com/?pc=<?=htmlentities(urlencode($pc)) ?>"><strong>Get messages from your MP</strong></a> <small>(via HearFromYourMP)</small></strong></a></li>
 <?php
 		} elseif ($member['current_member'][1]) {
 			?>
