@@ -27,7 +27,7 @@ Example usage:
 
 include_once INCLUDESPATH . 'dbtypes.php';
 if (defined('XAPIANDB') && XAPIANDB)
-	include_once '/usr/share/php5/xapian.php';
+	include_once '/usr/local/share/php5/xapian.php';
 
 global $xapiandb;
 
@@ -348,10 +348,10 @@ class SEARCHENGINE {
         // NOTE: this is to do sort by date
         switch ($sort_order) {
             case 'date':
-                $this->enquire->set_sorting(0, 1);
+                $this->enquire->set_sort_by_value_then_relevance(0, true);
                 break;
             case 'created':
-                $this->enquire->set_sorting(6, 1); 
+                $this->enquire->set_sort_by_value_then_relevance(6, true); 
             default:
                 //do nothing, default ordering is by relevance
                 break;
