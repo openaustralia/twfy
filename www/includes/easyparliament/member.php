@@ -336,11 +336,10 @@ class MEMBER {
 	function set_users_mp () {
 		// Is this MP THEUSER's MP?
 		global $THEUSER;
-		if (is_object($THEUSER) && $THEUSER->postcode_is_set() && $this->current_member(1)) {
-			$pc = $THEUSER->postcode();
+		if (is_object($THEUSER) && $THEUSER->constituency_is_set() && $this->current_member(1)) {
 			twfy_debug ('MP', "set_users_mp converting postcode to person");
-			$constituency = strtolower(postcode_to_constituency($pc));
-			if ($constituency == strtolower($this->constituency())) {
+			$constituency = $THEUSER->constituency();
+			if ($constituency == $this->constituency()) {
 				$this->the_users_mp = true;
 			}
 		}

@@ -30,13 +30,13 @@ function your_mp_bullet_point() {
 	global $THEUSER, $MPURL;
 	print "<li>";
 	$pc_form = true;
-	if ($THEUSER->isloggedin() && $THEUSER->postcode() != '' || $THEUSER->postcode_is_set()) {
+	if ($THEUSER->isloggedin() && $THEUSER->postcode() != '' || $THEUSER->constituency_is_set()) {
 		// User is logged in and has a postcode, or not logged in with a cookied postcode.
 		
 		// (We don't allow the user to search for a postcode if they
 		// already have one set in their prefs.)
 		
-		$MEMBER = new MEMBER(array ('postcode'=>$THEUSER->postcode()));
+		$MEMBER = new MEMBER(array ('constituency'=>$THEUSER->constituency()));
 		if ($MEMBER->valid) {
 			$pc_form = false;
 			if ($THEUSER->isloggedin()) {

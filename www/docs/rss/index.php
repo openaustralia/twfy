@@ -20,6 +20,7 @@ if (validate_postcode($pc)) {
 			if ($MEMBER->person_id()) {
 				// This will cookie the postcode.
 				$THEUSER->set_postcode_cookie($pc);
+				$THEUSER->set_constituency_cookie($constituency);
 			}
 
 			if ($MEMBER->person_id()) {

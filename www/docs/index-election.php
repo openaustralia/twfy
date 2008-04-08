@@ -79,7 +79,7 @@ $PAGE->block_start(array ('id'=>'intro', 'title'=>'Election special! Find out ho
 	
 						<li>
 <?php
-if ($THEUSER->isloggedin() && $THEUSER->postcode() != '' || $THEUSER->postcode_is_set()) {
+if ($THEUSER->postcode_is_set()) {
 	// User is logged in and has a postcode, or not logged in with a cookied postcode.
 	
 	// (We don't allow the user to search for a postcode if they

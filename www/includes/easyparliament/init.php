@@ -32,6 +32,7 @@ define ("TIMEFORMAT_SQL", 		"%l:%i %p"); // 11:59 PM
 
 // Where we store the postcode of users if they search for an MP by postcode.
 define ('POSTCODE_COOKIE', 		'eppc'); 
+define ('CONSTITUENCY_COOKIE',  'constituency');
 
 /********************************************************************************
 And now all the files we'll include on every page. 

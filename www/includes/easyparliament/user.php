@@ -69,6 +69,7 @@ class USER {
 	var $email = "";
 	var $emailpublic = "";		// boolean - can other users see this user's email?
 	var $postcode = "";
+	var $constituency = "";
 	var $url = "";
 	var $lastvisit = "";		// Last time the logged-in user loaded a page (GMT).
 	var $registrationtime = "";	// When they registered (GMT).
@@ -597,6 +598,7 @@ class USER {
 	function email() 				{ return $this->email; }
 	function emailpublic() 			{ return $this->emailpublic; }
 	function postcode() 			{ return $this->postcode; }
+	function constituency()         { return $this->constituency; }
 	function url() 					{ return $this->url; }
 	function lastvisit() 			{ return $this->lastvisit; }
 
@@ -616,6 +618,14 @@ class USER {
 		// So we can tell if the, er, postcode is set or not.
 		// Could maybe put some validation in here at some point.
 		if ($this->postcode != '') {
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
+	function constituency_is_set () {
+		if ($this->constituency != '') {
 			return true;
 		} else {
 			return false;
@@ -816,11 +826,14 @@ class THEUSER extends USER {
 		// If they aren't logged in, or they haven't set one, then we may
 		// have set a postcode for them when they searched for their MP.
 		// If so, we'll use that as $this->postcode.
-		if ($this->postcode == '') {
+		if ($this->postcode == '' || $this->constituency == '') {
 			if (get_cookie_var(POSTCODE_COOKIE) != '') {
 				$pc = get_cookie_var(POSTCODE_COOKIE);
-				
 				$this->set_postcode_cookie($pc);
+			}
+			if (get_cookie_var(CONSTITUENCY_COOKIE) != '') {
+				$pc = get_cookie_var(CONSTITUENCY_COOKIE);
+				$this->set_constituency_cookie($pc);
 			}
 		}
 		
@@ -1037,6 +1050,17 @@ class THEUSER extends USER {
 		}
 	}
 	
+	function set_constituency_cookie ($constituency) {
+		$this->constituency = $constituency;
+	    if (!headers_sent()) // if in debug mode
+	    	setcookie (CONSTITUENCY_COOKIE, $constituency, time()+7*86400, "/", COOKIEDOMAIN);
+		twfy_debug('USER', "Set the cookie named '" . CONSTITUENCY_COOKIE . " to '$constituency' for " . COOKIEDOMAIN . " domain");
+	}
+	
+	function unset_constituency_cookie () {
+        if (!headers_sent()) // if in debug mode
+            setcookie (CONSTITUENCY_COOKIE, '', time() - 3600, '/', COOKIEDOMAIN);
+	}
 	
 	function set_postcode_cookie ($pc) {
 		// Set the user's postcode.

@@ -15,7 +15,8 @@ if ($THEUSER->isloggedin()) {
 if (get_http_var('forget') == 't') {
 	// The user clicked the 'Forget this postcode' link.
 	$THEUSER->unset_postcode_cookie();
-
+	$THEUSER->unset_constituency_cookie();
+	
 	// The cookie will have already been read for this page, so we need to reload.
 	$URL = new URL($this_page);
 	header("Location: http://" . DOMAIN . $URL->generate());

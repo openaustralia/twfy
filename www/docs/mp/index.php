@@ -118,7 +118,12 @@ if (is_numeric(get_http_var('m'))) {
 	$pc = preg_replace('#[^a-z0-9 ]#i', '', $pc);
 	if (validate_postcode($pc)) {
 		twfy_debug ('MP', "MP lookup by postcode");
-		$constituency = postcode_to_constituency($pc);
+		# Only do lookup of constituency via postcode if the constituency isn't set
+		if ($cconstituency == "")
+			$constituency = postcode_to_constituency($pc);
+		else
+			$constituency = $cconstituency;
+
 		if ($constituency == "connection_timed_out") {
 			$errors['pc'] = "Sorry, we couldn't check your postcode right now, as our postcode lookup server is under quite a lot of load. Please use the 'All MPs' link above to browse all the MPs.";
 		} elseif ($constituency == "") {
@@ -130,7 +135,7 @@ if (is_numeric(get_http_var('m'))) {
 			print '<p>There are several electoral divisions within your postcode. Please select from the following:</p><ul>';
 			foreach ($constituency as $c) {
 				$member = new MEMBER(array('constituency' => $c));
-				print '<li><a href="' . WEBPATH . 'mp/?pid='.$member->person_id().'">' . ucwords(strtolower($member->full_name())) . ', ' . $member->constituency() . '</a></li>';
+				print '<li><a href="' . WEBPATH . 'mp/?pc='.$pc.'&c='.$c.'">' . ucwords(strtolower($member->full_name())) . ', ' . $member->constituency() . '</a></li>';
 			}
 			print '</ul>';
 
@@ -149,6 +154,7 @@ if (is_numeric(get_http_var('m'))) {
 			if ($MEMBER->person_id()) {
 				// This will cookie the postcode.
 				$THEUSER->set_postcode_cookie($pc);
+				$THEUSER->set_constituency_cookie($constituency);
 			}
 			member_redirect($MEMBER);
 		}
@@ -161,8 +167,8 @@ if (is_numeric(get_http_var('m'))) {
 // DOES THE USER HAVE A POSTCODE ALREADY SET?
 // (Either in their logged-in details or in a cookie from a previous search.)
 
-} elseif ($THEUSER->postcode_is_set() && $name == '' && $cconstituency == '') {
-	$MEMBER = new MEMBER(array('postcode' => $THEUSER->postcode()));
+} elseif ($THEUSER->constituency_is_set() && $name == '' && $cconstituency == '') {
+	$MEMBER = new MEMBER(array('constituency' => $THEUSER->constituency()));
 	member_redirect($MEMBER);
 } elseif ($name && $cconstituency) {
 	$MEMBER = new MEMBER(array('name'=>$name, 'constituency'=>$cconstituency));
