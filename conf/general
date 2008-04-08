@@ -67,7 +67,7 @@ define ("FILEIMAGEPATH", BASEDIR . "images/");
 define ("METADATAPATH", BASEDIR . "/../includes/easyparliament/metadata.php");
 
 // Search related. If non-empty will use XAPIAN search instead of mysql search
-define ("XAPIANDB", '');
+define ("XAPIANDB", '/Library/WebServer/Documents/openaustralia-app/xapiandb/');
 
 
 // Location of the parliamentary recess data file. You can access this remotely 
