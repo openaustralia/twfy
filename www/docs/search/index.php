@@ -94,19 +94,19 @@ you will have to search for it separately.</p>
 <table><tr><th>Number of occurences</th><th><?
 
 if ($wtt) print 'Speaker';
-else { ?>Table includes - <?
+else {
 
 $URL = new URL($this_page);
 $url_l = $URL->generate('html', array('house'=>2));
 $url_c = $URL->generate('html', array('house'=>1));
-$URL->remove('house');
+$URL->remove(array('house'));
 $url_b = $URL->generate();
 if ($q_house==1) {
-    print 'MPs | <a href="' . $url_l . '">Lords</a> | <a href="' . $url_b . '">Both</a>';
+    print 'Representatives | <a href="' . $url_l . '">Senators</a> | <a href="' . $url_b . '">Both</a>';
 } elseif ($q_house==2) {
-    print '<a href="' . $url_c . '">MPs</a> | Lords | <a href="' . $url_b . '">Both</a>';
+    print '<a href="' . $url_c . '">Representatives</a> | Senators | <a href="' . $url_b . '">Both</a>';
 } else {
-    print '<a href="' . $url_c . '">MPs</a> | <a href="' . $url_l . '">Lords</a> | Both';
+    print '<a href="' . $url_c . '">Representatives</a> | <a href="' . $url_l . '">Senators</a> | Both';
 }
 
 } ?></th><th>Date range</th></tr>
