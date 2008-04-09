@@ -181,7 +181,7 @@ class COMMENTLIST {
 								epobject.body,
 								member.first_name, 
 								member.last_name
-						FROM 	comments, hansard, users, epobject
+						FROM 	comments, users, epobject, hansard
 						LEFT OUTER JOIN member ON hansard.speaker_id = member.member_id 
 						WHERE 	comments.epobject_id = epobject.epobject_id 
 						AND 	comments.epobject_id = hansard.epobject_id 
