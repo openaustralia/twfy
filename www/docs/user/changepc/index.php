@@ -7,8 +7,7 @@ include_once "../../../includes/easyparliament/init.php";
 $this_page = "userchangepc";
 
 if (get_http_var('forget') == 't') {
-	// The user clicked the 'Forget this postcode' link.
-	$THEUSER->unset_postcode_cookie();
+	// The user clicked the 'Forget' link.
 	$THEUSER->unset_constituency_cookie();
 	
 	// The cookie will have already been read for this page, so we need to reload.
@@ -16,7 +15,7 @@ if (get_http_var('forget') == 't') {
 	header("Location: http://" . DOMAIN . $URL->generate());
 }
 
-if (!$THEUSER->postcode_is_set()) {
+if (!$THEUSER->constituency_is_set()) {
 	// Change it from 'Change your postcode'.
 	$DATA->set_page_metadata($this_page, 'title', 'Enter your postcode');
 }

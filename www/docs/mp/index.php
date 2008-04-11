@@ -11,13 +11,13 @@
 	Else, we check to see if a member_id's been submitted.
 	If so, we display that person.
 	
-	Otherwise, we then check to see if a postcode's been submitted.
+	Otherwise, we then check to see if a constituency's been submitted.
 	If it's valid we put it in a cookie.
 	
 	If no postcode, we check to see if a constituency's been submitted.
 	
 	If neither has been submitted, we see if either the user is logged in 
-	and has a postcode set or the user has a cookied postcode from a previous
+	and has a constituency set or the user has a cookied constituency from a previous
 	search.
 		
 	If we have a valid constituency after all this, we display its MP.
@@ -74,8 +74,8 @@ if (preg_match("#^ynys m\xc3\xb4n#i", $cconstituency))
 
 // Redirect for MP recent appearanecs
 if (get_http_var('recent')) {
-	if ($THEUSER->postcode_is_set() && !$pid) {
-		$MEMBER = new MEMBER(array('postcode' => $THEUSER->postcode()));
+	if ($THEUSER->constituency_is_set() && !$pid) {
+		$MEMBER = new MEMBER(array('constituency' => $THEUSER->constituency()));
 		if ($MEMBER->person_id())
 			$pid = $MEMBER->person_id();
 	} 
@@ -163,7 +163,6 @@ if (is_numeric(get_http_var('m'))) {
 				}
 				else {
 					// This will cookie the postcode.
-					$THEUSER->set_postcode_cookie($pc);
 					$THEUSER->set_constituency_cookie($constituency);
 				}
 			}

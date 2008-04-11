@@ -295,7 +295,6 @@ CREATE TABLE `users` (
   `emailpublic` tinyint(1) NOT NULL default '0',
   `optin` tinyint(1) NOT NULL default '0',
   `deleted` tinyint(1) NOT NULL default '0',
-  `postcode` varchar(10) NOT NULL default '',
   `constituency` varchar(255) NOT NULL default '',
   `registrationtoken` varchar(24) NOT NULL default '',
   `confirmed` tinyint(1) NOT NULL default '0',

@@ -54,7 +54,7 @@ function your_mp_bullet_point() {
 	if ($pc_form) { ?>
 		<form action="<?php echo $MPURL->generate(); ?>" method="get">
 		<p><strong>Find out more about your Representative</strong><br>
-		<label for="pc">Enter your Australian postcode here:</label>&nbsp; <input type="text" name="pc" id="pc" size="8" maxlength="10" value="<?php echo htmlentities($THEUSER->postcode()); ?>" class="text">&nbsp;&nbsp;<input type="submit" value=" GO " class="submit"></p>
+		<label for="pc">Enter your Australian postcode here:</label>&nbsp; <input type="text" name="pc" id="pc" size="8" maxlength="10" class="text">&nbsp;&nbsp;<input type="submit" value=" GO " class="submit"></p>
 		</form>
 	<?php
 	}

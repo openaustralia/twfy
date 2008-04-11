@@ -344,7 +344,7 @@ if (typeof urchinTracker == 'function') urchinTracker();
 		
 		// If the user's postcode is set, then we allow them to view the
 		// bottom menu link to this page...
-		if ($THEUSER->postcode_is_set()) {
+		if ($THEUSER->constituency_is_set()) {
 			$items['yourmp'] = array ('yourmp_recent');
 		}
 		
@@ -936,7 +936,7 @@ pr()//-->
 <?php
 	if (get_http_var('c4')) print '<input type="hidden" name="c4" value="1">';
 	if (get_http_var('c4x')) print '<input type="hidden" name="c4x" value="1">';
-		if ($THEUSER->postcode_is_set()) {
+		if ($THEUSER->constituency_is_set()) {
 			
 			$FORGETURL = new URL('userchangepc');
 			$FORGETURL->insert(array('forget'=>'t'));
@@ -1194,7 +1194,6 @@ pr()//-->
 		}
 					
 		if ($member['the_users_mp'] == true) {
-			$pc = $THEUSER->postcode();
 			?>
 <?php
 		} elseif ($member['current_member'][1]) {

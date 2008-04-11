@@ -112,7 +112,6 @@ if (get_http_var("submitted") == "true") {
 		$details["remember"] = $remember[0] == "true" ? true : false;
 	}
 
-	$details["postcode"]		= trim(get_http_var("postcode"));
 	$details["constituency"]		= trim(get_http_var("constituency"));
 	$details["url"]				= trim(get_http_var("url"));
 	if ($details['url'] != '' && !preg_match('/^http/', $details['url'])) {
@@ -192,7 +191,7 @@ if (get_http_var("submitted") == "true") {
 			$details["password"]		= $THEUSER->password();
 			$details["constituency"]	= $THEUSER->constituency();
 			$details["optin"]			= $THEUSER->optin();	
-			$details["postcode"]		= $THEUSER->postcode();
+			$details["constituency"]	= $THEUSER->constituency();
 			$details["url"]				= $THEUSER->url();
 			$details["status"]			= $THEUSER->status();
 				
@@ -217,7 +216,6 @@ if (get_http_var("submitted") == "true") {
 			$details["emailpublic"]		= $USER->emailpublic();
 			$details["password"]		= $USER->password();
 			$details["optin"]			= $USER->optin();
-			$details["postcode"]		= $USER->postcode();
 			$details["constituency"]	= $USER->constituency();
 			$details["url"]				= $USER->url();
 			$details["status"]			= $USER->status();
@@ -329,13 +327,6 @@ function check_input ($details) {
 		}
 	}
 	
-	// Check postcode (which is not a compulsory field).
-	if ($details["postcode"] != "" && !validate_postcode($details["postcode"])) {
-		$errors["postcode"] = "Sorry, this isn't a valid Australian postcode.";
-	}
-	
-	// TODO: Do validation on constituency
-
 	// No checking of URL.
 	
 	
@@ -612,8 +603,6 @@ function display_form ( $details = array(), $errors = array() ) {
 
 
 				<br style="clear: left;">&nbsp;<br>
-
-				<span class="formw"><input type="hidden" name="postcode" id="postcode" value="<?php if (isset($details["postcode"])) { echo htmlentities($details["postcode"]); } ?>" maxlength="10" size="10" class="form"></span>
 
 				<span class="formw"><input type="hidden" name="constituency" id="constituency" value="<?php if (isset($details["constituency"])) { echo htmlentities($details["constituency"]); } ?>" maxlength="20" size="20" class="form"></span>
 <?php
@@ -918,7 +907,7 @@ function display_user ($user_id="") {
 			$email 			= $THEUSER->email();
 			$emailpublic 	= $THEUSER->emailpublic() == true ? "Yes" : "No";
 			$optin		 	= $THEUSER->optin() == true ? "Yes" : "No";
-			$postcode		= $THEUSER->postcode();
+			$constituency	= $THEUSER->constituency();
 		} else {
 			// We're showing them how they're seen to other people.
 			if ($THEUSER->emailpublic()) {
@@ -993,14 +982,14 @@ function display_user ($user_id="") {
 
 <?php
 
-		if (isset($postcode)) {
-			if ($postcode == '') {
-				$postcode = 'none';
+		if (isset($constituency)) {
+			if ($constituency == '') {
+				$constituency = 'none';
 			}
 			?>
 				<div class="row">&nbsp;<br>
-				<span class="label">UK Postcode</span>
-				<span class="formw"><?php echo htmlentities($postcode); ?> <small>(not public)</small></span>
+				<span class="label">Australian Electoral Division</span>
+				<span class="formw"><?php echo htmlentities($constituency); ?> <small>(not public)</small></span>
 				</div>
 
 <?php

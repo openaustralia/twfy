@@ -68,7 +68,6 @@ class USER {
 	var $password = "";			// This will be a crypt()ed version of a plaintext pw.
 	var $email = "";
 	var $emailpublic = "";		// boolean - can other users see this user's email?
-	var $postcode = "";
 	var $constituency = "";
 	var $url = "";
 	var $lastvisit = "";		// Last time the logged-in user loaded a page (GMT).
@@ -103,7 +102,6 @@ class USER {
 								password,
 								email,
 								emailpublic,
-								postcode,
 								constituency,
 								url,
 								lastvisit,
@@ -126,7 +124,6 @@ class USER {
 			$this->password 			= $q->field(0,"password");
 			$this->email 				= $q->field(0,"email");
 			$this->emailpublic = $q->field(0,"emailpublic") == 1 ? true : false;
-			$this->postcode 			= $q->field(0,"postcode");
 			$this->constituency         = $q->field(0,"constituency");
 			$this->url 					= $q->field(0,"url");
 			$this->lastvisit 			= $q->field(0,"lastvisit");
@@ -189,7 +186,6 @@ class USER {
 				lastname,
 				email,
 				emailpublic,
-				postcode,
 				constituency,
 				url,
 				password,
@@ -203,7 +199,6 @@ class USER {
 				'" . mysql_escape_string($details["lastname"]) . "',
 				'" . mysql_escape_string($details["email"]) . "',
 				'" . mysql_escape_string($emailpublic) . "',
-				'" . mysql_escape_string($details["postcode"]) . "',
 				'" . mysql_escape_string($details["constituency"]) . "',				
 				'" . mysql_escape_string($details["url"]) . "',
 				'" . mysql_escape_string($passwordforDB) . "',
@@ -601,7 +596,6 @@ class USER {
 	function password() 			{ return $this->password; }
 	function email() 				{ return $this->email; }
 	function emailpublic() 			{ return $this->emailpublic; }
-	function postcode() 			{ return $this->postcode; }
 	function constituency()         { return $this->constituency; }
 	function url() 					{ return $this->url; }
 	function lastvisit() 			{ return $this->lastvisit; }
@@ -618,16 +612,6 @@ class USER {
 	function confirmed() 			{ return $this->confirmed; }
 
 
-	function postcode_is_set () {
-		// So we can tell if the, er, postcode is set or not.
-		// Could maybe put some validation in here at some point.
-		if ($this->postcode != '') {
-			return true;
-		} else {
-			return false;
-		}
-	}
-	
 	function constituency_is_set () {
 		if ($this->constituency != '') {
 			return true;
@@ -712,7 +696,6 @@ class USER {
 								lastname 	 = '" . mysql_escape_string($details["lastname"]) . "',
 								email		 = '" . mysql_escape_string($details["email"]) . "',
 								emailpublic	 = '" . $emailpublic . "',
-								postcode	 = '" . mysql_escape_string($details["postcode"]) . "',
 								constituency = '" . mysql_escape_string($details["constituency"]) . "',
 								url			 = '" . mysql_escape_string($details["url"]) . "',"
 								. $passwordsql
@@ -827,18 +810,14 @@ class THEUSER extends USER {
 			$this->loggedin = false;
 		}
 
-		// If a user is logged in they *might* have set their own postcode.
+		// If a user is logged in they *might* have set their own constituency.
 		// If they aren't logged in, or they haven't set one, then we may
-		// have set a postcode for them when they searched for their MP.
-		// If so, we'll use that as $this->postcode.
-		if ($this->postcode == '' || $this->constituency == '') {
-			if (get_cookie_var(POSTCODE_COOKIE) != '') {
-				$pc = get_cookie_var(POSTCODE_COOKIE);
-				$this->set_postcode_cookie($pc);
-			}
+		// have set a constituency for them when they searched for their MP.
+		// If so, we'll use that as $this->consitutuency.
+		if ($this->constituency == '') {
 			if (get_cookie_var(CONSTITUENCY_COOKIE) != '') {
-				$pc = get_cookie_var(CONSTITUENCY_COOKIE);
-				$this->set_constituency_cookie($pc);
+				$constituency = get_cookie_var(CONSTITUENCY_COOKIE);
+				$this->set_constituency_cookie($constituency);
 			}
 		}
 		
@@ -949,10 +928,9 @@ class THEUSER extends USER {
 			return;
 		}
 		
-		// Unset any existing postcode cookie.
-		// This will be the postcode the user set for themselves as a non-logged-in
+		// Unset any existing constituency cookie.
+		// This will be the constituency the user set for themselves as a non-logged-in
 		// user. We don't want it hanging around as it causes confusion.
-		$this->unset_postcode_cookie();
 		$this->unset_constituency_cookie();
 		
 		// Reminder: $this->password is actually a crypted version of the plaintext pw.
@@ -1004,7 +982,7 @@ class THEUSER extends USER {
 			return false;
 		}
 
-		$q = $this->db->query("SELECT email, password, postcode, constituency
+		$q = $this->db->query("SELECT email, password, constituency
 						FROM	users
 						WHERE	user_id = '" . mysql_escape_string($user_id) . "'
 						AND		registrationtoken = '" . mysql_escape_string($registrationtoken) . "'
@@ -1068,25 +1046,6 @@ class THEUSER extends USER {
             setcookie (CONSTITUENCY_COOKIE, '', time() - 3600, '/', COOKIEDOMAIN);
 	}
 	
-	function set_postcode_cookie ($pc) {
-		// Set the user's postcode.
-		// Doesn't change it in the DB, as it's probably mainly for 
-		// not-logged-in users.
-		
-		$this->postcode = $pc;
-        if (!headers_sent()) // if in debug mode
-            setcookie (POSTCODE_COOKIE, $pc, time()+7*86400, "/", COOKIEDOMAIN);
-		
-		twfy_debug('USER', "Set the cookie named '" . POSTCODE_COOKIE . " to '$pc' for " . COOKIEDOMAIN . " domain");
-	}
-	
-	
-	function unset_postcode_cookie () {
-        if (!headers_sent()) // if in debug mode
-            setcookie (POSTCODE_COOKIE, '', time() - 3600, '/', COOKIEDOMAIN);
-	}
-	
-	
 	function update_self ($details) {
 		// If the user wants to update their details, call this function.
 		// It checks that they're logged in before letting them.
@@ -1113,7 +1072,6 @@ class THEUSER extends USER {
 				$this->lastname 		= $newdetails["lastname"];
 				$this->email 			= $newdetails["email"];
 				$this->emailpublic 		= $newdetails["emailpublic"];
-				$this->postcode 		= $newdetails["postcode"];
 				$this->constituency		= $newdetails["constituency"];
 				$this->url 				= $newdetails["url"];
 				$this->optin 			= $newdetails["optin"];
