@@ -113,6 +113,7 @@ if (get_http_var("submitted") == "true") {
 	}
 
 	$details["postcode"]		= trim(get_http_var("postcode"));
+	$details["constituency"]		= trim(get_http_var("constituency"));
 	$details["url"]				= trim(get_http_var("url"));
 	if ($details['url'] != '' && !preg_match('/^http/', $details['url'])) {
 		$details['url'] = 'http://' . $details['url'];
@@ -189,6 +190,7 @@ if (get_http_var("submitted") == "true") {
 			$details["email"]			= $THEUSER->email();
 			$details["emailpublic"]		= $THEUSER->emailpublic();
 			$details["password"]		= $THEUSER->password();
+			$details["constituency"]	= $THEUSER->constituency();
 			$details["optin"]			= $THEUSER->optin();	
 			$details["postcode"]		= $THEUSER->postcode();
 			$details["url"]				= $THEUSER->url();
@@ -216,6 +218,7 @@ if (get_http_var("submitted") == "true") {
 			$details["password"]		= $USER->password();
 			$details["optin"]			= $USER->optin();
 			$details["postcode"]		= $USER->postcode();
+			$details["constituency"]	= $USER->constituency();
 			$details["url"]				= $USER->url();
 			$details["status"]			= $USER->status();
 			$details["deleted"]			= $USER->deleted();
@@ -330,6 +333,8 @@ function check_input ($details) {
 	if ($details["postcode"] != "" && !validate_postcode($details["postcode"])) {
 		$errors["postcode"] = "Sorry, this isn't a valid Australian postcode.";
 	}
+	
+	// TODO: Do validation on constituency
 
 	// No checking of URL.
 	
@@ -607,16 +612,10 @@ function display_form ( $details = array(), $errors = array() ) {
 
 
 				<br style="clear: left;">&nbsp;<br>
-<?php
-	if (isset($errors["postcode"])) {
-		$PAGE->error_message($errors["postcode"]);
-	}
-?>
-				<div class="row">
-				<span class="label"><label for="postcode">Your Australian postcode:</label></span>
-				<span class="formw"><input type="postcode" name="postcode" id="postcode" value="<?php if (isset($details["postcode"])) { echo htmlentities($details["postcode"]); } ?>" maxlength="10" size="10" class="form"> <small>Optional and not public</small></span>
-				</div>
 
+				<span class="formw"><input type="hidden" name="postcode" id="postcode" value="<?php if (isset($details["postcode"])) { echo htmlentities($details["postcode"]); } ?>" maxlength="10" size="10" class="form"></span>
+
+				<span class="formw"><input type="hidden" name="constituency" id="constituency" value="<?php if (isset($details["constituency"])) { echo htmlentities($details["constituency"]); } ?>" maxlength="20" size="20" class="form"></span>
 <?php
 	if (isset($errors["url"])) {
 		$PAGE->error_message($errors["url"]);

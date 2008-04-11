@@ -104,6 +104,7 @@ class USER {
 								email,
 								emailpublic,
 								postcode,
+								constituency,
 								url,
 								lastvisit,
 								registrationtime,
@@ -126,6 +127,7 @@ class USER {
 			$this->email 				= $q->field(0,"email");
 			$this->emailpublic = $q->field(0,"emailpublic") == 1 ? true : false;
 			$this->postcode 			= $q->field(0,"postcode");
+			$this->constituency         = $q->field(0,"constituency");
 			$this->url 					= $q->field(0,"url");
 			$this->lastvisit 			= $q->field(0,"lastvisit");
 			$this->registrationtime 	= $q->field(0,"registrationtime");
@@ -188,6 +190,7 @@ class USER {
 				email,
 				emailpublic,
 				postcode,
+				constituency,
 				url,
 				password,
 				optin,
@@ -201,6 +204,7 @@ class USER {
 				'" . mysql_escape_string($details["email"]) . "',
 				'" . mysql_escape_string($emailpublic) . "',
 				'" . mysql_escape_string($details["postcode"]) . "',
+				'" . mysql_escape_string($details["constituency"]) . "',				
 				'" . mysql_escape_string($details["url"]) . "',
 				'" . mysql_escape_string($passwordforDB) . "',
 				'" . mysql_escape_string($optin) . "',
@@ -239,8 +243,8 @@ class USER {
 			if ($r->success()) {
 				// Updated DB OK.
 
-				if ($details['mp_alert'] && $details['postcode']) {
-					$MEMBER = new MEMBER(array('postcode'=>$details['postcode']));
+				if ($details['mp_alert'] && $details['constituency']) {
+					$MEMBER = new MEMBER(array('constituency'=>$details['constituency']));
 					$pid = $MEMBER->person_id();
 					# No confirmation email, but don't automatically confirm
 					$ALERT = new ALERT;
@@ -704,12 +708,13 @@ class USER {
 		$optin = $details["optin"] == true ? 1 : 0;
 
 		$q = $this->db->query("UPDATE users
-						SET		firstname 	= '" . mysql_escape_string($details["firstname"]) . "',
-								lastname 	= '" . mysql_escape_string($details["lastname"]) . "',
-								email		= '" . mysql_escape_string($details["email"]) . "',
-								emailpublic	= '" . $emailpublic . "',
-								postcode	= '" . mysql_escape_string($details["postcode"]) . "',
-								url			= '" . mysql_escape_string($details["url"]) . "',"
+						SET		firstname 	 = '" . mysql_escape_string($details["firstname"]) . "',
+								lastname 	 = '" . mysql_escape_string($details["lastname"]) . "',
+								email		 = '" . mysql_escape_string($details["email"]) . "',
+								emailpublic	 = '" . $emailpublic . "',
+								postcode	 = '" . mysql_escape_string($details["postcode"]) . "',
+								constituency = '" . mysql_escape_string($details["constituency"]) . "',
+								url			 = '" . mysql_escape_string($details["url"]) . "',"
 								. $passwordsql
 								. $deletedsql
 								. $confirmedsql
@@ -948,7 +953,8 @@ class THEUSER extends USER {
 		// This will be the postcode the user set for themselves as a non-logged-in
 		// user. We don't want it hanging around as it causes confusion.
 		$this->unset_postcode_cookie();
-
+		$this->unset_constituency_cookie();
+		
 		// Reminder: $this->password is actually a crypted version of the plaintext pw.
 		$cookie = $this->user_id() . "." . md5 ($this->password());
 
@@ -998,7 +1004,7 @@ class THEUSER extends USER {
 			return false;
 		}
 
-		$q = $this->db->query("SELECT email, password, postcode
+		$q = $this->db->query("SELECT email, password, postcode, constituency
 						FROM	users
 						WHERE	user_id = '" . mysql_escape_string($user_id) . "'
 						AND		registrationtoken = '" . mysql_escape_string($registrationtoken) . "'
@@ -1017,8 +1023,8 @@ class THEUSER extends USER {
 							WHERE	user_id = '" . mysql_escape_string($user_id) . "'
 							");
 
-			if ($q->field(0, 'postcode')) {
-				$MEMBER = new MEMBER(array('postcode'=>$q->field(0, 'postcode')));
+			if ($q->field(0, 'constituency')) {
+				$MEMBER = new MEMBER(array('constituency'=>$q->field(0, 'constituency')));
 				$pid = $MEMBER->person_id();
 				# This should probably be in the ALERT class
 				$this->db->query('update alerts set confirmed=1 where email="' .
@@ -1108,6 +1114,7 @@ class THEUSER extends USER {
 				$this->email 			= $newdetails["email"];
 				$this->emailpublic 		= $newdetails["emailpublic"];
 				$this->postcode 		= $newdetails["postcode"];
+				$this->constituency		= $newdetails["constituency"];
 				$this->url 				= $newdetails["url"];
 				$this->optin 			= $newdetails["optin"];
 				if ($newdetails["password"] != "") {
