@@ -764,7 +764,7 @@ $this->page = array (
 		'parent'		=> 'userviewself'
 	),
 	'userchangepc' => array (
-		'title'			=> 'Change your postcode',
+		'title'			=> 'Change your Representative',
 		'url'			=> 'user/changepc/'
 	),
 	'userconfirm' => array (

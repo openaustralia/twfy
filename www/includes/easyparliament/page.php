@@ -940,9 +940,6 @@ pr()//-->
 			
 			$FORGETURL = new URL('userchangepc');
 			$FORGETURL->insert(array('forget'=>'t'));
-			?>
-						<p>Your current postcode: <strong><?php echo $THEUSER->postcode(); ?></strong> &nbsp; <small>(<a href="<?php echo $FORGETURL->generate(); ?>" title="The cookie storing your postcode will be erased">Forget this postcode</a>)</small></p>
-<?php
 		}
 		?>
 						<p><strong>Enter your Australian postcode: </strong>

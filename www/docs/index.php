@@ -30,9 +30,7 @@ function your_mp_bullet_point() {
 	global $THEUSER, $MPURL;
 	print "<li>";
 	$pc_form = true;
-	if ($THEUSER->isloggedin() && $THEUSER->postcode() != '' || $THEUSER->constituency_is_set()) {
-		// User is logged in and has a postcode, or not logged in with a cookied postcode.
-		
+	if ($THEUSER->constituency_is_set()) {
 		// (We don't allow the user to search for a postcode if they
 		// already have one set in their prefs.)
 		
@@ -47,8 +45,8 @@ function your_mp_bullet_point() {
 				$former = 'former';
 			}
 ?>
-	<p><a href="<?php echo $MPURL->generate(); ?>"><strong>Find out more about <?php echo $mpname; ?>, your <?= $former ?> MP</strong></a><br>
-	In <?php echo strtoupper(htmlentities($THEUSER->postcode())); ?> (<a href="<?php echo $CHANGEURL->generate(); ?>">Change your postcode</a>)</p>
+	<p><a href="<?php echo $MPURL->generate(); ?>"><strong>Find out more about <?php echo $mpname; ?>, your <?= $former ?> Representative</strong></a>
+	(<a href="<?php echo $CHANGEURL->generate(); ?>">Change</a>)</p>
 <?php
 		}
 	}
