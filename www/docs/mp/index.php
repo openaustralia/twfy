@@ -152,9 +152,20 @@ if (is_numeric(get_http_var('m'))) {
 			// Redirect to the canonical MP page, with a person id.
 			$MEMBER = new MEMBER(array('constituency' => $constituency));
 			if ($MEMBER->person_id()) {
-				// This will cookie the postcode.
-				$THEUSER->set_postcode_cookie($pc);
-				$THEUSER->set_constituency_cookie($constituency);
+				if ($THEUSER->isloggedin()) {
+					# Updates too much in the database to make one change
+					$details = array('firstname' => $THEUSER->firstname(), 'lastname' => $THEUSER->lastname(),
+						'email' => $THEUSER->email(), 'emailpublic' => $THEUSER->emailpublic(),
+						'postcode' => $pc, 'constituency' => $constituency, 'url' => $THEUSER->url(),
+						'optin' => $THEUSER->optin());
+					$success = $THEUSER->update_self ( $details );
+					// TODO: Check success of database update
+				}
+				else {
+					// This will cookie the postcode.
+					$THEUSER->set_postcode_cookie($pc);
+					$THEUSER->set_constituency_cookie($constituency);
+				}
 			}
 			member_redirect($MEMBER);
 		}

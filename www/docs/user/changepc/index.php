@@ -6,12 +6,6 @@ include_once "../../../includes/easyparliament/init.php";
 
 $this_page = "userchangepc";
 
-if ($THEUSER->isloggedin()) {
-	// They can't change their postcode here, so send them to the editing page.
-	$URL = new URL('useredit');
-	header("Location: http://" . DOMAIN . $URL->generate());
-}
-
 if (get_http_var('forget') == 't') {
 	// The user clicked the 'Forget this postcode' link.
 	$THEUSER->unset_postcode_cookie();

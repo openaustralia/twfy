@@ -39,11 +39,7 @@ function your_mp_bullet_point() {
 		$MEMBER = new MEMBER(array ('constituency'=>$THEUSER->constituency()));
 		if ($MEMBER->valid) {
 			$pc_form = false;
-			if ($THEUSER->isloggedin()) {
-				$CHANGEURL = new URL('useredit');
-			} else {
-				$CHANGEURL = new URL('userchangepc');
-			}
+			$CHANGEURL = new URL('userchangepc');
 			$mpname = $MEMBER->first_name() . ' ' . $MEMBER->last_name();
 			$former = "";
 			$left_house = $MEMBER->left_house();
