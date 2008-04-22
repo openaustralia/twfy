@@ -26,8 +26,12 @@ Example usage:
 */
 
 include_once INCLUDESPATH . 'dbtypes.php';
-if (defined('XAPIANDB') && XAPIANDB)
-	include_once '/usr/local/share/php5/xapian.php';
+if (defined('XAPIANDB') && XAPIANDB) {
+	if (file_exists('/usr/local/share/php5/xapian.php'))
+		include_once '/usr/local/share/php5/xapian.php';
+	if (file_exists('/usr/local/share/xapian-bindings/php5/xapian.php'))
+		include_once '/usr/local/share/xapian-bindings/php5/xapian.php';
+}
 
 global $xapiandb;
 
