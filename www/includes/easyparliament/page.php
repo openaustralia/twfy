@@ -1977,7 +1977,7 @@ elseif ($member['house_disp']==0) print $member['full_name']; ?> speaks<?php
 		$message = '';
 		list($name, $from, $to) = recess_prettify(date('j'), date('n'), date('Y'), 1);
 		if ($name) {
-			$message = 'The Houses of Parliament are in their ' . $name . ' ';
+			$message = 'The Houses of Parliament are in ' . $name . ' ';
 			if ($from && $to) {
 				$from = format_date($from, SHORTDATEFORMAT);
 				$to = format_date($to, SHORTDATEFORMAT);

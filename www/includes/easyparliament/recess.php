@@ -53,7 +53,7 @@ function recess_prettify($day, $month, $year, $body) {
 		$to_time = mktime(0, 0, 0, $to['tm_mon'] + 1, $to['tm_mday'], $to['tm_year'] + 1900);
 		$time = mktime(0, 0, 0, $month, $day, $year);
 		if ($time >= $from_time && $time <= $to_time)
-			return array('Not sitting', $range[0], $range[1]);
+			return array('recess', $range[0], $range[1]);
 	}
 }
 ?>
