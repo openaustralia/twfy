@@ -184,11 +184,11 @@ class PEOPLE {
 	function listoptions($args) {
 		global $THEUSER;
 		$data = $this->_get_data_by_mps($args);
-		if ($THEUSER->isloggedin() && $THEUSER->postcode() != '' || $THEUSER->postcode_is_set()) {
-			$MEMBER = new MEMBER(array('postcode'=>$THEUSER->postcode()));
-			print '<option value="'.$MEMBER->person_id().'">Your MP, '.$MEMBER->full_name().'</option>';
+		if ($THEUSER->constituency_is_set()) {
+			$MEMBER = new MEMBER(array('constituency'=>$THEUSER->constituency()));
+			print '<option value="'.$MEMBER->person_id().'">Your Representative, '.$MEMBER->full_name().'</option>';
 		}
-		print '<optgroup label="MPs">';
+		print '<optgroup label="Representatives">';
 		$opik = array();
 		foreach ($data['data'] as $row) {
 			// Lembit Opik is special
