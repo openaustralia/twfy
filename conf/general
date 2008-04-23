@@ -21,7 +21,7 @@ define ("COOKIEDOMAIN", "dev.openaustralia.org");
 define ("CONTACTEMAIL", "matthew@openaustralia.org");
 
 // File system path to the top directory of this Theyworkforyou installation
-define ("BASEDIR","/Library/WebServer/Documents/openaustralia-app/twfy/www/docs/"); 
+define ("BASEDIR","/Library/WebServer/Documents/openaustralia/twfy/www/docs/"); 
 
 // Webserver path to 'top' directory of the site (possibly just "/"). For example,
 // if the site is at 'http://www.yourdomain.com/public/theyworkforyou', 
@@ -47,8 +47,8 @@ define ("DEBUGTAG", 'debug');
 define ("TIMEZONE", "Australia/Sydney");
 
 // XML files and other scraped data stored as files
-define ("RAWDATA", "/Library/WebServer/Documents/openaustralia-app/pwdata/");
-define ('PWMEMBERS', '/Library/WebServer/Documents/openaustralia-app/pwdata/members/');
+define ("RAWDATA", "/Library/WebServer/Documents/openaustralia/pwdata/");
+define ('PWMEMBERS', '/Library/WebServer/Documents/openaustralia/pwdata/members/');
 
 // *******************************************************************************
 // If you've unpacked the tar file normally, and set the paths correctly above, 
@@ -67,12 +67,12 @@ define ("FILEIMAGEPATH", BASEDIR . "images/");
 define ("METADATAPATH", BASEDIR . "/../includes/easyparliament/metadata.php");
 
 // Search related. If non-empty will use XAPIAN search instead of mysql search
-define ("XAPIANDB", '/Library/WebServer/Documents/openaustralia-app/xapiandb/');
+define ("XAPIANDB", '/Library/WebServer/Documents/openaustralia/xapiandb/');
 
 
 // Location of the parliamentary recess data file. You can access this remotely 
 // from the main theyworkforyou site if you use
-define ("RECESSFILE","http://www.openaustralia.org/pwdata/parl-recesses.txt");
+// define ("RECESSFILE","http://www.openaustralia.org/pwdata/parl-recesses.txt");
 // AND amend your global php.ini to 'allow_url_fopen = On'
 //define ("RECESSFILE", RAWDATA . "/parl-recesses.txt");
 
