@@ -58,7 +58,7 @@ function confirm_success ($ALERT) {
 	<p>Your alert has been confirmed.</p>
 	<p>You will now receive email alerts for the following criteria:</p>
 	<ul><?=$criteria?></ul>
-	<p>This is normally the day after, but could conceivably be later due to issues at our or parliament.uk's end.</p>
+	<p>This is normally the day after, but could conceivably be later due to issues at our or aph.gov.au's end.</p>
 <?php
 
 	$extra = alert_confirmation_advert(array('email'=>$email, 'pid'=>strstr($ALERT->criteria(),'speaker:')));

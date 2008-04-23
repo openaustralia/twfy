@@ -11,7 +11,7 @@ $methods = array(
 	'convertURL' => array(
 		'parameters' => array('url'),
 		'required' => true,
-		'help' => 'Converts a parliament.uk Hansard URL into a OpenAustralia one, if possible',
+		'help' => 'Converts an aph.gov.au Hansard URL into a OpenAustralia one, if possible',
 	),
 	'getConstituency' => array(
 		'new' => true,
@@ -28,7 +28,7 @@ $methods = array(
 		'new' => true,
 		'parameters' => array('id', 'constituency', 'postcode', 'always_return', 'extra'),
 		'required' => true,
-		'help' => 'Returns main details for an MP'
+		'help' => 'Returns main details for a representative'
 	),
 	'getMPInfo' => array(
 		'parameters' => array('id'),
@@ -38,7 +38,7 @@ $methods = array(
 	'getMPs' => array(
 		'parameters' => array('party', 'date', 'search'),
 		'required' => false,
-		'help' => 'Returns list of MPs',
+		'help' => 'Returns list of Representatives',
 	),
 	'getLord' => array(
 		'parameters' => array('id'),

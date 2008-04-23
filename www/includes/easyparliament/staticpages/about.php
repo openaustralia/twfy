@@ -9,9 +9,8 @@ little wrong with Parliament that a healthy mixture of transparency and public e
 
 <h3>Who runs this site?</h3>
 
-<p>OpenAustralia is a website entirely started and run by a group of volunteers.
-We owe a great debt to a UK charity, mySociety, which with the help of a group of
-volunteers built <a href="http://theyworkforyou.com/">theyworkforyou.com</a> which this site is based on.
+<p>OpenAustralia is a website run by a group of volunteers.
+We owe a great debt to a UK charity, mySociety, which built <a href="http://theyworkforyou.com/">theyworkforyou.com</a> which this site is based on.
 </p>
 
 <p>The Australian Hansard is
@@ -34,6 +33,7 @@ freely available. Do let us know if you want to help!
 	<li>Katherine Szuminska</li>
 	<li>Bruno Mattarollo</li>
 	<li>Matthew Panetta</li>
+	<li>Wade Millican</li>
 </ul>
 
 <p><em>They did all this in their spare time, because they thought it was worth doing.
