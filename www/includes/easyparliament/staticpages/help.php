@@ -24,18 +24,10 @@
 <!-- start new faq entry-->
 <dt><a name="missing"></a>Is this the whole of Hansard?</dt>
 <dd>
-<p>This is everything in the House of Commons Hansard,
-back to the General Election of June 2001, everything
-in the House of Lords Hansard (except Grand Committees) back to around
-November 1999, and everything in the various Northern Ireland
-(Transitional) Assembly debates. 
-But this is by no means everything. Think of what we've done
-thus far as a mere taster of what could be possible.
-In the future we plan to incorporate the
-gems to be found in Parliamentary
-Committees, where many MPs and Peers do good solid unheralded work improving
-legislation. If
-you want the complete, definitive record, go to the <a href="http://www.parliament.uk/" title="Link to parliament website">UK Parliament</a> site, and you might be able to find what you want.</p>
+	<p>Not quite. This is everything in the Hansard for the House of Representatives excluding Written Answers, the divisions (voting) and
+		procedural text and so far goes back to the beginning of 2007. It also does not include committees. Think of what we've done
+thus far as a mere taster of what could be possible. In the future we plan to add voting information, the Senate and committees too.
+If you want the complete, definitive record, go to the <a href="http://aph.gov.au/" title="Link to Australian Parliament website">Australian Parliament</a> site, and you might be able to find what you want.</p>
 </dd>
 <!-- end old faq entry -->
 
@@ -129,10 +121,9 @@ address</a>. We've got a few ideas ourselves, to keep you on your toes.
 <!-- start new faq entry-->
 <dt><a name="api"></a>Do you have the data as a spreadsheet file, XML or in an API?</dt>
 <dd>
-<p>Yes. We have an <a href="<?= WEBPATH ?>/api">API (Application Programming Interface)</a> which 
-gives you the power to do almost anything with our data.
-If you just need a spreadsheet of
-representatives, you'll find one on the right hand side of <a href="<?= WEBPATH ?>/mps">this page</a>. 
+<p>Yes. If you just need a spreadsheet of
+representatives, you'll find one on the right hand side of <a href="<?= WEBPATH ?>/mps">this page</a>.
+Also, we will have an API (Application Programming Interface) soon which will give you the power to do almost anything with our data.
 Please <a href="mailto:matthew&#64;openaustralia.org">mail us</a> if you want help 
 working out how to use the data, or want to hire us to make something specific
 for you.
