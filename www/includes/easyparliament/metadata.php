@@ -219,14 +219,14 @@ $this->page = array (
 
 // End of ALERTS additions
 		
-	'api_front'		=> array (
-		'menu'			=> array (
-			'text'			=> 'API',
-			'title'			=> 'Access our data'
-		),
-		'title'			=> 'OpenAustralia API',
-		'url'			=> 'api/'
-	),
+	#'api_front'		=> array (
+	#	'menu'			=> array (
+	#		'text'			=> 'API',
+	#		'title'			=> 'Access our data'
+	#	),
+	#	'title'			=> 'OpenAustralia API',
+	#	'url'			=> 'api/'
+	#),
 	'api_doc_front'		=> array (
 		'menu'			=> array (
 			'text'			=> 'API',
