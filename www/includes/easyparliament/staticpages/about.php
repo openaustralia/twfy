@@ -25,7 +25,7 @@ freely available. Do let us know if you want to help!
 
 <h3><a name="history"></a>History</h3>
 
-<p>Back in 2004 Matthew Landauer and Katherine Szuminska were lucky enough to accidently find themseleves at the launch of
+<p>Back in 2004 Matthew Landauer and Katherine Szuminska were lucky enough to accidently find themselves at the launch of
 	the UK site <a href="http://theyworkforyou.com">TheyWorkForYou.com</a> at a nerdy techno conference, NotCon 2004. The talk
 	inspired them hugely and they left with a desire to make this happen in Australia too. It took a few years, other people
 	came on board to help and here you can see the fruits of their labour.</p>
