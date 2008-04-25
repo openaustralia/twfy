@@ -47,7 +47,7 @@ function alert_confirmation_advert($details) {
 <?	} else {
 		$advert_shown = 'twfy-alert-person';
 ?>
-<p>Did you know that OpenAustralia can also email you when a certain MP or Lord contributes in parliament? Don't rely on the newspapers to keep you informed about someone you're interested in - find out what's happening straight from the horse's mouth.
+<p>Did you know that OpenAustralia can also email you when a certain representative contributes in parliament? Don't rely on the newspapers to keep you informed about someone you're interested in - find out what's happening straight from the horse's mouth.
 <a href="<?= WEBPATH ?>alert/"><strong>Sign up for an email alert</strong></a></p>
 <?	}
 	return $advert_shown;
