@@ -295,7 +295,7 @@ class USER {
 
 		$urltoken = $this->user_id . '-' . $this->registrationtoken;
 
-		$confirmurl = 'http://' . DOMAIN . '/U/' . $urltoken;
+		$confirmurl = 'http://' . DOMAIN . WEBPATH . 'U/' . $urltoken;
 
 		// Arrays we need to send a templated email.
 		$data = array (
