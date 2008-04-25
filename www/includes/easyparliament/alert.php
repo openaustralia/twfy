@@ -256,7 +256,7 @@ class ALERT {
 
 		$urltoken = $this->alert_id . '-' . $this->registrationtoken;
 
-		$confirmurl = 'http://' . DOMAIN . '/A/' . $urltoken;
+		$confirmurl = 'http://' . DOMAIN . WEBPATH . 'A/' . $urltoken;
 		
 		// Arrays we need to send a templated email.
 		$data = array (
