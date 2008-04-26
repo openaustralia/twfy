@@ -1,4 +1,4 @@
-#! /usr/bin/env perl -w
+#! /usr/bin/env perl
 # vim:sw=8:ts=8:et:nowrap
 use strict;
 

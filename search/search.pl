@@ -1,4 +1,4 @@
-#!/usr/bin/perl -w
+#!/usr/bin/perl
 
 # Script for testing / development only.  Actual queries are done from PHP.
 # Does simple searches of Xapian databases from the command line.

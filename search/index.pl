@@ -1,4 +1,4 @@
-#!/usr/bin/env perl -w
+#!/usr/bin/env perl
 # vim:sw=4:ts=4:et:nowrap
 
 # Indexer of OpenAustralia.org using Xapian.

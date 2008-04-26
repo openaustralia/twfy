@@ -1,4 +1,4 @@
-#! /usr/bin/perl -w
+#! /usr/bin/perl
 #
 # One off because we didn't send any email for 2-3 weeks.
 # 

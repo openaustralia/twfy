@@ -1,4 +1,4 @@
-#!/usr/bin/perl -w -I..
+#!/usr/bin/perl -I..
 #
 # handlemail:
 # Handle an individual incoming mail message. Adapted from FYR one,
