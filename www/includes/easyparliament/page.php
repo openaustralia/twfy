@@ -1498,7 +1498,8 @@ and has had no written questions answered for which we know the department or su
 		#	$since_text = 'since joining Parliament';
 
 		$MOREURL = new URL('search');
-		$section = 'section:debates section:whall section:lordsdebates section:ni';
+		#$section = 'section:debates section:whall section:lordsdebates section:ni';
+		$section = 'section:debates';
 		$MOREURL->insert(array('pid'=>$member['person_id'], 's'=>$section, 'pop'=>1));
 		if ($member['party']!='Sinn Fein') {
 			$displayed_stuff |= display_stats_line('debate_sectionsspoken_inlastyear', 'Has spoken in <a href="' . $MOREURL->generate() . '">', 'debate', '</a> ' . $since_text, '', $extra_info);
