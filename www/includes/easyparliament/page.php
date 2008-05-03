@@ -1220,12 +1220,7 @@ pr()//-->
 						
 						
 						<ul class="jumpers">
-<? if ((in_array(1, $member['houses']) && $member['party']!='Sinn Fein') || in_array(2, $member['houses'])) { ?>
-<?		if (in_array(1, $member['houses'])) { ?>
-						<li><a href="#topics">Committees and topics of interest</a></li>
-<?		} ?>
-<? }
-   if (!in_array(1, $member['houses']) || $member['party'] == 'Sinn Fein') { ?>
+<? if (!in_array(1, $member['houses']) || $member['party'] == 'Sinn Fein') { ?>
 						<li><a href="#hansard">Recent appearances</a></li>
 <? } ?>
 						<li><a href="#numbers">Numerology</a></li>
