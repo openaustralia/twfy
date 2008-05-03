@@ -1,9 +1,9 @@
 <dl>
 <dt>Contributions must be civil and tasteful</dt>
-<dd><p>Please be nice to each other. Please respect MPs and Peers. If you think they have an easy job, you're very, very wrong.</p></dd>
+<dd><p>Please be nice to each other. Please respect Representatives and Senators. If you think they have an easy job, you're very, very wrong.</p></dd>
 
 <dt>Please be patient</dt>
-<dd><p>Users of all ages and abilities may be contributing to OpenAustralia. Also, remember this site is partly run by volunteers, so please bear with us if we&rsquo;re slow to get back to you.</p></dd>
+<dd><p>Users of all ages and abilities may be contributing to OpenAustralia. Also, remember this site is run by volunteers, so please bear with us if we&rsquo;re slow to get back to you.</p></dd>
 
 <dt>No disruptive, offensive or abusive behaviour</dt>
 <dd><p>Contributions should be constructive and polite, not mean-spirited or contributed with the intention of causing trouble. </p></dd>
