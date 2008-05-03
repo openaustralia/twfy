@@ -29,7 +29,7 @@ print '<?xml version="1.0" encoding="iso-8859-1"?>' ?>
 	foreach ($all_news as $id => $news_row) {
 		if ($c++ == 10) break;
 		list($title, $content, $date) = $news_row;
-		$url = "http://".DOMAIN.WEBPATH.news_individual_link($date, $title);
+		$url = "http://".DOMAIN.news_individual_link($date, $title);
 		print "<rdf:li rdf:resource=\"$url\" />\n";
 	}
 ?>
@@ -43,7 +43,7 @@ print '<?xml version="1.0" encoding="iso-8859-1"?>' ?>
 	foreach ($all_news as $id => $news_row) {
 		if ($c++ == 10) break;
 		list($title, $content, $date) = $news_row;
-		$url = "http://".DOMAIN.WEBPATH.news_individual_link($date, $title);
+		$url = "http://".DOMAIN.news_individual_link($date, $title);
 		$excerpt = trim_characters(news_format_body($content), 0, 250);
 		$date = str_replace(" ", "T", $date) . "+00:00";
 ?>
