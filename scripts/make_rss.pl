@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/bin/env perl
 
 use warnings;
 use strict;
@@ -15,12 +15,14 @@ mySociety::Config::set_file('../conf/general');
 
 my $dsn = 'DBI:mysql:database=' . mySociety::Config::get('DB_NAME'). ':host=' . mySociety::Config::get('DB_HOST');
 my $dbh = DBI->connect($dsn, mySociety::Config::get('DB_USER'), mySociety::Config::get('DB_PASSWORD'), { RaiseError => 1, PrintError => 0 });
+my $domain = mySociety::Config::get('DOMAIN');
+my $webpath = mySociety::Config::get('WEBPATH');
 
 my $dc = {
     subject => '',
     creator => 'OpenAustralia.org',
     publisher => 'OpenAustralia.org',
-    rights => 'Parliamentary Copyright',
+    rights => 'Copyright Commonwealth of Australia',
     language => 'en-gb',
     ttl => 600
 };
@@ -31,13 +33,13 @@ my $syn = {
     updateBase => '1901-01-01T00:00+00:00',
 };
 
-debates_rss(1, 'House of Commons debates', 'debates/', 'debates/debates.rss');
-debates_rss(101, 'House of Lords debates', 'lords/', 'lords/lords.rss');
-debates_rss(2, 'Westminster Hall debates', 'whall/', 'whall/whall.rss');
-debates_rss(5, 'Northern Ireland Assembly debates', 'ni/', 'ni/ni.rss');
-wms_rss();
+debates_rss(1, 'House of Representatives debates', 'debates/', 'debates/debates.rss');
+#debates_rss(101, 'House of Lords debates', 'lords/', 'lords/lords.rss');
+#debates_rss(2, 'Westminster Hall debates', 'whall/', 'whall/whall.rss');
+#debates_rss(5, 'Northern Ireland Assembly debates', 'ni/', 'ni/ni.rss');
+#wms_rss();
 # wrans_rss();
-pbc_rss();
+#pbc_rss();
 
 sub debates_rss {
     my ($major, $title, $url, $file) = @_;
@@ -53,8 +55,8 @@ sub debates_rss {
     my $rss = new XML::RSS (version => '1.0');
     $rss->channel(
         title => $title,
-        link => "http://www.openaustralia.org/$url",
-        description => "$title via OpenAustralia.org - http://www.openaustralia.org/",
+        link => "http://" . $domain . $webpath . "$url",
+        description => "$title via OpenAustralia.org - http://" . $domain . $webpath,
         dc => $dc,
         syn => $syn,
     );
@@ -62,11 +64,11 @@ sub debates_rss {
     my $body = '';
     while (my $result = $query->fetchrow_hashref) {
         my ($id) = $result->{gid} =~ m#\/([^/]+)$#;
-        $body .= "<li><a href=\"http://www.openaustralia.org/$url?id=$id\">$result->{body}</a></li>\n";
+        $body .= "<li><a href=\"http://" . $domain . $webpath . "$url?id=$id\">$result->{body}</a></li>\n";
     }
     $rss->add_item(
         title => "$title for $date",
-        link => "http://www.openaustralia.org/$url?d=$date",
+        link => "http://" . $domain . $webpath . "$url?d=$date",
         description => "<ul>\n\n$body\n\n</ul>\n"
     );
 
