@@ -6,15 +6,15 @@
 for example to find documents containing the word "representation" but not the word "taxation":<br>
 <span class="example-input">representation -taxation</span></li>
 
-<li>To search for an exact phrase, use quotes (""). For example to find only documents contain the exact phrase "Hutton Report":<br>
-<span class="example-input">"hutton report"</span></li>
+<li>To search for an exact phrase, use quotes (""). For example to find only documents contain the exact phrase "Cole Inquiry":<br>
+<span class="example-input">"Cole Inquiry"</span></li>
 
-<li>If the search phrase matches (part of) an MP or Peer's name, their own page will appear as the top result.</li>
+<li>If the search phrase matches (part of) a Representative's name, their own page will appear as the top result.</li>
 
 <li>If your search term matches a glossary definition, a link to that definition will appear as the top result.</li>
 
 
-<li>From an MP or Peer's page, you have the option to search only their speeches. </li>
+<li>From a Representative's page, you have the option to search only their speeches. </li>
 
 <?php
 $user_agent = ( isset( $_SERVER['HTTP_USER_AGENT'] ) ) ? strtolower( $_SERVER['HTTP_USER_AGENT'] ) : '';
