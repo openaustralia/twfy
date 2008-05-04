@@ -8,7 +8,7 @@ $email_text = '';
 if ($SEARCHENGINE) {
 	$value = get_http_var('s');
 	$person_id = get_http_var('pid');
-	$email_link = '/alert/?only=1' . ($value ? '&amp;keyword='.urlencode($value) : '') .
+	$email_link = WEBPATH . 'alert/?only=1' . ($value ? '&amp;keyword='.urlencode($value) : '') .
 		($person_id ? '&amp;pid='.urlencode($person_id) : '');
 	$email_text = $SEARCHENGINE->query_description_long();
 }
@@ -20,7 +20,7 @@ if ($email_text || $rss) {
 		echo '<li id="search_links_email"><a href="', $email_link, '">Subscribe to an email alert</a> for items ', $email_text, '</li>';
 	}
 	if ($rss) {
-		echo '<li id="search_links_rss">Or <a href="/', $rss, '">get an RSS feed</a></li>';
+		echo '<li id="search_links_rss">Or <a href="', $rss, '">get an RSS feed</a></li>';
 	}
 	echo '</ul>';
 	$this->block_end();
