@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # compactsearchdb. Compacts the Xapian search database using xapian-compact.
 
 #set -x  # for debugging, prints each line before executing it
