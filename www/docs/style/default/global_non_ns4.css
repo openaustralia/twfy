@@ -728,10 +728,10 @@ div.pagelinks {
 	background-position: 0 0;
 }
 #search_links_email {
-	background-image: url(/images/icon-email.png);
+	background-image: url("../../images/icon-email.png");
 }
 #search_links_rss {
-	background-image: url(/images/icon-rss-32.png);
+	background-image: url("../../images/icon-rss-32.png");
 }
 
 span.hi {
