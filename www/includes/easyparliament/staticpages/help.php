@@ -99,7 +99,7 @@ do, a count doesn't measure the quality of a Representative's contribution.</p>
 	admitted to tabling questions to increase their boss' rankings. So, TheyWorkForYou
 	became concerned about the use of these statistics</p>
 	
-<p> We've followed their lead by doing two things. We have silly statistic, to catch your attention.
+<p> We've followed their lead by doing two things. We have silly statistics, to catch your attention.
 And we don't have absolute rankings. Instead of saying a Representative is exactly
 5th for giving out verbiage in the chamber, we just say that they are
 "well above average". 
