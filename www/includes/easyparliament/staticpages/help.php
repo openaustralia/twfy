@@ -5,8 +5,8 @@
 <li><a href="#cookie">What is your Cookie Policy?</a></li>
 <li><a href="#extreme">What's that weird 'urchin' javascript I spy in your page source?</a></li>
 <li><a href="#rss">What is RSS?</a></li>
-<!--><li><a href="#votingrecord">How is the voting record decided?</a></li>
-<li><a href="#numbers">Why should I read in more depth than just the numbers?</a></li><-->
+<!--><li><a href="#votingrecord">How is the voting record decided?</a></li><-->
+<li><a href="#numbers">Why should I read in more depth than just the numbers?</a></li>
 <li><a href="#api">Do you have the data as a spreadsheet file, XML or in an API?</a></li>
 </ul>
 
@@ -80,41 +80,39 @@ href="http://www.openaustralia.org/debate/?id=2005-02-07.1200.2">like the
 Speaker</a>, that all votes are free.  </P>
 </dd>
 
+<-->
+
 <dt><a name="numbers"></a>Why should I read in more depth than just the numbers?</dt>
 
 <dd>
-<p>A few people have asked why we publish statistics on how often MPs use
-alliterative phrases, such as "she sells seashells". It has even been <a
-href="/debate/?id=2006-06-28a.348.0">mentioned in the House of Commons</a>.
+<p>A few people have asked why we publish statistics on how often Representatives use
+alliterative phrases, such as "she sells seashells".
 </p>
 
-<p>Simply put, we realise that data such as the number of debates spoken in
-means little in terms of an MP's actual performance.  MPs do lots of useful
+<p>Simply put, we realise that data such as the number of debates spoken in Parliament
+means little in terms of a Representative's actual performance.  Representatives do lots of useful
 things which we don't count yet, and some which we never could.  Even when we
-do, a count doesn't measure the quality of an MPs contribution.</p>
+do, a count doesn't measure the quality of a Representative's contribution.</p>
 
-<p>After reading media reports like <a
-href="http://www.timesonline.co.uk/article/0,,17129-2060278,00.html">this one
-in The Times</a>, and hearing from real MP's researchers who have admitted
-to tabling questions to increase their boss's rankings, we became concerned about the
-use of these statistics.</p>
-
-<p>We've done two things. We've added the silly statistic, to catch your attention.
-And we've removed the absolute rankings. Instead of saying an MP is exactly
-5th for giving out verbiage in the chamber, we now just say that they are
+<p>On the UK site TheyWorkForYou, they used to publish absolute rankings of, for
+	instance, the most verbose MPs. Then, they were hearing from real MP's researchers who
+	admitted to tabling questions to increase their boss' rankings. So, TheyWorkForYou
+	became concerned about the use of these statistics</p>
+	
+<p> We've followed their lead by doing two things. We have silly statistic, to catch your attention.
+And we don't have absolute rankings. Instead of saying a Representative is exactly
+5th for giving out verbiage in the chamber, we just say that they are
 "well above average". 
 
-<p>Our advice &mdash; when you're judging your MP, read some of their speeches,
+<p>Our advice &mdash; when you're judging your Representative, read some of their speeches,
 check out their website, even go to a local meeting and ask them a question.
 Use OpenAustralia as a gateway, rather than a simple place to find a number
 measuring competence.
 
-<p>If you have suggestions for other metrics we could add which would be
-useful, send them to the <a href="mailto:beta&#64;openaustralia.org">usual
-address</a>. We've got a few ideas ourselves, to keep you on your toes.
+<p>If you have other suggestions for useful metrics, send them to the <a href="mailto:matthew&#64;openaustralia.org">usual
+address</a>. We have a few ideas ourselves to keep you on your toes.
 
 </dd>
-<-->
 
 <!-- end old faq entry -->
 
