@@ -12,7 +12,7 @@ $eptype = array(
 // The major field in the hansard database table
 $hansardmajors = array(
 	1 => array(
-		'type'=>'debate',
+		'type'=>'other',
 		'title'=>"House debates",
 		'singular'=>'debate',
 		'plural'=>'debates',
