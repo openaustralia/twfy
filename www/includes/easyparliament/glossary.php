@@ -123,11 +123,11 @@ class GLOSSARY {
 				}
 				// The first term in the list has no previous, so we'll make it the last term
 				if (!isset($this->previous_term)) {
-					$this->previous_term = array_pop($this->terms);
+					$this->previous_term = end($this->terms);
 				}
 				// and the last has no next, so we'll make it the first
 				if (!isset($this->next_term)) {
-					$this->next_term = array_shift($this->terms);
+					$this->next_term = reset($this->terms);
 				}
 			}
 			
