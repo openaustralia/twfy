@@ -747,7 +747,7 @@ function display_form ( $details = array(), $errors = array() ) {
 		$submittext = "Join OpenAustralia.org";
 	}
 	
-	$TERMSURL = new URL('disclaimer');
+	$TERMSURL = new URL('about');
 ?>
 				<div class="row">
 				<span class="label">&nbsp;</span>
