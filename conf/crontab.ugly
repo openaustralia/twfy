@@ -26,3 +26,5 @@ MAILTO=matthew@openaustralia.org
 # 15 * * * * $HOME/fawkes/scripts/update-hansard-all.pl
 # 15 * * * * $HOME/fawkes_staging/scripts/update-hansard-all.pl
 
+# Morning update (Australian Hansard is supposed to be up by 9am the next working day)
+5 9 * * * $HOME/morningupdate

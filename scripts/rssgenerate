@@ -3,7 +3,7 @@
 # Make sure only one copy runs at once
 if [ x$LOCKFILE = x ]
 then
-        /home/fawkes/fawkes/scripts/run-with-lockfile -n /home/fawkes/fawkes/scripts/rssgenerate-lockfile $0
+        ./run-with-lockfile -n rssgenerate-lockfile $0
         if [ $? = 100 ]
         then
                 echo "Another copy of rssgenerate is already running" 1>&2
@@ -17,7 +17,6 @@ fi
 #./index.pl ~/searchdb/ check $CRONQUIET_NODASH
 
 # Make RSS this takes a while
-cd ~/fawkes/scripts
 ./make_rss.pl
 php -q mprss.php
 

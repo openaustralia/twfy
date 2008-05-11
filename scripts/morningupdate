@@ -6,7 +6,7 @@
 
 #set -x  # for debugging, prints each line before executing it
 
-source /home/fawkes/fawkes/scripts/consts
+source consts
 [ -z "$VERBOSE" ] && VERBOSE=false
 
 if $VERBOSE
@@ -21,7 +21,7 @@ fi
 # Make sure only one copy runs at once
 if [ x$LOCKFILE = x ]
 then
-        /home/fawkes/fawkes/scripts/run-with-lockfile -n /home/fawkes/fawkes/scripts/morningupdate-lockfile $0
+        ./run-with-lockfile -n morningupdate-lockfile $0
         if [ $? = 100 ]
         then
                 echo "Another copy of morningupdate or compactsearchdb is already running" 1>&2
@@ -29,43 +29,44 @@ then
         exit $?
 fi
 
-#echo -n "Start time: "
-#date +"%Y-%m-%d %H:%M:%S %Z"
+echo -n "Start time: "
+date +"%Y-%m-%d %H:%M:%S %Z"
 
 # Get new data -- with the "-a" so we get same timestamps as remote filesystem
-$VERBOSE && echo "Rsyncing new data from parlparse"
-rsync --exclude '.zip' --exclude '.svn' --exclude 'tmp/' --recursive --archive ukparse.kforge.net::parldata /home/fawkes/parldata
+#$VERBOSE && echo "Rsyncing new data from parlparse"
+#rsync --exclude '.zip' --exclude '.svn' --exclude 'tmp/' --recursive --archive ukparse.kforge.net::parldata /home/fawkes/parldata
+
+# TODO: This is going to fail for proceedings that come out on Monday which were from Friday the previous week
+../../openaustralia-parser/parse-speeches.rb --no-load yesterday
 
 # Load recent new files from XML into the database
 $VERBOSE && echo "Loading into database"
-cd ~/fawkes/scripts
 # --cronquiet because we think things are reliable enough we decide we don't
 # want email on success each day just for the database loader
-./xml2db.pl $CRONQUIET --all --members
+#./xml2db.pl $CRONQUIET --all --members
 # We do these on separate lines, so if one fails, others still run
-./xml2db.pl $CRONQUIET --recent --wrans --quiet
-./xml2db.pl $CRONQUIET --recent --debates --quiet
-./xml2db.pl $CRONQUIET --recent --westminhall --quiet
-./xml2db.pl $CRONQUIET --recent --wms --quiet
-./xml2db.pl $CRONQUIET --recent --lordsdebates --quiet
-./xml2db.pl $CRONQUIET --recent --ni --quiet
+#./xml2db.pl $CRONQUIET --recent --wrans --quiet
+./xml2db.pl $CRONQUIET --recent --debates
+#./xml2db.pl $CRONQUIET --recent --westminhall --quiet
+#./xml2db.pl $CRONQUIET --recent --wms --quiet
+#./xml2db.pl $CRONQUIET --recent --lordsdebates --quiet
+#./xml2db.pl $CRONQUIET --recent --ni --quiet
 
 # Update Xapan index
 $VERBOSE && echo "Xapian indexing"
-cd ~/fawkes/search
-./index.pl ~/searchdb/ sincefile ~/searchdb-lastupdated $CRONQUIET_NODASH
+../search/index.pl ../../searchdb sincefile ../../searchdb-lastupdated $CRONQUIET_NODASH
 
 # Create new RSS files.
 if $VERBOSE
 then
 	echo "Running rssgenerate"
-	/home/fawkes/fawkes/scripts/rssgenerate
+	./rssgenerate
 else
  	at NOW >/dev/null 2>/dev/null <<EOF
-/home/fawkes/fawkes/scripts/rssgenerate
+./rssgenerate
 EOF
 fi
 
-#echo -n "Whole thing done time: "
-#date +"%Y-%m-%d %H:%M:%S"
+echo -n "Whole thing done time: "
+date +"%Y-%m-%d %H:%M:%S"
 
