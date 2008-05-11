@@ -4,3 +4,4 @@ www/docs/rss/mp/*.rdf
 www/docs/debates/debates.rss
 scripts/morningupdate-lockfile
 scripts/run-with-lockfile
+scripts/rssgenerate-lockfile

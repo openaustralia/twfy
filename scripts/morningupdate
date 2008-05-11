@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # morningupdate.  Called when new data is available from ukparse.
 
 # Call with VERBOSE=true set in the environment for diagnostic messages:
