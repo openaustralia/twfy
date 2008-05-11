@@ -9,7 +9,7 @@ function mlog($message) {
 	print $message;
 }
 
-include '/data/vhost/www.openaustralia.org/includes/easyparliament/init.php';
+include '../www/includes/easyparliament//init.php';
 ini_set('memory_limit', -1);
 include INCLUDESPATH . 'easyparliament/member.php';
 
