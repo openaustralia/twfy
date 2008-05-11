@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # Make sure only one copy runs at once
 if [ x$LOCKFILE = x ]

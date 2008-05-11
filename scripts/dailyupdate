@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # Jobs that need running daily, that aren't with urgency dependent on new stuff
 # from Hansard
 
