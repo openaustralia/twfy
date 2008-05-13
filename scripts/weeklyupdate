@@ -2,20 +2,22 @@
 # Jobs that need running weekly
 #set -x
 
-source ~/fawkes/scripts/consts
+source consts
+
+source ../../shlib/deployfns
+read_conf "../conf/general"
 
 # Get new wikipedia titles database
-cd ~/parldata/dumps
-rm -f all-titles-in-ns0.gz
-rm -f all-titles-in-ns0
+rm -f ../../pwdata/dumps/all-titles-in-ns0.gz
+rm -f ../../pwdata/dumps/all-titles-in-ns0
 
 DUMPDATE=`fetch -q -o - http://download.wikimedia.org/backup-index.html | grep "enwiki/" | perl -pi.bak -e "s/.*(\d\d\d\d\d\d\d\d).*/\\\$1/;"`
 #echo "Wikipedia dump date $DUMPDATE"
-fetch -q -o all-titles-in-ns0.gz http://download.wikimedia.org/enwiki/$DUMPDATE/enwiki-$DUMPDATE-all-titles-in-ns0.gz
-gunzip all-titles-in-ns0.gz
-echo "load data infile '/home/fawkes/parldata/dumps/all-titles-in-ns0' ignore into table titles;" | mysql
-cd ~/fawkes/scripts
-cat wikipedia-exceptions | mysql
+fetch -q -o ../../pwdata/dumps/all-titles-in-ns0.gz http://download.wikimedia.org/enwiki/$DUMPDATE/enwiki-$DUMPDATE-all-titles-in-ns0.gz
+gunzip ../../pwdata/dumps/all-titles-in-ns0.gz
+MYSQL="mysql -u $DB_USER --password=$DB_PASSWORD $DB_NAME"
+echo "load data infile '$RAWDATA/dumps/all-titles-in-ns0' ignore into table titles;" | $MYSQL
+cat wikipedia-exceptions | $MYSQL
 
 # Compact Xapian database
 ./compactsearchdb
