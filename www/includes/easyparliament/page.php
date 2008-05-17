@@ -850,6 +850,7 @@ pageTracker._trackPageview();
 		# For the time being commenting out API/XML links until we get those up and running
 		#$links[] = '<a href="' . WEBPATH . 'api">API</a> / <a href="http://ukparse.kforge.net/parlparse">XML</a>';
 		$links[] = '<a href="http://software.openaustralia.org">Source code</a>';
+		$links[] = '<a href="http://blog.openaustralia.org">Blog</a>';
 
 #		$user_agent = ( isset( $_SERVER['HTTP_USER_AGENT'] ) ) ? strtolower( $_SERVER['HTTP_USER_AGENT'] ) : '';
 #		if (stristr($user_agent, 'Firefox/'))
