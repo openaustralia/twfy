@@ -291,10 +291,10 @@ if (isset($MEMBER) && is_array($MEMBER->person_id())) {
 			'type'		=> 'include',
 			'content'	=> 'mp_speech_search'
 		),
-/*		array (
+		array (
 			'type'		=> 'html',
 			'content'	=> $linkshtml
-		) */
+		)
 	);
 
 /*
