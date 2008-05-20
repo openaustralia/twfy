@@ -1751,7 +1751,7 @@ elseif ($member['house_disp']==0) print $member['full_name']; ?> speaks<?php
 		}
 
 		if (isset($links['mp_contactdetails'])) {
-			$html .= '	<li><a href="' . $links['mp_contactdetails'] . '">Contact details on the Australian Parliament website</a></li>';
+			$html .= '	<li><a href="' . $links['mp_contactdetails'] . '">Contact details</a> <small>(From Australian Parliament website)</small></li>';
 		}
 
 		if (isset($links['bbc_profile_url'])) {
