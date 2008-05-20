@@ -80,7 +80,7 @@ $alertdata = $alertdata['data'];
 
 $DEBATELIST = new DEBATELIST; # Nothing debate specific, but has to be one of them
 
-$sects = array('', 'Commons debate', 'Westminster Hall debate', 'Written Answer', 'Written Ministerial Statement', 'Northern Ireland Assembly debate');
+$sects = array('', 'House of Representatives debate', 'Westminster Hall debate', 'Written Answer', 'Written Ministerial Statement', 'Northern Ireland Assembly debate');
 $sects[101] = 'Lords debate';
 $sects_short = array('', 'debate', 'westminhall', 'wrans', 'wms', 'ni');
 $sects_short[101] = 'lords';
