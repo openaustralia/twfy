@@ -1750,6 +1750,10 @@ elseif ($member['house_disp']==0) print $member['full_name']; ?> speaks<?php
 			$html .= '	<li><a href="' . $links['guardian_contactdetails'] . '">Contact details</a> <small>(From The Guardian)</small></li>';
 		}
 
+		if (isset($links['mp_contactdetails'])) {
+			$html .= '	<li><a href="' . $links['mp_contactdetails'] . '">Contact details on the Australian Parliament website</a></li>';
+		}
+
 		if (isset($links['bbc_profile_url'])) {
 			$html .= '	<li><a href="' . $links['bbc_profile_url'] . '">General information</a> <small>(From BBC News)</small></li>';
 
