@@ -1758,6 +1758,11 @@ elseif ($member['house_disp']==0) print $member['full_name']; ?> speaks<?php
 			$html .= '	<li><a href="' . $links['bbc_profile_url'] . '">General information</a> <small>(From BBC News)</small></li>';
 
 		} 
+
+		if (isset($links['mp_biography_qanda'])) {
+			$html .= '	<li><a href="' . $links['mp_biography_qanda'] . '">Biography from ABC\'s Q &amp; A</a></li>';
+
+		} 
 		$bbc_name = urlencode($member->first_name()) . "%20" . urlencode($member->last_name());
 		if ($member->member_id() == -1)
 			$bbc_name = 'Queen Elizabeth';
