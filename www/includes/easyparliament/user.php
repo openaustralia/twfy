@@ -1075,7 +1075,7 @@ class THEUSER extends USER {
 				$this->constituency		= $newdetails["constituency"];
 				$this->url 				= $newdetails["url"];
 				$this->optin 			= $newdetails["optin"];
-				if ($newdetails["password"] != "") {
+				if (array_key_exists("password", $newdetails) && $newdetails["password"] != "") {
 					$this->password = $newdetails["password"];
 				}
 
