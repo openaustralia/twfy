@@ -23,6 +23,6 @@ done
 
 # Dumps database for backups (we do this last, so other servers can grab first
 # of the month backup before it moves the next day)
-mysqldump5 --skip-lock-tables -u $DB_USER --password=$DB_PASSWORD $DB_NAME | bzip2 -c > $BACKUP/openaustralia-all-including-sensitive-data-`date +%F`.sql.bz2
+mysqldump --skip-lock-tables -u $DB_USER --password=$DB_PASSWORD $DB_NAME | bzip2 -c > $BACKUP/openaustralia-all-including-sensitive-data-`date +%F`.sql.bz2
 
 
