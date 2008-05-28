@@ -24,6 +24,8 @@ done
 
 # Dumps database for backups (we do this last, so other servers can grab first
 # of the month backup before it moves the next day)
-mysqldump --skip-lock-tables -u $DB_USER --password=$DB_PASSWORD $DB_NAME | bzip2 -c > $BACKUP/$PREFIX`date +%F`.sql.bz2
+
+# This requires the openaustralia database user to have "SELECT" privileges for all databases
+mysqldump --skip-lock-tables --all-databases -u $DB_USER --password=$DB_PASSWORD | bzip2 -c > $BACKUP/$PREFIX`date +%F`.sql.bz2
 
 
