@@ -1759,7 +1759,7 @@ elseif ($member['house_disp']==0) print $member['full_name']; ?> speaks<?php
 
 		} 
 
-		if (isset($links['mp_biography_qanda'])) {
+		if (isset($links['mp_biography_qanda']) && $links['mp_biography_qanda'] != "") {
 			$html .= '	<li><a href="' . $links['mp_biography_qanda'] . '">Biography from ABC\'s Q &amp; A</a></li>';
 
 		} 
