@@ -7,12 +7,11 @@ $all_news = array(
 1 => array('Public Launch of OpenAustralia Beta', <<<EOT
 We're open to the public! After more than six months work by a small
 group of volunteers working in their spare time, we're launching
-OpenAustralia to the public. We hope that this site will become an
-important part of ensuring a continued and improved fair, democratic
-and open Australian Parliamentary system.
+OpenAustralia to the public.
 
-This site is about giving you, the Australian public, the tools to easily
-follow what goes on in Parliament and be just a little better informed.
+With OpenAustralia we hope to strengthen our traditions of fair and open
+democracy in Australia. This site is about giving you, the Australian public, the tools to easily
+follow what goes on in Parliament, and be just a little better informed.
 
 You'll hopefully discover with OpenAustralia that what goes on in Parliament
 is much more interesting than you might imagine - entertaining even!
