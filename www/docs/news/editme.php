@@ -28,7 +28,7 @@ that looks wrong please email matthew at openaustralia dot org.
 
 Enjoy!
 EOT
-, '2008-6-16 9:00:00', 'Matthew'),
+, '2008-06-16 09:00:00', 'Matthew'),
 
 );
 
