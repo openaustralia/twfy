@@ -23,7 +23,7 @@ to use and friendly form.
 This site is still in beta, which means that we're not totally confident that
 we've ironed out all the small problems, but we didn't think it fair to keep
 it from you any longer. If you do find something
-that looks wrong please email matthew at openaustralia dot org.
+that looks wrong please email contact at openaustralia dot org.
 
 Enjoy!
 EOT

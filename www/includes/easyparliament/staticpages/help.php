@@ -109,7 +109,7 @@ check out their website, even go to a local meeting and ask them a question.
 Use OpenAustralia as a gateway, rather than a simple place to find a number
 measuring competence.
 
-<p>If you have other suggestions for useful metrics, send them to the <a href="mailto:matthew&#64;openaustralia.org">usual
+<p>If you have other suggestions for useful metrics, send them to the <a href="mailto:contact&#64;openaustralia.org">usual
 address</a>. We have a few ideas ourselves to keep you on your toes.
 
 </dd>
@@ -122,7 +122,7 @@ address</a>. We have a few ideas ourselves to keep you on your toes.
 <p>Yes. If you just need a spreadsheet of
 representatives, you'll find one on the right hand side of <a href="<?= WEBPATH ?>/mps">this page</a>.
 Also, we will have an API (Application Programming Interface) soon which will give you the power to do almost anything with our data.
-Please <a href="mailto:matthew&#64;openaustralia.org">mail us</a> if you want help 
+Please <a href="mailto:contact&#64;openaustralia.org">mail us</a> if you want help 
 working out how to use the data, or want to hire us to make something specific
 for you.
 </dd>
