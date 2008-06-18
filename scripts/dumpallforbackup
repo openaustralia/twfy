@@ -19,7 +19,7 @@ PREFIX="openaustralia-all-including-sensitive-data-"
 ls -1 $BACKUP/$PREFIX*.sql.bz2 | fgrep -v "`ls -1 $BACKUP/$PREFIX*.sql.bz2 | sort -n | tail -n 20`" | while read X
 do
        echo "Deleting old backup $X"
-       rm $BACKUP/$X
+       rm $X
 done
 
 # Dumps database for backups (we do this last, so other servers can grab first
