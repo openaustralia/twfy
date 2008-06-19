@@ -720,11 +720,11 @@ function send_email ($to, $subject, $message, $bulk = false) {
 	// Everything is not BCC'd to REPORTLIST (unless it's already going to the list!).
 	
 	$headers = 
-	 "From: OpenAustralia.org <" . CONTACTEMAIL . ">\r\n" .
-     "Reply-To: OpenAustralia.org <" . CONTACTEMAIL . ">\r\n" .
-     "Content-Type: text/plain; charset=iso-8859-1\r\n" .
-     "Content-Transfer-Encoding: 8bit\r\n" . 
-     ($bulk ? "Precedence: bulk\r\n" : "" ).
+	 "From: OpenAustralia.org <" . CONTACTEMAIL . ">\n" .
+     "Reply-To: OpenAustralia.org <" . CONTACTEMAIL . ">\n" .
+     "Content-Type: text/plain; charset=iso-8859-1\n" .
+     "Content-Transfer-Encoding: 8bit\n" . 
+     ($bulk ? "Precedence: bulk\n" : "" ).
      "X-Mailer: PHP/" . phpversion();
     /* 
 	if ($to != REPORTLIST) {
