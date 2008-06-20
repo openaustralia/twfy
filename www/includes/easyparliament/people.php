@@ -146,11 +146,11 @@ class PEOPLE {
 				if ($narray['party'] == 'SPK') {
 					$narray['party'] = '-';
 					$narray['pos'] = 'Speaker';
-					$narray['dept'] = 'House of Commons';
+					$narray['dept'] = 'House of Representatives';
 				} elseif ($narray['party'] == 'CWM' || $narray['party'] == 'DCWM') {
 					$narray['party'] = '-';
 					$narray['pos'] = 'Deputy Speaker';
-					$narray['dept'] = 'House of Commons';
+					$narray['dept'] = 'House of Representatives';
 				}
 
 				$data[$p_id] = $narray;

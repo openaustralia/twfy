@@ -4,13 +4,13 @@
 <Format>http://a9.com/-/spec/opensearchrss/1.0/</Format>
 <ShortName>OpenAustralia</ShortName>
 <LongName>OpenAustralia.org</LongName>
-<Description>Search what MPs and Peers have said in Parliament.</Description>
-<Tags>democracy mp mps peer peers britain uk parliament house of commons lords</Tags>
+<Description>Search what Representatives have said in Parliament.</Description>
+<Tags>democracy representative representatives senator senators australia australian parliament house of representatives senate</Tags>
 <Image>http://www.openaustralia.org/search/rss/image.gif</Image>
 <SampleSearch>iraq</SampleSearch>
-<Developer>Matthew Somerville</Developer>
-<Contact>beta&#64;openaustralia.org</Contact>
-<Attribution>Copyright UK Parliament. Licensed.</Attribution>
+<Developer>Matthew Landauer</Developer>
+<Contact>contact&#64;openaustralia.org</Contact>
+<Attribution>Copyright Commonwealth of Australia. Licensed.</Attribution>
 <SyndicationRight>limited</SyndicationRight>
 <AdultContent>false</AdultContent>
 </OpenSearchDescription>
