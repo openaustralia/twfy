@@ -1227,7 +1227,7 @@ pr()//-->
 <? if (!in_array(1, $member['houses']) || $member['party'] == 'Sinn Fein') { ?>
 						<li><a href="#hansard">Recent appearances</a></li>
 <? } ?>
-						<li><a href="#numbers">Numerology</a></li>
+						<li><a href="#numbers">Numbers</a></li>
 <?php		if (isset($extra_info['register_member_interests_html'])) { ?>
 						<li><a href="#register">Register of Members' Interests</a></li>
 <?php		}
@@ -1483,7 +1483,7 @@ and has had no written questions answered for which we know the department or su
 } # End Sinn Fein
 
 		?> <a name="numbers"></a> <?php
-		$this->block_start(array('id'=>'numbers', 'title'=>'Numerology'));
+		$this->block_start(array('id'=>'numbers', 'title'=>'Numbers'));
 		$displayed_stuff = 0;
 		?>
 		<p><em>Please note that numbers do not measure quality. 
