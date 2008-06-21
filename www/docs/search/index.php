@@ -276,13 +276,16 @@ function find_constituency ($args) {
 
 	if (validate_postcode($searchterm)) {
 		// Looks like a postcode - can we find the constituency?
-		$constituency = postcode_to_constituency($searchterm);
-        if ($constituency != '') {
-            $validpostcode = true;
-        }
+		$constituencies = postcode_to_constituency($searchterm);		
+		if ($constituencies == '')
+			$constituencies = array();
+		else
+			$validpostcode = true;
+		if (!is_array($constituencies))
+			$constituencies = array($constituencies);
 	}
 
-	if ($constituency == '' && $searchterm) {
+	if ($constituencies == array() && $searchterm) {
 		// No luck so far - let's see if they're searching for a constituency.
 		$try = strtolower($searchterm);
 		if (normalise_constituency_name($try)) {
