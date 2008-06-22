@@ -36,8 +36,7 @@ date +"%Y-%m-%d %H:%M:%S %Z"
 #$VERBOSE && echo "Rsyncing new data from parlparse"
 #rsync --exclude '.zip' --exclude '.svn' --exclude 'tmp/' --recursive --archive ukparse.kforge.net::parldata /home/fawkes/parldata
 
-# TODO: This is going to fail for proceedings that come out on Monday which were from Friday the previous week
-../../openaustralia-parser/parse-speeches.rb --no-load yesterday
+../../openaustralia-parser/parse-speeches.rb --no-load previous-working-day
 
 # Load recent new files from XML into the database
 $VERBOSE && echo "Loading into database"
