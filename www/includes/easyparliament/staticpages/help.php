@@ -120,7 +120,7 @@ address</a>. We have a few ideas ourselves to keep you on your toes.
 <dt><a name="api"></a>Do you have the data as a spreadsheet file, XML or in an API?</dt>
 <dd>
 <p>Yes. If you just need a spreadsheet of
-representatives, you'll find one on the right hand side of <a href="<?= WEBPATH ?>/mps">this page</a>.
+representatives, you'll find one on the right hand side of <a href="/mps">this page</a>.
 Also, we will have an API (Application Programming Interface) soon which will give you the power to do almost anything with our data.
 Please <a href="mailto:contact&#64;openaustralia.org">mail us</a> if you want help 
 working out how to use the data, or want to hire us to make something specific
