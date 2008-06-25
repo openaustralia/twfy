@@ -148,7 +148,7 @@ if (get_http_var("submitterm") != '') {
 		$PAGE->error_message($error_message);
 	}
 	
-	print "<p>Seen a piece of jargon or an external reference? By adding the phrase and definition to the glossary, you'll create a link for it everywhere an MP or Peer says it. Search for a phrase to add or browse the existing entries for inspiration.</p>";
+	print "<p>Seen a piece of jargon or an external reference? By adding the phrase and definition to the glossary, you'll create a link for it everywhere an MP says it. Search for a phrase to add or browse the existing entries for inspiration.</p>";
 	print "<h3>Step 1: Search for a phrase</h3>";
 	
 	$PAGE->glossary_search_form($args);

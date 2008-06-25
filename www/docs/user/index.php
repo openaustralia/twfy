@@ -1081,7 +1081,7 @@ function display_user ($user_id="") {
 				}
 				$out .= '<tr><td>'.$criteria.'</td><td>'.$action.'</td></tr>';
 			}
-			print '<p>To add a new alert, simply visit an MP or Peer\'s page or conduct a search &#8212; to be given the option of turning them into alerts automatically &#8212; or visit <a href="'.WEBPATH.'alert/">the manual addition page</a>.</p>';
+			print '<p>To add a new alert, simply visit a Representative\'s page or conduct a search &#8212; to be given the option of turning them into alerts automatically &#8212; or visit <a href="'.WEBPATH.'alert/">the manual addition page</a>.</p>';
 			if ($out) {
 				print '<p>Here are your email alerts:</p>';
 				print '<table cellpadding="3" cellspacing="0"><tr><th>Criteria</th><th>Action</th></tr>' . $out . '</table>';

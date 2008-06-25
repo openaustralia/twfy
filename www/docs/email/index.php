@@ -21,7 +21,7 @@ if ($pid)
 $errors = array();
 
 if (!$pid)
-	$errors[] = 'You did not get to this page from an MP or Peer page. Please go back and try again.';
+	$errors[] = 'You did not get to this page from an MP page. Please go back and try again.';
 if (!preg_match('#^[^@]+@#', $recipient_email))
 	$errors[] = "'$recipient_email' is not a valid recipient email address. Please have another go.";
 if (!validate_email($sender_email))

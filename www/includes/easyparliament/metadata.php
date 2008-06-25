@@ -167,7 +167,7 @@ $this->page = array (
 	'alert' => array (
 		'menu'			=> array (
 			'text'			=> 'Email Alerts',
-			'title'			=> "Set up alerts for updates on an MP or Peer by email",
+			'title'			=> "Set up alerts for updates on a Representative by email",
 			'sidebar'		=> 'alert'
 
 		),

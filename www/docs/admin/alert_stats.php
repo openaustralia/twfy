@@ -44,7 +44,7 @@ for ($i=0; $i<$q->rows(); $i++) {
 		$unconfirmed[$person_id] += $c;
 	}
 }
-print '<h3>Alert signups by MP/Peer</h3> <table><tr><th>Name</th><th>Confirmed</th><th>Unconfirmed</th></tr> ';
+print '<h3>Alert signups by MP</h3> <table><tr><th>Name</th><th>Confirmed</th><th>Unconfirmed</th></tr> ';
 foreach ($tots as $person_id => $c) {
 	$u = isset($unconfirmed[$person_id]) ? $unconfirmed[$person_id] : 0;
 	print "<tr><td>";
