@@ -1,7 +1,17 @@
+# Removing terms that either point to completely the wrong thing or point to pages that have too numerous meanings.
+# For instance, "National Party" points to a page with a very long list of parties in different countries
 delete from titles where title in (
 'The_Bill', 'III', 'DAWN', 'The_Members', 'SEAL', 'The_Department', 'And_I', 'The_Border', 'TGP', 'CH', 'CO', 'The_Office',
 'Science_and_Technology', 'House_of_Representatives', 'MP', 'The_President', 'AM', 'The_Gap', 'WA', 'New_England', 'The_Americans',
 'The_Treasury', 'The_Australian', 'IGA', 'CRC', 'CD', 'CDL', 'St_Vincent', 'CBD', 'MacPherson', 'The_Jets', 'Competition_Commission',
-'James_Sullivan', 'BEC', 'CUA', 'PET', 'East_Asia', 'Princess_Anne'
+'James_Sullivan', 'BEC', 'CUA', 'PET', 'East_Asia', 'Princess_Anne', 'The_Environment', 'Foreign_Affairs', 'The_Prime_Minister',
+'Deputy_Speaker', 'Higher_Education', 'Deputy_Prime_Minister', 'CCB', 'CCTR', 'Deputy_Leader', 'Public_Service', 'Prime_Minister',
+'St_Edmund', 'St_Mary', 'Lost_Time', 'STEP', 'Smith_Family', 'No_Respect', 'White_Ribbon_Day', 'Our_Country', 'NAP', 'NRM',
+'National_Party', 'The_Leader', 'Liberal_Party', 'Public_Administration', 'In_July', 'World_Cup', 'School_Day', 'Albert_Street',
+'ADF', 'St_Patrick', 'St_George', 'Leader_of_the_House', 'Labor_Party', 'Parliamentary_Secretary', 'Leader_of_the_Opposition',
+'ABS', 'Federal_Government', 'TFN', 'PBS', 'AMA', 'TGA', 'AO', 'Star_Command', 'VII', 'BMA', 'Brand_X', 'McNeil', 'The_House',
+'High_Court', 'Federal_Court', 'CGT', 'RON', 'McArdle', 'ITF', 'China_and_India', 'The_King', 'Phil_May', 'MPI', 'His_Excellency',
+'Financial_Services', 'ASIC', 'APRA', 'Kelly_Burke', 'Department_of_Education', 'The_Arts', 'ABC', 'The_World_Today', 'ABC_Radio',
+'IPA'
 );
 
