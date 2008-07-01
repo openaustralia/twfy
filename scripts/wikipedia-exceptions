@@ -1,4 +1,7 @@
 delete from titles where title in (
-'The_Bill', 'III', 'DAWN', 'The_Members', 'SEAL', 'The_Department', 'And_I', 'The_Border'
+'The_Bill', 'III', 'DAWN', 'The_Members', 'SEAL', 'The_Department', 'And_I', 'The_Border', 'TGP', 'CH', 'CO', 'The_Office',
+'Science_and_Technology', 'House_of_Representatives', 'MP', 'The_President', 'AM', 'The_Gap', 'WA', 'New_England', 'The_Americans',
+'The_Treasury', 'The_Australian', 'IGA', 'CRC', 'CD', 'CDL', 'St_Vincent', 'CBD', 'MacPherson', 'The_Jets', 'Competition_Commission',
+'James_Sullivan', 'BEC', 'CUA', 'PET', 'East_Asia', 'Princess_Anne'
 );
 
