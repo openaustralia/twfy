@@ -37,6 +37,8 @@ freely available. Do let us know if you want to help!
 	<li>Bruno Mattarollo</li>
 	<li>Matthew Panetta</li>
 	<li>Wade Millican</li>
+	<li>Nathanael Boehm</li>
+	<li>Daniel Kinsman</li>
 </ul>
 
 <p><em>They did all this in their spare time, because they thought it was worth doing.
