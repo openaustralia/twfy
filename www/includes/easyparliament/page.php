@@ -1039,7 +1039,7 @@ pr()//-->
 			echo '>';
 		} elseif ($house == 1) {
             // For MPs, prompt for photo
-            echo '<div class="textportrait"><br>We\'re missing a photo!<br><br><a href="mailto:team@theyworkforyou.com">Email us one</a> <small>(that you have copyright of)</small><br><br></div>';
+            echo '<div class="textportrait"><br>We\'re missing a photo!<br><br><a href="mailto:contact@openaustralia.org">Email us one</a> <small>(that you have copyright of)</small><br><br></div>';
         }
 
 		echo '<ul class="hilites">';
