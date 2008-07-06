@@ -4,6 +4,22 @@
 
 $all_news = array(
 
+3 => array('OpenAustralia behind the scenes', <<<EOT
+This news feed will tell you about updates to the site.
+
+There have been some pretty exciting developments behind the scenes, which you can follow on our blog at
+<a href="http://blog.openaustralia.org">blog.openaustralia.org</a>. There's a link at the bottom of every page as well.
+
+For live updates follow @openaustralia on <a href="http://www.twitter.com/openaustralia">twitter</a>. 
+EOT
+, '2008-07-06 19:56:00', 'Matthew'),
+
+2 => array('Photos on all representatives page', <<<EOT
+On the "<a href="/mps">All Representatives</a>" page you now get a photo for each member so you can more easily
+browse through the list and find the person you're looking for.
+EOT
+, '2008-07-06 19:35:00', 'Matthew'),
+
 1 => array('Public Launch of OpenAustralia Beta', <<<EOT
 We're open to the public! After more than six months work by a small
 group of volunteers working in their spare time, we're launching
@@ -28,7 +44,6 @@ that looks wrong please email us at contact@openaustralia.org.
 Enjoy!
 EOT
 , '2008-06-16 09:00:00', 'Matthew'),
-
 );
 
 // General news functions
