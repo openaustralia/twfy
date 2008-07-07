@@ -1021,9 +1021,10 @@ pr()//-->
 */
 
 		foreach ($member['houses'] as $house) {
-			if ($house==2) continue;
-			if (!$member['current_member'][$house]) $title .= ', former';
-			if ($house==1) $title .= ' MP';
+			$title .= ',';
+			if (!$member['current_member'][$house]) $title .= ' former';
+			if ($house==1) $title .= ' Representative';
+			if ($house==2) $title .= ' Senator';
 			if ($house==3) $title .= ' MLA';
 			if ($house==4) $title .= ' MSP';
 		}
@@ -1066,7 +1067,7 @@ pr()//-->
 				}
 			}
 			$desc .= ' ';
-			if ($house==1) $desc .= 'MP';
+			if ($house==1) $desc .= 'Representative';
 			if ($house==2) $desc .= 'Senator';
 			if ($house==3) $desc .= 'MLA';
 			if ($house==4) $desc .= 'MSP';
@@ -1099,7 +1100,7 @@ pr()//-->
 		}
 
 		if (isset($member['left_house'][1]) && isset($member['entered_house'][2])) {
-			print '<li><strong>Entered the House of Lords ';
+			print '<li><strong>Entered the Senate ';
 			if (strlen($member['entered_house'][2]['date_pretty'])==4)
 				print 'in ';
 			else
@@ -1108,7 +1109,7 @@ pr()//-->
 			print '</strong>';
 			if ($member['entered_house'][2]['reason']) print ' &mdash; ' . $member['entered_house'][2]['reason'];
 			print '</li>';
-			print '<li><strong>Previously MP for ';
+			print '<li><strong>Previously Representative for ';
 			print $member['left_house'][1]['constituency'] . ' until ';
 			print $member['left_house'][1]['date_pretty'].'</strong>';
 			if ($member['left_house'][1]['reason']) print ' &mdash; ' . $member['left_house'][1]['reason'];
