@@ -75,7 +75,7 @@ class PEOPLE {
 
 	function _get_data_by_group($args) {
 		// $args can have an optional 'order' element.
-
+		
 		$order = 'last_name';
 		$sqlorder = 'last_name, first_name';
 		$query = 'SELECT person_id, title, first_name, last_name, constituency, party, dept, position
@@ -156,8 +156,8 @@ class PEOPLE {
 				$data[$p_id] = $narray;
 			}
 		}
-		if ($args['house'] == 2 && ($order == 'name' || $order == 'constituency'))
-			uasort($data, array($this, 'by_peer_name'));
+		#if ($args['house'] == 2 && ($order == 'name' || $order == 'constituency'))
+		#	uasort($data, array($this, 'by_peer_name'));
 		
 		$data = array (
 			'info' => array (

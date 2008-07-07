@@ -37,12 +37,18 @@ $th_party = '<a href="' . $URL->generate() . '">Party</a>';
 if ($order == 'party')
 	$th_party = 'Party';
 
+$URL->insert(array('o'=>'c'));
+$th_state = '<a href="' . $URL->generate() . '">State</a>';
+if ($order == 'constituency')
+	$th_state = 'State';
+
 ?>
 				<table border="0" cellpadding="4" cellspacing="0" width="90%" class="people">
 				<thead>
 				<th><?php echo $th_name; ?></th>
 				<th><?php echo $th_party; ?></th>
-				<th>Ministerialship</th>
+				<th><?php echo $th_state; ?></th>
+				<th>Positions</th>
 <?php if ($order == 'debates') { ?>
 				<th>Debates spoken in the last year</th>
 <?php } ?>
@@ -83,6 +89,7 @@ function render_peers_row($peer, &$style, $order, $URL) {
 				<tr>
 				<td class="row-<?php echo $style; ?>"><a href="<?php echo $URL->generate().make_member_url($name, $peer['constituency'], 2); ?>"><?php echo ucfirst($name); ?></a></td>
 				<td class="row-<?php echo $style; ?>"><?php echo $party; ?></td>
+				<td class="row-<?php echo $style; ?>"><?php echo $peer['constituency']?></td>
 				<td class="row-<?php echo $style; ?>"><?php
 	if (is_array($peer['dept'])) print join('<br>', array_map('manymins', $peer['pos'], $peer['dept']));
 	elseif ($peer['dept']) print prettify_office($peer['pos'], $peer['dept']);
