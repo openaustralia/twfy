@@ -81,7 +81,7 @@ function render_peers_row($peer, &$style, $order, $URL) {
 #	$MPURL->insert(array('pid'=>$peer['person_id']));
 	?>
 				<tr>
-				<td class="row-<?php echo $style; ?>"><a href="<?php echo $URL->generate().make_member_url($name, null, 2); ?>"><?php echo ucfirst($name); ?></a></td>
+				<td class="row-<?php echo $style; ?>"><a href="<?php echo $URL->generate().make_member_url($name, $peer['constituency'], 2); ?>"><?php echo ucfirst($name); ?></a></td>
 				<td class="row-<?php echo $style; ?>"><?php echo $party; ?></td>
 				<td class="row-<?php echo $style; ?>"><?php
 	if (is_array($peer['dept'])) print join('<br>', array_map('manymins', $peer['pos'], $peer['dept']));

@@ -17,7 +17,7 @@ class PEOPLE {
 	function display ($view, $args=array(), $format='html') {
 		global $PAGE;
 	
-		$validviews = array('mps');
+		$validviews = array('mps', 'peers');
 		
 		if (in_array($view, $validviews)) {
 		

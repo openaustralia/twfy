@@ -435,10 +435,10 @@ $this->page = array (
 	),
 	'peers' => array (
 		 'menu'			=> array (
-			'text'			=> 'All Lords',
-			'title'			=> "List of all Lords"
+			'text'			=> 'All Senators',
+			'title'			=> "List of all Senators"
 		),
-		'title'			=> 'All Lords',
+		'title'			=> 'All Senators',
 		'track'			=> true,
 		'url'			=> 'peers/'
 	),

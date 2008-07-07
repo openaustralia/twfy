@@ -338,7 +338,7 @@ pageTracker._trackPageview();
 			'hansard' 	=> array ('debatesfront'),
 			'yourmp'	=> array (),
 			'mps'           => array (),
-#			'peers'		=> array (),
+			'peers'		=> array (),
 #			'mlas'          => array (),
 #			'msps'          => array (),
 #			'help_us_out'	=> array (), 
@@ -1065,14 +1065,12 @@ pr()//-->
 					$desc .= $last['from'] . ' ';
 				}
 			}
-			if ($house==1 || $house==3 || $house==4) {
-				$desc .= ' ';
-				if ($house==1) $desc .= 'MP';
-				if ($house==3) $desc .= 'MLA';
-				if ($house==4) $desc .= 'MSP';
-				$desc .= ' for ' . $member['left_house'][$house]['constituency'];
-			}
-			if ($house==2 && $party != 'Bishop') $desc .= ' Peer';
+			$desc .= ' ';
+			if ($house==1) $desc .= 'MP';
+			if ($house==2) $desc .= 'Senator';
+			if ($house==3) $desc .= 'MLA';
+			if ($house==4) $desc .= 'MSP';
+			$desc .= ' for ' . $member['left_house'][$house]['constituency'];
 			$desc .= '</strong></li>';
 		}
 		print $desc;
@@ -1116,7 +1114,7 @@ pr()//-->
 			if ($member['left_house'][1]['reason']) print ' &mdash; ' . $member['left_house'][1]['reason'];
 			print '</li>';
 		} elseif (isset($member['entered_house'][2]['date'])) {
-			print '<li><strong>Became a Lord ';
+			print '<li><strong>Became a Senator ';
 			if (strlen($member['entered_house'][2]['date_pretty'])==4)
 				print 'in ';
 			else
@@ -1213,7 +1211,6 @@ pr()//-->
 						<li><a href="http://www.writetothem.com/"><strong>Send a message to your MLA</strong></a> <small>(via WriteToThem.com)</small></li>
 <?php		} elseif ($member['current_member'][2]) {
 			?>
-						<li><a href="http://www.writetothem.com/?person=uk.org.publicwhip/person/<?php echo $member['person_id']; ?>"><strong>Send a message to <?php echo $member['full_name']; ?></strong></a> <small>(via WriteToThem.com)</small></li>
 <?php
 
 		}
@@ -1546,8 +1543,8 @@ and has had no written questions answered for which we know the department or su
 			$displayed_stuff = 1;
 			?>
 		<li><strong><?=htmlentities($extra_info['number_of_alerts']) ?></strong> <?=($extra_info['number_of_alerts']==1?'person is':'people are') ?> tracking whenever <?
-if ($member['house_disp']==1) print 'this MP';
-elseif ($member['house_disp']==2) print 'this peer';
+if ($member['house_disp']==1) print 'this Representative';
+elseif ($member['house_disp']==2) print 'this Senator';
 elseif ($member['house_disp']==3) print 'this MLA';
 elseif ($member['house_disp']==4) print 'this MSP';
 elseif ($member['house_disp']==0) print $member['full_name']; ?> speaks<?php
