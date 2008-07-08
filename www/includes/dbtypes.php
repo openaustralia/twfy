@@ -154,7 +154,8 @@ $parties = array (
 	'SPK'   => 'Speaker',
 	'UKU'   => 'United Kingdom Unionist',
 	'UU'    => 'Ulster Unionist',
-	'XB'    => 'Crossbench'
+	'XB'    => 'Crossbench',
+	'PRESIDENT' => 'President of the Senate'
 );
 
 
