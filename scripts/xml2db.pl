@@ -1276,7 +1276,7 @@ sub add_lordsdebates_day
         my $twig = XML::Twig->new(twig_handlers => { 
                 'speech' => sub { do_load_speech($_, 101, 0, $_->sprint(1)) },
                 'minor-heading' => sub { do_load_subheading($_, 101, strip_string($_->sprint(1))) },
-#                'major-heading' => \&load_debate_heading,
+                'major-heading' => sub { load_debate_heading($_, 101) },
                 'division' => sub { load_debate_division($_, 101) },
                 'gidredirect' => sub { do_load_gidredirect($_, 101) },
                 }, output_filter => $outputfilter );
