@@ -65,7 +65,7 @@ $hansardmajors = array(
 	),
 	101 => array(
 		'type'=>'debate',
-		'title'=>'Lords debates',
+		'title'=>'Senate debates',
 		'singular'=>'debate',
 		'plural'=>'debates',
 		'page'=>'lordsdebate',

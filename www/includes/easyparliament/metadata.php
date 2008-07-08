@@ -341,9 +341,9 @@ $this->page = array (
 	'hansard' => array (
 		'menu'			=> array (
 			'text'			=> 'Hansard',
-			'title'			=> "House debates"
+			'title'			=> "House of Representatives and Senate debates"
 		),
-		'title'			=> 'House of Representatives',
+		'title'			=> 'House of Representatives and Senate debates',
 		'track'			=> true,
 		'url'			=> 'hansard/'
 	),	
@@ -413,11 +413,11 @@ $this->page = array (
 	),			
 	'lordsdebatesfront' => array (
 		'menu'			=> array (
-			'text'			=> 'Lords Debates',
-			'title'			=> "House of Lords debates"
+			'text'			=> 'Senate Debates',
+			'title'			=> "Senate debates"
 		),
 		'parent'		=> 'hansard',
-		'title'			=> 'House of Lords debates',
+		'title'			=> 'Senate debates',
 		'track'			=> true,
 		'rss'			=> 'lords/lords.rss',
 		'url'			=> 'lords/'

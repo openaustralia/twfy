@@ -335,7 +335,7 @@ pageTracker._trackPageview();
 		// we're within that section.
 		$items = array (
 			'home' 		=> array ('sitenews', 'comments_recent', 'api_front'),
-			'hansard' 	=> array ('debatesfront'),
+			'hansard' 	=> array ('debatesfront', 'lordsdebatesfront'),
 			'yourmp'	=> array (),
 			'mps'           => array (),
 			'peers'		=> array (),

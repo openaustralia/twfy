@@ -3,7 +3,7 @@
 
 $this->block_start(array(
 	'id'=>'help', 
-	'title'=>"What are Lords debates?", 
+	'title'=>"What are Senate debates?", 
 	'url'=>'/lords/#help',
 	'body'=>false
 ));
