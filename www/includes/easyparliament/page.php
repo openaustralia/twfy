@@ -1535,9 +1535,8 @@ and has had no written questions answered for which we know the department or su
 		}
 		if ($member['party'] != 'Sinn Fein') {
 #			$displayed_stuff |= display_stats_line('public_whip_division_attendance', 'Has voted in <a href="http://www.publicwhip.org.uk/mp.php?id=uk.org.publicwhip/member/' . $member['member_id'] . '&amp;showall=yes#divisions" title="See more details at Public Whip">', 'of vote', '</a> in parliament', $after_stuff, $extra_info);
-
-			$displayed_stuff |= display_stats_line('comments_on_speeches', 'People have made <a href="' . WEBPATH . 'comments/recent/?pid='.$member['person_id'].'">', 'comment', "</a> on this MP's speeches", '', $extra_info);
-			$displayed_stuff |= display_stats_line('reading_age', 'This MP\'s speeches are understandable to an average ', '', ' year old, going by the <a href="http://en.wikipedia.org/wiki/Flesch-Kincaid_Readability_Test">Flesch-Kincaid Grade Level</a> score', '', $extra_info);
+			$displayed_stuff |= display_stats_line('comments_on_speeches', 'People have made <a href="' . WEBPATH . 'comments/recent/?pid='.$member['person_id'].'">', 'comment', "</a> on this Representative's speeches", '', $extra_info);
+			$displayed_stuff |= display_stats_line('reading_age', 'This Representative\'s speeches are understandable to an average ', '', ' year old, going by the <a href="http://en.wikipedia.org/wiki/Flesch-Kincaid_Readability_Test">Flesch-Kincaid Grade Level</a> score', '', $extra_info);
 		}
 		
 		if (isset($extra_info['number_of_alerts'])) {
@@ -2956,7 +2955,7 @@ function display_stats_line_house($house, $category, $blurb, $type, $inwhat, $ex
 			$inwhat = preg_replace('#<\/a>#', '', $inwhat);
 		}
 	}
-	if ($house==2) $inwhat = str_replace('MP', 'Lord', $inwhat);
+	if ($house==2) $inwhat = str_replace('Representative', 'Senator', $inwhat);
 	print '<li>' . $blurb;
 	print '<strong>' . $extra_info[$category];
 	if ($type) print ' ' . make_plural($type, $extra_info[$category]);
@@ -2965,7 +2964,7 @@ function display_stats_line_house($house, $category, $blurb, $type, $inwhat, $ex
 	if ($minister)
 		print ' &#8212; Ministers do not ask written questions';
 	else {
-		$type = ($house==1?'MP':($house==2?'Lord':'MLA'));
+		$type = ($house==1?'Representative':($house==2?'Senator':'MLA'));
 		if (!get_http_var('rem') && isset($extra_info[$category . '_quintile'])) {
 			print ' &#8212; ';
 			$q = $extra_info[$category . '_quintile'];
