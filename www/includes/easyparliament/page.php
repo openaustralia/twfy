@@ -1489,7 +1489,7 @@ and has had no written questions answered for which we know the department or su
 		$displayed_stuff = 0;
 		?>
 		<p><em>Please note that numbers do not measure quality. 
-		Also, representatives may do other things not currently covered
+		Also, <?php if ($member['house_disp']==1) echo "Representatives"; else echo "Senators"; ?> may do other things not currently covered
 		by this site.</em> (<a href="<?=WEBPATH ?>help/#numbers">More about this</a>)</p>
 <ul>
 <?php
