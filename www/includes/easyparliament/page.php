@@ -990,7 +990,24 @@ pr()//-->
 	function display_member($member, $extra_info) {
 		global $THEUSER, $DATA, $this_page;
 
-		$title = ucfirst($member['full_name']);
+		# If current Senator show their name as "Senator John Smith". Current Representative show their name as "John Smith MP"
+		$title = $member['current_member'][2] ? 'Senator ' : '';
+		$title .= ucfirst($member['full_name']);
+		# Show current titles first
+		foreach ($member['houses'] as $house) {
+			if ($member['current_member'][$house]) {
+				$title .= ' ';
+				if ($house==1) $title .= 'MP';
+			}
+		}
+		# Show former membership
+		foreach ($member['houses'] as $house) {
+			if (!$member['current_member'][$house]) {
+				$title .= ', former ';
+				if ($house==1) $title .= 'Representative';
+				if ($house==2) $title .= 'Senator';
+			}
+		}
 
 /*		if (isset($extra_info["public_whip_dreammp996_distance"])) {
 			$dmpscore = floatval($extra_info["public_whip_dreammp996_distance"]);
@@ -1020,14 +1037,6 @@ pr()//-->
 		$this->block_end();
 */
 
-		foreach ($member['houses'] as $house) {
-			$title .= ',';
-			if (!$member['current_member'][$house]) $title .= ' former';
-			if ($house==1) $title .= ' Representative';
-			if ($house==2) $title .= ' Senator';
-			if ($house==3) $title .= ' MLA';
-			if ($house==4) $title .= ' MSP';
-		}
 		if ($rssurl = $DATA->page_metadata($this_page, 'rss')) {
 			$title = '<a href="' . WEBPATH . $rssurl . '"><img src="' . WEBPATH . 'images/rss.gif" alt="RSS feed" border="0" align="right"></a> ' . $title;
 		}
