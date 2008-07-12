@@ -1055,15 +1055,7 @@ pr()//-->
 		echo '<ul class="hilites">';
 		$desc = '';
 		foreach ($member['houses'] as $house) {
-			if ($house==0) {
-				$desc .= '<li><strong>Acceded on ';
-				$desc .= $member['entered_house'][0]['date_pretty'];
-				$desc .= '</strong></li>';
-				$desc .= '<li><strong>Coronated on 2 June 1953</strong></li>';
-				continue;
-			}
 			$party = $member['left_house'][$house]['party'];
-			if ($house==1 && isset($member['entered_house'][2])) continue; # Same info is printed further down
 			$desc .= '<li><strong>';
 			if (!$member['current_member'][$house]) $desc .= 'Former ';
 			$desc .= htmlentities($party);
@@ -1118,11 +1110,13 @@ pr()//-->
 			print '</strong>';
 			if ($member['entered_house'][2]['reason']) print ' &mdash; ' . $member['entered_house'][2]['reason'];
 			print '</li>';
-			print '<li><strong>Previously Representative for ';
-			print $member['left_house'][1]['constituency'] . ' until ';
-			print $member['left_house'][1]['date_pretty'].'</strong>';
-			if ($member['left_house'][1]['reason']) print ' &mdash; ' . $member['left_house'][1]['reason'];
-			print '</li>';
+			if (!$member['current_member'][1]) {
+				print '<li><strong>Previously Representative for ';
+				print $member['left_house'][1]['constituency'] . ' until ';
+				print $member['left_house'][1]['date_pretty'].'</strong>';
+				if ($member['left_house'][1]['reason']) print ' &mdash; ' . $member['left_house'][1]['reason'];
+				print '</li>';
+			}
 		} elseif (isset($member['entered_house'][2]['date'])) {
 			print '<li><strong>Became a Senator ';
 			if (strlen($member['entered_house'][2]['date_pretty'])==4)
@@ -1133,13 +1127,13 @@ pr()//-->
 			if ($member['entered_house'][2]['reason']) print ' &mdash; ' . $member['entered_house'][2]['reason'];
 			print '</li>';
 		} elseif (in_array(1, $member['houses']) && !$member['current_member'][1]) {
-			print '<li><strong>Left Parliament on '.$member['left_house'][1]['date_pretty'].'</strong>';
+			print '<li><strong>Left House of Representatives on '.$member['left_house'][1]['date_pretty'].'</strong>';
 			if ($member['left_house'][1]['reason']) print ' &mdash; ' . $member['left_house'][1]['reason'];
 			print '</li>';
 		}
 
-		if (isset($member['entered_house'][1]['date']) && $member['entered_house'][1]['date'] != '1997-05-01') {
-			print '<li><strong>Entered Parliament on ';
+		if (isset($member['entered_house'][1]['date'])) {
+			print '<li><strong>Entered House of Representatives on ';
 			print $member['entered_house'][1]['date_pretty'].'</strong>';
 			if ($member['entered_house'][1]['reason']) print ' &mdash; ' . $member['entered_house'][1]['reason'];
 			print '</li>';
@@ -1150,7 +1144,7 @@ pr()//-->
 				$extra_info['lordbio_from'], '">Number 10 press release</a>)</small></li>';
 		}
 		if (in_array(2, $member['houses']) && !$member['current_member'][2]) {
-			print '<li><strong>Left Parliament on '.$member['left_house'][2]['date_pretty'].'</strong>';
+			print '<li><strong>Left Senate on '.$member['left_house'][2]['date_pretty'].'</strong>';
 			if ($member['left_house'][2]['reason']) print ' &mdash; ' . $member['left_house'][2]['reason'];
 			print '</li>';
 		}
