@@ -9,7 +9,7 @@ for example to find documents containing the word "representation" but not the w
 <li>To search for an exact phrase, use quotes (""). For example to find only documents contain the exact phrase "Cole Inquiry":<br>
 <span class="example-input">"Cole Inquiry"</span></li>
 
-<li>If the search phrase matches (part of) a Representative's name, their own page will appear as the top result.</li>
+<li>If the search phrase matches (part of) a Representative's or Senator's name, their own page will appear as the top result.</li>
 
 <li>If your search term matches a glossary definition, a link to that definition will appear as the top result.</li>
 
