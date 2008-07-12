@@ -377,7 +377,7 @@ $this->page = array (
 			'text'			=> 'Home',
 			'title'			=> "The front page of the site"
 		),
-		'title'			=> "Are your Representatives working for you in Australia's Parliament?",
+		'title'			=> "Are your Representatives and Senators working for you in Australia's Parliament?",
 		'track'			=> true,
 		'rss'			=> 'news/index.rdf',
 		'url'			=> ''
