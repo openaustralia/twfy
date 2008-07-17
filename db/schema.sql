@@ -299,7 +299,9 @@ CREATE TABLE `users` (
   `registrationtoken` varchar(24) NOT NULL default '',
   `confirmed` tinyint(1) NOT NULL default '0',
   `url` varchar(255) NOT NULL default '',
+  `api_key` char(24),
   PRIMARY KEY  (`user_id`),
+  UNIQUE KEY `api_key` (`api_key`),
   KEY `email` (`email`)
 );
 
@@ -309,3 +311,62 @@ CREATE TABLE `uservotes` (
   `vote` tinyint(1) NOT NULL default '0',
   KEY `epobject_id` (`epobject_id`,`vote`)
 );
+
+CREATE TABLE `mentions` (
+  `mention_id` int(11) NOT NULL auto_increment,
+  `gid` varchar(100) default NULL,
+  `type` int(11) NOT NULL,
+  `date` date default NULL,
+  `url` varchar(255) default NULL,
+  `mentioned_gid` varchar(100) default NULL,
+  UNIQUE KEY `all_values` (`gid`,`type`,`date`,`url`,`mentioned_gid`),
+  PRIMARY KEY (`mention_id`)
+);
+
+-- Free Our Bills
+CREATE TABLE `campaigners` (
+  `campaigner_id` mediumint(8) unsigned NOT NULL auto_increment,
+  `email` varchar(255) NOT NULL default '',
+  `postcode` varchar(255) NOT NULL default '',
+  `constituency` varchar(100) NOT NULL default '',
+  `token` varchar(255) NOT NULL default '',
+  `confirmed` tinyint(1) NOT NULL default '0',
+  `signup_date` datetime NOT NULL,
+  PRIMARY KEY  (`campaigner_id`),
+  KEY `email` (`email`),
+  KEY `confirmed` (`confirmed`),
+  KEY `constituency` (`constituency`)
+);
+
+-- who each email has been sent to so far
+CREATE TABLE `campaigners_sent_email` (
+  `campaigner_id` int(11) NOT NULL,
+  `email_name` varchar(100) NOT NULL,
+
+  UNIQUE KEY `campaigner_id` (`campaigner_id`,`email_name`)
+);
+
+CREATE TABLE `video_timestamps` (
+  `id` int(11) NOT NULL auto_increment,
+  `gid` varchar(100) NOT NULL,
+  `user_id` int(11) default NULL,
+  `atime` time NOT NULL,
+  `deleted` tinyint(1) NOT NULL default '0',
+  `whenstamped` timestamp NOT NULL default CURRENT_TIMESTAMP,
+  PRIMARY KEY  (`id`),
+  KEY `gid` (`gid`),
+  KEY `deleted` (`deleted`),
+  KEY `user_id` (`user_id`),
+  UNIQUE KEY `gid_user_id` (`gid`, `user_id`)
+);
+
+CREATE TABLE `api_stats` (
+  `id` int(11) NOT NULL auto_increment,
+  `api_key` char(24) NOT NULL,
+  `ip_address` varchar(16) NOT NULL,
+  `query_time` datetime NOT NULL,
+  `query` text NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `api_key` (`api_key`)
+);
+
