@@ -24,9 +24,9 @@
 <!-- start new faq entry-->
 <dt><a name="missing"></a>Is this the whole of Hansard?</dt>
 <dd>
-	<p>Not quite. This is everything in the Hansard for the House of Representatives excluding written questions, petitions,
+	<p>Not quite. This is everything in the Hansard for the House of Representatives and the Senate excluding written questions, petitions,
 		the divisions (voting), and procedural text and so far goes back to the beginning of 2006. It also does not include committees. Think of what we've done
-thus far as a mere taster of what could be possible. In the future we plan to add voting information, the Senate and committees too.
+thus far as a mere taster of what could be possible.
 If you want the complete, definitive record, go to the <a href="http://www.aph.gov.au/" title="Link to Australian Parliament website">Australian Parliament</a> site, and you might be able to find what you want.</p>
 </dd>
 <!-- end old faq entry -->
