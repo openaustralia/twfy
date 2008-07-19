@@ -854,9 +854,9 @@ pageTracker._trackPageview();
 		$links[] = '<a href="http://software.openaustralia.org">Source code</a>';
 		$links[] = '<a href="http://blog.openaustralia.org">Blog</a>';
 
-#		$user_agent = ( isset( $_SERVER['HTTP_USER_AGENT'] ) ) ? strtolower( $_SERVER['HTTP_USER_AGENT'] ) : '';
-#		if (stristr($user_agent, 'Firefox/'))
-#			$links[] = '<a href="http://mycroft.mozdev.org/download.html?name=theyworkforyou">Add search to Firefox</a>';
+		$user_agent = ( isset( $_SERVER['HTTP_USER_AGENT'] ) ) ? strtolower( $_SERVER['HTTP_USER_AGENT'] ) : '';
+		if (stristr($user_agent, 'Firefox/'))
+			$links[] = '<a href="http://mycroft.mozdev.org/download.html?name=openaustralia">Add search to Firefox</a>';
 		?>
 	
 		<div id="footer">
