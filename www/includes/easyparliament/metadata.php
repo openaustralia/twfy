@@ -396,20 +396,20 @@ $this->page = array (
 	'lordsdebate'  => array (
 		'parent'		=> 'lordsdebatesfront',
 		'track'			=> true,
-		'url'			=> 'lords/',
+		'url'			=> 'senate/',
 		'session_vars'	=> array ('gid'),
 	),
 	'lordsdebates'  => array (
 		'parent'		=> 'lordsdebatesfront',
 		'track'			=> true,
-		'url'			=> 'lords/',
+		'url'			=> 'senate/',
 		'session_vars'	=> array ('id'),
 	),
 	'lordsdebatesday' => array (
 		'parent'		=> 'lordsdebatesfront',
 		'session_vars'	=> array ('d'),
 		'track'			=> true,
-		'url'			=> 'lords/',
+		'url'			=> 'senate/',
 	),			
 	'lordsdebatesfront' => array (
 		'menu'			=> array (
@@ -419,19 +419,19 @@ $this->page = array (
 		'parent'		=> 'hansard',
 		'title'			=> 'Senate debates',
 		'track'			=> true,
-		'rss'			=> 'lords/lords.rss',
-		'url'			=> 'lords/'
+		'rss'			=> 'senate/senate.rss',
+		'url'			=> 'senate/'
 	),
 	'lordsdebatesyear' => array (
 		'parent'		=> 'lordsdebatesfront',
 		'title'			=> 'Debates for ',
-		'url'			=> 'lords/'
+		'url'			=> 'senate/'
 	),
 
 	'peer' => array (
-		'title'			=> 'Peer',
+		'title'			=> 'Senator',
 		'track'			=> true,
-		'url'			=> 'peer/'
+		'url'			=> 'senator/'
 	),
 	'peers' => array (
 		 'menu'			=> array (
@@ -440,7 +440,7 @@ $this->page = array (
 		),
 		'title'			=> 'All Senators',
 		'track'			=> true,
-		'url'			=> 'peers/'
+		'url'			=> 'senators/'
 	),
 
 	'mla' => array (
