@@ -5,6 +5,8 @@ General utility functions v1.1 (well, it was).
 
 */
 
+include_once('strptime.php');
+
 function twfy_debug ($header, $text="") {
 	// Pass it a brief header word and some debug text and it'll be output.
 

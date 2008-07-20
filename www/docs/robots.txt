@@ -3,6 +3,7 @@ Disallow: /pwdata
 Disallow: /pwdata/scrapedxml
 Disallow: /pwdata/cmpages
 Disallow: /user
+Disallow: /search
 
 User-agent: Slurp
 Crawl-delay: 5

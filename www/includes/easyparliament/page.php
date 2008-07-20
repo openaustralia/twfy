@@ -854,9 +854,9 @@ pageTracker._trackPageview();
 		$links[] = '<a href="http://software.openaustralia.org">Source code</a>';
 		$links[] = '<a href="http://blog.openaustralia.org">Blog</a>';
 
-#		$user_agent = ( isset( $_SERVER['HTTP_USER_AGENT'] ) ) ? strtolower( $_SERVER['HTTP_USER_AGENT'] ) : '';
-#		if (stristr($user_agent, 'Firefox/'))
-#			$links[] = '<a href="http://mycroft.mozdev.org/download.html?name=theyworkforyou">Add search to Firefox</a>';
+		$user_agent = ( isset( $_SERVER['HTTP_USER_AGENT'] ) ) ? strtolower( $_SERVER['HTTP_USER_AGENT'] ) : '';
+		if (stristr($user_agent, 'Firefox/'))
+			$links[] = '<a href="http://mycroft.mozdev.org/download.html?name=openaustralia">Add search to Firefox</a>';
 		?>
 	
 		<div id="footer">
@@ -1726,8 +1726,11 @@ elseif ($member['house_disp']==0) print $member['full_name']; ?> speaks<?php
 		}
 		if(isset($links['wikipedia_url'])) {
 			$html .= '	<li><a href="' . $links['wikipedia_url'] . '">Biography</a> <small>(From Wikipedia)</small></li>';
-		}
-		
+		}	
+		if (isset($links['mp_biography_qanda']) && $links['mp_biography_qanda'] != "") {
+			$html .= '	<li><a href="' . $links['mp_biography_qanda'] . '">Biography</a> <small>(From ABC\'s Q &amp; A)</small></li>';
+		} 
+
 		if(isset($links['diocese_url'])) {
 			$html .= '	<li><a href="' . $links['diocese_url'] . '">Diocese website</a></li>';
 		}
@@ -1762,10 +1765,6 @@ elseif ($member['house_disp']==0) print $member['full_name']; ?> speaks<?php
 
 		} 
 
-		if (isset($links['mp_biography_qanda']) && $links['mp_biography_qanda'] != "") {
-			$html .= '	<li><a href="' . $links['mp_biography_qanda'] . '">Biography from ABC\'s Q &amp; A</a></li>';
-
-		} 
 		$bbc_name = urlencode($member->first_name()) . "%20" . urlencode($member->last_name());
 		if ($member->member_id() == -1)
 			$bbc_name = 'Queen Elizabeth';
