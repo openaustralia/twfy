@@ -313,14 +313,14 @@ if (isset($MEMBER) && is_array($MEMBER->person_id())) {
 		if ($previous_people) {
 			$sidebars[] = array(
 				'type' => 'html',
-				'content' => '<div class="block"><h4>Previous MPs in this constituency</h4><div class="blockbody"><ul>' . $previous_people . '</ul></div></div>'
+				'content' => '<div class="block"><h4>Previous Representatives in this constituency</h4><div class="blockbody"><ul>' . $previous_people . '</ul></div></div>'
 			);
 		}
 		$future_people = $MEMBER->future_mps();
 		if ($future_people) {
 			$sidebars[] = array(
 				'type' => 'html',
-				'content' => '<div class="block"><h4>Succeeding MPs in this constituency</h4><div class="blockbody"><ul>' . $future_people . '</ul></div></div>'
+				'content' => '<div class="block"><h4>Succeeding Representatives in this constituency</h4><div class="blockbody"><ul>' . $future_people . '</ul></div></div>'
 			);
 		}
 	}
