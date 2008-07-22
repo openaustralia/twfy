@@ -334,8 +334,10 @@ pageTracker._trackPageview();
 		// Links in the top menu, and the sublinks we see if
 		// we're within that section.
 		$items = array (
-			'home' 		=> array ('sitenews', 'comments_recent', 'api_front'),
-			'hansard' 	=> array ('debatesfront', 'lordsdebatesfront'),
+			'home' 		=> array (),
+			'sitenews'  => array(),
+			'comments_recent' => array(),
+			'debatesfront' => array(),
 			'yourmp'	=> array (),
 			'mps'           => array (),
 			'peers'		=> array (),
@@ -423,14 +425,11 @@ pageTracker._trackPageview();
 			$user_bottom_links = $this->user_bar($top_hilite, $bottom_hilite);
 			if ($user_bottom_links) $bottom_links = $user_bottom_links;
 			?>
-			<ul id="site">
-			<li><?php print implode("</li>\n\t\t\t<li>", $top_links); ?></li>
-			</ul>
 			<br>
 		</div>
 		<div id="bottommenu">
 			<ul>
-			<li><?php print implode("</li>\n\t\t\t<li>", $bottom_links); ?></li>
+			<li><?php print implode("</li>\n\t\t\t<li>", $top_links); ?></li>
 			</ul>
 		</div>
 	</div> <!-- end #menu -->
