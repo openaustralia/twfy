@@ -641,7 +641,7 @@ $this->page = array (
 	
 	'sitenews'		=> array (
 		'menu'			=> array (
-			'text'			=> 'OpenAustralia news',
+			'text'			=> 'News',
 			'title'			=> "News about changes to this website"
 		),
 		'parent'		=> 'home',
@@ -937,7 +937,7 @@ $this->page = array (
 
 	'yourmp' => array (
 		'menu'			=> array (
-			'text'			=> 'Your Representative',
+			'text'			=> '<em>Your</em> Representative',
 			'title'			=> "Find out about your Member of the House of Representatives"
 		),
 		'sidebar'		=> 'yourmp',
