@@ -14,7 +14,7 @@ print '<?xml version="1.0" encoding="iso-8859-1"?>' ?>
 
 <channel rdf:about="http://<? DOMAIN . WEBPATH . "news/" ?>">
 <title>OpenAustralia News</title>
-<link>http://<? DOMAIN . WEBPATH . "news/" ?></link>
+<link>http://<?= DOMAIN . WEBPATH . "news/" ?></link>
 <description>The weblog for news about site updates, etc.</description>
 <dc:language>en-us</dc:language>
 <dc:creator></dc:creator>
