@@ -60,7 +60,7 @@ If you want the complete, definitive record, go to the <a href="http://www.aph.g
 <!-- start new faq entry-->
 <dt><a name="rss"></a>What is RSS?</dt>
 <dd>
-<p>RSS files contain information about a list of things: diary entries, speeches, etc. and are formatted to be readable by computer programs, rather than humans. So what use are they? You can use a program called a news reader to store the locations of RSS feeds, and each time one is updated - with new diary entries or speeches - you can easily see what's new. It saves you visiting web pages on the off-chance anything new has appeared. Popular RSS readers are <a href="http://www.sharpreader.net/">Sharpreader</a> for Windows or <a href="http://ranchero.com/netnewswire/#lite">NetNewsWire Lite</a> for Macs. <a href="http://www.bloglines.com/">Bloglines</a> is an online RSS reader.</p>
+<p>RSS files contain information about a list of things: diary entries, speeches, etc. and are formatted to be readable by computer programs, rather than humans. So what use are they? You can use a program called a news reader to store the locations of RSS feeds, and each time one is updated - with new diary entries or speeches - you can easily see what's new. It saves you visiting web pages on the off-chance anything new has appeared. Popular RSS readers are <a href="http://www.sharpreader.net/">Sharpreader</a> for Windows or <a href="http://ranchero.com/netnewswire/#lite">NetNewsWire Lite</a> for Macs. <a href="http://www.bloglines.com/">Bloglines</a> and <a href="http://www.google.com/reader">Google Reader</a> are online RSS readers.</p>
 </dd>
 
 <!-- end old faq entry -->
