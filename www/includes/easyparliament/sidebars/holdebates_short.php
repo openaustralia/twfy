@@ -4,7 +4,7 @@
 $this->block_start(array(
 	'id'=>'help', 
 	'title'=>"What are Senate debates?", 
-	'url'=>'/lords/#help',
+	'url'=>'/senate/#help',
 	'body'=>false
 ));
 $this->block_end();
