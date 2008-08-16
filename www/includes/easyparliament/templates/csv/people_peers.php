@@ -11,6 +11,7 @@ twfy_debug("TEMPLATE", "people_peers.php");
 $order = $data['info']['order'];
 
 header('Content-Type: text/csv');
+header('Content-Disposition: attachment; filename=senators.csv');
 print "Person ID,Name,Party,URI";
 print "\n";
 
