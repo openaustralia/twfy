@@ -4,6 +4,18 @@
 
 $all_news = array(
 
+4 => array('The Senate is Here!', <<<EOT
+Just in time for the next sitting, for your civic pleasure, we bring you the Senate. Read the Senate Hansard as
+far back as 2006, and get to know those lovely people working on your behalf, the Senators.
+
+No bills pass without the say so of the Senate, so get over there and see what they're up to. Better still,
+write to them and ask them what they've been doing on your behalf over the recess.
+
+While we've tried to bring you a perfectly working website, it is in beta, so if you find anything broken,
+or see anything wrong, please <a href="mailto:contact@openaustralia.org">drop us a line</a>.
+EOT
+, '2008-08-18 09:00:00', 'Katherine'),
+
 3 => array('OpenAustralia behind the scenes', <<<EOT
 This news feed will tell you about updates to the site.
 
