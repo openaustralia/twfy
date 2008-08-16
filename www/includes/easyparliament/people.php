@@ -151,6 +151,14 @@ class PEOPLE {
 					$narray['party'] = '-';
 					$narray['pos'] = 'Deputy Speaker';
 					$narray['dept'] = 'House of Representatives';
+				} elseif ($narray['party'] == 'PRES') {
+					$narray['party'] = '-';
+					$narray['pos'] = 'President';
+					$narray['dept'] = 'Senate';
+				} elseif ($narray['party'] == 'DPRES') {
+					$narray['party'] = '-';
+					$narray['pos'] = 'Deputy President';
+					$narray['dept'] = 'Senate';
 				}
 
 				$data[$p_id] = $narray;
