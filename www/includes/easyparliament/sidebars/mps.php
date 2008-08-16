@@ -9,7 +9,7 @@ $this->block_start(array('title'=>"This data as a spreadsheet",
 	'body'=>''));
 ?>
 <p>
-	Click <?php echo '<a href="'.$csvurl.'">here</a>'; ?> to download a CSV (Comma Separated Values) file that you can load into Excel.
+	<a href="<?= $csvurl ?>">Download a CSV</a> (Comma Separated Values) file that you can load into Excel.
 </p>
 <?php
 $this->block_end();
