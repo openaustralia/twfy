@@ -7,106 +7,25 @@ include_once 'api_functions.php';
 
 # XXX: Need to override error handling! XXX
 
-$methods = array(
-	'convertURL' => array(
-		'parameters' => array('url'),
-		'required' => true,
-		'help' => 'Converts an aph.gov.au Hansard URL into a OpenAustralia one, if possible',
-	),
-	'getConstituency' => array(
-		'new' => true,
-		'parameters' => array('postcode'),
-		'required' => true,
-		'help' => 'Searches for a constituency',
-	),
-	'getConstituencies' => array(
-		'parameters' => array('date', 'search', 'latitude', 'longitude', 'distance'),
-		'required' => false,
-		'help' => 'Returns list of constituencies',
-	),
-	'getMP' => array(
-		'new' => true,
-		'parameters' => array('id', 'constituency', 'postcode', 'always_return', 'extra'),
-		'required' => true,
-		'help' => 'Returns main details for a representative'
-	),
-	'getMPInfo' => array(
-		'parameters' => array('id'),
-		'required' => true,
-		'help' => 'Returns extra information for a person'
-	),
-	'getMPs' => array(
-		'parameters' => array('party', 'date', 'search'),
-		'required' => false,
-		'help' => 'Returns list of Representatives',
-	),
-	'getLord' => array(
-		'parameters' => array('id'),
-		'required' => true,
-		'help' => 'Returns details for a Lord'
-	),
-	'getLords' => array(
-		'parameters' => array('date', 'party', 'search'),
-		'required' => false,
-		'help' => 'Returns list of Lords',
-	),
-	'getGeometry' => array(
-		'new' => true,
-		'parameters' => array('name'),
-		'required' => false,
-		'help' => 'Returns centre, bounding box of constituencies'
-	),
-/*	'getBoundary' => array(
-		'parameters' => array('name'),
-		'required' => true,
-		'help' => 'Returns boundary polygon of constituency'
-	),
-*/
-	'getCommittee' => array(
-		'new' => true,
-		'parameters' => array('name', 'date'),
-		'required' => true,
-		'help' => 'Returns members of Select Committee',
-	),
-	'getDebates' => array(
-		'new' => true,
-		'parameters' => array('type', 'date', 'search', 'person', 'gid', 'year', 'order', 'page', 'num'),
-		'required' => true,
-		'help' => 'Returns Debates (either Commons, Westminhall Hall, or Lords)',
-	),
-	'getWrans' => array(
-		'parameters' => array('date', 'search', 'person', 'gid', 'year', 'order', 'page', 'num'),
-		'required' => true,
-		'help' => 'Returns Written Answers',
-	),
-	'getWMS' => array(
-		'parameters' => array('date', 'search', 'person', 'gid', 'year', 'order', 'page', 'num'),
-		'required' => true,
-		'help' => 'Returns Written Ministerial Statements',
-	),
-	'getHansard' => array(
-		'parameters' => array('search', 'person', 'order', 'page', 'num'),
-		'required' => true,
-		'help' => 'Returns any of the above',
-	),
-	'getComments' => array(
-		'new' => true,
-		'parameters' => array('search', 'page', 'num', 'pid'),
-		'required' => false,
-		'help' => 'Returns comments'
-	),
-	'postComment' => array(
-		'parameters' => array('user_id', 'gid?'),
-		'working' => false,
-		'required' => true,
-		'help' => 'Posts a comment - needs authentication!'
-	),
-);
-
 if ($q_method = get_http_var('method')) {
+	if (get_http_var('docs')) {
+		$key = 'DOCS';
+	} else {
+		if (!get_http_var('key')) {
+		# Allow key-less requests for some amount of time
+		#	api_error('No API key provided. Please see http://www.theyworkforyou.com/api/key for more information.');
+		#	exit;
+		}
+		$key = get_http_var('key');
+		if ($key && !api_check_key($key)) {
+			api_error('Invalid API key.');
+			exit;
+		}
+	}
 	$match = 0;
 	foreach ($methods as $method => $data) {
 		if (strtolower($q_method) == strtolower($method)) {
+			api_log_call($key);
 			$match++;
 			if (get_http_var('docs')) {
 				$_GET['verbose'] = 1;
@@ -136,6 +55,7 @@ if ($q_method = get_http_var('method')) {
 		}
 	}
 	if (!$match) {
+		api_log_call($key);
 		api_front_page('Unknown function "' . htmlspecialchars($q_method) .
 			'". Possible functions are: ' .
 			join(', ', array_keys($methods)) );
@@ -213,14 +133,23 @@ function api_front_page($error = '') {
 
 <h3>Overview</h3>
 
-<p>All requests take a number of parameters. <em>output</em> is optional, and defaults to <kbd>js</kbd>.</p>
+<ol style="font-size:130%">
+<li><a href="key">Get an API key</a>.
+<li>All requests are made by GETting a particular URL with a number of parameters. <em>key</em> is required;
+<em>output</em> is optional, and defaults to <kbd>js</kbd>.
+</ol>
 
-<p align="center"><strong>http://www.openaustralia.org/api/<em>function</em>?output=<em>output</em>&<em>other_variables</em></strong></p>
+<p align="center"><strong>http://www.openaustralia.org/api/<em>function</em>?key=<em>key</em>&amp;output=<em>output</em>&amp;<em>other_variables</em></strong></p>
 
-<p>The current version of the API is <em>1.0.0</em>. If we make changes
-to the API,
-we'll increase the version number and make it an argument so you can still
-use the old version.</p>
+<? api_key_current_message(); ?>
+
+<p>The current version of the API is <em>1.0.0</em>. If we make changes to the
+API functions, we'll increase the version number and make it an argument so you
+can still use the old version.</p>
+
+<table>
+<tr valign="top">
+<td width="60%">
 
 <h3>Outputs</h3>
 <p>The <em>output</em> argument can take any of the following values:
@@ -232,6 +161,18 @@ function with the <em>callback</em> variable, and then that function will be
 called with the data as its argument.</li>
 <li><strong>rabx</strong>. "RPC over Anything But XML".</li>
 </ul>
+
+</td><td>
+
+<h3>Errors</h3>
+
+<p>If there's an error, either in the arguments provided or in trying to perform the request,
+this is returned as a top-level error string, ie. in XML it returns
+<code>&lt;twfy&gt;&lt;error&gt;ERROR&lt;/error&gt;&lt;/twfy&gt;</code>;
+in JS <code>{"error":"ERROR"}</code>;
+and in PHP and RABX a serialised array containing one entry with key <code>error</code>.
+
+</td></tr></table>
 
 <h3>Licensing</h3>
 
@@ -259,6 +200,10 @@ to use the service on a large scale.
 <ul>
 <li><a href="http://codefluency.com/2006/11/21/tfwy-1-0-0-released">Ruby</a> (thanks to Bruce Williams and Martin Owen)</li>
 <li><a href="http://search.cpan.org/~sden/WebService-TWFY-API-0.01/lib/WebService/TWFY/API.pm">Perl</a> (thanks to Spiros Denaxas)</li>
+<li><a href="http://tools.wackomenace.co.uk/twfyapi/">PHP</a> (thanks to Ruben Arakelyan)</li>
+<li><a href="http://code.google.com/p/twfython/">Python</a> (thanks to Paul Doran)</li>
+<li><a href="http://tools.wackomenace.co.uk/twfyapi/">ASP.net</a> (thanks to Ruben Arakelyan)</li>
+<li><a href="https://sourceforge.net/projects/twfyjavaapi">Java</a> (thanks to Mitch Kent)</li>
 </ul>
 
 <p>If anyone wishes to write bindings for the API in any language, please
@@ -272,38 +217,3 @@ to discuss things.</p>
 	$PAGE->page_end();
 }
 
-function api_sidebar() {
-	global $methods;
-	$sidebar = '<div class="block"><h4>API Functions</h4> <div class="blockbody"><ul>';
-	foreach ($methods as $method => $data){
-		$sidebar .= '<li';
-		if (isset($data['new']))
-			$sidebar .= ' style="border-top: solid 1px #999999;"';
-		$sidebar .= '>';
-		if (!isset($data['working']) || $data['working'])
-			$sidebar .= '<a href="' . WEBPATH . 'api/docs/' . $method . '">';
-		$sidebar .= $method;
-		if (!isset($data['working']) || $data['working'])
-			$sidebar .= '</a>';
-		else
-			$sidebar .= ' - <em>not written yet</em>';
-		#		if ($data['required'])
-		#			$sidebar .= ' (parameter required)';
-		#		else
-		#			$sidebar .= ' (parameter optional)';
-		$sidebar .= '<br>' . $data['help'];
-		#		$sidebar .= '<ul>';
-		#		foreach ($data['parameters'] as $parameter) {
-			#			$sidebar .= '<li>' . $parameter . '</li>';
-			#		}
-			#		$sidebar .= '</ul>';
-		$sidebar .= '</li>';
-	}
-	$sidebar .= '</ul></div></div>';
-	$sidebar = array(
-		'type' => 'html',
-		'content' => $sidebar
-	);
-	return $sidebar;
-}
-?>

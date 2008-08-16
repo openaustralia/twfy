@@ -88,18 +88,17 @@ if (get_http_var("d") != "") {
 	// Show a calendar for a particular year's debates.
 	
 	$this_page = 'debatesyear';
+    $year = (is_numeric(get_http_var('y'))) ? get_http_var('y') : date('Y');
 
-	if (is_numeric(get_http_var('y'))) {
-		$pagetitle = $DATA->page_metadata($this_page, 'title');
-		$DATA->set_page_metadata($this_page, 'title', $pagetitle.' '.get_http_var('y'));
-	}
+    $pagetitle = $DATA->page_metadata($this_page, 'title');
+    $DATA->set_page_metadata($this_page, 'title', $pagetitle.' '.$year);
 	
 	$PAGE->page_start();
 
 	$PAGE->stripe_start();
 
 	$args = array (
-		'year' => get_http_var('y')
+		'year' => $year
 	);
 
 	$LIST = new DEBATELIST;
