@@ -1059,7 +1059,7 @@ pr()//-->
 			$desc .= '<li><strong>';
 			if (!$member['current_member'][$house]) $desc .= 'Former ';
 			$desc .= htmlentities($party);
-			if ($party=='Speaker' || $party=='Deputy-Speaker' || $party=='President of the Senate') {
+			if ($party=='Speaker' || $party=='Deputy-Speaker' || $party=='President' || $party=='Deputy-President') {
 				$desc .= ', and ';
 				# XXX: Will go horribly wrong if something odd happens
 				if ($party=='Deputy-Speaker') {
@@ -1076,7 +1076,7 @@ pr()//-->
 			$desc .= '</strong></li>';
 		}
 		print $desc;
-		if ($member['other_parties'] && $member['party'] != 'Speaker' && $member['party']!='Deputy-Speaker' && $member['party']!='President of the Senate') {
+		if ($member['other_parties'] && $member['party'] != 'Speaker' && $member['party']!='Deputy-Speaker' && $member['party']!='President' && $member['party']!='Deputy-President') {
 			print "<li>Changed party ";
 			foreach ($member['other_parties'] as $r) {
 				$out[] = 'from ' . $r['from'] . ' on ' . format_date($r['date'], SHORTDATEFORMAT);

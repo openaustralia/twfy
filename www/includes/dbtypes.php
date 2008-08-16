@@ -155,7 +155,8 @@ $parties = array (
 	'UKU'   => 'United Kingdom Unionist',
 	'UU'    => 'Ulster Unionist',
 	'XB'    => 'Crossbench',
-	'PRESIDENT' => 'President of the Senate'
+	'PRES'  => 'President',
+	'DPRES' => 'Deputy-President'
 );
 
 
