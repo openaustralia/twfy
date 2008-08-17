@@ -14,7 +14,7 @@ write to them and ask them what they've been doing on your behalf over the reces
 While we've tried to bring you a perfectly working website, it is in beta, so if you find anything broken,
 or see anything wrong, please <a href="mailto:contact@openaustralia.org">drop us a line</a>.
 EOT
-, '2008-08-18 09:00:00', 'Katherine'),
+, '2008-08-17 19:40:00', 'Katherine'),
 
 3 => array('OpenAustralia behind the scenes', <<<EOT
 This news feed will tell you about updates to the site.
