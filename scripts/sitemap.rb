@@ -53,19 +53,60 @@ end
 class Hansard < ActiveRecord::Base
 	set_table_name "hansard"
 	
-	# Returns the unique url for this bit of the Hansard
-	# Again, this should not really be in the model
-	def url
+	# Return all dates for which there are speeches on that day in the given house
+	def Hansard.find_all_dates_for_house(house)
+		if house == "reps"
+			major = 1
+		elsif house == "senate"
+			major = 101
+		else
+			throw "Unexpected value for house: #{house}"
+		end
+		find(:all, :conditions => ['major = ?', major], :group => 'hdate').map {|h| h.hdate}
+	end
+	
+	def house
+		if major == 1
+			"reps"
+		elsif major == 101
+			"senate"
+		else
+			throw "Unexpected value of major: #{major}"
+		end
+	end
+	
+	def numeric_id
 		if gid =~ /^uk.org.publicwhip\/(lords|debate)\/(.*)$/
-			"/" + ($~[1] == "debate" ? "debate" : "senate") + "/?id=" + $~[2]
+			$~[2]
 		else
 			throw "Unexpected form of gid #{gid}"
 		end
 	end
+	
+	# TODO: There seems to be an assymetry between the reps and senate in their handling of the two different kinds of url below
+	# Must investigate this
+	
+	# Returns the unique url for this bit of the Hansard
+	# Again, this should not really be in the model
+	def url
+		"/" + (house == "reps" ? "debate" : "senate") + "/?id=" + numeric_id
+	end
+	
+	# The URL pointing to the date that this speech occurs in
+	def date_url
+		"/" + (house == "reps" ? "debates" : "senate") + "/?d=" + hdate.to_s		
+	end
 end
 
+
+urls = []
+
+# URLs for daily highlights of speeches in Reps and Senate
+urls = urls + Hansard.find_all_dates_for_house("reps").map{|hdate| Hansard.find_by_hdate(hdate).date_url}
+urls = urls + Hansard.find_all_dates_for_house("senate").map{|hdate| Hansard.find_by_hdate(hdate).date_url}
+
 # All the member urls (Representatives and Senators)
-urls = Member.find_all_person_ids.map {|person_id| Member.find_most_recent_by_person_id(person_id).url}
+urls = urls + Member.find_all_person_ids.map {|person_id| Member.find_most_recent_by_person_id(person_id).url}
 # All the Hansard urls (for both House of Representatives and the Senate)
 urls = urls + Hansard.find(:all).map {|h| h.url}
 
