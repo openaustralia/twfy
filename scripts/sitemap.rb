@@ -35,6 +35,7 @@ class Member < ActiveRecord::Base
 	
 	# Returns the unique url for this member.
 	# Obviously this doesn't really belong in the model but, you know, for the time being...
+	# URLs without the initial http://www.openaustralia.org bit
 	def url
 		if house == 1
 			house_url = "mp"
@@ -45,7 +46,7 @@ class Member < ActiveRecord::Base
 		end
 		# The url is made up of the full_name, constituency and house
 		# TODO: Need to correctly encode the urls
-		"http://" + MySociety::Config.get('DOMAIN') + "/" + house_url + "/" + full_name.downcase.tr(' ', '_') + '/' + constituency.downcase
+		"/" + house_url + "/" + full_name.downcase.tr(' ', '_') + '/' + constituency.downcase
 	end
 end
 
@@ -56,8 +57,7 @@ class Hansard < ActiveRecord::Base
 	# Again, this should not really be in the model
 	def url
 		if gid =~ /^uk.org.publicwhip\/(lords|debate)\/(.*)$/
-			house = ($~[1] == "debate") ? "debate" : "senate"
-			"http://" + MySociety::Config.get('DOMAIN') + "/" + house + "/?id=" + $~[2]
+			"/" + ($~[1] == "debate" ? "debate" : "senate") + "/?id=" + $~[2]
 		else
 			throw "Unexpected form of gid #{gid}"
 		end
@@ -69,8 +69,12 @@ urls = Member.find_all_person_ids.map {|person_id| Member.find_most_recent_by_pe
 # All the Hansard urls (for both House of Representatives and the Senate)
 urls = urls + Hansard.find(:all).map {|h| h.url}
 
+# Add some static URLs
+#urls = ""
+
+prefix = "http://" + MySociety::Config.get('DOMAIN')
 urls.each do |url|
-	p url
+	puts prefix + url
 end
 
 puts "There were #{urls.size} urls in the sitemap"
