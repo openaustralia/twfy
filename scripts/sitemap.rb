@@ -70,7 +70,29 @@ urls = Member.find_all_person_ids.map {|person_id| Member.find_most_recent_by_pe
 urls = urls + Hansard.find(:all).map {|h| h.url}
 
 # Add some static URLs
-#urls = ""
+urls << "/"
+urls << "/about/"
+urls << "/alert/"
+# TODO: Comments appear on Hansard pages. So the last modified date should take account of the comments
+urls << "/comments/recent/"
+urls << "/contact/"
+urls << "/debates/"
+# TODO: Should we include the glossary?
+urls << "/glossary/"
+urls << "/hansard/"
+urls << "/help/"
+urls << "/houserules/"
+# The find out about your representative page
+urls << "/mp/"
+urls << "/mps/"
+# TODO: Also include all the news items
+urls << "/news/"
+urls << "/privacy/"
+# Help with Searching
+urls << "/search/"
+urls << "/senate/"
+# TODO: Do we also want to include the yearly and daily overview pages for debates?
+urls << "/senators/"
 
 prefix = "http://" + MySociety::Config.get('DOMAIN')
 urls.each do |url|
