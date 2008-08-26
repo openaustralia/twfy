@@ -92,18 +92,17 @@ class Hansard < ActiveRecord::Base
 		"/" + (house == "reps" ? "debate" : "senate") + "/?id=" + numeric_id
 	end
 	
-	# The URL pointing to the date that this speech occurs in
-	def date_url
+	def Hansard.url_for_date(hdate, house)
 		"/" + (house == "reps" ? "debates" : "senate") + "/?d=" + hdate.to_s		
 	end
 end
 
-
 urls = []
 
 # URLs for daily highlights of speeches in Reps and Senate
-urls = urls + Hansard.find_all_dates_for_house("reps").map{|hdate| Hansard.find_by_hdate(hdate).date_url}
-urls = urls + Hansard.find_all_dates_for_house("senate").map{|hdate| Hansard.find_by_hdate(hdate).date_url}
+["reps", "senate"].each do |house|
+	urls = urls + Hansard.find_all_dates_for_house(house).map{|hdate| Hansard.url_for_date(hdate, house)}
+end
 
 # All the member urls (Representatives and Senators)
 urls = urls + Member.find_all_person_ids.map {|person_id| Member.find_most_recent_by_person_id(person_id).url}
