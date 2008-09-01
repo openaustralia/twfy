@@ -109,6 +109,9 @@ urls = urls + Member.find_all_person_ids.map {|person_id| Member.find_most_recen
 # All the Hansard urls (for both House of Representatives and the Senate)
 urls = urls + Hansard.find(:all).map {|h| h.url}
 
+# Not going to include the glossary until we actually start to use it
+# urls << "/glossary/"
+
 # Add some static URLs
 urls << "/"
 urls << "/about/"
@@ -117,22 +120,22 @@ urls << "/alert/"
 urls << "/comments/recent/"
 urls << "/contact/"
 urls << "/debates/"
-# TODO: Should we include the glossary?
-urls << "/glossary/"
 urls << "/hansard/"
 urls << "/help/"
 urls << "/houserules/"
 # The find out about your representative page
 urls << "/mp/"
 urls << "/mps/"
-# TODO: Also include all the news items
+# TODO: Also include all the news items (This isn't stored in the database)
 urls << "/news/"
 urls << "/privacy/"
 # Help with Searching
 urls << "/search/"
 urls << "/senate/"
-# TODO: Do we also want to include the yearly and daily overview pages for debates?
 urls << "/senators/"
+
+# No point in including yearly overview of days in which speeches occur because there's nothing on
+# the page to search on
 
 prefix = "http://" + MySociety::Config.get('DOMAIN')
 urls.each do |url|
