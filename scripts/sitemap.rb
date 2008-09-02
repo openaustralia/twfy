@@ -3,6 +3,7 @@
 
 require 'rubygems'
 require 'active_record'
+require 'enumerator'
 require "../../rblib/config"
 
 # Load database information from the mysociety configuration
@@ -97,6 +98,37 @@ class Hansard < ActiveRecord::Base
 	end
 end
 
+# A news item
+class News
+	def initialize(title, date)
+		@title, @date = title, date
+	end
+	
+	def News.find_all
+		news = []
+		IO.popen('php', "w+") do |child|
+		    child.print('<?php require "../www/docs/news/editme.php"; foreach ($all_news as $k => $v) { print $v[0]."\n"; print $v[2]."\n"; } ?>')
+		    child.close_write()
+		    child.readlines().map{|l| l.strip}.each_slice(2) do |title,date|
+				news << News.new(title, date)
+			end
+		end
+		news
+	end
+	
+	def url
+		"/news/archives/#{url_encoded_date}/#{url_encoded_title}"
+	end
+	
+	def url_encoded_title
+		@title.downcase.gsub(/[^a-z0-9 ]/, '').tr(' ', '_')[0..15]
+	end
+	
+	def url_encoded_date
+		@date[0..9].tr('-', '/')
+	end
+end
+
 urls = []
 
 # URLs for daily highlights of speeches in Reps and Senate
@@ -108,6 +140,9 @@ end
 urls = urls + Member.find_all_person_ids.map {|person_id| Member.find_most_recent_by_person_id(person_id).url}
 # All the Hansard urls (for both House of Representatives and the Senate)
 urls = urls + Hansard.find(:all).map {|h| h.url}
+
+# Include the news items
+urls = urls + News.find_all.map {|n| n.url}
 
 # Not going to include the glossary until we actually start to use it
 # urls << "/glossary/"
