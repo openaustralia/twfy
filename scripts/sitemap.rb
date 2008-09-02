@@ -5,6 +5,8 @@ require 'rubygems'
 require 'active_record'
 require 'enumerator'
 require "../../rblib/config"
+require 'builder'
+require 'zlib'
 
 # Load database information from the mysociety configuration
 MySociety::Config.set_file("../conf/general")
@@ -130,8 +132,15 @@ class News
 end
 
 class Sitemap
-	def initialize(domain)
-		@domain = domain
+	# These are limits that are imposed on a single sitemap file by the specification
+	MAX_URLS_PER_FILE = 50000
+	# This is the uncompressed size of a single sitemap file
+	MAX_BYTES_PER_FILE = 10485760
+	
+	SITEMAP_XMLNS = "http://www.sitemaps.org/schemas/sitemap/0.9"
+	
+	def initialize(domain, path, web_path)
+		@domain, @path, @web_path = domain, path, web_path
 		@urls = []
 	end
 	
@@ -139,15 +148,67 @@ class Sitemap
 		@urls << url
 	end
 	
-	def display
-		@urls.each do |url|
-			puts "http://" + @domain + url
+	# Returns the sitemap xml as a string for the given urls
+	def xml(urls)
+		# Should really not use any indentation to make the resulting file as small as possible
+		x = Builder::XmlMarkup.new(:indent => 2)
+		x.instruct! :xml, :version => "1.0", :encoding => "UTF-8"
+		x.urlset(:xmlns => SITEMAP_XMLNS) do
+			urls.each do |url|
+				x.url do
+					x.loc("http://" + @domain + url)
+				end
+			end
+		end		
+	end
+	
+	# Returns the sitemap index xml as a string
+	def index_xml(no_sitemap_files)
+	    x = Builder::XmlMarkup.new(:indent => 1)
+		x.instruct! :xml, :version => "1.0", :encoding => "UTF-8"
+		x.sitemapindex(:xmlns => SITEMAP_XMLNS) do
+			(1..no_sitemap_files).each do |i|
+				x.sitemap do
+					x.loc(sitemap_url(i))
+					x.lastmod(Date.today)
+				end
+			end
 		end
-		puts "There were #{@urls.size} urls in the sitemap"
+	end
+	
+	# Path on the filesystem to the sitemap index file
+	def sitemap_index_path
+		"#{@path}sitemaps/sitemap.xml"
+	end
+	
+	def sitemap_url(index)
+		"http://#{@domain}#{@web_path}sitemaps/sitemap#{index}.xml.gz"
+	end
+	
+	def sitemap_path(index)
+		"#{@path}sitemaps/sitemap#{index}.xml.gz"
+	end
+	
+	def output
+		# Make things simple by assuming that we will always have a sitemap index file
+		no_sitemap_files = (@urls.size.to_f / MAX_URLS_PER_FILE).ceil
+		no_urls_per_sitemap_file = (@urls.size.to_f / no_sitemap_files).ceil
+
+		puts "Writing sitemap index (#{sitemap_index_path})..."
+		File.open(sitemap_index_path, 'w') { |f| f << index_xml(no_sitemap_files) }
+		index = 1
+		@urls.each_slice(no_urls_per_sitemap_file) do |urls|
+			sitemap = xml(urls)
+			sitemap_file_size = sitemap.size
+			puts "Writing sitemap file (#{sitemap_path(index)})..."
+			Zlib::GzipWriter.open(sitemap_path(index)) {|f| f << sitemap}
+			throw "Sitemap file #{sitemap_path(index)} is too big" if sitemap_file_size > MAX_BYTES_PER_FILE
+			index = index + 1
+		end
 	end
 end
 
-s = Sitemap.new(MySociety::Config.get('DOMAIN'))
+s = Sitemap.new(MySociety::Config.get('DOMAIN'), MySociety::Config.get('BASEDIR'), MySociety::Config.get('WEBPATH'))
 
 # URLs for daily highlights of speeches in Reps and Senate
 ["reps", "senate"].each do |house|
@@ -192,6 +253,6 @@ s.add_url "/senators/"
 # No point in including yearly overview of days in which speeches occur because there's nothing on
 # the page to search on
 
-s.display
+s.output
 
 
