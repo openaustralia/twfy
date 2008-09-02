@@ -131,6 +131,20 @@ class News
 	end
 end
 
+class SitemapUrl
+	attr_reader :loc, :changefreq
+	
+	CHANGEFREQ_VALUES = ["always", "hourly", "daily", "weekly", "monthly", "yearly", "never"]
+	
+	def initialize(loc, options)
+		@loc = loc
+		@changefreq = options.delete(:changefreq)
+		@changefreq = @changefreq.to_s if @changefreq
+		throw "Invalid value #{@changefreq} for changefreq" unless @changefreq.nil? || CHANGEFREQ_VALUES.include?(@changefreq)
+		throw "Invalid options in add_url" unless options.empty?
+	end
+end
+
 class Sitemap
 	# These are limits that are imposed on a single sitemap file by the specification
 	MAX_URLS_PER_FILE = 50000
@@ -144,8 +158,8 @@ class Sitemap
 		@urls = []
 	end
 	
-	def add_url(url)
-		@urls << url
+	def add_url(loc, options = {})
+		@urls << SitemapUrl.new(loc, options)
 	end
 	
 	# Returns the sitemap xml as a string for the given urls
@@ -156,7 +170,8 @@ class Sitemap
 		x.urlset(:xmlns => SITEMAP_XMLNS) do
 			urls.each do |url|
 				x.url do
-					x.loc("http://" + @domain + url)
+					x.loc("http://" + @domain + url.loc)
+					x.changefreq(url.changefreq) if url.changefreq
 				end
 			end
 		end		
@@ -211,48 +226,56 @@ end
 
 s = Sitemap.new(MySociety::Config.get('DOMAIN'), MySociety::Config.get('BASEDIR'), MySociety::Config.get('WEBPATH'))
 
+# Arrange some static URL's with the most quickly changing at the top
+
+# Add some static URLs
+s.add_url "/", :changefreq => :hourly
+# TODO: Comments appear on Hansard pages. So the last modified date should take account of the comments
+s.add_url "/comments/recent/", :changefreq => :hourly
+s.add_url "/debates/", :changefreq => :daily
+s.add_url "/hansard/", :changefreq => :daily
+s.add_url "/senate/", :changefreq => :daily
+s.add_url "/news/", :changefreq => :weekly
+s.add_url "/about/", :changefreq => :monthly
+s.add_url "/contact/", :changefreq => :monthly
+s.add_url "/help/", :changefreq => :monthly
+s.add_url "/houserules/", :changefreq => :monthly
+# The find out about your representative page
+s.add_url "/mp/", :changefreq => :monthly
+s.add_url "/mps/", :changefreq => :monthly
+s.add_url "/privacy/", :changefreq => :monthly
+# Help with Searching
+s.add_url "/search/", :changefreq => :monthly
+s.add_url "/senators/", :changefreq => :monthly
+s.add_url "/alert/", :changefreq => :monthly
+
+# Not going to include the glossary until we actually start to use it
+# urls << "/glossary/"
+# No point in including yearly overview of days in which speeches occur because there's nothing on
+# the page to search on
+
 # URLs for daily highlights of speeches in Reps and Senate
 ["reps", "senate"].each do |house|
 	Hansard.find_all_dates_for_house(house).each do |hdate|
-		s.add_url Hansard.url_for_date(hdate, house)
+		s.add_url Hansard.url_for_date(hdate, house), :changefreq => :monthly
 	end
 end
 
 # All the member urls (Representatives and Senators)
-Member.find_all_person_ids.each {|person_id| s.add_url Member.find_most_recent_by_person_id(person_id).url}
+Member.find_all_person_ids.each do |person_id|
+	# Could change daily because of recent speeches they make
+	s.add_url Member.find_most_recent_by_person_id(person_id).url, :changefreq => :daily
+end
 # All the Hansard urls (for both House of Representatives and the Senate)
-Hansard.find(:all).each {|h| s.add_url h.url}
+Hansard.find(:all).each do |h|
+	# Saying the Hansard could change monthly because of reparsing
+	s.add_url h.url, :changefreq => :monthly
+end
 
 # Include the news items
-News.find_all.each {|n| s.add_url n.url}
-
-# Not going to include the glossary until we actually start to use it
-# urls << "/glossary/"
-
-# Add some static URLs
-s.add_url "/"
-s.add_url "/about/"
-s.add_url "/alert/"
-# TODO: Comments appear on Hansard pages. So the last modified date should take account of the comments
-s.add_url "/comments/recent/"
-s.add_url "/contact/"
-s.add_url "/debates/"
-s.add_url "/hansard/"
-s.add_url "/help/"
-s.add_url "/houserules/"
-# The find out about your representative page
-s.add_url "/mp/"
-s.add_url "/mps/"
-# TODO: Also include all the news items (This isn't stored in the database)
-s.add_url "/news/"
-s.add_url "/privacy/"
-# Help with Searching
-s.add_url "/search/"
-s.add_url "/senate/"
-s.add_url "/senators/"
-
-# No point in including yearly overview of days in which speeches occur because there's nothing on
-# the page to search on
+News.find_all.each do |n|
+	s.add_url n.url, :changefreq => :monthly
+end
 
 s.output
 
