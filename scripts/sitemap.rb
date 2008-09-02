@@ -129,54 +129,69 @@ class News
 	end
 end
 
-urls = []
+class Sitemap
+	def initialize(domain)
+		@domain = domain
+		@urls = []
+	end
+	
+	def add_url(url)
+		@urls << url
+	end
+	
+	def display
+		@urls.each do |url|
+			puts "http://" + @domain + url
+		end
+		puts "There were #{@urls.size} urls in the sitemap"
+	end
+end
+
+s = Sitemap.new(MySociety::Config.get('DOMAIN'))
 
 # URLs for daily highlights of speeches in Reps and Senate
 ["reps", "senate"].each do |house|
-	urls = urls + Hansard.find_all_dates_for_house(house).map{|hdate| Hansard.url_for_date(hdate, house)}
+	Hansard.find_all_dates_for_house(house).each do |hdate|
+		s.add_url Hansard.url_for_date(hdate, house)
+	end
 end
 
 # All the member urls (Representatives and Senators)
-urls = urls + Member.find_all_person_ids.map {|person_id| Member.find_most_recent_by_person_id(person_id).url}
+Member.find_all_person_ids.each {|person_id| s.add_url Member.find_most_recent_by_person_id(person_id).url}
 # All the Hansard urls (for both House of Representatives and the Senate)
-urls = urls + Hansard.find(:all).map {|h| h.url}
+Hansard.find(:all).each {|h| s.add_url h.url}
 
 # Include the news items
-urls = urls + News.find_all.map {|n| n.url}
+News.find_all.each {|n| s.add_url n.url}
 
 # Not going to include the glossary until we actually start to use it
 # urls << "/glossary/"
 
 # Add some static URLs
-urls << "/"
-urls << "/about/"
-urls << "/alert/"
+s.add_url "/"
+s.add_url "/about/"
+s.add_url "/alert/"
 # TODO: Comments appear on Hansard pages. So the last modified date should take account of the comments
-urls << "/comments/recent/"
-urls << "/contact/"
-urls << "/debates/"
-urls << "/hansard/"
-urls << "/help/"
-urls << "/houserules/"
+s.add_url "/comments/recent/"
+s.add_url "/contact/"
+s.add_url "/debates/"
+s.add_url "/hansard/"
+s.add_url "/help/"
+s.add_url "/houserules/"
 # The find out about your representative page
-urls << "/mp/"
-urls << "/mps/"
+s.add_url "/mp/"
+s.add_url "/mps/"
 # TODO: Also include all the news items (This isn't stored in the database)
-urls << "/news/"
-urls << "/privacy/"
+s.add_url "/news/"
+s.add_url "/privacy/"
 # Help with Searching
-urls << "/search/"
-urls << "/senate/"
-urls << "/senators/"
+s.add_url "/search/"
+s.add_url "/senate/"
+s.add_url "/senators/"
 
 # No point in including yearly overview of days in which speeches occur because there's nothing on
 # the page to search on
 
-prefix = "http://" + MySociety::Config.get('DOMAIN')
-urls.each do |url|
-	puts prefix + url
-end
-
-puts "There were #{urls.size} urls in the sitemap"
+s.display
 
 
