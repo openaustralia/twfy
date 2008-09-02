@@ -177,8 +177,9 @@ class Sitemap
 	end
 	
 	# Path on the filesystem to the sitemap index file
+	# This needs to be at the root of the web path to include all the urls below it
 	def sitemap_index_path
-		"#{@path}sitemaps/sitemap.xml"
+		"#{@path}sitemap.xml"
 	end
 	
 	def sitemap_url(index)
