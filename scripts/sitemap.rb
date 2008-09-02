@@ -108,7 +108,7 @@ class News
 	
 	def News.find_all
 		news = []
-		IO.popen('php', "w+") do |child|
+		MySociety::Config.fork_php do |child|
 		    child.print('<?php require "../www/docs/news/editme.php"; foreach ($all_news as $k => $v) { print $v[0]."\n"; print $v[2]."\n"; } ?>')
 		    child.close_write()
 		    child.readlines().map{|l| l.strip}.each_slice(2) do |title,date|
