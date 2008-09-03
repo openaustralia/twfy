@@ -347,8 +347,11 @@ s.add_url "/alert/", :changefreq => :monthly
 
 # All the Hansard urls (for both House of Representatives and the Senate)
 Hansard.find(:all).each do |h|
-	# Saying the Hansard could change monthly because of reparsing
-	s.add_url h.url, :changefreq => :monthly, :lastmod => h.last_modified_including_comments
+	# Skip section urls that just would get redirected to subsection urls
+	unless h.section? && h.speeches.size == 1
+		# Saying the Hansard could change monthly because of reparsing
+		s.add_url h.url, :changefreq => :monthly, :lastmod => h.last_modified_including_comments
+	end
 end
 
 # URLs for daily highlights of speeches in Reps and Senate
