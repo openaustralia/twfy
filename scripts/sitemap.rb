@@ -299,7 +299,7 @@ s = Sitemap.new(MySociety::Config.get('DOMAIN'), MySociety::Config.get('BASEDIR'
 
 # Arrange some static URL's with the most quickly changing at the top
 
-# Add some static URLs
+# Add some static URLs with dynamic content
 s.add_url "/", :changefreq => :hourly
 # TODO: Comments appear on Hansard pages. So the last modified date should take account of the comments
 s.add_url "/comments/recent/", :changefreq => :hourly
@@ -307,17 +307,19 @@ s.add_url "/debates/", :changefreq => :daily
 s.add_url "/hansard/", :changefreq => :daily
 s.add_url "/senate/", :changefreq => :daily
 s.add_url "/news/", :changefreq => :weekly
+s.add_url "/mps/", :changefreq => :monthly
+s.add_url "/senators/", :changefreq => :monthly
+
+# Add some static URLs with no dynamic content
 s.add_url "/about/", :changefreq => :monthly
 s.add_url "/contact/", :changefreq => :monthly
 s.add_url "/help/", :changefreq => :monthly
 s.add_url "/houserules/", :changefreq => :monthly
 # The find out about your representative page
 s.add_url "/mp/", :changefreq => :monthly
-s.add_url "/mps/", :changefreq => :monthly
 s.add_url "/privacy/", :changefreq => :monthly
 # Help with Searching
 s.add_url "/search/", :changefreq => :monthly
-s.add_url "/senators/", :changefreq => :monthly
 s.add_url "/alert/", :changefreq => :monthly
 
 # Not going to include the glossary until we actually start to use it
