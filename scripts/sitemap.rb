@@ -67,14 +67,21 @@ class Hansard < ActiveRecord::Base
 	
 	# Return all dates for which there are speeches on that day in the given house
 	def Hansard.find_all_dates_for_house(house)
+		find_all_by_major(house_to_major(house), :group => 'hdate').map {|h| h.hdate}
+	end
+	
+	def Hansard.house_to_major(house)
 		if house == "reps"
-			major = 1
+			1
 		elsif house == "senate"
-			major = 101
+			101
 		else
 			throw "Unexpected value for house: #{house}"
 		end
-		find(:all, :conditions => ['major = ?', major], :group => 'hdate').map {|h| h.hdate}
+	end
+	
+	def Hansard.find_all_sections_by_date_and_house(date, house)
+		find_all_by_major_and_hdate_and_htype(house_to_major(house), date, 10)
 	end
 	
 	def house
@@ -317,7 +324,9 @@ s.add_url "/alert/", :changefreq => :monthly
 # URLs for daily highlights of speeches in Reps and Senate
 ["reps", "senate"].each do |house|
 	Hansard.find_all_dates_for_house(house).each do |hdate|
-		s.add_url Hansard.url_for_date(hdate, house), :changefreq => :monthly
+		s.add_url Hansard.url_for_date(hdate, house),
+			:changefreq => :monthly,
+			:lastmod => Hansard.find_all_sections_by_date_and_house(hdate, house).map{|h| h.last_modified}.max
 	end
 end
 
