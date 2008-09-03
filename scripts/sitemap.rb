@@ -167,6 +167,10 @@ class News
 		@title, @date = title, date
 	end
 	
+	def last_modified
+		Time.parse(@date)
+	end
+	
 	def News.find_all
 		news = []
 		MySociety::Config.fork_php do |child|
@@ -343,7 +347,7 @@ end
 
 # Include the news items
 News.find_all.each do |n|
-	s.add_url n.url, :changefreq => :monthly
+	s.add_url n.url, :changefreq => :monthly, :lastmod => n.last_modified
 end
 
 s.output
