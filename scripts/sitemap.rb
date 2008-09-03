@@ -85,6 +85,14 @@ class Hansard < ActiveRecord::Base
 		end
 	end
 	
+	def Hansard.most_recent_in_house(house)
+		find_all_by_major(house_to_major(house), :order => "hdate DESC, htime DESC", :limit => 1).first
+	end
+	
+	def Hansard.most_recent
+		find(:all, :order => "hdate DESC, htime DESC", :limit => 1).first
+	end
+	
 	def Hansard.find_all_sections_by_date_and_house(date, house)
 		find_all_by_major_and_hdate_and_htype(house_to_major(house), date, 10)
 	end
@@ -174,6 +182,11 @@ class News
 	
 	def last_modified
 		Time.parse(@date)
+	end
+	
+	# The most recently added news item
+	def News.most_recent
+		find_all.max {|a,b| a.last_modified <=> b.last_modified}
 	end
 	
 	def News.find_all
@@ -305,12 +318,13 @@ s = Sitemap.new(MySociety::Config.get('DOMAIN'), MySociety::Config.get('BASEDIR'
 # Arrange some static URL's with the most quickly changing at the top
 
 # Add some static URLs with dynamic content
-s.add_url "/", :changefreq => :hourly
+s.add_url "/", :changefreq => :hourly,
+	:lastmod => [Comment.most_recent.last_modified, Hansard.most_recent.last_modified, News.most_recent.last_modified].max
 s.add_url "/comments/recent/", :changefreq => :hourly, :lastmod => Comment.most_recent.last_modified
-s.add_url "/debates/", :changefreq => :daily
-s.add_url "/hansard/", :changefreq => :daily
-s.add_url "/senate/", :changefreq => :daily
-s.add_url "/news/", :changefreq => :weekly
+s.add_url "/debates/", :changefreq => :daily, :lastmod => Hansard.most_recent_in_house("reps").last_modified
+s.add_url "/hansard/", :changefreq => :daily, :lastmod => Hansard.most_recent.last_modified
+s.add_url "/senate/", :changefreq => :daily, :lastmod => Hansard.most_recent_in_house("senate").last_modified
+s.add_url "/news/", :changefreq => :weekly, :lastmod => News.most_recent.last_modified
 s.add_url "/mps/", :changefreq => :monthly
 s.add_url "/senators/", :changefreq => :monthly
 
