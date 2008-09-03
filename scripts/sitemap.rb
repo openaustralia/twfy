@@ -345,6 +345,12 @@ s.add_url "/alert/", :changefreq => :monthly
 # No point in including yearly overview of days in which speeches occur because there's nothing on
 # the page to search on
 
+# All the Hansard urls (for both House of Representatives and the Senate)
+Hansard.find(:all).each do |h|
+	# Saying the Hansard could change monthly because of reparsing
+	s.add_url h.url, :changefreq => :monthly, :lastmod => h.last_modified_including_comments
+end
+
 # URLs for daily highlights of speeches in Reps and Senate
 ["reps", "senate"].each do |house|
 	Hansard.find_all_dates_for_house(house).each do |hdate|
@@ -358,11 +364,6 @@ end
 Member.find_all_person_ids.each do |person_id|
 	# Could change daily because of recent speeches they make
 	s.add_url Member.find_most_recent_by_person_id(person_id).url, :changefreq => :daily
-end
-# All the Hansard urls (for both House of Representatives and the Senate)
-Hansard.find(:all).each do |h|
-	# Saying the Hansard could change monthly because of reparsing
-	s.add_url h.url, :changefreq => :monthly, :lastmod => h.last_modified_including_comments
 end
 
 # Include the news items
