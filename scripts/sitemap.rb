@@ -54,6 +54,11 @@ class Member < ActiveRecord::Base
 end
 
 class Comment < ActiveRecord::Base
+	# The most recently added comment
+	def Comment.most_recent
+		Comment.find(:all, :order => "posted DESC", :limit => 1).first
+	end
+	
 	def last_modified
 		posted
 	end
@@ -301,8 +306,7 @@ s = Sitemap.new(MySociety::Config.get('DOMAIN'), MySociety::Config.get('BASEDIR'
 
 # Add some static URLs with dynamic content
 s.add_url "/", :changefreq => :hourly
-# TODO: Comments appear on Hansard pages. So the last modified date should take account of the comments
-s.add_url "/comments/recent/", :changefreq => :hourly
+s.add_url "/comments/recent/", :changefreq => :hourly, :lastmod => Comment.most_recent.last_modified
 s.add_url "/debates/", :changefreq => :daily
 s.add_url "/hansard/", :changefreq => :daily
 s.add_url "/senate/", :changefreq => :daily
