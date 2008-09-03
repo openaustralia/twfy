@@ -53,8 +53,17 @@ class Member < ActiveRecord::Base
 	end
 end
 
+class Comment < ActiveRecord::Base
+	def last_modified
+		posted
+	end
+end
+
 class Hansard < ActiveRecord::Base
 	set_table_name "hansard"
+	set_primary_key "epobject_id"
+	
+	has_many :comments, :foreign_key => "epobject_id"
 	
 	# Return all dates for which there are speeches on that day in the given house
 	def Hansard.find_all_dates_for_house(house)
@@ -75,6 +84,51 @@ class Hansard < ActiveRecord::Base
 			"senate"
 		else
 			throw "Unexpected value of major: #{major}"
+		end
+	end
+	
+	def section?
+		htype == 10
+	end
+	
+	def subsection?
+		htype == 11
+	end
+	
+	def speech?
+		htype == 12
+	end
+	
+	# Takes the modification times of any comments on a speech into account
+	def last_modified_including_comments
+		if speech?
+			(comments.map{|c| c.last_modified} << last_modified).max
+		else
+			speeches.map{|s| s.last_modified_including_comments}.max
+		end
+	end
+	
+	# The last time this was modified. Takes into account all subsections and speeches under this
+	# if this is a section or subsection.
+	def last_modified
+		if speech?
+			modified
+		else
+			speeches.map{|s| s.last_modified}.max
+		end
+	end
+	
+	# Returns all the hansard objects which are contained by this Hansard object
+	# For example, if this is a section, it returns all the subsections
+	def speeches
+		if section?
+			Hansard.find_all_by_section_id_and_htype(epobject_id, 11)
+		elsif subsection?
+			Hansard.find_all_by_subsection_id(epobject_id)
+		elsif speech?
+			return []
+		else
+			throw "Unknown hansard type"
 		end
 	end
 	
@@ -132,7 +186,7 @@ class News
 end
 
 class SitemapUrl
-	attr_reader :loc, :changefreq
+	attr_reader :loc, :changefreq, :lastmod
 	
 	CHANGEFREQ_VALUES = ["always", "hourly", "daily", "weekly", "monthly", "yearly", "never"]
 	
@@ -140,6 +194,7 @@ class SitemapUrl
 		@loc = loc
 		@changefreq = options.delete(:changefreq)
 		@changefreq = @changefreq.to_s if @changefreq
+		@lastmod = options.delete(:lastmod)
 		throw "Invalid value #{@changefreq} for changefreq" unless @changefreq.nil? || CHANGEFREQ_VALUES.include?(@changefreq)
 		throw "Invalid options in add_url" unless options.empty?
 	end
@@ -162,6 +217,10 @@ class Sitemap
 		@urls << SitemapUrl.new(loc, options)
 	end
 	
+	def Sitemap.w3c_date(date)
+		date.utc.strftime("%Y-%m-%dT%H:%M:%S+00:00")
+	end 
+		
 	# Returns the sitemap xml as a string for the given urls
 	def xml(urls)
 		# Should really not use any indentation to make the resulting file as small as possible
@@ -172,6 +231,7 @@ class Sitemap
 				x.url do
 					x.loc("http://" + @domain + url.loc)
 					x.changefreq(url.changefreq) if url.changefreq
+					x.lastmod(Sitemap.w3c_date(url.lastmod)) if url.lastmod
 				end
 			end
 		end		
@@ -185,7 +245,7 @@ class Sitemap
 			(1..no_sitemap_files).each do |i|
 				x.sitemap do
 					x.loc(sitemap_url(i))
-					x.lastmod(Date.today)
+					x.lastmod(Sitemap.w3c_date(Time.now))
 				end
 			end
 		end
@@ -269,7 +329,7 @@ end
 # All the Hansard urls (for both House of Representatives and the Senate)
 Hansard.find(:all).each do |h|
 	# Saying the Hansard could change monthly because of reparsing
-	s.add_url h.url, :changefreq => :monthly
+	s.add_url h.url, :changefreq => :monthly, :lastmod => h.last_modified_including_comments
 end
 
 # Include the news items
@@ -278,5 +338,3 @@ News.find_all.each do |n|
 end
 
 s.output
-
-
