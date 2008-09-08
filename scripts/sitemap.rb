@@ -7,6 +7,9 @@ require 'enumerator'
 require "../../rblib/config"
 require 'builder'
 require 'zlib'
+require 'json'
+require 'yaml'
+require 'net/http'
 
 # Load database information from the mysociety configuration
 MySociety::Config.set_file("../conf/general")
@@ -286,6 +289,10 @@ class Sitemap
 		"#{@path}sitemap.xml"
 	end
 	
+	def sitemap_index_url
+		"http://#{@domain}#{@web_path}sitemap.xml"
+	end
+	
 	def sitemap_url(index)
 		"http://#{@domain}#{@web_path}sitemaps/sitemap#{index}.xml.gz"
 	end
@@ -309,6 +316,28 @@ class Sitemap
 			Zlib::GzipWriter.open(sitemap_path(index)) {|f| f << sitemap}
 			throw "Sitemap file #{sitemap_path(index)} is too big" if sitemap_file_size > MAX_BYTES_PER_FILE
 			index = index + 1
+		end
+	end
+	
+	# Notify the search engines (like Google, Yahoo, etc..) of the new sitemap
+	def notify_search_engines
+		# API Ping URL
+		PINGMYMAP_API_URL = "http://api.pingmymap.com/v1/?url=#{sitemap_index_url}&key=#{MySociety::Config.get('PINGMYMAP_API_KEY')}"
+		# Make HTTP request to API URL
+		response = Net::HTTP.get_response(URI.parse(PINGMYMAP_API_URL))
+
+		# Check response for any errors
+		if response.body and response.code == '200'
+			# Display success message
+			puts 'Successfully called PingMyMap API!'
+
+			# Parse JSON response
+			parsed_response = JSON.parse(response.body)
+
+			# Output JSON response
+			y parsed_response
+		else
+			puts "Error calling PingMyMap API with #{PINGMYMAP_API_URL}"
 		end
 	end
 end
@@ -375,3 +404,4 @@ News.find_all.each do |n|
 end
 
 s.output
+s.notify_search_engines
