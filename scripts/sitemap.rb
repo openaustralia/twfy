@@ -322,9 +322,9 @@ class Sitemap
 	# Notify the search engines (like Google, Yahoo, etc..) of the new sitemap
 	def notify_search_engines
 		# API Ping URL
-		PINGMYMAP_API_URL = "http://api.pingmymap.com/v1/?url=#{sitemap_index_url}&key=#{MySociety::Config.get('PINGMYMAP_API_KEY')}"
+		pingmymap_api_url = "http://api.pingmymap.com/v1/?url=#{sitemap_index_url}&key=#{MySociety::Config.get('PINGMYMAP_API_KEY')}"
 		# Make HTTP request to API URL
-		response = Net::HTTP.get_response(URI.parse(PINGMYMAP_API_URL))
+		response = Net::HTTP.get_response(URI.parse(pingmymap_api_url))
 
 		# Check response for any errors
 		if response.body and response.code == '200'
