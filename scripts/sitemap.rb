@@ -270,14 +270,17 @@ class Sitemap
 	end
 	
 	# Returns the sitemap index xml as a string
-	def index_xml(no_sitemap_files)
-	    x = Builder::XmlMarkup.new(:indent => 1)
+	def index_xml(sitemap_urls)
+		no_sitemap_files = sitemap_urls.size
+	  x = Builder::XmlMarkup.new(:indent => 1)
 		x.instruct! :xml, :version => "1.0", :encoding => "UTF-8"
 		x.sitemapindex(:xmlns => SITEMAP_XMLNS) do
-			(1..no_sitemap_files).each do |i|
+		  sitemap_urls.each_with_index do |urls, index|
 				x.sitemap do
-					x.loc(sitemap_url(i))
-					x.lastmod(Sitemap.w3c_date(Time.now))
+					x.loc(sitemap_url(index))
+					# For the last modification time of the whole sitemap file use the most recent
+					# modification time of all the urls in the file
+					x.lastmod(Sitemap.w3c_date(urls.map{|u| u.lastmod}.compact.max))
 				end
 			end
 		end
@@ -294,11 +297,11 @@ class Sitemap
 	end
 	
 	def sitemap_url(index)
-		"http://#{@domain}#{@web_path}sitemaps/sitemap#{index}.xml.gz"
+		"http://#{@domain}#{@web_path}sitemaps/sitemap#{index + 1}.xml.gz"
 	end
 	
 	def sitemap_path(index)
-		"#{@path}sitemaps/sitemap#{index}.xml.gz"
+		"#{@path}sitemaps/sitemap#{index + 1}.xml.gz"
 	end
 	
 	def output
@@ -306,17 +309,19 @@ class Sitemap
 		no_sitemap_files = (@urls.size.to_f / MAX_URLS_PER_FILE).ceil
 		no_urls_per_sitemap_file = (@urls.size.to_f / no_sitemap_files).ceil
 
-		puts "Writing sitemap index (#{sitemap_index_path})..."
-		File.open(sitemap_index_path, 'w') { |f| f << index_xml(no_sitemap_files) }
-		index = 1
+		# Create an array with all the urls sliced into bite size chunks for each sitemap
+		sitemap_urls = []
 		@urls.each_slice(no_urls_per_sitemap_file) do |urls|
-			sitemap = xml(urls)
-			sitemap_file_size = sitemap.size
-			puts "Writing sitemap file (#{sitemap_path(index)})..."
-			Zlib::GzipWriter.open(sitemap_path(index)) {|f| f << sitemap}
-			throw "Sitemap file #{sitemap_path(index)} is too big" if sitemap_file_size > MAX_BYTES_PER_FILE
-			index = index + 1
+			sitemap_urls << urls
 		end
+
+		sitemap_urls.each_with_index do |urls, index|
+			puts "Writing sitemap file (#{sitemap_path(index)})..."
+			Zlib::GzipWriter.open(sitemap_path(index)) {|f| f << xml(urls)}
+			throw "Sitemap file #{sitemap_path(index)} is too big" if xml(urls).size > MAX_BYTES_PER_FILE
+		end
+		puts "Writing sitemap index (#{sitemap_index_path})..."
+		File.open(sitemap_index_path, 'w') { |f| f << index_xml(sitemap_urls) }
 	end
 	
 	# Notify the search engines (like Google, Yahoo, etc..) of the new sitemap
