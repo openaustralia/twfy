@@ -52,8 +52,13 @@ class Member < ActiveRecord::Base
 		end
 		# The url is made up of the full_name, constituency and house
 		# TODO: Need to correctly encode the urls
-		"/" + house_url + "/" + full_name.downcase.tr(' ', '_') + '/' + constituency.downcase
+		"/" + house_url + "/" + encode_name(full_name) + '/' + encode_name(constituency)
 	end
+	
+	# Encode names and constituencies (for URLs) in the following way
+	def encode_name(text)
+	  text.downcase.tr(' ', '_')
+  end
 end
 
 class Comment < ActiveRecord::Base
