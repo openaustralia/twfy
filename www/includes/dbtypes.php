@@ -65,7 +65,7 @@ $hansardmajors = array(
 	),
 	101 => array(
 		'type'=>'debate',
-		'title'=>'Lords debates',
+		'title'=>'Senate debates',
 		'singular'=>'debate',
 		'plural'=>'debates',
 		'page'=>'lordsdebate',
@@ -154,7 +154,9 @@ $parties = array (
 	'SPK'   => 'Speaker',
 	'UKU'   => 'United Kingdom Unionist',
 	'UU'    => 'Ulster Unionist',
-	'XB'    => 'Crossbench'
+	'XB'    => 'Crossbench',
+	'PRES'  => 'President',
+	'DPRES' => 'Deputy-President'
 );
 
 

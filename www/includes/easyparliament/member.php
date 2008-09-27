@@ -235,21 +235,22 @@ class MEMBER {
 		# Iain Duncan Smith, so I've put it back.  FAI 2005-03-14
 		#		$success = preg_match('#^(.*? .*?) (.*?)$#', $name, $m);
 		$q = "SELECT DISTINCT person_id,constituency FROM member WHERE ";
-		if ($this_page=='peer') {
-			$success = preg_match('#^(.*?) (.*?) of (.*?)$#', $name, $m);
-			if (!$success)
-				$success = preg_match('#^(.*?)() of (.*?)$#', $name, $m);
-			if (!$success)
-				$success = preg_match('#^(.*?) (.*?)()$#', $name, $m);
-			if (!$success) {
-				$PAGE->error_message('Sorry, that name was not recognised.');
-				return false;
-			}
-			$title = mysql_escape_string($m[1]);
-			$last_name = mysql_escape_string($m[2]);
-			$const = $m[3];
-			$q .= "house = 2 AND title = '$title' AND last_name='$last_name'";
-		} elseif ($this_page=='msp') {
+		#if ($this_page=='peer') {
+		#	$success = preg_match('#^(.*?) (.*?) of (.*?)$#', $name, $m);
+		#	if (!$success)
+		#		$success = preg_match('#^(.*?)() of (.*?)$#', $name, $m);
+		#	if (!$success)
+		#		$success = preg_match('#^(.*?) (.*?)()$#', $name, $m);
+		#	if (!$success) {
+		#		$PAGE->error_message('Sorry, that name was not recognised.');
+		#		return false;
+		#	}
+		#	$title = mysql_escape_string($m[1]);
+		#	$last_name = mysql_escape_string($m[2]);
+		#	$const = $m[3];
+		#	$q .= "house = 2 AND title = '$title' AND last_name='$last_name'";
+		#}
+		if ($this_page=='msp') {
 			$success = preg_match('#^(.*?) (.*?) (.*?)$#', $name, $m);
 			if (!$success)
 				$success = preg_match('#^(.*?)() (.*)$#', $name, $m);
@@ -277,7 +278,7 @@ class MEMBER {
 			$q .= "house = 3 AND (";
 			$q .= "(first_name='$first_name $middle_name' AND last_name='$last_name')";
 			$q .= " or (first_name='$first_name' AND last_name='$middle_name $last_name') )";
-		} elseif (strstr($this_page, 'mp')) {
+		} elseif (strstr($this_page, 'mp') || $this_page == 'peer') {
 			$success = preg_match('#^(.*?) (.*?) (.*?)$#', $name, $m);
 			if (!$success)
 				$success = preg_match('#^(.*?)() (.*)$#', $name, $m);
@@ -288,8 +289,12 @@ class MEMBER {
 			$first_name = $m[1];
 			$middle_name = $m[2];
 			$last_name = $m[3];
+			if (strstr($this_page, 'mp'))
+				$house = 1;
+			else
+				$house = 2;
 			# if ($title) $q .= 'title = \'' . mysql_escape_string($title) . '\' AND ';
-			$q .= "house =1 AND ((first_name='".mysql_escape_string($first_name." ".$middle_name)."' AND last_name='".mysql_escape_string($last_name)."') OR ".
+			$q .= "house = ".$house." AND ((first_name='".mysql_escape_string($first_name." ".$middle_name)."' AND last_name='".mysql_escape_string($last_name)."') OR ".
 			"(first_name='".mysql_escape_string($first_name)."' AND last_name='".mysql_escape_string($middle_name." ".$last_name)."'))";
 			if ($const) {
 				$normalised = normalise_constituency_name($const);
@@ -324,7 +329,7 @@ class MEMBER {
 			return $person_ids;
 		} elseif ($q->rows > 0) {
 			return $q->field(0, 'person_id');
-		} elseif ($const) {
+		} elseif ($const && $this_page!='peer') {
 			$this->canonical = false;
 			return $this->name_to_person_id($name);
 		} else {

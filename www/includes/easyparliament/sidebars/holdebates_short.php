@@ -3,8 +3,8 @@
 
 $this->block_start(array(
 	'id'=>'help', 
-	'title'=>"What are Lords debates?", 
-	'url'=>'/lords/#help',
+	'title'=>"What are Senate debates?", 
+	'url'=>'/senate/#help',
 	'body'=>false
 ));
 $this->block_end();

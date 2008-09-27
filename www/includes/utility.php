@@ -5,6 +5,8 @@ General utility functions v1.1 (well, it was).
 
 */
 
+include_once('strptime.php');
+
 function twfy_debug ($header, $text="") {
 	// Pass it a brief header word and some debug text and it'll be output.
 
@@ -839,7 +841,7 @@ function make_member_url($name, $const = '', $house = 1) {
 	$r = array('_', 'and',     'o',       'o',    'a',       'i',        'a' );
 	$name = preg_replace('#^the #', '', strtolower($name));
 	$out = urlencode(str_replace($s, $r, $name));
-	if ($const && $house==1)
+	if ($const && ($house==1 || $house == 2))
 		$out .= '/' . urlencode(str_replace($s, $r, strtolower($const)));
 	elseif ($house==0)
 		$out = 'elizabeth_the_second';
@@ -848,17 +850,17 @@ function make_member_url($name, $const = '', $house = 1) {
 
 function member_full_name($house, $title, $first_name, $last_name, $constituency) {
 	$s = 'ERROR';
-	if ($house == 1 || $house == 3 || $house == 4) {
+	if ($house == 1 || $house == 2 || $house == 3 || $house == 4) {
 		$s = $first_name . ' ' . $last_name;
 		if ($title) {
 			$s = $title . ' ' . $s;
 		}
-	} elseif ($house == 2) {
-		$s = '';
-		if (!$last_name) $s = 'the ';
-		$s .= $title;
-		if ($last_name) $s .= ' ' . $last_name;
-		if ($constituency) $s .= ' of ' . $constituency;
+//	} elseif ($house == 2) {
+//		$s = '';
+//		if (!$last_name) $s = 'the ';
+//		$s .= $title;
+//		if ($last_name) $s .= ' ' . $last_name;
+//		if ($constituency) $s .= ' of ' . $constituency;
 	} elseif ($house == 0) { # Queen
 		$s = "$first_name $last_name";
 	}

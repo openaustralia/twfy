@@ -27,7 +27,8 @@ h3 {
 	}
 	
 h4 {
-	color: #4D6C25;
+	/* color: #4D6C25; */
+	color: #AB4329; /* NAT */
 	margin: 1em 14px 0 18px;
 	}
 
@@ -172,7 +173,7 @@ div.row span.formw {
 #topmenu {
 	position: relative;
 	margin: 0;
-	padding: 0 14px 0 0;
+	padding: 0 14px 2px 0;
 	border-top: 1px solid #fff;
 	z-index: 10;
 	}
@@ -180,7 +181,7 @@ div.row span.formw {
 #bottommenu {	
 	position: relative;
 	width: 100%;
-	height: 20px; /* NAT */
+	height: 22px; /* NAT */
 	margin: 0;
 	padding: 0 0 0 0px; /* was 2px left padding */
 	z-index: 10;
@@ -287,14 +288,14 @@ div.stripe-1,
 div.stripe-1-on,
 div.stripe-time-1,
 div.stripe-procedural-1 {
-	background: #F5FDEA;
+	background: #F5F5F5;
 	}
 
 div.stripe-2,
 div.stripe-2-on,
 div.stripe-time-2,
 div.stripe-procedural-2 {
-	background: #E8FDCB;
+	background: #E5DFD9;
 	}
 
 /* The main, left-column */
@@ -331,14 +332,14 @@ div.stripe-1-on div.main,
 div.stripe-time-1 div.main,
 div.stripe-procedural-1 div.main {
 	border-right: 1px solid #fff;
-	background: #F5FDEA;
+	background: #F5F5F5;
 	}
 div.stripe-2 div.main,
 div.stripe-2-on div.main,
 div.stripe-time-2 div.main,
 div.stripe-procedural-2 div.main {
 	border-right: 1px solid #fff;
-	background: #E8FDCB;
+	background: #E5DFD9;
 	}
 div.stripe-time-1 div.main,
 div.stripe-time-2 div.main,
@@ -376,6 +377,11 @@ div.main dd p {
 	margin-left: 0;
 	margin-right: 0;
 	}
+
+div.main p.speaker small,
+div.main p.unknownspeaker small {
+	font-style: italic;
+}
 	
 div.main p.speaker,
 div.main p.unknownspeaker {
@@ -399,6 +405,17 @@ div.main img.portrait {
 	border: none;
 	float: left;
 	}
+div.main .textportrait {
+	float: left;
+	display: block;
+    width: 96px; 
+    min-height: 118px;
+    float: left; 
+	border: 1px solid #BDE190;
+    text-align: center;
+    margin: 0 2em 1em 0;
+}
+
 div.main p.divisionheading {
 	font-weight: bold;
 	color: #000;
@@ -445,11 +462,10 @@ div.block div.blockbody ul {
 
 div#help.block {
 	/* border: 1px solid #D24000; */ /* NAT */
-	background-color: #ECD8CF; /* NAT */
+	background-color: #ECDDCF; /* NAT */
 	}
 div#help.block h4 {
-	padding: 2px 0 5px 30px;
-	background: url("../../images/help.gif") no-repeat top left #A9958C; /* NAT */
+	padding: 2px 0 5px 5px;
 	color: #fff;
 	}
 div#help.block h4 a {
@@ -563,26 +579,30 @@ div.calendar {
 	float: left;
 	margin: 0 14px 1em 18px;
 	padding: 0;
-	height: 11.5em;
-	width: 190px; /* NAT */
+	height: 13.3em;
+	width: 187px; /* NAT */
 	border: solid 1px #999; /* NAT */
 	}
 	
 div.calendar table {
 	margin: 0;
+	width: 187px;
 	}
 	
 div.calendar caption {
 	caption-side: top;
 	text-align: left;
-	padding: 0.2em 0.4em;
-	background: #BDE190;
+	padding: 0.3em 0.4em;
+	background: #a8a98c;
+	color: #fff;
+	font-weight: bold;
+	width: 187px;
 	}
 div.calendar th,
 div.calendar td {
 	text-align: center;
 	font-weight: normal;
-	background: #E8FDCB;
+	background: #fff;
 	padding: 0.2em 0.1em; /* NAT */
 	}
 div.calendar td {
@@ -590,7 +610,7 @@ div.calendar td {
 	color: #4D6C25;
 	}
 div.calendar td.on {
-	background: #89B84B;
+	background: #DECEB3;
 	color: #fff;
 	}
 div.calendar td.on a {
@@ -615,7 +635,7 @@ div.sidebar div.calendar td {
 	background: #fff;
 	}
 div.sidebar div.calendar td.on {
-	background: #89B84B;
+	background: #DECEB3;
 	color: #fff;
 	}
 	
@@ -695,13 +715,13 @@ dl.recent-wrans p.numindent {
 
 table.people th {
 	text-align: left;
-	background: #BDE190;
+	background: #DECEB3;
 	}
 table.people td.row-1 {
-	background: #F5FDEA;
+	background: #F5F5F5;
 	}
 table.people td.row-2 {
-	background: #E8FDCB;
+	background: #E5DFD9;
 	}
 
 #people_results {
@@ -841,14 +861,15 @@ div#mp.block {
 div#mp.block,
 div#mpsearch.block {
 	background: #FDF5F5;
-	border: 1px solid #C00;
+	border: 1px solid #a8a98c;
 	}
 div#mp.block h4,
 div#mpsearch.block h4 {
-	background: #C00;
+	background: #a8a98c;
 	color: #fff;
 	padding-left: 0.5em;
 	padding-right: 0.5em;
+	padding-top: 0.4em;
 	}
 div#emailfriend.block {
 	background: #eeeeff;

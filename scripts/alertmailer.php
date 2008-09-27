@@ -11,7 +11,7 @@ function mlog($message) {
 
 include '../www/includes/easyparliament//init.php';
 ini_set('memory_limit', -1);
-include INCLUDESPATH . 'easyparliament/member.php';
+include_once INCLUDESPATH . 'easyparliament/member.php';
 
 $global_start = getmicrotime();
 $db = new ParlDB;
@@ -81,9 +81,9 @@ $alertdata = $alertdata['data'];
 $DEBATELIST = new DEBATELIST; # Nothing debate specific, but has to be one of them
 
 $sects = array('', 'House of Representatives debate', 'Westminster Hall debate', 'Written Answer', 'Written Ministerial Statement', 'Northern Ireland Assembly debate');
-$sects[101] = 'Lords debate';
+$sects[101] = 'Senate debate';
 $sects_short = array('', 'debate', 'westminhall', 'wrans', 'wms', 'ni');
-$sects_short[101] = 'lords';
+$sects_short[101] = 'senate';
 $results = array();
 
 $outof = count($alertdata);

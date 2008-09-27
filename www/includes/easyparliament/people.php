@@ -17,7 +17,7 @@ class PEOPLE {
 	function display ($view, $args=array(), $format='html') {
 		global $PAGE;
 	
-		$validviews = array('mps');
+		$validviews = array('mps', 'peers');
 		
 		if (in_array($view, $validviews)) {
 		
@@ -75,7 +75,7 @@ class PEOPLE {
 
 	function _get_data_by_group($args) {
 		// $args can have an optional 'order' element.
-
+		
 		$order = 'last_name';
 		$sqlorder = 'last_name, first_name';
 		$query = 'SELECT person_id, title, first_name, last_name, constituency, party, dept, position
@@ -151,13 +151,21 @@ class PEOPLE {
 					$narray['party'] = '-';
 					$narray['pos'] = 'Deputy Speaker';
 					$narray['dept'] = 'House of Representatives';
+				} elseif ($narray['party'] == 'PRES') {
+					$narray['party'] = '-';
+					$narray['pos'] = 'President';
+					$narray['dept'] = 'Senate';
+				} elseif ($narray['party'] == 'DPRES') {
+					$narray['party'] = '-';
+					$narray['pos'] = 'Deputy President';
+					$narray['dept'] = 'Senate';
 				}
 
 				$data[$p_id] = $narray;
 			}
 		}
-		if ($args['house'] == 2 && ($order == 'name' || $order == 'constituency'))
-			uasort($data, array($this, 'by_peer_name'));
+		#if ($args['house'] == 2 && ($order == 'name' || $order == 'constituency'))
+		#	uasort($data, array($this, 'by_peer_name'));
 		
 		$data = array (
 			'info' => array (
@@ -206,27 +214,18 @@ class PEOPLE {
 			print ', ' . $row['constituency'];
 			print '</option>';
 		}
-		print '</optgroup> <optgroup label="Peers">';
+		print '</optgroup> <optgroup label="Senators">';
 		$data = $this->_get_data_by_peers($args);
 		foreach ($data['data'] as $row) {
 			print '<option';
 			if (isset($args['pid']) && $args['pid']==$row['person_id']) print ' selected';
 			print ' value="'.$row['person_id'].'">';
 			print ucfirst(member_full_name(2, $row['title'], $row['first_name'], $row['last_name'], $row['constituency']));
-			print '</option>';
-		}
-		print '</optgroup> <optgroup label="MLAs">';
-		$data = $this->_get_data_by_mlas($args);
-		foreach ($data['data'] as $row) {
-			print '<option';
-			if (isset($args['pid']) && $args['pid']==$row['person_id']) print ' selected';
-			print ' value="'.$row['person_id'].'">';
-			print ucfirst(member_full_name(3, $row['title'], $row['first_name'], $row['last_name'], $row['constituency']));
+			print ', ' . $row['constituency'];
 			print '</option>';
 		}
 		print '</optgroup>';
 	}
-
 }
 
 ?>

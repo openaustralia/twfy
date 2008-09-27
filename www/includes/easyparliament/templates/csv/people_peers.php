@@ -11,6 +11,7 @@ twfy_debug("TEMPLATE", "people_peers.php");
 $order = $data['info']['order'];
 
 header('Content-Type: text/csv');
+header('Content-Disposition: attachment; filename=senators.csv');
 print "Person ID,Name,Party,URI";
 print "\n";
 
@@ -27,7 +28,7 @@ function render_peers_row($peer, $order) {
 		print $parties[$peer['party']];
 	else
 		print $peer['party'];
-	print ',' .  'http://www.openaustralia.org/peer/' . 
+	print ',' .  'http://www.openaustralia.org/senator/' . 
 		make_member_url($name, null);
 	print "\n";
 }

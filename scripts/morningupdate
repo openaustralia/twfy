@@ -48,7 +48,7 @@ $VERBOSE && echo "Loading into database"
 ./xml2db.pl $CRONQUIET --recent --debates
 #./xml2db.pl $CRONQUIET --recent --westminhall --quiet
 #./xml2db.pl $CRONQUIET --recent --wms --quiet
-#./xml2db.pl $CRONQUIET --recent --lordsdebates --quiet
+./xml2db.pl $CRONQUIET --recent --lordsdebates
 #./xml2db.pl $CRONQUIET --recent --ni --quiet
 
 # Update Xapan index

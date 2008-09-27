@@ -226,8 +226,9 @@ class USER {
 			// Full stops don't work well at the end of URLs in emails,
 			// so replace them. We won't be doing anything clever with the crypt
 			// stuff, just need to match this token.
-
-			$this->registrationtoken = strtr($token, '.', 'X');
+			// Also, replace '/' with 'X' since two '//' in the url will get passed
+			// to /alert/confirm with a single '/' for some reason
+			$this->registrationtoken = strtr($token, './', 'XX');
 
 			// Add that to the DB.
 			$r = $this->db->query("UPDATE users

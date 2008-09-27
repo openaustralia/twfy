@@ -34,7 +34,7 @@ my $syn = {
 };
 
 debates_rss(1, 'House of Representatives debates', 'debates/', 'debates/debates.rss');
-#debates_rss(101, 'House of Lords debates', 'lords/', 'lords/lords.rss');
+debates_rss(101, 'Senate debates', 'senate/', 'senate/senate.rss');
 #debates_rss(2, 'Westminster Hall debates', 'whall/', 'whall/whall.rss');
 #debates_rss(5, 'Northern Ireland Assembly debates', 'ni/', 'ni/ni.rss');
 #wms_rss();

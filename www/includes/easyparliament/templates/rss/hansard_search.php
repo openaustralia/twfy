@@ -2,7 +2,7 @@
 
 <rss version="2.0" xmlns:openSearch="http://a9.com/-/spec/opensearchrss/1.0/">
 <channel>
-<title>OpenAustralia.org Search: <?=$SEARCHENGINE->query_description_short() ?></title>
+<title>Search: <?=$SEARCHENGINE->query_description_short() ?> (OpenAustralia.org)</title>
 <link>http://www.openaustralia.org<?=htmlentities(str_replace('rss/', '', $_SERVER['REQUEST_URI'])) ?></link>
 <description>Search results for <?=$SEARCHENGINE->query_description_short() ?> at OpenAustralia.org</description>
 <language>en-gb</language>

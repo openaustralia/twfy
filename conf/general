@@ -5,9 +5,9 @@
 // *******************************************************************************
 // MySQL database.
 define ("DB_HOST", "localhost");
-define ("DB_USER", "twfy-australia");
-define ("DB_PASSWORD", "twfy-australia");
-define ("DB_NAME", "twfy-australia");
+define ("DB_USER", "openaustralia");
+define ("DB_PASSWORD", "openaustralia");
+define ("DB_NAME", "openaustralia");
 
 // *******************************************************************************
 // Domains.
@@ -117,4 +117,11 @@ define('OPTION_AUTH_SHARED_SECRET', 'Guy Fawkes');
 
 // mySociety debug level thing. Probably leave as 0.
 define('OPTION_PHP_DEBUG_LEVEL', 0);
+
+// *******************************************************************************
+// XML Sitemaps
+
+// Using pingmymap.com for simultaneously notifying many search engines of new xml sitemaps
+// Sign up for an account to get an API key
+define('PINGMYMAP_API_KEY', '0123456789abcdef0123456789abcdef');
 

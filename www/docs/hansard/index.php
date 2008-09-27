@@ -104,5 +104,29 @@ $PAGE->stripe_end(array(
 	)
 ));
 
+$PAGE->stripe_start();
+?>
+				<h3>Busiest Senate debates from the most recent week</h3>
+<?php
+$DEBATELIST = new LORDSDEBATELIST;
+$DEBATELIST->display('biggest_debates', array('days'=>7, 'num'=>$number_of_debates_to_show));
+
+$MOREURL = new URL('lordsdebatesfront');
+$anchor = $number_of_debates_to_show + 1;
+?>
+				<p><strong><a href="<?php echo $MOREURL->generate(); ?>#d<?php echo $anchor; ?>">See more debates</a></strong></p>
+<?php
+
+$PAGE->stripe_end(array(
+	array (
+		'type' => 'include',
+		'content' => "holdebates_short"
+	),
+	array (
+		'type' => 'include',
+		'content' => "calendar_holdebates"
+	)
+));
+
 $PAGE->page_end();
 ?>

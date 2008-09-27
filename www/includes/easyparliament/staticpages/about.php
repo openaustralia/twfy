@@ -15,8 +15,8 @@ We owe a great debt to a UK charity, mySociety, which built <a href="http://they
 
 <p>The Australian Hansard is
 <a href="http://www.ag.gov.au/cca">Copyright Commonwealth of Australia</a>,
-and is used with permission.
-
+and is used with permission. Images of politicians are <a href="http://www.ag.gov.au/cca">Copyright Commonwealth of Australia<a> and administered by <a href="mailto:auspic@aph.gov.au">AUSPIC</a>.
+</p>
 <p>If you're technically minded, we make all the
 <a href="http://software.openaustralia.org/">OpenAustralia source code</a>
 freely available. Do let us know if you want to help!
@@ -30,6 +30,12 @@ freely available. Do let us know if you want to help!
 	inspired them hugely and they left with a desire to make this happen in Australia too. It took a few years, other people
 	came on board to help and here you can see the fruits of their labour.</p>
 
+<p>The project was kick-started in November 2007 when Matthew, supported by <a href="http://www.rsp.com.au">Rising Sun Pictures</a>,
+	was given the oppurtunity to take a week of paid charity leave to develop the first, very rough, prototype of OpenAustralia.</p>
+
+<p>The project continues to be supported by Andrew Snow from <a href="http://octopus.com.au">Octopus Computing</a> who kindly provide
+	VPS hosting to us for free.</p>
+
 <h4>Volunteers on OpenAustralia.org</h4>
 <ul>
 	<li>Matthew Landauer</li>
@@ -37,6 +43,8 @@ freely available. Do let us know if you want to help!
 	<li>Bruno Mattarollo</li>
 	<li>Matthew Panetta</li>
 	<li>Wade Millican</li>
+	<li>Nathanael Boehm</li>
+	<li>Daniel Kinsman</li>
 </ul>
 
 <p><em>They did all this in their spare time, because they thought it was worth doing.

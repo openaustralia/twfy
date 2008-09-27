@@ -244,19 +244,24 @@ if (isset($MEMBER) && is_array($MEMBER->person_id())) {
 	
 	$member_name = ucfirst($MEMBER->full_name());
 
-	$subtitle = $member_name;
-	if ($MEMBER->house(1)) {
-		if (!$MEMBER->current_member(1)) {
-			$subtitle .= ', former';
-		}
-		$subtitle .= ' MP, '.$MEMBER->constituency();
+	if ($MEMBER->current_member(2)) {
+		$subtitle = "Senator ".$member_name.', '.$MEMBER->constituency();
 	}
-	if ($MEMBER->house(3)) {
-		if (!$MEMBER->current_member(3)) {
-			$subtitle .= ', former';
+	else {
+		$subtitle = $member_name;
+		if ($MEMBER->house(1)) {
+			if (!$MEMBER->current_member(1)) {
+				$subtitle .= ', former Representative';
+			}
+			else {
+				$subtitle .= ' MP';
+			}
+			$subtitle .=  ', '.$MEMBER->constituency();
 		}
-		$subtitle .= ' MLA, '.$MEMBER->constituency();
+		if ($MEMBER->house(2))
+			$subtitle .= ', former Senator, '.$MEMBER->constituency();
 	}
+
 	$DATA->set_page_metadata($this_page, 'subtitle', $subtitle);
 	$DATA->set_page_metadata($this_page, 'heading', '');
 
@@ -313,14 +318,14 @@ if (isset($MEMBER) && is_array($MEMBER->person_id())) {
 		if ($previous_people) {
 			$sidebars[] = array(
 				'type' => 'html',
-				'content' => '<div class="block"><h4>Previous MPs in this constituency</h4><div class="blockbody"><ul>' . $previous_people . '</ul></div></div>'
+				'content' => '<div class="block"><h4>Previous Representatives in this constituency</h4><div class="blockbody"><ul>' . $previous_people . '</ul></div></div>'
 			);
 		}
 		$future_people = $MEMBER->future_mps();
 		if ($future_people) {
 			$sidebars[] = array(
 				'type' => 'html',
-				'content' => '<div class="block"><h4>Succeeding MPs in this constituency</h4><div class="blockbody"><ul>' . $future_people . '</ul></div></div>'
+				'content' => '<div class="block"><h4>Succeeding Representatives in this constituency</h4><div class="blockbody"><ul>' . $future_people . '</ul></div></div>'
 			);
 		}
 	}

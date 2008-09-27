@@ -17,9 +17,43 @@ $data = array (
 );
 */
 
-global $this_page;
+global $this_page, $THEUSER;
 
 twfy_debug("TEMPLATE", "people_mps.php");
+
+$MPURL = new URL('yourmp');
+$MP_RECENT_URL = new URL('yourmp_recent');
+
+// Hack hack
+if ($THEUSER->constituency_is_set()) {
+	// (We don't allow the user to search for a postcode if they
+	// already have one set in their prefs.)
+	
+	$MEMBER = new MEMBER(array ('constituency'=>$THEUSER->constituency()));
+	if ($MEMBER->valid) {
+		$pc_form = false;
+		$CHANGEURL = new URL('userchangepc');
+		$mpname = $MEMBER->first_name() . ' ' . $MEMBER->last_name();
+		$former = "";
+		$left_house = $MEMBER->left_house();
+		if ($left_house[1]['date'] != '9999-12-31') {
+			$former = 'former';
+		}
+?>
+	<p style="margin-top: -30px; margin-bottom: 5px">Find out more about <a href="<?php echo $MPURL->generate(); ?>"><strong><?php echo $mpname; ?>, your <?= $former ?> Representative</strong></a>, including their <a href="<?= $MP_RECENT_URL->generate() ?>">most recent speeches</a>.</p>
+	<p style="margin-bottom: 30px">If <?php echo $mpname; ?> is not your Representative, <a href="<?= $CHANGEURL->generate(); ?>">provide a new postcode</a>.</p>
+<?php
+	}
+}
+else {
+?>
+	<p>Find out who <a href="<?= $MPURL->generate() ?>">your Representative</a> is. All you need is a postcode.</p>
+<?php
+}
+
+?>
+<h3>All members of the House of Representatives</h3>
+<?php
 
 $order = $data['info']['order'];
 
@@ -53,6 +87,7 @@ if ($order == 'party') {
 ?>
 				<table border="0" cellpadding="4" cellspacing="0" width="90%" class="people">
 				<thead>
+				<th>Photo</th>
 				<th><?php echo $th_name; ?></th>
 				<th><?php echo $th_party; ?></th>
 				<th><?php echo $th_constituency; ?></th>
@@ -108,6 +143,16 @@ function render_mps_row($mp, &$style, $order, $MPURL) {
 #	$MPURL->insert(array('pid'=>$mp['person_id']));
 	?>
 				<tr>
+                <td class="row">
+                <?php
+                list($image,$sz) = find_rep_image($mp['person_id'], true);
+                if ($image) {
+                    echo '<img class="portrait" alt="" src="', $image, '"';
+                    echo '>';
+                } else {
+                }
+                ?>
+                </td>
 				<td class="row-<?php echo $style; ?>"><a href="<?php echo $MPURL->generate().make_member_url($mp['first_name'].' '.$mp['last_name'], $mp['constituency'], 1); ?>"><?php echo $name; ?></a></td>
 				<td class="row-<?php echo $style; ?>"><?php echo $mp['party']; ?></td>
 				<td class="row-<?php echo $style; ?>"><?php echo $mp['constituency']; ?></td>

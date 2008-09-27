@@ -235,6 +235,11 @@ $this->page = array (
 		'parent'		=> 'api_front',
 		'url'			=> 'api/'
 	),
+	'api_key'		=> array (
+		'title'			=> 'API Key',
+		'parent'		=> 'api_front',
+		'url'			=> 'api/'
+	),
 
 	'cards' => array (
 		'title'			=> 'MP Stats Cards',
@@ -340,10 +345,10 @@ $this->page = array (
 	),
 	'hansard' => array (
 		'menu'			=> array (
-			'text'			=> 'Hansard',
-			'title'			=> "House debates"
+			'text'			=> 'Debates',
+			'title'			=> "House of Representatives and Senate debates"
 		),
-		'title'			=> 'House of Representatives',
+		'title'			=> 'House of Representatives and Senate debates',
 		'track'			=> true,
 		'url'			=> 'hansard/'
 	),	
@@ -377,7 +382,7 @@ $this->page = array (
 			'text'			=> 'Home',
 			'title'			=> "The front page of the site"
 		),
-		'title'			=> "Are your Representatives working for you in Australia's Parliament?",
+		'title'			=> "Are your Representatives and Senators working for you in Australia's Parliament?",
 		'track'			=> true,
 		'rss'			=> 'news/index.rdf',
 		'url'			=> ''
@@ -396,51 +401,51 @@ $this->page = array (
 	'lordsdebate'  => array (
 		'parent'		=> 'lordsdebatesfront',
 		'track'			=> true,
-		'url'			=> 'lords/',
+		'url'			=> 'senate/',
 		'session_vars'	=> array ('gid'),
 	),
 	'lordsdebates'  => array (
 		'parent'		=> 'lordsdebatesfront',
 		'track'			=> true,
-		'url'			=> 'lords/',
+		'url'			=> 'senate/',
 		'session_vars'	=> array ('id'),
 	),
 	'lordsdebatesday' => array (
 		'parent'		=> 'lordsdebatesfront',
 		'session_vars'	=> array ('d'),
 		'track'			=> true,
-		'url'			=> 'lords/',
+		'url'			=> 'senate/',
 	),			
 	'lordsdebatesfront' => array (
 		'menu'			=> array (
-			'text'			=> 'Lords Debates',
-			'title'			=> "House of Lords debates"
+			'text'			=> 'Senate Debates',
+			'title'			=> "Senate debates"
 		),
 		'parent'		=> 'hansard',
-		'title'			=> 'House of Lords debates',
+		'title'			=> 'Senate debates',
 		'track'			=> true,
-		'rss'			=> 'lords/lords.rss',
-		'url'			=> 'lords/'
+		'rss'			=> 'senate/senate.rss',
+		'url'			=> 'senate/'
 	),
 	'lordsdebatesyear' => array (
 		'parent'		=> 'lordsdebatesfront',
 		'title'			=> 'Debates for ',
-		'url'			=> 'lords/'
+		'url'			=> 'senate/'
 	),
 
 	'peer' => array (
-		'title'			=> 'Peer',
+		'title'			=> 'Senator',
 		'track'			=> true,
-		'url'			=> 'peer/'
+		'url'			=> 'senator/'
 	),
 	'peers' => array (
 		 'menu'			=> array (
-			'text'			=> 'All Lords',
-			'title'			=> "List of all Lords"
+			'text'			=> 'Senators',
+			'title'			=> "List of all Senators"
 		),
-		'title'			=> 'All Lords',
+		'title'			=> 'All Senators',
 		'track'			=> true,
-		'url'			=> 'peers/'
+		'url'			=> 'senators/'
 	),
 
 	'mla' => array (
@@ -501,10 +506,10 @@ $this->page = array (
 
 	'mps' => array (
 		 'menu'			=> array (
-			'text'			=> 'All Representatives',
-			'title'			=> "List of all Members of the House of Representatives"
+			'text'			=> 'Representatives',
+			'title'			=> "Your Representative and list of all Members of the House of Representatives"
 		),
-		'title'			=> 'All Members of the House of Representatives',
+		'title'			=> 'Representatives',
 		'track'			=> true,
 		'url'			=> 'mps/'
 	),

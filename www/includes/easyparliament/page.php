@@ -4,6 +4,7 @@ if (defined('OPTION_TRACKING') && OPTION_TRACKING)
 	require_once INCLUDESPATH . '../../../phplib/tracking.php';
 
 include_once INCLUDESPATH . '../../../phplib/gaze.php';
+include_once INCLUDESPATH . 'easyparliament/member.php';
 
 function score_to_strongly($dmpscore) {
 	$dmpdesc = "unknown about";
@@ -213,7 +214,7 @@ class PAGE {
 	<title><?php echo $title; ?></title>
 	<meta name="description" content="Making parliament easy.">
 	<meta name="keywords" content="Parliament, government, House of Representatives, Senate, Senator, MP, Member of Parliament, MPs, Australia, Australian, <?php echo htmlentities($keywords_title).htmlentities($keywords); ?>">
-	<meta name="verify-v1" content="5FBaCDi8kCKdo4s64NEdB5EOJDNc310SwcLLYHmEbgg=" />
+	<meta name="verify-v1" content="5FBaCDi8kCKdo4s64NEdB5EOJDNc310SwcLLYHmEbgg=">
 	<link rel="author" title="Send feedback" href="mailto:<?php echo str_replace('@', '&#64;', CONTACTEMAIL); ?>">
 	<link rel="home" title="Home" href="http://<?php echo DOMAIN; ?>/">
 <?php
@@ -314,7 +315,7 @@ pageTracker._trackPageview();
 			?>
 		<div id="search">
 			<form action="<?php echo $URL->generate(); ?>" method="get">
-			<p>Search <input name="s" size="15"> <input type="submit" class="submit" value="GO"></p>
+			<p style="padding-left: 5px"><input name="s" size="15"> <input type="submit" class="submit" value="Search"></p>
 			</form>
 		</div>
 <?php
@@ -335,11 +336,10 @@ pageTracker._trackPageview();
 		$items = array (
 			'home' 		=> array (),
 			'sitenews'  => array(),
+			'hansard' => array(),
 			'comments_recent' => array(),
-			'debatesfront' => array(),
-			'yourmp'	=> array (),
 			'mps'           => array (),
-#			'peers'		=> array (),
+			'peers'		=> array (),
 #			'mlas'          => array (),
 #			'msps'          => array (),
 #			'help_us_out'	=> array (), 
@@ -349,9 +349,9 @@ pageTracker._trackPageview();
 		
 		// If the user's postcode is set, then we allow them to view the
 		// bottom menu link to this page...
-		if ($THEUSER->constituency_is_set()) {
-			$items['yourmp'] = array ('yourmp_recent');
-		}
+		//if ($THEUSER->constituency_is_set()) {
+		//	$items['yourmp'] = array ('yourmp_recent');
+		//}
 		
 	
 		$top_links = array();
@@ -848,13 +848,13 @@ pageTracker._trackPageview();
 			}
 		}
 		# For the time being commenting out API/XML links until we get those up and running
-		#$links[] = '<a href="' . WEBPATH . 'api">API</a> / <a href="http://ukparse.kforge.net/parlparse">XML</a>';
+		#$links[] = '<a href="' . WEBPATH . 'api/">API</a> / <a href="http://ukparse.kforge.net/parlparse">XML</a>';
 		$links[] = '<a href="http://software.openaustralia.org">Source code</a>';
 		$links[] = '<a href="http://blog.openaustralia.org">Blog</a>';
 
-#		$user_agent = ( isset( $_SERVER['HTTP_USER_AGENT'] ) ) ? strtolower( $_SERVER['HTTP_USER_AGENT'] ) : '';
-#		if (stristr($user_agent, 'Firefox/'))
-#			$links[] = '<a href="http://mycroft.mozdev.org/download.html?name=theyworkforyou">Add search to Firefox</a>';
+		$user_agent = ( isset( $_SERVER['HTTP_USER_AGENT'] ) ) ? strtolower( $_SERVER['HTTP_USER_AGENT'] ) : '';
+		if (stristr($user_agent, 'Firefox/'))
+			$links[] = '<a href="http://mycroft.mozdev.org/download.html?name=openaustralia">Add search to Firefox</a>';
 		?>
 	
 		<div id="footer">
@@ -988,7 +988,24 @@ pr()//-->
 	function display_member($member, $extra_info) {
 		global $THEUSER, $DATA, $this_page;
 
-		$title = ucfirst($member['full_name']);
+		# If current Senator show their name as "Senator John Smith". Current Representative show their name as "John Smith MP"
+		$title = $member['current_member'][2] ? 'Senator ' : '';
+		$title .= ucfirst($member['full_name']);
+		# Show current titles first
+		foreach ($member['houses'] as $house) {
+			if ($member['current_member'][$house]) {
+				$title .= ' ';
+				if ($house==1) $title .= 'MP';
+			}
+		}
+		# Show former membership
+		foreach ($member['houses'] as $house) {
+			if (!$member['current_member'][$house]) {
+				$title .= ', former ';
+				if ($house==1) $title .= 'Representative';
+				if ($house==2) $title .= 'Senator';
+			}
+		}
 
 /*		if (isset($extra_info["public_whip_dreammp996_distance"])) {
 			$dmpscore = floatval($extra_info["public_whip_dreammp996_distance"]);
@@ -1018,13 +1035,6 @@ pr()//-->
 		$this->block_end();
 */
 
-		foreach ($member['houses'] as $house) {
-			if ($house==2) continue;
-			if (!$member['current_member'][$house]) $title .= ', former';
-			if ($house==1) $title .= ' MP';
-			if ($house==3) $title .= ' MLA';
-			if ($house==4) $title .= ' MSP';
-		}
 		if ($rssurl = $DATA->page_metadata($this_page, 'rss')) {
 			$title = '<a href="' . WEBPATH . $rssurl . '"><img src="' . WEBPATH . 'images/rss.gif" alt="RSS feed" border="0" align="right"></a> ' . $title;
 		}
@@ -1035,24 +1045,19 @@ pr()//-->
 			echo '<img class="portrait" alt="Photo of ', $member['full_name'], '" src="', $image, '"';
 			if ($sz=='S') echo ' height="118"';
 			echo '>';
-		}
+		} else {
+            // Prompt for photo
+            echo '<div class="textportrait"><br>We\'re missing a photo!<br><br><a href="mailto:contact@openaustralia.org">Email us one</a> <small>(that you have copyright of)</small><br><br></div>';
+        }
 
 		echo '<ul class="hilites">';
 		$desc = '';
 		foreach ($member['houses'] as $house) {
-			if ($house==0) {
-				$desc .= '<li><strong>Acceded on ';
-				$desc .= $member['entered_house'][0]['date_pretty'];
-				$desc .= '</strong></li>';
-				$desc .= '<li><strong>Coronated on 2 June 1953</strong></li>';
-				continue;
-			}
 			$party = $member['left_house'][$house]['party'];
-			if ($house==1 && isset($member['entered_house'][2])) continue; # Same info is printed further down
 			$desc .= '<li><strong>';
 			if (!$member['current_member'][$house]) $desc .= 'Former ';
 			$desc .= htmlentities($party);
-			if ($party=='Speaker' || $party=='Deputy-Speaker') {
+			if ($party=='Speaker' || $party=='Deputy-Speaker' || $party=='President' || $party=='Deputy-President') {
 				$desc .= ', and ';
 				# XXX: Will go horribly wrong if something odd happens
 				if ($party=='Deputy-Speaker') {
@@ -1060,18 +1065,16 @@ pr()//-->
 					$desc .= $last['from'] . ' ';
 				}
 			}
-			if ($house==1 || $house==3 || $house==4) {
-				$desc .= ' ';
-				if ($house==1) $desc .= 'MP';
-				if ($house==3) $desc .= 'MLA';
-				if ($house==4) $desc .= 'MSP';
-				$desc .= ' for ' . $member['left_house'][$house]['constituency'];
-			}
-			if ($house==2 && $party != 'Bishop') $desc .= ' Peer';
+			$desc .= ' ';
+			if ($house==1) $desc .= 'Representative';
+			if ($house==2) $desc .= 'Senator';
+			if ($house==3) $desc .= 'MLA';
+			if ($house==4) $desc .= 'MSP';
+			$desc .= ' for ' . $member['left_house'][$house]['constituency'];
 			$desc .= '</strong></li>';
 		}
 		print $desc;
-		if ($member['other_parties'] && $member['party'] != 'Speaker' && $member['party']!='Deputy-Speaker') {
+		if ($member['other_parties'] && $member['party'] != 'Speaker' && $member['party']!='Deputy-Speaker' && $member['party']!='President' && $member['party']!='Deputy-President') {
 			print "<li>Changed party ";
 			foreach ($member['other_parties'] as $r) {
 				$out[] = 'from ' . $r['from'] . ' on ' . format_date($r['date'], SHORTDATEFORMAT);
@@ -1096,7 +1099,7 @@ pr()//-->
 		}
 
 		if (isset($member['left_house'][1]) && isset($member['entered_house'][2])) {
-			print '<li><strong>Entered the House of Lords ';
+			print '<li><strong>Entered the Senate ';
 			if (strlen($member['entered_house'][2]['date_pretty'])==4)
 				print 'in ';
 			else
@@ -1105,13 +1108,15 @@ pr()//-->
 			print '</strong>';
 			if ($member['entered_house'][2]['reason']) print ' &mdash; ' . $member['entered_house'][2]['reason'];
 			print '</li>';
-			print '<li><strong>Previously MP for ';
-			print $member['left_house'][1]['constituency'] . ' until ';
-			print $member['left_house'][1]['date_pretty'].'</strong>';
-			if ($member['left_house'][1]['reason']) print ' &mdash; ' . $member['left_house'][1]['reason'];
-			print '</li>';
+			if (!$member['current_member'][1]) {
+				print '<li><strong>Previously Representative for ';
+				print $member['left_house'][1]['constituency'] . ' until ';
+				print $member['left_house'][1]['date_pretty'].'</strong>';
+				if ($member['left_house'][1]['reason']) print ' &mdash; ' . $member['left_house'][1]['reason'];
+				print '</li>';
+			}
 		} elseif (isset($member['entered_house'][2]['date'])) {
-			print '<li><strong>Became a Lord ';
+			print '<li><strong>Became a Senator ';
 			if (strlen($member['entered_house'][2]['date_pretty'])==4)
 				print 'in ';
 			else
@@ -1120,13 +1125,13 @@ pr()//-->
 			if ($member['entered_house'][2]['reason']) print ' &mdash; ' . $member['entered_house'][2]['reason'];
 			print '</li>';
 		} elseif (in_array(1, $member['houses']) && !$member['current_member'][1]) {
-			print '<li><strong>Left Parliament on '.$member['left_house'][1]['date_pretty'].'</strong>';
+			print '<li><strong>Left House of Representatives on '.$member['left_house'][1]['date_pretty'].'</strong>';
 			if ($member['left_house'][1]['reason']) print ' &mdash; ' . $member['left_house'][1]['reason'];
 			print '</li>';
 		}
 
-		if (isset($member['entered_house'][1]['date']) && $member['entered_house'][1]['date'] != '1997-05-01') {
-			print '<li><strong>Entered Parliament on ';
+		if (isset($member['entered_house'][1]['date'])) {
+			print '<li><strong>Entered House of Representatives on ';
 			print $member['entered_house'][1]['date_pretty'].'</strong>';
 			if ($member['entered_house'][1]['reason']) print ' &mdash; ' . $member['entered_house'][1]['reason'];
 			print '</li>';
@@ -1137,7 +1142,7 @@ pr()//-->
 				$extra_info['lordbio_from'], '">Number 10 press release</a>)</small></li>';
 		}
 		if (in_array(2, $member['houses']) && !$member['current_member'][2]) {
-			print '<li><strong>Left Parliament on '.$member['left_house'][2]['date_pretty'].'</strong>';
+			print '<li><strong>Left Senate on '.$member['left_house'][2]['date_pretty'].'</strong>';
 			if ($member['left_house'][2]['reason']) print ' &mdash; ' . $member['left_house'][2]['reason'];
 			print '</li>';
 		}
@@ -1208,7 +1213,6 @@ pr()//-->
 						<li><a href="http://www.writetothem.com/"><strong>Send a message to your MLA</strong></a> <small>(via WriteToThem.com)</small></li>
 <?php		} elseif ($member['current_member'][2]) {
 			?>
-						<li><a href="http://www.writetothem.com/?person=uk.org.publicwhip/person/<?php echo $member['person_id']; ?>"><strong>Send a message to <?php echo $member['full_name']; ?></strong></a> <small>(via WriteToThem.com)</small></li>
 <?php
 
 		}
@@ -1486,7 +1490,7 @@ and has had no written questions answered for which we know the department or su
 		$displayed_stuff = 0;
 		?>
 		<p><em>Please note that numbers do not measure quality. 
-		Also, representatives may do other things not currently covered
+		Also, <?php if ($member['house_disp']==1) echo "Representatives"; else echo "Senators"; ?> may do other things not currently covered
 		by this site.</em> (<a href="<?=WEBPATH ?>help/#numbers">More about this</a>)</p>
 <ul>
 <?php
@@ -1496,9 +1500,7 @@ and has had no written questions answered for which we know the department or su
 		#	$since_text = 'since joining Parliament';
 
 		$MOREURL = new URL('search');
-		#$section = 'section:debates section:whall section:lordsdebates section:ni';
-		$section = 'section:debates';
-		$MOREURL->insert(array('pid'=>$member['person_id'], 's'=>$section, 'pop'=>1));
+		$MOREURL->insert(array('pid'=>$member['person_id'], 'pop'=>1));
 		if ($member['party']!='Sinn Fein') {
 			$displayed_stuff |= display_stats_line('debate_sectionsspoken_inlastyear', 'Has spoken in <a href="' . $MOREURL->generate() . '">', 'debate', '</a> ' . $since_text, '', $extra_info);
 
@@ -1532,17 +1534,16 @@ and has had no written questions answered for which we know the department or su
 		}
 		if ($member['party'] != 'Sinn Fein') {
 #			$displayed_stuff |= display_stats_line('public_whip_division_attendance', 'Has voted in <a href="http://www.publicwhip.org.uk/mp.php?id=uk.org.publicwhip/member/' . $member['member_id'] . '&amp;showall=yes#divisions" title="See more details at Public Whip">', 'of vote', '</a> in parliament', $after_stuff, $extra_info);
-
-			$displayed_stuff |= display_stats_line('comments_on_speeches', 'People have made <a href="' . WEBPATH . 'comments/recent/?pid='.$member['person_id'].'">', 'comment', "</a> on this MP's speeches", '', $extra_info);
-			$displayed_stuff |= display_stats_line('reading_age', 'This MP\'s speeches are understandable to an average ', '', ' year old, going by the <a href="http://en.wikipedia.org/wiki/Flesch-Kincaid_Readability_Test">Flesch-Kincaid Grade Level</a> score', '', $extra_info);
+			$displayed_stuff |= display_stats_line('comments_on_speeches', 'People have made <a href="' . WEBPATH . 'comments/recent/?pid='.$member['person_id'].'">', 'comment', "</a> on this Representative's speeches", '', $extra_info);
+			$displayed_stuff |= display_stats_line('reading_age', 'This Representative\'s speeches are understandable to an average ', '', ' year old, going by the <a href="http://en.wikipedia.org/wiki/Flesch-Kincaid_Readability_Test">Flesch-Kincaid Grade Level</a> score', '', $extra_info);
 		}
 		
 		if (isset($extra_info['number_of_alerts'])) {
 			$displayed_stuff = 1;
 			?>
 		<li><strong><?=htmlentities($extra_info['number_of_alerts']) ?></strong> <?=($extra_info['number_of_alerts']==1?'person is':'people are') ?> tracking whenever <?
-if ($member['house_disp']==1) print 'this MP';
-elseif ($member['house_disp']==2) print 'this peer';
+if ($member['house_disp']==1) print 'this Representative';
+elseif ($member['house_disp']==2) print 'this Senator';
 elseif ($member['house_disp']==3) print 'this MLA';
 elseif ($member['house_disp']==4) print 'this MSP';
 elseif ($member['house_disp']==0) print $member['full_name']; ?> speaks<?php
@@ -1723,8 +1724,11 @@ elseif ($member['house_disp']==0) print $member['full_name']; ?> speaks<?php
 		}
 		if(isset($links['wikipedia_url'])) {
 			$html .= '	<li><a href="' . $links['wikipedia_url'] . '">Biography</a> <small>(From Wikipedia)</small></li>';
-		}
-		
+		}	
+		if (isset($links['mp_biography_qanda']) && $links['mp_biography_qanda'] != "") {
+			$html .= '	<li><a href="' . $links['mp_biography_qanda'] . '">Biography</a> <small>(From ABC\'s Q &amp; A)</small></li>';
+		} 
+
 		if(isset($links['diocese_url'])) {
 			$html .= '	<li><a href="' . $links['diocese_url'] . '">Diocese website</a></li>';
 		}
@@ -1759,10 +1763,6 @@ elseif ($member['house_disp']==0) print $member['full_name']; ?> speaks<?php
 
 		} 
 
-		if (isset($links['mp_biography_qanda']) && $links['mp_biography_qanda'] != "") {
-			$html .= '	<li><a href="' . $links['mp_biography_qanda'] . '">Biography from ABC\'s Q &amp; A</a></li>';
-
-		} 
 		$bbc_name = urlencode($member->first_name()) . "%20" . urlencode($member->last_name());
 		if ($member->member_id() == -1)
 			$bbc_name = 'Queen Elizabeth';
@@ -2953,7 +2953,7 @@ function display_stats_line_house($house, $category, $blurb, $type, $inwhat, $ex
 			$inwhat = preg_replace('#<\/a>#', '', $inwhat);
 		}
 	}
-	if ($house==2) $inwhat = str_replace('MP', 'Lord', $inwhat);
+	if ($house==2) $inwhat = str_replace('Representative', 'Senator', $inwhat);
 	print '<li>' . $blurb;
 	print '<strong>' . $extra_info[$category];
 	if ($type) print ' ' . make_plural($type, $extra_info[$category]);
@@ -2962,7 +2962,7 @@ function display_stats_line_house($house, $category, $blurb, $type, $inwhat, $ex
 	if ($minister)
 		print ' &#8212; Ministers do not ask written questions';
 	else {
-		$type = ($house==1?'MP':($house==2?'Lord':'MLA'));
+		$type = ($house==1?'Representative':($house==2?'Senator':'MLA'));
 		if (!get_http_var('rem') && isset($extra_info[$category . '_quintile'])) {
 			print ' &#8212; ';
 			$q = $extra_info[$category . '_quintile'];

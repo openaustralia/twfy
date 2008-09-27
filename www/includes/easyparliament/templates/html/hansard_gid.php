@@ -224,21 +224,18 @@ if (isset ($data['rows'])) {
 				}
 				echo '<strong>', $speakername, '</strong></a> <small>';
 				$desc = '';
-				if (isset($speaker['office'])) {
-					$desc = $speaker['office'][0]['pretty'];
-					if (strpos($desc, 'PPS')!==false) $desc .= ', ';
+				if ($speaker['house'] == 1 && $speaker['party'] != 'Speaker' && $speaker['party'] != 'Deputy Speaker' && $speaker['constituency']) {
+					$desc .= $speaker['constituency'] . ', ';
 				}
-				if (!$desc || strpos($desc, 'PPS')!==false) {
-					if ($speaker['house'] == 1 && $speaker['party'] != 'Speaker' && $speaker['party'] != 'Deputy Speaker' && $speaker['constituency']) {
-						$desc .= $speaker['constituency'] . ', ';
-					}
-					if (get_http_var('wordcolours')) {
-						$desc .= '<span style="color: '.party_to_colour($speaker['party']).'">';
-					}
-					$desc .= htmlentities($speaker['party']);
-					if (get_http_var('wordcolours')) {
-						$desc .= '</span>';
-					}
+				if (get_http_var('wordcolours')) {
+					$desc .= '<span style="color: '.party_to_colour($speaker['party']).'">';
+				}
+				$desc .= htmlentities($speaker['party']);
+				if (get_http_var('wordcolours')) {
+					$desc .= '</span>';
+				}
+				if (isset($speaker['office'])) {
+					$desc .= ', ' . $speaker['office'][0]['pretty'];
 				}
 				if ($desc) print "($desc)";
 				if ($hansardmajors[$data['info']['major']]['type']=='debate' && $this_page == $hansardmajors[$data['info']['major']]['page_all']) {
