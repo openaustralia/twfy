@@ -257,7 +257,6 @@ $this->page = array (
 			'text'			=> 'Recent comments',
 			'title'			=> "Recently posted comments"
 		),
-		'parent'		=> 'home',
 		'title'			=> "Recent comments",
 		'url'			=> 'comments/recent/'
 	),
@@ -649,7 +648,6 @@ $this->page = array (
 			'text'			=> 'News',
 			'title'			=> "News about changes to this website"
 		),
-		'parent'		=> 'home',
 		'rss'			=> 'news/index.rdf',
 		'sidebar'		=> 'sitenews',
 		'title'			=> 'OpenAustralia news',
