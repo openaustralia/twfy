@@ -336,9 +336,8 @@ pageTracker._trackPageview();
 		$items = array (
 			'home' 		=> array (),
 			'sitenews'  => array(),
+			'hansard' => array(),
 			'comments_recent' => array(),
-			'debatesfront' => array(),
-			'yourmp'	=> array (),
 			'mps'           => array (),
 			'peers'		=> array (),
 #			'mlas'          => array (),
@@ -350,9 +349,9 @@ pageTracker._trackPageview();
 		
 		// If the user's postcode is set, then we allow them to view the
 		// bottom menu link to this page...
-		if ($THEUSER->constituency_is_set()) {
-			$items['yourmp'] = array ('yourmp_recent');
-		}
+		//if ($THEUSER->constituency_is_set()) {
+		//	$items['yourmp'] = array ('yourmp_recent');
+		//}
 		
 	
 		$top_links = array();
