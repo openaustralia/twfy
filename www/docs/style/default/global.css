@@ -22,14 +22,18 @@ body {
 	font-size: 80%;
 	}
 	
-h2,
+h2 {
+	font-size: 1.5em;
+}
 h4 {
-	font-size: 1.4em;
+	font-size: 1.25em;
 	}
 
-h3,
+h3 {
+	font-size: 1.15em;
+}
 h5 {
-	font-size: 1.2em;
+	font-size: 1.1em;
 	}
 	
 p,

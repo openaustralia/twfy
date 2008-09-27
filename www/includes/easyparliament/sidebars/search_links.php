@@ -17,10 +17,10 @@ if ($email_text || $rss) {
 	$this->block_start(array( 'title' => "Being alerted to new search results"));
 	echo '<ul id="search_links">';
 	if ($email_text) {
-		echo '<li id="search_links_email"><a href="', $email_link, '">Subscribe to an email alert</a> for items ', $email_text, '</li>';
+		echo '<li id="search_links_email"><p><a href="', $email_link, '">Subscribe to an email alert</a> for items ', $email_text, '</p></li>';
 	}
 	if ($rss) {
-		echo '<li id="search_links_rss">Or <a href="', $rss, '">get an RSS feed</a></li>';
+		echo '<li id="search_links_rss"><p>Or <a href="', $rss, '">get an RSS feed</a></p></li>';
 	}
 	echo '</ul>';
 	$this->block_end();
