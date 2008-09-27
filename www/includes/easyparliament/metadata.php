@@ -345,7 +345,7 @@ $this->page = array (
 	),
 	'hansard' => array (
 		'menu'			=> array (
-			'text'			=> 'Hansard',
+			'text'			=> 'Debates',
 			'title'			=> "House of Representatives and Senate debates"
 		),
 		'title'			=> 'House of Representatives and Senate debates',
@@ -440,7 +440,7 @@ $this->page = array (
 	),
 	'peers' => array (
 		 'menu'			=> array (
-			'text'			=> 'All Senators',
+			'text'			=> 'Senators',
 			'title'			=> "List of all Senators"
 		),
 		'title'			=> 'All Senators',
@@ -506,10 +506,10 @@ $this->page = array (
 
 	'mps' => array (
 		 'menu'			=> array (
-			'text'			=> 'All Representatives',
-			'title'			=> "List of all Members of the House of Representatives"
+			'text'			=> 'Representatives',
+			'title'			=> "Your Representative and list of all Members of the House of Representatives"
 		),
-		'title'			=> 'All Members of the House of Representatives',
+		'title'			=> 'Representatives',
 		'track'			=> true,
 		'url'			=> 'mps/'
 	),
