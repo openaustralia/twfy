@@ -315,7 +315,7 @@ pageTracker._trackPageview();
 			?>
 		<div id="search">
 			<form action="<?php echo $URL->generate(); ?>" method="get">
-			<p>Search <input name="s" size="15"> <input type="submit" class="submit" value="GO"></p>
+			<p style="padding-left: 5px"><input name="s" size="15"> <input type="submit" class="submit" value="Search"></p>
 			</form>
 		</div>
 <?php
