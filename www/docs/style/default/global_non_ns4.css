@@ -580,14 +580,13 @@ div.calendar {
 	margin: 0 14px 1em 18px;
 	padding: 0;
 	height: 13.3em;
-	width: 187px; /* NAT */
 	border: solid 1px #999; /* NAT */
 	}
 	
 div.calendar table {
 	margin: 0;
 	width: 187px;
-	}
+}
 	
 div.calendar caption {
 	caption-side: top;
@@ -596,7 +595,7 @@ div.calendar caption {
 	background: #a8a98c;
 	color: #fff;
 	font-weight: bold;
-	width: 187px;
+	width: 189px;
 	}
 div.calendar th,
 div.calendar td {
