@@ -4,6 +4,13 @@
 
 $all_news = array(
 
+5 => array('A new look OpenAustralia', <<<EOT
+OpenAustralia has a lovely and sleek new look courtesy of <a href="http://www.purecaffeine.com/">Nathanael Boehm</a>.
+
+We're always interested in feedback, so let us know what you think by <a href="mailto:contact@openaustralia.org">emailing us</a> at the usual place. Enjoy! 
+EOT
+, '2008-10-04 12:26:00', 'Matthew'),
+
 4 => array('The Senate is Here!', <<<EOT
 Just in time for the next sitting, for your civic pleasure, we bring you the Senate. Read the Senate Hansard as
 far back as 2006, and get to know those lovely people working on your behalf, the Senators.
