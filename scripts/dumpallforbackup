@@ -14,9 +14,9 @@ mkdir -p $BACKUP $BACKUP/firsts
 touch $BACKUP/dummy-01.sql.bz2
 mv $BACKUP/*-01.sql.bz2 $BACKUP/firsts
 rm $BACKUP/firsts/dummy-01.sql.bz2
-# ... delete all except 20
+# ... delete all except 14
 PREFIX="openaustralia-all-including-sensitive-data-"
-ls -1 $BACKUP/$PREFIX*.sql.bz2 | fgrep -v "`ls -1 $BACKUP/$PREFIX*.sql.bz2 | sort -n | tail -n 20`" | while read X
+ls -1 $BACKUP/$PREFIX*.sql.bz2 | fgrep -v "`ls -1 $BACKUP/$PREFIX*.sql.bz2 | sort -n | tail -n 14`" | while read X
 do
        echo "Deleting old backup $X"
        rm $X
