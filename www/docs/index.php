@@ -8,9 +8,6 @@ include_once "../includes/easyparliament/member.php";
 $PAGE->page_start();
 
 $PAGE->stripe_start();
-?>
-<p id="warning"><big>The latest speeches aren't here! <a href="http://blog.openaustralia.org/2008/10/13/why-is-openaustralia-not-getting-updated/">Why? Tell me more...</a></big></p>
-<?php
 $message = $PAGE->recess_message();
 if ($message != '') {
 	print '<p id="warning">' . $message . '</p>';
