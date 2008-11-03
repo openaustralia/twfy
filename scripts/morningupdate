@@ -66,6 +66,9 @@ else
 EOF
 fi
 
+# Update the XML sitemaps to keep the search engines informed
+./sitemap.rb
+
 echo -n "Whole thing done time: "
 date +"%Y-%m-%d %H:%M:%S"
 
