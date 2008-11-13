@@ -271,7 +271,10 @@ if (isset ($data['rows'])) {
 
 #			$body = preg_replace('#<phrase class="offrep" id="([^"]*?)/([^"]*?)">#', '<a href="/$1/?id=$2.0">', $body);
 #			$body = str_replace('</phrase>', '</a>', $body);
-			$body = preg_replace('#(<p[^>]*class=".*?)("[^>]*)pwmotiontext="moved"#', '$1 moved$2', $body);
+			# Okay, this is truly strange. It appears that when preg_replace is called on a very long string it can return
+			# empty which in the regular expression below should not happen. TODO: Needs more investigation
+			# For the time being have commented the line below out (which we don't need anyway for OpenAustralia)
+			#$body = preg_replace('#(<p[^>]*class=".*?)("[^>]*)pwmotiontext="moved"#', '$1 moved$2', $body);
 			$body = str_replace('pwmotiontext="moved"', 'class="moved"', $body);
 			$body = str_replace('<a href="h', '<a rel="nofollow" href="h', $body); # As even sites in Hansard lapse and become spam-sites
 			echo str_replace('</p><p','</p> <p',$body); # NN4 font size bug
