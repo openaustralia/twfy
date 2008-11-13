@@ -7,6 +7,9 @@
 #set -x  # for debugging, prints each line before executing it
 
 source consts
+source ../../shlib/deployfns
+read_conf "../conf/general"
+
 [ -z "$VERBOSE" ] && VERBOSE=false
 
 if $VERBOSE
@@ -53,7 +56,7 @@ $VERBOSE && echo "Loading into database"
 
 # Update Xapan index
 $VERBOSE && echo "Xapian indexing"
-../search/index.pl ../../searchdb sincefile ../../searchdb-lastupdated $CRONQUIET_NODASH
+../search/index.pl $XAPIANDB sincefile $XAPIANDB/../searchdb-lastupdated $CRONQUIET_NODASH
 
 # Create new RSS files.
 if $VERBOSE

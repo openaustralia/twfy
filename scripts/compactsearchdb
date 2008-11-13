@@ -5,6 +5,8 @@
 set -e
 
 source consts
+source ../../shlib/deployfns
+read_conf "../conf/general"
 
 # Make sure only one copy runs at once
 if [ x$LOCKFILE = x ]
@@ -17,11 +19,13 @@ then
         exit $?
 fi
 
-cd ../../
+# Go to the directory where the search directory exists
+cd $XAPIANDB/..
+
 rm -fr searchdb-compacted
-xapian-compact searchdb/ searchdb-compacted/ >/dev/null
+xapian-compact $XAPIANDB searchdb-compacted/ >/dev/null
 rm -fr searchdb-previous
-mv searchdb searchdb-previous
-mv searchdb-compacted searchdb
+mv $XAPIANDB searchdb-previous
+mv searchdb-compacted $XAPIANDB
 
 
