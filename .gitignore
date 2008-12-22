@@ -5,6 +5,7 @@ www/docs/debates/debates.rss
 www/docs/senate/senate.rss
 www/docs/sitemap.xml
 www/docs/sitemaps/*
+www/docs/regmem/*.pdf
 scripts/morningupdate-lockfile
 scripts/run-with-lockfile
 scripts/rssgenerate-lockfile
