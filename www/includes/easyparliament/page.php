@@ -1231,8 +1231,8 @@ pr()//-->
 						<li><a href="#hansard">Recent appearances</a></li>
 <? } ?>
 						<li><a href="#numbers">Numbers</a></li>
-<?php		if (isset($extra_info['register_member_interests_html'])) { ?>
-						<li><a href="#register">Register of Members' Interests</a></li>
+<?php		if ($member['current_member'][2]) { ?>
+						<li><a href="#register">Register of Senators' Interests</a></li>
 <?php		}
 		if (isset($extra_info['expenses2004_col1']) || isset($extra_info['expenses2006_col1']) || isset($extra_info['expenses2007_col1'])) { ?>
  						<li><a href="#expenses">Expenses</a></li>
@@ -1572,26 +1572,21 @@ elseif ($member['house_disp']==0) print $member['full_name']; ?> speaks<?php
 		}
 		$this->block_end();
 
-		if (isset($extra_info['register_member_interests_html'])) {
+		if ($member['current_member'][2]) {
 ?>				
 <a name="register"></a>
 <?php
-			$this->block_start(array('id'=>'register', 'title'=>"Register of Members' Interests"));
+			$this->block_start(array('id'=>'register', 'title'=>'Register of Senators\' Interests <small>(<a href="' . WEBPATH . 'help/#regmem">What\'s this?</a>)</small>'));
 
-			if ($extra_info['register_member_interests_html'] != '') {
-				echo $extra_info['register_member_interests_html'];
-			} else {
-				echo "\t\t\t\t<p>Nil</p>\n";
-			}
-			echo '<p class="italic">';
+			echo '<a href="' . WEBPATH . REGMEMPDFPATH . $member['person_id'] . '.pdf">Scan of ' . $member['full_name'] . '\'s latest entry (including amendments)</a>';
 			if (isset($extra_info['register_member_interests_date'])) {
+				echo '<p class="italic">';
 				echo 'Register last updated: ';
 				echo format_date($extra_info['register_member_interests_date'], SHORTDATEFORMAT);
 				echo '. ';
+				echo '</p>';
 			}
-			echo '<a href="http://www.publications.parliament.uk/pa/cm/cmregmem/061106/memi01.htm">More about the Register</a>';
-			echo '</p>';
-			print '<p><strong><a href="' . WEBPATH . 'regmem/?p='.$member['person_id'].'">View the history of this MP\'s entries in the Register</a></strong></p>';
+			//print '<p><strong><a href="' . WEBPATH . 'regmem/?p='.$member['person_id'].'">View the history of this MP\'s entries in the Register</a></strong></p>';
 			$this->block_end();
 		}
 
