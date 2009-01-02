@@ -4,6 +4,13 @@
 
 $all_news = array(
 
+7 => array('Register of Senators\' Interests is online', <<<EOT
+Today is a big milestone. We are the first website to make the Register of Senators' Interests available online. This important public document until now has only been available to the small number of people who were able to visit the office in Canberra where the documents are held. In the Register each Senator declares information of financial interests, stocks and shares held, gifts received over a certain value, and memberships of Clubs and Associations.
+
+As soon as we can we will also make the Register of Members' Interests available online, the equivalent document for the Representatives. Our main obstacle right now is getting our paper copy of the register scanned. If you have access to a bulk scanner and can help please <a href="mailto:contact&#64;openaustralia.org">contact us</a>.</p>
+EOT
+, '2009-01-02 13:00:00', 'Matthew'),
+
 6 => array('Government website changes everything', <<<EOT
 We've completely rewritten the engine that drives OpenAustralia. We didn't want to, the government (website) made us do it. No really. For a bit of background read our blog post <a href="http://blog.openaustralia.org/2008/10/13/why-is-openaustralia-not-getting-updated/">"Why is OpenAustralia not getting updated?"</a>.
 
