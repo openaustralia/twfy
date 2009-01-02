@@ -64,7 +64,7 @@ define ("IMAGEPATH", WEBPATH . "images/");
 define ("FILEIMAGEPATH", BASEDIR . "images/");
 
 // Path *relative* to the WEBPATH and BASEDIR where the Register of Members' Interests pdfs are stored
-define ("REGMEMPDFPATH", "regmem/");
+define ("REGMEMPDFPATH", "regmem/scan/");
 
 // This will be included in data.php. It's an array of page/section metadata.
 define ("METADATAPATH", BASEDIR . "/../includes/easyparliament/metadata.php");
