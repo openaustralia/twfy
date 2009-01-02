@@ -8,6 +8,9 @@
 <!--><li><a href="#votingrecord">How is the voting record decided?</a></li><-->
 <li><a href="#numbers">Why should I read in more depth than just the numbers?</a></li>
 <li><a href="#api">Do you have the data as a spreadsheet file, XML or in an API?</a></li>
+<li><a href="#regmem">What is the Register of Interests and how can I use it?</a></li>
+<li><a href="#whereregmem">Where is the Register of Members' Interests?</a></li>
+
 </ul>
 
 <br>
@@ -127,5 +130,26 @@ working out how to use the data, or want to hire us to make something specific
 for you.
 </dd>
 <!-- end old faq entry -->
+
+<dt><a name="regmem"></a>What is the Register of Interests and how can I use it?</dt>
+<dd>
+<p>The Register of Interests contains information of financial interests, stocks and shares held, gifts received over a certain value, and memberships of Clubs and Associations for Senators and Representatives. These are the things that have been considered to be a potential influence on their behaviour in Parliament.</p>
+
+<p>Find out more at the Senate Standing Committee of Senators' Interests and The Standing Committee of Privileges and Members' Interests.</p>
+
+Please note that for the Register of Interests we have been asked to make the following caveats clear:
+<ul>
+<li>OpenAustralia is not an officially supported or maintained by parliament</li>
+<li>At any given time it is possible that information available about a Member or Senator's interests through the site may not be up to date as they may have notified alterations</li>
+<li>Fraudulent use or manipulation of the information could be raised as a matter of contempt.</li>
+</ul>
+</dd>
+
+<dt><a name="whereregmem"></a>Where is the Register of Members' Interests?</dt>
+<dd>
+<p>The registrar of Senators' interests kindly sent us a scanned version of the register for the Senators. Unfortunately, currently no such scan exists for the Representatives, though we are told that one may become available to us soon.</p>
+	
+<p>We're working on getting it online in the same form as the Register of Senators' Interests. Our main obstacle right now is getting our paper copy of the register scanned. If you have access to a bulk scanner and can help please <a href="mailto:contact&#64;openaustralia.org">contact us</a>.</p>
+</dd>
 
 </dl>
