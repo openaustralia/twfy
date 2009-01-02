@@ -135,7 +135,7 @@ for you.
 <dd>
 <p>The Register of Interests contains information of financial interests, stocks and shares held, gifts received over a certain value, and memberships of Clubs and Associations for Senators and Representatives. These are the things that have been considered to be a potential influence on their behaviour in Parliament.</p>
 
-<p>Find out more at the Senate Standing Committee of Senators' Interests and The Standing Committee of Privileges and Members' Interests.</p>
+<p>Find out more at the <a href="http://www.aph.gov.au/Senate/committee/interests_ctte/index.htm">Senate Standing Committee of Senators' Interests</a> and the <a href="http://www.aph.gov.au/house/committee/pmi/index.htm">Standing Committee of Privileges and Members' Interests</a>.</p>
 
 Please note that for the Register of Interests we have been asked to make the following caveats clear:
 <ul>
