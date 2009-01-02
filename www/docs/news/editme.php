@@ -7,6 +7,8 @@ $all_news = array(
 7 => array('Read the Register of Senators\' Interests here', <<<EOT
 Today is a big milestone. We are the first website to make the Register of Senators' Interests available online. This important public document until now has only been available to the small number of people who were able to visit the office in Canberra where the documents are held. In the Register each Senator declares information of financial interests, stocks and shares held, gifts received over a certain value, and memberships of Clubs and Associations.
 
+The register is available on each Senator's page. For example, <a href="/senator/judith_adams/wa#register">have a look at the Register for Senator Judith Adams</a>.
+
 As soon as we can we will also make the Register of Members' Interests available online, the equivalent document for the Representatives. Our main obstacle right now is getting our paper copy of the register scanned. If you have access to a bulk scanner and can help please <a href="mailto:contact&#64;openaustralia.org">contact us</a>.</p>
 EOT
 , '2009-01-02 13:00:00', 'Matthew'),
