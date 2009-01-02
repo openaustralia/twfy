@@ -1578,7 +1578,7 @@ elseif ($member['house_disp']==0) print $member['full_name']; ?> speaks<?php
 <?php
 			$this->block_start(array('id'=>'register', 'title'=>'Register of Senators\' Interests <small>(<a href="' . WEBPATH . 'help/#regmem">What\'s this?</a>)</small>'));
 
-			echo '<a href="' . WEBPATH . REGMEMPDFPATH . 'register_interests_' . $member['person_id'] . '.pdf">Scan of ' . $member['full_name'] . '\'s latest entry (including amendments)</a>';
+			echo '<a href="' . WEBPATH . REGMEMPDFPATH . 'register_interests_' . $member['person_id'] . '.pdf">Scan of ' . $member['full_name'] . '\'s latest entry (including amendments)</a><img alt="PDF" src="/images/pdficon_small.gif">';
 			if (isset($extra_info['register_member_interests_date'])) {
 				echo '<p class="italic">';
 				echo 'Register last updated: ';
