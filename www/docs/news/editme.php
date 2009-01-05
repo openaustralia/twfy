@@ -11,7 +11,7 @@ The register is available on each Senator's page. For example, <a href="/senator
 
 As soon as we can we will also make the Register of Members' Interests available online, the equivalent document for the Representatives. Our main obstacle right now is getting our paper copy of the register scanned. If you have access to a bulk scanner and can help please <a href="mailto:contact&#64;openaustralia.org">contact us</a>.</p>
 EOT
-, '2009-01-02 13:00:00', 'Matthew'),
+, '2009-01-05 11:05:00', 'Matthew'),
 
 6 => array('Government website changes everything', <<<EOT
 We've completely rewritten the engine that drives OpenAustralia. We didn't want to, the government (website) made us do it. No really. For a bit of background read our blog post <a href="http://blog.openaustralia.org/2008/10/13/why-is-openaustralia-not-getting-updated/">"Why is OpenAustralia not getting updated?"</a>.
