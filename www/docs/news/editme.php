@@ -4,6 +4,14 @@
 
 $all_news = array(
 
+8 => array('Multiple email alerts over the last few days', <<<EOT
+<p>Some of you might have been getting multiple email alerts for the same day's speeches over the last few days. We're sorry about this. It turns out one of the email alerts was causing the mailing system to fail and each day it was retrying and sending out the old mails again. We found the wayward alert and fixed it. Tomorrow (Friday 20 February) you might get another duplicate email but after that everything should be back to normal.</p>
+
+<p>As always, if you find a problem or something isn't working as expected please do let us know by <a href="mailto:contact@openaustralia.org">emailing us at contact@openaustralia.org</a>.</p>
+EOT
+, '2009-02-19 17:29:00', 'Matthew'),
+
+
 7 => array('Read the Register of Senators\' Interests here', <<<EOT
 Today is a big milestone. We are the first website to make the Register of Senators' Interests available online. This important public document until now has only been available to the small number of people who were able to visit the office in Canberra where the documents are held. In the Register each Senator declares information of financial interests, stocks and shares held, gifts received over a certain value, and memberships of Clubs and Associations.
 
