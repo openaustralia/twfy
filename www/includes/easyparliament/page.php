@@ -1231,8 +1231,8 @@ pr()//-->
 						<li><a href="#hansard">Recent appearances</a></li>
 <? } ?>
 						<li><a href="#numbers">Numbers</a></li>
-<?php		if ($member['current_member'][2]) { ?>
-						<li><a href="#register">Register of Senators' Interests</a></li>
+<?php		if ($member['current_member'][1] || $member['current_member'][2] ) { ?>
+						<li><a href="#register">Register of Interests</a></li>
 <?php		}
 		if (isset($extra_info['expenses2004_col1']) || isset($extra_info['expenses2006_col1']) || isset($extra_info['expenses2007_col1'])) { ?>
  						<li><a href="#expenses">Expenses</a></li>
@@ -1572,11 +1572,11 @@ elseif ($member['house_disp']==0) print $member['full_name']; ?> speaks<?php
 		}
 		$this->block_end();
 
-		if ($member['current_member'][2]) {
+		if ($member['current_member'][1] || $member['current_member'][2]) {
 ?>				
 <a name="register"></a>
 <?php
-			$this->block_start(array('id'=>'register', 'title'=>'Register of Senators\' Interests <small>(<a href="' . WEBPATH . 'help/#regmem">What\'s this?</a>)</small>'));
+			$this->block_start(array('id'=>'register', 'title'=>'Register of Interests <small>(<a href="' . WEBPATH . 'help/#regmem">What\'s this?</a>)</small>'));
 
 			echo '<a href="' . WEBPATH . REGMEMPDFPATH . 'register_interests_' . $member['person_id'] . '.pdf">Scan of ' . $member['full_name'] . '\'s latest entry (including amendments)</a><img alt="PDF" src="/images/pdficon_small.gif">';
 			if (isset($extra_info['register_member_interests_date'])) {
