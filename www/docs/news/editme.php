@@ -4,13 +4,27 @@
 
 $all_news = array(
 
+9 => array('Another big step forward for government transparency in Australia', <<<EOT
+
+Today we proudly bring you the Register of Members' Interests. We have now made these extremely important documents available online for the first time ever.
+
+In the Register of Interests, Representatives and Senators declare information of financial interests, stocks and shares held, gifts received over a certain value, and memberships of Clubs and Associations.
+
+Now, the Register of Interests is available for all sitting Senators and Representatives and is available at the bottom of each of their pages.
+
+See, for instance, the <a href="/mp/kevin_rudd/griffith#register">Register of Interests for the Prime Minister, Kevin Rudd</a>, available at the bottom of his page. (<a href="/regmem/scan/register_interests_10552.pdf">direct link</a>)
+
+This latest addition was largely made possible by the generous help of volunteer <a href="http://shiny.thorne.id.au/">Stephen Thorne</a> who scanned the 1500 pages of the Register of Members' Interests and <a href="http://www.aph.gov.au/HOUSE/dept/bios/bw.htm">Bernard Wright</a>, the Registrar of the Committee of Privileges and Members' Interests, for providing us with the hardcopy material.
+
+EOT
+, '2009-02-26 08:30:00', 'Matthew'),
+
 8 => array('Multiple email alerts over the last few days', <<<EOT
 <p>Some of you might have been getting multiple email alerts for the same day's speeches over the last few days. We're sorry about this. It turns out one of the email alerts was causing the mailing system to fail and each day it was retrying and sending out the old mails again. We found the wayward alert and fixed it. Tomorrow (Friday 20 February) you might get another duplicate email but after that everything should be back to normal.</p>
 
 <p>As always, if you find a problem or something isn't working as expected please do let us know by <a href="mailto:contact@openaustralia.org">emailing us at contact@openaustralia.org</a>.</p>
 EOT
 , '2009-02-19 17:29:00', 'Matthew'),
-
 
 7 => array('Read the Register of Senators\' Interests here', <<<EOT
 Today is a big milestone. We are the first website to make the Register of Senators' Interests available online. This important public document until now has only been available to the small number of people who were able to visit the office in Canberra where the documents are held. In the Register each Senator declares information of financial interests, stocks and shares held, gifts received over a certain value, and memberships of Clubs and Associations.
