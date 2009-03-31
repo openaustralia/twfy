@@ -1264,7 +1264,8 @@ sub load_debate_division {
         $text .= '&amp;house=lords' if $major == 101;
         $text .= "&amp;showall=yes#voters\">See full
 list of votes</a> (From <a href=\"http://www.publicwhip.org.uk\">The Public Whip</a>)</p>";
-        do_load_speech($division, $major, 0, $text);
+				# Temporarily commenting out the link to the division data
+        #do_load_speech($division, $major, 0, $text);
 }
 
 ##########################################################################
