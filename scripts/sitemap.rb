@@ -130,9 +130,9 @@ class Hansard < ActiveRecord::Base
 	# Takes the modification times of any comments on a speech into account
 	def last_modified_including_comments
 		if speech?
-			(comments.map{|c| c.last_modified} << last_modified).max
+			(comments.map{|c| c.last_modified} << last_modified).compact.max
 		else
-			speeches.map{|s| s.last_modified_including_comments}.max
+			speeches.map{|s| s.last_modified_including_comments}.compact.max
 		end
 	end
 	
@@ -142,7 +142,7 @@ class Hansard < ActiveRecord::Base
 		if speech?
 			modified
 		else
-			speeches.map{|s| s.last_modified}.max
+			speeches.map{|s| s.last_modified}.compact.max
 		end
 	end
 	
@@ -358,7 +358,7 @@ s = Sitemap.new(MySociety::Config.get('DOMAIN'), MySociety::Config.get('BASEDIR'
 
 # Add some static URLs with dynamic content
 s.add_url "/", :changefreq => :hourly,
-	:lastmod => [Comment.most_recent.last_modified, Hansard.most_recent.last_modified, News.most_recent.last_modified].max
+	:lastmod => [Comment.most_recent.last_modified, Hansard.most_recent.last_modified, News.most_recent.last_modified].compact.max
 s.add_url "/comments/recent/", :changefreq => :hourly, :lastmod => Comment.most_recent.last_modified
 s.add_url "/debates/", :changefreq => :daily, :lastmod => Hansard.most_recent_in_house("reps").last_modified
 s.add_url "/hansard/", :changefreq => :daily, :lastmod => Hansard.most_recent.last_modified
@@ -398,7 +398,7 @@ end
 	Hansard.find_all_dates_for_house(house).each do |hdate|
 		s.add_url Hansard.url_for_date(hdate, house),
 			:changefreq => :monthly,
-			:lastmod => Hansard.find_all_sections_by_date_and_house(hdate, house).map{|h| h.last_modified}.max
+			:lastmod => Hansard.find_all_sections_by_date_and_house(hdate, house).map{|h| h.last_modified}.compact.max
 	end
 end
 
