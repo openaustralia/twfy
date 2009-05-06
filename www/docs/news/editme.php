@@ -4,6 +4,17 @@
 
 $all_news = array(
 
+10 => array('Opening up the procedures of Parliament', <<<EOT
+So far we've shown you what they say (speeches) not what they do (procedures). Believe it or not proceedings of Parliament take place within a highly structured system. The speeches don't always give the full picture of what's going on. So, to help provide some more context, we've now added "procedural text".
+
+Procedural text is a standardised description of what's going on. Examples include: someone putting forward a motion, reading a bill, a debate ending, or someone leaving the chamber.
+
+We hadn't included it in the past because we simply hadn't supported the translation of the information from the official source.
+
+Also, we have a further incentive. It's also preparation for some very exciting new developments which we hope to announce soon!
+EOT
+, '2009-05-06 18:15:00', 'Kat'),
+
 9 => array('Another big step forward for government transparency in Australia', <<<EOT
 
 Today we proudly bring you the Register of Members' Interests. We have now made these extremely important documents available online for the first time ever.
