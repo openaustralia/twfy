@@ -127,6 +127,10 @@ class Hansard < ActiveRecord::Base
 		htype == 12
 	end
 	
+	def procedural?
+	  htype == 13
+  end
+	
 	# Takes the modification times of any comments on a speech into account
 	def last_modified_including_comments
 		if speech?
@@ -153,10 +157,10 @@ class Hansard < ActiveRecord::Base
 			Hansard.find_all_by_section_id_and_htype(epobject_id, 11)
 		elsif subsection?
 			Hansard.find_all_by_subsection_id(epobject_id)
-		elsif speech?
+		elsif speech? || procedural?
 			return []
 		else
-			throw "Unknown hansard type"
+			throw "Unknown hansard type (htype: #{htype})"
 		end
 	end
 	
