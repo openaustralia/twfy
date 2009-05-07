@@ -7,19 +7,18 @@ source consts
 source ../../shlib/deployfns
 read_conf "../conf/general"
 
-mkdir -p $RAWDATA/dumps
-
 # Get new wikipedia titles database
-rm -f $RAWDATA/dumps/all-titles-in-ns0.gz
-rm -f $RAWDATA/dumps/all-titles-in-ns0
+rm -f all-titles-in-ns0.gz all-titles-in-ns0
 
 DUMPDATE=`fetch -q -o - http://download.wikimedia.org/backup-index.html | grep "enwiki/" | perl -pi.bak -e "s/.*(\d\d\d\d\d\d\d\d).*/\\\$1/;"`
 #echo "Wikipedia dump date $DUMPDATE"
-fetch -q -o $RAWDATA/dumps/all-titles-in-ns0.gz http://download.wikimedia.org/enwiki/$DUMPDATE/enwiki-$DUMPDATE-all-titles-in-ns0.gz
-gunzip $RAWDATA/dumps/all-titles-in-ns0.gz
+fetch -q -o all-titles-in-ns0.gz http://download.wikimedia.org/enwiki/$DUMPDATE/enwiki-$DUMPDATE-all-titles-in-ns0.gz
+gunzip all-titles-in-ns0.gz
 MYSQL="mysql -u $DB_USER --password=$DB_PASSWORD $DB_NAME"
-echo "load data infile '$RAWDATA/dumps/all-titles-in-ns0' ignore into table titles;" | $MYSQL
+echo "load data infile 'all-titles-in-ns0' ignore into table titles;" | $MYSQL
 cat wikipedia-exceptions | $MYSQL
+# Cleanup
+rm -f all-titles-in-ns0
 
 # Compact Xapian database
 ./compactsearchdb
