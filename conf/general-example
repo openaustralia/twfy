@@ -50,6 +50,9 @@ define ("TIMEZONE", "Europe/London");
 define ("RAWDATA", "/home/fawkes/pwdata");
 define ('PWMEMBERS', '/home/fawkes/parlparse/members');
 
+// Path to directory where automated database backups are stored (by scripts/dumpallforbackup)
+define ("DBBACKUP", "/home/fawkes/backup");
+
 // *******************************************************************************
 // If you've unpacked the tar file normally, and set the paths correctly above, 
 // you shouldn't change these.

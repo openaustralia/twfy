@@ -5,18 +5,16 @@ source consts
 source ../../shlib/deployfns
 read_conf "../conf/general"
 
-BACKUP=$RAWDATA/backup
-
-mkdir -p $BACKUP $BACKUP/firsts
+mkdir -p $DBBACKUP $DBBACKUP/firsts
 
 # Keep much of last month, and first of month before then
 # ... move first of month
-touch $BACKUP/dummy-01.sql.bz2
-mv $BACKUP/*-01.sql.bz2 $BACKUP/firsts
-rm $BACKUP/firsts/dummy-01.sql.bz2
+touch $DBBACKUP/dummy-01.sql.bz2
+mv $DBBACKUP/*-01.sql.bz2 $DBBACKUP/firsts
+rm $DBBACKUP/firsts/dummy-01.sql.bz2
 # ... delete all except 14
 PREFIX="openaustralia-all-including-sensitive-data-"
-ls -1 $BACKUP/$PREFIX*.sql.bz2 | fgrep -v "`ls -1 $BACKUP/$PREFIX*.sql.bz2 | sort -n | tail -n 14`" | while read X
+ls -1 $DBBACKUP/$PREFIX*.sql.bz2 | fgrep -v "`ls -1 $DBBACKUP/$PREFIX*.sql.bz2 | sort -n | tail -n 14`" | while read X
 do
        echo "Deleting old backup $X"
        rm $X
@@ -26,6 +24,6 @@ done
 # of the month backup before it moves the next day)
 
 # This requires the openaustralia database user to have "SELECT" privileges for all databases
-mysqldump --skip-lock-tables --all-databases -u $DB_USER --password=$DB_PASSWORD | bzip2 -c > $BACKUP/$PREFIX`date +%F`.sql.bz2
+mysqldump --skip-lock-tables --all-databases -u $DB_USER --password=$DB_PASSWORD | bzip2 -c > $DBBACKUP/$PREFIX`date +%F`.sql.bz2
 
 
