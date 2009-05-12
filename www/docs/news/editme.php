@@ -4,6 +4,13 @@
 
 $all_news = array(
 
+11 => array('Our new home on Facebook', <<<EOT
+If you're a user of Facebook, come and visit <a href="http://www.facebook.com/pages/OpenAustralia/59877428354">our new home on Facebook</a> and invite your friends along. Do your bit by letting even more people know about OpenAustralia.org.
+
+Also, you can talk amongst your fellow OpenAustralia fans, leave comments, post links and all the usual stuff.
+EOT
+, '2009-05-12 16:30:00', 'Matthew'),
+
 10 => array('Opening up the procedures of Parliament', <<<EOT
 So far we've shown you what they say (speeches) not what they do (procedures). Believe it or not proceedings of Parliament take place within a highly structured system. The speeches don't always give the full picture of what's going on. So, to help provide some more context, we've now added "procedural text".
 
