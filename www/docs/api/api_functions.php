@@ -5,11 +5,12 @@ include_once '../../../../phplib/rabx.php';
 # The METHODS
 
 $methods = array(
-	'convertURL' => array(
+/*	'convertURL' => array(
 		'parameters' => array('url'),
 		'required' => true,
 		'help' => 'Converts a parliament.uk Hansard URL into a TheyWorkForYou one, if possible',
 	),
+*/
 	'getConstituency' => array(
 		'new' => true,
 		'parameters' => array('postcode'),
