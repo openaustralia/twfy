@@ -15,14 +15,12 @@ function api_getComments_front() {
 <dt>user_id (optional)</dt>
 <dd>Fetch the comments by a particular user ID.</dd>
 <dt>pid</dt>
-<dd>Fetch the comments made on a particular person ID (MP/Lord).</dd>
+<dd>Fetch the comments made on a particular person ID (Representative/Senator).</dd>
 <dt>page (optional)</dt>
 <dd>Page of results to return.</dd>
 <dt>num (optional)</dt>
 <dd>Number of results to return.</dd>
 </dl>
-
-<h4>Example Response</h4>
 
 <?
 }
