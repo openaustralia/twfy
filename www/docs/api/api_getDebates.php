@@ -10,7 +10,7 @@ function api_getDebates_front() {
 <p>Note you can only supply <strong>one</strong> of the following search terms at present.</p>
 <dl>
 <dt>type (required)</dt>
-<dd>One of "commons", "westminsterhall", or "lords".
+<dd>One of "representative" or "senate".
 <dt>date</dt>
 <dd>Fetch the debates for this date.</dd>
 <dt>search</dt>
@@ -30,86 +30,52 @@ function api_getDebates_front() {
 <h4>Example Response (search)</h4>
 <pre>{
 	"info" : {
-		"s" : "fish section:lords",
+		"s" : "cows section:lords",
 		"results_per_page" : 20,
 		"page" : 1,
-		"total_results" : 245,
+		"total_results" : 24,
 		"first_result" : 1
 	},
-	"searchdescription" : "containing the word 'fish' in Lords debates",
+	"searchdescription" : "containing the word 'cows' in Senate debates",
 	"rows" : [{
-		"gid" : "2006-07-14a.946.0",
-		"hdate" : "2006-07-14",
+		"gid" : "2009-02-11.70.21",
+		"hdate" : "2009-02-11",
 		"htype" : "12",
 		"major" : "101",
-		"section_id" : "11432880",
-		"subsection_id" : "11432880",
-		"relevance" : 17,
-		"speaker_id" : "100176",
-		"hpos" : "29",
-		"body" : ...
-		"listurl" : "/lords/?id=2006-07-14a.901.2&amp;s=fish+section%3Alords#g946.0",
+		"section_id" : "5316",
+		"subsection_id" : "5317",
+		"relevance" : 99,
+		"speaker_id" : "100114",
+		"hpos" : "221",
+		"body" : "Shut the door. I can hear the <span class=\"hi\">cows</span> coming home!",
+		"listurl" : "/senate/?id=2009-02-11.66.2&amp;s=cows+section%3Alords#g70.21",
 		"speaker" : {
-			"member_id" : "100176",
-			"title" : "Lord",
-			"first_name" : "Robert",
-			"last_name" : "Dixon-Smith",
+			"member_id" : "100114",
+			"title" : "",
+			"first_name" : "Barnaby",
+			"last_name" : "Joyce",
 			"house" : "2",
-			"constituency" : "",
-			"party" : "Conservative",
-			"person_id" : "13665",
-			"url" : "/peer/?m=100176"
+			"constituency" : "Queensland",
+			"party" : "National Party",
+			"person_id" : "10350",
+			"url" : "/senator/?m=100114"
 		},
 		"parent" : {
-			"body" : "Climate Change (EAC Report)"
+			"body" : "Appropriation (Nation Building and Jobs) Bill (No. 1) 2008-2009; Appropriation (Nation Building and Jobs) Bill (No. 2) 2008-2009; Household Stimulus Package Bill 2009; Tax Bonus for Working Australians Bill 2009; Tax Bonus for Working Australians (Consequential Amendments) Bill 2009; Commonwealth Inscribed Stock Amendment Bill 2009: In Committee"
 		}
-	},
-	{
-		"gid" : "2006-07-13a.874.0",
-		"hdate" : "2006-07-13",
-		"htype" : "12",
-		"major" : "101",
-		"section_id" : "11432688",
-		"subsection_id" : "11432688",
-		"relevance" : 28,
-		"speaker_id" : "100549",
-		"hpos" : "179",
-		"body" : ...
-		"listurl" : "/lords/?id=2006-07-13a.871.2&amp;s=fish+section%3Alords#g874.0",
-		"speaker" : {
-			"member_id" : "100549",
-			"title" : "Lord",
-			"first_name" : "Jeff",
-			"last_name" : "Rooker",
-			"house" : "2",
-			"constituency" : "",
-			"party" : "Labour",
-			"person_id" : "10511",
-			"url" : "/peer/?m=100549",
-			"office" : [{
-				"dept" : "Department for Environment, Food and Rural Affairs",
-				"position" : "Minister of State (Sustainable Farming and Food)",
-				"pretty" : "Minister of State (Sustainable Farming and Food), Department for Environment, Food and Rural Affairs"
-			}]
-		},
-		"parent" : {
-			"body" : "Northern Ireland (Miscellaneous Provisions) Bill"
-		}
-	},
-	...</pre>
+	}]
+}
+</pre>
 <?	
 }
 
 function api_getDebates_type($t) {
-	if ($t == 'commons') {
+	if ($t == 'representatives') {
 		$list = 'DEBATE';
 		$type = 'debates';
-	} elseif ($t == 'lords') {
+	} elseif ($t == 'senate') {
 		$list = 'LORDSDEBATE';
 		$type = 'lords';
-	} elseif ($t == 'westminsterhall') {
-		$list = 'WHALL';
-		$type = 'whall';
 	} else {
 		api_error('Unknown type');
 		return;
