@@ -14,7 +14,7 @@ $methods = array(
 		'new' => true,
 		'parameters' => array('postcode'),
 		'required' => true,
-		'help' => 'Searches for a constituency',
+		'help' => 'Searches for an electoral division',
 	),
 	'getConstituencies' => array(
 		'parameters' => array('date', 'search', 'latitude', 'longitude', 'distance'),
