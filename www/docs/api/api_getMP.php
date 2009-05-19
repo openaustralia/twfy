@@ -4,18 +4,18 @@ include_once INCLUDESPATH . 'easyparliament/member.php';
 
 function api_getMP_front() {
 ?>
-<p><big>Fetch a particular MP.</big></p>
+<p><big>Fetch a particular member of the House of Representatives.</big></p>
 
 <h4>Arguments</h4>
 <dl>
 <dt>postcode (optional)</dt>
 <dd>Fetch the MP for a particular postcode (either the current one, or the most recent one, depending upon the setting of the always_return variable.</dd>
 <dt>constituency (optional)</dt>
-<dd>The name of a constituency; we will try and work it out from whatever you give us. :)</dd>
+<dd>The name of an electoral division; we will try and work it out from whatever you give us. :)</dd>
 <dt>id (optional)</dt>
 <dd>If you know the person ID for the member you want (returned from getMPs or elsewhere), this will return data for that person. <!-- <em>Also returns select committee membership and ministerial positions, past and present.</em> --></dd>
 <dt>always_return (optional)</dt>
-<dd>For the postcode and constituency options, sets whether to always try and return an MP, even if the seat is currently vacant.</dd>
+<dd>For the postcode and constituency options, sets whether to always try and return a Representative, even if the seat is currently vacant.</dd>
 <!-- 
 <dt>extra (optional)</dt>
 <dd>Returns extra data in one or more categories, separated by commas.</dd>
@@ -23,8 +23,8 @@ function api_getMP_front() {
 </dl>
 
 <h4>Example Response</h4>
-<pre>&lt;twfy&gt;
-  &lt;/twfy&gt;
+<pre>&lt;result&gt;
+  &lt;/result&gt;
 </pre>
 
 <?	
@@ -82,7 +82,7 @@ function api_getMP_id($id) {
 }
 
 function api_getMP_postcode($pc) {
-	$pc = preg_replace('#[^a-z0-9 ]#i', '', $pc);
+	$pc = preg_replace('#[^0-9]#i', '', $pc);
 	if (is_postcode($pc)) {
 		$constituency = postcode_to_constituency($pc);
 		if ($constituency == 'CONNECTION_TIMED_OUT') {

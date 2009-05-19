@@ -25,9 +25,9 @@ $methods = array(
 	),
 	'getMP' => array(
 		'new' => true,
-		'parameters' => array('id', 'constituency', 'postcode', 'always_return', 'extra'),
+		'parameters' => array('id', 'constituency', 'postcode', 'always_return'),
 		'required' => true,
-		'help' => 'Returns main details for an MP'
+		'help' => 'Returns main details for a member of the House of Representatives'
 	),
 	'getMPInfo' => array(
 		'parameters' => array('id', 'fields'),
