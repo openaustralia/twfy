@@ -54,7 +54,7 @@ $methods = array(
 		'required' => false,
 		'help' => 'Returns list of Lords',
 	),
-	'getMLAs' => array(
+/*	'getMLAs' => array(
 		'parameters' => array('date', 'party', 'search'),
 		'required' => false,
 		'help' => 'Returns list of MLAs',
@@ -75,25 +75,27 @@ $methods = array(
 		'required' => false,
 		'help' => 'Returns centre, bounding box of constituencies'
 	),
+*/
 /*	'getBoundary' => array(
 		'parameters' => array('name'),
 		'required' => true,
 		'help' => 'Returns boundary polygon of constituency'
 	),
 */
-	'getCommittee' => array(
+/*	'getCommittee' => array(
 		'new' => true,
 		'parameters' => array('name', 'date'),
 		'required' => true,
 		'help' => 'Returns members of Select Committee',
 	),
+*/
 	'getDebates' => array(
 		'new' => true,
 		'parameters' => array('type', 'date', 'search', 'person', 'gid', 'year', 'order', 'page', 'num'),
 		'required' => true,
 		'help' => 'Returns Debates (either Commons, Westminhall Hall, or Lords)',
 	),
-	'getWrans' => array(
+/*	'getWrans' => array(
 		'parameters' => array('date', 'search', 'person', 'gid', 'year', 'order', 'page', 'num'),
 		'required' => true,
 		'help' => 'Returns Written Answers',
@@ -103,6 +105,7 @@ $methods = array(
 		'required' => true,
 		'help' => 'Returns Written Ministerial Statements',
 	),
+*/
 	'getHansard' => array(
 		'parameters' => array('search', 'person', 'order', 'page', 'num'),
 		'required' => true,
@@ -114,12 +117,13 @@ $methods = array(
 		'required' => false,
 		'help' => 'Returns comments'
 	),
-	'postComment' => array(
+/*	'postComment' => array(
 		'parameters' => array('user_id', 'gid?'),
 		'working' => false,
 		'required' => true,
 		'help' => 'Posts a comment - needs authentication!'
 	),
+*/
 );
 
 # Key-related functions
