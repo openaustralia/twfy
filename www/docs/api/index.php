@@ -158,7 +158,7 @@ can still use the old version.</p>
 <h3>Outputs</h3>
 <p>The <em>output</em> argument can take any of the following values:
 <ul>
-<li><strong>xml</strong>. XML. The root element is twfy.</li>
+<li><strong>xml</strong>. XML. The root element is result.</li>
 <li><strong>php</strong>. Serialized PHP, that can be turned back into useful information with the unserialize() command. Quite useful in Python as well, using <a href="http://hurring.com/code/python/serialize/">PHPUnserialize</a>.</li>
 <li><strong>js</strong>. A JavaScript object. You can provide a callback
 function with the <em>callback</em> variable, and then that function will be
@@ -172,7 +172,7 @@ called with the data as its argument.</li>
 
 <p>If there's an error, either in the arguments provided or in trying to perform the request,
 this is returned as a top-level error string, ie. in XML it returns
-<code>&lt;twfy&gt;&lt;error&gt;ERROR&lt;/error&gt;&lt;/twfy&gt;</code>;
+<code>&lt;result&gt;&lt;error&gt;ERROR&lt;/error&gt;&lt;/result&gt;</code>;
 in JS <code>{"error":"ERROR"}</code>;
 and in PHP and RABX a serialised array containing one entry with key <code>error</code>.
 

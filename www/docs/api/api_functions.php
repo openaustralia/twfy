@@ -189,7 +189,7 @@ function api_output($arr, $last_mod=null) {
 	}
 	if ($output == 'xml') {
 		$out = '<?xml version="1.0" encoding="iso-8859-1"?>'."\n";
-		$out .= '<twfy>' . api_output_xml($arr) . '</twfy>';
+		$out .= '<result>' . api_output_xml($arr) . '</result>';
 	} elseif ($output == 'php') {
 		$out = api_output_php($arr);
 	} elseif ($output == 'rabx') {
