@@ -53,7 +53,7 @@ $methods = array(
 	'getLords' => array(
 		'parameters' => array('date', 'party', 'search'),
 		'required' => false,
-		'help' => 'Returns list of Lords',
+		'help' => 'Returns list of Senators',
 	),
 /*	'getMLAs' => array(
 		'parameters' => array('date', 'party', 'search'),
