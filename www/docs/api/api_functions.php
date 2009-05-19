@@ -11,21 +11,21 @@ $methods = array(
 		'help' => 'Converts a parliament.uk Hansard URL into a TheyWorkForYou one, if possible',
 	),
 */
-	'getConstituency' => array(
+	'getDivision' => array(
 		'new' => true,
 		'parameters' => array('postcode'),
 		'required' => true,
 		'help' => 'Searches for an electoral division',
 	),
-	'getConstituencies' => array(
+	'getDivisions' => array(
 #		'parameters' => array('date', 'search', 'latitude', 'longitude', 'distance'),
 		'parameters' => array('date', 'search'),
 		'required' => false,
 		'help' => 'Returns list of electoral divisions',
 	),
-	'getMP' => array(
+	'getRepresentative' => array(
 		'new' => true,
-		'parameters' => array('id', 'constituency', 'postcode', 'always_return'),
+		'parameters' => array('id', 'division', 'postcode', 'always_return'),
 		'required' => true,
 		'help' => 'Returns main details for a member of the House of Representatives'
 	),
@@ -40,17 +40,17 @@ $methods = array(
 		'help' => 'Returns extra information for one or more people'
 	),
 */
-	'getMPs' => array(
+	'getRepresentatives' => array(
 		'parameters' => array('party', 'date', 'search'),
 		'required' => false,
 		'help' => 'Returns list of members of the House of Representatives',
 	),
-	'getLord' => array(
+	'getSenator' => array(
 		'parameters' => array('id'),
 		'required' => true,
 		'help' => 'Returns details for a Senator'
 	),
-	'getLords' => array(
+	'getSenators' => array(
 		'parameters' => array('date', 'party', 'search'),
 		'required' => false,
 		'help' => 'Returns list of Senators',
