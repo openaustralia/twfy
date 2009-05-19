@@ -4,24 +4,22 @@ include_once 'api_getGeometry.php';
 
 function api_getConstituencies_front() {
 ?>
-<p><big>Fetch a list of constituencies.</big></p>
+<p><big>Fetch a list of electoral divisions.</big></p>
 
 <h4>Arguments</h4>
 <p>Note only one argument can be given at present.</p>
 <dl>
 <dt>date (optional)</dt>
-<dd>Fetch the list of constituencies as it was on this date.</dd>
+<dd>Fetch the list of electoral divisions as it was on this date.</dd>
 <dt>search (optional)</dt>
-<dd>Fetch the list of constituencies that match this search string.</dd>
-<dt>latitude, longitude, distance (optional, all together)</dt>
-<dd>Fetches (vaguely) constituency or constituencies within <kbd>distance</kbd> km of (<kbd>latitude</kbd>,<kbd>longitude</kbd>)</dd>
+<dd>Fetch the list of electoral divisions that match this search string.</dd>
 </dl>
 
 <h4>Example Response</h4>
 <pre>[
-	{ name : "Aberavon" },
-	{ name : "Aldershot" },
-	{ name : "Aldridge-Brownhills" },
+	{ name : "Warringah" },
+	{ name : "Lyons" },
+	{ name : "Fairfax" },
 	...
 ]</pre>
 

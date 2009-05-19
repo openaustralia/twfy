@@ -17,9 +17,10 @@ $methods = array(
 		'help' => 'Searches for an electoral division',
 	),
 	'getConstituencies' => array(
-		'parameters' => array('date', 'search', 'latitude', 'longitude', 'distance'),
+#		'parameters' => array('date', 'search', 'latitude', 'longitude', 'distance'),
+		'parameters' => array('date', 'search'),
 		'required' => false,
-		'help' => 'Returns list of constituencies',
+		'help' => 'Returns list of electoral divisions',
 	),
 	'getMP' => array(
 		'new' => true,
