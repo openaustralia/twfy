@@ -42,7 +42,7 @@ $methods = array(
 	'getMPs' => array(
 		'parameters' => array('party', 'date', 'search'),
 		'required' => false,
-		'help' => 'Returns list of MPs',
+		'help' => 'Returns list of members of the House of Representatives',
 	),
 	'getLord' => array(
 		'parameters' => array('id'),
