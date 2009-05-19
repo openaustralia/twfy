@@ -29,7 +29,7 @@ $methods = array(
 		'required' => true,
 		'help' => 'Returns main details for a member of the House of Representatives'
 	),
-	'getMPInfo' => array(
+/*	'getMPInfo' => array(
 		'parameters' => array('id', 'fields'),
 		'required' => true,
 		'help' => 'Returns extra information for a person'
@@ -39,6 +39,7 @@ $methods = array(
 		'required' => true,
 		'help' => 'Returns extra information for one or more people'
 	),
+*/
 	'getMPs' => array(
 		'parameters' => array('party', 'date', 'search'),
 		'required' => false,
