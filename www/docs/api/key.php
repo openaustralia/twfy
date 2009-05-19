@@ -11,7 +11,7 @@ $this_page = 'api_key';
 $PAGE->page_start();
 $PAGE->stripe_start();
 api_key_current_message();
-echo '<p>TheyWorkForYou API calls require a key, so that we can monitor usage
+echo '<p>OpenAustralia API calls require a key, so that we can monitor usage
 of the service, and provide usage stats to you.';
 if ($THEUSER->loggedin()) {
 	if (get_http_var('create_key')) {
@@ -50,7 +50,7 @@ if ($THEUSER->loggedin()) {
 	}
 	api_key_form();
 } else {
-	echo ' The key is tied to your TheyWorkForYou account,
+	echo ' The key is tied to your OpenAustralia account,
 so if you don\'t yet have one, please <a href="/user/?pg=join">sign up</a>, then 
 return here to get a key.</p>';
 	echo '<p style="font-size:200%"><strong><a href="/user/login/?ret=/api/key">Log in</a></strong> (or <a href="/user/?pg=join">sign up</a>) to get an API key.</p>';

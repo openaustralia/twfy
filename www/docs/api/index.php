@@ -13,7 +13,7 @@ if ($q_method = get_http_var('method')) {
 	} else {
 		if (!get_http_var('key')) {
 		# Allow key-less requests for some amount of time
-		#	api_error('No API key provided. Please see http://www.theyworkforyou.com/api/key for more information.');
+		#	api_error('No API key provided. Please see http://www.openaustralia.org/api/key for more information.');
 		#	exit;
 		}
 		$key = get_http_var('key');
@@ -177,38 +177,20 @@ and in PHP and RABX a serialised array containing one entry with key <code>error
 <h3>Licensing</h3>
 
 <p>To use parliamentary material yourself (that's data returned from
-getDebates, getWrans, and getWMS), you will need to get a
-<a href="http://www.opsi.gov.uk/click-use/parliamentary-licence-information/index.htm">Parliamentary Licence</a> from the Office of Public Sector
-Information.
+getDebates), which is Copyright Commonwealth of Australia, you will need to obtain permission to republish it. When we sought permission, we were told that the material is "considered in the public domain". We're not quite sure what that means so you best check for yourself.</p>
 
-<? /* All Ordnance Survey data (returned by getGeometry and getBoundary) is
-covered by the <acronym title="Pan-Government Agreement">PGA</acronym>
-under the <a href="http://www.dca.gov.uk/">Department for Constitutional
-Affairs</a>; you will have to get your own licence to re-use them. */ ?>
-
-Our own data - lists of MPs, Lords, constituencies and so on - is available
+<p>Our own data - lists of members of the House of Representatives, Senators, electoral divisions and so on - is available
 under the <a href="http://creativecommons.org/licenses/by-sa/2.5/">Creative
-Commons Attribution-ShareAlike license version 2.5</a>.
+Commons Attribution-ShareAlike license version 2.5</a>.</p>
 
 <p>Low volume, non-commercial use of the API service itself is free. Please
 <a href="<?= WEBPATH ?>/contact">contact us</a> for commercial use, or if you are about
-to use the service on a large scale.
+to use the service on a large scale.</p>
 
 <h3>Bindings</h3>
 
-<p>These help you interface with the API more easily in a particular language:</p>
-<ul>
-<li><a href="http://codefluency.com/2006/11/21/tfwy-1-0-0-released">Ruby</a> (thanks to Bruce Williams and Martin Owen)</li>
-<li><a href="http://search.cpan.org/~sden/WebService-TWFY-API-0.01/lib/WebService/TWFY/API.pm">Perl</a> (thanks to Spiros Denaxas)</li>
-<li><a href="http://tools.wackomenace.co.uk/twfyapi/">PHP</a> (thanks to Ruben Arakelyan)</li>
-<li><a href="http://code.google.com/p/twfython/">Python</a> (thanks to Paul Doran)</li>
-<li><a href="http://tools.wackomenace.co.uk/twfyapi/">ASP.net</a> (thanks to Ruben Arakelyan)</li>
-<li><a href="https://sourceforge.net/projects/twfyjavaapi">Java</a> (thanks to Mitch Kent)</li>
-</ul>
-
-<p>If anyone wishes to write bindings for the API in any language, please
-do so, let us know and we'll link to it here. You might want to
-<a href="https://secure.mysociety.org/admin/lists/mailman/listinfo/developers-public">join the UK OpenAustralia public developer mailing list</a>
+<p>In adapting the API of TheyWorkForYou to OpenAustralia we've had to make a number of modifications which means that the language bindings developed for the <a href="http://theyworkforyou.com/api">TheyWorkForYou API</a> won't directly work with the OpenAustralia API. If anyone wishes to adapt them or write new bindings, please
+do so, let us know and we'll link to it here. You might want to join the OpenAustralia development mailing list
 to discuss things.</p>
 
 <?
