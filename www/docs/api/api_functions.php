@@ -48,7 +48,7 @@ $methods = array(
 	'getLord' => array(
 		'parameters' => array('id'),
 		'required' => true,
-		'help' => 'Returns details for a Lord'
+		'help' => 'Returns details for a Senator'
 	),
 	'getLords' => array(
 		'parameters' => array('date', 'party', 'search'),

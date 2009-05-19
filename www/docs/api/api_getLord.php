@@ -2,12 +2,12 @@
 
 function api_getLord_front() {
 ?>
-<p><big>Fetch a particular Lord.</big></p>
+<p><big>Fetch a particular Senator.</big></p>
 
 <h4>Arguments</h4>
 <dl>
 <dt>id (optional)</dt>
-<dd>If you know the person ID for the Lord you want, this will return data for that person.</dd>
+<dd>If you know the person ID for the Senator you want, this will return data for that person.</dd>
 </dl>
 
 <?	
