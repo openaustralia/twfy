@@ -12,7 +12,6 @@ $methods = array(
 	),
 */
 	'getDivision' => array(
-		'new' => true,
 		'parameters' => array('postcode'),
 		'required' => true,
 		'help' => 'Searches for an electoral division',
@@ -24,7 +23,6 @@ $methods = array(
 		'help' => 'Returns list of electoral divisions',
 	),
 	'getRepresentative' => array(
-		'new' => true,
 		'parameters' => array('id', 'division', 'postcode', 'always_return'),
 		'required' => true,
 		'help' => 'Returns main details for a member of the House of Representatives'
@@ -91,7 +89,6 @@ $methods = array(
 	),
 */
 	'getDebates' => array(
-		'new' => true,
 		'parameters' => array('type', 'date', 'search', 'person', 'gid', 'year', 'order', 'page', 'num'),
 		'required' => true,
 		'help' => 'Returns Debates (either House of Representatives or Senate)',
@@ -113,7 +110,6 @@ $methods = array(
 		'help' => 'Returns any of the above',
 	),
 	'getComments' => array(
-		'new' => true,
 		'parameters' => array('search', 'page', 'num', 'pid'),
 		'required' => false,
 		'help' => 'Returns comments'
