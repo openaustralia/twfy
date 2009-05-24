@@ -181,14 +181,14 @@ and in PHP and RABX a serialised array containing one entry with key <code>error
 <h3>Licensing</h3>
 
 <p>To use parliamentary material yourself (that's data returned from
-getDebates), which is Copyright Commonwealth of Australia, you will need to obtain permission to republish it. When we sought permission, we were told that the material is "considered in the public domain". We're not quite sure what that means so you best check for yourself.</p>
+getDebates and getHansard), which is Copyright Commonwealth of Australia, you will need to obtain permission to republish it. When we sought permission, we were told that the material is "considered in the public domain". We're not quite sure what that means so you best check for yourself.</p>
 
 <p>Our own data - lists of members of the House of Representatives, Senators, electoral divisions and so on - is available
 under the <a href="http://creativecommons.org/licenses/by-sa/2.5/">Creative
 Commons Attribution-ShareAlike license version 2.5</a>.</p>
 
 <p>Low volume, non-commercial use of the API service itself is free. Please
-<a href="<?= WEBPATH ?>/contact">contact us</a> for commercial use, or if you are about
+<a href="/contact">contact us</a> for commercial use, or if you are about
 to use the service on a large scale.</p>
 
 <h3>Bindings</h3>
