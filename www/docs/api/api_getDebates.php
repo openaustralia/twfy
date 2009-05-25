@@ -10,7 +10,7 @@ function api_getDebates_front() {
 <p>Note you can only supply <strong>one</strong> of the following search terms at present.</p>
 <dl>
 <dt>type (required)</dt>
-<dd>One of "representative" or "senate".
+<dd>One of "representatives" or "senate".
 <dt>date</dt>
 <dd>Fetch the debates for this date.</dd>
 <dt>search</dt>
