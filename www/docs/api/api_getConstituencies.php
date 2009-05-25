@@ -9,6 +9,8 @@ function api_getConstituencies_front() {
 <h4>Arguments</h4>
 <p>Note only one argument can be given at present.</p>
 <dl>
+<dt>postcode (optional)</dt>
+<dd>Fetch the list of electoral divisions that are within the given postcode (there can be more than one)</dd>
 <dt>date (optional)</dt>
 <dd>Fetch the list of electoral divisions as it was on this date.</dd>
 <dt>search (optional)</dt>

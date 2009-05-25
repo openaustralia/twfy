@@ -11,14 +11,9 @@ $methods = array(
 		'help' => 'Converts a parliament.uk Hansard URL into a TheyWorkForYou one, if possible',
 	),
 */
-	'getDivision' => array(
-		'parameters' => array('postcode'),
-		'required' => true,
-		'help' => 'Searches for an electoral division',
-	),
 	'getDivisions' => array(
 #		'parameters' => array('date', 'search', 'latitude', 'longitude', 'distance'),
-		'parameters' => array('date', 'search'),
+		'parameters' => array('postcode', 'date', 'search'),
 		'required' => false,
 		'help' => 'Returns list of electoral divisions',
 	),
