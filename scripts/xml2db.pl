@@ -995,11 +995,18 @@ sub loadmember {
 
         my $id = $member->att('id');
         my $person_id = $membertoperson{$id};
-        $id =~ s:uk.org.publicwhip/member/::;
         $person_id =~ s:uk.org.publicwhip/person/::;
 
-        my $house = 1;
-        if ($member->att('house') ne "commons") {
+        my $house;
+		if ($member->att('house') eq "representatives") {
+	        $id =~ s:uk.org.publicwhip/member/::;
+			$house = 1;
+		}
+		elsif ($member->att('house') eq "senate") {
+	        $id =~ s:uk.org.publicwhip/lord/::;
+			$house = 2;
+		}
+        else {
                 die "Unknown house"; 
         }
         
@@ -1014,7 +1021,7 @@ sub loadmember {
                 encode_entities_noapos($member->att('title')),
                 encode_entities_noapos($member->att('firstname')), 
                 encode_entities_noapos($member->att('lastname')),
-                encode_entities_noapos($member->att('constituency')), 
+                encode_entities_noapos($member->att('division')), 
                 $member->att('party'),
                 $member->att('fromdate'), $member->att('todate'),
                 $member->att('fromwhy'), $member->att('towhy'));
