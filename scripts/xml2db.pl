@@ -144,13 +144,13 @@ use vars qw(%membertoperson);
 use vars qw($current_file);
 
 use vars qw($debatesdir $wransdir $lordswransdir $westminhalldir $wmsdir $lordswmsdir $lordsdebatesdir $nidir $standingdir $scotlanddir $scotwransdir);
-$debatesdir = $parldata . "scrapedxml/debates/";
+$debatesdir = $parldata . "scrapedxml/representatives_debates/";
 $wransdir = $parldata . "scrapedxml/wrans/";
 $lordswransdir = $parldata . "scrapedxml/lordswrans/";
 $westminhalldir = $parldata . "scrapedxml/westminhall/";
 $wmsdir = $parldata . "scrapedxml/wms/";
 $lordswmsdir = $parldata . "scrapedxml/lordswms/";
-$lordsdebatesdir = $parldata . "scrapedxml/lordspages/";
+$lordsdebatesdir = $parldata . "scrapedxml/senate_debates/";
 $nidir = $parldata . 'scrapedxml/ni/';
 $scotlanddir = $parldata . 'scrapedxml/sp/';
 $scotwransdir = $parldata . 'scrapedxml/sp-written/';
@@ -272,11 +272,11 @@ sub process_type {
 }
 
 # Process main data
-process_type(["debates"], [$debatesdir], \&add_debates_day) if ($debates) ;
+process_type([""], [$debatesdir], \&add_debates_day) if ($debates) ;
 process_type(["answers", "lordswrans"], [$wransdir, $lordswransdir], \&add_wrans_day) if ($wrans);
 process_type(["westminster"], [$westminhalldir], \&add_westminhall_day) if ($westminhall);
 process_type(["ministerial", "lordswms"], [$wmsdir, $lordswmsdir], \&add_wms_day) if ($wms);
-process_type(["daylord"], [$lordsdebatesdir], \&add_lordsdebates_day) if ($lordsdebates);
+process_type([""], [$lordsdebatesdir], \&add_lordsdebates_day) if ($lordsdebates);
 process_type(['ni'], [$nidir], \&add_ni_day) if ($ni);
 process_type(['sp'], [$scotlanddir], \&add_scotland_day) if $scotland;
 process_type(['spwa'], [$scotwransdir], \&add_scotwrans_day) if $scotwrans;
@@ -889,13 +889,10 @@ sub add_mps_and_peers {
         $constituencydel->execute(); 
         $constituencydel->finish();
         my $pwmembers = mySociety::Config::get('PWMEMBERS');
-        $twig->parsefile($pwmembers . "constituencies.xml");
+        $twig->parsefile($pwmembers . "divisions.xml");
         $twig->parsefile($pwmembers . "people.xml");
-        $twig->parsefile($pwmembers . "all-members.xml");
-        $twig->parsefile($pwmembers . "peers-ucl.xml");
-        $twig->parsefile($pwmembers . "royals.xml");
-        $twig->parsefile($pwmembers . "ni-members.xml");
-        $twig->parsefile($pwmembers . "sp-members.xml");
+        $twig->parsefile($pwmembers . "representatives.xml");
+        $twig->parsefile($pwmembers . "senators.xml");
         $twig->parsefile($pwmembers . "ministers.xml");
         loadmoffices();
         check_member_ids();
@@ -1220,7 +1217,7 @@ sub add_debates_day
         # find out what gids there are (using tallygidsmode)
         $hpos = 0; $currsection = 0; $currsubsection = 0; $promotedheading = 0; $inoralanswers = 0;
         $tallygidsmode = 1; %gids = (); %grdests = (); $tallygidsmodedummycount = 10;
-        parsefile_glob($twig, $parldata . "scrapedxml/debates/debates" . $curdate. "*.xml");
+        parsefile_glob($twig, $parldata . "scrapedxml/representatives_debates/" . $curdate. "*.xml");
         # see if there are deleted gids
         my @gids = keys %gids;
         check_extra_gids($date, \@gids, "major = 1");
@@ -1228,7 +1225,7 @@ sub add_debates_day
         # make the modifications
         $hpos = 0; $currsection = 0; $currsubsection = 0; $promotedheading = 0; $inoralanswers = 0;
         $tallygidsmode = 0; %gids = ();
-        parsefile_glob($twig, $parldata . "scrapedxml/debates/debates" . $curdate. "*.xml");
+        parsefile_glob($twig, $parldata . "scrapedxml/representatives_debates/" . $curdate. "*.xml");
 
         # and delete anything that has been redirected (moving comments etc)
         delete_redirected_gids($date, \%grdests);
@@ -1286,7 +1283,7 @@ sub add_lordsdebates_day
         # find out what gids there are (using tallygidsmode)
         $hpos = 0; $currsection = 0; $currsubsection = 0; $promotedheading = 0; $inoralanswers = 0;
         $tallygidsmode = 1; %gids = (); %grdests = (); $tallygidsmodedummycount = 10;
-        parsefile_glob($twig, $parldata . "scrapedxml/lordspages/daylord" . $curdate. "*.xml");
+        parsefile_glob($twig, $parldata . "scrapedxml/senate_debates/" . $curdate. "*.xml");
         # see if there are deleted gids
         my @gids = keys %gids;
         check_extra_gids($date, \@gids, "major = 101");
@@ -1294,7 +1291,7 @@ sub add_lordsdebates_day
         # make the modifications
         $hpos = 0; $currsection = 0; $currsubsection = 0; $promotedheading = 0; $inoralanswers = 0;
         $tallygidsmode = 0; %gids = ();
-        parsefile_glob($twig, $parldata . "scrapedxml/lordspages/daylord" . $curdate. "*.xml");
+        parsefile_glob($twig, $parldata . "scrapedxml/senate_debates/" . $curdate. "*.xml");
 
         # and delete anything that has been redirected (moving comments etc)
         delete_redirected_gids($date, \%grdests);

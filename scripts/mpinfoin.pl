@@ -76,20 +76,20 @@ if ($action{'regmem'}) {
 }
 
 if ($action{'links'}) {
-        $twig->parsefile($pwmembers . "wikipedia-mla.xml", ErrorContext => 2);
-        $twig->parsefile($pwmembers . "wikipedia-msp.xml", ErrorContext => 2);
-        $twig->parsefile($pwmembers . "wikipedia-commons.xml", ErrorContext => 2);
-        $twig->parsefile($pwmembers . "wikipedia-lords.xml", ErrorContext => 2);
-        $twig->parsefile($pwmembers . "diocese-bishops.xml", ErrorContext => 2);
-        $twig->parsefile($pwmembers . "edm-links.xml", ErrorContext => 2);
-        $twig->parsefile($pwmembers . "bbc-links.xml", ErrorContext => 2);
+        #$twig->parsefile($pwmembers . "wikipedia-mla.xml", ErrorContext => 2);
+        #$twig->parsefile($pwmembers . "wikipedia-msp.xml", ErrorContext => 2);
+        #$twig->parsefile($pwmembers . "wikipedia-commons.xml", ErrorContext => 2);
+        #$twig->parsefile($pwmembers . "wikipedia-lords.xml", ErrorContext => 2);
+        #$twig->parsefile($pwmembers . "diocese-bishops.xml", ErrorContext => 2);
+        #$twig->parsefile($pwmembers . "edm-links.xml", ErrorContext => 2);
+        #$twig->parsefile($pwmembers . "bbc-links.xml", ErrorContext => 2);
         # TODO: Update Guardian links
-        $twig->parsefile($pwmembers . "guardian-links.xml", ErrorContext => 2);
+        #$twig->parsefile($pwmembers . "guardian-links.xml", ErrorContext => 2);
         # TODO: Update websites (esp. with new MPs)
         $twig->parsefile($pwmembers . 'websites.xml', ErrorContext => 2);
         chdir $FindBin::Bin;
-        $twig->parsefile($pwmembers . 'lordbiogs.xml', ErrorContext => 2);
-        $twig->parsefile($pwmembers . 'journa-list.xml', ErrorContext => 2);
+        #$twig->parsefile($pwmembers . 'lordbiogs.xml', ErrorContext => 2);
+        #$twig->parsefile($pwmembers . 'journa-list.xml', ErrorContext => 2);
         $twig->parsefile($pwmembers . 'links-abc-qanda.xml', ErrorContext => 2);
         $twig->parsefile($pwmembers . 'twitter.xml', ErrorContext => 2);
 }
