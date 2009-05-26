@@ -18,7 +18,7 @@ $methods = array(
 		'help' => 'Returns list of electoral divisions',
 	),
 	'getRepresentative' => array(
-		'parameters' => array('id', 'division', 'postcode', 'always_return'),
+		'parameters' => array('id', 'division', 'always_return'),
 		'required' => true,
 		'help' => 'Returns main details for a member of the House of Representatives'
 	),
@@ -34,7 +34,7 @@ $methods = array(
 	),
 */
 	'getRepresentatives' => array(
-		'parameters' => array('party', 'date', 'search'),
+		'parameters' => array('postcode', 'party', 'date', 'search'),
 		'required' => false,
 		'help' => 'Returns list of members of the House of Representatives',
 	),

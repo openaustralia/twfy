@@ -8,6 +8,8 @@ function api_getMPs_front() {
 
 <h4>Arguments</h4>
 <dl>
+<dt>postcode (optional)</dt>
+<dd>Fetch the list of Representatives whose electoral division lies within the postcode (there may be more than one)</dd>
 <dt>date (optional)</dt>
 <dd>Fetch the list of members of the House of Representatives as it was on this date.</dd>
 <dt>party (optional)</dt>

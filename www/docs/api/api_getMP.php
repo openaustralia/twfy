@@ -8,14 +8,12 @@ function api_getMP_front() {
 
 <h4>Arguments</h4>
 <dl>
-<dt>postcode (optional)</dt>
-<dd>Fetch the Representative for a particular postcode (either the current one, or the most recent one, depending upon the setting of the always_return variable.</dd>
-<dt>division (optional)</dt>
-<dd>The name of an electoral division; we will try and work it out from whatever you give us. :)</dd>
 <dt>id (optional)</dt>
 <dd>If you know the person ID for the member you want (returned from getRepresentatives or elsewhere), this will return data for that person. <!-- <em>Also returns select committee membership and ministerial positions, past and present.</em> --></dd>
+<dt>division (optional)</dt>
+<dd>The name of an electoral division; we will try and work it out from whatever you give us. :)</dd>
 <dt>always_return (optional)</dt>
-<dd>For the postcode and constituency options, sets whether to always try and return a Representative, even if the seat is currently vacant.</dd>
+<dd>For the division option, sets whether to always try and return a Representative, even if the seat is currently vacant.</dd>
 <!-- 
 <dt>extra (optional)</dt>
 <dd>Returns extra data in one or more categories, separated by commas.</dd>
