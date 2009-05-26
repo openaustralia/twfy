@@ -1763,7 +1763,10 @@ elseif ($member['house_disp']==0) print $member['full_name']; ?> speaks<?php
 
 		if (isset($links['mp_twitter_screen_name'])) {
 			$html .= '	<li><a href="http://twitter.com/' . $links['mp_twitter_screen_name'] . '">'. $member->full_name(). ' on Twitter</a> <small>(via <a href="http://tweetmp.org.au">tweetMP</a>)</small></li>';
-		} 
+		}
+		elseif (isset($links['mp_twitter_invite_tweetmp'])) {
+			$html .= '<li><a href="'. $links['mp_twitter_invite_tweetmp'] . '">Invite ' . $member->full_name() . ' to use Twitter</a> <small>(via <a href="http://tweetmp.org.au">tweetMP</a>)</small></li>';
+		}
 
 		$bbc_name = urlencode($member->first_name()) . "%20" . urlencode($member->last_name());
 		if ($member->member_id() == -1)
