@@ -72,7 +72,7 @@ my $twig = XML::Twig->new(
 
 if ($action{'regmem'}) {
         # TODO: Parse ALL regmem in forwards chronological order, so each MP (even ones left parl) gets their most recent one
-        $twig->parsefile(mySociety::Config::get('RAWDATA') . "scrapedxml/regmem/$regmemfile", ErrorContext => 2);
+        #$twig->parsefile(mySociety::Config::get('RAWDATA') . "scrapedxml/regmem/$regmemfile", ErrorContext => 2);
 }
 
 if ($action{'links'}) {
