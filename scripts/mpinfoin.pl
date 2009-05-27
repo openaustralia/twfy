@@ -95,21 +95,21 @@ if ($action{'links'}) {
 }
 
 if ($action{'wtt'}) {
-        $twig->parseurl("http://www.writetothem.com/stats/2005/mps?xml=1");
-        $twig->parseurl("http://www.writetothem.com/stats/2006/mps?xml=1");
+        #$twig->parseurl("http://www.writetothem.com/stats/2005/mps?xml=1");
+        #$twig->parseurl("http://www.writetothem.com/stats/2006/mps?xml=1");
 }
 
 if ($action{'pw'}) {
-        $twig->parseurl("http://www.publicwhip.org.uk/feeds/mp-info.xml"); # i love twig
-        $twig->parseurl("http://www.publicwhip.org.uk/feeds/mp-info.xml?house=lords"); # i love twig
+        #$twig->parseurl("http://www.publicwhip.org.uk/feeds/mp-info.xml"); # i love twig
+        #$twig->parseurl("http://www.publicwhip.org.uk/feeds/mp-info.xml?house=lords"); # i love twig
         # TODO: Add smoking, parliamentary scrutiny
         # Iraq war, terrorism law, Hunting, Foundation hospitals, gay vote,
         # no2id, top-up fees, abolish parliament, no smoking, Parliament FOI,
         # trident
         # TODO: Think about how these (esp no2id) might change now after election
-        foreach my $dreamid (219, 258, 358, 363, 826, 230, 367, 856, 811, 975, 996, 984) {
-                $twig->parseurl("http://www.publicwhip.org.uk/feeds/mpdream-info.xml?id=$dreamid");
-        }
+        #foreach my $dreamid (219, 258, 358, 363, 826, 230, 367, 856, 811, 975, 996, 984) {
+        #        $twig->parseurl("http://www.publicwhip.org.uk/feeds/mpdream-info.xml?id=$dreamid");
+        #}
 }
 
 if ($action{'expenses'}) {
