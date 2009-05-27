@@ -113,13 +113,13 @@ if ($action{'pw'}) {
 }
 
 if ($action{'expenses'}) {
-        $twig->parsefile($pwmembers . "expenses200607.xml", ErrorContext => 2);
-        $twig->parsefile($pwmembers . "expenses200506.xml", ErrorContext => 2);
-        $twig->parsefile($pwmembers . "expenses200506former.xml", ErrorContext => 2);
-        $twig->parsefile($pwmembers . "expenses200405.xml", ErrorContext => 2);
-        $twig->parsefile($pwmembers . "expenses200304.xml", ErrorContext => 2);
-        $twig->parsefile($pwmembers . "expenses200203.xml", ErrorContext => 2);
-        $twig->parsefile($pwmembers . "expenses200102.xml", ErrorContext => 2);
+        #$twig->parsefile($pwmembers . "expenses200607.xml", ErrorContext => 2);
+        #$twig->parsefile($pwmembers . "expenses200506.xml", ErrorContext => 2);
+        #$twig->parsefile($pwmembers . "expenses200506former.xml", ErrorContext => 2);
+        #$twig->parsefile($pwmembers . "expenses200405.xml", ErrorContext => 2);
+        #$twig->parsefile($pwmembers . "expenses200304.xml", ErrorContext => 2);
+        #$twig->parsefile($pwmembers . "expenses200203.xml", ErrorContext => 2);
+        #$twig->parsefile($pwmembers . "expenses200102.xml", ErrorContext => 2);
 }
 
 # Get any data from the database
