@@ -155,26 +155,29 @@ if (get_http_var("submitterm") != '') {
 	
 	$URL = new URL('glossary');
 
-	// Early Day Motion
-	$URL->insert(array("gl" => "90"));
-	$earlyday_url = $URL->generate();
+	// Standing Order 94A
+	$URL->insert(array("gl" => "2"));
+	$standingorder94_url = $URL->generate();
 
-	// Black rod
-	$URL->insert(array("gl" => "109"));
-	$blackrod_url = $URL->generate();
+	// Interjecting
+	$URL->insert(array("gl" => "1"));
+	$interjecting_url = $URL->generate();
 
+
+// Commented out until we have more glossary terms for further examples
 	// Devon county council
-	$URL->insert(array("gl" => "12"));
-	$devoncc_url = $URL->generate();
+//	$URL->insert(array("gl" => "12"));
+//	$devoncc_url = $URL->generate();
 
 	// Hutton Report
-	$URL->insert(array("gl" => "7"));
-	$hutton_url = $URL->generate();
+//	$URL->insert(array("gl" => "7"));
+//	$hutton_url = $URL->generate();
 
-	print "<p><small>Some examples:<br>";
-	print "A technical term, or a piece of jargon e.g. <em>&quot;<a href=\"".$earlyday_url."\">Early Day Motion</a>&quot;(671 occurences)</em> or <em>&quot;<a href=\"".$blackrod_url."\">Black Rod</a>&quot;(12 occurences)</em><br>";
-	print "An external organisation e.g. <em>&quot;<a href=\"".$devoncc_url."\">Devon County Council</a>&quot;(80 occurences)</em><br>";
-	print "An external web document e.g. <em>&quot;<a href=\"".$hutton_url."\">Hutton Report</a>&quot;(104 occurences)</em></small></p>";
+	print "<p><small>For example:<br>";
+	print "A technical term, or a piece of jargon e.g. <em>&quot;<a href=\"".$standingorder94_url."\">Standing Order 94A</a>&quot;</em> or <em>&quot;<a href=\"".$interjecting_url."\">interjecting</a>&quot;</em><br>";
+// Commented out until we have more glossary terms for further examples
+//	print "An external organisation e.g. <em>&quot;<a href=\"".$devoncc_url."\">Devon County Council</a>&quot;(80 occurences)</em><br>";
+//	print "An external web document e.g. <em>&quot;<a href=\"".$hutton_url."\">Hutton Report</a>&quot;(104 occurences)</em></small></p>";
 	print "<p>Or browse the existing entries:</p>";
 
 	$PAGE->glossary_atoz($GLOSSARY);
