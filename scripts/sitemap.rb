@@ -253,60 +253,101 @@ class SitemapUrl
 	end
 end
 
+# Like a Zlib::GzipWriter class but also counts the number of bytes (uncompressed) written out
+class CountedFile < Zlib::GzipWriter
+  attr_reader :size
+  
+  def initialize(filename)
+    @size = 0
+    super
+  end
+  
+  def <<(text)
+    @size = @size + text.size
+    super
+  end
+end
+
 class Sitemap
 	# These are limits that are imposed on a single sitemap file by the specification
 	MAX_URLS_PER_FILE = 50000
 	# This is the uncompressed size of a single sitemap file
-	MAX_BYTES_PER_FILE = 10485760
+	#MAX_BYTES_PER_FILE = 10485760
+	MAX_BYTES_PER_FILE = 200000
 	
 	SITEMAP_XMLNS = "http://www.sitemaps.org/schemas/sitemap/0.9"
 	
 	def initialize(domain, path, web_path)
 		@domain, @path, @web_path = domain, path, web_path
-		@urls = []
+		# Index of current sitemap file
+		@index = 0
+		start_index
+		start_sitemap
 	end
+	
+	def start_sitemap
+		puts "Writing sitemap file (#{sitemap_path})..."
+		@sitemap_file = CountedFile.open(sitemap_path)
+		@sitemap_file << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+		@sitemap_file << "<urlset xmlns=\"#{SITEMAP_XMLNS}\">"
+		@no_urls = 0
+		@lastmod = nil
+  end
+	
+	def start_index
+	  @index_file = File.open(sitemap_index_path, 'w')
+		@index_file << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+		@index_file << "<sitemapindex xmlns=\"#{SITEMAP_XMLNS}\">"
+  end
+  
+  def finish_index
+    @index_file << "</sitemapindex>"
+    @index_file.close
+  end
+  
+  def finish_sitemap
+	  @sitemap_file << "</urlset>"
+	  @sitemap_file.close
+	  # Update the sitemap index
+    @index_file << "<sitemap>"
+    @index_file << "<loc>#{sitemap_url}</loc>"
+		@index_file << "<lastmod>#{Sitemap.w3c_date(@lastmod)}</lastmod>"
+    @index_file << "</sitemap>"
+  end
 	
 	def add_url(loc, options = {})
-		@urls << SitemapUrl.new(loc, options)
+	  url = SitemapUrl.new(loc, options)
+	  # Now build up the bit of XML that we're going to add (as a string)
+	  t = "<url>"
+	  t << "<loc>http://#{@domain}#{url.loc}</loc>"
+	  t << "<changefreq>#{url.changefreq}</changefreq>" if url.changefreq
+	  t << "<lastmod>#{Sitemap.w3c_date(url.lastmod)}</lastmod>" if url.lastmod
+		t << "</url>"
+	  
+	  # First check if we need to start a new sitemap file
+	  if (@no_urls == MAX_URLS_PER_FILE) || (@sitemap_file.size + t.size + "</urlset>".size > MAX_BYTES_PER_FILE)
+	    finish_sitemap
+	    @index = @index + 1
+	    start_sitemap
+    end
+    
+	  @sitemap_file << t
+		@no_urls = @no_urls + 1
+		# For the last modification time of the whole sitemap file use the most recent
+		# modification time of all the urls in the file
+		@lastmod = url.lastmod if url.lastmod && (@lastmod.nil? || url.lastmod > @lastmod)
 	end
 	
+	# Write any remaining bits of XML and close all the files
+	def finish
+	  finish_sitemap
+	  finish_index
+  end
+  
 	def Sitemap.w3c_date(date)
 		date.utc.strftime("%Y-%m-%dT%H:%M:%S+00:00")
 	end 
 		
-	# Returns the sitemap xml as a string for the given urls
-	def xml(urls)
-		# Should really not use any indentation to make the resulting file as small as possible
-		x = Builder::XmlMarkup.new(:indent => 2)
-		x.instruct! :xml, :version => "1.0", :encoding => "UTF-8"
-		x.urlset(:xmlns => SITEMAP_XMLNS) do
-			urls.each do |url|
-				x.url do
-					x.loc("http://" + @domain + url.loc)
-					x.changefreq(url.changefreq) if url.changefreq
-					x.lastmod(Sitemap.w3c_date(url.lastmod)) if url.lastmod
-				end
-			end
-		end		
-	end
-	
-	# Returns the sitemap index xml as a string
-	def index_xml(sitemap_urls)
-		no_sitemap_files = sitemap_urls.size
-	  x = Builder::XmlMarkup.new(:indent => 1)
-		x.instruct! :xml, :version => "1.0", :encoding => "UTF-8"
-		x.sitemapindex(:xmlns => SITEMAP_XMLNS) do
-		  sitemap_urls.each_with_index do |urls, index|
-				x.sitemap do
-					x.loc(sitemap_url(index))
-					# For the last modification time of the whole sitemap file use the most recent
-					# modification time of all the urls in the file
-					x.lastmod(Sitemap.w3c_date(urls.map{|u| u.lastmod}.compact.max))
-				end
-			end
-		end
-	end
-	
 	# Path on the filesystem to the sitemap index file
 	# This needs to be at the root of the web path to include all the urls below it
 	def sitemap_index_path
@@ -317,32 +358,12 @@ class Sitemap
 		"http://#{@domain}#{@web_path}sitemap.xml"
 	end
 	
-	def sitemap_url(index)
-		"http://#{@domain}#{@web_path}sitemaps/sitemap#{index + 1}.xml.gz"
+	def sitemap_url
+		"http://#{@domain}#{@web_path}sitemaps/sitemap#{@index + 1}.xml.gz"
 	end
 	
-	def sitemap_path(index)
-		"#{@path}sitemaps/sitemap#{index + 1}.xml.gz"
-	end
-	
-	def output
-		# Make things simple by assuming that we will always have a sitemap index file
-		no_sitemap_files = (@urls.size.to_f / MAX_URLS_PER_FILE).ceil
-		no_urls_per_sitemap_file = (@urls.size.to_f / no_sitemap_files).ceil
-
-		# Create an array with all the urls sliced into bite size chunks for each sitemap
-		sitemap_urls = []
-		@urls.each_slice(no_urls_per_sitemap_file) do |urls|
-			sitemap_urls << urls
-		end
-
-		sitemap_urls.each_with_index do |urls, index|
-			puts "Writing sitemap file (#{sitemap_path(index)})..."
-			Zlib::GzipWriter.open(sitemap_path(index)) {|f| f << xml(urls)}
-			throw "Sitemap file #{sitemap_path(index)} is too big" if xml(urls).size > MAX_BYTES_PER_FILE
-		end
-		puts "Writing sitemap index (#{sitemap_index_path})..."
-		File.open(sitemap_index_path, 'w') { |f| f << index_xml(sitemap_urls) }
+	def sitemap_path
+		"#{@path}sitemaps/sitemap#{@index + 1}.xml.gz"
 	end
 	
 	# Notify the search engines (like Google, Yahoo, etc..) of the new sitemap
@@ -429,5 +450,5 @@ News.find_all.each do |n|
 	s.add_url n.url, :changefreq => :monthly, :lastmod => n.last_modified
 end
 
-s.output
+s.finish
 s.notify_search_engines
