@@ -272,8 +272,7 @@ class Sitemap
 	# These are limits that are imposed on a single sitemap file by the specification
 	MAX_URLS_PER_FILE = 50000
 	# This is the uncompressed size of a single sitemap file
-	#MAX_BYTES_PER_FILE = 10485760
-	MAX_BYTES_PER_FILE = 200000
+	MAX_BYTES_PER_FILE = 10485760
 	
 	SITEMAP_XMLNS = "http://www.sitemaps.org/schemas/sitemap/0.9"
 	
