@@ -5,6 +5,10 @@
 # 
 # $Id: httpd.conf,v 1.5 2008/01/25 18:03:42 twfy-staging Exp $
 
+<VirtualHost *>
+ServerName dev.openaustralia.org
+DocumentRoot /Library/WebServer/Documents/openaustralia/twfy/www/docs/
+
 DirectoryIndex index.php
 
 RewriteEngine on
@@ -30,3 +34,5 @@ RewriteRule ^/mp/(['a-zA-Z_\ +-]+)/?$       /mp/index.php?n=$1 [QSA]
 # News
 RewriteRule ^/news/archives/(.*)$  /news/index.php/archives/$1 [QSA]
 RewriteRule ^/news/index.rdf$      /news/rdf.php [QSA]
+
+</VirtualHost>

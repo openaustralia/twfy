@@ -6,8 +6,8 @@
 # $Id: httpd.conf,v 1.5 2008/01/25 18:03:42 twfy-staging Exp $
 
 <VirtualHost *>
-ServerName openaustralia
-DocumentRoot /var/www/openaustralia
+ServerName dev.openaustralia.org
+DocumentRoot /var/www/openaustralia/twfy/www/docs/
 
 DirectoryIndex index.php
 
