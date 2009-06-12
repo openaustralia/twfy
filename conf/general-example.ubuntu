@@ -18,7 +18,7 @@ define ("COOKIEDOMAIN", "dev.openaustralia.org");
 // General 'Contact us' type email address. Point this at a real address if you 
 // want the site generated email to come to you. Can be overridden for other mails below.
 
-define ("CONTACTEMAIL", "matthew@openaustralia.org");
+define ("CONTACTEMAIL", "contact@openaustralia.org");
 
 // File system path to the top directory of this Theyworkforyou installation
 define ("BASEDIR","/var/www/openaustralia/twfy/www/docs/"); 
@@ -50,6 +50,9 @@ define ("TIMEZONE", "Australia/Sydney");
 define ("RAWDATA", "/var/www/openaustralia/pwdata/");
 define ('PWMEMBERS', '/var/www/openaustralia/pwdata/members/');
 
+// Path to directory where automated database backups are stored (by scripts/dumpallforbackup)
+define ("DBBACKUP", "/var/www/openaustralia/backup/");
+
 // *******************************************************************************
 // If you've unpacked the tar file normally, and set the paths correctly above, 
 // you shouldn't change these.
@@ -72,14 +75,11 @@ define ("METADATAPATH", BASEDIR . "/../includes/easyparliament/metadata.php");
 // Search related. If non-empty will use XAPIAN search instead of mysql search
 define ("XAPIANDB", '');
 
-
 // Location of the parliamentary recess data file. You can access this remotely 
 // from the main theyworkforyou site if you use
-// define ("RECESSFILE","http://www.openaustralia.org/pwdata/parl-recesses.txt");
+//define ("RECESSFILE","http://www.openaustralia.org/pwdata/parl-recesses.txt");
 // AND amend your global php.ini to 'allow_url_fopen = On'
 //define ("RECESSFILE", RAWDATA . "/parl-recesses.txt");
-
-
 
 // *******************************************************************************
 // More Email addresses.
@@ -109,7 +109,7 @@ define('OPTION_TRACKING_URL', 'http://path/to/web/bug');
 define('OPTION_TRACKING_SECRET', 'really-secret-value');
 
 // For linking to HFYMP at points
-define('OPTION_AUTH_SHARED_SECRET', 'Guy Fawkes');
+define('OPTION_AUTH_SHARED_SECRET', '');
 // define('OPTION_HEARFROMYOURMP_BASE_URL', '');
 
 // For API getGeometry call.
