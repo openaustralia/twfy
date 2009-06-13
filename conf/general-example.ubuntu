@@ -5,23 +5,23 @@
 // *******************************************************************************
 // MySQL database.
 define ("DB_HOST", "localhost");
-define ("DB_USER", "username");
-define ("DB_PASSWORD", "password");
-define ("DB_NAME", "fawkes");
+define ("DB_USER", "openaustralia");
+define ("DB_PASSWORD", "openaustralia");
+define ("DB_NAME", "openaustralia");
 
 // *******************************************************************************
 // Domains.
 // Set this to the domain you are hosting on. If you're running locally, this will be "localhost" 
-define ("DOMAIN", "www.example.org");
-define ("COOKIEDOMAIN", "www.example.org");
+define ("DOMAIN", "dev.openaustralia.org");
+define ("COOKIEDOMAIN", "dev.openaustralia.org");
 
 // General 'Contact us' type email address. Point this at a real address if you 
 // want the site generated email to come to you. Can be overridden for other mails below.
 
-define ("CONTACTEMAIL", "you@yourdomain.com");
+define ("CONTACTEMAIL", "contact@openaustralia.org");
 
 // File system path to the top directory of this Theyworkforyou installation
-define ("BASEDIR","/home/user/theyworkforyou/docs"); 
+define ("BASEDIR","/var/www/openaustralia/twfy/www/docs/"); 
 
 // Webserver path to 'top' directory of the site (possibly just "/"). For example,
 // if the site is at 'http://www.yourdomain.com/public/theyworkforyou', 
@@ -44,14 +44,14 @@ define ("DEVSITE", true);
 define ("DEBUGTAG", 'debug');
 
 // Timezone (only works in PHP5)
-define ("TIMEZONE", "Europe/London");
+define ("TIMEZONE", "Australia/Sydney");
 
 // XML files and other scraped data stored as files
-define ("RAWDATA", "/home/fawkes/pwdata");
-define ('PWMEMBERS', '/home/fawkes/parlparse/members');
+define ("RAWDATA", "/var/www/openaustralia/pwdata/");
+define ('PWMEMBERS', '/var/www/openaustralia/pwdata/members/');
 
 // Path to directory where automated database backups are stored (by scripts/dumpallforbackup)
-define ("DBBACKUP", "/home/fawkes/backup");
+define ("DBBACKUP", "/var/www/openaustralia/backup/");
 
 // *******************************************************************************
 // If you've unpacked the tar file normally, and set the paths correctly above, 
@@ -63,6 +63,11 @@ define ("INCLUDESPATH", BASEDIR . "/../includes/");
 // Web path to the directory where the site's images are kept.
 define ("IMAGEPATH", WEBPATH . "images/");
 
+// Filesystem path to where the images are kept
+define ("FILEIMAGEPATH", BASEDIR . "images/");
+
+// Path *relative* to the WEBPATH and BASEDIR where the Register of Members' Interests pdfs are stored
+define ("REGMEMPDFPATH", "regmem/scan/");
 
 // This will be included in data.php. It's an array of page/section metadata.
 define ("METADATAPATH", BASEDIR . "/../includes/easyparliament/metadata.php");
@@ -72,11 +77,9 @@ define ("XAPIANDB", '');
 
 // Location of the parliamentary recess data file. You can access this remotely 
 // from the main theyworkforyou site if you use
-define ("RECESSFILE","http://www.openaustralia.org/pwdata/parl-recesses.txt");
+//define ("RECESSFILE","http://www.openaustralia.org/pwdata/parl-recesses.txt");
 // AND amend your global php.ini to 'allow_url_fopen = On'
 //define ("RECESSFILE", RAWDATA . "/parl-recesses.txt");
-
-
 
 // *******************************************************************************
 // More Email addresses.
@@ -93,13 +96,6 @@ define ("BUGSLIST", CONTACTEMAIL);
 // Email addresses that alertmailer.php sends stats to
 define('ALERT_STATS_EMAILS', CONTACTEMAIL);
 
-// Postcode lookup
-// If domain is empty, causes postcode lookups to be random but deterministic
-define ("POSTCODE_SEARCH_DOMAIN", '');
-define ("POSTCODE_SEARCH_PORT", "80");
-define ("POSTCODE_SEARCH_PATH", "somescript.php?postcode=");
-
-
 // *******************************************************************************
 // mySociety user-tracking.
 
@@ -114,13 +110,13 @@ define('OPTION_TRACKING_SECRET', 'really-secret-value');
 
 // For linking to HFYMP at points
 define('OPTION_AUTH_SHARED_SECRET', '');
-define('OPTION_HEARFROMYOURMP_BASE_URL', '');
+// define('OPTION_HEARFROMYOURMP_BASE_URL', '');
 
 // For API getGeometry call.
-define('OPTION_MAPIT_URL', '');
+// define('OPTION_MAPIT_URL', '');
 
 // For seeing if someone is in New Zealand.
-define('OPTION_GAZE_URL', '');
+// define('OPTION_GAZE_URL', '');
 
 // mySociety debug level thing. Probably leave as 0.
 define('OPTION_PHP_DEBUG_LEVEL', 0);
