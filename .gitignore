@@ -10,3 +10,4 @@ scripts/morningupdate-lockfile
 scripts/run-with-lockfile
 scripts/rssgenerate-lockfile
 scripts/alerts-lastsent
+conf/general
