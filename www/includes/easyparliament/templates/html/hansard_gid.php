@@ -115,6 +115,9 @@ if (isset ($data['rows'])) {
 			
 			$PAGE->stripe_start('head-2');
 			?>
+                        <!-- ADDTHIS JAVASCRIPT BEGIN --!>
+                        <script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js"></script>
+                        <!-- ADDTHIS JAVASCRIPT END --!>
 				<h4><?php echo $section_title; ?></h4>
 				<h5><?php echo $subsection_title; ?></h5>
 <?php
@@ -239,7 +242,7 @@ if (isset ($data['rows'])) {
 				}
 				if ($desc) print "($desc)";
 				if ($hansardmajors[$data['info']['major']]['type']=='debate' && $this_page == $hansardmajors[$data['info']['major']]['page_all']) {
-					?> <a href="<?php echo $row['commentsurl']; ?>" title="Copy this URL to link directly to this piece of text" class="permalink">Link to this</a><?php
+					?> <a href="http://www.addthis.com/bookmark.php" onmouseover="return addthis_open(this, '', '<?php echo 'http://', DOMAIN, WEBPATH, $row['commentsurl']; ?>', '');" onmouseout="addthis_close();" onclick="return addthis_sendto();">Share This</a> | <a href="<?php echo $row['commentsurl']; ?>" title="Copy this URL to link directly to this piece of text" class="permalink">Link to this</a><?php
 				}
 				if (isset($row['source_url']) && $row['source_url'] != '') {
 					echo ' | <a href="', $row['source_url'], '" title="The source of this piece of text">',
