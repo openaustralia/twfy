@@ -915,7 +915,7 @@ class HANSARDLIST {
 				JOIN hansard AS hansard_subsection
                                 	ON hansard.subsection_id = hansard_subsection.epobject_id
 						WHERE	$where $majorwhere
-						ORDER BY hansard.hdate DESC, hansard.hpos DESC
+						ORDER BY hansard.hdate DESC, hansard.htime DESC, hansard.hpos DESC
 						LIMIT	$items_to_list
 						");
 
