@@ -241,8 +241,9 @@ if (isset ($data['rows'])) {
 					$desc .= ', ' . $speaker['office'][0]['pretty'];
 				}
 				if ($desc) print "($desc)";
+				?> <a href="http://www.addthis.com/bookmark.php" onmouseover="return addthis_open(this, '', '<?php echo 'http://', DOMAIN, $row['commentsurl']; ?>', '');" onmouseout="addthis_close();" onclick="return addthis_sendto();">Share this</a><?php
 				if ($hansardmajors[$data['info']['major']]['type']=='debate' && $this_page == $hansardmajors[$data['info']['major']]['page_all']) {
-					?> <a href="http://www.addthis.com/bookmark.php" onmouseover="return addthis_open(this, '', '<?php echo 'http://', DOMAIN, WEBPATH, $row['commentsurl']; ?>', '');" onmouseout="addthis_close();" onclick="return addthis_sendto();">Share This</a> | <a href="<?php echo $row['commentsurl']; ?>" title="Copy this URL to link directly to this piece of text" class="permalink">Link to this</a><?php
+					?> | <a href="<?php echo $row['commentsurl']; ?>" title="Copy this URL to link directly to this piece of text" class="permalink">Link to this</a><?php
 				}
 				if (isset($row['source_url']) && $row['source_url'] != '') {
 					echo ' | <a href="', $row['source_url'], '" title="The source of this piece of text">',
