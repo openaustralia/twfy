@@ -307,7 +307,7 @@ class MEMBER {
 			$q .= ' house = 0';
 		}
 
-		if ($const || $this_page=='peer') {
+		if ($const) {
 			$q .= ' AND constituency=\''.mysql_escape_string($const)."'";
 		}
 		$q .= ' ORDER BY left_house DESC';
