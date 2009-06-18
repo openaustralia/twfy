@@ -128,3 +128,6 @@ define('OPTION_PHP_DEBUG_LEVEL', 0);
 // Sign up for an account to get an API key
 define('PINGMYMAP_API_KEY', '0123456789abcdef0123456789abcdef');
 
+// *******************************************************************************
+// AddThis.com Sharing Analytics 
+define('ADDTHIS_USERNAME', '');
