@@ -307,7 +307,8 @@ class MEMBER {
 			$q .= ' house = 0';
 		}
 
-		if ($const || $this_page=='peer') {
+		#if ($const && $this_page=='peer') {
+		if ($const) {
 			$q .= ' AND constituency=\''.mysql_escape_string($const)."'";
 		}
 		$q .= ' ORDER BY left_house DESC';
@@ -333,7 +334,7 @@ class MEMBER {
 			$this->canonical = false;
 			return $this->name_to_person_id($name);
 		} else {
-			$PAGE->error_message("Sorry, there is no current member with that name.");
+			$PAGE->error_message("Sorry, there is no current member with that name." . $q->field(0,'person_id'));
 			return false;
 		}
 	}
