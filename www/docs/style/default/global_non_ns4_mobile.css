@@ -1,0 +1,966 @@
+/* Only included by modern browsers. */
+/* The 'body' and font sizes are set in global.css. */
+
+/**** GENERIC HTML ELEMENTS *****************************************************/
+
+body {
+	/* min-width: 950px; */ /* NAT */
+}
+
+h1 {
+	margin: 0;
+	padding: 0;
+	display: inline;
+	font-size: 1px;
+	line-height: 0em;
+	}
+	
+h2 {
+	color: #B82E00;
+	font-weight: bold;
+	margin: 0.2em 14px 10px 18px; /* NAT */
+	}
+	
+h3 {
+	color: #880101;
+	margin: 0 14px 1em 18px;
+	}
+	
+h4 {
+	/* color: #4D6C25; */
+	color: #AB4329; /* NAT */
+	margin: 1em 14px 0 18px;
+	}
+
+h5 {
+	margin: 0 14px 1.4em 18px;
+	}
+	
+form {
+	margin: 0;
+	padding: 0;
+	}
+
+a:link {
+	color: #00b;
+	text-decoration: underline;
+}
+
+a:visited {
+	color: #505;
+	text-decoration: underline;
+	}
+	
+p {
+	margin: 0 0 1em 0;
+	padding: 0;
+	line-height: 1.5em;
+	}
+
+ul, ol, li {
+	margin: 0;
+	padding: 0;
+	}
+li {
+	margin: 0 0 0.5em 1.2em;
+	}
+ol li {
+	margin-left: 1.5em;
+	}
+dt {
+	margin-left: 0;
+	font-weight: bold;
+	}
+dd {
+	margin: 0 0 1.5em 0;
+	}
+
+input.submit {
+	font-weight: bold;
+	color: #333;
+	}	
+	
+div.break {
+	clear: both;
+	height: 1px;
+	font-size: 1px;
+	background: #fff;
+	}
+
+div.row {
+  clear: both;
+  margin: 0 14px 0 18px;
+  padding-top: 0.5em;
+  }
+
+div.row span.label {
+  display: block;
+  float: left;
+  width: 10.5em;
+  font-weight: bold;
+  }
+
+div.row span.formw {
+  display: block;
+  float: left;
+  width: 25em;
+  text-align: left;
+  }
+
+
+/**** MAIN STRUCTURAL BLOCKS *****************************************************/
+
+/* Used on every page */
+
+#container {
+	margin: 0 auto 0 auto;
+	padding: 0;
+	}
+
+#banner {
+	position: relative;
+	margin: 0;
+	padding: 0;
+	}
+#title {
+	padding: 15px 14px 10px 18px; /* NAT */
+	line-height: 0;
+	font-size: 10%; /* Only way to stop space below images in Win IE? */
+	}
+
+#search {
+	position: absolute;
+	top: 0px;
+	right: 0px;
+	width: 26%; /* NAT */
+	height: 68px;
+	padding: 0;
+	background-color: #EBECCF; /* NAT */
+	z-index: 0;
+	}
+
+#search form {
+	margin: 1.4em 14px 0 20px;
+	font-weight: bold;
+	}
+	
+#menu {
+	position: relative;
+	width: 100%;
+	background-color: #EBECCF;  /* NAT */
+	border-top: 1px solid #fff;
+	}
+
+#content {
+	clear: both;
+	width: 100%;
+	/* min-width: 950px; */ /* NAT */
+	}
+
+#footer {
+	width: 100%;
+	padding: 0.7em 0 0.2em 0;
+	margin: 0;
+	background-color: #CDCEBC; /* NAT */
+	}
+
+#footer p {
+	margin-left: 18px;
+	}
+
+/**** MENU ***********************************************************************/
+
+#topmenu {
+	position: relative;
+	margin: 0;
+	padding: 0 14px 2px 0;
+	border-top: 1px solid #fff;
+	z-index: 10;
+	}
+	
+#bottommenu {	
+	position: relative;
+	width: 100%;
+	height: 22px; /* NAT */
+	margin: 0;
+	padding: 0 0 0 0px; /* was 2px left padding */
+	z-index: 10;
+	background-color: #CDCEBC; /* NAT */
+	}
+	
+#topmenu ul,
+#bottommenu ul {
+	list-style: none;
+	margin: 0 0 0 18px;
+	padding: 0;
+	}
+	
+ul#user {
+	position: relative;
+	float: right;
+	width: 25em;
+	height: 20px;  /* NAT */
+	}
+ul#user li {
+	float: right;
+	}
+ul#user .name {
+	display: block;
+	margin: 3px 5px 0 0;
+	}
+	
+#topmenu li,
+#bottommenu li {
+	position: relative;
+	display: block;
+	float: left;
+	width: auto;
+	margin: 0;
+	padding: 0;
+	}
+	
+#topmenu br { 
+	clear: both; 
+	}
+	
+#topmenu a,
+#bottommenu a {
+	position: relative;
+	display: block;
+	margin: 0;
+	padding: 3px 10px;
+	background: #DECEB3;  /* NAT */
+	border-left: 1px solid #fff;
+	border-bottom: 1px solid #fff;
+	color: #000;
+	font-weight: bold;
+	width: 5.5em;
+	/* Mac IE will ignore the next line \*/
+	width: auto;
+	/* end hack */
+	}
+	
+#bottommenu a {
+	padding-right: 20px;
+	border-width: 0 1px; /* NAT */
+	border-style: solid; /* NAT */
+	border-color: #AE967F; /* NAT */
+	background: #DECEB3; /* NAT */
+	color: #000; /* NAT */
+	}
+
+#topmenu a.on,
+#topmenu a:hover {
+	background: #EBA668; /* NAT */
+	color: #fff;
+	text-decoration: none; /* NAT */
+	}
+	
+#topmenu a.on {
+	border-bottom: 1px solid #4D6C25;
+	}
+
+#bottommenu a.on,
+#bottommenu a:hover {
+	background: #EBA668; /* NAT */
+	color: #fff; /* NAT */
+	text-decoration: none; /* NAT */
+	}
+
+/**** STRIPES *****************************************************************/
+/**** The horizontal stripes. And/or the main column / sidebar structure.     */
+/**** A stripe* will probably contain main and sidebar divs. */
+
+div.stripe-side,
+div.stripe-head-1,
+div.stripe-head-2 {
+	margin: 0;
+	padding: 0;
+	background: #EBECCF; /* NAT */
+	}
+
+div.stripe-head-2,
+div.stripe-foot {
+	background: #FDF5F5;
+	}
+
+div.stripe-1,
+div.stripe-1-on,
+div.stripe-time-1,
+div.stripe-procedural-1 {
+	background: #F5F5F5;
+	}
+
+div.stripe-2,
+div.stripe-2-on,
+div.stripe-time-2,
+div.stripe-procedural-2 {
+	background: #E5DFD9;
+	}
+
+/* The main, left-column */
+
+div.main {	
+	float: left;
+	/* width: 74%; */ /* NAT */
+	margin: 0;
+	padding: 0;
+	background: #fff;
+	}	
+
+div.stripe-side div.main {
+	padding-top: 1em;
+	padding-bottom: 3em;
+	}
+div.stripe-head-1 div.main {
+	padding-top: 1em;
+	}
+div.stripe-head-2 div.main,
+div.stripe-foot div.main {
+	border-right: 1px solid #fff;
+	background: #FDF5F5;
+	}
+
+div.stripe-1 div.main,
+div.stripe-2 div.main,
+div.stripe-1-on div.main,
+div.stripe-2-on div.main {
+	padding: 1em 0 1em 0;
+	}
+div.stripe-1 div.main,
+div.stripe-1-on div.main,
+div.stripe-time-1 div.main,
+div.stripe-procedural-1 div.main {
+	border-right: 1px solid #fff;
+	background: #F5F5F5;
+	}
+div.stripe-2 div.main,
+div.stripe-2-on div.main,
+div.stripe-time-2 div.main,
+div.stripe-procedural-2 div.main {
+	border-right: 1px solid #fff;
+	background: #E5DFD9;
+	}
+div.stripe-time-1 div.main,
+div.stripe-time-2 div.main,
+div.stripe-procedural-1 div.main,
+div.stripe-procedural-2 div.main {
+	padding-top: 0.5em;
+	color: #4D6C25;
+}
+p.moved {
+	color: #4D6C25;
+}
+div.stripe-1 p,
+div.stripe-2 p,
+div.stripe-1-on p,
+div.stripe-2-on p,
+div.stripe-time-1 p,
+div.stripe-procedural-1 p,
+div.stripe-time-2 p,
+div.stripe-procedural-2 p {
+	margin-bottom: 0.5em;
+	}
+
+
+div.main p,
+div.main ul,
+div.main dl,
+div.main pre,
+div.main iframe,
+div.main table {
+	margin-left: 18px;
+	margin-right: 14px;
+	}
+div.main dd p {
+	margin-left: 0;
+	margin-right: 0;
+	}
+
+div.main p.speaker small,
+div.main p.unknownspeaker small {
+	font-style: italic;
+}
+	
+div.main p.speaker,
+div.main p.unknownspeaker {
+	margin-bottom: 0;
+	}
+div.main p.unknownspeaker {
+	font-weight: bold;
+	}
+	
+div.stripe-1-on p.speaker a,
+div.stripe-2-on p.speaker a {
+	color: #B82E00;
+	}
+div.stripe-1-on p.speaker a.permalink,
+div.stripe-2-on p.speaker a.permalink {
+	color: #000;
+	}
+	
+div.main img.portrait {
+	margin: 0.3em 1em 1em 0;
+	border: none;
+	float: left;
+	}
+div.main .textportrait {
+	float: left;
+	display: block;
+    width: 96px; 
+    min-height: 118px;
+    float: left; 
+	border: 1px solid #BDE190;
+    text-align: center;
+    margin: 0 2em 1em 0;
+}
+
+div.main p.divisionheading {
+	font-weight: bold;
+	color: #000;
+	}
+div.main p.indent,
+div.main p.indentitalic,
+div.main p.numindent {
+	margin-left: 4em;
+	}
+div.main p.italic,
+div.main p.indentitalic {
+	font-style: italic;
+	color: #4D6C25;
+	}
+
+
+
+/**** BLOCKS *************************************************************************/	
+/* A 'block' is a colored area with a headline, like all those ones on the home page. */
+
+div.block {
+	margin: 0 14px 1.5em 18px;
+	padding: 0;
+	/* border: 1px solid #BDE190; */ /* NAT */
+	background-color: #fff;
+	}
+	
+div.block h4 {
+	margin: 0;
+	padding: 0.15em 0.7em 0.3em 0.7em;
+	/* background: #BDE190; */ /* NAT */
+	color: #000;
+	}
+
+div.block div.blockbody {
+	padding: 0.7em;
+	}
+
+div.block div.blockbody p,
+div.block div.blockbody ul {
+	margin-left: 0;
+	margin-right: 0;
+	}
+
+div#help.block {
+	/* border: 1px solid #D24000; */ /* NAT */
+	background-color: #ECDDCF; /* NAT */
+	}
+div#help.block h4 {
+	padding: 2px 0 5px 5px;
+	color: #fff;
+	}
+div#help.block h4 a {
+	color: #fff;
+	}
+	
+	
+	
+/**** SIDEBARS ******************************************************************/
+
+div.sidebar {
+	float: right;
+	clear: none; /* NAT */
+	width: 25%; /* NAT */
+	padding: 1em 0 0 0;
+	margin: 0;
+	background: transparent;
+	}
+
+/* Overriding the standard block styles for the sidebar. */
+div.sidebar div.block {
+	margin: 0 14px 1em 10px;
+	padding: 4px;
+	border: 2px solid #FFF; /* NAT */
+	}
+div.sidebar div.block h4 {
+	background: #A8A98C; /* NAT */
+	color: #fff;
+	padding-left: 0.35em;
+	padding-right: 0.35em;
+	}
+div.sidebar div.block h4 a {
+	color: #fff;
+	}
+	
+div.sidebar div.block h5 {
+	margin: 1em 0 0 0;
+	}
+	
+div.sidebar div.blockbody {
+	padding: 0 0.35em 0em 0.35em;
+	}
+
+div.sidebar p {
+	line-height: 1.3em;
+	margin-top: 0.5em;
+	margin-bottom: 1em;
+	}
+div.sidebar p.vote {
+	margin: 0.2em 14px 0 10px;
+	}
+div.sidebar p.vote a {
+	background-color: #4D6C25;
+	padding: 2px 4px;
+	border-top: 2px solid #EAECE7;
+	border-right: 2px solid #F0F1ED;
+	border-bottom: 2px solid #3C541D;
+	border-left: 2px solid #324518;
+	color: #fff;
+	font-weight: bold;
+	text-decoration: none;
+	}
+span.wransvote {
+	line-height: 2.2em;
+	}
+
+div.sidebar p.comment-teaser {
+	margin: 0 14px 0 10px;
+	}
+
+div.sidebar p.video {
+	margin: 0 14px 0 10px;
+}
+	
+div.sidebar p.nextprev {
+	margin: 0.5em 14px 2em 10px;
+	height: 3em;
+	}
+.up {
+	display: block;
+	font-weight: bold;
+	margin-bottom: 0.5em;
+	text-align: center;
+	}
+.prev {
+	display: block;
+	float: left;
+	}
+.next {
+	display: block;
+	float: right;
+	}
+	
+div.sidebar ul {
+	margin-top: 0.5em;
+	}
+
+/* eg, the 'source' link on Hansard pages. */
+div.extra {
+	float: right;
+	margin: -1.8em 14px 0 0;
+	}
+div.extra a {
+	color: #A1B487;
+	}
+
+
+/**** CALENDARS ****************************************************************/	
+
+div.calendar {
+	float: left;
+	margin: 0 14px 1em 18px;
+	padding: 0;
+	height: 13.3em;
+	border: solid 1px #999; /* NAT */
+	}
+	
+div.calendar table {
+	margin: 0;
+	width: 187px;
+}
+	
+div.calendar caption {
+	caption-side: top;
+	text-align: left;
+	padding: 0.3em 0.4em;
+	background: #a8a98c;
+	color: #fff;
+	font-weight: bold;
+	width: 189px;
+	}
+div.calendar th,
+div.calendar td {
+	text-align: center;
+	font-weight: normal;
+	background: #fff;
+	padding: 0.2em 0.1em; /* NAT */
+	}
+div.calendar td {
+	padding: 0.2em 0.4em;
+	color: #4D6C25;
+	}
+div.calendar td.on {
+	background: #DECEB3;
+	color: #fff;
+	}
+div.calendar td.on a {
+	color: #fff;
+	}
+div.calendar td.no, div.sidebar div.calendar td.no {
+	color: #cccccc;
+	background-color: #eeeeee;
+}
+/* Changes for sidebar */
+div.sidebar div.calendar {
+	float: none;
+	margin: 0.5em 0 0.5em 0;
+	height: auto;
+	}
+div.sidebar div.calendar caption {
+	font-weight: bold;
+	background: none;
+	}
+div.sidebar div.calendar th,
+div.sidebar div.calendar td {
+	background: #fff;
+	}
+div.sidebar div.calendar td.on {
+	background: #DECEB3;
+	color: #fff;
+	}
+	
+	
+
+/**** MISC THINGS ****************************************************************/	
+
+ul#hansard-day,
+ul#hansard-day li,
+ul#hansard-day ul,
+ul#hansard-day ul li {
+	list-style-type: none;
+	line-height: 1.3em;
+	margin: 0;
+	padding: 0;
+	}
+ul#hansard-day {
+	margin: 0 14px 1em 18px;
+	}
+ul#hansard-day li,
+ul#hansard-day ul li {
+	margin-bottom: 0.5em;
+	}
+ul#hansard-day ul {
+	margin: 0.5em 0 0 3em;
+	}
+div#intro ul#hansard-day {
+	list-style-type: disc;
+	margin: 0;
+	padding: 0 0 0 1em;
+}
+div#intro ul#hansard-day li {
+	list-style-type: disc;
+	margin: 0 0 0 0;
+	padding: 0;
+}
+div#intro ul#hansard-day ul {
+	padding: 0;
+	margin: 0 0 0.5em 1em;
+}
+div#intro ul#hansard-day ul li {
+}
+div#intro ul#hansard-day ul ul {
+	margin: 0 0 0 2em;
+}
+
+div.comment {
+	margin-top: 2em;
+	}
+div.comment p.credit {
+	line-height: 1.3em;
+	margin-bottom: 0;
+	}
+div.comment p.comment {
+	margin-bottom: 0;
+	}
+
+
+dl.big-debates dt,
+dl.recent-wrans dt {
+	line-height: 1.3em;
+	font-weight: normal;
+	}
+dl.big-debates dd {
+	line-height: 1.3em;
+	margin: 0 0 0.5em 1.5em;
+	}
+dl.recent-wrans dd {
+	margin: 0 0 1em 1.5em;
+	}
+dl.recent-wrans p {
+	display: inline;
+	}
+dl.recent-wrans p.numindent {
+	margin: 0;
+	}
+
+table.people th {
+	text-align: left;
+	background: #DECEB3;
+	}
+table.people td.row-1 {
+	background: #F5F5F5;
+	}
+table.people td.row-2 {
+	background: #E5DFD9;
+	}
+
+#people_results {
+	margin-bottom: 1em;
+	padding-bottom: 1em;
+}
+
+dl.searchresults {
+	margin: 0;
+	}
+dl#searchresults dt,
+dl#searchresults dd {
+	margin: 0;
+	padding: 0;
+	}
+dl#searchresults dt {
+	margin: 0 0 0.2em 0;
+	font-weight: normal;
+	}
+dl#searchresults dd {
+	margin-bottom: 1em;
+	}
+
+div.mainsearchbox,
+div.pagelinks {
+	margin: 1em 14px 1em 18px;
+	text-align: center;
+	}
+
+#search_links {
+	font-size: 150%;
+	list-style-type:none;
+}
+#search_links li {
+	min-height: 32px;
+	margin-left:0;
+	padding-left:40px;
+	background-repeat: no-repeat;
+	background-position: 0 0;
+}
+#search_links_email {
+	background-image: url("../../images/icon-email.png");
+}
+#search_links_rss {
+	background-image: url("../../images/icon-rss-32.png");
+}
+
+span.hi {
+	background: #ff3;
+	}
+a span.hi {
+	text-decoration: underline;
+	}
+	
+span.example-input {
+	display: block;
+	background: #eee; 
+	margin: 0.2em 0;
+	padding: 2px; 
+	border-top: 1px solid #666; 
+	border-left: 1px solid #666;
+	}
+	
+	
+/* Site News */
+form.blogcomment {
+	margin-left: 18px;
+	margin-right: 14px;
+	}
+
+/* Admin */	
+p.email-template {
+	font-family: monospace;
+	background: #F5FDEA;
+	border: 1px solid #4D6C25;
+	padding: 1em;
+	}
+
+/**** GLOSSARY ***********************************************************************/
+
+p.glossary-body {
+	clear: both;
+	margin-top: 1em;
+}
+
+a.glossary {
+	/*cursor: help;*/
+}
+
+ul.glossary {
+	margin: 1em 14px 1em 18px;
+	padding-top: 1em;
+	clear: left;
+	}
+
+div.letters {
+	margin: 1em 14px 0 18px;
+	}
+div.letters ul,
+div.letters li {
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+	}
+div.letters ul {
+	clear: left;
+	}
+div.letters li {
+	float: left;
+	width: 2em;
+	margin: 0 1px 1px 0;
+	padding-top: 0.3em;
+	padding-bottom: 0.5em;
+	text-align: center;
+	background: #E8FDCB;
+	}
+div.letters li.on {
+	background: #880000;
+	color: #fff;
+	font-weight: bold;
+	}
+div.letters li.on a {
+	background: #880000;
+	color: #fff;
+	font-weight: bold;
+	}
+
+
+/**** MP PAGE ****************************************************************/	
+/* We override the standard block styles for these special MP page blocks.   */
+
+div#mp.block {
+	/* Stops contents disappearing in Win IE. Weird. */
+	line-height: 1.2em;
+	}
+	
+div#mp.block,
+div#mpsearch.block {
+	background: #FDF5F5;
+	border: 1px solid #a8a98c;
+	}
+div#mp.block h4,
+div#mpsearch.block h4 {
+	background: #a8a98c;
+	color: #fff;
+	padding-left: 0.5em;
+	padding-right: 0.5em;
+	padding-top: 0.4em;
+	}
+div#emailfriend.block {
+	background: #eeeeff;
+	border: 1px solid #000099;
+}
+div#emailfriend.block h4 {
+	background: #000099;
+	color: #ffffff;
+	padding-left: 0.5em;
+	padding-right: 0.5em;
+}
+div#mp img.portrait {
+	float: left;
+	display: block;
+	margin: 0 2em 1em 0;
+	}
+
+ul.jumpers {
+	clear: left;
+	}
+	
+.regmemcategory {
+	font-weight: bold;
+	}
+.regmemitem {
+	margin: 0.5em 0;
+	}
+
+
+/**** HOME PAGE ****************************************************************/	
+/* We override the standard block styles for this special home page block.     */
+
+div#intro.block {
+	/* background: #FDF5F5; */ /* NAT */
+	/* border: 1px solid #C00; */ /* NAT */
+	}
+div#intro.block h4 {
+	/* background: #C00; */ /* NAT */
+	color: #9C3A24; /* NAT */
+	border-bottom: dashed 1px #999; /* NAT */
+	/* padding-left: 0.5em; */ /* NAT */
+	padding-right: 0.5em;
+	}
+div#intro.block li {
+	font-weight: bold;
+	margin-bottom: 1em;
+	}
+div#intro.block li li {
+	font-weight: normal;
+}
+div#intro.block li p {
+	font-weight: normal;
+	line-height: 1.8em;
+	padding: 0.2em 0 0 0em;
+	margin-bottom: 0;
+	}
+
+p#howvoted {
+	margin-bottom: 0.5em;
+}
+ul#dreamcomparisons {
+	margin-bottom: 1em;
+}
+
+acronym {
+	border-bottom: dotted 1px black;
+}
+
+#warning {
+	font-size: 95%; /* NAT */
+	font-weight: bold;
+	text-align: center;
+	border: solid 1px #648D46; /* NAT */
+	background-color: #D5E9C6; /* NAT */
+	padding: 0.3em; /* NAT */
+}
+
+#topics h5 {
+	font-size: 100%;
+	margin: 0.5em 14px 0.5em 0;
+}
+#topics ul {
+	margin-bottom: 1em;
+}
+
+/* Adverts */
+
+#advert_thin {
+	width: 50%;
+	margin: 0 auto;
+	padding-top: 0.5em;
+	border-top: dotted 1px #999999;
+}
+#advert_thin a {
+	font-weight: bold;
+}
