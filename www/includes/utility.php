@@ -892,11 +892,15 @@ function prettify_office($pos, $dept) {
 	return $pretty;
 }
 
-function major_summary($data) {
+function major_summary($data, $limit="") {
 	global $hansardmajors;
 	$db = new ParlDB;
 	$one_date = false;
 	if (isset($data['date'])) $one_date = true;
+    $limitsql = "";
+    if ($limit) {
+        $limitsql = " limit $limit";
+    }
 
 	$daytext = array();
 	if (!$one_date) {
@@ -925,7 +929,7 @@ function major_summary($data) {
 				WHERE hansard.epobject_id = epobject.epobject_id AND section_id=0
 				AND hdate="'.$date.'"
 				AND major IN (' . join(',',$printed_majors) . ')
-				ORDER BY major desc, hpos');
+				ORDER BY major desc, hpos'.$limitsql);
 		$current_major = 0;
 		for ($i = 0; $i < $q->rows(); $i++) {
 			$gid = fix_gid_from_db($q->field($i, 'gid'));
@@ -955,7 +959,7 @@ function major_summary($data) {
 			$date = $data[4]['hdate'];
 		$q = $db->query('SELECT section_id, body, gid FROM hansard,epobject
 				WHERE hansard.epobject_id = epobject.epobject_id AND major=4 AND hdate="'.$date.'" AND subsection_id=0
-				ORDER BY major, hpos');
+				ORDER BY major, hpos'.$limitsql);
 		if ($q->rows()) {
 			$LISTURL = new URL($hansardmajors[4]['page_all']);
 			_major_summary_title(4, $data, $LISTURL, $daytext);
