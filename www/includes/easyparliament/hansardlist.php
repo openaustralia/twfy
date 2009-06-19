@@ -157,14 +157,18 @@ class HANSARDLIST {
 			$view = $args['view_override'];
 		}
 		
-		$return = $this->render($view, $data, $format);
+        if (isset($args['mobile'])) {
+		    $return = $this->render($view, $data, $format, $args['mobile']);
+        } else {
+		    $return = $this->render($view, $data, $format);
+        }
 		
 		return $return;
 	}
 	
 	
 	
-	function render ($view, $data, $format='html') {
+	function render ($view, $data, $format='html', $mobile=0) {
 		// Once we have the data that's to be rendered,
 		// include the template.
 
@@ -173,7 +177,11 @@ class HANSARDLIST {
 			return $data;
 		}
 		
-		include (INCLUDESPATH."easyparliament/templates/$format/hansard_$view" . ".php");
+        if ($mobile) {
+		    include (INCLUDESPATH."easyparliament/templates/$format/hansard_".$view."_mobile" . ".php");
+        } else {
+		    include (INCLUDESPATH."easyparliament/templates/$format/hansard_$view" . ".php");
+        }
 		return true;
 	
 	}
@@ -915,7 +923,7 @@ class HANSARDLIST {
 				JOIN hansard AS hansard_subsection
                                 	ON hansard.subsection_id = hansard_subsection.epobject_id
 						WHERE	$where $majorwhere
-						ORDER BY hansard.hdate DESC, hansard.htime DESC, hansard.hpos DESC
+						ORDER BY hansard.hdate DESC, hansard.hpos DESC
 						LIMIT	$items_to_list
 						");
 
