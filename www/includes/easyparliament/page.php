@@ -1743,6 +1743,9 @@ elseif ($member['house_disp']==0) print $member['full_name']; ?> speaks<?php
 		if (isset($links['guardian_election_results'])) {
 			$html .= '	<li><a href="' . $links['guardian_election_results'] . '">Election results for ' . $member->constituency() . '</a> <small>(From The Guardian)</small></li>';
 		}
+		if (isset($links['abc_election_results'])) {
+			$html .= '	<li><a href="' . $links['abc_election_results'] . '">Election results for ' . $member->constituency() . '</a> <small>(From ABC)</small></li>';
+		}
 
 		if (isset($links['guardian_candidacies'])) {
 			$html .= '	<li><a href="' . $links['guardian_candidacies'] . '">Previous candidacies</a> <small>(From The Guardian)</small></li>';
