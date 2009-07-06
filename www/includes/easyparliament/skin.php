@@ -66,6 +66,14 @@ class SKIN {
 		'default' => array (
 			'global' 	=> 'default',
 			'screen' 	=> '',
+            'mobile'    => '',
+			'print' 	=> 'default',
+			'extra' 	=> ''
+		),
+		'mobile' => array (
+			'global' 	=> '',
+			'screen' 	=> '',
+            'mobile'    => 'default',
 			'print' 	=> 'default',
 			'extra' 	=> ''
 		),
@@ -129,7 +137,7 @@ class SKIN {
 			?>
 	<link rel="stylesheet" href="<?php echo WEBPATH; ?>style/<?php echo $skinstyles['global']; ?>/global.css" type="text/css">
 <?php
-			if (isset($_SERVER['HTTP_USER_AGENT']) && !(ereg("MSIE 4.0", $_SERVER['HTTP_USER_AGENT']))){
+			if (isset($_SERVER['HTTP_USER_AGENT']) && !(ereg("MSIE 4.0", $_SERVER['HTTP_USER_AGENT'])) && (isset($skinstyles["mobile"]))){
 				// Hide this from IE4 and Mac AOL5.
 				?>
 	<style type="text/css">
@@ -142,6 +150,13 @@ class SKIN {
 			?>
 	<link rel="stylesheet" href="<?php echo WEBPATH; ?>style/<?php echo $skinstyles['screen']; ?>/screen.css" type="text/css" media="screen">
 <?php
+		}
+		if (isset($skinstyles["mobile"]) && $skinstyles["mobile"] != "") {
+			?>
+	<link rel="stylesheet" href="<?php echo WEBPATH; ?>style/<?php echo $skinstyles['mobile']; ?>/global_non_ns4_mobile.css" type="text/css"> 
+	<link rel="stylesheet" href="<?php echo WEBPATH; ?>style/<?php echo $skinstyles['mobile']; ?>/mobile.css" type="text/css"> 
+<?php
+    // link tag should end in media="handheld"> but mobile's don't always obey that - I'm looking at you Windows Mobile 8/
 		}
 		if (isset($skinstyles["extra"]) && $skinstyles["extra"] != "") {
 			?>
