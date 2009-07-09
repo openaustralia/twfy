@@ -192,7 +192,7 @@ if (is_numeric(get_http_var('m'))) {
 } elseif ($name) {
 	$MEMBER = new MEMBER(array('name' => $name));
 	if (((($MEMBER->house_disp==1)
-	    || ($MEMBER->house_disp==2 && $this_page!='peer'))
+	    || ($MEMBER->house_disp==2))
 	    && ($MEMBER->valid || !is_array($MEMBER->person_id()))) || $redirect) {
 		member_redirect($MEMBER);
 	}
