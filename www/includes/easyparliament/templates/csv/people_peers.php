@@ -28,8 +28,8 @@ function render_peers_row($peer, $order) {
 		print $parties[$peer['party']];
 	else
 		print $peer['party'];
-	print ',' .  'http://www.openaustralia.org/senator/' . 
-		make_member_url($name, null);
+	print ',' .  'http://' . DOMAIN . WEBPATH . 'senator/' . 
+		make_member_url($name, $peer['constituency']);
 	print "\n";
 }
 
