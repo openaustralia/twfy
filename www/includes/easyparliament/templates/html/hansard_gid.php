@@ -115,10 +115,10 @@ if (isset ($data['rows'])) {
 			
 			$PAGE->stripe_start('head-2');
 			?>
-                        <!-- ADDTHIS JAVASCRIPT BEGIN --!>
+                        <!-- ADDTHIS JAVASCRIPT BEGIN -->
                         <script type="text/javascript">var addthis_pub = "<?php echo ADDTHIS_USERNAME; ?>";</script>
 			<script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js"></script>
-                        <!-- ADDTHIS JAVASCRIPT END --!>
+                        <!-- ADDTHIS JAVASCRIPT END -->
 				<h4><?php echo $section_title; ?></h4>
 				<h5><?php echo $subsection_title; ?></h5>
 <?php
