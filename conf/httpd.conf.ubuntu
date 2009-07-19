@@ -5,6 +5,10 @@
 # 
 # $Id: httpd.conf,v 1.5 2008/01/25 18:03:42 twfy-staging Exp $
 
+<VirtualHost *>
+ServerName dev.openaustralia.org
+DocumentRoot /var/www/openaustralia/twfy/www/docs/
+
 DirectoryIndex index.php
 
 RewriteEngine on
@@ -22,7 +26,6 @@ RewriteRule ^/api/docs/(.*)$         /api/index.php?docs=1&method=$1 [QSA]
 # Other people types
 RewriteRule ^/senator/(.*)   /mp/$1?peer=1 [QSA]
 
-
 ##########################################################################################
 ## See http://smartmobtoolkit.wordpress.com/2008/10/16/not-device-detection/ for more info
 ## NOTE: May also need conds/rules for specific transcoders that lie
@@ -30,7 +33,7 @@ RewriteRule ^/senator/(.*)   /mp/$1?peer=1 [QSA]
 ##########################################################################################
     # /mp/ URL Mobile redirection (by exclusion)
     #RewriteCond         %{QUERY_STRING}         !^pc$ [NC]
-        # NOTE: May want to add other bot patters here
+        # NOTE: May want to add other bot patterns here
         RewriteCond         %{HTTP_USER_AGENT}      !^.*(spider|crawl|slurp|bot).*$ [NC]
     RewriteCond         %{HTTP_USER_AGENT}      ^.*webOS.*$ [NC,OR]
     RewriteCond         %{HTTP_USER_AGENT}      !^.*Linux.*$ [NC,OR]
@@ -42,7 +45,7 @@ RewriteRule ^/senator/(.*)   /mp/$1?peer=1 [QSA]
     RewriteCond         %{HTTP_USER_AGENT}      ^.*iPod.*$ [NC]
     RewriteCond         %{HTTP_USER_AGENT}      !^.*Solaris.*$ [NC]
     RewriteCond         %{HTTP_USER_AGENT}      !^.*BSD.*$
-    RewriteRule         ^/mp/(['a-zA-Z_+-]+)/([\(\)\.a-zA-Z_+,'-]+)$      http://openaustralia.org/mp/mobile.php?n=$1&c=$2 [QSA]
+    RewriteRule         ^/mp/(['a-zA-Z_+-]+)/([\(\)\.a-zA-Z_+,'-]+)$      /mp/mobile.php?n=$1&c=$2 [QSA]
 # MP pages
 RewriteRule ^/mp/(['a-zA-Z_+-]+)/([\(\)\.a-zA-Z_+,'-]+)$      /mp/index.php?n=$1&c=$2 [QSA]
 RewriteRule ^/mp/(['a-zA-Z_\ +-]+)\ mp/?$  /mp/index.php?n=$1 [QSA]
@@ -131,3 +134,5 @@ RewriteRule ^/news/index.rdf$      /news/rdf.php [QSA]
     RewriteCond         %{HTTP_USER_AGENT}      !^.*Solaris.*$ [NC]
     RewriteCond         %{HTTP_USER_AGENT}      !^.*BSD.*$
     RewriteRule         ^/debates/(.*)$            /debates/mobile.php$1 [QSA]
+
+</VirtualHost>
