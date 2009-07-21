@@ -177,7 +177,7 @@ foreach my $constituency (keys %$consinfohash) {
         my $data = $consinfohash->{$constituency};
         foreach my $key (keys %$data) {
                 my $value = $data->{$key};
-                $consinfoadd->execute(encode_entities($constituency), $key, $value, $value);
+                $consinfoadd->execute($constituency, $key, $value, $value);
         }
 }
 
