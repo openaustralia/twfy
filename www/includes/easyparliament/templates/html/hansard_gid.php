@@ -257,7 +257,8 @@ if (isset ($data['rows'])) {
 					print " | Question $m[1]";
 				}
 
-                                if ($data['info']['major'] == 1) { # Commons debates only
+                #                if ($data['info']['major'] == 1) { # Commons debates only
+                if (0) {
 					?><!-- | <script type="text/javascript" src="http://parlvid.mysociety.org/video.cgi?gid=<?
 					echo $row['gid'];
 				 	?>&output=js-link"></script> --><?
