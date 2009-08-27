@@ -91,6 +91,7 @@ if ($action{'links'}) {
         #$twig->parsefile($pwmembers . 'lordbiogs.xml', ErrorContext => 2);
         #$twig->parsefile($pwmembers . 'journa-list.xml', ErrorContext => 2);
         $twig->parsefile($pwmembers . 'links-abc-qanda.xml', ErrorContext => 2);
+        $twig->parsefile($pwmembers . 'links-abc-election.xml', ErrorContext => 2);
         $twig->parsefile($pwmembers . 'twitter.xml', ErrorContext => 2);
 }
 
@@ -176,7 +177,7 @@ foreach my $constituency (keys %$consinfohash) {
         my $data = $consinfohash->{$constituency};
         foreach my $key (keys %$data) {
                 my $value = $data->{$key};
-                $consinfoadd->execute(encode_entities($constituency), $key, $value, $value);
+                $consinfoadd->execute($constituency, $key, $value, $value);
         }
 }
 

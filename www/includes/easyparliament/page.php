@@ -1226,9 +1226,6 @@ pr()//-->
 						
 						
 						<ul class="jumpers">
-<? if (!in_array(1, $member['houses']) || $member['party'] == 'Sinn Fein') { ?>
-						<li><a href="#hansard">Recent appearances</a></li>
-<? } ?>
 						<li><a href="#numbers">Numbers</a></li>
 <?php		if ($member['current_member'][1] || $member['current_member'][2] ) { ?>
 						<li><a href="#register">Register of Interests</a></li>
@@ -1742,6 +1739,9 @@ elseif ($member['house_disp']==0) print $member['full_name']; ?> speaks<?php
 
 		if (isset($links['guardian_election_results'])) {
 			$html .= '	<li><a href="' . $links['guardian_election_results'] . '">Election results for ' . $member->constituency() . '</a> <small>(From The Guardian)</small></li>';
+		}
+		if (isset($links['abc_election_results_2007'])) {
+			$html .= '	<li><a href="' . $links['abc_election_results_2007'] . '">Election results for ' . $member->constituency() . '</a> <small>(From ABC)</small></li>';
 		}
 
 		if (isset($links['guardian_candidacies'])) {
