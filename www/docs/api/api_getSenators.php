@@ -9,6 +9,9 @@ function api_getSenators_front() {
 function api_getSenators_party($s) {
 	api_getLords_party($s);
 }
+function api_getSenators_state($s) {
+        api_getLords_state($s);
+}
 function api_getSenators_search($s) {
 	api_getLords_search($s);
 }

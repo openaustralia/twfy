@@ -38,6 +38,17 @@ function api_getMembers_party($house, $s) {
 		'%" and entered_house <= date(now()) and date(now()) <= left_house');
 }
 
+function api_getMembers_state($house, $s) {
+        global $parties;
+        $canon_to_short = array_flip($parties);
+        if (isset($canon_to_short[ucwords($s)]))
+            $s = $canon_to_short[ucwords($s)];
+        _api_getMembers_output('select * from member
+                where house = ' . mysql_escape_string($house) . '
+                and constituency like "%' . mysql_escape_string($s) .
+                '%" and entered_house <= date(now()) and date(now()) <= left_house');
+}
+
 function api_getMembers_search($house, $s) {
 	$sq = mysql_escape_string($s);
 	_api_getMembers_output('select * from member
