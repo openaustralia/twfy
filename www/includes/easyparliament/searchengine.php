@@ -594,7 +594,7 @@ function search_by_usage($search, $house = 0) {
                 if ($dept && $q->field($n, 'to_date') == '9999-12-31')
                     $speakers[$pid]['office'][$moffice_id] = prettify_office($posn, $dept);
                 if (!isset($speakers[$pid]['name'])) {
-                    $speakers[$pid]['name'] = i($house==2?'Senator ':'') . $full_name . ($house==1?' MP':'');
+                    $speakers[$pid]['name'] = ($house==2?'Senator ':'') . $full_name . ($house==1?' MP':'');
                     $speakers[$pid]['party'] = $party;
                 }
             }
