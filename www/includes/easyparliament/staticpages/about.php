@@ -38,13 +38,19 @@ freely available. Do let us know if you want to help!
 
 <h4>Volunteers on OpenAustralia.org</h4>
 <ul>
-	<li>Matthew Landauer</li>
-	<li>Katherine Szuminska</li>
-	<li>Bruno Mattarollo</li>
-	<li>Matthew Panetta</li>
-	<li>Wade Millican</li>
+	<li>Tim Ansell</li>
 	<li>Nathanael Boehm</li>
+	<li>Lachie Cox</li>
+	<li>Henare Degan</li>
+	<li>Ray Haleblian</li>
 	<li>Daniel Kinsman</li>
+	<li>Matthew Landauer</li>
+	<li>Rob Manson</li>
+	<li>Bruno Mattarollo</li>
+	<li>Wade Millican</li>
+	<li>Matthew Panetta</li>
+	<li>Sarah Stokely</li>
+	<li>Katherine Szuminska</li>
 </ul>
 
 <p><em>They did all this in their spare time, because they thought it was worth doing.
