@@ -5,7 +5,6 @@
 <li><a href="#cookie">What is your Cookie Policy?</a></li>
 <li><a href="#extreme">What's that weird 'urchin' javascript I spy in your page source?</a></li>
 <li><a href="#rss">What is RSS?</a></li>
-<!--><li><a href="#votingrecord">How is the voting record decided?</a></li><-->
 <li><a href="#numbers">Why should I read in more depth than just the numbers?</a></li>
 <li><a href="#api">Do you have the data as a spreadsheet file, XML or in an API?</a></li>
 <li><a href="#regmem">What is the Register of Interests and how can I use it?</a></li>
@@ -14,7 +13,7 @@
 
 <br>
 
-<!-- start new faq entry-->
+<!-- start new faq entry -->
 <dl>
 
 <dt><a name="moderation"></a>How do you moderate comments?</dt>
@@ -23,7 +22,7 @@
 </dd>
 <!-- end old faq entry -->
 
-<!-- start new faq entry-->
+<!-- start new faq entry -->
 <dt><a name="missing"></a>Is this the whole of Hansard?</dt>
 <dd>
 	<p>Not quite. This is everything in the Hansard for the House of Representatives and the Senate excluding written questions, petitions,
@@ -33,7 +32,7 @@ If you want the complete, definitive record, go to the <a href="http://www.aph.g
 </dd>
 <!-- end old faq entry -->
 
-<!-- start new faq entry-->
+<!-- start new faq entry -->
 <dt><a name="privacy"></a>What is your Privacy Policy?</dt>
 <dd>
 <p>Our Privacy Policy is very simple:</p>
@@ -44,7 +43,7 @@ If you want the complete, definitive record, go to the <a href="http://www.aph.g
 <!-- end old faq entry -->
 
 
-<!-- start new faq entry-->
+<!-- start new faq entry -->
 <dt><a name="cookie"></a>What is your Cookie Policy?</dt>
 <dd>
 <p>We use cookies to save you from having to repeatedly log in to the site, and also to remember your electoral division. The site will work with cookies disabled, but it won't be as good. </p>
@@ -52,14 +51,14 @@ If you want the complete, definitive record, go to the <a href="http://www.aph.g
 <!-- end old faq entry -->
 
 
-<!-- start new faq entry-->
+<!-- start new faq entry -->
 <dt><a name="extreme"></a>What's that weird 'urchin' javascript I spy in your page source?</dt>
 <dd>
 <p>We use Google Analytics to track aggregated traffic through the website. It captures nothing that you won't find in an Apache logfile, but has an interface we like, and is dead easy to use. Rest assured, we only track usage data for one reason only: to help us understand how we can make the site work better for you lot. If anyone wants to whinge about 'Web Bugs', expect short shrift. </p>
 </dd>
 <!-- end old faq entry -->
 
-<!-- start new faq entry-->
+<!-- start new faq entry -->
 <dt><a name="rss"></a>What is RSS?</dt>
 <dd>
 <p>RSS files contain information about a list of things: diary entries, speeches, etc. and are formatted to be readable by computer programs, rather than humans. So what use are they? You can use a program called a news reader to store the locations of RSS feeds, and each time one is updated - with new diary entries or speeches - you can easily see what's new. It saves you visiting web pages on the off-chance anything new has appeared. Popular RSS readers are <a href="http://www.sharpreader.net/">Sharpreader</a> for Windows or <a href="http://ranchero.com/netnewswire/#lite">NetNewsWire Lite</a> for Macs. <a href="http://www.bloglines.com/">Bloglines</a> and <a href="http://www.google.com/reader">Google Reader</a> are online RSS readers.</p>
@@ -67,22 +66,7 @@ If you want the complete, definitive record, go to the <a href="http://www.aph.g
 
 <!-- end old faq entry -->
 
-<!-- start new faq entry-->
-
-<!-->
-<dt><a name="votingrecord"></a>How is the voting record decided?</dt>
-<dd>
-<p>The voting record is not affected by what MPs and Peers have said, only how they
-<strong>voted</strong> in relation to that topic in the house - i.e. "aye" or
-"no".  Votes on each topic were examined, and strength of support determined
-based on these votes.  Follow the "votes" link next to each topic for details.
-Additionally, in many votes, MPs and Peers are told how to vote ('whipped') by their
-parties. Since the Whip is secret, we have to assume, <a
-href="http://www.openaustralia.org/debate/?id=2005-02-07.1200.2">like the
-Speaker</a>, that all votes are free.  </P>
-</dd>
-
-<-->
+<!-- start new faq entry -->
 
 <dt><a name="numbers"></a>Why should I read in more depth than just the numbers?</dt>
 
@@ -118,7 +102,7 @@ address</a>. We have a few ideas ourselves to keep you on your toes.
 
 <!-- end old faq entry -->
 
-<!-- start new faq entry-->
+<!-- start new faq entry -->
 <dt><a name="api"></a>Do you have the data as a spreadsheet file, XML or in an API?</dt>
 <dd>
 <p>Yes. If you just need a spreadsheet of
