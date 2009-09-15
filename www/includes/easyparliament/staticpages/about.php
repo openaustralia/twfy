@@ -15,7 +15,7 @@ We owe a great debt to a UK charity, mySociety, which built <a href="http://they
 
 <p>The Australian Hansard is
 <a href="http://www.ag.gov.au/cca">Copyright Commonwealth of Australia</a>,
-and is used with permission. Images of politicians are <a href="http://www.ag.gov.au/cca">Copyright Commonwealth of Australia<a> and administered by <a href="mailto:auspic@aph.gov.au">AUSPIC</a>.
+and is used with permission. Images of politicians are <a href="http://www.ag.gov.au/cca">Copyright Commonwealth of Australia</a> and administered by <a href="mailto:auspic@aph.gov.au">AUSPIC</a>.
 </p>
 <p>If you're technically minded, we make all the
 <a href="http://software.openaustralia.org/">OpenAustralia source code</a>
