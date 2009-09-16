@@ -229,8 +229,8 @@ if ($q_house==1) {
         if ($args['s']) {
             find_constituency($args);
             #        find_users($args);
-        	find_glossary_items($args);
-            #        find_comments($args);
+            find_glossary_items($args);
+            find_comments($args);
     	}
     }
 } else {
