@@ -37,21 +37,87 @@ freely available. Do let us know if you want to help!
 	VPS hosting to us for free.</p>
 
 <h4>Volunteers on OpenAustralia.org</h4>
-<ul>
-	<li>Tim Ansell</li>
-	<li>Nathanael Boehm</li>
-	<li>Lachie Cox</li>
-	<li>Henare Degan</li>
-	<li>Ray Haleblian</li>
-	<li>Daniel Kinsman</li>
-	<li>Matthew Landauer</li>
-	<li>Rob Manson</li>
-	<li>Bruno Mattarollo</li>
-	<li>Wade Millican</li>
-	<li>Matthew Panetta</li>
-	<li>Sarah Stokely</li>
-	<li>Katherine Szuminska</li>
-</ul>
+
+<table class="people" border="0" cellpadding="4" cellspacing="0">
+<tr>
+<td class="row">
+<img src="http://www.gravatar.com/avatar/b22adbe107ae92088a105b551354d487?s=32&d=identicon">
+</td>
+<td class="row-1">Tim Ansell</td>
+</tr>
+<tr>
+<td class="row-2">
+<img src="http://www.gravatar.com/avatar/039a87be2d3843f64170f5e625252e84?s=32&d=identicon">
+</td>
+<td class="row-2">Nathanael Boehm</td>
+</tr>
+<tr>
+<td class="row-1">
+<img src="http://www.gravatar.com/avatar/9f24adfa971912d72f72c1396ef63351?s=32&d=identicon">
+</td>
+<td class="row-1">Lachie Cox</td>
+</tr>
+<tr>
+<td class="row-2">
+<img src="http://www.gravatar.com/avatar/b30d37e67e4c4584a71d977763651513?s=32&d=identicon">
+</td>
+<td class="row-2">Henare Degan</td>
+</tr>
+<tr>
+<td class="row-1">
+<img src="http://www.gravatar.com/avatar/011c7cbc5af9c3c81b12b9c173a9db32?s=32&d=identicon">
+</td>
+<td class="row-1">Ray Haleblian</td>
+</tr>
+<tr>
+<td class="row-2">
+<img src="http://www.gravatar.com/avatar/a1ed877d79337034f8e1bb46f2dad8e3?s=32&d=identicon">
+</td>
+<td class="row-2">Daniel Kinsman</td>
+</tr>
+<tr>
+<td class="row-1">
+<img src="http://www.gravatar.com/avatar/5a600494d91ea4223e7256989155f687?s=32&d=identicon">
+</td>
+<td class="row-1">Matthew Landauer</td>
+</tr>
+<tr>
+<td class="row-2">
+<img src="http://www.gravatar.com/avatar/4dde9fa837cdd695790518e140efbf7d?s=32&d=identicon">
+</td>
+<td class="row-2">Rob Manson</td>
+</tr>
+<tr>
+<td class="row-1">
+<img src="http://www.gravatar.com/avatar/d25d7166e80639478ef1811788b8e61e?s=32&d=identicon">
+</td>
+<td class="row-1">Bruno Mattarollo</td>
+</tr>
+<tr>
+<td class="row-2">
+<img src="http://www.gravatar.com/avatar/0a6ceb73d181645bcaff2c21e8fe0e85?s=32&d=identicon">
+</td>
+<td class="row-2">Wade Millican</td>
+</tr>
+<tr>
+<td class="row-1">
+<img src="http://www.gravatar.com/avatar/6a5ba0842a531163425d66839569a68?s=32&d=identicon">
+</td>
+<td class="row-1">Matthew Panetta</td>
+</tr>
+<tr>
+<td class="row-2">
+<img src="http://www.gravatar.com/avatar/868fb81dcf82f1c5973cb733491b2da3?s=32&d=identicon">
+</td>
+<td class="row-2">Sarah Stokely</td>
+</tr>
+<tr>
+<td class="row-1">
+<img src="http://www.gravatar.com/avatar/87bb46366f13106c2deebf655af73b38?s=32&d=identicon">
+</td>
+<td class="row-1">Katherine Szuminska</td>
+</tr>
+</table>
 
 <p><em>They did all this in their spare time, because they thought it was worth doing.
 And if it's worth doing, you might as well try to do it well. </em></p>
