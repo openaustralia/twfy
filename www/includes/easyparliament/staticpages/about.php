@@ -107,7 +107,7 @@ freely available. Do let us know if you want to help!
 </tr>
 <tr>
 <td class="row-2">
-<img src="http://www.gravatar.com/avatar/868fb81dcf82f1c5973cb733491b2da3?s=32&d=identicon">
+<img src="http://www.gravatar.com/avatar/b6d632e6f84a8b522199a91d75b7eb39?s=32&d=identicon">
 </td>
 <td class="row-2">Sarah Stokely</td>
 </tr>
