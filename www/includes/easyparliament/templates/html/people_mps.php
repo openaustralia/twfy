@@ -67,7 +67,7 @@ if ($order == 'first_name') {
 }
 $th_name .= ' &amp; ';
 if ($order == 'last_name') {
-	$th_name .= 'last';
+	$th_name .= 'Last';
 } else {
 	$URL->insert(array('o'=>'l'));
 	$th_name .= '<a href="' . $URL->generate() . '">Last</a>';
