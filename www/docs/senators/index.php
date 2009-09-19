@@ -15,8 +15,10 @@ if (get_http_var('f') != 'csv') {
 
 $args = array('order'=>'name');
 
-if (get_http_var('o') == 'n') {
-	$args['order'] = 'name';
+if (get_http_var('o') == 'l' || get_http_var('o') == 'n') {
+	$args['order'] = 'last_name';
+} elseif (get_http_var('o') == 'f') {
+	$args['order'] = 'first_name';
 } elseif (get_http_var('o') == 'p') {
 	$args['order'] = 'party';
 } elseif (get_http_var('o') == 'c') {
@@ -24,6 +26,7 @@ if (get_http_var('o') == 'n') {
 } elseif (get_http_var('o') == 'd') {
 	$args['order'] = 'debates';
 }
+
 
 $PEOPLE = new PEOPLE;
 $PEOPLE->display('peers', $args, $format);

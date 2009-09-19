@@ -25,12 +25,20 @@ $order = $data['info']['order'];
 
 $URL = new URL($this_page);
 
-if ($order == 'last_name') {
-	$th_name = 'Name';
+if ($order == 'first_name') {
+	$th_name = 'First';
 } else {
-	$URL->insert(array('o'=>'n'));
-	$th_name = '<a href="'. $URL->generate() .'">Name</a>';
+	$URL->insert(array('o'=>'f'));
+	$th_name = '<a href="'. $URL->generate() .'">First</a>';
 }
+$th_name .= ' &amp; ';
+if ($order == 'last_name') {
+	$th_name .= 'Last';
+} else {
+	$URL->insert(array('o'=>'l'));
+	$th_name .= '<a href="' . $URL->generate() . '">Last</a>';
+}
+$th_name .= ' name';
 $URL->insert(array('o'=>'p'));
 $th_party = '<a href="' . $URL->generate() . '">Party</a>';
 
