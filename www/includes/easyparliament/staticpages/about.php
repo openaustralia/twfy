@@ -38,84 +38,58 @@ freely available. Do let us know if you want to help!
 
 <h4>Volunteers on OpenAustralia.org</h4>
 
-<table class="people" border="0" cellpadding="4" cellspacing="0">
+<table class="people" border="0" cellpadding="3" cellspacing="0">
 <tr>
-<td class="row">
-<img src="http://www.gravatar.com/avatar/b22adbe107ae92088a105b551354d487?s=32&d=identicon">
-</td>
-<td class="row-1">Tim Ansell</td>
+<td><img src="http://www.gravatar.com/avatar/b22adbe107ae92088a105b551354d487?s=32&d=identicon" width="32" height="32"></td>
+<td>Tim Ansell</td>
 </tr>
 <tr>
-<td class="row-2">
-<img src="http://www.gravatar.com/avatar/039a87be2d3843f64170f5e625252e84?s=32&d=identicon">
-</td>
-<td class="row-2">Nathanael Boehm</td>
+<td><img src="http://www.gravatar.com/avatar/039a87be2d3843f64170f5e625252e84?s=32&d=identicon" width="32" height="32"></td>
+<td>Nathanael Boehm</td>
 </tr>
 <tr>
-<td class="row-1">
-<img src="http://www.gravatar.com/avatar/9f24adfa971912d72f72c1396ef63351?s=32&d=identicon">
-</td>
-<td class="row-1">Lachie Cox</td>
+<td><img src="http://www.gravatar.com/avatar/9f24adfa971912d72f72c1396ef63351?s=32&d=identicon" width="32" height="32"></td>
+<td>Lachie Cox</td>
 </tr>
 <tr>
-<td class="row-2">
-<img src="http://www.gravatar.com/avatar/b30d37e67e4c4584a71d977763651513?s=32&d=identicon">
-</td>
-<td class="row-2">Henare Degan</td>
+<td><img src="http://www.gravatar.com/avatar/b30d37e67e4c4584a71d977763651513?s=32&d=identicon" width="32" height="32"></td>
+<td>Henare Degan</td>
 </tr>
 <tr>
-<td class="row-1">
-<img src="http://www.gravatar.com/avatar/011c7cbc5af9c3c81b12b9c173a9db32?s=32&d=identicon">
-</td>
-<td class="row-1">Ray Haleblian</td>
+<td><img src="http://www.gravatar.com/avatar/011c7cbc5af9c3c81b12b9c173a9db32?s=32&d=identicon" width="32" height="32"></td>
+<td>Ray Haleblian</td>
 </tr>
 <tr>
-<td class="row-2">
-<img src="http://www.gravatar.com/avatar/a1ed877d79337034f8e1bb46f2dad8e3?s=32&d=identicon">
-</td>
-<td class="row-2">Daniel Kinsman</td>
+<td><img src="http://www.gravatar.com/avatar/a1ed877d79337034f8e1bb46f2dad8e3?s=32&d=identicon" width="32" height="32"></td>
+<td>Daniel Kinsman</td>
 </tr>
 <tr>
-<td class="row-1">
-<img src="http://www.gravatar.com/avatar/5a600494d91ea4223e7256989155f687?s=32&d=identicon">
-</td>
-<td class="row-1">Matthew Landauer</td>
+<td><img src="http://www.gravatar.com/avatar/5a600494d91ea4223e7256989155f687?s=32&d=identicon" width="32" height="32"></td>
+<td>Matthew Landauer</td>
 </tr>
 <tr>
-<td class="row-2">
-<img src="http://www.gravatar.com/avatar/4dde9fa837cdd695790518e140efbf7d?s=32&d=identicon">
-</td>
-<td class="row-2">Rob Manson</td>
+<td><img src="http://www.gravatar.com/avatar/4dde9fa837cdd695790518e140efbf7d?s=32&d=identicon" width="32" height="32"></td>
+<td>Rob Manson</td>
 </tr>
 <tr>
-<td class="row-1">
-<img src="http://www.gravatar.com/avatar/d25d7166e80639478ef1811788b8e61e?s=32&d=identicon">
-</td>
-<td class="row-1">Bruno Mattarollo</td>
+<td><img src="http://www.gravatar.com/avatar/d25d7166e80639478ef1811788b8e61e?s=32&d=identicon" width="32" height="32"></td>
+<td>Bruno Mattarollo</td>
 </tr>
 <tr>
-<td class="row-2">
-<img src="http://www.gravatar.com/avatar/0a6ceb73d181645bcaff2c21e8fe0e85?s=32&d=identicon">
-</td>
-<td class="row-2">Wade Millican</td>
+<td><img src="http://www.gravatar.com/avatar/0a6ceb73d181645bcaff2c21e8fe0e85?s=32&d=identicon" width="32" height="32"></td>
+<td>Wade Millican</td>
 </tr>
 <tr>
-<td class="row-1">
-<img src="http://www.gravatar.com/avatar/6a5ba0842a531163425d66839569a68?s=32&d=identicon">
-</td>
-<td class="row-1">Matthew Panetta</td>
+<td><img src="http://www.gravatar.com/avatar/6a5ba0842a531163425d66839569a68?s=32&d=identicon" width="32" height="32"></td>
+<td>Matthew Panetta</td>
 </tr>
 <tr>
-<td class="row-2">
-<img src="http://www.gravatar.com/avatar/b6d632e6f84a8b522199a91d75b7eb39?s=32&d=identicon">
-</td>
-<td class="row-2">Sarah Stokely</td>
+<td><img src="http://www.gravatar.com/avatar/b6d632e6f84a8b522199a91d75b7eb39?s=32&d=identicon" width="32" height="32"></td>
+<td>Sarah Stokely</td>
 </tr>
 <tr>
-<td class="row-1">
-<img src="http://www.gravatar.com/avatar/87bb46366f13106c2deebf655af73b38?s=32&d=identicon">
-</td>
-<td class="row-1">Katherine Szuminska</td>
+<td><img src="http://www.gravatar.com/avatar/87bb46366f13106c2deebf655af73b38?s=32&d=identicon" width="32" height="32"></td>
+<td>Katherine Szuminska</td>
 </tr>
 </table>
 
