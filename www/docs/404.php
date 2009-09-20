@@ -25,7 +25,7 @@ can fix it.</p>
 <ul>
 <li>Try using the search box in the top right if you're looking for something
 in the data we hold.
-<li>The links in the navigation bar above will take you to lists of MPs, Lords,
+<li>The links in the navigation bar above will take you to lists of MPs, Senators,
 and so on.
 </ul>
 
