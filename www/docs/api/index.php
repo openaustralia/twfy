@@ -197,9 +197,14 @@ to use the service on a large scale.</p>
 do so, let us know and we'll link to it here. You might want to join the OpenAustralia development mailing list
 to discuss things.</p>
 
+<h3>Examples</h3>
+
+<ul>
+<li><a href="http://code.google.com/p/poli-press/">PoliPress</a> is a <a href="http://www.wordpress.org/">WordPress</a> plugin that lets you quote members of parliament and search the Australian Hansard from within your WordPress blog.</li>
+</ul>
+
 <?
 	$sidebar = api_sidebar();
 	$PAGE->stripe_end(array($sidebar));
 	$PAGE->page_end();
 }
-
