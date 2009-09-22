@@ -446,8 +446,7 @@ pageTracker._trackPageview();
 
 		// We may want to send the user back to this current page after they've
 		// joined, logged out or logged in. So we put the URL in $returl.
-		$URL = new URL($this_page);
-		$returl = $URL->generate();
+		$returl = $_SERVER['REQUEST_URI'];
 		
 			// The 'get involved' link.
 			$menudata 	= $DATA->page_metadata('getinvolved', 'menu');
