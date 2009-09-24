@@ -228,7 +228,7 @@ if (isset ($data['rows'])) {
 				}
 				echo '<strong>', $speakername, '</strong></a> <small>';
 				$desc = '';
-				if ($speaker['house'] == 1 && $speaker['party'] != 'Speaker' && $speaker['party'] != 'Deputy Speaker' && $speaker['constituency']) {
+				if ($speaker['party'] != 'Speaker' && $speaker['party'] != 'Deputy Speaker' && $speaker['party'] != "President" && $speaker['constituency']) {
 					$desc .= $speaker['constituency'] . ', ';
 				}
 				if (get_http_var('wordcolours')) {
