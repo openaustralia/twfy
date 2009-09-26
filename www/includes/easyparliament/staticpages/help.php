@@ -8,6 +8,7 @@
 <li><a href="#numbers">Why should I read in more depth than just the numbers?</a></li>
 <li><a href="#api">Do you have the data as a spreadsheet file, XML or in an API?</a></li>
 <li><a href="#regmem">What is the Register of Interests and how can I use it?</a></li>
+<li><a href="#avatar">Where do the little pictures of commenters come from and how to I change mine?</a></li>
 
 </ul>
 
@@ -126,6 +127,12 @@ Please note that for the Register of Interests we have been asked to make the fo
 <li>At any given time it is possible that information available about a Member or Senator's interests through the site may not be up to date as they may have notified alterations</li>
 <li>Fraudulent use or manipulation of the information could be raised as a matter of contempt.</li>
 </ul>
+</dd>
+
+<dt><a name="avatar"></a>Where do the little pictures of commenters come from and how to I change mine?</dt>
+<dd>
+<p>The little pictures beside commenter's names are called avatars. We use the <a href="http://www.gravatar.com/">Gravatar service</a> to show these so if you want to change your own, please <a href="http://www.gravatar.com/site/signup/">sign-up to Gravatar</a>.</p>
+
 </dd>
 
 </dl>
