@@ -162,7 +162,7 @@ if (get_http_var("d") != "") {
 	
 	$PAGE->page_start_mobile();
 
-	//$PAGE->stripe_start();
+	$PAGE->stripe_start();
 	?>
 				<h4>Busiest debates from the most recent week</h4>
 <?php
