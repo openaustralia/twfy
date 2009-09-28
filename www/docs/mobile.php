@@ -1,4 +1,5 @@
 <?php
+$_SERVER['DEVICE_TYPE'] = "mobile";
 
 $this_page = "home";
 
@@ -165,5 +166,6 @@ $includes = array(
 );
 //$PAGE->stripe_end($includes);
 //$PAGE->page_end();
+$PAGE->page_end_mobile();
 
 ?>

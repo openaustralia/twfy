@@ -1,4 +1,5 @@
 <?php
+$_SERVER['DEVICE_TYPE'] = "mobile";
 
 /* For displaying info about a person for a postcode or constituency.
 
@@ -416,7 +417,7 @@ keeping these sorts of records on you...</p></div></div>'
 	$PAGE->stripe_start();
 
 	if (isset($errors['pc'])) {
-		$PAGE->error_message($errors['pc']);
+		$PAGE->error_message_mobile($errors['pc']);
 	}
 
 	$PAGE->postcode_form();
@@ -427,6 +428,7 @@ keeping these sorts of records on you...</p></div></div>'
 
 
 //$PAGE->page_end();
+$PAGE->page_end_mobile();
 
 
 

@@ -1,4 +1,5 @@
 <?php
+$_SERVER['DEVICE_TYPE'] = "mobile";
 # vim:sw=4:ts=4:et:nowrap
 
 include_once "../../includes/easyparliament/init.php";
@@ -69,6 +70,7 @@ if (get_http_var('s') != '' || get_http_var('pid') != '') {
         if (isset($data['error'])) {
             print '<p>' . $data['error'] . '</p>';
             //$PAGE->page_end();
+            $PAGE->page_end_mobile();
             return;
         }
 
@@ -254,6 +256,7 @@ $PAGE->stripe_end(array (
 ));
 $PAGE->page_end();
 */
+$PAGE->page_end_mobile();
 function find_comments($args) {
 	global $PAGE, $db;
     $commentlist = new COMMENTLIST;    

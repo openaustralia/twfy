@@ -12,6 +12,10 @@ DocumentRoot /var/www/openaustralia/twfy/www/docs/
 DirectoryIndex index.php
 
 RewriteEngine on
+RewriteCond         %{HTTP_REFERER}     .*show_pc.* [NC]
+RewriteCond         %{QUERY_STRING}     !.*show_pc.* [NC]
+RewriteCond         %{QUERY_STRING}     !.*show_mobile.* [NC]
+RewriteRule         (.*)    $1?show_pc [QSA,R]
 
 # Links in emails
 RewriteRule ^/A/(.*)$     /alert/confirm/index.php?t=$1 [QSA]
@@ -32,7 +36,7 @@ RewriteRule ^/senator/(.*)   /mp/$1?peer=1 [QSA]
 ##       e.g. Google\sWireless\sTranscoder & MG\(Novarra-Vision
 ##########################################################################################
     # /mp/ URL Mobile redirection (by exclusion)
-    #RewriteCond         %{QUERY_STRING}         !^pc$ [NC]
+    RewriteCond         %{QUERY_STRING}         !.*show_pc.* [NC]
         # NOTE: May want to add other bot patterns here
         RewriteCond         %{HTTP_USER_AGENT}      !^.*(spider|crawl|slurp|bot).*$ [NC]
     RewriteCond         %{HTTP_USER_AGENT}      ^.*webOS.*$ [NC,OR]
@@ -46,6 +50,23 @@ RewriteRule ^/senator/(.*)   /mp/$1?peer=1 [QSA]
     RewriteCond         %{HTTP_USER_AGENT}      !^.*Solaris.*$ [NC]
     RewriteCond         %{HTTP_USER_AGENT}      !^.*BSD.*$
     RewriteRule         ^/mp/(['a-zA-Z_+-]+)/([\(\)\.a-zA-Z_+,'-]+)$      /mp/mobile.php?n=$1&c=$2 [QSA]
+
+    # /mp/ URL Mobile redirection (by exclusion)
+    RewriteCond         %{QUERY_STRING}         !.*show_pc.* [NC]
+        # NOTE: May want to add other bot patters here
+        RewriteCond         %{HTTP_USER_AGENT}      !^.*(spider|crawl|slurp|bot).*$ [NC]
+    RewriteCond         %{HTTP_USER_AGENT}      ^.*webOS.*$ [NC,OR]
+    RewriteCond         %{HTTP_USER_AGENT}      !^.*Linux.*$ [NC,OR]
+    RewriteCond         %{HTTP_USER_AGENT}      ^.*Android.*$ [NC]
+    RewriteCond         %{HTTP_USER_AGENT}      !^.*Win.*$ [NC,OR]
+    RewriteCond         %{HTTP_USER_AGENT}      ^.*Windows\s+CE.*$ [NC]
+    RewriteCond         %{HTTP_USER_AGENT}      !^.*OS\s+(X|9).*$ [NC,OR]
+    RewriteCond         %{HTTP_USER_AGENT}      ^.*iPhone.*$ [NC,OR]
+    RewriteCond         %{HTTP_USER_AGENT}      ^.*iPod.*$ [NC]
+    RewriteCond         %{HTTP_USER_AGENT}      !^.*Solaris.*$ [NC]
+    RewriteCond         %{HTTP_USER_AGENT}      !^.*BSD.*$
+    RewriteRule         ^/mp/$      http://openaustralia.org/mp/mobile.php?n=$1&c=$2 [QSA]
+
 # MP pages
 RewriteRule ^/mp/(['a-zA-Z_+-]+)/([\(\)\.a-zA-Z_+,'-]+)$      /mp/index.php?n=$1&c=$2 [QSA]
 RewriteRule ^/mp/(['a-zA-Z_\ +-]+)\ mp/?$  /mp/index.php?n=$1 [QSA]
@@ -56,7 +77,7 @@ RewriteRule ^/news/archives/(.*)$  /news/index.php/archives/$1 [QSA]
 RewriteRule ^/news/index.rdf$      /news/rdf.php [QSA]
 
     # default top level / URL Mobile redirection (by exclusion)
-    RewriteCond         %{QUERY_STRING}         !^pc$ [NC]
+    RewriteCond         %{QUERY_STRING}         !.*show_pc.* [NC]
         # NOTE: May want to add other bot patters here
         RewriteCond         %{HTTP_USER_AGENT}      !^.*(spider|crawl|slurp|bot).*$ [NC]
     RewriteCond         %{HTTP_USER_AGENT}      ^.*webOS.*$ [NC,OR]
@@ -72,7 +93,7 @@ RewriteRule ^/news/index.rdf$      /news/rdf.php [QSA]
     RewriteRule         ^/$                     /mobile.php [PT]
 
     # help/ URL Mobile redirection (by exclusion)
-    #RewriteCond         %{QUERY_STRING}         !^pc$ [NC]
+    RewriteCond         %{QUERY_STRING}         !.*show_pc.* [NC]
         # NOTE: May want to add other bot patters here
         RewriteCond         %{HTTP_USER_AGENT}      !^.*(spider|crawl|slurp|bot).*$ [NC]
     RewriteCond         %{HTTP_USER_AGENT}      ^.*webOS.*$ [NC,OR]
@@ -88,7 +109,7 @@ RewriteRule ^/news/index.rdf$      /news/rdf.php [QSA]
     RewriteRule         ^/help/(.*)$            /help/mobile.php$1 [PT]
 
     # search/ URL Mobile redirection (by exclusion)
-    #RewriteCond         %{QUERY_STRING}         !^pc$ [NC]
+    RewriteCond         %{QUERY_STRING}         !.*show_pc.* [NC]
         # NOTE: May want to add other bot patters here
         RewriteCond         %{HTTP_USER_AGENT}      !^.*(spider|crawl|slurp|bot).*$ [NC]
     RewriteCond         %{HTTP_USER_AGENT}      ^.*webOS.*$ [NC,OR]
@@ -104,7 +125,7 @@ RewriteRule ^/news/index.rdf$      /news/rdf.php [QSA]
     RewriteRule         ^/search/(.*)$            /search/mobile.php$1 [PT]
 
     # senate/ URL Mobile redirection (by exclusion)
-    #RewriteCond         %{QUERY_STRING}         !^pc$ [NC]
+    RewriteCond         %{QUERY_STRING}         !.*show_pc.* [NC]
         # NOTE: May want to add other bot patters here
         RewriteCond         %{HTTP_USER_AGENT}      !^.*(spider|crawl|slurp|bot).*$ [NC]
     RewriteCond         %{HTTP_USER_AGENT}      ^.*webOS.*$ [NC,OR]
@@ -120,7 +141,7 @@ RewriteRule ^/news/index.rdf$      /news/rdf.php [QSA]
     RewriteRule         ^/senate/(.*)$            /senate/mobile.php$1 [QSA]
 
     # debates/ URL Mobile redirection (by exclusion)
-    #RewriteCond         %{QUERY_STRING}         !^pc$ [NC]
+    RewriteCond         %{QUERY_STRING}         !.*show_pc.* [NC]
         # NOTE: May want to add other bot patters here
         RewriteCond         %{HTTP_USER_AGENT}      !^.*(spider|crawl|slurp|bot).*$ [NC]
     RewriteCond         %{HTTP_USER_AGENT}      ^.*webOS.*$ [NC,OR]

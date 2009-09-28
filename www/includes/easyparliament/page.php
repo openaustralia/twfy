@@ -144,6 +144,10 @@ class PAGE {
 		$this->content_end();
 		$this->page_footer($extra);
 	}
+
+    function page_end_mobile () {
+        print '<div id="footer"><p><a href="/?show_pc">View the PC OA website</a></p></div>';
+    }
 	
 	
 	function page_started () {
@@ -1201,6 +1205,11 @@ pageTracker._trackPageview();
 		$links[] = '<a href="http://software.openaustralia.org">Source code</a>';
 		$links[] = '<a href="http://blog.openaustralia.org">Blog</a>';
 
+        $qs = $_SERVER['QUERY_STRING'];
+        if (preg_match('/.*show_pc.*/i', $qs)) {
+            $links[] = '<a href="/?show_mobile">Mobile OA</a>';
+        }
+
 		$user_agent = ( isset( $_SERVER['HTTP_USER_AGENT'] ) ) ? strtolower( $_SERVER['HTTP_USER_AGENT'] ) : '';
 		if (stristr($user_agent, 'Firefox/'))
 			$links[] = '<a href="http://mycroft.mozdev.org/download.html?name=openaustralia">Add search to Firefox</a>';
@@ -1568,7 +1577,9 @@ pr()//-->
 
 		# If they're currently an MLA, a Lord or a non-Sinn Fein MP
 		if ($member['current_member'][0] || $member['current_member'][2] || $member['current_member'][3] || ($member['current_member'][1] && $member['party'] != 'Sinn Fein')) {
-			print '<li><a href="' . WEBPATH . 'alert/?only=1&amp;pid='.$member['person_id'].'"><strong>Email me whenever '. $member['full_name']. ' speaks</strong></a> (no more than once per day)</li>';
+            if (!isset($_SERVER['DEVICE_TYPE']) || $_SERVER['DEVICE_TYPE'] != "mobile") {
+			    print '<li><a href="' . WEBPATH . 'alert/?only=1&amp;pid='.$member['person_id'].'"><strong>Email me whenever '. $member['full_name']. ' speaks</strong></a> (no more than once per day)</li>';
+            }
 		}
 
 		?>
@@ -2159,6 +2170,33 @@ elseif ($member['house_disp']==0) print $member['full_name']; ?> speaks<?php
 	
 	}
 	
+	function error_message_mobile ($message, $fatal = false) {	
+		// If $fatal is true, we exit the page right here.
+		// $message is like the array used in $this->message()
+			
+		if (!$this->page_started()) {
+			$this->page_start_mobile();
+		}
+		
+		if (is_string($message)) {
+			// Sometimes we're just sending a single line to this function
+			// rather like the bigger array...
+			$message = array (
+				'text' => $message
+			);
+		}
+		
+		$this->message($message, 'error');
+			
+		if ($fatal) {
+			if ($this->within_stripe()) {
+				$this->stripe_end();
+			}
+			$this->page_end_mobile();
+		}
+	
+	}
+
 	
 	function message ($message, $class='') {
 		// Generates a very simple but common page content.

@@ -1,4 +1,5 @@
 <?php
+$_SERVER['DEVICE_TYPE'] = "mobile";
 
 include_once "../../includes/easyparliament/init.php";
 include_once INCLUDESPATH . "easyparliament/glossary.php";
@@ -165,6 +166,7 @@ if (get_http_var("d") != "") {
 
 
 //$PAGE->page_end();
+$PAGE->page_end_mobile();
 
 twfy_debug_timestamp("page end");
 
