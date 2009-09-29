@@ -4,6 +4,19 @@
 
 $all_news = array(
 
+12 => array('OpenAustralia Goes Mobile and Gets Social', <<<EOT
+<div style="float: right;padding: 5px;"><img src="/images/mobile-oa.png"></div>
+
+Many of you may have been in the same situation as this - you're out having a quiet drink with friends and a loud political discussion ensues. Without access to OpenAustralia.org to settle the debate, you're stuck. Well now that's changing - from today when you access OpenAustralia on your mobile device, you'll get a site optimised for its small display so you can quickly and easily settle that "discussion" :)
+
+Another feature we added recently was the ability to share speeches on social networks like Facebook and Twitter. You may have noticed that there is a "Share This" link next to each speech listed on OpenAustralia. Simply hover over that link and select the social network you want to share the speech on and start a discussion with your friends.
+
+If you have a <a href="http://www.wordpress.org/">Wordpress blog</a> that you host yourself you'll be interested in a plugin that was developed at our recent Hackfest in Sydney called <a href="http://code.google.com/p/poli-press/">PoliPress</a>. Using this plugin you can import speeches from OpenAustralia right into your own blog to discuss them or comment on them.
+
+We hope you enjoy the new features and if you have any ideas for what you'd like to see on OpenAustralia, <a href="mailto:contact@openaustralia.org">please get in touch</a>!
+EOT
+, '2009-09-29 12:58:00', 'Henare'),
+
 11 => array('Our new home on Facebook', <<<EOT
 If you're a user of Facebook, come and visit <a href="http://www.facebook.com/pages/OpenAustralia/59877428354">our new home on Facebook</a> and invite your friends along. Do your bit by letting even more people know about OpenAustralia.org.
 
