@@ -508,7 +508,7 @@ $this->page = array (
 			'text'			=> 'Representatives',
 			'title'			=> "Your Representative and list of all Members of the House of Representatives"
 		),
-		'title'			=> 'Representatives',
+		'title'			=> 'All Members of the House of Representatives',
 		'track'			=> true,
 		'url'			=> 'mps/'
 	),

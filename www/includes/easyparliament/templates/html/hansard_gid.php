@@ -115,6 +115,10 @@ if (isset ($data['rows'])) {
 			
 			$PAGE->stripe_start('head-2');
 			?>
+                        <!-- ADDTHIS JAVASCRIPT BEGIN -->
+                       <?php if (defined('ADDTHIS_USERNAME') && ADDTHIS_USERNAME) print '<script type="text/javascript">var addthis_pub = "' . ADDTHIS_USERNAME .'";</script>' ?>
+			<script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js"></script>
+                        <!-- ADDTHIS JAVASCRIPT END -->
 				<h4><?php echo $section_title; ?></h4>
 				<h5><?php echo $subsection_title; ?></h5>
 <?php
@@ -224,7 +228,7 @@ if (isset ($data['rows'])) {
 				}
 				echo '<strong>', $speakername, '</strong></a> <small>';
 				$desc = '';
-				if ($speaker['house'] == 1 && $speaker['party'] != 'Speaker' && $speaker['party'] != 'Deputy Speaker' && $speaker['constituency']) {
+				if ($speaker['party'] != 'Speaker' && $speaker['party'] != 'Deputy Speaker' && $speaker['party'] != "President" && $speaker['constituency']) {
 					$desc .= $speaker['constituency'] . ', ';
 				}
 				if (get_http_var('wordcolours')) {
@@ -238,8 +242,9 @@ if (isset ($data['rows'])) {
 					$desc .= ', ' . $speaker['office'][0]['pretty'];
 				}
 				if ($desc) print "($desc)";
+				?> <a href="http://www.addthis.com/bookmark.php" onmouseover="return addthis_open(this, '', '<?php echo 'http://', DOMAIN, $row['commentsurl']; ?>', '');" onmouseout="addthis_close();" onclick="return addthis_sendto();">Share this</a><?php
 				if ($hansardmajors[$data['info']['major']]['type']=='debate' && $this_page == $hansardmajors[$data['info']['major']]['page_all']) {
-					?> <a href="<?php echo $row['commentsurl']; ?>" title="Copy this URL to link directly to this piece of text" class="permalink">Link to this</a><?php
+					?> | <a href="<?php echo $row['commentsurl']; ?>" title="Copy this URL to link directly to this piece of text" class="permalink">Link to this</a><?php
 				}
 				if (isset($row['source_url']) && $row['source_url'] != '') {
 					echo ' | <a href="', $row['source_url'], '" title="The source of this piece of text">',
@@ -252,7 +257,8 @@ if (isset ($data['rows'])) {
 					print " | Question $m[1]";
 				}
 
-                                if ($data['info']['major'] == 1) { # Commons debates only
+                #                if ($data['info']['major'] == 1) { # Commons debates only
+                if (0) {
 					?><!-- | <script type="text/javascript" src="http://parlvid.mysociety.org/video.cgi?gid=<?
 					echo $row['gid'];
 				 	?>&output=js-link"></script> --><?
@@ -467,8 +473,11 @@ function generate_commentteaser (&$row, $major) {
 					$linktext = 'Continue reading';
 				}
 			}
+			
+			// MD5 hash the user's email for their Gravatar
+			$usermailmd5 = md5($THEUSER->email());
 		
-			$html = '<em>' . htmlentities($comment['username']) . '</em>: ' . prepare_comment_for_display($commentbody);
+			$html = '<img src="http://www.gravatar.com/avatar/' . $usermailmd5 . '?s=32&d=identicon" width="32" height="32" alt="Avatar for ' . htmlentities($comment['username']) . '"><br><em>' . htmlentities($comment['username']) . '</em>: ' . prepare_comment_for_display($commentbody);
 			
 			if (isset($linktext)) {
 				$html .= ' <a href="' . $row['commentsurl'] . '#c' . $comment['comment_id'] . '" title="See any comments posted about this">' . $linktext . '</a>';

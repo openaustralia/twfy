@@ -44,7 +44,7 @@ $methods = array(
 		'help' => 'Returns details for a Senator'
 	),
 	'getSenators' => array(
-		'parameters' => array('date', 'party', 'search'),
+		'parameters' => array('date', 'party', 'state', 'search'),
 		'required' => false,
 		'help' => 'Returns list of Senators',
 	),

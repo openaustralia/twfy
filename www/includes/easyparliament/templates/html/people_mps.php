@@ -47,12 +47,11 @@ if ($THEUSER->constituency_is_set()) {
 }
 else {
 ?>
-	<p>Find out who <a href="<?= $MPURL->generate() ?>">your Representative</a> is. All you need is a postcode.</p>
+	<p style="margin-top: -30px; margin-bottom: 30px">Find out who <a href="<?= $MPURL->generate() ?>">your Representative</a> is. All you need is a postcode.</p>
 <?php
 }
 
 ?>
-<h3>All members of the House of Representatives</h3>
 <?php
 
 $order = $data['info']['order'];
@@ -67,7 +66,7 @@ if ($order == 'first_name') {
 }
 $th_name .= ' &amp; ';
 if ($order == 'last_name') {
-	$th_name .= 'last';
+	$th_name .= 'Last';
 } else {
 	$URL->insert(array('o'=>'l'));
 	$th_name .= '<a href="' . $URL->generate() . '">Last</a>';

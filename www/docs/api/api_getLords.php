@@ -12,6 +12,8 @@ function api_getLords_front() {
 <dd>Fetch the list of Senators as it was on this date.</dd>
 <dt>party (optional)</dt>
 <dd>Fetch the list of Senators from the given party.</dd>
+<dt>state (optional)</dt>
+<dd>Fetch the list of Senators from the given state.</dd>
 <dt>search (optional)</dt>
 <dd>Fetch the list of Senators that match this search string in their name.</dd>
 </dl>
@@ -40,6 +42,9 @@ function api_getLords_front() {
 /* See api_getMembers.php for these shared functions */
 function api_getLords_party($s) {
 	api_getMembers_party(2, $s);
+}
+function api_getLords_state($s) {
+        api_getMembers_state(2, $s);
 }
 function api_getLords_search($s) {
 	api_getMembers_search(2, $s);

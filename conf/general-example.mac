@@ -25,8 +25,8 @@ define ("BASEDIR","/Library/WebServer/Documents/openaustralia/twfy/www/docs/");
 
 // Webserver path to 'top' directory of the site (possibly just "/"). For example,
 // if the site is at 'http://www.yourdomain.com/public/theyworkforyou', 
-// this would be '/public/theyworkforyou'
-define ("WEBPATH", "/");
+// this would be '/public/theyworkforyou/'. Note the trailing '/'.
+define ("WEBPATH", "/openaustralia/twfy/www/docs/");
 
 // *******************************************************************************
 // Stop Here. In a basic developer configuration you shouldn't need to edit 
@@ -128,3 +128,6 @@ define('OPTION_PHP_DEBUG_LEVEL', 0);
 // Sign up for an account to get an API key
 define('PINGMYMAP_API_KEY', '0123456789abcdef0123456789abcdef');
 
+// *******************************************************************************
+// AddThis.com Sharing Analytics
+define('ADDTHIS_USERNAME', '');

@@ -83,7 +83,7 @@ class PEOPLE {
 			WHERE house=' . $args['house'] . ' AND left_house = (SELECT MAX(left_house) FROM member) ';
 		if (isset($args['order'])) {
 			if ($args['order'] == 'name') { # Lords
-				$order = 'name';
+				$order = 'last_name';
 			} elseif ($args['order'] == 'first_name') {
 				$order = 'first_name';
 				$sqlorder = 'first_name, last_name';

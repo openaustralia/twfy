@@ -183,7 +183,7 @@ class MEMBER {
 		if ($q->rows > 0) {
 			return $q->field(0, 'person_id');
 		} else {
-			$PAGE->error_message("Sorry, there is no member with a member ID of '" . htmlentities($member_id) . "'.");
+			// $PAGE->error_message("Sorry, there is no member with a member ID of '" . htmlentities($member_id) . "'.");
 			return false;
 		}	
 	}
@@ -219,7 +219,7 @@ class MEMBER {
 			if ($q->rows > 0) {
 				return $q->field(0, 'person_id');
 			} else {
-				$PAGE->error_message("Sorry, there is no current member for the '" . htmlentities(html_entity_decode($constituency)) . "' constituency.");
+				// $PAGE->error_message("Sorry, there is no current member for the '" . htmlentities(html_entity_decode($constituency)) . "' constituency.");
 				return false;
 			}
 		}
@@ -395,8 +395,6 @@ class MEMBER {
         }
 
         // Info specific to constituency (e.g. election results page on Guardian website)
-	if ($this->house(1)) {
-
         $q = $this->db->query("SELECT	data_key,
                                 data_value
                         FROM 	consinfo
@@ -425,7 +423,6 @@ class MEMBER {
                     str_replace("/person/", "/person/contactdetails/", $guardian_url);
         }
 
-	}
 
         if (array_key_exists('public_whip_rebellions', $this->extra_info))
         {

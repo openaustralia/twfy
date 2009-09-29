@@ -31,6 +31,8 @@ if (defined('XAPIANDB') && XAPIANDB) {
 		include_once '/usr/local/share/php5/xapian.php';
 	if (file_exists('/usr/local/share/xapian-bindings/php5/xapian.php'))
 		include_once '/usr/local/share/xapian-bindings/php5/xapian.php';
+	if (file_exists('/usr/share/php5/xapian.php'))
+		include_once '/usr/share/php5/xapian.php';
 }
 
 global $xapiandb;
@@ -592,7 +594,7 @@ function search_by_usage($search, $house = 0) {
                 if ($dept && $q->field($n, 'to_date') == '9999-12-31')
                     $speakers[$pid]['office'][$moffice_id] = prettify_office($posn, $dept);
                 if (!isset($speakers[$pid]['name'])) {
-                    $speakers[$pid]['name'] = $full_name . ($house==1?' MP':'');
+                    $speakers[$pid]['name'] = ($house==2?'Senator ':'') . $full_name . ($house==1?' MP':'');
                     $speakers[$pid]['party'] = $party;
                 }
             }
