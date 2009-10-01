@@ -1037,10 +1037,6 @@ function display_user ($user_id="") {
 				<span class="label">Joined</span>
 				<span class="formw"><?php echo htmlentities($registrationtime); ?></span>
 				</div>
-                                <div class="row">
-                                <span class="label">Your avatar (<a href="/help/#avatar">?</a>)</span>
-                                <span class="formw"><img src="http://www.gravatar.com/avatar/<?php echo md5($THEUSER->email()) ?>?s=32&d=identicon" width="32" height="32" alt="Avatar for <?php echo $name ?>"></span>
-                                </div>
 <?php
 		}
 		
