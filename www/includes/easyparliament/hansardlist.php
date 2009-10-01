@@ -177,10 +177,14 @@ class HANSARDLIST {
 			return $data;
 		}
 		
-        if ($mobile) {
-		    include (INCLUDESPATH."easyparliament/templates/$format/hansard_".$view."_mobile" . ".php");
+		$standard_template = INCLUDESPATH."easyparliament/templates/$format/hansard_$view" . ".php";
+		$mobile_template = INCLUDESPATH."easyparliament/templates/$format/hansard_".$view."_mobile" . ".php";
+		
+		// Not every possible view here has a mobile version. So, only use the mobile version template if it exists.
+        if ($mobile && file_exists($mobile_template)) {
+		    include ($mobile_template);
         } else {
-		    include (INCLUDESPATH."easyparliament/templates/$format/hansard_$view" . ".php");
+		    include ($standard_template);
         }
 		return true;
 	
