@@ -475,9 +475,9 @@ function generate_commentteaser (&$row, $major) {
 			}
 			
 			// MD5 hash the user's email for their Gravatar
-			$usermailmd5 = md5($THEUSER->email());
+			$usermailmd5 = md5($comment['email']);
 		
-			$html = '<img src="http://www.gravatar.com/avatar/' . $usermailmd5 . '?s=32&d=identicon" width="32" height="32" alt="Avatar for ' . htmlentities($comment['username']) . '"><br><em>' . htmlentities($comment['username']) . '</em>: ' . prepare_comment_for_display($commentbody);
+			$html = '<img style="float: left; padding: 3px;" src="http://www.gravatar.com/avatar/' . $usermailmd5 . '?s=32&d=identicon&r=g" width="32" height="32" alt="Avatar for ' . htmlentities($comment['username']) . '"><em>' . htmlentities($comment['username']) . '</em>: ' . prepare_comment_for_display($commentbody);
 			
 			if (isset($linktext)) {
 				$html .= ' <a href="' . $row['commentsurl'] . '#c' . $comment['comment_id'] . '" title="See any comments posted about this">' . $linktext . '</a>';
