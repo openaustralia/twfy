@@ -40,7 +40,7 @@ if (isset($data['comments']) && count($data['comments']) > 0) {
 		// MD5 hash the user's email for their Gravatar
 		$usermailmd5 = md5($comment['email']);
 		
-		?><td><img src="http://www.gravatar.com/avatar/<?php echo $usermailmd5; ?>?s=32&d=identicon&r=g" width="32" height="32" alt="Avatar for <?php echo htmlentities($comment['firstname']) .' '. htmlentities($comment['lastname']); ?>"></td><td><a name="c<?php echo $count; ?>"></a><strong><?php echo htmlentities($comment['firstname'] . ' ' . $comment['lastname']); ?>:</strong> <?php echo $commenttext; ?> <small>(<?php echo relative_time($comment['posted']); ?>)</small><br><a href="<?php echo $comment['url']; ?>">Read comment</a> | <a href="<?php echo $USERURL->generate(); ?>" title="See more information about this user">All by this user</a></td></tr>
+		?><td><img src="http://www.gravatar.com/avatar/<?php echo $usermailmd5; ?>?s=32&d=identicon&r=g" width="32" height="32" alt="Avatar for <?php echo htmlentities($comment['firstname']) .' '. htmlentities($comment['lastname']); ?>"></td><td style="font-size: 1em"><a name="c<?php echo $count; ?>"></a><strong><?php echo htmlentities($comment['firstname'] . ' ' . $comment['lastname']); ?>:</strong> <?php echo $commenttext; ?> <small>(<?php echo relative_time($comment['posted']); ?>)</small><br><a href="<?php echo $comment['url']; ?>">Read comment</a> | <a href="<?php echo $USERURL->generate(); ?>" title="See more information about this user">All by this user</a></td></tr>
 <?php
 	}
 	?>
