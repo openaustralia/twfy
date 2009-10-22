@@ -4,6 +4,17 @@
 
 $all_news = array(
 
+13 => array('Calling OpenAustralia volunteers', <<<EOT
+Yes, it's that time again, The OpenAustralia Foundation is having another hackfest! For the many of you out there that may be wondering, what on earth is a hackfest? It's a technical working bee of sorts, we get a bunch of great people together and work on ideas for how to make OpenAustralia.org and other related projects even better.
+
+This time it's a special hackfest as we're planning it to coincide with the <a href="http://gov2.net.au/">Goverment 2.0 Taskforce</a>'s recently lauched competition, <a href="http://mashupaustralia.org/">MashupAustralia</a> and we're running it over the <strong>entire weekend of the 7th and 8th of November in Sydney</strong>. The Government 2.0 Taskforce has asked Australians to help show why open access to Australian government information is good for our economy and society. They've kicked things off by arranging for a wide assortment of goverment data to be made available and have also announced over $20,000 in prizes.
+
+You don't need to be a software developer or 'hacker' to come along - everone is welcome to this free event being hosted at Google's Sydney offices. All you have to do is head along to <a href="http://hackfest.openaustralia.org/">our hackfest site</a> and sign up to the event.
+
+We're all looking forward to seeing you there!
+EOT
+, '2009-10-22 22:03:00', 'Henare'),
+
 12 => array('OpenAustralia Goes Mobile and Gets Social', <<<EOT
 <div style="float: right;padding: 5px;"><img src="/images/mobile-oa.png"></div>
 
