@@ -1075,9 +1075,9 @@ function display_user ($user_id="") {
 				if (!$row['confirmed']) {
 					$action = '<a href="'.WEBPATH.'A/'.$token.'">Confirm</a>';
 				} elseif ($row['deleted']) {
-					$action = '<form action="'.WEBPATH.'alert/undelete/" method="post"><input type="hidden" name="t" value="'.$token.'"><input type="submit" value="Undelete"></form>';
+					$action = '<form action="'.WEBPATH.'alert/undelete/" method="post"><input type="hidden" name="t" value="'.$token.'"><input type="submit" value="Resubscribe"></form>';
 				} else {
-					$action = '<form action="'.WEBPATH.'alert/delete/" method="post"><input type="hidden" name="t" value="'.$token.'"><input type="submit" value="Delete"></form>';
+					$action = '<form action="'.WEBPATH.'alert/delete/" method="post"><input type="hidden" name="t" value="'.$token.'"><input type="submit" value="Unsubscribe"></form>';
 				}
 				$out .= '<tr><td>'.$criteria.'</td><td>'.$action.'</td></tr>';
 			}

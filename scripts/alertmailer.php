@@ -186,7 +186,7 @@ foreach ($alertdata as $alertitem) {
 					$email_text .= $body;
 				}
 			}
-			$email_text .= "To cancel your alert for items " . $desc . ", please use:\nhttp://www.openaustralia.org/D/" . $alertitem['alert_id'] . '-' . $alertitem['registrationtoken'] . "\n\n";
+			$email_text .= "To unsubscribe from your alert for items " . $desc . ", please use:\nhttp://www.openaustralia.org/D/" . $alertitem['alert_id'] . '-' . $alertitem['registrationtoken'] . "\n\n";
 		}
 	}
 }
@@ -228,7 +228,7 @@ function write_and_send_email($email, $user_id, $data) {
 
 	$data .= '===================='."\n\n";
 	if ($user_id) {
-		$data .= "As a registered user, visit http://www.openaustralia.org/user/\nto manage your alerts.\n";
+		$data .= "As a registered user, visit http://www.openaustralia.org/user/\nto unsubscribe from, or manage, your alerts.\n";
 	} else {
 		$data .= "If you register on the site, you will be able to manage your\nalerts there as well as post comments. :)\n";
 	}

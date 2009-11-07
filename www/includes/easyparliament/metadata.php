@@ -198,12 +198,12 @@ $this->page = array (
 		'url'			=> 'alert/delete/'
 	),
 	'alertdeletesucceeded' => array (
-		'title'			=> 'Alert Deleted!',
+		'title'			=> 'Alert Unsubscribed!',
 		'track'			=> true,
 		'url'			=> 'alert/delete/'
 	),
 	'alertundeletesucceeded' => array (
-		'title'			=> 'Alert Undeleted!',
+		'title'			=> 'Alert Resubscribed!',
 		'track'			=> true,
 		'url'			=> 'alert/undelete/'
 	),
