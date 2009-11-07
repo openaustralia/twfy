@@ -483,7 +483,7 @@ class COMMENTLIST {
 		
 		// Add on the stuff for getting a user's details.
 		if (isset($amount['user']) && $amount['user'] == true) {
-			$fieldsarr['users'] = array ('firstname', 'lastname', 'user_id');
+			$fieldsarr['users'] = array ('firstname', 'lastname', 'user_id', 'email');
 			// Like doing "FROM comments, users" but it's easier to add
 			// an "INNER JOIN..." automatically to the query.
 			$join .= ' INNER JOIN users ON comments.user_id = users.user_id ';
