@@ -880,6 +880,7 @@ function display_user ($user_id="") {
 		
 			$name = $USER->firstname() . " " . $USER->lastname();
 			$url = $USER->url();
+			$usermailmd5 = md5($THEUSER->email());
 			
 			if ($USER->emailpublic() == true) {
 				$email = $USER->email();
@@ -902,6 +903,7 @@ function display_user ($user_id="") {
 		// Display THEUSER's info.	
 		$name 			= $THEUSER->firstname() . " " . $THEUSER->lastname();
 		$url 			= $THEUSER->url();
+		$usermailmd5		= md5($THEUSER->email());
 		if ($edited) {
 			// We want to show all the info to the user.
 			$email 			= $THEUSER->email();
@@ -1037,12 +1039,15 @@ function display_user ($user_id="") {
 				<span class="label">Joined</span>
 				<span class="formw"><?php echo htmlentities($registrationtime); ?></span>
 				</div>
-                                <div class="row">
-                                <span class="label">Avatar (<a href="/help/#avatar">?</a>)</span>
-                                <span class="formw"><img src="http://www.gravatar.com/avatar/<?php echo md5($USER->email()) ?>?s=32&d=identicon&r=g" width="32" height="32" alt="Avatar for <?php echo $name ?>"></span>
-                                </div>
 <?php
 		}
+		
+		?>
+		<div class="row">
+		<span class="label">Avatar (<a href="/help/#avatar">?</a>)</span>
+		<span class="formw"><img src="http://www.gravatar.com/avatar/<?php echo $usermailmd5 ?>?s=32&d=identicon&r=g" width="32" height="32" alt="Avatar for <?php echo $name ?>"></span>
+		</div>
+		<?php
 		
 		if ($edited && $this_page == 'userviewself') {
 			$EDITURL = new URL('useredit');
