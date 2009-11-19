@@ -12,6 +12,6 @@ delete from titles where title in (
 'ABS', 'Federal_Government', 'TFN', 'PBS', 'AMA', 'TGA', 'AO', 'Star_Command', 'VII', 'BMA', 'Brand_X', 'McNeil', 'The_House',
 'High_Court', 'Federal_Court', 'CGT', 'RON', 'McArdle', 'ITF', 'China_and_India', 'The_King', 'Phil_May', 'MPI', 'His_Excellency',
 'Financial_Services', 'ASIC', 'APRA', 'Kelly_Burke', 'Department_of_Education', 'The_Arts', 'ABC', 'The_World_Today', 'ABC_Radio',
-'IPA'
+'IPA', 'Katie_Price'
 );
 
