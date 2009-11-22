@@ -880,7 +880,7 @@ function display_user ($user_id="") {
 		
 			$name = $USER->firstname() . " " . $USER->lastname();
 			$url = $USER->url();
-			$usermailmd5 = md5($THEUSER->email());
+			$usermailmd5 = md5($USER->email());
 			
 			if ($USER->emailpublic() == true) {
 				$email = $USER->email();
