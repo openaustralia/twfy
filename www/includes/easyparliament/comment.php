@@ -215,7 +215,6 @@ class COMMENT {
 			'user_id'		=> $this->user_id,
 			'epobject_id'	=> $this->epobject_id,
 			'body'			=> $this->body,
-			'email'		=> $this->email,
 			'posted'		=> $this->posted,
 			'modflagged'	=> $this->modflagged,
 			'url'			=> $this->url,
@@ -338,7 +337,8 @@ class COMMENT {
 		// Gets and sets the user's name who posted the comment.
 				
 		if ($this->firstname == '' && $this->lastname == '') {
-			$q = $this->db->query("SELECT firstname, lastname, email
+			$q = $this->db->query("SELECT firstname,
+									lastname
 							FROM	users
 							WHERE	user_id = '" . addslashes($this->user_id) . "'
 							");
@@ -346,7 +346,6 @@ class COMMENT {
 			if ($q->rows() > 0) {
 				$this->firstname = $q->field(0, 'firstname');
 				$this->lastname = $q->field(0, 'lastname');
-				$this->email = $q->field(0, 'email');
 			}
 		}
 	}

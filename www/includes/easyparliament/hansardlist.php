@@ -2044,8 +2044,7 @@ class HANSARDLIST {
 									c.body,
 									c.posted,
 									u.firstname,
-									u.lastname,
-									u.email
+									u.lastname
 							FROM	comments c, users u
 							WHERE	c.epobject_id = '" . mysql_escape_string($item_data['epobject_id']) . "'
 							AND		c.user_id = u.user_id
@@ -2060,8 +2059,7 @@ class HANSARDLIST {
 					'user_id'	=> $q->field(0, 'user_id'),
 					'body'		=> $q->field(0, 'body'),
 					'posted'	=> $q->field(0, 'posted'),
-					'username'	=> $q->field(0, 'firstname') .' '. $q->field(0, 'lastname'),
-					'email'		=> $q->field(0, 'email')
+					'username'	=> $q->field(0, 'firstname') .' '. $q->field(0, 'lastname')
 				);
 			}
 			
