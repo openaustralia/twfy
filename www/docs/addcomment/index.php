@@ -64,6 +64,7 @@ if (get_http_var("submitcomment") != '') {
 			'firstname' => $THEUSER->firstname(),
 			'lastname' => $THEUSER->lastname(),
 			'user_id' => $THEUSER->user_id(),
+			'email' => $THEUSER->email(),
 			'posted' => date('Y-m-d H:i:s', time()),
 			'modflagged' => NULL,
 			'visible' => 1,
