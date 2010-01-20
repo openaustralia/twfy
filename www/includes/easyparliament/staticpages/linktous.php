@@ -17,7 +17,7 @@ END;
 $link_to_us_form .= $url. 'mp/';
 $link_to_us_form .= <<<END
 ' method='get' style='margin: 0; padding: 5px 0 0 0;' title='Find out about your Representative'>
-    <label for='pc' style='display: block; font-size: small; font-weight: bold; margin: 0 0 9px 0;'>Find out more about your <abbr class="display: inline; speak: spell-out;" title="Representative">Representative</abbr></label>
+    <label for='pc' style='display: block; font-size: small; font-weight: bold; margin: 0 0 9px 0;'>Find out more about your Representative</label>
     <input id='pc' maxlength='20' name='pc' size='8' style='width: 12em; border: solid 1px #AE967F;' tabindex='1' title='Enter your Australian postcode here' type='text' value='Your Postcode'>
     <input id='Submit1' name='Submit1' style='border: solid 0px #AE967F; background-color: #AE967F; color: #ffffff; font-weight: bold; text-transform: uppercase;' tabindex='2' title='Submit search' type='submit' value='Go'>
   </form>
