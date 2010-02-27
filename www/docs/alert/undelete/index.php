@@ -43,7 +43,7 @@ function undelete_success () {
 	$PAGE->page_start();
 	$PAGE->stripe_start();
 	?>
-	<p>Your alert has been undeleted.</p>
+	<p>Your alert has been resubscribed.</p>
 	<p>You will now receive email alerts on any day when there are entries in Hansard that match your criteria.</p>
 <?php
 	$PAGE->stripe_end();

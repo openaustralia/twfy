@@ -85,7 +85,7 @@ if ($order == 'party') {
 
 ?>
 				<table border="0" cellpadding="4" cellspacing="0" width="90%" class="people">
-				<thead>
+				<thead><tr>
 				<th>Photo</th>
 				<th><?php echo $th_name; ?></th>
 				<th><?php echo $th_party; ?></th>
@@ -99,7 +99,7 @@ if ($order == 'party') {
 				<th>Swing to lose seat (%)</th>
 <?php	}
 ?>
-				</thead>
+				</tr></thead>
 				<tbody>
 <?php
 
