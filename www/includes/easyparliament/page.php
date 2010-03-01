@@ -1204,7 +1204,7 @@ pageTracker._trackPageview();
 		}
 		$links[] = '<a href="' . WEBPATH . 'api/">API</a> / <a href="http://data.openaustralia.org">XML</a>';
 		$links[] = '<a href="http://software.openaustralia.org">Source code</a>';
-		$links[] = '<a href="http://blog.openaustralia.org">Blog</a>';
+		$links[] = '<a href="http://blog.openaustralia.org">Blog</a> / <a href="http://www.twitter.com/OpenAustralia/">Twitter</a>';
 
         $qs = $_SERVER['QUERY_STRING'];
         if (preg_match('/.*show_pc.*/i', $qs)) {
