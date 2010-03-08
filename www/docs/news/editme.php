@@ -4,6 +4,15 @@
 
 $all_news = array(
 
+14 => array('Register of Senators\' Interests updated', <<<EOT
+We've just updated the Register of Senators' Interests on the site. The register for Senators is now up to date up to 23 November 2009.
+
+The same can't unfortunately yet be said of the equivalent register for the Representatives in parliament. The Register of Members' Interests only has updates and ammendments up to June 2008. We've been trying for a while to get the latest changes. Good news is that just a few days ago we were told that the latest updates are on their way to us in the post, so with a little luck you should be able to see it here soon. Stay tuned!
+
+For a quick example see the updated register for <a href="/regmem/scan/register_interests_10696.pdf">Senator Bob Brown</a>. It now goes to an impressive 43 pages.
+EOT
+, '2010-03-09 09:52:00', 'Matthew'),
+
 13 => array('Calling OpenAustralia volunteers', <<<EOT
 Yes, it's that time again. The OpenAustralia Foundation is having <a href="http://hackfest.openaustralia.org/">another hackfest</a>! For the many of you out there that may be wondering, what on earth is a hackfest? It's a technical working bee of sorts. We get a bunch of great people together and work on ideas for how to make OpenAustralia.org and other related projects even better.
 
