@@ -10,6 +10,8 @@ We've just updated the Register of Senators' Interests on the site. The register
 The same can't unfortunately yet be said of the equivalent register for the Representatives in parliament. The Register of Members' Interests only has updates and ammendments up to June 2008. We've been trying for a while to get the latest changes. Good news is that just a few days ago we were told that the latest updates are on their way to us in the post, so with a little luck you should be able to see it here soon. Stay tuned!
 
 For a quick example see the updated register for <a href="/regmem/scan/register_interests_10696.pdf">Senator Bob Brown</a>. It now goes to an impressive 43 pages.
+
+As always you can find the link to the Register of Interests at the bottom of each Senator or Representative's page on OpenAustralia.
 EOT
 , '2010-03-09 09:52:00', 'Matthew'),
 
