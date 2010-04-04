@@ -1214,6 +1214,8 @@ pageTracker._trackPageview();
 		$user_agent = ( isset( $_SERVER['HTTP_USER_AGENT'] ) ) ? strtolower( $_SERVER['HTTP_USER_AGENT'] ) : '';
 		if (stristr($user_agent, 'Firefox/'))
 			$links[] = '<a href="http://mycroft.mozdev.org/download.html?name=openaustralia">Add search to Firefox</a>';
+        $links[] = '|';
+        $links[] = 'Powered&nbsp;by&nbsp;<a href="http://octopus.com.au/">Octopus&nbsp;Computing&nbsp;VPS&nbsp;Hosting</a>';
 		?>
 	
 		<div id="footer">
