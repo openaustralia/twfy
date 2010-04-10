@@ -21,8 +21,33 @@ function api_getMP_front() {
 </dl>
 
 <h4>Example Response</h4>
-<pre>&lt;result&gt;
-  &lt;/result&gt;
+<pre>
+[{
+  "member_id" : "1",
+  "house" : "1",
+  "first_name" : "Tony",
+  "last_name" : "Abbott",
+  "constituency" : "Warringah",
+  "party" : "Liberal Party",
+  "entered_house" : "1994-03-26",
+  "left_house" : "9999-12-31",
+  "entered_reason" : "by_election",
+  "left_reason" : "still_in_office",
+  "person_id" : "10001",
+  "title" : "",
+  "lastupdate" : "2008-07-20 22:54:54",
+  "full_name" : "Tony Abbott",
+  "image" : "/images/mpsL/10001.jpg",
+  "office" : [{
+  "moffice_id" : "23013",
+  "dept" : "",
+  "position" : "Leader of the Opposition",
+  "from_date" : "2009-12-08",
+  "to_date" : "9999-12-31",
+  "person" : "10001",
+  "source" : ""
+}]
+}]
 </pre>
 
 <?	
