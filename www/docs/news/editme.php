@@ -4,6 +4,16 @@
 
 $all_news = array(
 
+15 => array('Kevin Rudd surrenders his Cuban cigars. But who gets to smoke them?', <<<EOT
+We've just finished uploading an enormous update bringing you changes in interests that may influence the decision making of the people running our country. The update is a whopping
+850 pages and tracks changes to the Register of Members' Interests for the period from 25 June 2008 to the very recent 17 March 2010. Recent changes are appended to their existing entries and are conveniently located on the members' pages. See for example <a href="http://www.openaustralia.org/mp/kevin_rudd/griffith#register">Kevin Rudd</a>.
+
+Thanks to David Elder and Lynnette Eager of the Clerk's office for sending us the update. Thanks also to two fine upstanding citizens, Sharon and Thomas Clark of Sydney for the use of their bulk scanner over a cup of tea. 
+
+This is a unique resource for interested citizens and journalists. The register, which is only available online from this website, now runs to nearly 2000 pages and within it are buried all sorts of interesting and potentially important connections between politicians, corporations, charities, religious and sporting organisations, foreign countries and financial institutions. Ignore it at your peril.
+EOT
+, '2010-05-03 12:30:00', 'Matthew'),
+
 14 => array('Register of Senators\' Interests updated', <<<EOT
 We've just updated the Register of Senators' Interests on the site. The register for Senators is now up to date up to 23 November 2009.
 
