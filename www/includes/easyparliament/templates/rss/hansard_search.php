@@ -32,6 +32,7 @@ if (isset ($data['rows']) && count($data['rows']) > 0) {
 		echo (' (' . format_date($row['hdate'], SHORTDATEFORMAT) . ')');
 ?></title>
 <link>http://www.openaustralia.org<?=$row['listurl'] ?></link>
+<guid>http://www.openaustralia.org<?=$row['listurl'] ?></guid>
 <description><?php
 		if (isset($row['speaker']) && count($row['speaker'])) {
 			$sp = $row['speaker'];
