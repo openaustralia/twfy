@@ -20,7 +20,7 @@ if ($email_text || $rss) {
 		echo '<li id="search_links_email"><p><a href="', $email_link, '">Subscribe to an email alert</a> for items ', $email_text, '</p></li>';
 	}
 	if ($rss) {
-		echo '<li id="search_links_rss"><p>Or <a href="', $rss, '">get an RSS feed</a></p></li>';
+		echo '<li id="search_links_rss"><p>Or <a href="' . WEBPATH . $rss . '">get an RSS feed</a></p></li>';
 	}
 	echo '</ul>';
 	$this->block_end();
