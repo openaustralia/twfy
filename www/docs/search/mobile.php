@@ -205,7 +205,7 @@ if ($q_house==1) {
     	}
 	
     	$DATA->set_page_metadata($this_page, 'title', $pagetitle);
-	    $DATA->set_page_metadata($this_page, 'rss', WEBPATH . 'search/rss/?s=' . urlencode($searchstring));
+	    $DATA->set_page_metadata($this_page, 'rss', 'search/rss/?s=' . urlencode($searchstring));
     	$PAGE->page_start_mobile();
     	$PAGE->stripe_start();
     	$PAGE->search_form();
