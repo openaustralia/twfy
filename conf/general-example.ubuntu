@@ -96,6 +96,9 @@ define ("BUGSLIST", CONTACTEMAIL);
 // Email addresses that alertmailer.php sends stats to
 define('ALERT_STATS_EMAILS', CONTACTEMAIL);
 
+// Email address that alertmailer.php sends stats from
+define ('ALERT_STATS_SENDER',"CONTACTEMAIL");
+
 // *******************************************************************************
 // mySociety user-tracking.
 

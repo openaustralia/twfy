@@ -208,7 +208,7 @@ if (!$nomail && !$onlyemail) {
 	fwrite($fp, time() . "\n");
 	fwrite($fp, $max_batch_id);
 	fclose($fp);
-	mail(ALERT_STATS_EMAILS, 'Email alert statistics', $sss, 'From: Email Alerts <fawkes@dracos.co.uk>');
+	mail(ALERT_STATS_EMAILS, 'Email alert statistics', $sss, 'From: Email Alerts <'. ALERT_STATS_SENDER .'>');
 }
 mlog(date('r') . "\n");
 
