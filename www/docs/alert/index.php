@@ -171,6 +171,7 @@ function add_alert ($details) {
 		if ($extra) $extra .= "; ";
 		$extra .= "advert=$advert_shown";
 	}
+	suggest_alerts($details['email'],$details['pid'],5);
 	$PAGE->stripe_end();
 	$PAGE->page_end($extra);
 }

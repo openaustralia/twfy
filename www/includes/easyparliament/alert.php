@@ -38,6 +38,44 @@ etc.
 
 // CLASS:  ALERT
 
+
+function suggest_alerts($email,$criteria,$maxresults)
+{
+    $db = new ParlDB;
+    if(stripos($criteria,"speaker:")==0)  //speaker only
+    {
+        // find emails who follow this speaker
+        // find the speakers followed by those email
+        // return their most frequently followed speakers, not followed by the searcher
+        $sql ="SELECT count(*) AS c, criteria FROM alerts ";  // select and count criteria
+        $sql.="WHERE email = any (SELECT email FROM alerts WHERE criteria like '%$criteria%') ";  // from emails which have the provided criteria/pid
+        $sql.="AND LENGTH(criteria)=13.AND LEFT(criteria,8)='speaker:' ";  // filter in simple speaker alerts 'speaker:nnnnn'
+        $sql.="AND NOT(criteria=ANY(SELECT criteria FROM alerts WHERE email='$email')) "; // disregard any alert of this emailer (already following)
+        //$sql.="AND email like '%foo.test%' "; // filter in my test alerts  // REMOVE ME
+        $sql.="GROUP BY criteria ORDER BY c DESC";  // most commo first
+        $q=$db->query($sql);
+        $resultcount=$q->rows();
+        if($resultcount>0)    // if something was returned
+	print "<p>You may also be interested in being alerted when these people speak too.</p>";
+        {
+            if($resultcount>$maxresults) $resultcount=$maxresults;  // cap results
+
+            for($i=0; $i<$resultcount; $i++)  // iterate through results
+            {
+                if($q->field($i,'c')>1) // ignore suggestion where only one other has an alert for
+                {
+                    $pid=substr($q->field($i,'criteria'),-5); // extract members PID
+                    $member=new MEMBER(array('person_id'=>$pid)); 
+                    print '<p><a href="' . WEBPATH . 'alert/?only=1&amp;pid='.$member->person_id().'"><strong>Email me whenever '. $member->full_name() . ' speaks</strong></a></p>';
+                }
+            }
+        }
+    }
+}
+
+
+
+
 function alert_confirmation_advert($details) {
 	if ($details['pid']) {
 		$advert_shown = 'twfy-alert-word';
