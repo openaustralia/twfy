@@ -66,7 +66,7 @@ function suggest_alerts($email,$criteria,$maxresults)
                 {
                     $pid=substr($q->field($i,'criteria'),-5); // extract members PID
                     $member=new MEMBER(array('person_id'=>$pid)); 
-                    print '<p><a href="' . WEBPATH . 'alert/?only=1&amp;pid='.$member->person_id().'"><strong>Email me whenever '. $member->full_name() . ' speaks</strong></a></p>';
+                    print '<p><a href="' . WEBPATH . 'alert/?r=1&only=1&amp;pid='.$member->person_id().'"><strong>Email me whenever '. $member->full_name() . ' speaks</strong></a></p>';
                 }
             }
         }
@@ -203,14 +203,17 @@ class ALERT {
 			}
 		}
 
-		$q = $this->db->query("INSERT INTO alerts (
-				email, criteria, deleted, confirmed, created
-			) VALUES (
-				'" . mysql_escape_string($details["email"]) . "',
-				'" . mysql_escape_string($criteria) . "',
-				'0', '0', NOW()
-			)
-		");
+		$sql ="INSERT INTO alerts (email, criteria, deleted, confirmed, recommended, created) ";
+		$sql.="VALUES (";
+		$sql.="'" . mysql_escape_string($details["email"]) . "',";
+		$sql.="'" . mysql_escape_string($criteria) . "', '0','0',";
+		if($details['recommended']==1) //MJ OA-437 add as recommendation
+		    $sql.="'1',";
+		else
+		    $sql.="'0',";
+		$sql.="NOW() )";
+
+		$q = $this->db->query($sql);
 
 		if ($q->success()) {
 

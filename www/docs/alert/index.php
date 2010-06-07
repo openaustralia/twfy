@@ -37,6 +37,9 @@ if ($THEUSER->loggedin()) {
 } else {
 	$details["email"] = trim(get_http_var("email"));
 }
+
+// MJ OA_437 add reccomend arg to indicate this alert is by way of a recommendation
+$details['recommended'] = trim(get_http_var("r"));
 $details['keyword'] = trim(get_http_var("keyword"));
 $details['pid'] = trim(get_http_var("pid"));
 if ($details['pid'] == 'Any') $details['pid'] = '';
@@ -272,6 +275,9 @@ above.</li>
 			echo '<input type="hidden" name="sign" value="' . htmlspecialchars(get_http_var('sign')) . '">';
 		if (get_http_var('site'))
 			echo '<input type="hidden" name="site" value="' . htmlspecialchars(get_http_var('site')) . '">';
+		// MJ OA-437 Recommendations
+		if (get_http_var('r'))
+			echo '<input type="hidden" name="r" value="' . htmlspecialchars(get_http_var('r')) . '">';
 		echo '<input type="hidden" name="submitted" value="true"> </form>';
 } 
 
