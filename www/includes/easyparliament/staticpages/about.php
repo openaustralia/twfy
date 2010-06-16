@@ -60,6 +60,10 @@ freely available. Do let us know if you want to help!
 <td>Ray Haleblian</td>
 </tr>
 <tr>
+<td><img src="http://www.gravatar.com/avatar/8b4c4881fbc0495bb58f4bc7b59fd960?s=32&d=identicon&r=g" width="32" height="32" alt="Avatar for Matt Joyce"></td>
+<td>Matt Joyce</td>
+</tr>
+<tr>
 <td><img src="http://www.gravatar.com/avatar/a1ed877d79337034f8e1bb46f2dad8e3?s=32&d=identicon&r=g" width="32" height="32" alt="Avatar for Daniel Kinsman"></td>
 <td>Daniel Kinsman</td>
 </tr>
