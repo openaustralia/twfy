@@ -3,7 +3,16 @@
 /* OpenAustralia.org site news */
 
 $all_news = array(
+16 => array('Register of Senators\' Interests update - June 2010', <<<EOT
+We've just received and uploaded the latest batch of updates to the Register of Senators' Interests spanning the period 24 November 2009 to 21 June 2010.
 
+As per usual, they are added to the end of each Senator's register which can be found on their page. See for example <a href="/senator/mark_arbib/nsw#register">Senator Mark Arbib</a>.
+
+To make it easier to see just what's changed in this update you can also now <a href="/regmem/scan/update_senate_2010_06.pdf">download a compilation of all the recent changes</a>.
+
+You might be wondering why we update the Register of Senators' Interests before we update the Register of Members' Interests. This is because the Senate is able to send us a digital scanned copy of their register, while the House of Representatives sends us only a hardcopy of their register. It simply takes us a little time to organise someone who will scan the document for us.
+EOT
+, '2010-06-25 15:05:00', 'Matthew'),
 15 => array('Kevin Rudd surrenders his Cuban cigars. But who gets to smoke them?', <<<EOT
 We've just finished uploading an enormous update bringing you changes in interests that may influence the decision making of the people running our country. The update is a whopping
 850 pages and tracks changes to the Register of Members' Interests for the period from 25 June 2008 to the very recent 17 March 2010. Recent changes are appended to their existing entries and are conveniently located on the members' pages. See for example <a href="http://www.openaustralia.org/mp/kevin_rudd/griffith#register">Kevin Rudd</a>.
