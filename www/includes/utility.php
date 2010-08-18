@@ -78,6 +78,10 @@ function error_handler ($errno, $errmsg, $filename, $linenum, $vars) {
 		2048			=> "Runtime Notice"
 	);
 
+	// Completely ignore E_DEPRECATED messages on production server
+	if ($errno == 8192 && !DEVSITE)
+		return;
+
 	$err = '';
 	if (isset($_SERVER['REQUEST_URI'])) {
 		$err .= "URL:\t\thttp://" . DOMAIN . $_SERVER['REQUEST_URI'] . "\n";
