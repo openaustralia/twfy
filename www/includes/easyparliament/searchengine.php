@@ -33,6 +33,8 @@ if (defined('XAPIANDB') && XAPIANDB) {
 		include_once '/usr/local/share/xapian-bindings/php5/xapian.php';
 	if (file_exists('/usr/share/php5/xapian.php'))
 		include_once '/usr/share/php5/xapian.php';
+	if (file_exists('/usr/share/php/xapian.php'))
+		include_once '/usr/share/php/xapian.php';
 }
 
 global $xapiandb;
