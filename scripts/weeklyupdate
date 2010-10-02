@@ -12,9 +12,9 @@ INDEX="`pwd`/all-titles-in-ns0"
 # Get new wikipedia titles database
 rm -f "$INDEX.gz" $INDEX
 
-DUMPDATE=`fetch -q -o - http://download.wikimedia.org/backup-index.html | grep "enwiki/" | perl -pi.bak -e "s/.*(\d\d\d\d\d\d\d\d).*/\\\$1/;"`
+DUMPDATE=`curl -q -o - http://download.wikimedia.org/backup-index.html | grep "enwiki/" | perl -pi.bak -e "s/.*(\d\d\d\d\d\d\d\d).*/\\\$1/;"`
 #echo "Wikipedia dump date $DUMPDATE"
-fetch -q -o "$INDEX.gz" http://download.wikimedia.org/enwiki/$DUMPDATE/enwiki-$DUMPDATE-all-titles-in-ns0.gz
+curl -q -o "$INDEX.gz" http://download.wikimedia.org/enwiki/$DUMPDATE/enwiki-$DUMPDATE-all-titles-in-ns0.gz
 gunzip "$INDEX.gz"
 MYSQL="mysql -u $DB_USER --password=$DB_PASSWORD $DB_NAME"
 echo "load data infile '$INDEX' ignore into table titles;" | $MYSQL
