@@ -76,7 +76,7 @@ function api_documentation_front($method, $explorer) {
 	$PAGE->stripe_start();
 	include_once 'api_' . $method . '.php';
 	print '<p align="center"><strong>http://www.openaustralia.org/api/' . $method . '</strong></p>';
-	api_call_user_func_or_error('api_' . $method . '_front', null, 'No documentation yet', 'html');
+	api_call_user_func_or_error('api_' . $method . '_front', array(), 'No documentation yet', 'html');
 ?>
 <h4>Explorer</h4>
 <p>Try out this function without writing any code!</p>
