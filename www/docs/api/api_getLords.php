@@ -13,7 +13,8 @@ function api_getLords_front() {
 <dt>party (optional)</dt>
 <dd>Fetch the list of Senators from the given party.</dd>
 <dt>state (optional)</dt>
-<dd>Fetch the list of Senators from the given state.</dd>
+<dd>Fetch the list of Senators from the given state.<br />
+(NSW, Tasmania, WA, Queensland, Victoria, SA, NT, ACT)</dd>
 <dt>search (optional)</dt>
 <dd>Fetch the list of Senators that match this search string in their name.</dd>
 </dl>
@@ -26,12 +27,14 @@ function api_getLords_front() {
 		&lt;person_id&gt;10214&lt;/person_id&gt;
 		&lt;name&gt;John Faulkner&lt;/name&gt;
 		&lt;party&gt;Australian Labor Party&lt;/party&gt;
+		&lt;constituency&gt;NSW&lt;/constituency&gt;
 	&lt;/match&gt;
 	&lt;match&gt;
 		&lt;member_id&gt;100261&lt;/member_id&gt;
 		&lt;person_id&gt;10716&lt;/person_id&gt;
 		&lt;name&gt;John Williams&lt;/name&gt;
 		&lt;party&gt;National Party&lt;/party&gt;
+		&lt;constituency&gt;NSW&lt;/constituency&gt;
 	&lt;/match&gt;	
 	...
 &lt;/result&gt;
