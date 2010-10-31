@@ -16,9 +16,8 @@ function _api_getMembers_output($sql) {
 				$q->field($i, 'first_name'), $q->field($i, 'last_name'),
 				$q->field($i, 'constituency') )),
 			'party' => isset($parties[$q->field($i, 'party')]) ? $parties[$q->field($i, 'party')] : $q->field($i, 'party'),
+			'constituency' => $q->field($i, 'constituency')
 		);
-		if ($q->field($i, 'house') != 2)
-			$row['constituency'] = html_entity_decode($q->field($i, 'constituency'));
 		$output[] = $row;
 		$time = strtotime($q->field($i, 'lastupdate'));
 		if ($time > $last_mod)
