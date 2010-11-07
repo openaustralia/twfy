@@ -150,7 +150,7 @@ class MEMBER {
 			    || ((!$this->house_disp || $this->house_disp==3) && $house==1) # MPs have higher priority than MLAs
 			)
 			{
-				// OA-309 assure that person's party affiliation and constituency
+				// OA-306 assure that person's party affiliation and constituency
 				// are derived from thier latest membership role.
 				if (!isset($this->left_house[$this->house_disp])
 				|| ($left_house >= $this->left_house[$this->house_disp]['date'])) {
