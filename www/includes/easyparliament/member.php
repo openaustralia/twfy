@@ -143,21 +143,27 @@ class MEMBER {
 				);
 			}
 
-			if ( $house==0 					# The Monarch
+			if ( $house==0					# The Monarch
 			    || (!$this->house_disp && $house==4)	# MSPs and
 			    || (!$this->house_disp && $house==3)	# MLAs have lowest priority
 			    || ($this->house_disp!=2 && $house==2)	# Lords have highest priority
 			    || ((!$this->house_disp || $this->house_disp==3) && $house==1) # MPs have higher priority than MLAs
-			) {
-				$this->house_disp = $house;
-				$this->constituency = $const;
-				$this->party = $party;
+			)
+			{
+				// OA-309 assure that person's party affiliation and constituency
+				// are derived from thier latest membership role.
+				if (!isset($this->left_house[$this->house_disp])
+				|| ($left_house >= $this->left_house[$this->house_disp]['date'])) {
+					$this->house_disp = $house;
+					$this->constituency = $const;
+					$this->party = $party;
 
-				$this->member_id	= $q->field($row, 'member_id');
-				$this->title		= $q->field($row, 'title');
-				$this->first_name	= $q->field($row, 'first_name');
-				$this->last_name	= $q->field($row, 'last_name');
-				$this->person_id	= $q->field($row, 'person_id');
+					$this->member_id	= $q->field($row, 'member_id');
+					$this->title		= $q->field($row, 'title');
+					$this->first_name	= $q->field($row, 'first_name');
+					$this->last_name	= $q->field($row, 'last_name');
+					$this->person_id	= $q->field($row, 'person_id');
+				}
 			}
 
 			if ($left_reason == 'changed_party') {
