@@ -145,8 +145,8 @@ function render_mps_row($mp, &$style, $order, $MPURL) {
 	?>
 				<tr>
 				<td class="row">
-				<?php 
-                if ($image)
+				<?php
+				if ($image)
 					echo '<a href="', $url, '">',
 					'<img class="portrait" alt="" src="', $image, '">',
 					'</a>';
