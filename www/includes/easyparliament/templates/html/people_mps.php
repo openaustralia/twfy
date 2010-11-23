@@ -138,20 +138,20 @@ function render_mps_row($mp, &$style, $order, $MPURL) {
 	$style = $style == '1' ? '2' : '1';
 
 	$name = member_full_name(1, $mp['title'], $mp['first_name'], $mp['last_name'], $mp['constituency']);
-	
+	$url = $MPURL->generate().make_member_url($mp['first_name'].' '.$mp['last_name'], $mp['constituency'], 1);
+
 #	$MPURL->insert(array('pid'=>$mp['person_id']));
+	list($image,$sz) = find_rep_image($mp['person_id'], true);
 	?>
 				<tr>
-                <td class="row">
-                <?php
-                list($image,$sz) = find_rep_image($mp['person_id'], true);
-                if ($image) {
-                    echo '<img class="portrait" alt="" src="', $image, '"';
-                    echo '>';
-                } else {
-                }
-                ?>
-                </td>
+				<td class="row">
+				<?php 
+                if ($image)
+					echo '<a href="', $url, '">',
+					'<img class="portrait" alt="" src="', $image, '">',
+					'</a>';
+				?>
+				</td>
 				<td class="row-<?php echo $style; ?>"><a href="<?php echo $MPURL->generate().make_member_url($mp['first_name'].' '.$mp['last_name'], $mp['constituency'], 1); ?>"><?php echo $name; ?></a></td>
 				<td class="row-<?php echo $style; ?>"><?php echo $mp['party']; ?></td>
 				<td class="row-<?php echo $style; ?>"><?php echo $mp['constituency']; ?></td>

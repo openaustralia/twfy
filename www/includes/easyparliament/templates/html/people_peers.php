@@ -94,18 +94,22 @@ function render_peers_row($peer, &$style, $order, $URL) {
 		$party = $peer['party'];
 	
 #	$MPURL->insert(array('pid'=>$peer['person_id']));
+	$url = $URL->generate().make_member_url($name, $peer['constituency'], 2);
 	?>
 				<tr>
 				<td class="row">
 				<?php
 				list($image,$sz) = find_rep_image($peer['person_id'], true);
 				if ($image) {
-					echo '<img class="portrait" alt="" src="', $image, '"';
-					echo '>';
+					echo '<a href="', $url, '">';
+					echo '<img class="portrait" alt="" src="', $image, '"/>';
+					echo '</a>';
 				}
 				?>
 				</td>
-				<td class="row-<?php echo $style; ?>"><a href="<?php echo $URL->generate().make_member_url($name, $peer['constituency'], 2); ?>"><?php echo ucfirst($name); ?></a></td>
+				<td class="row-<?php echo $style; ?>">
+					<a href="<?php echo $url; ?>"><?php echo ucfirst($name); ?></a>
+				</td>
 				<td class="row-<?php echo $style; ?>"><?php echo $party; ?></td>
 				<td class="row-<?php echo $style; ?>"><?php echo $peer['constituency']?></td>
 				<td class="row-<?php echo $style; ?>"><?php
