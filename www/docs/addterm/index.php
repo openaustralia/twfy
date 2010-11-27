@@ -178,7 +178,7 @@ if (get_http_var("submitterm") != '') {
 // Commented out until we have more glossary terms for further examples
 //	print "An external organisation e.g. <em>&quot;<a href=\"".$devoncc_url."\">Devon County Council</a>&quot;(80 occurences)</em><br>";
 //	print "An external web document e.g. <em>&quot;<a href=\"".$hutton_url."\">Hutton Report</a>&quot;(104 occurences)</em></small></p>";
-	print "<p>Or browse the existing entries:</p>";
+	print "Or browse the existing entries:</small></p>";
 
 	$PAGE->glossary_atoz($GLOSSARY);
 
