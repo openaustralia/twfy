@@ -46,7 +46,7 @@ if ($q_method = get_http_var('method')) {
 						join(', ', $data['parameters']) );
 				} else {
 					include_once 'api_' . $method . '.php';
-					api_call_user_func_or_error('api_' . $method, null, 'API call not yet functional', 'api');
+					api_call_user_func_or_error('api_' . $method, array(), 'API call not yet functional', 'api');
 					break;
 				}
 			}
