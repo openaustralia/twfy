@@ -199,7 +199,7 @@ to use the service on a large scale.</p>
 <h3>Bindings</h3>
 
 <ul>
-    <li><a href="source/oaapi.phps">PHP source</a> and <a href="source/test.phps">example</a> (thanks to Mark Kinkade for adapting <a href="http://tools.wackomenace.co.uk/twfyapi/">Ruben Arakelyan's TWFY bindings</a>)</li>
+    <li><a href="source/oaapi.phps">PHP source</a> and <a href="source/test.phps">example</a> (thanks to Mark Kinkade for adapting <a href="http://tools.rubenarakelyan.com/twfyapi/">Ruben Arakelyan's TWFY bindings</a>)</li>
     <li><a href="http://github.com/kuperov/open-australia-api/">Ruby</a>, by <a href="http://www.acooper.org/">Alex Cooper</a></li>
     <li><a href="http://tools.rubenarakelyan.com/twfyapi/">PHP &amp; ASP.NET</a>, by <a href="http://www.rubenarakelyan.com/">Ruben Arakelyan</a></li>
 </ul>
