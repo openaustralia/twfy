@@ -1,29 +1,22 @@
 <?
 
+include_once 'api_getMP.php';
+
 /* Shared API functions for get<Members> */
 
 function _api_getMembers_output($sql) {
-	global $parties;
 	$db = new ParlDB;
 	$q = $db->query($sql);
 	$output = array();
-	$last_mod = 0;
-	for ($i=0; $i<$q->rows(); $i++) {
-		$row = array(
-			'member_id' => $q->field($i, 'member_id'),
-			'person_id' => $q->field($i, 'person_id'),
-			'name' => html_entity_decode(member_full_name($q->field($i, 'house'), $q->field($i, 'title'),
-				$q->field($i, 'first_name'), $q->field($i, 'last_name'),
-				$q->field($i, 'constituency') )),
-			'party' => isset($parties[$q->field($i, 'party')]) ? $parties[$q->field($i, 'party')] : $q->field($i, 'party'),
-			'constituency' => html_entity_decode($q->field($i, 'constituency'))
-		);
-		$output[] = $row;
-		$time = strtotime($q->field($i, 'lastupdate'));
-		if ($time > $last_mod)
-			$last_mod = $time;
-	}
-	api_output($output, $last_mod);
+  $last_mod = 0;
+  for ($i=0; $i<$q->rows(); $i++) {
+    $out = _api_getMP_row($q->row($i));
+    $output[] = $out;
+    $time = strtotime($q->field($i, 'lastupdate'));
+    if ($time > $last_mod)
+      $last_mod = $time;
+  }
+  api_output($output, $last_mod);
 }
 
 function api_getMembers_party($house, $s) {

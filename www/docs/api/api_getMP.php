@@ -57,6 +57,8 @@ function _api_getMP_row($row) {
 	global $parties;
 	$row['full_name'] = member_full_name($row['house'], $row['title'], $row['first_name'],
 		$row['last_name'], $row['constituency']);
+  # We need 'name' to maintain backwards compatibility due to OA-476
+  $row['name'] = $row['full_name'];
 	if (isset($parties[$row['party']]))
 		$row['party'] = $parties[$row['party']];
 	list($image,$sz) = find_rep_image($row['person_id']);
