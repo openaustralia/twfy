@@ -180,8 +180,13 @@ and in PHP and RABX a serialised array containing one entry with key <code>error
 
 <h3>Licensing</h3>
 
-<p>To use parliamentary material yourself (that's data returned from
-getDebates and getHansard), which is Copyright Commonwealth of Australia, you will need to obtain permission to republish it. When we sought permission, we were told that the material is "considered in the public domain". We're not quite sure what that means so you best check for yourself.</p>
+<p>
+  Parliamentary material (that's data returned from getDebates and
+  getHansard), is Copyright Commonwealth of Australia and is
+  <a href="http://aph.gov.au/legal/copyright.htm">provided by them</a>
+  under a <a href="http://creativecommons.org/licenses/by-nc-nd/3.0/au/">
+  Creative Commons 3.0 Attribution-NonCommercial-NoDerivs</a> licence.
+</p>
 
 <p>Our own data - lists of members of the House of Representatives, Senators, electoral divisions and so on - is available
 under the <a href="http://creativecommons.org/licenses/by-sa/2.5/">Creative
