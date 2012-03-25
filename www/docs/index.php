@@ -156,7 +156,7 @@ $includes = array(
 	),
 	array (
 		'type' => 'include',
-		'content' => 'sitenews_recent'
+		'content' => 'twitter'
 	),
 	array(
 		'type' => 'include',

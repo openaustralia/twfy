@@ -1098,7 +1098,7 @@ pageTracker._trackPageview();
 		}
 		?>
 				<div class="block"<?php echo $id; ?>>
-					<h4><?php echo $title; ?></h4>
+					<?php if ($title) { ?><h4><?php echo $title; ?></h4><?php } ?>
 <?php
 		if (!isset($data['body']) || $data['body'] == true) {
 			?>
