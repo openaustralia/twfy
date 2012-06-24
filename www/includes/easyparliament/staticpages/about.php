@@ -95,6 +95,10 @@ freely available. Do let us know if you want to help!
 <td><img src="http://www.gravatar.com/avatar/87bb46366f13106c2deebf655af73b38?s=32&d=identicon&r=g" width="32" height="32" alt="Avatar for Katherine Szuminska"></td>
 <td>Katherine Szuminska</td>
 </tr>
+<tr>
+<td><img src="http://www.gravatar.com/avatar/3c1983a3371799ba1a78606dc62655db?s=32&d=identicon&r=g" width="32" height="32" alt="Avatar for Justin Wells"></td>
+<td>Justin Wells</td>
+</tr>
 </table>
 
 <p><em>They did all this in their spare time, because they thought it was worth doing.
