@@ -1222,7 +1222,9 @@ pageTracker._trackPageview();
 			<p><?php
 		print implode(' &nbsp;&nbsp;&nbsp; ', $links);
 		?></p>
-			
+			<p>
+				Other Wonderful Projects from the OpenAustralia Foundation: <a href="http://www.planningalerts.org.au">PlanningAlerts.org.au</a> | <a href="http://www.electionleaflets.org.au">ElectionLeaflets.org.au</a>
+	 		</p>
 		</div>
 
 	</div> <!-- end #content -->
