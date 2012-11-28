@@ -1,4 +1,12 @@
 Subject: Your OpenAustralia email alert
+-------------------------------------------------------------------------
+You like finding out what's happening in Parliament, what about what's
+happening in government? Our exciting new project allows you to do
+exactly that!
+
+Introducing Right To Know: http://tinyurl.com/righttoknowau
+-------------------------------------------------------------------------
+
 {DATA}
 
 If clicking any of these links doesn't work, you may have
@@ -8,10 +16,3 @@ or 'return' on your keyboard.
 
 Best wishes,
 OpenAustralia.org
-
--------------------------------------------------------------------------
-If you like OpenAustralia try our handy new service "PlanningAlerts".
-Get email alerts of planning applications near you! It's completely free.
-
-Sign up now: http://tinyurl.com/planningalerts-1
--------------------------------------------------------------------------
