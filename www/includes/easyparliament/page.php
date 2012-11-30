@@ -1224,6 +1224,7 @@ pageTracker._trackPageview();
 		?></p>
 			<p>
 				Other Wonderful Projects from the OpenAustralia Foundation:
+				<a href="http://www.righttoknow.org.au/">Right To Know</a> |
 				<a href="http://www.planningalerts.org.au/">PlanningAlerts</a> |
 				<a href="http://www.electionleaflets.org.au/">Election Leaflets</a>
 	 		</p>
