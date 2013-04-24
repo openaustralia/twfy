@@ -137,7 +137,7 @@ class SKIN {
 			?>
 	<link rel="stylesheet" href="<?php echo WEBPATH; ?>style/<?php echo $skinstyles['global']; ?>/global.css" type="text/css">
 <?php
-			if (isset($_SERVER['HTTP_USER_AGENT']) && !(ereg("MSIE 4.0", $_SERVER['HTTP_USER_AGENT'])) && (isset($skinstyles["mobile"]))){
+			if (isset($_SERVER['HTTP_USER_AGENT']) && !(preg_match("/MSIE 4.0/", $_SERVER['HTTP_USER_AGENT'])) && (isset($skinstyles["mobile"]))){
 				// Hide this from IE4 and Mac AOL5.
 				?>
 	<style type="text/css">
@@ -165,7 +165,7 @@ class SKIN {
 		}
 		if (isset($skinstyles["print"]) && 
 			$skinstyles["print"] != "" && 
-			( isset($_SERVER['HTTP_USER_AGENT']) && !(ereg("MSIE 4.0", $_SERVER['HTTP_USER_AGENT'])) )
+			( isset($_SERVER['HTTP_USER_AGENT']) && !(preg_match("/MSIE 4.0/", $_SERVER['HTTP_USER_AGENT'])) )
 		) {
 			// Hide this from IE4 and Mac AOL5.
 			?>
@@ -177,7 +177,7 @@ class SKIN {
 			$x = get_http_var('c4x') ? 'X' : ''; ?>
 	<link rel="stylesheet" href="<?php echo WEBPATH; ?>style/channel4/global<?=$x ?>.css" type="text/css">
 <?php
-			if (isset($_SERVER['HTTP_USER_AGENT']) && !(ereg("MSIE 4.0", $_SERVER['HTTP_USER_AGENT']))){
+			if (isset($_SERVER['HTTP_USER_AGENT']) && !(preg_match("/MSIE 4.0/", $_SERVER['HTTP_USER_AGENT']))){
 				// Hide this from IE4 and Mac AOL5.
 				?>
 	<style type="text/css">
