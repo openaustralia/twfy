@@ -383,7 +383,7 @@ class USER {
 
 				// If the PW fits your purpose (e.g. this regexpression) return it, else make a new one
 				// (You can change this regular-expression how you want ....)
-				if(ereg("^[a-zA-Z]{1}([a-zA-Z]+[0-9][a-zA-Z]+)+",$pwd)) {
+				if(preg_match("/^[a-zA-Z]{1}([a-zA-Z]+[0-9][a-zA-Z]+)+/",$pwd)) {
 					break;
 				}
 
@@ -764,7 +764,7 @@ class THEUSER extends USER {
 			twfy_debug("THEUSER init FAILED", "No cookie set");
 			$this->loggedin = false;
 
-		} elseif (ereg ("([[:alnum:]]*)\.([[:alnum:]]*)", $cookie, $matches)) {
+		} elseif (preg_match ("/([[:alnum:]]*)\.([[:alnum:]]*)/", $cookie, $matches)) {
 
 			if (is_numeric($matches[1])) {
 
