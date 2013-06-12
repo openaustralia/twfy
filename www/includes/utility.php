@@ -672,11 +672,11 @@ function send_template_email ($data, $merge, $bulk = false) {
 	
 	// Get the text from the template.
 	$handle = fopen($filename, "r");
-	$emailtext = fread($handle, filesize($filename));
+	$email_body = fread($handle, filesize($filename));
 	fclose($handle);
 
 	// See if there's a default subject in the template.
-	$firstline = substr($emailtext, 0, strpos($emailtext, "\n"));
+	$firstline = substr($email_body, 0, strpos($email_body, "\n"));
 	
 	// Work out what the subject line is.
 	if (preg_match("/Subject:/", $firstline)) {
@@ -687,7 +687,7 @@ function send_template_email ($data, $merge, $bulk = false) {
 		}
 		
 		// Either way, remove this subject line from the template.
-		$emailtext = substr($emailtext, strpos($emailtext, "\n"));
+		$emailtext = substr($email_body, strpos($email_body, "\n"));
 		
 	} elseif (isset($data['subject'])) {
 		$subject = $data['subject'];
@@ -706,10 +706,13 @@ function send_template_email ($data, $merge, $bulk = false) {
 		$replace[] = $val;
 	}
 	
-	$emailtext = preg_replace($search, $replace, $emailtext);
+	$email_body = preg_replace($search, $replace, $email_body);
 	
 	// Send it!
-	$success = send_email ($data['to'], $subject, $emailtext, $bulk);
+	if($data['template']=='alert_mailout_multipart')
+	    $success = send_multipart_email ($data['to'], $subject, $email_body, $data['MIMEBOUNDARY'], $bulk);
+	else
+	    $success = send_email ($data['to'], $subject, $email_body, $bulk);
 
 	return $success;
 
@@ -743,6 +746,23 @@ function send_email ($to, $subject, $message, $bulk = false) {
 
 	return $success;
 }
+
+
+function send_multipart_email ($to, $subject, $message, $mime_boundary, $bulk = false) {
+    $mime_boundary=uniqid('mime-boundary-');
+    $headers  ="X-Mailer: PHP/" . phpversion();
+    $headers .= "MIME-Version: 1.0 \n";
+    if($bulk) $headers .="Precedence: bulk \n";
+    $headers .= "From: OpenAustralia.org <" . CONTACTEMAIL . "> \n";
+    $headers .= "Reply-To: OpenAustralia.org <" . CONTACTEMAIL . "> \n";
+    $headers .= "Content-Type: multipart/alternative;boundary=" . $mime_boundary . "\n";
+
+    twfy_debug('EMAIL', "Sending multipart email to $to with subject of '$subject'");
+    $success = mail ($to, $subject, $message, $headers);
+    file_put_contents('/srv/www/openaustralia/twfy/scripts/mails/multipart.html',$message);
+    return $success;
+}
+
 
 
 
