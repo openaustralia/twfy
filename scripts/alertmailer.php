@@ -41,22 +41,22 @@ mlog("batch_query_fragment: " . $batch_query_fragment . "\n");
 
 # For testing purposes, specify nomail on command line to not send out emails
 $nomail = false;
-$onlyemail = '';
-$fromemail = '';
-$toemail = '';
+$onlyemail_addr = '';
+$fromemail_addr = '';
+$toemail_addr = '';
 for ($k=1; $k<$argc; $k++) {
 	if ($argv[$k] == '--nomail')
 		$nomail = true;
 	if (preg_match('#^--only=(.*)$#', $argv[$k], $m))
-		$onlyemail = $m[1];
+		$onlyemail_addr = $m[1];
 	if (preg_match('#^--from=(.*)$#', $argv[$k], $m))
-		$fromemail = $m[1];
+		$fromemail_addr = $m[1];
 	if (preg_match('#^--to=(.*)$#', $argv[$k], $m))
-		$toemail = $m[1];
+		$toemail_addr = $m[1];
 }
 
 if ($nomail) mlog("NOT SENDING EMAIL\n");
-if (($fromemail && $onlyemail) || ($toemail && $onlyemail)) {
+if (($fromemail_addr && $onlyemail_addr) || ($toemail_addr && $onlyemail_addr)) {
 	mlog("Can't have both from/to and only!\n");
 	exit;
 }
@@ -69,8 +69,8 @@ $sentemails = 0;
 
 $LIVEALERTS = new ALERT;
 
-$current_email = '';
-$email_text = '';
+$current_email_addr = '';
+$email_body = '';
 $globalsuccess = 1;
 
 # Fetch all confirmed, non-deleted alerts
@@ -90,19 +90,19 @@ $outof = count($alertdata);
 $start_time = time();
 foreach ($alertdata as $alertitem) {
 	$active++;
-	$email = $alertitem['email'];
-	if ($onlyemail && $email != $onlyemail) continue;
-	if ($fromemail && strtolower($email) <= $fromemail) continue;
-	if ($toemail && strtolower($email) >= $toemail) continue;
+	$alert_email_addr = $alertitem['email'];
+	if ($onlyemail_addr && $alert_email_addr != $onlyemail_addr) continue;
+	if ($fromemail_addr && strtolower($alert_email_addr) <= $fromemail_addr) continue;
+	if ($toemail_addr && strtolower($alert_email_addr) >= $toemail_addr) continue;
 	$criteria_raw = $alertitem['criteria'];
 	$criteria_batch = $criteria_raw . " " . $batch_query_fragment;
 
-	if ($email != $current_email) {
-		if ($email_text)
-			write_and_send_email($current_email, $user_id, $email_text);
-		$current_email = $email;
-		$email_text = '';
-		$q = $db->query('SELECT user_id FROM users WHERE email = \''.mysql_escape_string($email)."'");
+	if ($alert_email_addr != $current_email_addr) {
+		if ($email_body)
+			write_and_send_email($current_email_addr, $user_id, $email_body);
+		$current_email_addr = $alert_email_addr;
+		$email_body = '';
+		$q = $db->query('SELECT user_id FROM users WHERE email = \''.mysql_escape_string($alert_email_addr)."'");
 		if ($q->rows() > 0) {
 			$user_id = $q->field(0, 'user_id');
 			$registered++;
@@ -110,7 +110,7 @@ foreach ($alertdata as $alertitem) {
 			$user_id = 0;
 			$unregistered++;
 		}
-		mlog("\nEMAIL: $email, uid $user_id; memory usage : ".memory_get_usage()."\n");
+		mlog("\nEMAIL: $alert_email_addr, uid $user_id; memory usage : ".memory_get_usage()."\n");
 	}
 
 	$data = null;
@@ -179,19 +179,19 @@ foreach ($alertdata as $alertitem) {
 			foreach ($o as $major => $body) {
 				if ($body) {
 					$heading = $deschead . ' : ' . $count[$major] . ' ' . $sects[$major] . ($count[$major]!=1?'s':'');
-					$email_text .= "$heading\n".str_repeat('=',strlen($heading))."\n\n";
+					$email_body .= "$heading\n".str_repeat('=',strlen($heading))."\n\n";
 					if ($count[$major] > 3) {
-						$email_text .= "There are more results than we have shown here. See more:\nhttp://www.openaustralia.org/search/?s=".urlencode($criteria_raw)."+section:".$sects_short[$major]."&o=d\n\n";
+						$email_body .= "There are more results than we have shown here. See more:\nhttp://www.openaustralia.org/search/?s=".urlencode($criteria_raw)."+section:".$sects_short[$major]."&o=d\n\n";
 					}
-					$email_text .= $body;
+					$email_body .= $body;
 				}
 			}
-			$email_text .= "To unsubscribe from your alert for items " . $desc . ", please use:\nhttp://www.openaustralia.org/D/" . $alertitem['alert_id'] . '-' . $alertitem['registrationtoken'] . "\n\n";
+			$email_body .= "To unsubscribe from your alert for items " . $desc . ", please use:\nhttp://www.openaustralia.org/D/" . $alertitem['alert_id'] . '-' . $alertitem['registrationtoken'] . "\n\n";
 		}
 	}
 }
-if ($email_text)
-	write_and_send_email($current_email, $user_id, $email_text);
+if ($email_body)
+	write_and_send_email($current_email_addr, $user_id, $email_body);
 
 mlog("\n");
 
@@ -203,7 +203,7 @@ if ($globalsuccess) {
 }
 $sss .= (getmicrotime()-$global_start)."\n\n";
 mlog($sss);
-if (!$nomail && !$onlyemail) {
+if (!$nomail && !$onlyemail_addr) {
 	$fp = fopen('alerts-lastsent', 'w');
 	fwrite($fp, time() . "\n");
 	fwrite($fp, $max_batch_id);
@@ -223,21 +223,21 @@ function sort_by_stuff($a, $b) {
 	return ($a['hpos'] > $b['hpos']) ? 1 : -1;
 }
 
-function write_and_send_email($email, $user_id, $data) {
+function write_and_send_email($email_addr, $user_id, $email_body) {
 	global $globalsuccess, $sentemails, $nomail, $start_time;
 
-	$data .= '===================='."\n\n";
+	$email_body .= '===================='."\n\n";
 	if ($user_id) {
-		$data .= "As a registered user, visit http://www.openaustralia.org/user/\nto unsubscribe from, or manage, your alerts.\n";
+		$email_body .= "As a registered user, visit http://www.openaustralia.org/user/\nto unsubscribe from, or manage, your alerts.\n";
 	} else {
-		$data .= "If you register on the site, you will be able to manage your\nalerts there as well as post comments. :)\n";
+		$email_body .= "If you register on the site, you will be able to manage your\nalerts there as well as post comments. :)\n";
 	}
 	$sentemails++;
 	mlog("SEND $sentemails : Sending email to $email ... ");
-	$d = array('to' => $email, 'template' => 'alert_mailout');
-	$m = array('DATA' => $data);
+	$template_data = array('to' => $email_addr, 'template' => 'alert_mailout');
+	$template_merge = array('DATA' => $email_body);
 	if (!$nomail) {
-		$success = send_template_email($d, $m, true); # true = "Precedence: bulk"
+		$success = send_template_email($template_data, $template_merge, true); # true = "Precedence: bulk"
 		mlog("sent ... ");
 		# sleep if time between sending mails is less than a certain number of seconds on average
 		if (((time() - $start_time) / $sentemails) < 0.5 ) { # number of seconds per mail not to be quicker than
@@ -245,7 +245,7 @@ function write_and_send_email($email, $user_id, $data) {
 			sleep(1);
 		}
 	} else {
-		mlog($data);
+		mlog($email_body);
 		$success = 1;
 	}
 	mlog("done\n");
