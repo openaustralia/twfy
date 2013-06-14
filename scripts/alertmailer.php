@@ -70,7 +70,8 @@ $sentemails = 0;
 $LIVEALERTS = new ALERT;
 
 $current_email_addr = '';
-$email_plaintext = '';
+$email_plaintext = '';  // this is for the plaintext content
+$email_html = ''; // this is for the html content
 $globalsuccess = 1;
 
 // Fetch all confirmed, non-deleted alerts
@@ -102,6 +103,7 @@ foreach ($alertdata as $alertitem) {
 			write_and_send_email($current_email_addr, $user_id, $email_plaintext);
 		$current_email_addr = $alert_email_addr;
 		$email_plaintext = '';
+		$email_html = '';
 		$q = $db->query('SELECT user_id FROM users WHERE email = \''.mysql_escape_string($alert_email_addr)."'");
 		if ($q->rows() > 0) {
 			$user_id = $q->field(0, 'user_id');
@@ -187,19 +189,29 @@ foreach ($alertdata as $alertitem) {
 				$heading = $deschead . ' : ' . $count[$major] . ' ' . $sects[$major] . ($count[$major]!=1?'s':'');
 				$email_plaintext .= "$heading\n";
 				$email_plaintext .= str_repeat('=',strlen($heading))."\n\n";
-					if ($count[$major] > 3) {
-						$email_plaintext .= "There are more results than we have shown here. See more:\nhttp://www.openaustralia.org/search/?s=".urlencode($criteria_raw)."+section:".$sects_short[$major]."&o=d\n\n";
-					}
+				$email_html .= "<p>" . $heading . "</p>\n";
+				if ($count[$major] > 3) {
+					$url_seemore="http://www.openaustralia.org/search/?s=".urlencode($criteria_raw)."+section:".$sects_short[$major]."&o=d";
+					$email_plaintext .= "There are more results than we have shown here. See more: \n $url_seemore \n\n";
+					$email_html .= "<p>There are more results than we have shown here. <a url='$url_seemore'>See more</a></p>\n";
+				}
 				foreach ($theseresults as $result) {
 					if ($result['body']) {
+						//plain text
 						$email_plaintext .= $result['title'] . "\n";
 						$email_plaintext .= $result['url'] . "\n";
 						$email_plaintext .= ($result['speaker'] ? $result['speaker'] . " : " : "");
 						$email_plaintext .= $result['body'] ."\n\n";
+						//html
+						$email_html .= "<p><a url='" . $result['url'] . "'>" . $result['title'] . "</a></p>\n";
+						$email_html .= ($result['speaker'] ? '<p>' . $result['speaker'] . '</p>' . "\n" : "");
+						$email_html .= '<p>' . $result['body'] . '</p><br />' . "\n";
 					}
 				}
 			}
-			$email_plaintext .= "To unsubscribe from your alert for items " . $desc . ", please use:\nhttp://www.openaustralia.org/D/" . $alertitem['alert_id'] . '-' . $alertitem['registrationtoken'] . "\n\n";
+			$url_unsubscribe="http://www.openaustralia.org/D/" . $alertitem['alert_id'] . '-' . $alertitem['registrationtoken'];
+			$email_plaintext .= "To unsubscribe from your alert for items " . $desc . ", please use:\n $url_unsubscribe \n\n";
+			$email_html .= "<p><a url='" . $url_unsubscribe . "'>Unsubscibe alerts " . $desc . "</a></p>\n";
 		}
 	}
 }
