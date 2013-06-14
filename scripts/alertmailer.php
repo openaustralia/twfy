@@ -189,7 +189,7 @@ foreach ($alertdata as $alertitem) {
 
 		if ($any_content) {
 			// Add data to email_text
-			$desc = trim(html_entity_decode($data['searchdescription']));
+			$desc = trim(html_entity_decode($search_result_data['searchdescription']));
 			$deschead = ucfirst(str_replace('containing ', '', $desc));
 			foreach ($o as $major => $body) {
 				if ($body) {
@@ -248,7 +248,7 @@ function write_and_send_email($email_addr, $user_id, $email_body) {
 		$email_body .= "If you register on the site, you will be able to manage your\nalerts there as well as post comments. :)\n";
 	}
 	$sentemails++;
-	mlog("SEND $sentemails : Sending email to $email ... ");
+	mlog("SEND $sentemails : Sending email to $email_addr ... ");
 	$template_data = array('to' => $email_addr, 'template' => 'alert_mailout');
 	$template_merge = array('DATA' => $email_body);
 	if (!$nomail) {
