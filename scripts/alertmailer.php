@@ -143,7 +143,7 @@ foreach ($alertdata as $alertitem) {
 	}
 
 	if (isset($search_result_data['rows']) && count($search_result_data['rows']) > 0) {
-		usort($data['rows'], 'sort_by_stuff'); // Sort results into order, by major, then date, then hpos
+		usort($search_result_data['rows'], 'sort_by_stuff'); // Sort results into order, by major, then date, then hpos
 		$o = array(); $major = 0; $count = array(); $total = 0;
 		$any_content = false;
 		foreach ($search_result_data['rows'] as $row) {
@@ -154,7 +154,7 @@ foreach ($alertdata as $alertitem) {
 				$k = 3;
 			}
 			//mlog($row['major'] . " " . $row['gid'] ."\n");
-			if ($row['hdate'] < '2008-01-14') continue;
+			if ($row['hdate'] < '2007-01-14') continue;  // I had to change this 2007, to get results from the dev db
 			$q = $db->query('SELECT gid_from FROM gidredirect WHERE gid_to=\'uk.org.publicwhip/' . $sects_short[$major] . '/' . mysql_escape_string($row['gid']) . "'");
 			if ($q->rows() > 0) continue;
 			--$k;
