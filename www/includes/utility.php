@@ -710,7 +710,7 @@ function send_template_email ($data, $merge, $bulk = false) {
 	
 	// Send it!
 	if($data['template']=='alert_mailout_multipart')
-	    $success = send_multipart_email ($data['to'], $subject, $email_body, $merge['MIMEBOUNDARY'], $bulk);
+	    $success = send_multipart_email ($data['to'], $subject, $email_body, $data['MIMEBOUNDARY'], $bulk);
 	else
 	    $success = send_email ($data['to'], $subject, $email_body, $bulk);
 
@@ -750,17 +750,16 @@ function send_email ($to, $subject, $message, $bulk = false) {
 
 function send_multipart_email ($to, $subject, $message, $mime_boundary, $bulk = false) {
     $mime_boundary=uniqid('mime-boundary-');
-    $headers  ="X-Mailer: PHP/" . phpversion() . "\r\n";
-    $headers .= "MIME-Version: 1.0 \r\n";
-    if($bulk) $headers .="Precedence: bulk \r\n";
-    $headers .= "From: OpenAustralia.org <" . CONTACTEMAIL . "> \r\n";
-    $headers .= "Reply-To: OpenAustralia.org <" . CONTACTEMAIL . "> \r\n";
-    $headers .= "Content-Type: multipart/alternative;boundary=" . $mime_boundary . "\r\n";
+    $headers  ="X-Mailer: PHP/" . phpversion();
+    $headers .= "MIME-Version: 1.0 \n";
+    if($bulk) $headers .="Precedence: bulk \n";
+    $headers .= "From: OpenAustralia.org <" . CONTACTEMAIL . "> \n";
+    $headers .= "Reply-To: OpenAustralia.org <" . CONTACTEMAIL . "> \n";
+    $headers .= "Content-Type: multipart/alternative;boundary=" . $mime_boundary . "\n";
 
     twfy_debug('EMAIL', "Sending multipart email to $to with subject of '$subject'");
     $success = mail ($to, $subject, $message, $headers);
     file_put_contents('/srv/www/openaustralia/twfy/scripts/mails/multipart.html',$message);
-    file_put_contents('/srv/www/openaustralia/twfy/scripts/mails/multipart_header',$headers);
     return $success;
 }
 

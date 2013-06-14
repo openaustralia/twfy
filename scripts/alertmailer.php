@@ -301,14 +301,14 @@ function write_and_send_email($to_email_addr, $user_id, $email_text, $email_html
 	
 	$multipart_text  = "--$mime_boundary \n";
 	$multipart_text .= "Content-type: text/plain;charset=\"utf-8\" \n";
-	$multipart_text .= "Content-transfer-encoding: 7bit \n";
+	$multipart_text .= "Content-transfer-encoding: 8bit \n";
 	
 	$multipart_html = "--$mime_boundary \n";
 	$multipart_html .= "Content-Type: text/html; charset=\"iso-8859-1\" \n";
 	$multipart_html .= "Content-Transfer-Encoding: quoted-printable \n";
 	
-	$template_data = array('to' => $to_email_addr, 'template' => 'alert_mailout_multipart');
-	$template_merge = array('MIMEBOUNDARY'=>$mime_boundary, 'MIMEBOUNDARY_TEXT' => $multipart_text, 'TEXTMESSAGE' => $email_text, 'MIMEBOUNDARY_HTML' => $multipart_html, 'HTMLMESSAGE' => $email_html);
+	$template_data = array('to' => $to_email_addr, 'template' => 'alert_mailout_multipart', 'MIMEBOUNDARY'=>$mime_boundary);
+	$template_merge = array('MIMEBOUNDARY_TEXT' => $multipart_text, 'TEXTMESSAGE' => $email_text, 'MIMEBOUNDARY_HTML' => $multipart_html, 'HTMLMESSAGE' => $email_html);
 	if (!$nomail) {
 		$success = send_template_email($template_data, $template_merge, true); // true = "Precedence: bulk"
 		mlog("sent ... ");
