@@ -70,7 +70,7 @@ $sentemails = 0;
 $LIVEALERTS = new ALERT;
 
 $current_email_addr = '';
-$email_body = '';
+$email_plaintext = '';
 $globalsuccess = 1;
 
 // Fetch all confirmed, non-deleted alerts
@@ -98,10 +98,10 @@ foreach ($alertdata as $alertitem) {
 	$criteria_batch = $criteria_raw . " " . $batch_query_fragment;
 
 	if ($alert_email_addr != $current_email_addr) {
-		if ($email_body)
-			write_and_send_email($current_email_addr, $user_id, $email_body);
+		if ($email_plaintext)
+			write_and_send_email($current_email_addr, $user_id, $email_plaintext);
 		$current_email_addr = $alert_email_addr;
-		$email_body = '';
+		$email_plaintext = '';
 		$q = $db->query('SELECT user_id FROM users WHERE email = \''.mysql_escape_string($alert_email_addr)."'");
 		if ($q->rows() > 0) {
 			$user_id = $q->field(0, 'user_id');
@@ -144,7 +144,6 @@ foreach ($alertdata as $alertitem) {
 
 	if (isset($search_result_data['rows']) && count($search_result_data['rows']) > 0) {
 		usort($search_result_data['rows'], 'sort_by_stuff'); // Sort results into order, by major, then date, then hpos
-		$o = array(); 
 		$major = 0; 
 		$count = array(); 
 		$total = 0;
@@ -154,7 +153,6 @@ foreach ($alertdata as $alertitem) {
 			if ($major != $row['major']) {
 				$count[$major] = $total; $total = 0;
 				$major = $row['major'];
-				$o[$major] = '';
 				$results_for_email[$major]=array();  // new array to hold the results to be sent
 				$k = 3;
 			}
@@ -174,13 +172,7 @@ foreach ($alertdata as $alertitem) {
 				if (isset($row['speaker']) && count($row['speaker']))
 				    $result['speaker'] = html_entity_decode(member_full_name($row['speaker']['house'], $row['speaker']['title'], $row['speaker']['first_name'], $row['speaker']['last_name'], $row['speaker']['constituency']));
 				
-				// use the parts, this just replaces the existing text email construction
-				$o[$major] .= $result['title'] . "\n";
-				$o[$major] .= $result['url'] . "\n";
-				if(isset($result['speaker'])) $o[$major] .= $result['speaker'] . " : ";
-				$o[$major] .= wordwrap($result['body'],72) . "\n\n";
-				
-				// save the result in part form, at this point it's redundant, not used
+				// save the result in part form
 				$results_for_email[$major][$k]=$result;
 			}
 			$total++;
@@ -191,22 +183,28 @@ foreach ($alertdata as $alertitem) {
 			// Add data to email_text
 			$desc = trim(html_entity_decode($search_result_data['searchdescription']));
 			$deschead = ucfirst(str_replace('containing ', '', $desc));
-			foreach ($o as $major => $body) {
-				if ($body) {
-					$heading = $deschead . ' : ' . $count[$major] . ' ' . $sects[$major] . ($count[$major]!=1?'s':'');
-					$email_body .= "$heading\n".str_repeat('=',strlen($heading))."\n\n";
+			foreach ($results_for_email as $major => $theseresults) {
+				$heading = $deschead . ' : ' . $count[$major] . ' ' . $sects[$major] . ($count[$major]!=1?'s':'');
+				$email_plaintext .= "$heading\n";
+				$email_plaintext .= str_repeat('=',strlen($heading))."\n\n";
 					if ($count[$major] > 3) {
-						$email_body .= "There are more results than we have shown here. See more:\nhttp://www.openaustralia.org/search/?s=".urlencode($criteria_raw)."+section:".$sects_short[$major]."&o=d\n\n";
+						$email_plaintext .= "There are more results than we have shown here. See more:\nhttp://www.openaustralia.org/search/?s=".urlencode($criteria_raw)."+section:".$sects_short[$major]."&o=d\n\n";
 					}
-					$email_body .= $body;
+				foreach ($theseresults as $result) {
+					if ($result['body']) {
+						$email_plaintext .= $result['title'] . "\n";
+						$email_plaintext .= $result['url'] . "\n";
+						$email_plaintext .= ($result['speaker'] ? $result['speaker'] . " : " : "");
+						$email_plaintext .= $result['body'] ."\n\n";
+					}
 				}
 			}
-			$email_body .= "To unsubscribe from your alert for items " . $desc . ", please use:\nhttp://www.openaustralia.org/D/" . $alertitem['alert_id'] . '-' . $alertitem['registrationtoken'] . "\n\n";
+			$email_plaintext .= "To unsubscribe from your alert for items " . $desc . ", please use:\nhttp://www.openaustralia.org/D/" . $alertitem['alert_id'] . '-' . $alertitem['registrationtoken'] . "\n\n";
 		}
 	}
 }
-if ($email_body)
-	write_and_send_email($current_email_addr, $user_id, $email_body);
+if ($email_plaintext)
+	write_and_send_email($current_email_addr, $user_id, $email_plaintext);
 
 mlog("\n");
 
@@ -238,19 +236,19 @@ function sort_by_stuff($a, $b) {
 	return ($a['hpos'] > $b['hpos']) ? 1 : -1;
 }
 
-function write_and_send_email($email_addr, $user_id, $email_body) {
+function write_and_send_email($email_addr, $user_id, $email_plaintext) {
 	global $globalsuccess, $sentemails, $nomail, $start_time;
 
-	$email_body .= '===================='."\n\n";
+	$email_plaintext .= '===================='."\n\n";
 	if ($user_id) {
-		$email_body .= "As a registered user, visit http://www.openaustralia.org/user/\nto unsubscribe from, or manage, your alerts.\n";
+		$email_plaintext .= "As a registered user, visit http://www.openaustralia.org/user/\nto unsubscribe from, or manage, your alerts.\n";
 	} else {
-		$email_body .= "If you register on the site, you will be able to manage your\nalerts there as well as post comments. :)\n";
+		$email_plaintext .= "If you register on the site, you will be able to manage your\nalerts there as well as post comments. :)\n";
 	}
 	$sentemails++;
 	mlog("SEND $sentemails : Sending email to $email_addr ... ");
 	$template_data = array('to' => $email_addr, 'template' => 'alert_mailout');
-	$template_merge = array('DATA' => $email_body);
+	$template_merge = array('DATA' => $email_plaintext);
 	if (!$nomail) {
 		$success = send_template_email($template_data, $template_merge, true); // true = "Precedence: bulk"
 		mlog("sent ... ");
@@ -260,7 +258,7 @@ function write_and_send_email($email_addr, $user_id, $email_body) {
 			sleep(1);
 		}
 	} else {
-		mlog($email_body);
+		mlog($email_plaintext);
 		$success = 1;
 	}
 	mlog("done\n");
