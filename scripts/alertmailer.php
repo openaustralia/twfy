@@ -16,13 +16,13 @@ include_once INCLUDESPATH . 'easyparliament/member.php';
 $global_start = getmicrotime();
 $db = new ParlDB;
 
-# Get current value of latest batch
+// Get current value of latest batch
 $q = $db->query('SELECT max(indexbatch_id) as max_batch_id FROM indexbatch');
 $max_batch_id = $q->field(0, 'max_batch_id');
 mlog("max_batch_id: " . $max_batch_id . "\n");
 
-# Last sent is timestamp of last alerts gone out.
-# Last batch is the search index batch number last alert went out to.
+// Last sent is timestamp of last alerts gone out.
+// Last batch is the search index batch number last alert went out to.
 $lastsent = file('alerts-lastsent');
 $lastupdated = trim($lastsent[0]);
 if (!$lastupdated) $lastupdated = strtotime('00:00 today');
@@ -30,8 +30,8 @@ $lastbatch = trim($lastsent[1]);
 if (!$lastbatch) $lastbatch = 0;
 mlog("lastupdated: $lastupdated lastbatch: $lastbatch\n");
 
-# Construct query fragment to select search index batches which
-# have been made since last time we ran
+// Construct query fragment to select search index batches which
+// have been made since last time we ran
 $batch_query_fragment = "";
 for ($i=$lastbatch + 1; $i <= $max_batch_id; $i++) {
 	$batch_query_fragment .= "batch:$i ";
@@ -39,7 +39,7 @@ for ($i=$lastbatch + 1; $i <= $max_batch_id; $i++) {
 $batch_query_fragment = trim($batch_query_fragment);
 mlog("batch_query_fragment: " . $batch_query_fragment . "\n");
 
-# For testing purposes, specify nomail on command line to not send out emails
+// For testing purposes, specify nomail on command line to not send out emails
 $nomail = false;
 $onlyemail_addr = '';
 $fromemail_addr = '';
@@ -73,12 +73,12 @@ $current_email_addr = '';
 $email_body = '';
 $globalsuccess = 1;
 
-# Fetch all confirmed, non-deleted alerts
+// Fetch all confirmed, non-deleted alerts
 $confirmed = 1; $deleted = 0;
 $alertdata = $LIVEALERTS->fetch($confirmed, $deleted);
 $alertdata = $alertdata['data'];
 
-$DEBATELIST = new DEBATELIST; # Nothing debate specific, but has to be one of them
+$DEBATELIST = new DEBATELIST; // Nothing debate specific, but has to be one of them
 
 $sects = array('', 'House of Representatives debate', 'Westminster Hall debate', 'Written Answer', 'Written Ministerial Statement', 'Northern Ireland Assembly debate');
 $sects[101] = 'Senate debate';
@@ -113,47 +113,47 @@ foreach ($alertdata as $alertitem) {
 		mlog("\nEMAIL: $alert_email_addr, uid $user_id; memory usage : ".memory_get_usage()."\n");
 	}
 
-	$data = null;
+	$search_result_data = null;
 	if (!isset($results[$criteria_batch])) {
 		mlog("  ALERT $active/$outof QUERY $queries : Xapian query '$criteria_batch'");
 		$start = getmicrotime();
 		$SEARCHENGINE = new SEARCHENGINE($criteria_batch);
-		#mlog("query_remade: " . $SEARCHENGINE->query_remade() . "\n");
+		//mlog("query_remade: " . $SEARCHENGINE->query_remade() . "\n");
 		$args = array(
-			's' => $criteria_raw, # Note: use raw here for URLs, whereas search engine has batch
-			'threshold' => $lastupdated, # Return everything added since last time this script was run
+			's' => $criteria_raw, // Note: use raw here for URLs, whereas search engine has batch
+			'threshold' => $lastupdated, // Return everything added since last time this script was run
 			'o' => 'c',
 			'num' => 1000, // this is limited to 1000 in hansardlist.php anyway
 			'pop' => 1,
-			'e' => 1 # Don't escape ampersands
+			'e' => 1 // Don't escape ampersands
 		);
-		$data = $DEBATELIST->_get_data_by_search($args);
-		# add to cache (but only for speaker queries, which are commonly repeated)
+		$search_result_data = $DEBATELIST->_get_data_by_search($args);
+		// add to cache (but only for speaker queries, which are commonly repeated)
 		if (preg_match('#^speaker:\d+$#', $criteria_raw, $m)) {
 			mlog(", caching");
-			$results[$criteria_batch] = $data;
+			$results[$criteria_batch] = $search_result_data;
 		}
-		#		unset($SEARCHENGINE);
-		$total_results = $data['info']['total_results'];
+		//		unset($SEARCHENGINE);
+		$total_results = $search_result_data['info']['total_results'];
 		$queries++;
 		mlog(", hits ".$total_results.", time ".(getmicrotime()-$start)."\n");
 	} else {
 		mlog("  ACTION $active/$outof CACHE HIT : Using cached result for '$criteria_batch'\n");
-		$data = $results[$criteria_batch];
+		$search_result_data = $results[$criteria_batch];
 	}
 
-	if (isset($data['rows']) && count($data['rows']) > 0) {
-		usort($data['rows'], 'sort_by_stuff'); # Sort results into order, by major, then date, then hpos
+	if (isset($search_result_data['rows']) && count($search_result_data['rows']) > 0) {
+		usort($data['rows'], 'sort_by_stuff'); // Sort results into order, by major, then date, then hpos
 		$o = array(); $major = 0; $count = array(); $total = 0;
 		$any_content = false;
-		foreach ($data['rows'] as $row) {
+		foreach ($search_result_data['rows'] as $row) {
 			if ($major != $row['major']) {
 				$count[$major] = $total; $total = 0;
 				$major = $row['major'];
 				$o[$major] = '';
 				$k = 3;
 			}
-			#mlog($row['major'] . " " . $row['gid'] ."\n");
+			//mlog($row['major'] . " " . $row['gid'] ."\n");
 			if ($row['hdate'] < '2008-01-14') continue;
 			$q = $db->query('SELECT gid_from FROM gidredirect WHERE gid_to=\'uk.org.publicwhip/' . $sects_short[$major] . '/' . mysql_escape_string($row['gid']) . "'");
 			if ($q->rows() > 0) continue;
@@ -173,7 +173,7 @@ foreach ($alertdata as $alertitem) {
 		$count[$major] = $total;
 
 		if ($any_content) {
-			# Add data to email_text
+			// Add data to email_text
 			$desc = trim(html_entity_decode($data['searchdescription']));
 			$deschead = ucfirst(str_replace('containing ', '', $desc));
 			foreach ($o as $major => $body) {
@@ -237,10 +237,10 @@ function write_and_send_email($email_addr, $user_id, $email_body) {
 	$template_data = array('to' => $email_addr, 'template' => 'alert_mailout');
 	$template_merge = array('DATA' => $email_body);
 	if (!$nomail) {
-		$success = send_template_email($template_data, $template_merge, true); # true = "Precedence: bulk"
+		$success = send_template_email($template_data, $template_merge, true); // true = "Precedence: bulk"
 		mlog("sent ... ");
-		# sleep if time between sending mails is less than a certain number of seconds on average
-		if (((time() - $start_time) / $sentemails) < 0.5 ) { # number of seconds per mail not to be quicker than
+		// sleep if time between sending mails is less than a certain number of seconds on average
+		if (((time() - $start_time) / $sentemails) < 0.5 ) { // number of seconds per mail not to be quicker than
 			mlog("pausing ... ");
 			sleep(1);
 		}
