@@ -144,13 +144,18 @@ foreach ($alertdata as $alertitem) {
 
 	if (isset($search_result_data['rows']) && count($search_result_data['rows']) > 0) {
 		usort($search_result_data['rows'], 'sort_by_stuff'); // Sort results into order, by major, then date, then hpos
-		$o = array(); $major = 0; $count = array(); $total = 0;
+		$o = array(); 
+		$major = 0; 
+		$count = array(); 
+		$total = 0;
+		$results_for_email = array(); // used as an array of array of result parts
 		$any_content = false;
 		foreach ($search_result_data['rows'] as $row) {
 			if ($major != $row['major']) {
 				$count[$major] = $total; $total = 0;
 				$major = $row['major'];
 				$o[$major] = '';
+				$results_for_email[$major]=array();  // new array to hold the results to be sent
 				$k = 3;
 			}
 			//mlog($row['major'] . " " . $row['gid'] ."\n");
@@ -160,13 +165,23 @@ foreach ($alertdata as $alertitem) {
 			--$k;
 			if ($k>=0) {
 				$any_content = true;
+				$result=array(); // this will contain a dict of result parts
 				$parentbody = str_replace(array('&#8212;','<span class="hi">','</span>'), array('-','*','*'), $row['parent']['body']);
-				$body = str_replace(array('&#163;','&#8212;','<span class="hi">','</span>'), array("\xa3",'-','*','*'), $row['body']);
-				if (isset($row['speaker']) && count($row['speaker'])) $body = html_entity_decode(member_full_name($row['speaker']['house'], $row['speaker']['title'], $row['speaker']['first_name'], $row['speaker']['last_name'], $row['speaker']['constituency'])) . ': ' . $body;
-
-				$body = wordwrap($body, 72);
-				$o[$major] .= $parentbody . ' (' . format_date($row['hdate'], SHORTDATEFORMAT) . ")\nhttp://www.openaustralia.org" . $row['listurl'] . "\n";
-				$o[$major] .= $body . "\n\n";
+				// gather the parts
+				$result['title'] = $parentbody . ' (' . format_date($row['hdate'], SHORTDATEFORMAT) . ')';
+				$result['body'] = str_replace(array('&#163;','&#8212;','<span class="hi">','</span>'), array("\xa3",'-','*','*'), $row['body']);
+				$result['url'] = 'http://www.openaustralia.org' . $row['listurl'];
+				if (isset($row['speaker']) && count($row['speaker']))
+				    $result['speaker'] = html_entity_decode(member_full_name($row['speaker']['house'], $row['speaker']['title'], $row['speaker']['first_name'], $row['speaker']['last_name'], $row['speaker']['constituency']));
+				
+				// use the parts, this just replaces the existing text email construction
+				$o[$major] .= $result['title'] . "\n";
+				$o[$major] .= $result['url'] . "\n";
+				if(isset($result['speaker'])) $o[$major] .= $result['speaker'] . " : ";
+				$o[$major] .= wordwrap($result['body'],72) . "\n\n";
+				
+				// save the result in part form, at this point it's redundant, not used
+				$results_for_email[$major][$k]=$result;
 			}
 			$total++;
 		}
