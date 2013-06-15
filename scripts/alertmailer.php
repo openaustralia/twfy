@@ -166,10 +166,9 @@ foreach ($alertdata as $alertitem) {
 			if ($k>=0) {
 				$any_content = true;
 				$result=array(); // this will contain a dict of result parts
-				$parentbody = str_replace(array('&#8212;','<span class="hi">','</span>'), array('-','*','*'), $row['parent']['body']);
 				// gather the parts
-				$result['title'] = $parentbody . ' (' . format_date($row['hdate'], SHORTDATEFORMAT) . ')';
-				$result['body'] = str_replace(array('&#163;','&#8212;','<span class="hi">','</span>'), array("\xa3",'-','*','*'), $row['body']);
+				$result['title'] = $row['parent']['body'] . ' (' . format_date($row['hdate'], SHORTDATEFORMAT) . ')';
+				$result['body'] = $row['body'];
 				$result['url'] = 'http://www.openaustralia.org' . $row['listurl'];
 				if (isset($row['speaker']) && count($row['speaker']))
 				    $result['speaker'] = html_entity_decode(member_full_name($row['speaker']['house'], $row['speaker']['title'], $row['speaker']['first_name'], $row['speaker']['last_name'], $row['speaker']['constituency']));
@@ -198,14 +197,16 @@ foreach ($alertdata as $alertitem) {
 				foreach ($theseresults as $result) {
 					if ($result['body']) {
 						//plain text
-						$email_plaintext .= $result['title'] . "\n";
+						$email_plaintext .= str_replace(array('&#8212;','<span class="hi">','</span>'), array('-','*','*'), $result['title']) . "\n";
 						$email_plaintext .= $result['url'] . "\n";
 						$email_plaintext .= ($result['speaker'] ? $result['speaker'] . " : " : "");
-						$email_plaintext .= $result['body'] ."\n\n";
+						$email_plaintext .= str_replace(array('&#163;','&#8212;','<span class="hi">','</span>'), array("\xa3",'-','*','*'), $result['body']) ."\n\n";
 						//html
-						$email_html .= "<p><a href='" . $result['url'] . "'>" . $result['title'] . "</a></p>\n";
+						$cleaned_title = str_replace(array('&#8212;','<span class="hi">','</span>'), array('-','<strong>','</strong>'), $result['title']) . "\n";
+						$email_html .= "<p><a href='" . $result['url'] . "'>" . $cleaned_title . "</a></p>\n";
 						$email_html .= ($result['speaker'] ? '<p>' . $result['speaker'] . '</p>' . "\n" : "");
-						$email_html .= '<p>' . $result['body'] . '</p><br />' . "\n";
+						$tagged_alert_term_body=str_replace(array('&#163;','&#8212;','<span class="hi">','</span>'), array("\xa3",'-','<strong>','</strong>'), $result['body']);
+						$email_html .= '<p>' . $tagged_alert_term_body . '</p><br />' . "\n";
 					}
 				}
 			}
