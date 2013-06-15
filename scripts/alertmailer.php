@@ -262,7 +262,7 @@ function write_and_send_email($to_email_addr, $user_id, $email_plaintext, $email
 		$email_html .= "<p>If you <a url='http://www.openaustralia.org/user/?pg=join'>register online</a> you will be able to manage you alerts, and post comments too.</a></p>\n";
 	}
 	$sentemails++;
-	mlog("SEND $sentemails : Sending email to $email_addr ... ");
+	mlog("SEND $sentemails : Sending email to $to_email_addr ... ");
 	
 	// the mime spec says a unique is is needed for the boundary
 	// I'm not sure if it means unique in the message, or unique mail system

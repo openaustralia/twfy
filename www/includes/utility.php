@@ -710,7 +710,7 @@ function send_template_email ($data, $merge, $bulk = false) {
 	
 	// Send it!  if we used the multipart template, use the multipart send fuction
 	if($data['template']=='alert_mailout_multipart')
-		$success = send_multipart_email ($data['to'], $subject, $email_body, $merge['MIMEBOUNDARY'], $bulk);
+		$success = send_multipart_email ($data['to'], $subject, $emailtext, $merge['MIMEBOUNDARY'], $bulk);
 	else
 		$success = send_email ($data['to'], $subject, $emailtext, $bulk);
 
