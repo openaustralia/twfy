@@ -215,8 +215,8 @@ foreach ($alertdata as $alertitem) {
 		}
 	}
 }
-if ($email_plaintext)
-	write_and_send_email($current_email_addr, $user_id, $email_plaintext);
+if ($email_plaintext && $email_html)  //somewhat unessesary but clearer, for someone working on this fuction
+	write_and_send_email($current_email_addr, $user_id, $email_plaintext, $email_html);
 
 mlog("\n");
 
@@ -248,19 +248,37 @@ function sort_by_stuff($a, $b) {
 	return ($a['hpos'] > $b['hpos']) ? 1 : -1;
 }
 
-function write_and_send_email($email_addr, $user_id, $email_plaintext) {
+function write_and_send_email($to_email_addr, $user_id, $email_plaintext, $email_html) {
 	global $globalsuccess, $sentemails, $nomail, $start_time;
 
 	$email_plaintext .= '===================='."\n\n";
-	if ($user_id) {
-		$email_plaintext .= "As a registered user, visit http://www.openaustralia.org/user/\nto unsubscribe from, or manage, your alerts.\n";
+	if ($user_id) {  // change the message depending on if the alert user is a registered user
+		$email_plaintext .= "As a registered user, visit http://www.openaustralia.org/user/\n";
+		$email_plaintext .= "to unsubscribe from, or manage, your alerts.\n";
+		$email_html .= "<p>As a registered user, you can <a url='http://www.openaustralia.org/user/'>manage your alerts online</a>.\n";
 	} else {
-		$email_plaintext .= "If you register on the site, you will be able to manage your\nalerts there as well as post comments. :)\n";
+		$email_text .= "If you register on the site, you will be able to manage your\n";
+		$email_text .= " alerts there as well as post comments. :)\n";
+		$email_html .= "<p>If you <a url='http://www.openaustralia.org/user/?pg=join'>register online</a> you will be able to manage you alerts, and post comments too.</a></p>\n";
 	}
 	$sentemails++;
 	mlog("SEND $sentemails : Sending email to $email_addr ... ");
-	$template_data = array('to' => $email_addr, 'template' => 'alert_mailout');
-	$template_merge = array('DATA' => $email_plaintext);
+	
+	// the mime spec says a unique is is needed for the boundary
+	// I'm not sure if it means unique in the message, or unique mail system
+	// I opted to make it unique in the system (reasonably)
+	$mime_boundary=uniqid('mime-boundary-'); // we pass this on to the template function, to be used in the email header (utility.php)
+	
+	$multipart_text  = "--$mime_boundary \n";
+	$multipart_text .= "Content-type: text/plain;charset=\"utf-8\" \n";
+	$multipart_text .= "Content-transfer-encoding: 7bit \n";
+	
+	$multipart_html = "--$mime_boundary \n";
+	$multipart_html .= "Content-Type: text/html; charset=\"iso-8859-1\" \n";
+	$multipart_html .= "Content-Transfer-Encoding: quoted-printable \n";
+	
+	$template_data = array('to' => $to_email_addr, 'template' => 'alert_mailout_multipart');
+	$template_merge = array('MIMEBOUNDARY'=>$mime_boundary, 'MIMEBOUNDARY_TEXT' => $multipart_text, 'TEXTMESSAGE' => $email_plaintext, 'MIMEBOUNDARY_HTML' => $multipart_html, 'HTMLMESSAGE' => $email_html);
 	if (!$nomail) {
 		$success = send_template_email($template_data, $template_merge, true); // true = "Precedence: bulk"
 		mlog("sent ... ");
