@@ -193,7 +193,7 @@ foreach ($alertdata as $alertitem) {
 				if ($count[$major] > 3) {
 					$url_seemore="http://www.openaustralia.org/search/?s=".urlencode($criteria_raw)."+section:".$sects_short[$major]."&o=d";
 					$email_plaintext .= "There are more results than we have shown here. See more: \n $url_seemore \n\n";
-					$email_html .= "<p>There are more results than we have shown here. <a url='$url_seemore'>See more</a></p>\n";
+					$email_html .= "<p>There are more results than we have shown here. <a href='$url_seemore'>See more</a></p>\n";
 				}
 				foreach ($theseresults as $result) {
 					if ($result['body']) {
@@ -203,7 +203,7 @@ foreach ($alertdata as $alertitem) {
 						$email_plaintext .= ($result['speaker'] ? $result['speaker'] . " : " : "");
 						$email_plaintext .= $result['body'] ."\n\n";
 						//html
-						$email_html .= "<p><a url='" . $result['url'] . "'>" . $result['title'] . "</a></p>\n";
+						$email_html .= "<p><a href='" . $result['url'] . "'>" . $result['title'] . "</a></p>\n";
 						$email_html .= ($result['speaker'] ? '<p>' . $result['speaker'] . '</p>' . "\n" : "");
 						$email_html .= '<p>' . $result['body'] . '</p><br />' . "\n";
 					}
@@ -211,7 +211,7 @@ foreach ($alertdata as $alertitem) {
 			}
 			$url_unsubscribe="http://www.openaustralia.org/D/" . $alertitem['alert_id'] . '-' . $alertitem['registrationtoken'];
 			$email_plaintext .= "To unsubscribe from your alert for items " . $desc . ", please use:\n $url_unsubscribe \n\n";
-			$email_html .= "<p><a url='" . $url_unsubscribe . "'>Unsubscibe alerts " . $desc . "</a></p>\n";
+			$email_html .= "<p><a href='" . $url_unsubscribe . "'>Unsubscibe alerts " . $desc . "</a></p>\n";
 		}
 	}
 }
@@ -255,11 +255,11 @@ function write_and_send_email($to_email_addr, $user_id, $email_plaintext, $email
 	if ($user_id) {  // change the message depending on if the alert user is a registered user
 		$email_plaintext .= "As a registered user, visit http://www.openaustralia.org/user/\n";
 		$email_plaintext .= "to unsubscribe from, or manage, your alerts.\n";
-		$email_html .= "<p>As a registered user, you can <a url='http://www.openaustralia.org/user/'>manage your alerts online</a>.\n";
+		$email_html .= "<p>As a registered user, you can <a href='http://www.openaustralia.org/user/'>manage your alerts online</a>.\n";
 	} else {
 		$email_text .= "If you register on the site, you will be able to manage your\n";
 		$email_text .= " alerts there as well as post comments. :)\n";
-		$email_html .= "<p>If you <a url='http://www.openaustralia.org/user/?pg=join'>register online</a> you will be able to manage you alerts, and post comments too.</a></p>\n";
+		$email_html .= "<p>If you <a href='http://www.openaustralia.org/user/?pg=join'>register online</a> you will be able to manage you alerts, and post comments too.</a></p>\n";
 	}
 	$sentemails++;
 	mlog("SEND $sentemails : Sending email to $to_email_addr ... ");

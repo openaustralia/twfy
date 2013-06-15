@@ -756,8 +756,8 @@ function send_multipart_email ($to, $subject, $message, $mime_boundary, $bulk = 
 	$headers .= "Content-Type: multipart/alternative;boundary=" . $mime_boundary . "\r\n";
 	twfy_debug('EMAIL', "Sending multipart email to $to with subject of '$subject'");
 	$success = mail ($to, $subject, $message, $headers);
-	//file_put_contents('/srv/www/openaustralia/twfy/scripts/mails/multipart.html',$message);
-	//file_put_contents('/srv/www/openaustralia/twfy/scripts/mails/multipart_header',$headers);
+	file_put_contents('/srv/www/openaustralia/twfy/scripts/mails/multipart.html',$message);
+	file_put_contents('/srv/www/openaustralia/twfy/scripts/mails/multipart_header',$headers);
 	return $success;
 }
 

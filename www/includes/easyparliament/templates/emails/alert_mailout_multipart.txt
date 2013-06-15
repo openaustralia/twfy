@@ -25,7 +25,7 @@ OpenAustralia.org
 <tr style='border-collapse: collapse'><td style='border-collapse: collapse; word-wrap: break-word;'>
 <p>-------------------------------------------------------------------------</p>
 <p>You like finding out what's happening in Parliament, what about what's happening in government? Our exciting new project allows you to do exactly that!</p>
-<p>Introducing <a url='http://tinyurl.com/righttoknowa'>Right To Know</a></p>
+<p>Introducing <a href='http://tinyurl.com/righttoknowa'>Right To Know</a></p>
 <p>-------------------------------------------------------------------------</p>
 </td></tr>
 
