@@ -744,6 +744,21 @@ function send_email ($to, $subject, $message, $bulk = false) {
 	return $success;
 }
 
+function send_multipart_email ($to, $subject, $message, $mime_boundary, $bulk = false) {
+	$headers  ="X-Mailer: PHP/" . phpversion() . "\r\n";
+	$headers .= "MIME-Version: 1.0 \r\n";
+	if($bulk) $headers .="Precedence: bulk \r\n";
+	$headers .= "From: OpenAustralia.org <" . CONTACTEMAIL . "> \r\n";
+	$headers .= "Reply-To: OpenAustralia.org <" . CONTACTEMAIL . "> \r\n";
+	$headers .= "Content-Type: multipart/alternative;boundary=" . $mime_boundary . "\r\n";
+	twfy_debug('EMAIL', "Sending multipart email to $to with subject of '$subject'");
+	$success = mail ($to, $subject, $message, $headers);
+	//file_put_contents('/srv/www/openaustralia/twfy/scripts/mails/multipart.html',$message);
+	//file_put_contents('/srv/www/openaustralia/twfy/scripts/mails/multipart_header',$headers);
+	return $success;
+}
+
+
 
 
 ///////////////////////////////
