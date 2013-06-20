@@ -1060,17 +1060,17 @@ function display_user ($user_id="") {
 			$out = '';
 			for ($i=0; $i<$q->rows(); ++$i) {
 				$row = $q->row($i);
-				$criteria = explode(' ',$row['criteria']);
-				$ccc = array();
-				foreach ($criteria as $c) {
-					if (preg_match('#^speaker:(\d+)#',$c,$m)) {
+				$alert_criteria_terms = explode(' ',$row['criteria']);
+				$display_terms = array();
+				foreach ($alert_criteria_terms as $criteria_term) {
+					if (preg_match('#^speaker:(\d+)#',$criteria_term,$m)) {
 						$MEMBER = new MEMBER(array('person_id'=>$m[1]));
-						$ccc[] = 'spoken by ' . $MEMBER->full_name();
+						$display_terms[] = 'spoken by ' . $MEMBER->full_name();
 					} else {
-						$ccc[] = $c;
+						$display_terms[] = $criteria_term;
 					}
 				}
-				$criteria = join(' ',$ccc);
+				$display_criteria = join(' ',$display_terms);
 				$token = $row['alert_id'] . '-' . $row['registrationtoken'];
 				if (!$row['confirmed']) {
 					$action = '<a href="'.WEBPATH.'A/'.$token.'">Confirm</a>';
@@ -1079,7 +1079,7 @@ function display_user ($user_id="") {
 				} else {
 					$action = '<form action="'.WEBPATH.'alert/delete/" method="post"><input type="hidden" name="t" value="'.$token.'"><input type="submit" value="Unsubscribe"></form>';
 				}
-				$out .= '<tr><td>'.$criteria.'</td><td>'.$action.'</td></tr>';
+				$out .= '<tr><td>'.$display_criteria.'</td><td>'.$action.'</td></tr>';
 			}
 			print '<p>To add a new alert, simply visit a Representative or Senator\'s page or conduct a search &#8212; to be given the option of turning them into alerts automatically &#8212; or visit <a href="'.WEBPATH.'alert/">the manual addition page</a>.</p>';
 			if ($out) {
