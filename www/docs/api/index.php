@@ -201,7 +201,7 @@ to use the service on a large scale.</p>
 <ul>
     <li><a href="source/oaapi.phps">PHP source</a> and <a href="source/test.phps">example</a> (thanks to Mark Kinkade for adapting <a href="https://github.com/rubenarakelyan/twfyapi/">Ruben Arakelyan's TWFY bindings</a>)</li>
     <li><a href="https://github.com/henare/openaustralia-api/">Ruby</a>, by <a href="http://www.acooper.org/">Alex Cooper</a>, updated by <a href="http://www.henaredegan.com/">Henare Degan</a></li>
-    <li><a href="https://github.com/rubenarakelyan/twfyapi/">PHP &amp; ASP.NET</a>, by <a href="http://www.rubenarakelyan.com/">Ruben Arakelyan</a></li>
+    <li><a href="https://github.com/rubenarakelyan/twfyapi/">PHP &amp; ASP.NET</a>, by <a href="http://ra.me.uk/">Ruben Arakelyan</a></li>
 </ul>
 
 <p>In adapting the API of TheyWorkForYou to OpenAustralia we've had to make a number of modifications which means that the language bindings developed for the <a href="http://theyworkforyou.com/api">TheyWorkForYou API</a> won't directly work with the OpenAustralia API. If anyone wishes to adapt them or write new bindings, please
