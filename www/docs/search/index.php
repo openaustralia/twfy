@@ -293,7 +293,7 @@ function find_constituency ($args) {
 		} else {
             $query = "select distinct
                     (select name from constituency where cons_id = o.cons_id and main_name) as name 
-                from constituency AS o where name like '%" . mysql_escape_string($try) . "%'
+                from constituency AS o where name like '%" . mysql_real_escape_string($try) . "%'
                 and from_date <= date(now()) and date(now()) <= to_date";
             $q = $db->query($query);
             for ($n=0; $n<$q->rows(); $n++) {
