@@ -1595,6 +1595,7 @@ pr()//-->
 						
 						
 						<ul class="jumpers">
+						<li><a href="#votingrecord">Voting record</a></li>
 						<li><a href="#numbers">Numbers</a></li>
 <?php		if ($member['current_member'][1] || $member['current_member'][2] ) { ?>
 						<li><a href="#register">Register of Interests</a></li>
@@ -1612,9 +1613,6 @@ pr()//-->
 						</ul>
 <?php
 		$this->block_end();
-
-# Big don't-print for SF MPs
-if (0) {
 
 		// Voting Record.
 		?> <a name="votingrecord"></a> <?php
@@ -1799,7 +1797,6 @@ and has had no written questions answered for which we know the department or su
 		$this->block_end();
 
 		}
-	}
 
 	if (!in_array(1, $member['houses']) || $member['party'] != 'Sinn Fein') {
 
