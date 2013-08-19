@@ -1639,8 +1639,7 @@ pr()//-->
 				<?=$dmpdesc?>
 			<?=$desc?>. 
 <small class="unneededprintlinks"> 
-<a href="<?= PUBLICWHIP_HOST ?>/mp.php?mpid=<?=$member['member_id']?>&amp;dmp=<?=$dreamid?>">votes</a>,
-<a href="<?=$search_link?>">speeches</a>
+<a href="<?= PUBLICWHIP_HOST ?>/mp.php?mpid=<?=$member['member_id']?>&amp;dmp=<?=$dreamid?>">votes</a>
 </small>
 
 				</li>
