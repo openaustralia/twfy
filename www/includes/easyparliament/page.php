@@ -1655,8 +1655,8 @@ pr()//-->
 	<?
 		$got_dream = false;
 		$got_dream |= display_dream_comparison($extra_info, $member, 1, "<strong>marriage equality</strong>", false, "");
-		// Add extra policies you want to display here as per below example
-		// $got_dream |= display_dream_comparison($extra_info, $member, 2, "offshore processing of <strong>asylum seekers</strong>", false, "");
+		$got_dream |= display_dream_comparison($extra_info, $member, 2, "offshore processing of <strong>asylum seekers</strong>", false, "");
+		$got_dream |= display_dream_comparison($extra_info, $member, 3, "introducing a <strong>carbon tax</strong>", false, "");
 		if (!$got_dream) {
 			print "<li>" . $member['full_name'] . " has not voted enough in this parliament to have any scores.</li>";
 		}
