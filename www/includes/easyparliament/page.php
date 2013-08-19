@@ -1709,8 +1709,10 @@ pr()//-->
 		}
 		$this->block_end();
 
-		# Topics of interest only for MPs at the moment
-		if (in_array(1, $member['houses'])) {
+		// Topics of interest only for MPs at the moment
+		// if (in_array(1, $member['houses'])) {
+		// Disable topics of interest
+		if (0) {
 
 ?>	<a name="topics"></a>
 		<? $this->block_start(array('id'=>'topics', 'title'=>'Committees and topics of interest')); 
