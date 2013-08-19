@@ -109,8 +109,9 @@ if ($action{'pw'}) {
         # trident
         # TODO: Think about how these (esp no2id) might change now after election
         #foreach my $dreamid (219, 258, 358, 363, 826, 230, 367, 856, 811, 975, 996, 984) {
-        #        $twig->parseurl(mySociety::Config::get('PUBLICWHIP_HOST') . "/feeds/mpdream-info.xml?id=$dreamid");
-        #}
+        foreach my $dreamid (1, 2, 3) {
+               $twig->parseurl(mySociety::Config::get('PUBLICWHIP_HOST') . "/feeds/mpdream-info.xml?id=$dreamid");
+        }
 }
 
 if ($action{'expenses'}) {
