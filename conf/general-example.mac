@@ -134,3 +134,6 @@ define('PINGMYMAP_API_KEY', '0123456789abcdef0123456789abcdef');
 // *******************************************************************************
 // AddThis.com Sharing Analytics
 define('ADDTHIS_USERNAME', '');
+
+// Host to use when loading Public Whip data
+define('PUBLICWHIP_HOST', 'http://dev.publicwhip.org.au');

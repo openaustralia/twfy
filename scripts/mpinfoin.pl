@@ -101,8 +101,8 @@ if ($action{'wtt'}) {
 }
 
 if ($action{'pw'}) {
-        #$twig->parseurl("http://www.publicwhip.org.uk/feeds/mp-info.xml"); # i love twig
-        #$twig->parseurl("http://www.publicwhip.org.uk/feeds/mp-info.xml?house=lords"); # i love twig
+        $twig->parseurl(mySociety::Config::get('PUBLICWHIP_HOST') . "/feeds/mp-info.xml"); # i love twig
+        $twig->parseurl(mySociety::Config::get('PUBLICWHIP_HOST') . "/feeds/mp-info.xml?house=lords"); # i love twig
         # TODO: Add smoking, parliamentary scrutiny
         # Iraq war, terrorism law, Hunting, Foundation hospitals, gay vote,
         # no2id, top-up fees, abolish parliament, no smoking, Parliament FOI,
