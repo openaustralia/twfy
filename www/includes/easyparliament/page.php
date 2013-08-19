@@ -1649,10 +1649,7 @@ pr()//-->
 			}
 			return false;
 		}
-
-	if (isset($extra_info["public_whip_dreammp230_distance"]) || isset($extra_info["public_whip_dreammp996_distance"])) { # XXX
-		$displayed_stuff = 1; ?>
-
+?>
 
 	<p id="howvoted">How <?=$member['full_name']?> voted on key issues since 2001:</p>
 	<ul id="dreamcomparisons">
@@ -1678,8 +1675,6 @@ pr()//-->
 <p class="italic">
 <small>Read about <a href="<?=WEBPATH ?>help/#votingrecord">how the voting record is decided</a>.</small>
 </p>
-
-<? } ?>
 
 <?
 		// Links to full record at Guardian and Public Whip	
