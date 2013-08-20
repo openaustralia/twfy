@@ -1426,10 +1426,8 @@ pr()//-->
 			if ($party=='Speaker' || $party=='Deputy-Speaker' || $party=='President' || $party=='Deputy-President') {
 				$desc .= ', and ';
 				# XXX: Will go horribly wrong if something odd happens
-				if ($party=='Deputy-Speaker') {
-					$last = end($member['other_parties']);
-					$desc .= $last['from'] . ' ';
-				}
+				$last = end($member['other_parties']);
+				$desc .= $last['from'] . ' ';
 			}
 			$desc .= ' ';
 			if ($house==1) $desc .= 'Representative';
