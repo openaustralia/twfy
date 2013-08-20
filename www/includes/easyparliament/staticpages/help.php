@@ -70,11 +70,11 @@ If you want the complete, definitive record, go to the <a href="http://www.aph.g
 <!-- start new faq entry-->
 <dt><a name="votingrecord"></a>How is the voting record decided?</dt>
 <dd>
-<p>The voting record is not affected by what MPs and Peers have said, only how they
+<p>The voting record is not affected by what MPs and Senators have said, only how they
 <strong>voted</strong> in relation to that topic in the house - i.e. "aye" or
 "no".  Votes on each topic were examined, and strength of support determined
 based on these votes.  Follow the "votes" link next to each topic for details.
-Additionally, in many votes, MPs and Peers are told how to vote ('whipped') by their
+Additionally, in many votes, MPs and Senators are told how to vote ('whipped') by their
 parties. Since the Whip is secret, we have to assume, <a
 href="http://www.openaustralia.org/debate/?id=2005-02-07.1200.2">like the
 Speaker</a>, that all votes are free.  </P>
