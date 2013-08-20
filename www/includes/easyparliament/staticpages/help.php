@@ -5,6 +5,7 @@
 <li><a href="#cookie">What is your Cookie Policy?</a></li>
 <li><a href="#extreme">What's that weird 'urchin' javascript I spy in your page source?</a></li>
 <li><a href="#rss">What is RSS?</a></li>
+<li><a href="#votingrecord">How is the voting record decided?</a></li>
 <li><a href="#numbers">Why should I read in more depth than just the numbers?</a></li>
 <li><a href="#api">Do you have the data as a spreadsheet file, XML or in an API?</a></li>
 <li><a href="#regmem">What is the Register of Interests and how can I use it?</a></li>
@@ -66,7 +67,18 @@ If you want the complete, definitive record, go to the <a href="http://www.aph.g
 
 <!-- end old faq entry -->
 
-<!-- start new faq entry -->
+<!-- start new faq entry-->
+<dt><a name="votingrecord"></a>How is the voting record decided?</dt>
+<dd>
+<p>The voting record is not affected by what MPs and Peers have said, only how they
+<strong>voted</strong> in relation to that topic in the house - i.e. "aye" or
+"no".  Votes on each topic were examined, and strength of support determined
+based on these votes.  Follow the "votes" link next to each topic for details.
+Additionally, in many votes, MPs and Peers are told how to vote ('whipped') by their
+parties. Since the Whip is secret, we have to assume, <a
+href="http://www.openaustralia.org/debate/?id=2005-02-07.1200.2">like the
+Speaker</a>, that all votes are free.  </P>
+</dd>
 
 <dt><a name="numbers"></a>Why should I read in more depth than just the numbers?</dt>
 
