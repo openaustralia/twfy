@@ -1645,7 +1645,7 @@ pr()//-->
 			$record[] = '<a href="' . $extra_info['guardian_howtheyvoted'] . '" title="At The Guardian">well-known issues</a> <small>(from the Guardian)</small>';
 		}
 		if (isset($extra_info['public_whip_division_attendance']) && $extra_info['public_whip_division_attendance'] != 'n/a') { 
-			$record[] = '<a href="http://www.publicwhip.org.uk/mp.php?id=uk.org.publicwhip/member/' . $member['member_id'] . '&amp;showall=yes#divisions" title="At Public Whip">their full record</a>';
+			$record[] = '<a href="' . PUBLICWHIP_HOST . '/mp.php?id=uk.org.publicwhip/member/' . $member['member_id'] . '&amp;showall=yes#divisions" title="At Public Whip">their full record</a>';
 		}
 
 		if (count($record) > 0) {
@@ -1659,7 +1659,7 @@ pr()//-->
 		if (isset($extra_info['public_whip_rebellions']) && $extra_info['public_whip_rebellions'] != 'n/a') {	
 			$displayed_stuff = 1;
 	?>					<ul>
-							<li><a href="http://www.publicwhip.org.uk/mp.php?id=uk.org.publicwhip/member/<?=$member['member_id'] ?>#divisions" title="See more details at Public Whip">
+							<li><a href="<?= PUBLICWHIP_HOST ?>/mp.php?id=uk.org.publicwhip/member/<?=$member['member_id'] ?>#divisions" title="See more details at Public Whip">
                         <strong><?php echo htmlentities(ucfirst($extra_info['public_whip_rebel_description'])); ?> rebels</strong></a> against their party<?php
 			if (isset($extra_info['public_whip_rebelrank'])) {
 				echo " in this parliament"; /* &#8212; ";
@@ -1854,7 +1854,7 @@ and has had no written questions answered for which we know the department or su
 			$after_stuff .= '<br><em>Note SNP MPs do not vote on legislation not affecting Scotland.</em>';
 		}
 		if ($member['party'] != 'Sinn Fein') {
-#			$displayed_stuff |= display_stats_line('public_whip_division_attendance', 'Has voted in <a href="http://www.publicwhip.org.uk/mp.php?id=uk.org.publicwhip/member/' . $member['member_id'] . '&amp;showall=yes#divisions" title="See more details at Public Whip">', 'of vote', '</a> in parliament', $after_stuff, $extra_info);
+#			$displayed_stuff |= display_stats_line('public_whip_division_attendance', 'Has voted in <a href=" . PUBLICWHIP_HOST . "/mp.php?id=uk.org.publicwhip/member/' . $member['member_id'] . '&amp;showall=yes#divisions" title="See more details at Public Whip">', 'of vote', '</a> in parliament', $after_stuff, $extra_info);
 			$displayed_stuff |= display_stats_line('comments_on_speeches', 'People have made <a href="' . WEBPATH . 'comments/recent/?pid='.$member['person_id'].'">', 'comment', "</a> on this Representative's speeches", '', $extra_info);
 			$displayed_stuff |= display_stats_line('reading_age', 'This Representative\'s speeches are understandable to an average ', '', ' year old, going by the <a href="http://en.wikipedia.org/wiki/Flesch-Kincaid_Readability_Test">Flesch-Kincaid Grade Level</a> score', '', $extra_info);
 		}
