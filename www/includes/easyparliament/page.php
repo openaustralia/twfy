@@ -1373,34 +1373,6 @@ pr()//-->
 			}
 		}
 
-/*		if (isset($extra_info["public_whip_dreammp996_distance"])) {
-			$dmpscore = floatval($extra_info["public_whip_dreammp996_distance"]);
-			$strongly_foi = "voted " . score_to_strongly(1.0 - $dmpscore);
-		}
-		if ($extra_info["public_whip_dreammp996_both_voted"] == 0) {
-			$strongly_foi = "has never voted on";
-		}
-		$this->block_start(array('id'=>'black', 'title'=>"Freedom of Information and Parliament"));
-		print "<p>There is currently a Bill before Parliament which will make Parliament
-			exempt from Freedom of Information requests. This Bill will remove
-			your legal right to see some of the information on this page, notably
-			expenses, replacing it with a weaker promise that could be retracted
-			later.</p>
-
-			<p>Even if this bill is amended to exclude expenses, exemption from the
-			Freedom of Information Act may prevent OpenAustralia from adding
-			useful information of new sorts in the future. The Bill is not backed
-			or opposed by a specific party, and OpenAustralia remains strictly
-			neutral on all issues that do not affect our ability to serve the
-			public.</p>
-
-			<p><a href=\"somewhere\">Join the Campaign to keep Parliament transparent
-			(external)</a>.</p>";
-
-		print 'For your information, '.$title.' MP <a href="http://www.publicwhip.org.uk/mp.php?mpid='.$member['member_id'].'&amp;dmp=996">'.$strongly_foi.'</a> this Bill.';
-		$this->block_end();
-*/
-
 		if ($rssurl = $DATA->page_metadata($this_page, 'rss')) {
 			$title = '<a href="' . WEBPATH . $rssurl . '"><img src="' . WEBPATH . 'images/rss.gif" alt="RSS feed" border="0" align="right"></a> ' . $title;
 		}
