@@ -258,8 +258,8 @@ function write_and_send_email($to_email_addr, $user_id, $email_plaintext, $email
 		$email_plaintext .= "to unsubscribe from, or manage, your alerts.\n";
 		$email_html .= "<p>As a registered user, you can <a href='http://www.openaustralia.org/user/'>manage your alerts online</a>.\n";
 	} else {
-		$email_text .= "If you register on the site, you will be able to manage your\n";
-		$email_text .= " alerts there as well as post comments. :)\n";
+		$email_plaintext .= "If you register on the site, you will be able to manage your\n";
+		$email_plaintext .= " alerts there as well as post comments. :)\n";
 		$email_html .= "<p>If you <a href='http://www.openaustralia.org/user/?pg=join'>register online</a> you will be able to manage you alerts, and post comments too.</a></p>\n";
 	}
 	$sentemails++;
