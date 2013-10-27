@@ -2077,7 +2077,7 @@ elseif ($member['house_disp']==0) print $member['full_name']; ?> speaks<?php
 
 		// BIOGRAPHY.
 		if (isset($links['mp_email'])) {
-			$html .= '	<li><a href="' . $links['mp_email'] . '">'. $member->full_name().'\'s email address</a></li>';
+			$html .= '	<li><a href="mailto:' . $links['mp_email'] . '">Email '. $member->full_name().'</a></li>';
 		}elseif(isset($links['mp_contact_form'])) {
 			$html .= '	<li><a href="' . $links['mp_contact_form'] . '">Contact form</a> <small>(On the Australian Parliament website)</small></li>';
 		}
