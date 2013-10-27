@@ -2076,11 +2076,24 @@ elseif ($member['house_disp']==0) print $member['full_name']; ?> speaks<?php
 		}
 
 		// BIOGRAPHY.
+		if (isset($links['mp_email'])) {
+			$html .= '	<li><a href="' . $links['mp_email'] . '">'. $member->full_name().'\'s email address</a></li>';
+		}elseif(isset($links['mp_contact_form'])) {
+			$html .= '	<li><a href="' . $links['mp_contact_form'] . '">Contact form</a> <small>(On the Australian Parliament website)</small></li>';
+		}
+
 		if (isset($links['mp_website'])) {
 			$html .= '<li><a href="' . $links['mp_website'] . '">'. $member->full_name().'\'s personal website</a></li>';
 		}
 		if (isset($links['sp_url'])) {
 			$html .= '<li><a href="' . $links['sp_url'] . '">'. $member->full_name().'\'s page on the Scottish Parliament website</a></li>';
+		}
+
+		if (isset($links['mp_twitter_url'])) {
+			$html .= '	<li><a href="' . $links['mp_twitter_url'] . '">'. $member->full_name(). ' on Twitter</a></li>';
+		}
+		if (isset($links['mp_facebook_url'])) {
+			$html .= '	<li><a href="' . $links['mp_facebook_url'] . '">'. $member->full_name(). ' on Facebook</a></li>';
 		}
 
 		if(isset($links['guardian_biography'])) {
@@ -2127,23 +2140,10 @@ elseif ($member['house_disp']==0) print $member['full_name']; ?> speaks<?php
 			$html .= '	<li><a href="' . $links['guardian_contactdetails'] . '">Contact details</a> <small>(From The Guardian)</small></li>';
 		}
 
-		if (isset($links['mp_email'])) {
-			$html .= '	<li><a href="' . $links['mp_email'] . '">'. $member->full_name().'\'s email address</a></li>';
-		}elseif(isset($links['mp_contact_form'])) {
-			$html .= '	<li><a href="' . $links['mp_contact_form'] . '">Contact form</a> <small>(On the Australian Parliament website)</small></li>';
-		}
-
 		if (isset($links['bbc_profile_url'])) {
 			$html .= '	<li><a href="' . $links['bbc_profile_url'] . '">General information</a> <small>(From BBC News)</small></li>';
 
 		} 
-
-		if (isset($links['mp_twitter_url'])) {
-			$html .= '	<li><a href="' . $links['mp_twitter_url'] . '">'. $member->full_name(). ' on Twitter</a></li>';
-		}
-		if (isset($links['mp_facebook_url'])) {
-			$html .= '	<li><a href="' . $links['mp_facebook_url'] . '">'. $member->full_name(). ' on Facebook</a></li>';
-		}
 
 		$bbc_name = urlencode($member->first_name()) . "%20" . urlencode($member->last_name());
 		if ($member->member_id() == -1)
