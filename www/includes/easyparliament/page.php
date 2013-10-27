@@ -2127,12 +2127,10 @@ elseif ($member['house_disp']==0) print $member['full_name']; ?> speaks<?php
 			$html .= '	<li><a href="' . $links['guardian_contactdetails'] . '">Contact details</a> <small>(From The Guardian)</small></li>';
 		}
 
-		if (isset($links['mp_contact_form'])) {
-			$html .= '	<li><a href="' . $links['mp_contact_form'] . '">Contact form</a> <small>(On the Australian Parliament website)</small></li>';
-		}
-
 		if (isset($links['mp_email'])) {
 			$html .= '	<li><a href="' . $links['mp_email'] . '">'. $member->full_name().'\'s email address</a></li>';
+		}elseif(isset($links['mp_contact_form'])) {
+			$html .= '	<li><a href="' . $links['mp_contact_form'] . '">Contact form</a> <small>(On the Australian Parliament website)</small></li>';
 		}
 
 		if (isset($links['bbc_profile_url'])) {
