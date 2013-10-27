@@ -2095,6 +2095,9 @@ elseif ($member['house_disp']==0) print $member['full_name']; ?> speaks<?php
 		if (isset($links['sp_url'])) {
 			$html .= '<li><a href="' . $links['sp_url'] . '">'. $member->full_name().'\'s page on the Scottish Parliament website</a></li>';
 		}
+		if (isset($links['aph_url'])) {
+			$html .= '<li><a href="' . $links['aph_url'] . '">Parliament House web page for '. $member->full_name().'</a></li>';
+		}
 
 		if(isset($links['guardian_biography'])) {
 			$html .= '	<li><a href="' . $links['guardian_biography'] . '">Biography</a> <small>(From The Guardian)</small></li>';
