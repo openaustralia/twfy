@@ -2082,18 +2082,18 @@ elseif ($member['house_disp']==0) print $member['full_name']; ?> speaks<?php
 			$html .= '	<li><a href="' . $links['mp_contact_form'] . '">Contact form</a> <small>(On the Australian Parliament website)</small></li>';
 		}
 
-		if (isset($links['mp_website'])) {
-			$html .= '<li><a href="' . $links['mp_website'] . '">'. $member->full_name().'\'s personal website</a></li>';
-		}
-		if (isset($links['sp_url'])) {
-			$html .= '<li><a href="' . $links['sp_url'] . '">'. $member->full_name().'\'s page on the Scottish Parliament website</a></li>';
-		}
-
 		if (isset($links['mp_twitter_url'])) {
 			$html .= '	<li><a href="' . $links['mp_twitter_url'] . '">'. $member->full_name(). ' on Twitter</a></li>';
 		}
 		if (isset($links['mp_facebook_url'])) {
 			$html .= '	<li><a href="' . $links['mp_facebook_url'] . '">'. $member->full_name(). ' on Facebook</a></li>';
+		}
+
+		if (isset($links['mp_website'])) {
+			$html .= '<li><a href="' . $links['mp_website'] . '">'. $member->full_name().'\'s personal website</a></li>';
+		}
+		if (isset($links['sp_url'])) {
+			$html .= '<li><a href="' . $links['sp_url'] . '">'. $member->full_name().'\'s page on the Scottish Parliament website</a></li>';
 		}
 
 		if(isset($links['guardian_biography'])) {
