@@ -8,6 +8,7 @@
 <li><a href="#numbers">Why should I read in more depth than just the numbers?</a></li>
 <li><a href="#api">Do you have the data as a spreadsheet file, XML or in an API?</a></li>
 <li><a href="#regmem">What is the Register of Interests and how can I use it?</a></li>
+<li><a href="#regmem-links">Why are there two Register of Interests links for some MPs?</a></li>
 
 </ul>
 
@@ -118,14 +119,16 @@ for you.</p>
 <dd>
 <p>The Register of Interests contains information of financial interests, stocks and shares held, gifts received over a certain value, and memberships of Clubs and Associations for Senators and Representatives. These are the things that have been considered to be a potential influence on their behaviour in Parliament.</p>
 
-<p>Find out more at the <a href="http://www.aph.gov.au/Parliamentary_Business/Committees/Senate_Committees?url=interests_ctte/index.htm">Senate Standing Committee of Senators' Interests</a> and the <a href="http://www.aph.gov.au/Parliamentary_Business/Committees/House_of_Representatives_Committees?url=pmi/index.htm">Standing Committee of Privileges and Members' Interests</a>.</p>
+<p>Find out more at the <a href="http://www.aph.gov.au/Parliamentary_Business/Committees/Senate/Senators_Interests">Senate Standing Committee of Senators' Interests</a> and the <a href="http://www.aph.gov.au/Parliamentary_Business/Committees/House_of_Representatives_Committees?url=pmi/index.htm">Standing Committee of Privileges and Members' Interests</a>.</p>
 
-Please note that for the Register of Interests we have been asked to make the following caveats clear:
-<ul>
-<li>OpenAustralia is not an officially supported or maintained by parliament</li>
-<li>At any given time it is possible that information available about a Member or Senator's interests through the site may not be up to date as they may have notified alterations</li>
-<li>Fraudulent use or manipulation of the information could be raised as a matter of contempt.</li>
-</ul>
+<p>You might also be interested in <a href="http://www.smh.com.au/national/political-interests">a searchable database</a> of the register, compiled by SMH. Note that this was created in 2012 and may not be up to date.</p>
+</dd>
+
+<dt><a name="regmem-links"></a>Why are there two Register of Interests links for some MPs?</dt>
+<dd>
+<p>In early 2009, OpenAustralia.org was <a href="https://www.openaustraliafoundation.org.au/2009/01/05/the-register-of-senators-interests-is-now-online-2/">the first to publish</a> the important Register of Interests online. We're happy to say that Australian Parliament House now publishes this register online themselves.</p>
+
+<p>That's also why you'll see two links on some MP pages. One links to the latest entry from parliament house and the other links to the last update that was sent to us. You should only ever need the latest copy from Parliament house, but you never know so we've kept our (older) copy available too.</p>
 </dd>
 
 </dl>

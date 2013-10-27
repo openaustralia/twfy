@@ -1944,10 +1944,21 @@ elseif ($member['house_disp']==0) print $member['full_name']; ?> speaks<?php
 			$this->block_start(array('id'=>'register', 'title'=>'Register of Interests <small>(<a href="' . WEBPATH . 'help/#regmem">What\'s this?</a>)</small>'));
 
 			$regpath = REGMEMPDFPATH.'register_interests_'.$member['person_id'].'.pdf';
-			if (is_file(BASEDIR.$regpath))
-				echo '<a href="'.WEBPATH.$regpath.'">Scan of ' . $member['full_name'] . '\'s latest entry (including amendments)</a><img alt="PDF" src="/images/pdficon_small.gif">';
-			else
+			if (isset($extra_info['aph_interests_url'])) {
+				echo '<p><a href="' . $extra_info['aph_interests_url'] . '">' . $member['full_name'] . '\'s latest interest statement from Australian Parliament House<img alt="PDF" src="/images/pdficon_small.gif"></a>';
+				if (isset($extra_info['aph_interests_last_updated'])) {
+					echo '<small>Last updated: ';
+					echo format_date($extra_info['aph_interests_last_updated'], SHORTDATEFORMAT);
+					echo '</small>';
+				}
+				echo '</p>';
+			}
+			if (is_file(BASEDIR.$regpath)) {
+				echo '<p><a href="'.WEBPATH.$regpath.'">Our last scan of ' . $member['full_name'] . '\'s interest statement</a><img alt="PDF" src="/images/pdficon_small.gif"><small>(<a href="' . WEBPATH . 'help/#regmem-links">Possibly outdated</a>)</small></p>';
+			}
+			if (!isset($extra_info['aph_interests_url']) && !is_file(BASEDIR.$regpath)) {
 				echo 'Scan of ' . $member['full_name'] . '\'s entry is not yet available';
+			}
 			if (isset($extra_info['register_member_interests_date'])) {
 				echo '<p class="italic">';
 				echo 'Register last updated: ';
