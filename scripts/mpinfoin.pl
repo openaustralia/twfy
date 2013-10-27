@@ -93,6 +93,7 @@ if ($action{'links'}) {
         $twig->parsefile($pwmembers . 'links-abc-qanda.xml', ErrorContext => 2);
         $twig->parsefile($pwmembers . 'links-abc-election.xml', ErrorContext => 2);
         #$twig->parsefile($pwmembers . 'twitter.xml', ErrorContext => 2);
+        $twig->parsefile($pwmembers . 'links-register-of-interests.xml', ErrorContext => 2);
 }
 
 if ($action{'wtt'}) {
