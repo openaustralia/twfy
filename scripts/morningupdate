@@ -39,7 +39,7 @@ date +"%Y-%m-%d %H:%M:%S %Z"
 #$VERBOSE && echo "Rsyncing new data from parlparse"
 #rsync --exclude '.zip' --exclude '.svn' --exclude 'tmp/' --recursive --archive ukparse.kforge.net::parldata /home/fawkes/parldata
 
-../../openaustralia-parser/parse-speeches.rb --no-load previous-working-day
+../../openaustralia-parser/parse-speeches.rb previous-working-day
 
 # Load recent new files from XML into the database
 $VERBOSE && echo "Loading into database"
@@ -48,10 +48,10 @@ $VERBOSE && echo "Loading into database"
 #./xml2db.pl $CRONQUIET --all --members
 # We do these on separate lines, so if one fails, others still run
 #./xml2db.pl $CRONQUIET --recent --wrans --quiet
-./xml2db.pl $CRONQUIET --recent --debates
+# ./xml2db.pl $CRONQUIET --recent --debates
 #./xml2db.pl $CRONQUIET --recent --westminhall --quiet
 #./xml2db.pl $CRONQUIET --recent --wms --quiet
-./xml2db.pl $CRONQUIET --recent --lordsdebates
+# ./xml2db.pl $CRONQUIET --recent --lordsdebates
 #./xml2db.pl $CRONQUIET --recent --ni --quiet
 
 # Update Xapan index
