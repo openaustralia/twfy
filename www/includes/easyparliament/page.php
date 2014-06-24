@@ -1626,9 +1626,39 @@ pr()//-->
 	<ul id="dreamcomparisons">
 	<?
 		$got_dream = false;
-		$got_dream |= display_dream_comparison($extra_info, $member, 1, "<strong>marriage equality</strong>", false, "");
-		$got_dream |= display_dream_comparison($extra_info, $member, 2, "offshore processing of <strong>asylum seekers</strong>", false, "");
-		$got_dream |= display_dream_comparison($extra_info, $member, 3, "introducing a <strong>carbon tax</strong>", false, "");
+		$got_dream |= display_dream_comparison($extra_info, $member, 1, "same sex marriage", false, "");
+		$got_dream |= display_dream_comparison($extra_info, $member, 2, "tobacco plain packaging", false, "");
+		$got_dream |= display_dream_comparison($extra_info, $member, 3, "a carbon price", false, "");
+		$got_dream |= display_dream_comparison($extra_info, $member, 4, "greater scrutiny of detention centres", false, "");
+		$got_dream |= display_dream_comparison($extra_info, $member, 5, "government administered paid parental leave", false, "");
+		$got_dream |= display_dream_comparison($extra_info, $member, 6, "stronger unions", false, "");
+		$got_dream |= display_dream_comparison($extra_info, $member, 7, "a carbon pollution reduction scheme", false, "");
+		$got_dream |= display_dream_comparison($extra_info, $member, 8, "the Refugees Convention and Refugees Protocol", false, "");
+		$got_dream |= display_dream_comparison($extra_info, $member, 9, "deregulating the wheat export market", false, "");
+		$got_dream |= display_dream_comparison($extra_info, $member, 10, "constitutional recognition of local government", false, "");
+		$got_dream |= display_dream_comparison($extra_info, $member, 11, "temporary protection visas", false, "");
+		$got_dream |= display_dream_comparison($extra_info, $member, 12, "voluntary student union fees", false, "");
+		$got_dream |= display_dream_comparison($extra_info, $member, 13, "increasing or removing the debt limit", false, "");
+		$got_dream |= display_dream_comparison($extra_info, $member, 14, "a minerals resource rent tax ", false, "");
+		$got_dream |= display_dream_comparison($extra_info, $member, 15, "protecting Australia's fresh water resources", false, "");
+		$got_dream |= display_dream_comparison($extra_info, $member, 16, "offshore/regional processing of asylum seekers", false, "");
+		$got_dream |= display_dream_comparison($extra_info, $member, 17, "marine conservation", false, "");
+		$got_dream |= display_dream_comparison($extra_info, $member, 18, "coal seam gas extraction", false, "");
+		$got_dream |= display_dream_comparison($extra_info, $member, 19, "restricting foreign ownership", false, "");
+		$got_dream |= display_dream_comparison($extra_info, $member, 20, "renewable energy", false, "");
+		$got_dream |= display_dream_comparison($extra_info, $member, 21, "privatising government assets", false, "");
+		$got_dream |= display_dream_comparison($extra_info, $member, 22, "stem cell research", false, "");
+		$got_dream |= display_dream_comparison($extra_info, $member, 23, "strengthening national security", false, "");
+		$got_dream |= display_dream_comparison($extra_info, $member, 24, "Aboriginal land rights", false, "");
+		$got_dream |= display_dream_comparison($extra_info, $member, 25, "increasing funding for university education", false, "");
+		$got_dream |= display_dream_comparison($extra_info, $member, 26, "reducing the private health insurance rebate", false, "");
+		$got_dream |= display_dream_comparison($extra_info, $member, 27, "increasing funding for TAFE (provisional)", false, "");
+		$got_dream |= display_dream_comparison($extra_info, $member, 28, "increasing the age pension", false, "");
+		$got_dream |= display_dream_comparison($extra_info, $member, 29, "equal treatment of same-sex couples", false, "");
+		$got_dream |= display_dream_comparison($extra_info, $member, 30, "preserving Aboriginal cultural heritage", false, "");
+		$got_dream |= display_dream_comparison($extra_info, $member, 31, "restricting access to RU486", false, "");
+		$got_dream |= display_dream_comparison($extra_info, $member, 32, "live animal exports", false, "");
+		$got_dream |= display_dream_comparison($extra_info, $member, 33, "carbon farming", false, "");
 		if (!$got_dream) {
 			print "<li>" . $member['full_name'] . " has not voted enough in this parliament to have any scores.</li>";
 		}
