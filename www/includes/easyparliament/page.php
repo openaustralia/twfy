@@ -1639,7 +1639,7 @@ pr()//-->
 		$got_dream |= display_dream_comparison($extra_info, $member, 11, "temporary protection visas", false, "");
 		$got_dream |= display_dream_comparison($extra_info, $member, 12, "voluntary student union fees", false, "");
 		$got_dream |= display_dream_comparison($extra_info, $member, 13, "increasing or removing the debt limit", false, "");
-		$got_dream |= display_dream_comparison($extra_info, $member, 14, "a minerals resource rent tax ", false, "");
+		$got_dream |= display_dream_comparison($extra_info, $member, 14, "a minerals resource rent tax", false, "");
 		$got_dream |= display_dream_comparison($extra_info, $member, 15, "protecting Australia's fresh water resources", false, "");
 		$got_dream |= display_dream_comparison($extra_info, $member, 16, "offshore/regional processing of asylum seekers", false, "");
 		$got_dream |= display_dream_comparison($extra_info, $member, 17, "marine conservation", false, "");
