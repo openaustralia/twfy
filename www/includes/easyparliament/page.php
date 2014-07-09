@@ -1622,7 +1622,7 @@ pr()//-->
 		}
 ?>
 
-	<p id="howvoted">How <?=$member['full_name']?> voted on key issues since 2001:</p>
+	<p id="howvoted">How <?=$member['full_name']?> voted on key issues since 2006:</p>
 	<ul id="dreamcomparisons">
 	<?
 		$got_dream = false;
