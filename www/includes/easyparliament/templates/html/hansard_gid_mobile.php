@@ -153,7 +153,7 @@ if (isset ($data['rows'])) {
 			
 			context_link($row);
 			
-			$sidebarhtml = generate_commentteaser(&$row, $data['info']['major']);
+			$sidebarhtml = generate_commentteaser($row, $data['info']['major']);
 			
             /*
 			$PAGE->stripe_end(array(
@@ -299,7 +299,7 @@ if (isset ($data['rows'])) {
 # Do the logic for this in the function; plus why shouldn't
 # you be able to comment on speeches with unknown speakers?
 #			if (($hansardmajors[$data['info']['major']]['type'] == 'debate') && isset($row['speaker']) && count($row['speaker']) > 0) {
-			$sidebarhtml .= generate_commentteaser(&$row, $data['info']['major']);
+			$sidebarhtml .= generate_commentteaser($row, $data['info']['major']);
 #			}
 			
 /*
@@ -432,7 +432,7 @@ function context_link (&$row) {
 
 
 //$totalcomments, $comment, $commenturl
-function generate_commentteaser (&$row, $major) {
+function generate_commentteaser ($row, $major) {
 	// Returns HTML for the one fragment of comment and link for the sidebar.
 	// $totalcomments is the number of comments this item has on it.
 	// $comment is an array like:

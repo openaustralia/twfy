@@ -1426,10 +1426,8 @@ pr()//-->
 			if ($party=='Speaker' || $party=='Deputy-Speaker' || $party=='President' || $party=='Deputy-President') {
 				$desc .= ', and ';
 				# XXX: Will go horribly wrong if something odd happens
-				if ($party=='Deputy-Speaker') {
-					$last = end($member['other_parties']);
-					$desc .= $last['from'] . ' ';
-				}
+				$last = end($member['other_parties']);
+				$desc .= $last['from'] . ' ';
 			}
 			$desc .= ' ';
 			if ($house==1) $desc .= 'Representative';
@@ -1946,10 +1944,21 @@ elseif ($member['house_disp']==0) print $member['full_name']; ?> speaks<?php
 			$this->block_start(array('id'=>'register', 'title'=>'Register of Interests <small>(<a href="' . WEBPATH . 'help/#regmem">What\'s this?</a>)</small>'));
 
 			$regpath = REGMEMPDFPATH.'register_interests_'.$member['person_id'].'.pdf';
-			if (is_file(BASEDIR.$regpath))
-				echo '<a href="'.WEBPATH.$regpath.'">Scan of ' . $member['full_name'] . '\'s latest entry (including amendments)</a><img alt="PDF" src="/images/pdficon_small.gif">';
-			else
+			if (isset($extra_info['aph_interests_url'])) {
+				echo '<p><a href="' . $extra_info['aph_interests_url'] . '">' . $member['full_name'] . '\'s latest interest statement from Australian Parliament House<img alt="PDF" src="/images/pdficon_small.gif"></a>';
+				if (isset($extra_info['aph_interests_last_updated'])) {
+					echo '<small>Last updated: ';
+					echo format_date($extra_info['aph_interests_last_updated'], SHORTDATEFORMAT);
+					echo '</small>';
+				}
+				echo '</p>';
+			}
+			if (is_file(BASEDIR.$regpath)) {
+				echo '<p><a href="'.WEBPATH.$regpath.'">Our last scan of ' . $member['full_name'] . '\'s interest statement</a><img alt="PDF" src="/images/pdficon_small.gif"><small>(<a href="' . WEBPATH . 'help/#regmem-links">Possibly outdated</a>)</small></p>';
+			}
+			if (!isset($extra_info['aph_interests_url']) && !is_file(BASEDIR.$regpath)) {
 				echo 'Scan of ' . $member['full_name'] . '\'s entry is not yet available';
+			}
 			if (isset($extra_info['register_member_interests_date'])) {
 				echo '<p class="italic">';
 				echo 'Register last updated: ';
@@ -2078,11 +2087,27 @@ elseif ($member['house_disp']==0) print $member['full_name']; ?> speaks<?php
 		}
 
 		// BIOGRAPHY.
+		if (isset($links['mp_email'])) {
+			$html .= '	<li><a href="mailto:' . $links['mp_email'] . '">Email '. $member->full_name().'</a></li>';
+		}elseif(isset($links['mp_contact_form'])) {
+			$html .= '	<li><a href="' . $links['mp_contact_form'] . '">Contact form</a> <small>(On the Australian Parliament website)</small></li>';
+		}
+
+		if (isset($links['mp_twitter_url'])) {
+			$html .= '	<li><a href="' . $links['mp_twitter_url'] . '">'. $member->full_name(). ' on Twitter</a></li>';
+		}
+		if (isset($links['mp_facebook_url'])) {
+			$html .= '	<li><a href="' . $links['mp_facebook_url'] . '">'. $member->full_name(). ' on Facebook</a></li>';
+		}
+
 		if (isset($links['mp_website'])) {
 			$html .= '<li><a href="' . $links['mp_website'] . '">'. $member->full_name().'\'s personal website</a></li>';
 		}
 		if (isset($links['sp_url'])) {
 			$html .= '<li><a href="' . $links['sp_url'] . '">'. $member->full_name().'\'s page on the Scottish Parliament website</a></li>';
+		}
+		if (isset($links['aph_url'])) {
+			$html .= '<li><a href="' . $links['aph_url'] . '">Parliament House web page for '. $member->full_name().'</a></li>';
 		}
 
 		if(isset($links['guardian_biography'])) {
@@ -2111,6 +2136,9 @@ elseif ($member['house_disp']==0) print $member['full_name']; ?> speaks<?php
 		if (isset($links['guardian_election_results'])) {
 			$html .= '	<li><a href="' . $links['guardian_election_results'] . '">Election results for ' . $member->constituency() . '</a> <small>(From The Guardian)</small></li>';
 		}
+		if (isset($links['abc_election_results_2013'])) {
+			$html .= '	<li><a href="' . $links['abc_election_results_2013'] . '">2013 Election results for ' . $member->constituency() . '</a> <small>(From ABC)</small></li>';
+		}
 		if (isset($links['abc_election_results_2010'])) {
 			$html .= '	<li><a href="' . $links['abc_election_results_2010'] . '">2010 Election results for ' . $member->constituency() . '</a> <small>(From ABC)</small></li>';
 		}
@@ -2126,21 +2154,10 @@ elseif ($member['house_disp']==0) print $member['full_name']; ?> speaks<?php
 			$html .= '	<li><a href="' . $links['guardian_contactdetails'] . '">Contact details</a> <small>(From The Guardian)</small></li>';
 		}
 
-		if (isset($links['mp_contactdetails'])) {
-			$html .= '	<li><a href="' . $links['mp_contactdetails'] . '">Contact details</a> <small>(From Australian Parliament website)</small></li>';
-		}
-
 		if (isset($links['bbc_profile_url'])) {
 			$html .= '	<li><a href="' . $links['bbc_profile_url'] . '">General information</a> <small>(From BBC News)</small></li>';
 
 		} 
-
-		//if (isset($links['mp_twitter_screen_name'])) {
-		//	$html .= '	<li><a href="http://twitter.com/' . $links['mp_twitter_screen_name'] . '">'. $member->full_name(). ' on Twitter</a> <small>(via <a href="http://tweetmp.org.au">tweetMP</a>)</small></li>';
-		//}
-		//elseif (isset($links['mp_twitter_invite_tweetmp'])) {
-		//	$html .= '<li><a href="'. $links['mp_twitter_invite_tweetmp'] . '">Invite ' . $member->full_name() . ' to use Twitter</a> <small>(via <a href="http://tweetmp.org.au">tweetMP</a>)</small></li>';
-		//}
 
 		$bbc_name = urlencode($member->first_name()) . "%20" . urlencode($member->last_name());
 		if ($member->member_id() == -1)

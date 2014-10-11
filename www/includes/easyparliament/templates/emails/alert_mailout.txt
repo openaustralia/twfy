@@ -1,10 +1,10 @@
 Subject: Your OpenAustralia email alert
 -------------------------------------------------------------------------
-You like finding out what's happening in Parliament, what about what's
-happening in government? Our exciting new project allows you to do
-exactly that!
+Hi, did you know we make these other wonderful projects too?
 
-Introducing Right To Know: http://tinyurl.com/righttoknowau
+Right To Know: http://tinyurl.com/righttoknowau
+PlanningAlerts: http://tinyurl.com/planningalerts
+Election Leaflets: http://tinyurl.com/electionleaflets-oa
 -------------------------------------------------------------------------
 
 {DATA}
