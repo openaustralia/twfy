@@ -101,7 +101,7 @@ if ($action{'wtt'}) {
 }
 
 if ($action{'pw'}) {
-        $twig->parseurl(mySociety::Config::get('PUBLICWHIP_HOST') . "/feeds/mp-info.xml"); # i love twig
+        $twig->parseurl(mySociety::Config::get('PUBLICWHIP_HOST') . "/feeds/mp-info.xml?house=representatives"); # i love twig
         $twig->parseurl(mySociety::Config::get('PUBLICWHIP_HOST') . "/feeds/mp-info.xml?house=senate"); # i love twig
         # TODO: Add smoking, parliamentary scrutiny
         # Iraq war, terrorism law, Hunting, Foundation hospitals, gay vote,
