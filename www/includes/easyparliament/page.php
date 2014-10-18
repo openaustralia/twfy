@@ -1586,7 +1586,7 @@ pr()//-->
 
 		// Voting Record.
 		?> <a name="votingrecord"></a> <?php
-		$this->block_start(array('id'=>'votingrecord', 'title'=>'Voting record (from They Vote For You)'));
+		$this->block_start(array('id'=>'votingrecord', 'title'=>'Voting record (from <a href="https://theyvoteforyou.org.au/">They Vote For You</a>)'));
 		$displayed_stuff = 0;
 		function display_dream_comparison($extra_info, $member, $dreamid, $desc, $inverse, $search) {
 			if (isset($extra_info["public_whip_dreammp${dreamid}_distance"])) {
