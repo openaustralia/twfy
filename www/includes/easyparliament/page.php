@@ -1677,7 +1677,7 @@ pr()//-->
 				$record[] = '<a href="' . $extra_info['guardian_howtheyvoted'] . '" title="At The Guardian">well-known issues</a> <small>(from the Guardian)</small>';
 			}
 			if (isset($extra_info['public_whip_division_attendance']) && $extra_info['public_whip_division_attendance'] != 'n/a') {
-				$record[] = '<a href="' . PUBLICWHIP_HOST . '/mp.php?id=uk.org.publicwhip/member/' . $member['member_id'] . '&amp;showall=yes#divisions" title="At Public Whip">their full record</a>';
+				$record[] = '<a href="' . PUBLICWHIP_HOST . '/mp.php?id=uk.org.publicwhip/member/' . $member['member_id'] . '&amp;showall=yes#divisions" title="At They Vote For You">their full record</a>';
 			}
 
 			if (count($record) > 0) {
