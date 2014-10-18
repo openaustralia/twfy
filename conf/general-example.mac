@@ -137,3 +137,4 @@ define('ADDTHIS_USERNAME', '');
 
 // Host to use when loading They Vote For You data
 define('PUBLICWHIP_HOST', 'https://theyvoteforyou.org.au');
+// define('DISPLAY_VOTING_DATA', false);
