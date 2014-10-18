@@ -1264,10 +1264,10 @@ sub load_debate_division {
         my $divnumber = $division->att('divnumber');
         my $text = 
 "<p class=\"divisionheading\">Division number $divnumber</p>
-<p class=\"divisionbody\"><a href=\"http://www.publicwhip.org.uk/division.php?date=$divdate&amp;number=$divnumber";
+<p class=\"divisionbody\"><a href=\"" . mySociety::Config::get('PUBLICWHIP_HOST') . "/division.php?date=$divdate&amp;number=$divnumber";
         $text .= '&amp;house=lords' if $major == 101;
         $text .= "&amp;showall=yes#voters\">See full
-list of votes</a> (From <a href=\"http://www.publicwhip.org.uk\">The Public Whip</a>)</p>";
+list of votes</a> (From <a href=\"" . mySociety::Config::get('PUBLICWHIP_HOST') . "\">The Public Whip</a>)</p>";
 				# Temporarily commenting out the link to the division data
         #do_load_speech($division, $major, 0, $text);
 }

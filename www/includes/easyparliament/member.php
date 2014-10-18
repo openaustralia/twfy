@@ -430,23 +430,22 @@ class MEMBER {
         }
 
 
-        if (array_key_exists('public_whip_rebellions', $this->extra_info))
-        {
+        if (array_key_exists('public_whip_rebellions', $this->extra_info)) {
             $rebellions = $this->extra_info['public_whip_rebellions'];
             $rebel_desc = "<unknown>";
             if ($rebellions == 0)
                 $rebel_desc = "never";
-            else if ($rebellions == 1)
+            elseif ($rebellions <= 1)
                 $rebel_desc = "hardly ever";
-            else if ($rebellions == 2 or $rebellions == 3)
+            elseif ($rebellions <= 3)
                 $rebel_desc = "occasionally";
-            else if ($rebellions == 4 or $rebellions == 5)
+            elseif ($rebellions <= 5)
                 $rebel_desc = "sometimes";
-            else if ($rebellions > 5)
+            elseif ($rebellions > 5)
                 $rebel_desc = "quite often";
-            $this->extra_info['public_whip_rebel_description'] = $rebel_desc; 
+            $this->extra_info['public_whip_rebel_description'] = $rebel_desc;
         }
-        
+
 	if (isset($this->extra_info['public_whip_attendrank'])) {
 		$prefix = ($this->house(2) ? 'L' : '');
 		$this->extra_info[$prefix.'public_whip_division_attendance_rank'] = $this->extra_info['public_whip_attendrank'];
