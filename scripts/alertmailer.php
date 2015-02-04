@@ -247,20 +247,50 @@ foreach ($alertdata as $alertitem) {
 						$email_plaintext .= ($result['speaker'] ? $result['speaker'] . " : " : "");
 						$email_plaintext .= str_replace(array('&#163;','&#8212;','<span class="hi">','</span>'), array("\xa3",'-','*','*'), $result['body']) ."\n\n";
 						//html
-						$cleaned_title = str_replace(array('&#8212;','<span class="hi">','</span>'), array('-','<strong>','</strong>'), $result['title']) . "\n";
-						$email_html .= "<p><a href='" . $result['url'] . "'>" . $cleaned_title . "</a></p>\n";
-						$email_html .= ($result['speaker'] ? '<p>' . $result['speaker'] . '</p>' . "\n" : "");
-						$tagged_alert_term_body=str_replace(array('&#163;','&#8212;','<span class="hi">','</span>'), array("\xa3",'-','<strong>','</strong>'), $result['body']);
-						$email_html .= '<p>' . $tagged_alert_term_body . '</p><br />' . "\n";
+						$cleaned_title = str_replace(array('&#8212;','<span class="hi">','</span>'), array('','',''), $result['title']);
+						$cleaned_body=str_replace(array('&#163;','&#8212;','<span class="hi">','</span>'), array('','','',''), $result['body']);
+						
+						if (preg_match('#^speaker:\d+$#', $criteria_raw, $m))  // it's a person alert
+						{  
+							//mlog("Person Item: " . $criteria_raw . "\n");
+							$email_html .= $html_email_sections['MEMBER_ITEM'];
+							$email_html = str_replace('{ITEM_TITLE}',$cleaned_title,$email_html); // swap in the values
+							$email_html = str_replace('{ITEM_DATE}',$result['date'],$email_html); // swap in the values
+							$email_html = str_replace('{ITEM_TEXT}',$cleaned_body,$email_html); // swap in the values
+						}
+						else // it's a phrase alert
+						{
+							//mlog("Phrase Item : " . $criteria_raw . "\n");
+							$email_html .= $html_email_sections['PHRASE_ITEM'];
+							$email_html = str_replace('{ITEM_TITLE}',$cleaned_title,$email_html); // swap in the values
+							$email_html = str_replace('{ITEM_DATE}',$result['date'],$email_html); // swap in the values
+							$email_html = str_replace('{ITEM_SPEAKER}',$result['speaker'],$email_html); // swap in the values
+							// have to hard code the highlights
+							$highlight_html='<span style="background-color: #FFFFA8; color: #8A5505; display: inline-block; padding: 0px 4px; border-radius: 5px; line-height: 22px;">';
+							$highlighted_text=str_replace($criteria_raw,$highlight_html . $criteria_raw . "</span>",$cleaned_body);
+							$email_html = str_replace('{ITEM_TEXT}',$highlighted_text,$email_html); // swap in the values
+						}
+						$email_html .= $html_email_sections['SEPERATION_LINE'];
 					}
 				}
+				
+				if ($count[$major] > 3) { // this is for the html emails which have this at the bottom
+					$email_html .= $html_email_sections['VIEW_MORE']; // insert this piece of html
+					$email_html = str_replace('{VIEW_MORE_URL}',$url_seemore,$email_html); // swap in the values
+					$email_html = str_replace('{VIEW_MORE_SPEAKER}',$result['speaker'],$email_html); // swap in the values
+				}
+
 			}
 			$url_unsubscribe="http://www.openaustralia.org/D/" . $alertitem['alert_id'] . '-' . $alertitem['registrationtoken'];
 			$email_plaintext .= "To unsubscribe from your alert for items " . $desc . ", please use:\n $url_unsubscribe \n\n";
-			$email_html .= "<p><a href='" . $url_unsubscribe . "'>Unsubscibe alerts " . $desc . "</a></p>\n";
+
+			$email_html .= $html_email_sections['UNSUB_ALERT']; // insert this piece of html
+			$email_html = str_replace('{UNSUB_URL}',$url_unsubscribe,$email_html); // swap in the values
+			$email_html = str_replace('{UNSUB_ALERT_DESCRIPTION}',$deschead,$email_html); // swap in the values
 		}
 	}
 }
+
 if ($email_plaintext && $email_html)  //somewhat unessesary but clearer, for someone working on this fuction
 	write_and_send_email($current_email_addr, $user_id, $email_plaintext, $email_html);
 
