@@ -127,7 +127,7 @@ foreach ($alertdata as $alertitem) {
 			write_and_send_email($current_email_addr, $user_id, $email_plaintext);
 		$current_email_addr = $alert_email_addr;
 		$email_plaintext = '';
-		$email_html = '';
+		$email_html = $html_email_sections['TOP']; // start with this piece of the html template, no values to swap in
 		$q = $db->query('SELECT user_id FROM users WHERE email = \''.mysql_escape_string($alert_email_addr)."'");
 		if ($q->rows() > 0) {
 			$user_id = $q->field(0, 'user_id');
@@ -286,6 +286,7 @@ function write_and_send_email($to_email_addr, $user_id, $email_plaintext, $email
 		$email_plaintext .= " alerts there as well as post comments. :)\n";
 		$email_html .= "<p>If you <a href='http://www.openaustralia.org/user/?pg=join'>register online</a> you will be able to manage you alerts, and post comments too.</a></p>\n";
 	}
+	$email_html .= $html_email_sections['BOTTOM'];
 	$sentemails++;
 	mlog("SEND $sentemails : Sending email to $to_email_addr ... ");
 	
