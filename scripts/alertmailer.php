@@ -191,7 +191,8 @@ foreach ($alertdata as $alertitem) {
 				$any_content = true;
 				$result=array(); // this will contain a dict of result parts
 				// gather the parts
-				$result['title'] = $row['parent']['body'] . ' (' . format_date($row['hdate'], SHORTDATEFORMAT) . ')';
+				$result['date'] = format_date($row['hdate'], SHORTDATEFORMAT);
+				$result['title'] = $row['parent']['body'];
 				$result['body'] = $row['body'];
 				$result['url'] = 'http://www.openaustralia.org' . $row['listurl'];
 				if (isset($row['speaker']) && count($row['speaker']))
@@ -212,7 +213,27 @@ foreach ($alertdata as $alertitem) {
 				$heading = $deschead . ' : ' . $count[$major] . ' ' . $sects[$major] . ($count[$major]!=1?'s':'');
 				$email_plaintext .= "$heading\n";
 				$email_plaintext .= str_repeat('=',strlen($heading))."\n\n";
-				$email_html .= "<p>" . $heading . "</p>\n";
+				
+				if (preg_match('#^speaker:\d+$#', $criteria_raw, $m))  // it's a person alert
+				{  
+				    //mlog("Person : " . $criteria_raw . "\n");
+				    $email_html .= $html_email_sections['MEMBER_HEADER'];
+				    $email_html = str_replace('{ALERT_TERM}',$result['speaker'],$email_html); // swap in the values
+				}
+				else // it's a phrase alert
+				{
+				    //mlog("Phrase : " . $criteria_raw . "\n");
+				    $email_html .= $html_email_sections['PHRASE_HEADER'];
+				    $email_html = str_replace('{ALERT_TERM}',$criteria_raw,$email_html); // swap in the values
+				}
+				$email_html = str_replace('{ITEM_COUNT}',$count[$major],$email_html); // swap in the values
+				$email_html = str_replace('{ITEM_HOUSE}',$sects[$major],$email_html); // swap in the values
+
+				if ($count[$major] > 3) { // this is for the text emails which have this at the top
+				    $url_seemore="http://www.openaustralia.org/search/?s=".urlencode($criteria_raw)."+section:".$sects_short[$major]."&o=d";
+				    $email_plaintext .= "There are more results than we have shown here. See more: \n $url_seemore \n\n";
+				}
+
 				if ($count[$major] > 3) {
 					$url_seemore="http://www.openaustralia.org/search/?s=".urlencode($criteria_raw)."+section:".$sects_short[$major]."&o=d";
 					$email_plaintext .= "There are more results than we have shown here. See more: \n $url_seemore \n\n";
