@@ -348,15 +348,15 @@ function write_and_send_email($to_email_addr, $user_id, $email_plaintext, $email
 	
         //$multipart_text  = "--$mime_boundary \n";
 	$multipart_text = "Content-type: text/plain;charset=\"utf-8\"\n";
-        $multipart_text .= "Content-transfer-encoding: 7bit \n";
+	$multipart_text .= "Content-transfer-encoding: 7bit \n";
 		
         //$multipart_html = "--$mime_boundary \n";
 	$multipart_html = "Content-Type: text/html; charset=\"iso-8859-1\";\n";
 	$multipart_html .= "Content-Transfer-Encoding: quoted-printable \n";	
 	
-        $template_data = array('to' => $to_email_addr, 'template' => 'alert_mailout_multipart');
+	$template_data = array('to' => $to_email_addr, 'template' => 'alert_mailout_multipart');
 	$template_data = array('to' => $to_email_addr, 'template' => 'alert_mailout_html');
-        $template_merge = array('MIMEBOUNDARY'=>$mime_boundary, 'MIMEHEADER_TEXT' => $multipart_text, 'TEXTMESSAGE' => $email_plaintext, 'MIMEHEADER_HTML' => $multipart_html, 'HTMLMESSAGE' => $email_html);
+	$template_merge = array('MIMEBOUNDARY'=>$mime_boundary, 'MIMEHEADER_TEXT' => $multipart_text, 'TEXTMESSAGE' => $email_plaintext, 'MIMEHEADER_HTML' => $multipart_html, 'HTMLMESSAGE' => $email_html);
 
 	if (!$nomail) {
 		$success = send_template_email($template_data, $template_merge, true); // true = "Precedence: bulk"
@@ -379,11 +379,11 @@ function extract_content_between_tokens($content,$start_token,$end_token,$includ
         // the tokens are encoded into the template as HTML comments <!--...-->
 
         $start_position = strpos($content, $start_token) + strlen($start_token);
-        $end_position = strpos($content, $end_token, $start_position) ;.
+        $end_position = strpos($content, $end_token, $start_position) ;
 
-        if($include_tokens).
+        if($include_tokens)
         {
-	    $start_position = $start_position - strlen($start_token);.
+	    $start_position = $start_position - strlen($start_token);
 	    $end_position = $end_position + strlen($end_token);
         }
         
