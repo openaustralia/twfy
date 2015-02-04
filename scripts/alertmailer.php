@@ -30,6 +30,30 @@ $lastbatch = trim($lastsent[1]);
 if (!$lastbatch) $lastbatch = 0;
 mlog("lastupdated: $lastupdated lastbatch: $lastbatch\n");
 
+
+// extract html wrappers from html email template
+// tokens have been added to the template to mark the start and end of section of the html
+$html_template_filename='edm.html'; // FIXME - move this to config
+$filename = INCLUDESPATH . "easyparliament/templates/emails/" . $html_template_filename;
+if (!file_exists($filename)) {
+    $PAGE->error_message("Sorry, we could not find the email template '" . $filename . "'.");
+    return false; }
+// Get the text from the template.
+$content = file_get_contents($filename);
+//content, start_token, end_token
+$html_email_sections['TOP']=extract_content_between_tokens($content,'<!-- CUT_HERE START_TOP -->','<!-- CUT_HERE END_TOP -->',false);
+$html_email_sections['MEMBER_HEADER']=extract_content_between_tokens($content,'<!-- CUT_HERE START_MEMBER_SEARCH_HEADER -->','<!-- CUT_HERE END_MEMBER_SEARCH_HEADER -->',true);
+$html_email_sections['MEMBER_ITEM']=extract_content_between_tokens($content,'<!-- CUT_HERE START_MEMBER_WRAPPER -->','<!-- CUT_HERE END_MEMBER_WRAPPER -->',true);
+$html_email_sections['UNSUB_ALERT']=extract_content_between_tokens($content,'<!-- CUT_HERE START_END_OF_SECTION_UNSUBSCRIBE -->','<!-- CUT_HERE END_END_OF_SECTION_UNSUBSCRIBE -->',true);
+$html_email_sections['VIEW_MORE']=extract_content_between_tokens($content,'<!-- CUT_HERE START_VIEW_MORE_LINK -->','<!-- CUT_HERE END_VIEW_MORE_LINK -->',true);
+$html_email_sections['PHRASE_HEADER']=extract_content_between_tokens($content,'<!-- CUT_HERE START_PHRASE_SEARCH_HEADER -->','<!-- CUT_HERE END_PHRASE_SEARCH_HEADER -->',true);
+$html_email_sections['PHRASE_ITEM']=extract_content_between_tokens($content,'<!-- CUT_HERE START_PHRASE_WRAPPER -->','<!-- CUT_HERE END_PHRASE_WRAPPER -->',true);
+$html_email_sections['ALERT_PREFS']=extract_content_between_tokens($content,'<!-- CUT_HERE START_NEWSLETTER_PREFERENCES_MANAGEMENT -->','<!-- CUT_HERE END_NEWSLETTER_PREFERENCES_MANAGEMENT -->',true);
+$html_email_sections['SEPERATION_LINE']=extract_content_between_tokens($content,'<!-- CUT_HERE START_SEPERATION_LINE -->','<!-- CUT_HERE END_SEPERATION_LINE -->',true);
+$html_email_sections['BOTTOM']=extract_content_between_tokens($content,'<!-- CUT_HERE START_BOTTOM -->','<!-- CUT_HERE END_BOTTOM -->',false);
+//mlog($html_email_sections['MEMBER_HEADER']);
+
+
 // Construct query fragment to select search index batches which
 // have been made since last time we ran
 $batch_query_fragment = "";
@@ -295,5 +319,25 @@ function write_and_send_email($to_email_addr, $user_id, $email_plaintext, $email
 	mlog("done\n");
 	if (!$success) $globalsuccess = 0;
 }
+
+function extract_content_between_tokens($content,$start_token,$end_token,$include_tokens) {
+        // this function takes a monolithic html tamplate, and using start/end tokens, extract specific fragments
+        // the tokens are encoded into the template as HTML comments <!--...-->
+
+        $start_position = strpos($content, $start_token) + strlen($start_token);
+        $end_position = strpos($content, $end_token, $start_position) ;.
+
+        if($include_tokens).
+        {
+	    $start_position = $start_position - strlen($start_token);.
+	    $end_position = $end_position + strlen($end_token);
+        }
+        
+        //mlog($start_token.' '.$start_position."\n");
+        //mlog($end_token.' '.$end_position."\n");
+        $result = substr($content, $start_position, $end_position - $start_position);
+        return $result;
+}
+
 
 ?>
