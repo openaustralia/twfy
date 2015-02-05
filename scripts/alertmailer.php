@@ -250,13 +250,15 @@ foreach ($alertdata as $alertitem) {
 						$cleaned_title = str_replace(array('&#8212;','<span class="hi">','</span>'), array('','',''), $result['title']);
 						$cleaned_body=str_replace(array('&#163;','&#8212;','<span class="hi">','</span>'), array('','','',''), $result['body']);
 						
-						if (preg_match('#^speaker:\d+$#', $criteria_raw, $m))  // it's a person alert
+						if (preg_match('#^speaker:(\d+)$#', $criteria_raw, $m))  // it's a person alert
 						{  
-							//mlog("Person Item: " . $criteria_raw . "\n");
+							$member_image_url="http://www.openaustralia.org.au/images/mpsL/" . $m[1] . ".jpg";
+							mlog("Person Item: " . $member_image_url . "\n");
 							$email_html .= $html_email_sections['MEMBER_ITEM'];
 							$email_html = str_replace('{ITEM_TITLE}',$cleaned_title,$email_html); // swap in the values
 							$email_html = str_replace('{ITEM_DATE}',$result['date'],$email_html); // swap in the values
 							$email_html = str_replace('{ITEM_TEXT}',$cleaned_body,$email_html); // swap in the values
+							$email_html = str_replace('{MEMBER_IMAGE_URL}',$member_image_url,$email_html); //
 						}
 						else // it's a phrase alert
 						{
