@@ -33,13 +33,13 @@ mlog("lastupdated: $lastupdated lastbatch: $lastbatch\n");
 
 // extract html wrappers from html email template
 // tokens have been added to the template to mark the start and end of section of the html
-$html_template_filename='edm.html'; // FIXME - move this to config
-$filename = INCLUDESPATH . "easyparliament/templates/emails/" . $html_template_filename;
-if (!file_exists($filename)) {
+$html_template_filename=HTML_EMAIL_TEMPLATE; 
+if (!file_exists($html_template_filename)) {
     $PAGE->error_message("Sorry, we could not find the email template '" . $filename . "'.");
     return false; }
+mlog(HTML_EMAIL_TEMPLATE);
 // Get the text from the template.
-$content = file_get_contents($filename);
+$content = file_get_contents($html_template_filename);
 //content, start_token, end_token
 $html_email_sections['TOP']=extract_content_between_tokens($content,'<!-- CUT_HERE START_TOP -->','<!-- CUT_HERE END_TOP -->',false);
 $html_email_sections['MEMBER_HEADER']=extract_content_between_tokens($content,'<!-- CUT_HERE START_MEMBER_SEARCH_HEADER -->','<!-- CUT_HERE END_MEMBER_SEARCH_HEADER -->',true);
