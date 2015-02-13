@@ -227,7 +227,15 @@ foreach ($alertdata as $alertitem) {
 				    $email_html = str_replace('{ALERT_TERM}',$criteria_raw,$email_html); // swap in the values
 				}
 				$email_html = str_replace('{ITEM_COUNT}',$count[$major],$email_html); // swap in the values
-				$email_html = str_replace('{ITEM_HOUSE}',$sects[$major],$email_html); // swap in the values
+				if($count[$major]>1)
+				{ //more then one, add an 's'
+				    $email_html = str_replace('{ITEM_HOUSE}',$sects[$major] . "s",$email_html); // swap in the values
+				}
+				else
+				{ //no 's' needed
+				    $email_html = str_replace('{ITEM_HOUSE}',$sects[$major],$email_html); // swap in the values
+
+				}
 
 				if ($count[$major] > 3) { // this is for the text emails which have this at the top
 				    $url_seemore="http://www.openaustralia.org/search/?s=".urlencode($criteria_raw)."+section:".$sects_short[$major]."&o=d";
