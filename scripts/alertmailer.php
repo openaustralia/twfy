@@ -37,7 +37,6 @@ $html_template_filename=HTML_EMAIL_TEMPLATE;
 if (!file_exists($html_template_filename)) {
     $PAGE->error_message("Sorry, we could not find the email template '" . $filename . "'.");
     return false; }
-mlog(HTML_EMAIL_TEMPLATE);
 // Get the text from the template.
 $content = file_get_contents($html_template_filename);
 //content, start_token, end_token
@@ -51,7 +50,6 @@ $html_email_sections['PHRASE_ITEM']=extract_content_between_tokens($content,'<!-
 $html_email_sections['ALERT_PREFS']=extract_content_between_tokens($content,'<!-- CUT_HERE START_NEWSLETTER_PREFERENCES_MANAGEMENT -->','<!-- CUT_HERE END_NEWSLETTER_PREFERENCES_MANAGEMENT -->',true);
 $html_email_sections['SEPERATION_LINE']=extract_content_between_tokens($content,'<!-- CUT_HERE START_SEPERATION_LINE -->','<!-- CUT_HERE END_SEPERATION_LINE -->',true);
 $html_email_sections['BOTTOM']=extract_content_between_tokens($content,'<!-- CUT_HERE START_BOTTOM -->','<!-- CUT_HERE END_BOTTOM -->',false);
-//mlog($html_email_sections['MEMBER_HEADER']);
 
 
 // Construct query fragment to select search index batches which
@@ -182,7 +180,6 @@ foreach ($alertdata as $alertitem) {
 				$results_for_email[$major]=array();  // new array to hold the results to be sent
 				$k = 3;
 			}
-			//mlog($row['major'] . " " . $row['gid'] ."\n");
 			if ($row['hdate'] < '2007-01-14') continue;  // I had to change this 2007, to get results from the dev db
 			$q = $db->query('SELECT gid_from FROM gidredirect WHERE gid_to=\'uk.org.publicwhip/' . $sects_short[$major] . '/' . mysql_escape_string($row['gid']) . "'");
 			if ($q->rows() > 0) continue;
@@ -216,13 +213,11 @@ foreach ($alertdata as $alertitem) {
 				
 				if (preg_match('#^speaker:\d+$#', $criteria_raw, $m))  // it's a person alert
 				{  
-				    //mlog("Person : " . $criteria_raw . "\n");
 				    $email_html .= $html_email_sections['MEMBER_HEADER'];
 				    $email_html = str_replace('{ALERT_TERM}',$result['speaker'],$email_html); // swap in the values
 				}
 				else // it's a phrase alert
 				{
-				    //mlog("Phrase : " . $criteria_raw . "\n");
 				    $email_html .= $html_email_sections['PHRASE_HEADER'];
 				    $email_html = str_replace('{ALERT_TERM}',$criteria_raw,$email_html); // swap in the values
 				}
@@ -261,7 +256,6 @@ foreach ($alertdata as $alertitem) {
 						if (preg_match('#^speaker:(\d+)$#', $criteria_raw, $m))  // it's a person alert
 						{  
 							$member_image_url="http://www.openaustralia.org.au/images/mpsL/" . $m[1] . ".jpg";
-							mlog("Person Item: " . $member_image_url . "\n");
 							$email_html .= $html_email_sections['MEMBER_ITEM'];
 							$email_html = str_replace('{ITEM_TITLE}',$cleaned_title,$email_html); // swap in the values
 							$email_html = str_replace('{ITEM_URL}',$result['url'],$email_html); // swap in the values
@@ -271,7 +265,6 @@ foreach ($alertdata as $alertitem) {
 						}
 						else // it's a phrase alert
 						{
-							//mlog("Phrase Item : " . $criteria_raw . "\n");
 							$email_html .= $html_email_sections['PHRASE_ITEM'];
 							$email_html = str_replace('{ITEM_TITLE}',$cleaned_title,$email_html); // swap in the values
 							$email_html = str_replace('{ITEM_URL}',$result['url'],$email_html); // swap in the values
@@ -379,7 +372,6 @@ function write_and_send_email($to_email_addr, $user_id, $email_plaintext, $email
 			sleep(1);
 		}
 	} else {
-		mlog($email_plaintext);
 		$success = 1;
 	}
 	mlog("done\n");
@@ -399,8 +391,6 @@ function extract_content_between_tokens($content,$start_token,$end_token,$includ
 	    $end_position = $end_position + strlen($end_token);
         }
         
-        //mlog($start_token.' '.$start_position."\n");
-        //mlog($end_token.' '.$end_position."\n");
         $result = substr($content, $start_position, $end_position - $start_position);
         return $result;
 }
