@@ -264,6 +264,7 @@ foreach ($alertdata as $alertitem) {
 							mlog("Person Item: " . $member_image_url . "\n");
 							$email_html .= $html_email_sections['MEMBER_ITEM'];
 							$email_html = str_replace('{ITEM_TITLE}',$cleaned_title,$email_html); // swap in the values
+							$email_html = str_replace('{ITEM_URL}',$result['url'],$email_html); // swap in the values
 							$email_html = str_replace('{ITEM_DATE}',$result['date'],$email_html); // swap in the values
 							$email_html = str_replace('{ITEM_TEXT}',$cleaned_body,$email_html); // swap in the values
 							$email_html = str_replace('{MEMBER_IMAGE_URL}',$member_image_url,$email_html); //
@@ -273,6 +274,7 @@ foreach ($alertdata as $alertitem) {
 							//mlog("Phrase Item : " . $criteria_raw . "\n");
 							$email_html .= $html_email_sections['PHRASE_ITEM'];
 							$email_html = str_replace('{ITEM_TITLE}',$cleaned_title,$email_html); // swap in the values
+							$email_html = str_replace('{ITEM_URL}',$result['url'],$email_html); // swap in the values
 							$email_html = str_replace('{ITEM_DATE}',$result['date'],$email_html); // swap in the values
 							$email_html = str_replace('{ITEM_SPEAKER}',$result['speaker'],$email_html); // swap in the values
 							// have to hard code the highlights
