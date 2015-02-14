@@ -356,16 +356,16 @@ function write_and_send_email($to_email_addr, $user_id, $email_plaintext, $email
 	// I opted to make it unique in the system (reasonably)
 	$mime_boundary=uniqid('mime-boundary-'); // we pass this on to the template function, to be used in the email header (utility.php)
 	
-        //$multipart_text  = "--$mime_boundary \n";
-	$multipart_text = "Content-type: text/plain;charset=\"utf-8\"\n";
+        $multipart_text  = "--$mime_boundary \n";
+	$multipart_text .= "Content-type: text/plain;charset=\"utf-8\"\n";
 	$multipart_text .= "Content-transfer-encoding: 7bit \n";
 		
-        //$multipart_html = "--$mime_boundary \n";
-	$multipart_html = "Content-Type: text/html; charset=\"iso-8859-1\";\n";
+        $multipart_html = "--$mime_boundary \n";
+	$multipart_html .= "Content-Type: text/html; charset=\"iso-8859-1\";\n";
 	$multipart_html .= "Content-Transfer-Encoding: quoted-printable \n";	
 	
 	$template_data = array('to' => $to_email_addr, 'template' => 'alert_mailout_multipart');
-	$template_data = array('to' => $to_email_addr, 'template' => 'alert_mailout_html');
+	//$template_data = array('to' => $to_email_addr, 'template' => 'alert_mailout_html');
 	$template_merge = array('MIMEBOUNDARY'=>$mime_boundary, 'MIMEHEADER_TEXT' => $multipart_text, 'TEXTMESSAGE' => $email_plaintext, 'MIMEHEADER_HTML' => $multipart_html, 'HTMLMESSAGE' => $email_html);
 
 	if (!$nomail) {
