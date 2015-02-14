@@ -122,9 +122,9 @@ foreach ($alertdata as $alertitem) {
 	$criteria_raw = $alertitem['criteria'];
 	$criteria_batch = $criteria_raw . " " . $batch_query_fragment;
 
-	if ($alert_email_addr != $current_email_addr) {
-		if ($email_plaintext)
-			write_and_send_email($current_email_addr, $user_id, $email_plaintext);
+	if ($alert_email_addr != $current_email_addr) {  // if the recipient changes
+		if ($email_plaintext)  // and there is something to send
+			write_and_send_email($current_email_addr, $user_id, $email_plaintext, $email_html, $html_email_sections);
 		$current_email_addr = $alert_email_addr;
 		$email_plaintext = '';
 		$email_html = $html_email_sections['TOP']; // start with this piece of the html template, no values to swap in
@@ -301,7 +301,7 @@ foreach ($alertdata as $alertitem) {
 	}
 }
 
-if ($email_plaintext && $email_html)  //somewhat unnecessary but clearer, for someone working on this function
+if ($email_plaintext && $email_html)  // if the final user has some content, send it.
     write_and_send_email($current_email_addr, $user_id, $email_plaintext, $email_html, $html_email_sections);
 
 mlog("\n");
