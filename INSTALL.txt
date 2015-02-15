@@ -165,4 +165,14 @@ on line 39
 
 There are some instructions on how to do this here:
   http://lists.tartarus.org/pipermail/xapian-discuss/2004-May/000037.html
+  
+On newer Linuxes, e.g. Ubuntu 14.04, these instructions seem to work well:
+  http://trac.xapian.org/wiki/FAQ/PHP%20Bindings%20Package
+  
+They're even used as part of mySociety's build script:
+  https://github.com/mysociety/theyworkforyou/blob/master/bin/site-specific-install.sh#L30-L62
+
+In addition to the PHP bindings you'll also need the Perl bindings to do
+the indexing with `search/index.pl`. Just install the Ubuntu package
+`libsearch-xapian-perl` and you should be golden.
 

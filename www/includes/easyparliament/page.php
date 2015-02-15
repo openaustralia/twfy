@@ -1224,7 +1224,8 @@ pageTracker._trackPageview();
 		?></p>
 			<p>
 				Other Wonderful Projects from the OpenAustralia Foundation:
-				<a href="http://www.righttoknow.org.au/">Right To Know</a> |
+				<a href="https://theyvoteforyou.org.au/">They Vote For You</a> |
+				<a href="https://www.righttoknow.org.au/">Right To Know</a> |
 				<a href="http://www.planningalerts.org.au/">PlanningAlerts</a> |
 				<a href="http://www.electionleaflets.org.au/">Election Leaflets</a>
 	 		</p>
@@ -1372,34 +1373,6 @@ pr()//-->
 				if ($house==2) $title .= 'Senator';
 			}
 		}
-
-/*		if (isset($extra_info["public_whip_dreammp996_distance"])) {
-			$dmpscore = floatval($extra_info["public_whip_dreammp996_distance"]);
-			$strongly_foi = "voted " . score_to_strongly(1.0 - $dmpscore);
-		}
-		if ($extra_info["public_whip_dreammp996_both_voted"] == 0) {
-			$strongly_foi = "has never voted on";
-		}
-		$this->block_start(array('id'=>'black', 'title'=>"Freedom of Information and Parliament"));
-		print "<p>There is currently a Bill before Parliament which will make Parliament
-			exempt from Freedom of Information requests. This Bill will remove
-			your legal right to see some of the information on this page, notably
-			expenses, replacing it with a weaker promise that could be retracted
-			later.</p>
-
-			<p>Even if this bill is amended to exclude expenses, exemption from the
-			Freedom of Information Act may prevent OpenAustralia from adding
-			useful information of new sorts in the future. The Bill is not backed
-			or opposed by a specific party, and OpenAustralia remains strictly
-			neutral on all issues that do not affect our ability to serve the
-			public.</p>
-
-			<p><a href=\"somewhere\">Join the Campaign to keep Parliament transparent
-			(external)</a>.</p>";
-
-		print 'For your information, '.$title.' MP <a href="http://www.publicwhip.org.uk/mp.php?mpid='.$member['member_id'].'&amp;dmp=996">'.$strongly_foi.'</a> this Bill.';
-		$this->block_end();
-*/
 
 		if ($rssurl = $DATA->page_metadata($this_page, 'rss')) {
 			$title = '<a href="' . WEBPATH . $rssurl . '"><img src="' . WEBPATH . 'images/rss.gif" alt="RSS feed" border="0" align="right"></a> ' . $title;
@@ -1593,6 +1566,9 @@ pr()//-->
 						
 						
 						<ul class="jumpers">
+<?php if(defined('DISPLAY_VOTING_DATA') && DISPLAY_VOTING_DATA) { ?>
+						<li><a href="#votingrecord">Voting record</a></li>
+<?php } ?>
 						<li><a href="#numbers">Numbers</a></li>
 <?php		if ($member['current_member'][1] || $member['current_member'][2] ) { ?>
 						<li><a href="#register">Register of Interests</a></li>
@@ -1611,121 +1587,157 @@ pr()//-->
 <?php
 		$this->block_end();
 
-# Big don't-print for SF MPs
-if (0) {
+		if(defined('DISPLAY_VOTING_DATA') && DISPLAY_VOTING_DATA) {
 
-		// Voting Record.
-		?> <a name="votingrecord"></a> <?php
-		$this->block_start(array('id'=>'votingrecord', 'title'=>'Voting record (from PublicWhip)'));
-		$displayed_stuff = 0;
-		function display_dream_comparison($extra_info, $member, $dreamid, $desc, $inverse, $search) {
-			if (isset($extra_info["public_whip_dreammp${dreamid}_distance"])) {
-				if ($extra_info["public_whip_dreammp${dreamid}_both_voted"] == 0) {
-					$dmpdesc = 'Has <strong>never voted</strong> on';
-				} else {
-					$dmpscore = floatval($extra_info["public_whip_dreammp${dreamid}_distance"]);
-					print "<!-- distance $dreamid: $dmpscore -->";
-					if ($inverse) 
-						$dmpscore = 1.0 - $dmpscore;
-					$dmpdesc = 'Voted <strong>' . score_to_strongly($dmpscore) . '</strong>';
+			// Voting Record.
+			?> <a name="votingrecord"></a> <?php
+			$this->block_start(array('id'=>'votingrecord', 'title'=>'Voting record (from <a href="https://theyvoteforyou.org.au/">They Vote For You</a>)'));
+			$displayed_stuff = 0;
+			function display_dream_comparison($extra_info, $member, $dreamid, $desc, $inverse, $search) {
+				if (isset($extra_info["public_whip_dreammp${dreamid}_distance"])) {
+					if ($extra_info["public_whip_dreammp${dreamid}_both_voted"] == 0) {
+						$dmpdesc = 'Has <strong>never voted</strong> on';
+					} else {
+						$dmpscore = floatval($extra_info["public_whip_dreammp${dreamid}_distance"]);
+						print "<!-- distance $dreamid: $dmpscore -->";
+						if ($inverse)
+							$dmpscore = 1.0 - $dmpscore;
+						$dmpdesc = 'Voted <strong>' . score_to_strongly($dmpscore) . '</strong>';
 
-					// How many votes Dream MP and MP both voted (and didn't abstain) in
-					// $extra_info["public_whip_dreammp${dreamid}_both_voted"];
+						// How many votes Dream MP and MP both voted (and didn't abstain) in
+						// $extra_info["public_whip_dreammp${dreamid}_both_voted"];
+					}
+					$search_link = WEBPATH . "search/?s=" . urlencode($search) .
+						"&pid=" . $member['person_id'] . "&pop=1";
+					?>
+					<li>
+					<?=$dmpdesc?>
+				<?=$desc?>.
+	<small class="unneededprintlinks">
+	<a href="<?= PUBLICWHIP_HOST ?>/mp.php?mpid=<?=$member['member_id']?>&amp;dmp=<?=$dreamid?>">votes</a>
+	</small>
+
+					</li>
+	<?php
+					return true;
 				}
-				$search_link = WEBPATH . "search/?s=" . urlencode($search) . 
-					"&pid=" . $member['person_id'] . "&pop=1";
-				?>
-				<li>
-				<?=$dmpdesc?>
-			<?=$desc?>. 
-<small class="unneededprintlinks"> 
-<a href="http://www.publicwhip.org.uk/mp.php?mpid=<?=$member['member_id']?>&amp;dmp=<?=$dreamid?>">votes</a>,
-<a href="<?=$search_link?>">speeches</a>
-</small>
-
-				</li>
-<?php
-				return true;
+				return false;
 			}
-			return false;
-		}
+	?>
 
-	if (isset($extra_info["public_whip_dreammp230_distance"]) || isset($extra_info["public_whip_dreammp996_distance"])) { # XXX
-		$displayed_stuff = 1; ?>
+		<p id="howvoted">How <?=$member['full_name']?> voted on key issues since 2006:</p>
+		<ul id="dreamcomparisons">
+		<?
+			$got_dream = false;
+			$got_dream |= display_dream_comparison($extra_info, $member, 1, "same sex marriage", false, "");
+			$got_dream |= display_dream_comparison($extra_info, $member, 2, "tobacco plain packaging", false, "");
+			$got_dream |= display_dream_comparison($extra_info, $member, 3, "a carbon price", false, "");
+			$got_dream |= display_dream_comparison($extra_info, $member, 4, "increasing scrutiny of asylum seeker management", false, "");
+			$got_dream |= display_dream_comparison($extra_info, $member, 5, "government administered paid parental leave", false, "");
+			$got_dream |= display_dream_comparison($extra_info, $member, 6, "increasing trade unions' powers in the workplace", false, "");
+			$got_dream |= display_dream_comparison($extra_info, $member, 7, "the Carbon Pollution Reduction Scheme", false, "");
+			$got_dream |= display_dream_comparison($extra_info, $member, 8, "implementing refugee and protection conventions", false, "");
+			$got_dream |= display_dream_comparison($extra_info, $member, 9, "increasing competition in bulk wheat export", false, "");
+			$got_dream |= display_dream_comparison($extra_info, $member, 10, "recognising local government in the Constitution", false, "");
+			$got_dream |= display_dream_comparison($extra_info, $member, 11, "temporary protection visas", false, "");
+			$got_dream |= display_dream_comparison($extra_info, $member, 12, "voluntary student union fees", false, "");
+			$got_dream |= display_dream_comparison($extra_info, $member, 13, "increasing or removing the debt limit", false, "");
+			$got_dream |= display_dream_comparison($extra_info, $member, 14, "a minerals resource rent tax ", false, "");
+			$got_dream |= display_dream_comparison($extra_info, $member, 15, "increasing protection of Australia's fresh water", false, "");
+			$got_dream |= display_dream_comparison($extra_info, $member, 16, "regional processing of asylum seekers", false, "");
+			$got_dream |= display_dream_comparison($extra_info, $member, 17, "increasing marine conservation", false, "");
+			$got_dream |= display_dream_comparison($extra_info, $member, 18, "unconventional gas mining", false, "");
+			$got_dream |= display_dream_comparison($extra_info, $member, 19, "restricting foreign ownership", false, "");
+			$got_dream |= display_dream_comparison($extra_info, $member, 20, "increasing investment in renewable energy", false, "");
+			$got_dream |= display_dream_comparison($extra_info, $member, 21, "privatising government assets", false, "");
+			$got_dream |= display_dream_comparison($extra_info, $member, 22, "stem cell research", false, "");
+			$got_dream |= display_dream_comparison($extra_info, $member, 23, "more scrutiny of intelligence services & police", false, "");
+			$got_dream |= display_dream_comparison($extra_info, $member, 24, "increasing Aboriginal land rights", false, "");
+			$got_dream |= display_dream_comparison($extra_info, $member, 25, "increasing funding for university education", false, "");
+			$got_dream |= display_dream_comparison($extra_info, $member, 26, "decreasing the private health insurance rebate", false, "");
+			$got_dream |= display_dream_comparison($extra_info, $member, 27, "increasing the price of subsidised medicine", false, "");
+			$got_dream |= display_dream_comparison($extra_info, $member, 28, "increasing the age pension", false, "");
+			$got_dream |= display_dream_comparison($extra_info, $member, 29, "extending government benefits to same-sex couples", false, "");
+			$got_dream |= display_dream_comparison($extra_info, $member, 30, "increasing protection of Aboriginal heritage sites", false, "");
+			$got_dream |= display_dream_comparison($extra_info, $member, 31, "increasing availability of abortion drugs", false, "");
+			$got_dream |= display_dream_comparison($extra_info, $member, 32, "live animal exports", false, "");
+			$got_dream |= display_dream_comparison($extra_info, $member, 33, "carbon farming", false, "");
+			$got_dream |= display_dream_comparison($extra_info, $member, 34, "decreasing availability of welfare payments", false, "");
+			$got_dream |= display_dream_comparison($extra_info, $member, 35, "re-approving/ re-registering agvet chemicals", false, "");
+			$got_dream |= display_dream_comparison($extra_info, $member, 36, "the Intervention in the Northern Territory", false, "");
+			$got_dream |= display_dream_comparison($extra_info, $member, 37, "an emissions reduction fund", false, "");
+			$got_dream |= display_dream_comparison($extra_info, $member, 38, "increasing funding for road infrastructure", false, "");
+			$got_dream |= display_dream_comparison($extra_info, $member, 39, "increasing restrictions on gambling", false, "");
+			$got_dream |= display_dream_comparison($extra_info, $member, 40, "increasing beef import standards", false, "");
+			$got_dream |= display_dream_comparison($extra_info, $member, 41, "increasing fishing restrictions", false, "");
+			$got_dream |= display_dream_comparison($extra_info, $member, 42, "encouraging Australian-based industry", false, "");
+			$got_dream |= display_dream_comparison($extra_info, $member, 43, "uranium export", false, "");
+			$got_dream |= display_dream_comparison($extra_info, $member, 44, "increasing surveillance powers", false, "");
+			$got_dream |= display_dream_comparison($extra_info, $member, 45, "increasing consumer protections", false, "");
+			$got_dream |= display_dream_comparison($extra_info, $member, 46, "increasing public access to government data", false, "");
+			$got_dream |= display_dream_comparison($extra_info, $member, 47, "an NBN (using fibre to the premises)", false, "");
+			$got_dream |= display_dream_comparison($extra_info, $member, 50, "a federal inquiry into Queensland government administration", false, "");
+			$got_dream |= display_dream_comparison($extra_info, $member, 51, "offshore processing of asylum seekers", false, "");
+			$got_dream |= display_dream_comparison($extra_info, $member, 53, "increasing freedom of political communication", false, "");
+			$got_dream |= display_dream_comparison($extra_info, $member, 56, "decreasing ABC and SBS funding", false, "");
+			if (!$got_dream) {
+				print "<li>" . $member['full_name'] . " has not voted enough in this parliament to have any scores.</li>";
+			}
+			print '</ul>';
+	?>
+	<p class="italic">
+	<small>Read about <a href="<?=WEBPATH ?>help/#votingrecord">how the voting record is decided</a>.</small>
+	</p>
 
-
-	<p id="howvoted">How <?=$member['full_name']?> voted on key issues since 2001:</p>
-	<ul id="dreamcomparisons">
 	<?
-		$got_dream = false;
-		$got_dream |= display_dream_comparison($extra_info, $member, 996, "a <strong>transparent Parliament</strong>", false, '"freedom of information"');
-		$got_dream |= display_dream_comparison($extra_info, $member, 811, "introducing a <strong>smoking ban</strong>", false, "smoking");
-		#$got_dream |= display_dream_comparison($extra_info, $member, 856, "the <strong>changes to parliamentary scrutiny in the <a href=\"http://en.wikipedia.org/wiki/Legislative_and_Regulatory_Reform_Bill\">Legislative and Regulatory Reform Bill</a></strong>", false, "legislative and regulatory reform bill");
-		$got_dream |= display_dream_comparison($extra_info, $member, 230, "introducing <strong>ID cards</strong>", true, "id cards");
-		$got_dream |= display_dream_comparison($extra_info, $member, 363, "introducing <strong>foundation hospitals</strong>", false, "foundation hospital");
-		$got_dream |= display_dream_comparison($extra_info, $member, 367, "introducing <strong>student top-up fees</strong>", true, "top-up fees");
-		$got_dream |= display_dream_comparison($extra_info, $member, 258, "Labour's <strong>anti-terrorism laws</strong>", true, "terrorism");
-		$got_dream |= display_dream_comparison($extra_info, $member, 219, "the <strong>Iraq war</strong>", true, "iraq");
-		$got_dream |= display_dream_comparison($extra_info, $member, 975, "investigating the <strong>Iraq war</strong>", false, "iraq");
-		$got_dream |= display_dream_comparison($extra_info, $member, 984, "replacing <strong>Trident</strong>", false, "trident");
-		$got_dream |= display_dream_comparison($extra_info, $member, 358, "the <strong>hunting ban</strong>", true, "hunting");
-		$got_dream |= display_dream_comparison($extra_info, $member, 826, "equal <strong>gay rights</strong>", false, "gay");
-		if (!$got_dream) {
-			print "<li>" . $member['full_name'] . " has not voted enough in this parliament to have any scores.</li>";
-		}
-		print '</ul>';
-?>
-<p class="italic">
-<small>Read about <a href="<?=WEBPATH ?>help/#votingrecord">how the voting record is decided</a>.</small>
-</p>
-
-<? } ?>
-
-<?
-		// Links to full record at Guardian and Public Whip	
-		$record = array();
-		if (isset($extra_info['guardian_howtheyvoted'])) {
-			$record[] = '<a href="' . $extra_info['guardian_howtheyvoted'] . '" title="At The Guardian">well-known issues</a> <small>(from the Guardian)</small>';
-		}
-		if (isset($extra_info['public_whip_division_attendance']) && $extra_info['public_whip_division_attendance'] != 'n/a') { 
-			$record[] = '<a href="http://www.publicwhip.org.uk/mp.php?id=uk.org.publicwhip/member/' . $member['member_id'] . '&amp;showall=yes#divisions" title="At Public Whip">their full record</a>';
-		}
-
-		if (count($record) > 0) {
-			$displayed_stuff = 1;
-			?>
-			<p>More on <?php echo implode(' &amp; ', $record); ?></p>
-<?php
-		}
-	        
-		// Rebellion rate
-		if (isset($extra_info['public_whip_rebellions']) && $extra_info['public_whip_rebellions'] != 'n/a') {	
-			$displayed_stuff = 1;
-	?>					<ul>
-							<li><a href="http://www.publicwhip.org.uk/mp.php?id=uk.org.publicwhip/member/<?=$member['member_id'] ?>#divisions" title="See more details at Public Whip">
-                        <strong><?php echo htmlentities(ucfirst($extra_info['public_whip_rebel_description'])); ?> rebels</strong></a> against their party<?php
-			if (isset($extra_info['public_whip_rebelrank'])) {
-				echo " in this parliament"; /* &#8212; ";
-				if (isset($extra_info['public_whip_rebelrank_joint']))
-					print 'joint ';
-				echo make_ranking($extra_info['public_whip_rebelrank']);
-				echo " most rebellious of ";
-				echo $extra_info['public_whip_rebelrank_outof'];
-				echo ($member['house']=='House of Commons') ? " MPs" : ' Lords';
-				*/
+			// Links to full record at Guardian and Public Whip
+			$record = array();
+			if (isset($extra_info['guardian_howtheyvoted'])) {
+				$record[] = '<a href="' . $extra_info['guardian_howtheyvoted'] . '" title="At The Guardian">well-known issues</a> <small>(from the Guardian)</small>';
 			}
-			?>.
-			</li>
-		</ul><?php
-		}
+			if (isset($extra_info['public_whip_division_attendance']) && $extra_info['public_whip_division_attendance'] != 'n/a') {
+				$record[] = '<a href="' . PUBLICWHIP_HOST . '/mp.php?id=uk.org.publicwhip/member/' . $member['member_id'] . '" title="At They Vote For You">their full record</a>';
+			}
 
-		if (!$displayed_stuff) {
-			print '<p>No data to display yet.</p>';
-		}
-		$this->block_end();
+			if (count($record) > 0) {
+				$displayed_stuff = 1;
+				?>
+				<p>More on <?php echo implode(' &amp; ', $record); ?></p>
+	<?php
+			}
 
-		# Topics of interest only for MPs at the moment
-		if (in_array(1, $member['houses'])) {
+			// Rebellion rate
+			if (isset($extra_info['public_whip_rebellions']) && $extra_info['public_whip_rebellions'] != 'n/a') {
+				$displayed_stuff = 1;
+		?>					<ul>
+								<li><a href="<?= PUBLICWHIP_HOST ?>/mp.php?id=uk.org.publicwhip/member/<?=$member['member_id'] ?>#divisions" title="See more details at Public Whip">
+	                        <strong><?php echo htmlentities(ucfirst($extra_info['public_whip_rebel_description'])); ?> rebels</strong></a> against their party<?php
+				if (isset($extra_info['public_whip_rebelrank'])) {
+					echo " in this parliament"; /* &#8212; ";
+					if (isset($extra_info['public_whip_rebelrank_joint']))
+						print 'joint ';
+					echo make_ranking($extra_info['public_whip_rebelrank']);
+					echo " most rebellious of ";
+					echo $extra_info['public_whip_rebelrank_outof'];
+					echo ($member['house']=='House of Commons') ? " MPs" : ' Lords';
+					*/
+				}
+				?>.
+				</li>
+			</ul><?php
+			}
+
+			if (!$displayed_stuff) {
+				print '<p>No data to display yet.</p>';
+			}
+			$this->block_end();
+
+		} // End DISPLAY_VOTING_DATA feature flag
+
+		// Topics of interest only for MPs at the moment
+		// if (in_array(1, $member['houses'])) {
+		// Disable topics of interest
+		if (0) {
 
 ?>	<a name="topics"></a>
 		<? $this->block_start(array('id'=>'topics', 'title'=>'Committees and topics of interest')); 
@@ -1797,7 +1809,6 @@ and has had no written questions answered for which we know the department or su
 		$this->block_end();
 
 		}
-	}
 
 	if (!in_array(1, $member['houses']) || $member['party'] != 'Sinn Fein') {
 
@@ -1896,7 +1907,7 @@ and has had no written questions answered for which we know the department or su
 			$after_stuff .= '<br><em>Note SNP MPs do not vote on legislation not affecting Scotland.</em>';
 		}
 		if ($member['party'] != 'Sinn Fein') {
-#			$displayed_stuff |= display_stats_line('public_whip_division_attendance', 'Has voted in <a href="http://www.publicwhip.org.uk/mp.php?id=uk.org.publicwhip/member/' . $member['member_id'] . '&amp;showall=yes#divisions" title="See more details at Public Whip">', 'of vote', '</a> in parliament', $after_stuff, $extra_info);
+#			$displayed_stuff |= display_stats_line('public_whip_division_attendance', 'Has voted in <a href=" . PUBLICWHIP_HOST . "/mp.php?id=uk.org.publicwhip/member/' . $member['member_id'] . '&amp;showall=yes#divisions" title="See more details at Public Whip">', 'of vote', '</a> in parliament', $after_stuff, $extra_info);
 			$displayed_stuff |= display_stats_line('comments_on_speeches', 'People have made <a href="' . WEBPATH . 'comments/recent/?pid='.$member['person_id'].'">', 'comment', "</a> on this Representative's speeches", '', $extra_info);
 			$displayed_stuff |= display_stats_line('reading_age', 'This Representative\'s speeches are understandable to an average ', '', ' year old, going by the <a href="http://en.wikipedia.org/wiki/Flesch-Kincaid_Readability_Test">Flesch-Kincaid Grade Level</a> score', '', $extra_info);
 		}
