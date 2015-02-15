@@ -30,6 +30,30 @@ $lastbatch = trim($lastsent[1]);
 if (!$lastbatch) $lastbatch = 0;
 mlog("lastupdated: $lastupdated lastbatch: $lastbatch\n");
 
+
+// extract html wrappers from html email template
+// tokens have been added to the template to mark the start and end of section of the html
+$html_template_filename=HTML_EMAIL_TEMPLATE; 
+if (!file_exists($html_template_filename)) {
+    $PAGE->error_message("Sorry, we could not find the email template '" . $filename . "'.");
+    return false; }
+mlog(HTML_EMAIL_TEMPLATE);
+// Get the text from the template.
+$content = file_get_contents($html_template_filename);
+//content, start_token, end_token
+$html_email_sections['TOP']=extract_content_between_tokens($content,'<!-- CUT_HERE START_TOP -->','<!-- CUT_HERE END_TOP -->',false);
+$html_email_sections['MEMBER_HEADER']=extract_content_between_tokens($content,'<!-- CUT_HERE START_MEMBER_SEARCH_HEADER -->','<!-- CUT_HERE END_MEMBER_SEARCH_HEADER -->',true);
+$html_email_sections['MEMBER_ITEM']=extract_content_between_tokens($content,'<!-- CUT_HERE START_MEMBER_WRAPPER -->','<!-- CUT_HERE END_MEMBER_WRAPPER -->',true);
+$html_email_sections['UNSUB_ALERT']=extract_content_between_tokens($content,'<!-- CUT_HERE START_END_OF_SECTION_UNSUBSCRIBE -->','<!-- CUT_HERE END_END_OF_SECTION_UNSUBSCRIBE -->',true);
+$html_email_sections['VIEW_MORE']=extract_content_between_tokens($content,'<!-- CUT_HERE START_VIEW_MORE_LINK -->','<!-- CUT_HERE END_VIEW_MORE_LINK -->',true);
+$html_email_sections['PHRASE_HEADER']=extract_content_between_tokens($content,'<!-- CUT_HERE START_PHRASE_SEARCH_HEADER -->','<!-- CUT_HERE END_PHRASE_SEARCH_HEADER -->',true);
+$html_email_sections['PHRASE_ITEM']=extract_content_between_tokens($content,'<!-- CUT_HERE START_PHRASE_WRAPPER -->','<!-- CUT_HERE END_PHRASE_WRAPPER -->',true);
+$html_email_sections['ALERT_PREFS']=extract_content_between_tokens($content,'<!-- CUT_HERE START_NEWSLETTER_PREFERENCES_MANAGEMENT -->','<!-- CUT_HERE END_NEWSLETTER_PREFERENCES_MANAGEMENT -->',true);
+$html_email_sections['SEPERATION_LINE']=extract_content_between_tokens($content,'<!-- CUT_HERE START_SEPERATION_LINE -->','<!-- CUT_HERE END_SEPERATION_LINE -->',true);
+$html_email_sections['BOTTOM']=extract_content_between_tokens($content,'<!-- CUT_HERE START_BOTTOM -->','<!-- CUT_HERE END_BOTTOM -->',false);
+//mlog($html_email_sections['MEMBER_HEADER']);
+
+
 // Construct query fragment to select search index batches which
 // have been made since last time we ran
 $batch_query_fragment = "";
@@ -103,7 +127,7 @@ foreach ($alertdata as $alertitem) {
 			write_and_send_email($current_email_addr, $user_id, $email_plaintext);
 		$current_email_addr = $alert_email_addr;
 		$email_plaintext = '';
-		$email_html = '';
+		$email_html = $html_email_sections['TOP']; // start with this piece of the html template, no values to swap in
 		$q = $db->query('SELECT user_id FROM users WHERE email = \''.mysql_escape_string($alert_email_addr)."'");
 		if ($q->rows() > 0) {
 			$user_id = $q->field(0, 'user_id');
@@ -167,7 +191,8 @@ foreach ($alertdata as $alertitem) {
 				$any_content = true;
 				$result=array(); // this will contain a dict of result parts
 				// gather the parts
-				$result['title'] = $row['parent']['body'] . ' (' . format_date($row['hdate'], SHORTDATEFORMAT) . ')';
+				$result['date'] = format_date($row['hdate'], SHORTDATEFORMAT);
+				$result['title'] = $row['parent']['body'];
 				$result['body'] = $row['body'];
 				$result['url'] = 'http://www.openaustralia.org' . $row['listurl'];
 				if (isset($row['speaker']) && count($row['speaker']))
@@ -188,7 +213,35 @@ foreach ($alertdata as $alertitem) {
 				$heading = $deschead . ' : ' . $count[$major] . ' ' . $sects[$major] . ($count[$major]!=1?'s':'');
 				$email_plaintext .= "$heading\n";
 				$email_plaintext .= str_repeat('=',strlen($heading))."\n\n";
-				$email_html .= "<p>" . $heading . "</p>\n";
+				
+				if (preg_match('#^speaker:\d+$#', $criteria_raw, $m))  // it's a person alert
+				{  
+				    //mlog("Person : " . $criteria_raw . "\n");
+				    $email_html .= $html_email_sections['MEMBER_HEADER'];
+				    $email_html = str_replace('{ALERT_TERM}',$result['speaker'],$email_html); // swap in the values
+				}
+				else // it's a phrase alert
+				{
+				    //mlog("Phrase : " . $criteria_raw . "\n");
+				    $email_html .= $html_email_sections['PHRASE_HEADER'];
+				    $email_html = str_replace('{ALERT_TERM}',$criteria_raw,$email_html); // swap in the values
+				}
+				$email_html = str_replace('{ITEM_COUNT}',$count[$major],$email_html); // swap in the values
+				if($count[$major]>1)
+				{ //more then one, add an 's'
+				    $email_html = str_replace('{ITEM_HOUSE}',$sects[$major] . "s",$email_html); // swap in the values
+				}
+				else
+				{ //no 's' needed
+				    $email_html = str_replace('{ITEM_HOUSE}',$sects[$major],$email_html); // swap in the values
+
+				}
+
+				if ($count[$major] > 3) { // this is for the text emails which have this at the top
+				    $url_seemore="http://www.openaustralia.org/search/?s=".urlencode($criteria_raw)."+section:".$sects_short[$major]."&o=d";
+				    $email_plaintext .= "There are more results than we have shown here. See more: \n $url_seemore \n\n";
+				}
+
 				if ($count[$major] > 3) {
 					$url_seemore="http://www.openaustralia.org/search/?s=".urlencode($criteria_raw)."+section:".$sects_short[$major]."&o=d";
 					$email_plaintext .= "There are more results than we have shown here. See more: \n $url_seemore \n\n";
@@ -202,22 +255,54 @@ foreach ($alertdata as $alertitem) {
 						$email_plaintext .= ($result['speaker'] ? $result['speaker'] . " : " : "");
 						$email_plaintext .= str_replace(array('&#163;','&#8212;','<span class="hi">','</span>'), array("\xa3",'-','*','*'), $result['body']) ."\n\n";
 						//html
-						$cleaned_title = str_replace(array('&#8212;','<span class="hi">','</span>'), array('-','<strong>','</strong>'), $result['title']) . "\n";
-						$email_html .= "<p><a href='" . $result['url'] . "'>" . $cleaned_title . "</a></p>\n";
-						$email_html .= ($result['speaker'] ? '<p>' . $result['speaker'] . '</p>' . "\n" : "");
-						$tagged_alert_term_body=str_replace(array('&#163;','&#8212;','<span class="hi">','</span>'), array("\xa3",'-','<strong>','</strong>'), $result['body']);
-						$email_html .= '<p>' . $tagged_alert_term_body . '</p><br />' . "\n";
+						$cleaned_title = str_replace(array('&#8212;','<span class="hi">','</span>'), array('','',''), $result['title']);
+						$cleaned_body=str_replace(array('&#163;','&#8212;','<span class="hi">','</span>'), array('','','',''), $result['body']);
+						
+						if (preg_match('#^speaker:(\d+)$#', $criteria_raw, $m))  // it's a person alert
+						{  
+							$member_image_url="http://www.openaustralia.org.au/images/mpsL/" . $m[1] . ".jpg";
+							mlog("Person Item: " . $member_image_url . "\n");
+							$email_html .= $html_email_sections['MEMBER_ITEM'];
+							$email_html = str_replace('{ITEM_TITLE}',$cleaned_title,$email_html); // swap in the values
+							$email_html = str_replace('{ITEM_DATE}',$result['date'],$email_html); // swap in the values
+							$email_html = str_replace('{ITEM_TEXT}',$cleaned_body,$email_html); // swap in the values
+							$email_html = str_replace('{MEMBER_IMAGE_URL}',$member_image_url,$email_html); //
+						}
+						else // it's a phrase alert
+						{
+							//mlog("Phrase Item : " . $criteria_raw . "\n");
+							$email_html .= $html_email_sections['PHRASE_ITEM'];
+							$email_html = str_replace('{ITEM_TITLE}',$cleaned_title,$email_html); // swap in the values
+							$email_html = str_replace('{ITEM_DATE}',$result['date'],$email_html); // swap in the values
+							$email_html = str_replace('{ITEM_SPEAKER}',$result['speaker'],$email_html); // swap in the values
+							// have to hard code the highlights
+							$highlight_html='<span style="background-color: #FFFFA8; color: #8A5505; display: inline-block; padding: 0px 4px; border-radius: 5px; line-height: 22px;">';
+							$highlighted_text=str_replace($criteria_raw,$highlight_html . $criteria_raw . "</span>",$cleaned_body);
+							$email_html = str_replace('{ITEM_TEXT}',$highlighted_text,$email_html); // swap in the values
+						}
+						$email_html .= $html_email_sections['SEPERATION_LINE'];
 					}
 				}
+				
+				if ($count[$major] > 3) { // this is for the html emails which have this at the bottom
+					$email_html .= $html_email_sections['VIEW_MORE']; // insert this piece of html
+					$email_html = str_replace('{VIEW_MORE_URL}',$url_seemore,$email_html); // swap in the values
+					$email_html = str_replace('{VIEW_MORE_SPEAKER}',$result['speaker'],$email_html); // swap in the values
+				}
+
 			}
 			$url_unsubscribe="http://www.openaustralia.org/D/" . $alertitem['alert_id'] . '-' . $alertitem['registrationtoken'];
 			$email_plaintext .= "To unsubscribe from your alert for items " . $desc . ", please use:\n $url_unsubscribe \n\n";
-			$email_html .= "<p><a href='" . $url_unsubscribe . "'>Unsubscibe alerts " . $desc . "</a></p>\n";
+
+			$email_html .= $html_email_sections['UNSUB_ALERT']; // insert this piece of html
+			$email_html = str_replace('{UNSUB_URL}',$url_unsubscribe,$email_html); // swap in the values
+			$email_html = str_replace('{UNSUB_ALERT_DESCRIPTION}',$deschead,$email_html); // swap in the values
 		}
 	}
 }
-if ($email_plaintext && $email_html)  //somewhat unessesary but clearer, for someone working on this fuction
-	write_and_send_email($current_email_addr, $user_id, $email_plaintext, $email_html);
+
+if ($email_plaintext && $email_html)  //somewhat unnecessary but clearer, for someone working on this function
+    write_and_send_email($current_email_addr, $user_id, $email_plaintext, $email_html, $html_email_sections);
 
 mlog("\n");
 
@@ -249,19 +334,20 @@ function sort_by_stuff($a, $b) {
 	return ($a['hpos'] > $b['hpos']) ? 1 : -1;
 }
 
-function write_and_send_email($to_email_addr, $user_id, $email_plaintext, $email_html) {
+function write_and_send_email($to_email_addr, $user_id, $email_plaintext, $email_html, $html_email_sections) {
 	global $globalsuccess, $sentemails, $nomail, $start_time;
 
 	$email_plaintext .= '===================='."\n\n";
 	if ($user_id) {  // change the message depending on if the alert user is a registered user
 		$email_plaintext .= "As a registered user, visit http://www.openaustralia.org/user/\n";
 		$email_plaintext .= "to unsubscribe from, or manage, your alerts.\n";
-		$email_html .= "<p>As a registered user, you can <a href='http://www.openaustralia.org/user/'>manage your alerts online</a>.\n";
+		$email_html .= $html_email_sections['ALERT_PREFS'];
 	} else {
 		$email_plaintext .= "If you register on the site, you will be able to manage your\n";
 		$email_plaintext .= " alerts there as well as post comments. :)\n";
-		$email_html .= "<p>If you <a href='http://www.openaustralia.org/user/?pg=join'>register online</a> you will be able to manage you alerts, and post comments too.</a></p>\n";
+		$email_html .= $html_email_sections['ALERT_PREFS']; // for html it's the same message, registered or not
 	}
+	$email_html .= $html_email_sections['BOTTOM'];
 	$sentemails++;
 	mlog("SEND $sentemails : Sending email to $to_email_addr ... ");
 	
@@ -270,16 +356,18 @@ function write_and_send_email($to_email_addr, $user_id, $email_plaintext, $email
 	// I opted to make it unique in the system (reasonably)
 	$mime_boundary=uniqid('mime-boundary-'); // we pass this on to the template function, to be used in the email header (utility.php)
 	
-	$multipart_text  = "--$mime_boundary \n";
-	$multipart_text .= "Content-type: text/plain;charset=\"utf-8\" \n";
+        //$multipart_text  = "--$mime_boundary \n";
+	$multipart_text = "Content-type: text/plain;charset=\"utf-8\"\n";
 	$multipart_text .= "Content-transfer-encoding: 7bit \n";
-	
-	$multipart_html = "--$mime_boundary \n";
-	$multipart_html .= "Content-Type: text/html; charset=\"iso-8859-1\" \n";
-	$multipart_html .= "Content-Transfer-Encoding: quoted-printable \n";
+		
+        //$multipart_html = "--$mime_boundary \n";
+	$multipart_html = "Content-Type: text/html; charset=\"iso-8859-1\";\n";
+	$multipart_html .= "Content-Transfer-Encoding: quoted-printable \n";	
 	
 	$template_data = array('to' => $to_email_addr, 'template' => 'alert_mailout_multipart');
-	$template_merge = array('MIMEBOUNDARY'=>$mime_boundary, 'MIMEBOUNDARY_TEXT' => $multipart_text, 'TEXTMESSAGE' => $email_plaintext, 'MIMEBOUNDARY_HTML' => $multipart_html, 'HTMLMESSAGE' => $email_html);
+	$template_data = array('to' => $to_email_addr, 'template' => 'alert_mailout_html');
+	$template_merge = array('MIMEBOUNDARY'=>$mime_boundary, 'MIMEHEADER_TEXT' => $multipart_text, 'TEXTMESSAGE' => $email_plaintext, 'MIMEHEADER_HTML' => $multipart_html, 'HTMLMESSAGE' => $email_html);
+
 	if (!$nomail) {
 		$success = send_template_email($template_data, $template_merge, true); // true = "Precedence: bulk"
 		mlog("sent ... ");
@@ -295,5 +383,25 @@ function write_and_send_email($to_email_addr, $user_id, $email_plaintext, $email
 	mlog("done\n");
 	if (!$success) $globalsuccess = 0;
 }
+
+function extract_content_between_tokens($content,$start_token,$end_token,$include_tokens) {
+        // this function takes a monolithic html tamplate, and using start/end tokens, extract specific fragments
+        // the tokens are encoded into the template as HTML comments <!--...-->
+
+        $start_position = strpos($content, $start_token) + strlen($start_token);
+        $end_position = strpos($content, $end_token, $start_position) ;
+
+        if($include_tokens)
+        {
+	    $start_position = $start_position - strlen($start_token);
+	    $end_position = $end_position + strlen($end_token);
+        }
+        
+        //mlog($start_token.' '.$start_position."\n");
+        //mlog($end_token.' '.$end_position."\n");
+        $result = substr($content, $start_position, $end_position - $start_position);
+        return $result;
+}
+
 
 ?>
