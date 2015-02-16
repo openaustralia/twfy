@@ -37,7 +37,6 @@ $html_template_filename=HTML_EMAIL_TEMPLATE;
 if (!file_exists($html_template_filename)) {
     $PAGE->error_message("Sorry, we could not find the email template '" . $filename . "'.");
     return false; }
-mlog(HTML_EMAIL_TEMPLATE);
 // Get the text from the template.
 $content = file_get_contents($html_template_filename);
 //content, start_token, end_token
@@ -51,7 +50,6 @@ $html_email_sections['PHRASE_ITEM']=extract_content_between_tokens($content,'<!-
 $html_email_sections['ALERT_PREFS']=extract_content_between_tokens($content,'<!-- CUT_HERE START_NEWSLETTER_PREFERENCES_MANAGEMENT -->','<!-- CUT_HERE END_NEWSLETTER_PREFERENCES_MANAGEMENT -->',true);
 $html_email_sections['SEPERATION_LINE']=extract_content_between_tokens($content,'<!-- CUT_HERE START_SEPERATION_LINE -->','<!-- CUT_HERE END_SEPERATION_LINE -->',true);
 $html_email_sections['BOTTOM']=extract_content_between_tokens($content,'<!-- CUT_HERE START_BOTTOM -->','<!-- CUT_HERE END_BOTTOM -->',false);
-//mlog($html_email_sections['MEMBER_HEADER']);
 
 
 // Construct query fragment to select search index batches which
@@ -122,9 +120,9 @@ foreach ($alertdata as $alertitem) {
 	$criteria_raw = $alertitem['criteria'];
 	$criteria_batch = $criteria_raw . " " . $batch_query_fragment;
 
-	if ($alert_email_addr != $current_email_addr) {
-		if ($email_plaintext)
-			write_and_send_email($current_email_addr, $user_id, $email_plaintext);
+	if ($alert_email_addr != $current_email_addr) {  // if the recipient changes
+		if ($email_plaintext)  // and there is something to send
+			write_and_send_email($current_email_addr, $user_id, $email_plaintext, $email_html, $html_email_sections);
 		$current_email_addr = $alert_email_addr;
 		$email_plaintext = '';
 		$email_html = $html_email_sections['TOP']; // start with this piece of the html template, no values to swap in
@@ -182,7 +180,6 @@ foreach ($alertdata as $alertitem) {
 				$results_for_email[$major]=array();  // new array to hold the results to be sent
 				$k = 3;
 			}
-			//mlog($row['major'] . " " . $row['gid'] ."\n");
 			if ($row['hdate'] < '2007-01-14') continue;  // I had to change this 2007, to get results from the dev db
 			$q = $db->query('SELECT gid_from FROM gidredirect WHERE gid_to=\'uk.org.publicwhip/' . $sects_short[$major] . '/' . mysql_escape_string($row['gid']) . "'");
 			if ($q->rows() > 0) continue;
@@ -216,13 +213,11 @@ foreach ($alertdata as $alertitem) {
 				
 				if (preg_match('#^speaker:\d+$#', $criteria_raw, $m))  // it's a person alert
 				{  
-				    //mlog("Person : " . $criteria_raw . "\n");
 				    $email_html .= $html_email_sections['MEMBER_HEADER'];
 				    $email_html = str_replace('{ALERT_TERM}',$result['speaker'],$email_html); // swap in the values
 				}
 				else // it's a phrase alert
 				{
-				    //mlog("Phrase : " . $criteria_raw . "\n");
 				    $email_html .= $html_email_sections['PHRASE_HEADER'];
 				    $email_html = str_replace('{ALERT_TERM}',$criteria_raw,$email_html); // swap in the values
 				}
@@ -261,18 +256,18 @@ foreach ($alertdata as $alertitem) {
 						if (preg_match('#^speaker:(\d+)$#', $criteria_raw, $m))  // it's a person alert
 						{  
 							$member_image_url="http://www.openaustralia.org.au/images/mpsL/" . $m[1] . ".jpg";
-							mlog("Person Item: " . $member_image_url . "\n");
 							$email_html .= $html_email_sections['MEMBER_ITEM'];
 							$email_html = str_replace('{ITEM_TITLE}',$cleaned_title,$email_html); // swap in the values
+							$email_html = str_replace('{ITEM_URL}',$result['url'],$email_html); // swap in the values
 							$email_html = str_replace('{ITEM_DATE}',$result['date'],$email_html); // swap in the values
 							$email_html = str_replace('{ITEM_TEXT}',$cleaned_body,$email_html); // swap in the values
 							$email_html = str_replace('{MEMBER_IMAGE_URL}',$member_image_url,$email_html); //
 						}
 						else // it's a phrase alert
 						{
-							//mlog("Phrase Item : " . $criteria_raw . "\n");
 							$email_html .= $html_email_sections['PHRASE_ITEM'];
 							$email_html = str_replace('{ITEM_TITLE}',$cleaned_title,$email_html); // swap in the values
+							$email_html = str_replace('{ITEM_URL}',$result['url'],$email_html); // swap in the values
 							$email_html = str_replace('{ITEM_DATE}',$result['date'],$email_html); // swap in the values
 							$email_html = str_replace('{ITEM_SPEAKER}',$result['speaker'],$email_html); // swap in the values
 							// have to hard code the highlights
@@ -301,7 +296,7 @@ foreach ($alertdata as $alertitem) {
 	}
 }
 
-if ($email_plaintext && $email_html)  //somewhat unnecessary but clearer, for someone working on this function
+if ($email_plaintext && $email_html)  // if the final user has some content, send it.
     write_and_send_email($current_email_addr, $user_id, $email_plaintext, $email_html, $html_email_sections);
 
 mlog("\n");
@@ -356,16 +351,16 @@ function write_and_send_email($to_email_addr, $user_id, $email_plaintext, $email
 	// I opted to make it unique in the system (reasonably)
 	$mime_boundary=uniqid('mime-boundary-'); // we pass this on to the template function, to be used in the email header (utility.php)
 	
-        //$multipart_text  = "--$mime_boundary \n";
-	$multipart_text = "Content-type: text/plain;charset=\"utf-8\"\n";
+        $multipart_text  = "--$mime_boundary \n";
+	$multipart_text .= "Content-type: text/plain;charset=\"utf-8\"\n";
 	$multipart_text .= "Content-transfer-encoding: 7bit \n";
 		
-        //$multipart_html = "--$mime_boundary \n";
-	$multipart_html = "Content-Type: text/html; charset=\"iso-8859-1\";\n";
+        $multipart_html = "--$mime_boundary \n";
+	$multipart_html .= "Content-Type: text/html; charset=\"iso-8859-1\";\n";
 	$multipart_html .= "Content-Transfer-Encoding: quoted-printable \n";	
 	
 	$template_data = array('to' => $to_email_addr, 'template' => 'alert_mailout_multipart');
-	$template_data = array('to' => $to_email_addr, 'template' => 'alert_mailout_html');
+	//$template_data = array('to' => $to_email_addr, 'template' => 'alert_mailout_html');
 	$template_merge = array('MIMEBOUNDARY'=>$mime_boundary, 'MIMEHEADER_TEXT' => $multipart_text, 'TEXTMESSAGE' => $email_plaintext, 'MIMEHEADER_HTML' => $multipart_html, 'HTMLMESSAGE' => $email_html);
 
 	if (!$nomail) {
@@ -377,7 +372,6 @@ function write_and_send_email($to_email_addr, $user_id, $email_plaintext, $email
 			sleep(1);
 		}
 	} else {
-		mlog($email_plaintext);
 		$success = 1;
 	}
 	mlog("done\n");
@@ -397,8 +391,6 @@ function extract_content_between_tokens($content,$start_token,$end_token,$includ
 	    $end_position = $end_position + strlen($end_token);
         }
         
-        //mlog($start_token.' '.$start_position."\n");
-        //mlog($end_token.' '.$end_position."\n");
         $result = substr($content, $start_position, $end_position - $start_position);
         return $result;
 }
