@@ -124,7 +124,7 @@ foreach ($alertdata as $alertitem) {
 
 	if ($alert_email_addr != $current_email_addr) {
 		if ($email_plaintext)
-			write_and_send_email($current_email_addr, $user_id, $email_plaintext);
+			write_and_send_email($current_email_addr, $user_id, $email_plaintext, $email_html, $html_email_sections);
 		$current_email_addr = $alert_email_addr;
 		$email_plaintext = '';
 		$email_html = $html_email_sections['TOP']; // start with this piece of the html template, no values to swap in
