@@ -269,6 +269,7 @@ foreach ($alertdata as $alertitem) {
 							$email_html = str_replace('{ITEM_TITLE}',$cleaned_title,$email_html); // swap in the values
 							$email_html = str_replace('{ITEM_DATE}',$result['date'],$email_html); // swap in the values
 							$email_html = str_replace('{ITEM_TEXT}',$cleaned_body,$email_html); // swap in the values
+							$email_html = str_replace('{ITEM_URL}',$result['url'],$email_html); // swap in the values
 							$email_html = str_replace('{MEMBER_IMAGE_URL}',$member_image_url,$email_html); //
 						}
 						else // it's a phrase alert
@@ -283,6 +284,8 @@ foreach ($alertdata as $alertitem) {
 							$highlight_html='<span style="background-color: #FFFFA8; color: #8A5505; display: inline-block; padding: 0px 4px; border-radius: 5px; line-height: 22px;">';
 							$highlighted_text=str_replace($criteria_raw,$highlight_html . $criteria_raw . "</span>",$cleaned_body);
 							$email_html = str_replace('{ITEM_TEXT}',$highlighted_text,$email_html); // swap in the values
+							$email_html = str_replace('{ITEM_URL}',$result['url'],$email_html); // swap in the values
+
 						}
 						$email_html .= $html_email_sections['SEPERATION_LINE'];
 					}
