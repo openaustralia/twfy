@@ -101,7 +101,7 @@ class OAAPI {
 class OAAPI_Request {
 
     // API URL
-    private $URL = 'http://www.openaustralia.org/api/';
+    private $URL = 'https://www.openaustralia.org.au/api/';
 
     // Chosen function, arguments and API key
     private $func;
