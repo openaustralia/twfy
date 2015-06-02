@@ -460,7 +460,8 @@ div.block div.blockbody ul {
 	margin-right: 0;
 	}
 
-div#help.block {
+div#help.block,
+div#research-quant2-bucket2 {
 	/* border: 1px solid #D24000; */ /* NAT */
 	background-color: #ECDDCF; /* NAT */
 	}
