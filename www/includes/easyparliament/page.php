@@ -1283,7 +1283,12 @@ pr()//-->
 		
 		?>
 </div> <!-- end #container -->
-
+<?php
+  // Include modal and scripts for mySociety experiment
+  if ($this_page == "mp" || $this_page == "peer") {
+    include INCLUDESPATH . 'easyparliament/templates/research/quant2.php';
+  }
+?>
 </body>
 </html>
 <?php
@@ -2051,8 +2056,6 @@ elseif ($member['house_disp']==0) print $member['full_name']; ?> speaks<?php
 			}
 			$this->block_end();
 		}
-    // Include modal and scripts for mySociety experiment
-    include INCLUDESPATH . 'easyparliament/templates/research/quant2.php';
 	}
 	
 	function expenses_printout($col, $extra_info, $style) {
