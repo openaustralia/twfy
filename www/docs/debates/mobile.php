@@ -85,7 +85,8 @@ if (get_http_var("d") != "") {
 	
 #	$TRACKBACK->display('epobject_id', $args);
 
-
+  // Include modal and scripts for mySociety experiment
+  include INCLUDESPATH . 'easyparliament/templates/research/quant2.php';
 	
 } elseif (get_http_var('y') != '') {
 	
