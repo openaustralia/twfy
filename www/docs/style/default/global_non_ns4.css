@@ -966,3 +966,35 @@ acronym {
 #advert_thin a {
 	font-weight: bold;
 }
+
+/* Modal styles for experiment
+ *
+ */
+
+#whereNextModal.reveal-modal {
+  padding: 2em;
+  background-color: #fff;
+}
+
+#whereNextModal h2 {
+  margin-left: 0;
+}
+
+#whereNextModal li {
+  margin-bottom: 1em;
+}
+
+#whereNextModal a {
+  color: #00B;
+  text-decoration: underline;
+}
+
+#whereNextModal a:hover,
+#whereNextModal a:focus {
+  cursor: pointer;
+}
+
+/* Make sure the modal is on top of the overlay which fades the page */
+.lean-overlay {
+  z-index: 99 !important;
+}
