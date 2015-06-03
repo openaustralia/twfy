@@ -236,6 +236,7 @@ if (isset($MEMBER) && is_array($MEMBER->person_id())) {
 	);
 	
   // Include modal and scripts for mySociety experiment
+  include INCLUDESPATH . 'easyparliament/sidebars/where_next_link.php';
   include INCLUDESPATH . 'easyparliament/templates/research/quant2.php';
 
 	//$PAGE->stripe_end(array($sidebar));
@@ -408,6 +409,7 @@ keeping these sorts of records on you...</p></div></div>'
 	);
 
   // Include modal and scripts for mySociety experiment
+  include INCLUDESPATH . 'easyparliament/sidebars/where_next_link.php';
   include INCLUDESPATH . 'easyparliament/templates/research/quant2.php';
 
 	//$PAGE->stripe_end($sidebars);
