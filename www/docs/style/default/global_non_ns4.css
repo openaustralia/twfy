@@ -975,7 +975,7 @@ acronym {
   display: none;
 }
 
-#whereNextModal.reveal-modal {
+#whereNextModal {
   padding: 2em;
   background-color: #fff;
 }
@@ -996,9 +996,4 @@ acronym {
 #whereNextModal a:hover,
 #whereNextModal a:focus {
   cursor: pointer;
-}
-
-/* Make sure the modal is on top of the overlay which fades the page */
-.lean-overlay {
-  z-index: 99 !important;
 }

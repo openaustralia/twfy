@@ -30,7 +30,7 @@ $(document).ready(function() {
     // Choose which action to take
     if (researchUser.bucket == 1) {
         // Bind modal behaviours
-        $('#whereNextModal').easyModal();
+        $('#whereNextModal').popup();
 
         // Bind the "where next" click event
         $('#research-quant2-bucket1-wherenext').click(function(e) {
@@ -85,7 +85,7 @@ $(document).ready(function() {
                 dataType: 'jsonp'
             });
 
-            $('#whereNextModal').trigger('closeModal');
+            $('#whereNextModal').popup('toggle');
             $('#whereNextModal').attr('hidden', '');
 
         });
@@ -99,7 +99,7 @@ $(document).ready(function() {
                 // Set the suppress popup flag.
                 $.localStorage.set('research.qual2.suppress_popup', true);
 
-                $('#whereNextModal').trigger('openModal');
+                $('#whereNextModal').popup('toggle');
                 $('#whereNextModal').removeAttr('hidden');
                 $.ajax({
                     url: recordEndpoint,
