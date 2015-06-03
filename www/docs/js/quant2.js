@@ -1,7 +1,7 @@
 var researchUser;
 var startTime = new Date();
 var recordEndpoint = 'http://logbook.mysociety.org/quant2';
-var siteTag = 'twfy';
+var siteTag = 'openaustralia';
 
 $(document).ready(function() {
 
