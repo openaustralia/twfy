@@ -971,6 +971,10 @@ acronym {
  *
  */
 
+#whereNextModal[hidden] {
+  display: none;
+}
+
 #whereNextModal.reveal-modal {
   padding: 2em;
   background-color: #fff;

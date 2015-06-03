@@ -1,4 +1,4 @@
-<div id="whereNextModal" class="reveal-modal" data-reveal aria-labelledby="modalTitle" aria-hidden="true" role="dialog">
+<div id="whereNextModal" class="reveal-modal" data-reveal aria-labelledby="modalTitle" hidden role="dialog">
   <h2 id="modalTitle">Where to next?</h2>
   <p class="lead">Do you know what would you like to do with the information on this page?</p>
   <p>We are looking at ways to improve this site. In one click, please tell us what you will do with the information you have found on this page.</p>

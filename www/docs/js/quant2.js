@@ -86,6 +86,7 @@ $(document).ready(function() {
             });
 
             $('#whereNextModal').trigger('closeModal');
+            $('#whereNextModal').attr('hidden', '');
 
         });
 
@@ -99,6 +100,7 @@ $(document).ready(function() {
                 $.localStorage.set('research.qual2.suppress_popup', true);
 
                 $('#whereNextModal').trigger('openModal');
+                $('#whereNextModal').removeAttr('hidden');
                 $.ajax({
                     url: recordEndpoint,
                     data: {
