@@ -1284,12 +1284,6 @@ pr()//-->
 		
 		?>
 </div> <!-- end #container -->
-<?php
-  // Include modal and scripts for mySociety experiment
-  if ($this_page == "debate" || $this_page == "lordsdebate" || $this_page == "debates" || $this_page == "lordsdebates" || $this_page == "mp" || $this_page == "peer" || $this_page == 'yourmp') {
-    include INCLUDESPATH . 'easyparliament/templates/research/quant2.php';
-  }
-?>
 </body>
 </html>
 <?php
