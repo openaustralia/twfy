@@ -10,6 +10,8 @@
   <h4>... with how your MP is representing you</h4>
   <p>You can contact your MP using the details on their page at OpenAustralia.<br />
   <a href="/mp/">Find your MP by entering your postcode</a>.</p>
+  <br />
+  <br />
 
   <h3>If you want to know more</h3>
 
