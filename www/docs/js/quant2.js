@@ -31,6 +31,7 @@ $(document).ready(function() {
     if (researchUser.bucket == 1) {
         // Bind modal behaviours
         $('#whereNextModal').popup({
+          transition: 'all 0.3s',
           scrolllock: true
         });
 
