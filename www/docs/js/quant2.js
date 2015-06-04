@@ -30,7 +30,9 @@ $(document).ready(function() {
     // Choose which action to take
     if (researchUser.bucket == 1) {
         // Bind modal behaviours
-        $('#whereNextModal').popup();
+        $('#whereNextModal').popup({
+          scrolllock: true
+        });
 
         // Bind the "where next" click event
         $('#research-quant2-bucket1-wherenext').click(function(e) {
