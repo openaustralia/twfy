@@ -1031,6 +1031,7 @@ pageTracker._trackPageview();
 						$this->include_sidebar_template($hash['content']);
 					
 					} elseif ($hash['type'] == 'nextprev') {
+            include INCLUDESPATH . 'easyparliament/sidebars/where_next_link.php';
 						$this->nextprevlinks();
 					
 					} elseif ($hash['type'] == 'html') {

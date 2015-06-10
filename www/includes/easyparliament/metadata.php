@@ -882,7 +882,12 @@ $this->page = array (
 		'title'			=> 'Westminster Hall debates for ',
 		'url'			=> 'whall/'
 	),
-
+  // Where next page for mySociety experiment
+	'wherenext' => array (
+		'title'			=> 'Where next?',
+		'track'			=> true,
+		'url'			=> 'wherenext/'
+	),
 	'wms' => array (
 		'parent'		=> 'wmsfront',
 		'url'			=> 'wms/',

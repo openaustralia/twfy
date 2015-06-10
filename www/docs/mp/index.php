@@ -236,6 +236,9 @@ if (isset($MEMBER) && is_array($MEMBER->person_id())) {
 	
 	$PAGE->stripe_end(array($sidebar));
 
+  // Include modal and scripts for mySociety experiment
+  include INCLUDESPATH . 'easyparliament/templates/research/quant2.php';
+
 } elseif (isset($MEMBER) && $MEMBER->person_id()) {
 	
 	twfy_debug_timestamp("before load_extra_info");
@@ -290,6 +293,7 @@ if (isset($MEMBER) && is_array($MEMBER->person_id())) {
 	
 	$sidebars = array(
 		array('type'=>'include', 'content' => 'donate'),
+		array('type'=>'include', 'content' => 'where_next_link'),
 /*		array (
 			'type'		=> 'include',
 			'content'	=> 'mp_email_friend'
@@ -403,6 +407,9 @@ data you get off this site. If you ignore this, we might have to start
 keeping these sorts of records on you...</p></div></div>'
 	);
 	$PAGE->stripe_end($sidebars);
+
+  // Include modal and scripts for mySociety experiment
+  include INCLUDESPATH . 'easyparliament/templates/research/quant2.php';
 
 } else {
 	// Something went wrong.

@@ -964,3 +964,36 @@ acronym {
 #advert_thin a {
 	font-weight: bold;
 }
+
+/* Modal styles for experiment
+ * https://github.com/openaustralia/openaustralia/issues/572
+ */
+
+/* Adjust position and type styles for small screens */
+#whereNextModal:not([hidden]) {
+  padding: 1em;
+  background-color: #fff;
+}
+
+#whereNextModal[hidden] {
+  display: none;
+}
+
+#whereNextModal p,
+#whereNextModal h2 {
+  margin-left: 0;
+}
+
+#whereNextModal li {
+  margin-bottom: 1em;
+}
+
+#whereNextModal a {
+  color: #00B;
+  text-decoration: underline;
+}
+
+#whereNextModal a:hover,
+#whereNextModal a:focus {
+  cursor: pointer;
+}

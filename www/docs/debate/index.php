@@ -78,9 +78,10 @@ if (get_http_var('id') != '') {
 #		$TRACKBACK = new TRACKBACK;	
 #		$TRACKBACK->display('epobject_id', $commendata);
 	}
-	
 
-	
+  // Include modal and scripts for mySociety experiment
+  include INCLUDESPATH . 'easyparliament/templates/research/quant2.php';
+
 } else {
 	$PAGE->error_message("We need a gid");
 }
