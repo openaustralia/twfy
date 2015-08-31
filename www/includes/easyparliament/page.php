@@ -444,6 +444,7 @@ pageTracker._trackPageview();
 		// Start the body, put in the page headings.
 		?>
 <body>
+<?php include INCLUDESPATH . 'easyparliament/templates/research/demographic-survey-link.php'; ?>
 <div id="container">
 <?php
 		twfy_debug ("PAGE", "This page: $this_page");
@@ -466,6 +467,7 @@ pageTracker._trackPageview();
 		// Start the body, put in the page headings.
 		?>
 <body>
+<?php include INCLUDESPATH . 'easyparliament/templates/research/demographic-survey-link.php'; ?>
 <div id="container">
 <?php
 		twfy_debug ("PAGE", "This page: $this_page");
