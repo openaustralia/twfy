@@ -1285,6 +1285,8 @@ pr()//-->
 		?>
 </div> <!-- end #container -->
 
+<!-- Script for mySociety demographics survey -->
+<script type="text/javascript" src="/js/demographic-survey.min.js"></script>
 </body>
 </html>
 <?php
