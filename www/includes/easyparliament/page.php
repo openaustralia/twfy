@@ -147,6 +147,8 @@ class PAGE {
 
     function page_end_mobile () {
         print '<div id="footer"><p><a href="/?show_pc">View the PC OA website</a></p></div>';
+        // Script for mySociety demographics survey
+        print '<script type="text/javascript" src="/js/demographic-survey.min.js"></script>';
     }
 	
 	
