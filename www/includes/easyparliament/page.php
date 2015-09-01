@@ -143,6 +143,8 @@ class PAGE {
 	function page_end ($extra = null) {
 		$this->content_end();
 		$this->page_footer($extra);
+    // Script for mySociety demographics survey
+    print '<script type="text/javascript" src="/js/demographic-survey.min.js"></script>';
 	}
 
     function page_end_mobile () {
@@ -1289,8 +1291,6 @@ pr()//-->
 		?>
 </div> <!-- end #container -->
 
-<!-- Script for mySociety demographics survey -->
-<script type="text/javascript" src="/js/demographic-survey.min.js"></script>
 </body>
 </html>
 <?php
