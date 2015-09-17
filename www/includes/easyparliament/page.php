@@ -143,10 +143,14 @@ class PAGE {
 	function page_end ($extra = null) {
 		$this->content_end();
 		$this->page_footer($extra);
+    // Script for mySociety demographics survey
+    print '<script type="text/javascript" src="/js/demographic-survey.min.js"></script>';
 	}
 
     function page_end_mobile () {
         print '<div id="footer"><p><a href="/?show_pc">View the PC OA website</a></p></div>';
+        // Script for mySociety demographics survey
+        print '<script type="text/javascript" src="/js/demographic-survey.min.js"></script>';
     }
 	
 	
@@ -444,6 +448,7 @@ pageTracker._trackPageview();
 		// Start the body, put in the page headings.
 		?>
 <body>
+<?php include INCLUDESPATH . 'easyparliament/templates/research/demographic-survey-link.php'; ?>
 <div id="container">
 <?php
 		twfy_debug ("PAGE", "This page: $this_page");
@@ -466,6 +471,7 @@ pageTracker._trackPageview();
 		// Start the body, put in the page headings.
 		?>
 <body>
+<?php include INCLUDESPATH . 'easyparliament/templates/research/demographic-survey-link.php'; ?>
 <div id="container">
 <?php
 		twfy_debug ("PAGE", "This page: $this_page");
