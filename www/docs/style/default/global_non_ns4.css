@@ -997,25 +997,3 @@ acronym {
 #whereNextModal a:focus {
   cursor: pointer;
 }
-
-.pre-header-notice {
-  font-weight: bold;
-  text-align: center;
-  border: solid 1px #648D46;
-  padding: 0;
-  margin: 0;
-  width: 100%;
-}
-
-.pre-header-notice a {
-  padding: 1em 0.5em;
-  width: 100%;
-  display: block;
-  color: #000000;
-  background-color: #EBA668;
-}
-
-.pre-header-notice a:hover,
-.pre-header-notice a:focus {
-  background-color: #f0bd8e;
-}
