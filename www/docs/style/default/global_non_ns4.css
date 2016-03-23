@@ -460,8 +460,7 @@ div.block div.blockbody ul {
 	margin-right: 0;
 	}
 
-div#help.block,
-div#research-quant2-bucket2 {
+div#help.block {
 	/* border: 1px solid #D24000; */ /* NAT */
 	background-color: #ECDDCF; /* NAT */
 	}
@@ -965,35 +964,4 @@ acronym {
 }
 #advert_thin a {
 	font-weight: bold;
-}
-
-/* Modal styles for experiment
- * https://github.com/openaustralia/openaustralia/issues/572
- */
-
-#whereNextModal[hidden] {
-  display: none;
-}
-
-#whereNextModal {
-  padding: 2em;
-  background-color: #fff;
-}
-
-#whereNextModal h2 {
-  margin-left: 0;
-}
-
-#whereNextModal li {
-  margin-bottom: 1em;
-}
-
-#whereNextModal a {
-  color: #00B;
-  text-decoration: underline;
-}
-
-#whereNextModal a:hover,
-#whereNextModal a:focus {
-  cursor: pointer;
 }

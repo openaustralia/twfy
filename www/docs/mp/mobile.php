@@ -235,10 +235,6 @@ if (isset($MEMBER) && is_array($MEMBER->person_id())) {
 			</div>'
 	);
 	
-  // Include modal and scripts for mySociety experiment
-  include INCLUDESPATH . 'easyparliament/sidebars/where_next_link.php';
-  include INCLUDESPATH . 'easyparliament/templates/research/quant2.php';
-
 	//$PAGE->stripe_end(array($sidebar));
 
 } elseif (isset($MEMBER) && $MEMBER->person_id()) {
@@ -407,11 +403,6 @@ body of your articles as the source of any analysis or
 data you get off this site. If you ignore this, we might have to start
 keeping these sorts of records on you...</p></div></div>'
 	);
-
-  // Include modal and scripts for mySociety experiment
-  include INCLUDESPATH . 'easyparliament/sidebars/where_next_link.php';
-  include INCLUDESPATH . 'easyparliament/templates/research/quant2.php';
-
 	//$PAGE->stripe_end($sidebars);
 
 } else {
