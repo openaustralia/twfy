@@ -12,5 +12,7 @@ source consts
 #cd ~/parlparse/members
 #svn -q update
 #cd ~/fawkes/scripts
-./mpinfoin.pl
-
+# FIXME: Re-enable SSL verification by removing the setting of this environment variable
+# This was disabled because we were getting "Can't connect to theyvoteforyou.org.au:443 (certificate verify failed)"
+# on the server: https://github.com/openaustralia/openaustralia/issues/603#issuecomment-244642228
+PERL_LWP_SSL_VERIFY_HOSTNAME=0 ./mpinfoin.pl
