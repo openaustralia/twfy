@@ -56,6 +56,10 @@ freely available. Do let us know if you want to help!
 <td>Henare Degan</td>
 </tr>
 <tr>
+<td><img src="http://www.gravatar.com/avatar/839aef22d6c767b07a630ceb9ac26793?s=32&d=identicon&r=g" width="32" height="32" alt="Avatar for Simon Elvery"></td>
+<td>Simon Elvery</td>
+</tr>
+<tr>
 <td><img src="http://www.gravatar.com/avatar/011c7cbc5af9c3c81b12b9c173a9db32?s=32&d=identicon&r=g" width="32" height="32" alt="Avatar for Ray Haleblian"></td>
 <td>Ray Haleblian</td>
 </tr>
