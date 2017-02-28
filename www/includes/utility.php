@@ -708,8 +708,11 @@ function send_template_email ($data, $merge, $bulk = false) {
 	
 	$emailtext = preg_replace($search, $replace, $emailtext);
 	
-	// Send it!
-	$success = send_email ($data['to'], $subject, $emailtext, $bulk);
+	// Send it!  if we used the multipart template, use the multipart send fuction
+	if($data['template']=='alert_mailout_multipart')
+		$success = send_multipart_email ($data['to'], $subject, $emailtext, $merge['MIMEBOUNDARY'], $bulk);
+	else
+		$success = send_email ($data['to'], $subject, $emailtext, $bulk);
 
 	return $success;
 
@@ -743,6 +746,24 @@ function send_email ($to, $subject, $message, $bulk = false) {
 
 	return $success;
 }
+
+function send_multipart_email ($to, $subject, $message, $mime_boundary, $bulk = false) {
+	$headers  ="X-Mailer: PHP/" . phpversion() . "\r\n";
+	$headers .= "MIME-Version: 1.0 \r\n";
+	if($bulk) $headers .="Precedence: bulk \r\n";
+	$headers .= "From: OpenAustralia.org <" . CONTACTEMAIL . "> \r\n";
+	$headers .= "Reply-To: OpenAustralia.org <" . CONTACTEMAIL . "> \r\n";
+	$headers .= "Content-Type: multipart/alternative;boundary=" . $mime_boundary . "\r\n";
+	twfy_debug('EMAIL', "Sending multipart email to $to with subject of '$subject'");
+	$success = mail ($to, $subject, $message, $headers);
+	
+	// the next two commented lines can be used to help debug html mail templte issues.
+	// file_put_contents('/srv/www/openaustralia/twfy/scripts/mails/multipart.html',$message);
+	// file_put_contents('/srv/www/openaustralia/twfy/scripts/mails/multipart_header',$headers);
+	
+	return $success;
+}
+
 
 
 
