@@ -708,8 +708,14 @@ function send_template_email ($data, $merge, $bulk = false) {
 	
 	$emailtext = preg_replace($search, $replace, $emailtext);
 	
-	// Send it!
-	$success = send_email ($data['to'], $subject, $emailtext, $bulk);
+	// Send it!  if we used the multipart template, use the multipart send fuction
+	//mlog($data['template']);
+	if($data['template']=='alert_mailout_multipart')
+		$success = send_multipart_email ($data['to'], $subject, $emailtext, $merge['MIMEBOUNDARY'], $bulk);
+	elseif($data['template']=='alert_mailout_html')
+		$success = send_html_email ($data['to'], $subject, $emailtext, $bulk);
+	else
+		$success = send_email ($data['to'], $subject, $emailtext, $bulk);
 
 	return $success;
 
@@ -744,6 +750,42 @@ function send_email ($to, $subject, $message, $bulk = false) {
 	return $success;
 }
 
+
+function send_html_email ($to, $subject, $message, $bulk = false) {
+     	$headers  ="X-Mailer: PHP/" . phpversion() . "\n";
+	$headers .= "MIME-Version: 1.0\n";
+	if($bulk) $headers .="Precedence: bulk\n";
+	$headers .= "From: OpenAustralia.org <" . CONTACTEMAIL . ">\n";
+	$headers .= "Reply-To: OpenAustralia.org <" . CONTACTEMAIL . ">\n";
+	$headers .= "Content-Type: text/html; charset=\"iso-8859-1\"\n";
+	$headers .= "Content-Transfer-Encoding: quoted-printable\n" ;
+	twfy_debug('EMAIL', "Sending html email to $to with subject of '$subject'");
+	$success = mail ($to, $subject, $message, $headers);
+	
+	//mlog("Saving html emails for debug\n");
+	//file_put_contents('/srv/www/openaustralia/twfy/scripts/mails/htmlmail.html',$message);
+	//file_put_contents('/srv/www/openaustralia/twfy/scripts/mails/htmlheader.html',$headers);
+	return $success;
+}
+
+
+function send_multipart_email ($to, $subject, $message, $mime_boundary, $bulk = false) {
+	$headers  ="X-Mailer: PHP/" . phpversion() . "\r\n";
+	$headers .= "MIME-Version: 1.0 \r\n";
+	if($bulk) $headers .="Precedence: bulk \r\n";
+	$headers .= "From: OpenAustralia.org <" . CONTACTEMAIL . "> \r\n";
+	$headers .= "Reply-To: OpenAustralia.org <" . CONTACTEMAIL . "> \r\n";
+	$headers .= "Content-Type: multipart/alternative;boundary=\"$mime_boundary\"\r\n";
+	twfy_debug('EMAIL', "Sending multipart email to $to with subject of '$subject'");
+	$success = mail ($to, $subject, $message, $headers);
+	
+	// the next two commented lines can be used to help debug html mail templte issues.
+	//mlog('Saving emails for debug\n');
+	//file_put_contents('/srv/www/openaustralia/twfy/scripts/mails/multipart.html',$message);
+	//file_put_contents('/srv/www/openaustralia/twfy/scripts/mails/multipart_header',$headers);
+	
+	return $success;
+}
 
 
 ///////////////////////////////

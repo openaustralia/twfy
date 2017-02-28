@@ -20,6 +20,9 @@ define ("COOKIEDOMAIN", "dev.openaustralia.org");
 
 define ("CONTACTEMAIL", "contact@openaustralia.org");
 
+// File system path to the html email tamplate
+define ("HTML_EMAIL_TEMPLATE","/srv/www/openaustralia/twfy/www/includes/easyparliament/templates/emails/html_email_template.html");
+
 // File system path to the top directory of this Theyworkforyou installation
 define ("BASEDIR","/var/www/openaustralia/twfy/www/docs/"); 
 

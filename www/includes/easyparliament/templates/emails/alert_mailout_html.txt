@@ -1,0 +1,2 @@
+Subject: Your OpenAustralia email alert
+{HTMLMESSAGE}

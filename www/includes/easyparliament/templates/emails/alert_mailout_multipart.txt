@@ -1,0 +1,27 @@
+Subject: Your OpenAustralia email alert
+--{MIMEBOUNDARY}
+{MIMEHEADER_TEXT}
+-------------------------------------------------------------------------
+You like finding out what's happening in Parliament, what about what's
+happening in government? Our exciting new project allows you to do
+exactly that!
+
+Introducing Right To Know: http://tinyurl.com/righttoknowau
+-------------------------------------------------------------------------
+
+{TEXTMESSAGE}
+
+If clicking any of these links doesn't work, you may have
+to copy and then paste them into the 'Location' or
+'Address' box of your web browser, and then press 'enter'
+or 'return' on your keyboard.
+
+Best wishes,
+OpenAustralia.org
+
+--{MIMEBOUNDARY}
+{MIMEHEADER_HTML}
+
+{HTMLMESSAGE}
+
+--{MIMEBOUNDARY}--
