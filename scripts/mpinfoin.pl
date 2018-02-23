@@ -90,7 +90,7 @@ if ($action{'links'}) {
         chdir $FindBin::Bin;
         #$twig->parsefile($pwmembers . 'lordbiogs.xml', ErrorContext => 2);
         #$twig->parsefile($pwmembers . 'journa-list.xml', ErrorContext => 2);
-        $twig->parsefile($pwmembers . 'links-abc-qanda.xml', ErrorContext => 2);
+        # $twig->parsefile($pwmembers . 'links-abc-qanda.xml', ErrorContext => 2);
         $twig->parsefile($pwmembers . 'links-abc-election.xml', ErrorContext => 2);
         #$twig->parsefile($pwmembers . 'twitter.xml', ErrorContext => 2);
         $twig->parsefile($pwmembers . 'links-register-of-interests.xml', ErrorContext => 2);
