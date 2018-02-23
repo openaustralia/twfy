@@ -106,7 +106,8 @@
 
 		function check_tags($data){
 
-			$data = preg_replace("/<(.*?)>/se", "\$this->process_tag(StripSlashes('\\1'))",	$data);
+			$callback = function($m) { return $this->process_tag(StripSlashes($m[1])); }
+			$data = preg_replace_callback("/<(.*?)>/s", $callback,	$data);
 
 			foreach(array_keys($this->tag_counts) as $tag){
 				for($i=0; $i<$this->tag_counts[$tag]; $i++){
