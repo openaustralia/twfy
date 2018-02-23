@@ -240,7 +240,7 @@ class MEMBER {
 		# Matthew made this change, but I don't know why.  It broke
 		# Iain Duncan Smith, so I've put it back.  FAI 2005-03-14
 		#		$success = preg_match('#^(.*? .*?) (.*?)$#', $name, $m);
-		$q = "SELECT DISTINCT person_id,constituency FROM member WHERE ";
+		$q = "SELECT DISTINCT person_id,constituency,left_house FROM member WHERE ";
 		#if ($this_page=='peer') {
 		#	$success = preg_match('#^(.*?) (.*?) of (.*?)$#', $name, $m);
 		#	if (!$success)
