@@ -99,7 +99,7 @@ function error_handler ($errno, $errmsg, $filename, $linenum, $vars) {
 		$err .= "User-Agent:\tNone\n";
 	}
 	$err .= "Number:\t\t$errno\n";
-	$err .= "Type:\t\t" . $errortype[$errno] . "\n";
+	//$err .= "Type:\t\t" . $errortype[$errno] . "\n";
 	$err .= "Message:\t$errmsg\n";
 	$err .= "File:\t\t$filename\n";
 	$err .= "Line:\t\t$linenum\n";
