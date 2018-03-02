@@ -82,6 +82,12 @@ function error_handler ($errno, $errmsg, $filename, $linenum, $vars) {
 	if ($errno == 8192 && !DEVSITE)
 		return;
 
+	// Also temporarily ignore:
+	// crypt(): No salt parameter was specified. You must use a randomly generated salt and a strong hash function to produce a secure hash.
+	// Yes, I know.
+  if ($errno == 8 && !DEVSITE)
+		return;
+
 	$err = '';
 	if (isset($_SERVER['REQUEST_URI'])) {
 		$err .= "URL:\t\thttp://" . DOMAIN . $_SERVER['REQUEST_URI'] . "\n";
