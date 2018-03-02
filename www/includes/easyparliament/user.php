@@ -171,7 +171,7 @@ class USER {
 		$registrationtime = gmdate("YmdHis");
 
 		// We crypt all passwords going into DB.
-		$passwordforDB = crypt($details["password"]);
+		$passwordforDB = @crypt($details["password"]);
 
 		if (!isset($details["status"])) {
 			$details["status"] = "User";
@@ -221,8 +221,8 @@ class USER {
 			// This will be sent to them via email, so we can confirm they exist.
 			// The token will be the first 16 characters of a crypt.
 
-			$token = substr( crypt($details["email"] . microtime()), 12, 16 );
-			
+			$token = substr( @crypt($details["email"] . microtime()), 12, 16 );
+
 			// Full stops don't work well at the end of URLs in emails,
 			// so replace them. We won't be doing anything clever with the crypt
 			// stuff, just need to match this token.
@@ -400,7 +400,7 @@ class USER {
 
 		}
 
-		$passwordforDB = crypt($pwd);
+		$passwordforDB = @crypt($pwd);
 
 		$q = $this->db->query ("UPDATE users SET password = '" . mysql_real_escape_string($passwordforDB) . "' WHERE email='" . mysql_real_escape_string($email) . "'");
 
@@ -650,7 +650,7 @@ class USER {
 			// so we don't want to overwrite the user's pw in the DB!
 
 			// We crypt all passwords going into DB.
-			$passwordforDB = crypt($details["password"]);
+			$passwordforDB = @crypt($details["password"]);
 
 			$passwordsql = "password	= '" . mysql_real_escape_string($passwordforDB) . "', ";
 		}

@@ -229,7 +229,7 @@ class ALERT {
 			// This gives a code for their email address which is then joined
 			// to the timestamp so as to provide a unique ID for each alert.
 
-			$token = substr( crypt($details["email"] . microtime() ), 12, 16 );
+			$token = substr( @crypt($details["email"] . microtime() ), 12, 16 );
 
 			// Full stops don't work well at the end of URLs in emails,
 			// so replace them. We won't be doing anything clever with the crypt
