@@ -206,6 +206,7 @@ class News
 	
 	# The most recently added news item
 	def News.most_recent
+		# Loads all news items into memory but should be okay because there are not many
 		find_all.max {|a,b| a.last_modified <=> b.last_modified}
 	end
 	
@@ -399,7 +400,7 @@ s.add_url "/alert/", :changefreq => :monthly
 # the page to search on
 
 # All the Hansard urls (for both House of Representatives and the Senate)
-Hansard.find(:all).each do |h|
+Hansard.find_each do |h|
 	# Skip section urls that just would get redirected to subsection urls
 	unless h.section? && h.speeches.size == 1
 		# Saying the Hansard could change monthly because of reparsing
