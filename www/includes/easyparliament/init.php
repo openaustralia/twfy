@@ -7,7 +7,7 @@ First some things to help make our PHP nicer and betterer
 
 error_reporting (E_ALL );
 ini_set("magic_quotes_runtime", 0);
-ini_set('memory_limit', 16*1024*1024);
+ini_set('memory_limit', 32*1024*1024);
 
 /********************************************************************************
 Now some constants that are the same for live and dev versions 
