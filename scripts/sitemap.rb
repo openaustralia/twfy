@@ -25,20 +25,20 @@ ActiveRecord::Base.establish_connection(
 
 class Member < ActiveRecord::Base
 	set_table_name "member"
-	
+
 	def full_name
 		"#{first_name} #{last_name}"
 	end
-	
+
 	def Member.find_all_person_ids
 		Member.find(:all, :group => "person_id").map{|m| m.person_id}
 	end
-	
+
 	# Find the most recent member for the given person_id
 	def Member.find_most_recent_by_person_id(person_id)
 		Member.find_all_by_person_id(person_id, :order => "entered_house DESC", :limit => 1).first
 	end
-	
+
 	# Returns the unique url for this member.
 	# Obviously this doesn't really belong in the model but, you know, for the time being...
 	# URLs without the initial http://www.openaustralia.org bit
@@ -54,7 +54,7 @@ class Member < ActiveRecord::Base
 		# TODO: Need to correctly encode the urls
 		"/" + house_url + "/" + encode_name(full_name) + '/' + encode_name(constituency)
 	end
-	
+
 	# Encode names and constituencies (for URLs) in the following way
 	def encode_name(text)
 	  text.downcase.tr(' ', '_')
@@ -66,11 +66,11 @@ class Comment < ActiveRecord::Base
 	def Comment.most_recent
 		Comment.find(:all, :order => "posted DESC", :limit => 1).first
 	end
-	
+
 	def Comment.last_modified
 	  Comment.most_recent.last_modified if Comment.most_recent
   end
-	
+
 	def last_modified
 		posted
 	end
@@ -79,14 +79,14 @@ end
 class Hansard < ActiveRecord::Base
 	set_table_name "hansard"
 	set_primary_key "epobject_id"
-	
+
 	has_many :comments, :foreign_key => "epobject_id"
-	
+
 	# Return all dates for which there are speeches on that day in the given house
 	def Hansard.find_all_dates_for_house(house)
 		find_all_by_major(house_to_major(house), :group => 'hdate').map {|h| h.hdate}
 	end
-	
+
 	def Hansard.house_to_major(house)
 		if house == "reps"
 			1
@@ -96,23 +96,23 @@ class Hansard < ActiveRecord::Base
 			throw "Unexpected value for house: #{house}"
 		end
 	end
-	
+
 	def Hansard.most_recent_in_house(house)
 		find_all_by_major(house_to_major(house), :order => "hdate DESC, htime DESC", :limit => 1).first
 	end
-	
+
 	def Hansard.most_recent
 		find(:all, :order => "hdate DESC, htime DESC", :limit => 1).first
 	end
-	
+
 	def Hansard.find_all_sections_by_date_and_house(date, house)
 		find_all_by_major_and_hdate_and_htype(house_to_major(house), date, 10)
 	end
-	
+
 	def Hansard.last_modified
 	  Hansard.most_recent.last_modified
   end
-	
+
 	def house
 		if major == 1
 			"reps"
@@ -122,23 +122,23 @@ class Hansard < ActiveRecord::Base
 			throw "Unexpected value of major: #{major}"
 		end
 	end
-	
+
 	def section?
 		htype == 10
 	end
-	
+
 	def subsection?
 		htype == 11
 	end
-	
+
 	def speech?
 		htype == 12
 	end
-	
+
 	def procedural?
 	  htype == 13
   end
-	
+
 	# Takes the modification times of any comments on a speech into account
 	def last_modified_including_comments
 		if speech?
@@ -147,7 +147,7 @@ class Hansard < ActiveRecord::Base
 			speeches.map{|s| s.last_modified_including_comments}.compact.max
 		end
 	end
-	
+
 	# The last time this was modified. Takes into account all subsections and speeches under this
 	# if this is a section or subsection.
 	def last_modified
@@ -157,7 +157,7 @@ class Hansard < ActiveRecord::Base
 			speeches.map{|s| s.last_modified}.compact.max
 		end
 	end
-	
+
 	# Returns all the hansard objects which are contained by this Hansard object
 	# For example, if this is a section, it returns all the subsections
 	def speeches
@@ -171,7 +171,7 @@ class Hansard < ActiveRecord::Base
 			throw "Unknown hansard type (htype: #{htype})"
 		end
 	end
-	
+
 	def numeric_id
 		if gid =~ /^uk.org.publicwhip\/(lords|debate)\/(.*)$/
 			$~[2]
@@ -179,18 +179,18 @@ class Hansard < ActiveRecord::Base
 			throw "Unexpected form of gid #{gid}"
 		end
 	end
-	
+
 	# TODO: There seems to be an assymetry between the reps and senate in their handling of the two different kinds of url below
 	# Must investigate this
-	
+
 	# Returns the unique url for this bit of the Hansard
 	# Again, this should not really be in the model
 	def url
 		"/" + (house == "reps" ? "debate" : "senate") + "/?id=" + numeric_id
 	end
-	
+
 	def Hansard.url_for_date(hdate, house)
-		"/" + (house == "reps" ? "debates" : "senate") + "/?d=" + hdate.to_s		
+		"/" + (house == "reps" ? "debates" : "senate") + "/?d=" + hdate.to_s
 	end
 end
 
@@ -199,17 +199,17 @@ class News
 	def initialize(title, date)
 		@title, @date = title, date
 	end
-	
+
 	def last_modified
 		Time.parse(@date)
 	end
-	
+
 	# The most recently added news item
 	def News.most_recent
 		# Loads all news items into memory but should be okay because there are not many
 		find_all.max {|a,b| a.last_modified <=> b.last_modified}
 	end
-	
+
 	def News.find_all
 		news = []
 		MySociety::Config.fork_php do |child|
@@ -221,19 +221,19 @@ class News
 		end
 		news
 	end
-	
+
 	def News.last_modified
 	  News.most_recent.last_modified
   end
-	
+
 	def url
 		"/news/archives/#{url_encoded_date}/#{url_encoded_title}"
 	end
-	
+
 	def url_encoded_title
 		@title.downcase.gsub(/[^a-z0-9 ]/, '').tr(' ', '_')[0..15]
 	end
-	
+
 	def url_encoded_date
 		@date[0..9].tr('-', '/')
 	end
@@ -241,9 +241,9 @@ end
 
 class SitemapUrl
 	attr_reader :loc, :changefreq, :lastmod
-	
+
 	CHANGEFREQ_VALUES = ["always", "hourly", "daily", "weekly", "monthly", "yearly", "never"]
-	
+
 	def initialize(loc, options)
 		@loc = loc
 		@changefreq = options.delete(:changefreq)
@@ -257,12 +257,12 @@ end
 # Like a Zlib::GzipWriter class but also counts the number of bytes (uncompressed) written out
 class CountedFile < Zlib::GzipWriter
   attr_reader :size
-  
+
   def initialize(filename)
     @size = 0
     super
   end
-  
+
   def <<(text)
     @size = @size + text.size
     super
@@ -274,9 +274,9 @@ class Sitemap
 	MAX_URLS_PER_FILE = 50000
 	# This is the uncompressed size of a single sitemap file
 	MAX_BYTES_PER_FILE = 10485760
-	
+
 	SITEMAP_XMLNS = "http://www.sitemaps.org/schemas/sitemap/0.9"
-	
+
 	def initialize(domain, path, web_path)
 		@domain, @path, @web_path = domain, path, web_path
 		# Index of current sitemap file
@@ -284,7 +284,7 @@ class Sitemap
 		start_index
 		start_sitemap
 	end
-	
+
 	def start_sitemap
 		puts "Writing sitemap file (#{sitemap_path})..."
 		@sitemap_file = CountedFile.open(sitemap_path)
@@ -293,18 +293,18 @@ class Sitemap
 		@no_urls = 0
 		@lastmod = nil
   end
-	
+
 	def start_index
 	  @index_file = File.open(sitemap_index_path, 'w')
 		@index_file << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
 		@index_file << "<sitemapindex xmlns=\"#{SITEMAP_XMLNS}\">"
   end
-  
+
   def finish_index
     @index_file << "</sitemapindex>"
     @index_file.close
   end
-  
+
   def finish_sitemap
 	  @sitemap_file << "</urlset>"
 	  @sitemap_file.close
@@ -314,7 +314,7 @@ class Sitemap
 		@index_file << "<lastmod>#{Sitemap.w3c_date(@lastmod)}</lastmod>"
     @index_file << "</sitemap>"
   end
-	
+
 	def add_url(loc, options = {})
 	  url = SitemapUrl.new(loc, options)
 	  # Now build up the bit of XML that we're going to add (as a string)
@@ -323,45 +323,45 @@ class Sitemap
 	  t << "<changefreq>#{url.changefreq}</changefreq>" if url.changefreq
 	  t << "<lastmod>#{Sitemap.w3c_date(url.lastmod)}</lastmod>" if url.lastmod
 		t << "</url>"
-	  
+
 	  # First check if we need to start a new sitemap file
 	  if (@no_urls == MAX_URLS_PER_FILE) || (@sitemap_file.size + t.size + "</urlset>".size > MAX_BYTES_PER_FILE)
 	    finish_sitemap
 	    @index = @index + 1
 	    start_sitemap
     end
-    
+
 	  @sitemap_file << t
 		@no_urls = @no_urls + 1
 		# For the last modification time of the whole sitemap file use the most recent
 		# modification time of all the urls in the file
 		@lastmod = url.lastmod if url.lastmod && (@lastmod.nil? || url.lastmod > @lastmod)
 	end
-	
+
 	# Write any remaining bits of XML and close all the files
 	def finish
 	  finish_sitemap
 	  finish_index
   end
-  
+
 	def Sitemap.w3c_date(date)
 		date.utc.strftime("%Y-%m-%dT%H:%M:%S+00:00")
-	end 
-		
+	end
+
 	# Path on the filesystem to the sitemap index file
 	# This needs to be at the root of the web path to include all the urls below it
 	def sitemap_index_path
 		"#{@path}sitemap.xml"
 	end
-	
+
 	def sitemap_index_url
 		"http://#{@domain}#{@web_path}sitemap.xml"
 	end
-	
+
 	def sitemap_url
 		"http://#{@domain}#{@web_path}sitemaps/sitemap#{@index + 1}.xml.gz"
 	end
-	
+
 	def sitemap_path
 		"#{@path}sitemaps/sitemap#{@index + 1}.xml.gz"
 	end
