@@ -74,4 +74,3 @@ fi
 
 echo -n "Whole thing done time: "
 date +"%Y-%m-%d %H:%M:%S"
-
