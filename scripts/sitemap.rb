@@ -1,5 +1,6 @@
 #!/usr/bin/env ruby
 # Generate sitemap.xml for quick and easy search engine updating
+# This script is run as part of twfy/scripts/morningupdate
 
 require 'rubygems'
 require 'active_record'
