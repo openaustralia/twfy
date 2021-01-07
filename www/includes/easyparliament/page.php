@@ -1962,9 +1962,6 @@ elseif ($member['house_disp']==0) print $member['full_name']; ?> speaks<?php
 				}
 				echo '</p>';
 			}
-			if (is_file(BASEDIR.$regpath)) {
-				echo '<p><a href="'.WEBPATH.$regpath.'">Our last scan of ' . $member['full_name'] . '\'s interest statement</a><img alt="PDF" src="/images/pdficon_small.gif"><small>(<a href="' . WEBPATH . 'help/#regmem-links">Possibly outdated</a>)</small></p>';
-			}
 			if (!isset($extra_info['aph_interests_url']) && !is_file(BASEDIR.$regpath)) {
 				echo 'Scan of ' . $member['full_name'] . '\'s entry is not yet available';
 			}
