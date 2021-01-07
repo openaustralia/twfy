@@ -1954,7 +1954,7 @@ elseif ($member['house_disp']==0) print $member['full_name']; ?> speaks<?php
 
 			$regpath = REGMEMPDFPATH.'register_interests_'.$member['person_id'].'.pdf';
 			if (isset($extra_info['aph_interests_url'])) {
-				echo '<p><a href="' . $extra_info['aph_interests_url'] . '">' . $member['full_name'] . '\'s latest interest statement from Australian Parliament House<img alt="PDF" src="/images/pdficon_small.gif"></a>';
+				echo '<p><a href="' . $extra_info['aph_interests_url'] . '">' . $member['full_name'] . '\'s latest interest statement<img alt="PDF" src="/images/pdficon_small.gif"></a>';
 				if (isset($extra_info['aph_interests_last_updated'])) {
 					echo '<small>Last updated: ';
 					echo format_date($extra_info['aph_interests_last_updated'], SHORTDATEFORMAT);
@@ -1962,7 +1962,7 @@ elseif ($member['house_disp']==0) print $member['full_name']; ?> speaks<?php
 				}
 				echo '</p>';
 			}
-			if (!isset($extra_info['aph_interests_url']) && !is_file(BASEDIR.$regpath)) {
+			if (!isset($extra_info['aph_interests_url'])) {
 				echo 'Scan of ' . $member['full_name'] . '\'s entry is not yet available';
 			}
 			if (isset($extra_info['register_member_interests_date'])) {
