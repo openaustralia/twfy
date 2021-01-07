@@ -2145,6 +2145,12 @@ elseif ($member['house_disp']==0) print $member['full_name']; ?> speaks<?php
 		if (isset($links['guardian_election_results'])) {
 			$html .= '	<li><a href="' . $links['guardian_election_results'] . '">Election results for ' . $member->constituency() . '</a> <small>(From The Guardian)</small></li>';
 		}
+		if (isset($links['abc_election_results_2019'])) {
+			$html .= '	<li><a href="' . $links['abc_election_results_2019'] . '">2019 Election results for ' . $member->constituency() . '</a> <small>(From ABC)</small></li>';
+		}
+		if (isset($links['abc_election_results_2016'])) {
+			$html .= '	<li><a href="' . $links['abc_election_results_2016'] . '">2016 Election results for ' . $member->constituency() . '</a> <small>(From ABC)</small></li>';
+		}
 		if (isset($links['abc_election_results_2013'])) {
 			$html .= '	<li><a href="' . $links['abc_election_results_2013'] . '">2013 Election results for ' . $member->constituency() . '</a> <small>(From ABC)</small></li>';
 		}
