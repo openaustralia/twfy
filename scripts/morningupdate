@@ -70,7 +70,7 @@ EOF
 fi
 
 # Update the XML sitemaps to keep the search engines informed
-./sitemap.rb
+(cd ../../openaustralia-parser; bundle exec sitemap.rb)
 
 echo -n "Whole thing done time: "
 date +"%Y-%m-%d %H:%M:%S"
