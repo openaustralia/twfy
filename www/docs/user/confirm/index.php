@@ -33,7 +33,7 @@ if (get_http_var('welcome') == 't') {
 		
 	<p>Hi, and welcome to OpenAustralia.org! You are now logged in.</p>
 
-	<p><strong>OpenAustralia.org</strong> helps make sense of this vital democratic resource and, crucially, allows you to scribble all over the margins.</p>
+	<p><strong>OpenAustralia.org</strong> helps make sense of this vital democratic resource.</p>
 
 	<p>Feel free to use it to keep an eye on <strong>your Representative</strong>, add <strong>comments</strong> next to speeches, or help others by contributing your own <strong>links</strong>.</p>
 

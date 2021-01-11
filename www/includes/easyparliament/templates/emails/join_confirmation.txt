@@ -1,7 +1,7 @@
 Subject: Please confirm your OpenAustralia.org account
 Hi {FIRSTNAME},
 
-Welcome to OpenAustralia.org, the website which lets you scribble all over the margins of Hansard.
+Welcome to OpenAustralia.org.
 
 Before you can log in and add comments, we need you to confirm your registration by clicking on the link below:
 
