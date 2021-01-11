@@ -126,24 +126,6 @@ if (get_http_var("d") != "") {
 		$args['epobject_id'] = $LORDSDEBATELIST->epobject_id();
 		$COMMENTLIST->display('ep', $args);
 		$PAGE->stripe_end();
-		$PAGE->stripe_start('side', 'addcomment');
-		$commendata = array(
-			'epobject_id' => $LORDSDEBATELIST->epobject_id(),
-			'gid' => get_http_var('gid'),
-			'return_page' => $this_page
-		);
-		$PAGE->comment_form($commendata);
-		if ($THEUSER->isloggedin()) {
-			$sidebar = array(
-				array(
-					'type' => 'include',
-					'content' => 'comment'
-				)
-			);
-			$PAGE->stripe_end($sidebar);
-		} else {
-			$PAGE->stripe_end();
-		}
 #		$TRACKBACK = new TRACKBACK;
 #		$TRACKBACK->display('epobject_id', $commendata);
 	}

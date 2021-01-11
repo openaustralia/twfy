@@ -69,32 +69,11 @@ if (get_http_var("d") != "") {
 	$PAGE->stripe_end();
 	
 	
-	$PAGE->stripe_start('side', 'addcomment');
-
-	$commentdata = array (
-		'epobject_id' 	=> $WRANSLIST->epobject_id(),
-		'gid' 			=> $WRANSLIST->gid(),
-		'return_page' 	=> $this_page
-	);
-	$PAGE->comment_form($commentdata);
 
 
-	// We show trackbacks on this page.
-	// We need that epobject_id for trackbacks too...	
 
 
-	// Display comment-adding help if user is logged in.
-	if ($THEUSER->isloggedin()) {
-		$sidebar = array (
-			array (
-				'type'		=> 'include',
-				'content' 	=> 'comment'
-			)
-		);
-		$PAGE->stripe_end($sidebar);
-	} else {
-		$PAGE->stripe_end();
-	}
+
 	
 #	$TRACKBACK = new TRACKBACK;
 	

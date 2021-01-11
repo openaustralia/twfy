@@ -57,24 +57,6 @@ if ($bill_id && !$id) {
 		$args['epobject_id'] = $committee->epobject_id();
 		$COMMENTLIST->display('ep', $args);
 		$PAGE->stripe_end();
-		$PAGE->stripe_start('side', 'addcomment');
-		$commendata = array(
-			'epobject_id' => $committee->epobject_id(),
-			'gid' => get_http_var('id'),
-			'return_page' => $this_page
-		);
-		$PAGE->comment_form($commendata);
-		if ($THEUSER->isloggedin()) {
-			$sidebar = array(
-				array(
-					'type' => 'include',
-					'content' => 'comment'
-				)
-			);
-			$PAGE->stripe_end($sidebar);
-		} else {
-			$PAGE->stripe_end();
-		}
 	}
 } elseif ($session) {
 	$this_page = 'pbc_session';

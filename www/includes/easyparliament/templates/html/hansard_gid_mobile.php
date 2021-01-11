@@ -499,8 +499,6 @@ function generate_commentteaser ($row, $major) {
 		} else {
 			$commentsurl = $row['commentsurl'];
 		}
-		
-		$html .= '<a href="' . $commentsurl . '#addcomment" title="Comment on this"><strong>Add your comment</strong></a>';
 
 		$html = "\t\t\t\t" . '<p class="comment-teaser">' . $html . "</p>\n";
 	}
