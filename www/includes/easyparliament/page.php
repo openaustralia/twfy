@@ -16,11 +16,11 @@ function score_to_strongly($dmpscore) {
 		$dmpdesc = "moderately against";
 	elseif ($dmpscore > 0.4)
 		$dmpdesc = "a mixture of for and against";
-	elseif ($dmpscore > 0.15) 
+	elseif ($dmpscore > 0.15)
 		$dmpdesc = "moderately for";
-	elseif ($dmpscore > 0.05) 
+	elseif ($dmpscore > 0.05)
 		$dmpdesc = "strongly for";
-	elseif ($dmpscore >= 0.0) 
+	elseif ($dmpscore >= 0.0)
 		$dmpdesc = "very strongly for";
 	return $dmpdesc;
 }
@@ -30,62 +30,62 @@ class PAGE {
 	// So we can tell from other places whether we need to output the page_start or not.
 	// Use the page_started() function to do this.
 	var $page_start_done = false;
-	
+
 	var $heading_displayed = false;
-	
+
 	// We want to know where we are with the stripes, the main structural elements
 	// of most pages, so that if we output an error message we can wrap it in HTML
 	// that won't break the rest of the page.
 	// Changed in $this->stripe_start().
 	var $within_stripe_main = false;
 	var $within_stripe_sidebar = false;
-		
-	
+
+
 	function page_start () {
 	  ob_start();
 	  set_time_limit(0);
 		global $DATA, $this_page, $THEUSER;
-		
+
 		if (!$this->page_started()) {
 			// Just in case something's already started this page...
-	
+
 			$parent = $DATA->page_metadata($this_page, "parent");
 
 			if ($parent == 'admin' && ! $THEUSER->is_able_to('viewadminsection')) {
 				// If the user tries to access the admin section when they're not
 				// allowed, then show them nothing.
-			
+
 				if (!$THEUSER->isloggedin()) {
 					$THISPAGE = new URL($this_page);
-					
+
 					$LOGINURL = new URL('userlogin');
 					$LOGINURL->insert(array('ret' => $THISPAGE->generate('none') ));
-				
+
 					$text = "<a href=\"" . $LOGINURL->generate() . "\">You'd better log in!</a>";
 				} else {
 					$text = "That's all folks!";
 				}
-				
+
 				$this_page = 'home';
-				
+
 				$this->page_header();
 				$this->page_body();
 				$this->content_start();
 				$this->stripe_start();
-				
+
 				print "<p>$text</p>\n";
-				
+
 				$this->stripe_end();
 				$this->page_end();
 				exit;
 			}
-			
+
 			$this->page_header();
 			$this->page_body();
 			$this->content_start();
-			
-			$this->page_start_done = true;		
-			
+
+			$this->page_start_done = true;
+
 		}
 	}
 
@@ -95,51 +95,51 @@ class PAGE {
 	  ob_start();
 	  set_time_limit(0);
 		global $DATA, $this_page, $THEUSER;
-		
+
 		if (!$this->page_started()) {
 			// Just in case something's already started this page...
-	
+
 			$parent = $DATA->page_metadata($this_page, "parent");
 
 			if ($parent == 'admin' && ! $THEUSER->is_able_to('viewadminsection')) {
 				// If the user tries to access the admin section when they're not
 				// allowed, then show them nothing.
-			
+
 				if (!$THEUSER->isloggedin()) {
 					$THISPAGE = new URL($this_page);
-					
+
 					$LOGINURL = new URL('userlogin');
 					$LOGINURL->insert(array('ret' => $THISPAGE->generate('none') ));
-				
+
 					$text = "<a href=\"" . $LOGINURL->generate() . "\">You'd better log in!</a>";
 				} else {
 					$text = "That's all folks!";
 				}
-				
+
 				$this_page = 'home';
-				
+
 				$this->page_header_mobile();
 				$this->page_body_mobile();
 				$this->content_start();
 				$this->stripe_start();
-				
+
 				print "<p>$text</p>\n";
-				
+
 				$this->stripe_end();
 				$this->page_end();
 				exit;
 			}
-			
+
 			$this->page_header_mobile();
 			$this->page_body_mobile();
 			$this->content_start();
-			
-			$this->page_start_done = true;		
-			
+
+			$this->page_start_done = true;
+
 		}
 	}
 
-	
+
 	function page_end ($extra = null) {
 		$this->content_end();
 		$this->page_footer($extra);
@@ -148,8 +148,8 @@ class PAGE {
     function page_end_mobile () {
         print '<div id="footer"><p><a href="/?show_pc">View the PC OA website</a></p></div>';
     }
-	
-	
+
+
 	function page_started () {
 		return $this->page_start_done == true ? true : false;
 	}
@@ -157,7 +157,7 @@ class PAGE {
 	function heading_displayed () {
 		return $this->heading_displayed == true ? true : false;
 	}
-	
+
 	function within_stripe () {
 		if ($this->within_stripe_main == true || $this->within_stripe_sidebar == true) {
 			return true;
@@ -177,16 +177,16 @@ class PAGE {
 
 	function page_header () {
 		global $DATA, $this_page;
-		
+
 		$linkshtml = "";
-	
+
 		$title = '';
 		$sitetitle = $DATA->page_metadata($this_page, "sitetitle");
 		$keywords_title = '';
-		
+
 		if ($this_page == 'home') {
 			$title = $sitetitle . ': ' . $DATA->page_metadata($this_page, "title");
-		
+
 		} else {
 
 			if ($page_subtitle = $DATA->page_metadata($this_page, "subtitle")) {
@@ -204,7 +204,7 @@ class PAGE {
 
 			if ($title == '') {
 				$title = $sitetitle;
-			} else {			
+			} else {
 				$title .= ' (' . $sitetitle . ')';
 			}
 		}
@@ -216,10 +216,10 @@ class PAGE {
 			$metadescription = "";
 		}
 
-	
+
 		if ($this_page != "home") {
 			$URL = new URL('home');
-			
+
 			$linkshtml = "\t<link rel=\"start\" title=\"Home\" href=\"" . $URL->generate() . "\">\n";
 		}
 
@@ -234,12 +234,12 @@ class PAGE {
 
 			foreach ($links as $n => $type) {
 				if (isset($nextprev[$type]) && isset($nextprev[$type]['listurl'])) {
-				
+
 					if (isset($nextprev[$type]['body'])) {
 						$linktitle = htmlentities( trim_characters($nextprev[$type]['body'], 0, 40) );
 						if (isset($nextprev[$type]['speaker']) &&
 							count($nextprev[$type]['speaker']) > 0) {
-							$linktitle = $nextprev[$type]['speaker']['first_name'] . ' ' . $nextprev[$type]['speaker']['last_name'] . ': ' . $linktitle;	
+							$linktitle = $nextprev[$type]['speaker']['first_name'] . ' ' . $nextprev[$type]['speaker']['last_name'] . ': ' . $linktitle;
 						}
 
 					} elseif (isset($nextprev[$type]['hdate'])) {
@@ -250,12 +250,12 @@ class PAGE {
 				}
 			}
 		}
-		
+
 		// Needs to come before any HTML is output, in case it needs to set a cookie.
 		$SKIN = new SKIN();
-			
+
 		if (!$keywords = $DATA->page_metadata($this_page, "keywords")) {
-			$keywords = "";	
+			$keywords = "";
 		} else {
 			$keywords = ",".$DATA->page_metadata($this_page, "keywords");
 		}
@@ -272,8 +272,8 @@ class PAGE {
 	<link rel="author" title="Send feedback" href="mailto:<?php echo str_replace('@', '&#64;', CONTACTEMAIL); ?>">
 	<link rel="home" title="Home" href="http://<?php echo DOMAIN; ?>/">
 <?php
-		echo $linkshtml; 
-		
+		echo $linkshtml;
+
 		$SKIN->output_stylesheets();
 
 		if ($rssurl = $DATA->page_metadata($this_page, 'rss')) {
@@ -282,7 +282,7 @@ class PAGE {
 	<link rel="alternate" type="application/rss+xml" title="OpenAustralia RSS" href="http://<?php echo DOMAIN . WEBPATH . $rssurl; ?>">
 <?php
 		}
-				
+
 		if (!DEVSITE) {
 		?>
 
@@ -301,23 +301,23 @@ pageTracker._trackPageview();
 </head>
 
 <?php
-	}	
-	
-	
-	
+	}
+
+
+
 	function page_header_mobile () {
         // TODO: would be better to set a global switch/env flag to use in page_header(), etc. - oh well this will do for the moment
 		global $DATA, $this_page;
-		
+
 		$linkshtml = "";
-	
+
 		$title = '';
 		$sitetitle = $DATA->page_metadata($this_page, "sitetitle");
 		$keywords_title = '';
-		
+
 		if ($this_page == 'home') {
 			$title = $sitetitle . ': ' . $DATA->page_metadata($this_page, "title");
-		
+
 		} else {
 
 			if ($page_subtitle = $DATA->page_metadata($this_page, "subtitle")) {
@@ -335,7 +335,7 @@ pageTracker._trackPageview();
 
 			if ($title == '') {
 				$title = $sitetitle;
-			} else {			
+			} else {
 				$title .= ' (' . $sitetitle . ')';
 			}
 		}
@@ -347,10 +347,10 @@ pageTracker._trackPageview();
 			$metadescription = "";
 		}
 
-	
+
 		if ($this_page != "home") {
 			$URL = new URL('home');
-			
+
 			$linkshtml = "\t<link rel=\"start\" title=\"Home\" href=\"" . $URL->generate() . "\">\n";
 		}
 
@@ -365,12 +365,12 @@ pageTracker._trackPageview();
 
 			foreach ($links as $n => $type) {
 				if (isset($nextprev[$type]) && isset($nextprev[$type]['listurl'])) {
-				
+
 					if (isset($nextprev[$type]['body'])) {
 						$linktitle = htmlentities( trim_characters($nextprev[$type]['body'], 0, 40) );
 						if (isset($nextprev[$type]['speaker']) &&
 							count($nextprev[$type]['speaker']) > 0) {
-							$linktitle = $nextprev[$type]['speaker']['first_name'] . ' ' . $nextprev[$type]['speaker']['last_name'] . ': ' . $linktitle;	
+							$linktitle = $nextprev[$type]['speaker']['first_name'] . ' ' . $nextprev[$type]['speaker']['last_name'] . ': ' . $linktitle;
 						}
 
 					} elseif (isset($nextprev[$type]['hdate'])) {
@@ -381,13 +381,13 @@ pageTracker._trackPageview();
 				}
 			}
 		}
-		
+
 		// Needs to come before any HTML is output, in case it needs to set a cookie.
 		$SKIN = new SKIN();
         $SKIN->set_skin("mobile");
-			
+
 		if (!$keywords = $DATA->page_metadata($this_page, "keywords")) {
-			$keywords = "";	
+			$keywords = "";
 		} else {
 			$keywords = ",".$DATA->page_metadata($this_page, "keywords");
 		}
@@ -405,8 +405,8 @@ pageTracker._trackPageview();
 	<link rel="author" title="Send feedback" href="mailto:<?php echo str_replace('@', '&#64;', CONTACTEMAIL); ?>">
 	<link rel="home" title="Home" href="http://<?php echo DOMAIN; ?>/">
 <?php
-		echo $linkshtml; 
-		
+		echo $linkshtml;
+
 		$SKIN->output_stylesheets();
 
 		if ($rssurl = $DATA->page_metadata($this_page, 'rss')) {
@@ -415,7 +415,7 @@ pageTracker._trackPageview();
 	<link rel="alternate" type="application/rss+xml" title="OpenAustralia RSS" href="http://<?php echo DOMAIN . WEBPATH . $rssurl; ?>">
 <?php
 		}
-				
+
 		if (!DEVSITE) {
 		?>
 
@@ -434,63 +434,63 @@ pageTracker._trackPageview();
 </head>
 
 <?php
-	}	
+	}
 
 
 
 	function page_body () {
 		global $this_page;
-		
+
 		// Start the body, put in the page headings.
 		?>
 <body>
 <div id="container">
 <?php
 		twfy_debug ("PAGE", "This page: $this_page");
-		
+
 		print "\t<a name=\"top\"></a>\n\n";
 		if (defined('OPTION_GAZE_URL') && OPTION_GAZE_URL && (gaze_get_country_from_ip($_SERVER["REMOTE_ADDR"]) == 'NZ' || get_http_var('nz'))) {
 			print '<p align="center"><strong>New!</strong> You\'re in New Zealand, so check out <a href="http://www.theyworkforyou.co.nz">OpenAustralia.co.nz</a></p>';
 		}
 
 		$this->title_bar();
-		
+
 		$this->menu();
-		
+
 	}
-	
+
 
 	function page_body_mobile () {
 		global $this_page;
-		
+
 		// Start the body, put in the page headings.
 		?>
 <body>
 <div id="container">
 <?php
 		twfy_debug ("PAGE", "This page: $this_page");
-		
+
 		print "\t<a name=\"top\"></a>\n\n";
 		if (defined('OPTION_GAZE_URL') && OPTION_GAZE_URL && (gaze_get_country_from_ip($_SERVER["REMOTE_ADDR"]) == 'NZ' || get_http_var('nz'))) {
 			print '<p align="center"><strong>New!</strong> You\'re in New Zealand, so check out <a href="http://www.theyworkforyou.co.nz">OpenAustralia.co.nz</a></p>';
 		}
 
 		$this->title_bar_mobile();
-		
+
 		//$this->menu_mobile();
-		
+
 	}
 
-	
-	
+
+
 	function title_bar () {
 		// The title bit of the page, with possible search box.
 		global $this_page;
-		
+
 		//$img = '<img src="' . IMAGEPATH . 'theyworkforyoucom.gif" width="293" height="28" alt="OpenAustralia.org">';
 
 		$img = '<img src="' . IMAGEPATH . 'openaustraliaorgbeta.gif" width="262" height="32" alt="OpenAustralia.org beta">';
-		
+
 		//isn't this very hacky? shouldn't we be cobranding cleverly using METADATA? ( I've repeated this below however -stef"
 		if (get_http_var('c4')) {
 			$img = '<img src="/images/c4banner.gif" alt="OpenAustralia.org with Channel 4">';
@@ -531,7 +531,7 @@ pageTracker._trackPageview();
 	#		}
 		?>
 	</div> <!-- end #banner -->
-<?php	
+<?php
 	}
 
 
@@ -539,11 +539,11 @@ pageTracker._trackPageview();
 	function title_bar_mobile () {
 		// The title bit of the page, with possible search box.
 		global $this_page;
-		
+
 		//$img = '<img src="' . IMAGEPATH . 'theyworkforyoucom.gif" width="293" height="28" alt="OpenAustralia.org">';
 
 		$img = '<img src="' . IMAGEPATH . 'openaustraliaorgbeta.gif" width="262" height="32" alt="OpenAustralia.org beta">';
-		
+
 		//isn't this very hacky? shouldn't we be cobranding cleverly using METADATA? ( I've repeated this below however -stef"
 		if (get_http_var('c4')) {
 			$img = '<img src="/images/c4banner.gif" alt="OpenAustralia.org with Channel 4">';
@@ -563,15 +563,15 @@ pageTracker._trackPageview();
 			<h1><?php echo $img; ?></h1>
 		</div>
 	</div> <!-- end #banner -->
-<?php	
+<?php
 	}
 
-	
-	
-	
+
+
+
 	function menu () {
 		global $this_page, $DATA, $THEUSER;
-	
+
 		// Page names mapping to those in metadata.php.
 		// Links in the top menu, and the sublinks we see if
 		// we're within that section.
@@ -584,32 +584,32 @@ pageTracker._trackPageview();
 			'peers'		=> array (),
 #			'mlas'          => array (),
 #			'msps'          => array (),
-#			'help_us_out'	=> array (), 
+#			'help_us_out'	=> array (),
 /*			'help_us_out'	=> array ('glossary_addterm'),  */
 			'help'		=> array ()
 		);
-		
+
 		// If the user's postcode is set, then we allow them to view the
 		// bottom menu link to this page...
 		//if ($THEUSER->constituency_is_set()) {
 		//	$items['yourmp'] = array ('yourmp_recent');
 		//}
-		
-	
+
+
 		$top_links = array();
 		$bottom_links = array();
-		
+
 		// We work out which of the items in the top and bottom menus
 		// are highlighted - $top_hilite and $bottom_hilite respectively.
-		
+
 		$this_parent = $DATA->page_metadata($this_page, 'parent');
-		
+
 		if ($this_parent == '') {
 			// This page is probably one of the ones in the top men.
 			// So hilite it and no bottom menu hilites.
 			$top_hilite = $this_page;
 			$bottom_hilite = '';
-		
+
 		} else {
 			// Does this page's parent have a parent?
 			$parents_parent = $DATA->page_metadata($this_parent, 'parent');
@@ -629,30 +629,30 @@ pageTracker._trackPageview();
 		}
 
 		foreach ($items as $toppage => $bottompages) {
-			
+
 			// Generate the links for the top menu.
-			
+
 			// What gets displayed for this page.
 			$menudata = $DATA->page_metadata($toppage, 'menu');
 			$text = $menudata['text'];
 			$title = $menudata['title'];
-			
+
 			// Where we're linking to.
-			$URL = new URL($toppage);			
-			
+			$URL = new URL($toppage);
+
 			$class = $toppage == $top_hilite ? ' class="on"' : '';
 
 			$top_links[] = '<a href="' . $URL->generate() . '" title="' . $title . '"' . $class . '>' . $text . '</a>';
 
 			if ($toppage == $top_hilite) {
 				// This top menu link is highlighted, so generate its bottom menu.
-				
+
 				foreach ($bottompages as $bottompage) {
 					$menudata = $DATA->page_metadata($bottompage, 'menu');
 					$text = $menudata['text'];
 					$title = $menudata['title'];
 					// Where we're linking to.
-					$URL = new URL($bottompage);	
+					$URL = new URL($bottompage);
 					$class = $bottompage == $bottom_hilite ? ' class="on"' : '';
 					$bottom_links[] = '<a href="' . $URL->generate() . '" title="' . $title . '"' . $class . '>' . $text . '</a>';
 				}
@@ -674,14 +674,14 @@ pageTracker._trackPageview();
 			</ul>
 		</div>
 	</div> <!-- end #menu -->
-	
+
 <?php
 	}
 
 
 	function menu_mobile () {
 		global $this_page, $DATA, $THEUSER;
-	
+
 		// Page names mapping to those in metadata.php.
 		// Links in the top menu, and the sublinks we see if
 		// we're within that section.
@@ -694,32 +694,32 @@ pageTracker._trackPageview();
 			'peers'		=> array (),
 #			'mlas'          => array (),
 #			'msps'          => array (),
-#			'help_us_out'	=> array (), 
+#			'help_us_out'	=> array (),
 /*			'help_us_out'	=> array ('glossary_addterm'),  */
 			'help'		=> array ()
 		);
-		
+
 		// If the user's postcode is set, then we allow them to view the
 		// bottom menu link to this page...
 		//if ($THEUSER->constituency_is_set()) {
 		//	$items['yourmp'] = array ('yourmp_recent');
 		//}
-		
-	
+
+
 		$top_links = array();
 		$bottom_links = array();
-		
+
 		// We work out which of the items in the top and bottom menus
 		// are highlighted - $top_hilite and $bottom_hilite respectively.
-		
+
 		$this_parent = $DATA->page_metadata($this_page, 'parent');
-		
+
 		if ($this_parent == '') {
 			// This page is probably one of the ones in the top men.
 			// So hilite it and no bottom menu hilites.
 			$top_hilite = $this_page;
 			$bottom_hilite = '';
-		
+
 		} else {
 			// Does this page's parent have a parent?
 			$parents_parent = $DATA->page_metadata($this_parent, 'parent');
@@ -739,30 +739,30 @@ pageTracker._trackPageview();
 		}
 
 		foreach ($items as $toppage => $bottompages) {
-			
+
 			// Generate the links for the top menu.
-			
+
 			// What gets displayed for this page.
 			$menudata = $DATA->page_metadata($toppage, 'menu');
 			$text = $menudata['text'];
 			$title = $menudata['title'];
-			
+
 			// Where we're linking to.
-			$URL = new URL($toppage);			
-			
+			$URL = new URL($toppage);
+
 			$class = $toppage == $top_hilite ? ' class="on"' : '';
 
 			$top_links[] = '<a href="' . $URL->generate() . '" title="' . $title . '"' . $class . '>' . $text . '</a>';
 
 			if ($toppage == $top_hilite) {
 				// This top menu link is highlighted, so generate its bottom menu.
-				
+
 				foreach ($bottompages as $bottompage) {
 					$menudata = $DATA->page_metadata($bottompage, 'menu');
 					$text = $menudata['text'];
 					$title = $menudata['title'];
 					// Where we're linking to.
-					$URL = new URL($bottompage);	
+					$URL = new URL($bottompage);
 					$class = $bottompage == $bottom_hilite ? ' class="on"' : '';
 					$bottom_links[] = '<a href="' . $URL->generate() . '" title="' . $title . '"' . $class . '>' . $text . '</a>';
 				}
@@ -784,7 +784,7 @@ pageTracker._trackPageview();
 			</ul>
 		</div>
 	</div> <!-- end #menu -->
-	
+
 <?php
 	}
 
@@ -803,16 +803,16 @@ pageTracker._trackPageview();
 		if (isset($_SERVER['REQUEST_URI'])) {
 			$returl = $_SERVER['REQUEST_URI'];
 		}
-		
+
 			// The 'get involved' link.
 			$menudata 	= $DATA->page_metadata('getinvolved', 'menu');
 			$getinvolvedtitle	= $menudata['title'];
 			$getinvolvedtext 	= $menudata['text'];
-			
+
 			$GETINVURL 	= new URL('getinvolved');
 			if ($this_page != 'getinvolved') {
-				//if ($this_page != "userlogout" && 
-				//	$this_page != "userpassword" && 
+				//if ($this_page != "userlogout" &&
+				//	$this_page != "userpassword" &&
 				//	$this_page != 'userjoin') {
 					// We don't do this on the logout page, because then the user
 					// will return straight to the logout page and be logged out
@@ -826,7 +826,7 @@ pageTracker._trackPageview();
 				$getinvolvedclass = ' class="on"';
 			}
 		if ($THEUSER->isloggedin()) {
-		
+
 			// The 'Edit details' link.
 			$menudata 	= $DATA->page_metadata('userviewself', 'menu');
 			$edittext 	= $menudata['text'];
@@ -840,7 +840,7 @@ pageTracker._trackPageview();
 					$text = $menudata['text'];
 					$title = $menudata['title'];
 					// Where we're linking to.
-					$URL = new URL($bottompage);	
+					$URL = new URL($bottompage);
 					$class = $bottompage == $bottom_hilite ? ' class="on"' : '';
 					$bottom_links[] = '<a href="' . $URL->generate() . '" title="' . $title . '"' . $class . '>' . $text . '</a>';
 				}
@@ -852,7 +852,7 @@ pageTracker._trackPageview();
 			$menudata 	= $DATA->page_metadata('userlogout', 'menu');
 			$logouttext	= $menudata['text'];
 			$logouttitle= $menudata['title'];
-			
+
 			$LOGOUTURL	= new URL('userlogout');
 			if ($this_page != 'userlogout') {
 				$LOGOUTURL->insert(array("ret"=>$returl));
@@ -860,7 +860,7 @@ pageTracker._trackPageview();
 			} else {
 				$logoutclass = ' class="on"';
 			}
-			
+
 			$username = $THEUSER->firstname() . ' ' . $THEUSER->lastname();
 
 		?>
@@ -879,14 +879,14 @@ pageTracker._trackPageview();
 			$menudata 	= $DATA->page_metadata('userjoin', 'menu');
 			$jointext 	= $menudata['text'];
 			$jointitle 	= $menudata['title'];
-			
+
 			$JOINURL 	= new URL('userjoin');
 			if ($this_page != 'userjoin') {
 				if ($this_page != 'userlogout' && $this_page != 'userlogin') {
 					// We don't do this on the logout page, because then the user
 					// will return straight to the logout page and be logged out
 					// immediately!
-					$JOINURL->insert(array("ret"=>$returl));	
+					$JOINURL->insert(array("ret"=>$returl));
 				}
 				$joinclass = '';
 			} else {
@@ -897,11 +897,11 @@ pageTracker._trackPageview();
 			$menudata 	= $DATA->page_metadata('userlogin', 'menu');
 			$logintext 	= $menudata['text'];
 			$logintitle	= $menudata['title'];
-			
+
 			$LOGINURL 	= new URL('userlogin');
 			if ($this_page != 'userlogin') {
-				if ($this_page != "userlogout" && 
-					$this_page != "userpassword" && 
+				if ($this_page != "userlogout" &&
+					$this_page != "userpassword" &&
 					$this_page != 'userjoin') {
 					// We don't do this on the logout page, because then the user
 					// will return straight to the logout page and be logged out
@@ -914,7 +914,7 @@ pageTracker._trackPageview();
 			} else {
 				$loginclass = ' class="on"';
 			}
-		
+
 		?>
 			<ul id="user">
 			<li><a href="<?php echo $LOGINURL->generate(); ?>" title="<?php echo $logintitle; ?>"<?php echo $loginclass; ?>><?php echo $logintext; ?></a></li>
@@ -929,12 +929,12 @@ pageTracker._trackPageview();
 
 	function content_start () {
 		global $DATA, $this_page;
-		
+
 		// Where the actual meat of the page begins, after the title and menu.
 		?>
 	<div id="content">
 
-<?php			
+<?php
 	}
 
 
@@ -978,7 +978,7 @@ pageTracker._trackPageview();
 		//					closed, but within this stripe.
 
 		// If $contents is empty then '&nbsp;' will be output.
-		
+
 		/* eg, take this hypothetical array:
 			$contents = array(
 				array (
@@ -996,7 +996,7 @@ pageTracker._trackPageview();
 					'extrahtml' => '<a href="blah">Source</a>'
 				)
 			);
-		
+
 			The sidebar div would be opened.
 			This would first include /includes/easyparliament/templates/sidebars/mp.php.
 			Then display "<p>This is your MP</p>\n".
@@ -1004,11 +1004,11 @@ pageTracker._trackPageview();
 			The sidebar div would be closed.
 			'<a href="blah">Source</a>' is displayed.
 			The stripe div is closed.
-			
+
 			But in most cases we only have 0 or 1 hashes in $contents.
-		
+
 		*/
-		
+
 		// $extra is html that will go after the sidebar has closed, but within
 		// this stripe.
 		// eg, the 'Source' bit on Hansard pages.
@@ -1021,7 +1021,7 @@ pageTracker._trackPageview();
 <?php
 		$this->within_stripe_sidebar = true;
 		$extrahtml = '';
-		
+
 		if (count($contents) == 0) {
 			print "\t\t\t&nbsp;\n";
 		} else {
@@ -1029,13 +1029,13 @@ pageTracker._trackPageview();
 				if (isset($hash['type'])) {
 					if ($hash['type'] == 'include') {
 						$this->include_sidebar_template($hash['content']);
-					
+
 					} elseif ($hash['type'] == 'nextprev') {
 						$this->nextprevlinks();
-					
+
 					} elseif ($hash['type'] == 'html') {
 						print $hash['content'];
-					
+
 					} elseif ($hash['type'] == 'extrahtml') {
 						$extrahtml .= $hash['content'];
 					}
@@ -1056,7 +1056,7 @@ pageTracker._trackPageview();
 			}
 			?>
 		</div> <!-- end .stripe-* -->
-		
+
 <?php
 	}
 
@@ -1064,35 +1064,35 @@ pageTracker._trackPageview();
 
 	function include_sidebar_template ($sidebarname) {
 		global $this_page, $DATA;
-		
+
 			$sidebarpath = INCLUDESPATH.'easyparliament/sidebars/'.$sidebarname.'.php';
 
 			if (file_exists($sidebarpath)) {
 				include $sidebarpath;
 			}
 	}
-	
-	
+
+
 	function block_start($data=array()) {
 		// Starts a 'block' div, used mostly on the home page,
 		// on the MP page, and in the sidebars.
 		// $data is a hash like this:
-		//	'id'	=> 'help',	
+		//	'id'	=> 'help',
 		//	'title'	=> 'What are debates?'
 		//	'url'	=> '/help/#debates' 	[if present, will be wrapped round 'title']
 		//	'body'	=> false	[If not present, assumed true. If false, no 'blockbody' div]
 		// Both items are optional (although it'll look odd without a title).
-		
+
 		$this->blockbody_open = false;
-		
+
 		if (isset($data['id']) && $data['id'] != '') {
 			$id = ' id="' . $data['id'] . '"';
 		} else {
 			$id = '';
 		}
-		
+
 		$title = isset($data['title']) ? $data['title'] : '';
-		
+
 		if (isset($data['url'])) {
 			$title = '<a href="' . $data['url'] . '">' . $title . '</a>';
 		}
@@ -1107,8 +1107,8 @@ pageTracker._trackPageview();
 			$this->blockbody_open = true;
 			}
 	}
-	
-	
+
+
 	function block_end () {
 		if ($this->blockbody_open) {
 			?>
@@ -1116,11 +1116,11 @@ pageTracker._trackPageview();
 <?php
 			}
 			?>
-				</div> <!-- end .block -->	
+				</div> <!-- end .block -->
 
 <?php
 	}
-	
+
 
 	function heading() {
 		global $this_page, $DATA;
@@ -1129,24 +1129,24 @@ pageTracker._trackPageview();
 		// A page's parent can have a 'title' and a 'heading'.
 		// The 'title' is always used to create the <title></title>.
 		// If we have a 'heading' however, we'll use that here, on the page, instead.
-		
+
 		$parent_page = $DATA->page_metadata($this_page, 'parent');
-	
+
 		if ($parent_page != '') {
 			// Not a top-level page, so it has a section heading.
 			// This is the page title of the parent.
 			$section_text = $DATA->page_metadata($parent_page, 'title');
-			
+
 		} else {
 			// Top level page - no parent, hence no parental title.
 			$section_text = '';
 		}
-		
-		
+
+
 		// A page can have a 'title' and a 'heading'.
 		// The 'title' is always used to create the <title></title>.
 		// If we have a 'heading' however, we'll use that here, on the page, instead.
-		
+
 		$page_text = $DATA->page_metadata($this_page, "heading");
 
 		if ($page_text == '' && !is_bool($page_text)) {
@@ -1155,7 +1155,7 @@ pageTracker._trackPageview();
 			// But if it just hasn't been set, we use the 'title'.
 			$page_text = $DATA->page_metadata($this_page, "title");
 		}
-		
+
 		if ($page_text == $section_text) {
 			// We don't want to print both.
 			$page_text = '&nbsp;';
@@ -1172,30 +1172,30 @@ pageTracker._trackPageview();
 			if ($section_text && $parent_page != 'help_us_out' && $parent_page != 'home') {
 				print "\t\t\t\t<h2>$section_text</h2>\n";
 			}
-			
+
 			if ($page_text) {
 				print "\t\t\t\t<h3>$page_text</h3>\n";
 			}
 
 		}
-	
+
 		// So we don't print the heading twice by accident from $this->stripe_start().
 		$this->heading_displayed = true;
 	}
 
 
 
-	
+
 
 	function content_end () {
 		global $DATA, $this_page;
-		
+
 		$pages = array ('about', 'contact', 'linktous', 'houserules');
-		
+
 		foreach ($pages as $page) {
 			$URL = new URL($page);
 			$title = $DATA->page_metadata($page, 'title');
-			
+
 			if ($page == $this_page) {
 				$links[] = $title;
 			} else {
@@ -1215,7 +1215,7 @@ pageTracker._trackPageview();
 		if (stristr($user_agent, 'Firefox/'))
 			$links[] = '<a href="http://mycroft.mozdev.org/download.html?name=openaustralia">Add search to Firefox</a>';
 		?>
-	
+
 		<div id="footer">
 			<p><?php
 		print implode(' &nbsp;&nbsp;&nbsp; ', $links);
@@ -1233,9 +1233,9 @@ pageTracker._trackPageview();
 <?php
 
 	}
-	
-	
-	
+
+
+
 	function page_footer ($extra = null) {
 		global $DATA, $this_page;
 
@@ -1268,7 +1268,7 @@ pr()//-->
 		// DAMN, this really shouldn't be in PAGE.
 		$db = new ParlDB;
 		$db->display_total_duration();
-		
+
 		$duration = getmicrotime() - STARTTIME;
 		twfy_debug ("TIME", "Total time for page: $duration seconds.");
 		if (!isset($_SERVER['WINDIR'])) {
@@ -1278,7 +1278,7 @@ pr()//-->
 			$duration = $rusage['ru_stime.tv_sec']*1000000 + $rusage['ru_stime.tv_usec'] - STARTTIMES;
 			twfy_debug ('TIME', "Total system time: $duration microseconds.");
 		}
-		
+
 		?>
 </div> <!-- end #container -->
 
@@ -1294,7 +1294,7 @@ pr()//-->
 		// Used on the mp (and yourmp) pages.
 		// And the userchangepc page.
 		global $THEUSER;
-		
+
 		$MPURL = new URL('yourmp');
 		?>
 				<br>
@@ -1306,7 +1306,7 @@ pr()//-->
 	if (get_http_var('c4')) print '<input type="hidden" name="c4" value="1">';
 	if (get_http_var('c4x')) print '<input type="hidden" name="c4x" value="1">';
 		if ($THEUSER->constituency_is_set()) {
-			
+
 			$FORGETURL = new URL('userchangepc');
 			$FORGETURL->insert(array('forget'=>'t'));
 		}
@@ -1317,16 +1317,16 @@ pr()//-->
 						</p>
 						<input type="hidden" name="ch" value="t">
 						</form>
-<?php	
+<?php
 		$this->block_end();
 	}
-	
-	
+
+
 
 	function member_rss_block ($urls) {
 		// Returns the html for a person's rss feeds sidebar block.
 		// Used on MP/Peer page.
-		
+
 		$html = '
 				<div class="block">
 				<h4>RSS feeds</h4>
@@ -1336,9 +1336,9 @@ pr()//-->
 		if (isset($urls['appearances'])) {
 			$html .= '<li><a href="' . $urls['appearances'] . '"><img src="' . WEBPATH . 'images/rss.gif" alt="RSS feed" border="0" align="middle"></a> <a href="' . $urls['appearances'] . '">Recent appearances</a></li>';
 		}
-		
+
 		$HELPURL = new URL('help');
-			
+
 		$html .= '
 						</ul>
 						<p><a href="' . $HELPURL->generate() . '#rss" title="An explanation of what RSS feeds are for"><small>What is RSS?</small></a></p>
@@ -1348,7 +1348,7 @@ pr()//-->
 		return $html;
 
 	}
-	
+
 
 	function display_member($member, $extra_info) {
 		global $THEUSER, $DATA, $this_page;
@@ -1503,12 +1503,12 @@ pr()//-->
 			if ($member['left_house'][4]['reason']) print ' &mdash; ' . $member['left_house'][4]['reason'];
 			print '</li>';
 		}
-		if (isset($extra_info['majority_in_seat'])) { 
+		if (isset($extra_info['majority_in_seat'])) {
 			?>
-						<li><strong>Majority:</strong> 
+						<li><strong>Majority:</strong>
 						<?php echo number_format($extra_info['majority_in_seat']); ?> votes. <?php
 
-			if (isset($extra_info['swing_to_lose_seat_today'])) { 
+			if (isset($extra_info['swing_to_lose_seat_today'])) {
 				/*
 				if (isset($extra_info['swing_to_lose_seat_today_quintile'])) {
 					$q = $extra_info['swing_to_lose_seat_today_quintile'];
@@ -1528,15 +1528,15 @@ pr()//-->
 				}
 				*/
 				print ' &mdash; ' . make_ranking($extra_info['swing_to_lose_seat_today_rank']); ?> out of <?php echo $extra_info['swing_to_lose_seat_today_rank_outof']; ?> MPs.
-<?php 
+<?php
 			} ?></li>
-<?php 
-		} 
-		
+<?php
+		}
+
 		if ($member['party'] == 'Sinn Fein' && in_array(1, $member['houses'])) {
 			print '<li>Sinn F&eacute;in MPs do not take their seats in Parliament</li>';
 		}
-					
+
 		if ($member['the_users_mp'] == true) {
 			?>
 <?php
@@ -1561,8 +1561,8 @@ pr()//-->
 
 		?>
 						</ul>
-						
-						
+
+
 						<ul class="jumpers">
 <?php if(defined('DISPLAY_VOTING_DATA') && DISPLAY_VOTING_DATA) { ?>
 						<li><a href="#votingrecord">Voting record</a></li>
@@ -1738,7 +1738,7 @@ pr()//-->
 		if (0) {
 
 ?>	<a name="topics"></a>
-		<? $this->block_start(array('id'=>'topics', 'title'=>'Committees and topics of interest')); 
+		<? $this->block_start(array('id'=>'topics', 'title'=>'Committees and topics of interest'));
 		$topics_block_empty = true;
 
 		// Select committee membership
@@ -1765,15 +1765,15 @@ pr()//-->
 		$wrans_dept = false;
 		$wrans_dept_1 = null;
 		$wrans_dept_2 = null;
-		if (isset($extra_info['wrans_departments'])) { 
+		if (isset($extra_info['wrans_departments'])) {
 				$wrans_dept = true;
 				$wrans_dept_1 = "<li><strong>Departments:</strong> ".$extra_info['wrans_departments']."</p>";
-		} 
-		if (isset($extra_info['wrans_subjects'])) { 
+		}
+		if (isset($extra_info['wrans_subjects'])) {
 				$wrans_dept = true;
 				$wrans_dept_2 = "<li><strong>Subjects (based on headings added by Hansard):</strong> ".$extra_info['wrans_subjects']."</p>";
-		} 
-		
+		}
+
 		if ($wrans_dept) {
 			print "<p><strong>Asks most questions about</strong></p>";
 			print "<ul>";
@@ -1799,7 +1799,7 @@ pr()//-->
 			}
 			print '</ul>';
 		}
-		
+
 		if ($topics_block_empty) {
 			print "<p><em>This MP is not currently on any select <!-- or public bill --> committee
 and has had no written questions answered for which we know the department or subject.</em></p>";
@@ -1820,15 +1820,15 @@ and has had no written questions answered for which we know the department or su
 		$this->block_start(array('id'=>'hansard', 'title'=>$title));
 		// This is really far from ideal - I don't really want $PAGE to know
 		// anything about HANSARDLIST / DEBATELIST / WRANSLIST.
-		// But doing this any other way is going to be a lot more work for little 
+		// But doing this any other way is going to be a lot more work for little
 		// benefit unfortunately.
-	
+
 	        twfy_debug_timestamp();
 		$HANSARDLIST = new HANSARDLIST();
-		
+
 		$searchstring = "speaker:$member[person_id]";
 		global $SEARCHENGINE;
-		$SEARCHENGINE = new SEARCHENGINE($searchstring); 
+		$SEARCHENGINE = new SEARCHENGINE($searchstring);
 		$args = array (
 			's' => $searchstring,
 			'p' => 1,
@@ -1852,7 +1852,7 @@ and has had no written questions answered for which we know the department or su
 					<p class="unneededprintlinks"><a href="<?php echo WEBPATH . $rssurl; ?>" title="XML version of this person's recent appearances">RSS feed</a> (<a href="<?php echo $HELPURL->generate(); ?>#rss" title="An explanation of what RSS feeds are for">?</a>)</p>
 <?php
 		}
-		
+
 		$this->block_end();
 
 } # End Sinn Fein
@@ -1861,7 +1861,7 @@ and has had no written questions answered for which we know the department or su
 		$this->block_start(array('id'=>'numbers', 'title'=>'Numbers'));
 		$displayed_stuff = 0;
 		?>
-		<p><em>Please note that numbers do not measure quality. 
+		<p><em>Please note that numbers do not measure quality.
 		Also, <?php if ($member['house_disp']==1) echo "Representatives"; else echo "Senators"; ?> may do other things not currently covered
 		by this site.</em> (<a href="<?=WEBPATH ?>help/#numbers">More about this</a>)</p>
 <ul>
@@ -1909,7 +1909,7 @@ and has had no written questions answered for which we know the department or su
 			$displayed_stuff |= display_stats_line('comments_on_speeches', 'People have made <a href="' . WEBPATH . 'comments/recent/?pid='.$member['person_id'].'">', 'comment', "</a> on this Representative's speeches", '', $extra_info);
 			$displayed_stuff |= display_stats_line('reading_age', 'This Representative\'s speeches are understandable to an average ', '', ' year old, going by the <a href="http://en.wikipedia.org/wiki/Flesch-Kincaid_Readability_Test">Flesch-Kincaid Grade Level</a> score', '', $extra_info);
 		}
-		
+
 		if (isset($extra_info['number_of_alerts'])) {
 			$displayed_stuff = 1;
 			?>
@@ -1947,7 +1947,7 @@ elseif ($member['house_disp']==0) print $member['full_name']; ?> speaks<?php
 		$this->block_end();
 
 		if ($member['current_member'][1] || $member['current_member'][2]) {
-?>				
+?>
 <a name="register"></a>
 <?php
 			$this->block_start(array('id'=>'register', 'title'=>'Register of Interests <small>(<a href="' . WEBPATH . 'help/#regmem">What\'s this?</a>)</small>'));
@@ -2047,7 +2047,7 @@ elseif ($member['house_disp']==0) print $member['full_name']; ?> speaks<?php
 			$this->block_end();
 		}
 	}
-	
+
 	function expenses_printout($col, $extra_info, $style) {
 		for ($ey=2007; $ey>=2002; --$ey) {
 			$k = 'expenses' . $ey . '_' . $col;
@@ -2071,12 +2071,12 @@ elseif ($member['house_disp']==0) print $member['full_name']; ?> speaks<?php
 			print '</td>';
 		}
 	}
-	
-	
+
+
 	function generate_member_links ($member, $links) {
 		// Receives its data from $MEMBER->display_links;
 		// This returns HTML, rather than outputting it.
-		// Why? Because we need this to be in the sidebar, and 
+		// Why? Because we need this to be in the sidebar, and
 		// we can't call the MEMBER object from the sidebar includes
 		// to get the links. So we call this function from the mp
 		// page and pass the HTML through to stripe_end(). Better than nothing.
@@ -2121,10 +2121,10 @@ elseif ($member['house_disp']==0) print $member['full_name']; ?> speaks<?php
 		}
 		if(isset($links['wikipedia_url'])) {
 			$html .= '	<li><a href="' . $links['wikipedia_url'] . '">Biography</a> <small>(From Wikipedia)</small></li>';
-		}	
+		}
 		if (isset($links['mp_biography_qanda']) && $links['mp_biography_qanda'] != "") {
 			$html .= '	<li><a href="' . $links['mp_biography_qanda'] . '">Biography</a> <small>(From ABC\'s Q &amp; A)</small></li>';
-		} 
+		}
 
 		if(isset($links['diocese_url'])) {
 			$html .= '	<li><a href="' . $links['diocese_url'] . '">Diocese website</a></li>';
@@ -2133,8 +2133,8 @@ elseif ($member['house_disp']==0) print $member['full_name']; ?> speaks<?php
 		if (isset($links['journa_list_link'])) {
 			$html .= '	<li><a href="' . $links['journa_list_link'] . '">Newspaper articles written by this MP</a> <small>(From Journa-list)</small></li>';
 
-		} 
-		
+		}
+
 		if (isset($links['guardian_parliament_history'])) {
 			$html .= '	<li><a href="' . $links['guardian_parliament_history'] . '">Parliamentary career</a> <small>(From The Guardian)</small></li>';
 		}
@@ -2169,30 +2169,30 @@ elseif ($member['house_disp']==0) print $member['full_name']; ?> speaks<?php
 		if (isset($links['bbc_profile_url'])) {
 			$html .= '	<li><a href="' . $links['bbc_profile_url'] . '">General information</a> <small>(From BBC News)</small></li>';
 
-		} 
+		}
 
 		$bbc_name = urlencode($member->first_name()) . "%20" . urlencode($member->last_name());
 		if ($member->member_id() == -1)
 			$bbc_name = 'Queen Elizabeth';
 		#$html .= '	<li><a href="http://catalogue.bbc.co.uk/catalogue/infax/search/' . $bbc_name . '">TV/radio appearances</a> <small>(From BBC Programme Catalogue)</small></li>';
 
-		
+
 		$html .= "	</ul>
 					</div>
 				</div> <!-- end block -->
 ";
 		return $html;
 	}
-	
-	
-	function error_message ($message, $fatal = false) {	
+
+
+	function error_message ($message, $fatal = false) {
 		// If $fatal is true, we exit the page right here.
 		// $message is like the array used in $this->message()
-			
+
 		if (!$this->page_started()) {
 			$this->page_start();
 		}
-		
+
 		if (is_string($message)) {
 			// Sometimes we're just sending a single line to this function
 			// rather like the bigger array...
@@ -2200,26 +2200,26 @@ elseif ($member['house_disp']==0) print $member['full_name']; ?> speaks<?php
 				'text' => $message
 			);
 		}
-		
+
 		$this->message($message, 'error');
-			
+
 		if ($fatal) {
 			if ($this->within_stripe()) {
 				$this->stripe_end();
 			}
 			$this->page_end();
 		}
-	
+
 	}
-	
-	function error_message_mobile ($message, $fatal = false) {	
+
+	function error_message_mobile ($message, $fatal = false) {
 		// If $fatal is true, we exit the page right here.
 		// $message is like the array used in $this->message()
-			
+
 		if (!$this->page_started()) {
 			$this->page_start_mobile();
 		}
-		
+
 		if (is_string($message)) {
 			// Sometimes we're just sending a single line to this function
 			// rather like the bigger array...
@@ -2227,19 +2227,19 @@ elseif ($member['house_disp']==0) print $member['full_name']; ?> speaks<?php
 				'text' => $message
 			);
 		}
-		
+
 		$this->message($message, 'error');
-			
+
 		if ($fatal) {
 			if ($this->within_stripe()) {
 				$this->stripe_end();
 			}
 			$this->page_end_mobile();
 		}
-	
+
 	}
 
-	
+
 	function message ($message, $class='') {
 		// Generates a very simple but common page content.
 		// Used for when a user logs out, or votes, or any simple thing
@@ -2252,13 +2252,13 @@ elseif ($member['house_disp']==0) print $member['full_name']; ?> speaks<?php
 		// All fields optional.
 		// 'linkurl' should already have htmlentities done on it.
 		// $class is a class name that will be applied to the message's HTML elements.
-		
+
 		if ($class != '') {
 			$class = ' class="' . $class . '"';
 		}
-		
+
 		$need_to_close_stripe = false;
-		
+
 		if (!$this->within_stripe()) {
 			$this->stripe_start();
 			$need_to_close_stripe = true;
@@ -2269,32 +2269,32 @@ elseif ($member['house_disp']==0) print $member['full_name']; ?> speaks<?php
 			<h3<?php echo $class; ?>><?php echo $message['title']; ?></h3>
 <?php
 		}
-		
+
 		if (isset($message['text'])) {
 			?>
 			<p<?php echo $class; ?>><?php echo $message['text']; ?></p>
 <?php
 		}
-		
+
 		if (isset($message['linkurl']) && isset($message['linktext'])) {
 			?>
 			<p><a href="<?php echo $message['linkurl']; ?>"><?php echo $message['linktext']; ?></a></p>
 <?php
 		}
-		
+
 		if ($need_to_close_stripe) {
 			$this->stripe_end();
 		}
 	}
-	
-	
+
+
 
 	function set_hansard_headings ($info) {
 		// Called from HANSARDLIST->display().
 		// $info is the $data['info'] array passed to the template.
 		// If the page's HTML hasn't already been started, it sets the page
 		// headings that will be needed later in the page.
-		
+
 		global $DATA, $this_page;
 
 		if (!$this->page_started()) {
@@ -2308,12 +2308,12 @@ elseif ($member['house_disp']==0) print $member['full_name']; ?> speaks<?php
 				// Use a truncated version of the page's main item's body text.
 				// trim_words() is in utility.php. Trim to 40 chars.
 				$page_title = trim_characters($info['text'], 0, 40);
-				
+
 			} elseif (isset($info['year'])) {
 				// debatesyear and wransyear pages.
 				$page_title = $DATA->page_metadata($this_page, 'title');
 
-				$page_title .= $info['year'];	
+				$page_title .= $info['year'];
 			}
 
 			if (isset($info['date'])) {
@@ -2323,33 +2323,33 @@ elseif ($member['house_disp']==0) print $member['full_name']; ?> speaks<?php
 				}
 				$page_title .= format_date ($info['date'], SHORTDATEFORMAT);
 			}
-			
+
 			if ($page_title != '') {
 				$DATA->set_page_metadata($this_page, 'title', $page_title);
 			}
-		
+
 			if (isset($info['date'])) {
 				// Set the page heading (displayed on the page).
 				$page_heading = format_date($info['date'], LONGERDATEFORMAT);
 				$DATA->set_page_metadata($this_page, 'heading', $page_heading);
 			}
-	
+
 		}
 
 	}
 
-	
+
 	function nextprevlinks () {
-		
+
 		// Generally called from $this->stripe_end();
-		
+
 		global $DATA, $this_page;
 
 		// We'll put the html in these and print them out at the end of the function...
 		$prevlink = '';
 		$uplink = '';
 		$nextlink = '';
-	
+
 		// This data is put in the metadata in hansardlist.php
 		$nextprev = $DATA->page_metadata($this_page, 'nextprev');
 		// $nextprev will have three arrays: 'prev', 'up' and 'next'.
@@ -2361,60 +2361,60 @@ elseif ($member['house_disp']==0) print $member['full_name']; ?> speaks<?php
 		if (isset($nextprev['prev'])) {
 
 			$prev = $nextprev['prev'];
-			
-			if (isset($prev['url'])) {	
+
+			if (isset($prev['url'])) {
 				$prevlink = '<a href="' . $prev['url'] . '" title="' . $prev['title'] . '">&laquo; ' . $prev['body'] . '</a>';
-		
+
 			} else {
 				$prevlink = '&laquo; ' . $prev['body'];
 			}
 		}
-		
+
 		if ($prevlink != '') {
 			$prevlink = '<span class="prev">' . $prevlink . '</span>';
 		}
-		
-		
+
+
 		// UP ////////////////////////////////////////////////
-		
+
 		if (isset($nextprev['up'])) {
 
 			$uplink = '<span class="up"><a href="' .  $nextprev['up']['url'] . '" title="' . $nextprev['up']['title'] . '">' . $nextprev['up']['body'] . '</a></span>';
 		}
-		
-		
+
+
 		// NEXT ////////////////////////////////////////////////
 
 		if (isset($nextprev['next'])) {
 			$next = $nextprev['next'];
-			
+
 			if (isset($next['url'])) {
 				$nextlink = '<a href="' .  $next['url'] . '" title="' . $next['title'] . '">' . $next['body'] . ' &raquo;</a>';
 			} else {
 				$nextlink = $next['body'] . ' &raquo;';
 			}
 		}
-		
+
 		if ($nextlink != '') {
 			$nextlink = '<span class="next">' . $nextlink . '</span>';
 		}
-		
-		
+
+
 		// Now output the HTML!
 		?>
 				<p class="nextprev">
 					<?php print $uplink; ?>
-						
+
 					<?php print $prevlink; ?>
-						
+
 					<?php print $nextlink; ?>
 
 				</p>
-<?php		
-					
+<?php
+
 	}
 
-	 
+
 	function recess_message() {
 		// Returns a message if parliament is currently in recess.
 		include_once INCLUDESPATH."easyparliament/recess.php";
@@ -2440,7 +2440,7 @@ elseif ($member['house_disp']==0) print $member['full_name']; ?> speaks<?php
 	function trackback_rss ($trackbackdata) {
 		/*
 		Outputs Trackback Auto Discovery RSS for something.
-		
+
 		$trackbackdata = array (
 			'itemurl' 	=> 'http://www.easyparliament.org/debate/?id=2003-02-28.544.2',
 			'pingurl' 	=> 'http://www.easyparliament.org/trackback/?e=2345',
@@ -2474,7 +2474,7 @@ elseif ($member['house_disp']==0) print $member['full_name']; ?> speaks<?php
 
 		$URL = new URL('search');
 		$URL->reset(); // no need to pass any query params as a form action. They are not used.
-		
+
 		if ($value == '')
 			$value = get_http_var('s');
 
@@ -2505,7 +2505,7 @@ elseif ($member['house_disp']==0) print $member['full_name']; ?> speaks<?php
 		        if ($ordering!='r' && $ordering!='d' && $ordering != 'p') {
 		            $ordering='d';
 		        }
-        
+
 		        if ($ordering=='r') {
 				print '<strong>Most relevant results are first</strong>';
 		        } else {
@@ -2534,7 +2534,7 @@ elseif ($member['house_disp']==0) print $member['full_name']; ?> speaks<?php
 			        	$name = $member->full_name();
                 ?>
                     <p>
-                    <input type="radio" name="pid" value="<?php echo htmlentities($person_id) ?>" checked>Search only <?php echo htmlentities($name) ?> 
+                    <input type="radio" name="pid" value="<?php echo htmlentities($person_id) ?>" checked>Search only <?php echo htmlentities($name) ?>
                     <input type="radio" name="pid" value="">Search all speeches
                     </p>
                 <?
@@ -2544,7 +2544,7 @@ elseif ($member['house_disp']==0) print $member['full_name']; ?> speaks<?php
 
 		echo '</form> </div>';
 	}
-	
+
 	function login_form ($errors = array()) {
 		// Used for /user/login/ and /user/prompt/
 		// $errors is a hash of potential errors from a previous log in attempt.
@@ -2590,10 +2590,10 @@ elseif ($member['house_disp']==0) print $member['full_name']; ?> speaks<?php
 
 				<div class="row">
 				<span class="label">&nbsp;</span>
-				<span class="formw"><input type="submit" value="Login" class="submit"> <small><a href="<?php 
+				<span class="formw"><input type="submit" value="Login" class="submit"> <small><a href="<?php
 		$URL = new URL("userpassword");
 		$URL->insert(array("email"=>get_http_var("email")));
-		echo $URL->generate(); 
+		echo $URL->generate();
 ?>">Forgotten your password?</a></small></span>
 				</div>
 
@@ -2623,19 +2623,19 @@ elseif ($member['house_disp']==0) print $member['full_name']; ?> speaks<?php
 				</form>
 <?php
 	}
-	
-	
-	
+
+
+
 	function mp_search_form ($person_id) {
 		// Search box on the MP page.
-	
+
 		$URL = new URL('search');
 		$URL->remove(array('s'));
 		?>
 				<div class="mpsearchbox">
 					<form action="<?php echo $URL->generate(); ?>" method="get">
                     <p>
-                    <input name="s" size="12"> 
+                    <input name="s" size="12">
                     <input type="hidden" name="pid" value="<?=$person_id ?>">
                     <input type="submit" class="submit" value="GO"></p>
 					</form>
@@ -2643,11 +2643,11 @@ elseif ($member['house_disp']==0) print $member['full_name']; ?> speaks<?php
 <?php
 	}
 
-	
+
 	function glossary_search_form ($args) {
 		// Search box on the glossary page.
 		global $THEUSER;
-		
+
 		$type = "";
 
 		if (isset($args['blankform']) && $args['blankform'] == 1) {
@@ -2656,7 +2656,7 @@ elseif ($member['house_disp']==0) print $member['full_name']; ?> speaks<?php
 		else {
 			$formcontent = htmlentities(get_http_var('g'));
 		}
-		
+
 		if ($THEUSER->isloggedin()) {
 			$URL = new URL($args['action']);
 			$URL->remove(array('g'));
@@ -2666,7 +2666,7 @@ elseif ($member['house_disp']==0) print $member['full_name']; ?> speaks<?php
 			$URL->remove(array('g'));
 			$type = "<input type=\"hidden\" name=\"type\" value=\"2\">";
 		}
-		
+
 		$add_link = $URL->generate('url');
 		?>
 		<form action="<?php echo $add_link; ?>" method="get">
@@ -2682,17 +2682,17 @@ elseif ($member['house_disp']==0) print $member['full_name']; ?> speaks<?php
 	function glossary_add_definition_form ($args) {
 		// Add a definition for a new Glossary term.
 		global $GLOSSARY;
-		
+
 		$URL = new URL($args['action']);
 		$URL->remove(array('g'));
-		
+
 		?>
 	<div class="glossaryaddbox">
 		<form action="<?php print $URL->generate(); ?>" method="post">
 		<input type="hidden" name="g" value="<?php echo $args['s']; ?>">
 		<input type="hidden" name="return_page" value="glossary">
 		<label for="definition"><p><textarea name="definition" id="definition" rows="15" cols="55"><?php echo htmlentities($GLOSSARY->current_term['body']); ?></textarea></p>
-		
+
 		<p><input type="submit" name="previewterm" value="Preview" class="submit">
 		<input type="submit" name="submitterm" value="Post" class="submit"></p></label>
 		<p><small>Only &lt;b&gt; and &lt;i&gt; tags are allowed. URLs and email addresses will automatically be turned into links.</small></p>
@@ -2703,7 +2703,7 @@ elseif ($member['house_disp']==0) print $member['full_name']; ?> speaks<?php
 	function glossary_add_link_form ($args) {
 		// Add an external link to the glossary.
 		global $GLOSSARY;
-		
+
 		$URL = new URL('glossary_addlink');
 		$URL->remove(array('g'));
 		?>
@@ -2721,12 +2721,12 @@ elseif ($member['house_disp']==0) print $member['full_name']; ?> speaks<?php
 	</div>
 <?php
 	}
-	
+
 	function glossary_atoz(&$GLOSSARY) {
-	// Print out a nice list of lettered links to glossary pages	
-				
+	// Print out a nice list of lettered links to glossary pages
+
 		$letters = array ();
-		
+
 		foreach ($GLOSSARY->alphabet as $letter => $eps) {
 			// if we're writing out the current letter (list or item)
 			if ($letter == $GLOSSARY->current_letter) {
@@ -2735,7 +2735,7 @@ elseif ($member['house_disp']==0) print $member['full_name']; ?> speaks<?php
 					$URL = new URL('glossary');
 					$URL->insert(array('az' => $letter));
 					$letter_link = $URL->generate('url');
-					
+
 					$letters[] = "<li class=\"on\"><a href=\"" . $letter_link . "\">" . $letter . "</a></li>";
 				}
 				// otherwise in list view show no link
@@ -2747,7 +2747,7 @@ elseif ($member['house_disp']==0) print $member['full_name']; ?> speaks<?php
 				$URL = new URL('glossary');
 				$URL->insert(array('az' => $letter));
 				$letter_link = $URL->generate('url');
-				
+
 				$letters[] = "<li><a href=\"" . $letter_link . "\">" . $letter . "</a></li>";
 			}
 			else {
@@ -2778,7 +2778,7 @@ elseif ($member['house_disp']==0) print $member['full_name']; ?> speaks<?php
 	function glossary_display_term(&$GLOSSARY) {
 	// Display a single glossary term
 		global $this_page;
-		
+
 		$term = $GLOSSARY->current_term;
 
 		$term['body'] = $GLOSSARY->glossarise($term['body'], 0, 1);
@@ -2800,7 +2800,7 @@ elseif ($member['house_disp']==0) print $member['full_name']; ?> speaks<?php
 			$URL = new URL('userview');
 			$URL->insert(array('u' => $term['user_id']));
 			$user_link = $URL->generate('url');
-			
+
 			$user_details = "\t\t\t\t<p><small>contributed by user <a href=\"" . $user_link . "\">" . $term['firstname'] . " " . $term['lastname'] . "</a></small>" . $admin_links . "</p>\n";
 		}
 		else {
@@ -2868,7 +2868,7 @@ elseif ($member['house_disp']==0) print $member['full_name']; ?> speaks<?php
 		$glossary_link = $URL->generate('url');
 		print "<small><a href=\"" . $glossary_link . "\">Browse the glossary</a></small>";
 	}
-	
+
 	function glossary_links() {
 		print "<div>";
 		$this->glossary_link();
@@ -2876,24 +2876,24 @@ elseif ($member['house_disp']==0) print $member['full_name']; ?> speaks<?php
 		$this->glossary_addterm_link();
 		print "</div>";
 	}
-	
+
 	function page_links ($pagedata) {
 		// The next/prev and page links for the search page.
 		global $this_page;
-		
+
 		// $pagedata has...
 		$total_results 		= $pagedata['total_results'];
 		$results_per_page 	= $pagedata['results_per_page'];
 		$page 				= $pagedata['page'];
-		
-		
+
+
 		if ($total_results > $results_per_page) {
-			
+
 			$numpages = ceil($total_results / $results_per_page);
-			
+
 			$pagelinks = array();
-			
-			// How many links are we going to display on the page - don't want to 
+
+			// How many links are we going to display on the page - don't want to
 			// display all of them if we have 100s...
 			if ($page < 10) {
 				$firstpage = 1;
@@ -2902,19 +2902,19 @@ elseif ($member['house_disp']==0) print $member['full_name']; ?> speaks<?php
 				$firstpage = $page - 10;
 				$lastpage = $page + 9;
 			}
-		
+
 			if ($firstpage < 1) {
 				$firstpage = 1;
-			}	
+			}
 			if ($lastpage > $numpages) {
 				$lastpage = $numpages;
 			}
-		
+
 			// Generate all the page links.
 			$URL = new URL($this_page);
 			$URL->insert(array('wtt'=>get_http_var('wtt')));
 			for ($n = $firstpage; $n <= $lastpage; $n++) {
-				
+
 				if ($n > 1) {
 					$URL->insert(array('p'=>$n));
 				} else {
@@ -2924,21 +2924,21 @@ elseif ($member['house_disp']==0) print $member['full_name']; ?> speaks<?php
 				if (isset($pagedata['pid'])) {
 					$URL->insert(array('pid'=>$pagedata['pid']));
 				}
-				
+
 				if ($n != $page) {
 					$pagelinks[] = '<a href="' . $URL->generate() . '">' . $n . '</a>';
 				} else {
 					$pagelinks[] = "<strong>$n</strong>";
 				}
 			}
-			
+
 			// Display everything.
-			
+
 			?>
 				<div class="pagelinks">
-					Result page: 
+					Result page:
 <?php
-			
+
 			if ($page != 1) {
 				$prevpage = $page - 1;
 				$URL->insert(array('p'=>$prevpage));
@@ -2946,8 +2946,8 @@ elseif ($member['house_disp']==0) print $member['full_name']; ?> speaks<?php
 					<big><strong><a href="<?php echo $URL->generate(); ?>"><big>&laquo;</big> Previous</a></strong></big>
 <?php
 			}
-			
-			echo "\t\t\t\t" . implode(' ', $pagelinks); 
+
+			echo "\t\t\t\t" . implode(' ', $pagelinks);
 
 			if ($page != $numpages) {
 				$nextpage = $page + 1;
@@ -2955,19 +2955,19 @@ elseif ($member['house_disp']==0) print $member['full_name']; ?> speaks<?php
 				?>
 
 					<big><strong><a href="<?php echo $URL->generate(); ?>">Next <big>&raquo;</big></a></strong></big> <?php
-			}	
-		
+			}
+
 			?>
 
 				</div>
 <?php
-			
-		}	
-	
+
+		}
+
 	}
 
-	
-	
+
+
 	function comment_form ($commentdata) {
 		// Comment data must at least contain an epobject_id.
 		// Comment text is optional.
@@ -2985,24 +2985,24 @@ elseif ($member['house_disp']==0) print $member['full_name']; ?> speaks<?php
 			$this->error_message("Sorry, we need an epobject id");
 			return;
 		}
-		
+
 		if (!$THEUSER->isloggedin()) {
 			// The user is not logged in.
-			
+
 			// The URL of this page - we'll want to return here after joining/logging in.
 			$THISPAGEURL = new URL($this_page);
-			
+
 			// The URLs to login / join pages.
 			$LOGINURL = new URL('userlogin');
 			$LOGINURL->insert(array('ret'=>$THISPAGEURL->generate().'#addcomment'));
 			$JOINURL = new URL('userjoin');
 			$JOINURL->insert(array('ret'=>$THISPAGEURL->generate().'#addcomment'));
-			
+
 			?>
 				<p><a href="<?php echo $LOGINURL->generate(); ?>">Log in</a> or <a href="<?php echo $JOINURL->generate(); ?>">join</a> to post a public comment.</p>
 <?php
 			return;
-			
+
 		} else if (!$THEUSER->is_able_to('addcomment')) {
 			// The user is logged in but not allowed to post a comment.
 
@@ -3011,15 +3011,15 @@ elseif ($member['house_disp']==0) print $member['full_name']; ?> speaks<?php
 <?php
 			return;
 		}
-		
+
 		// We can post a comment...
-			
+
 		$ADDURL = new URL('addcomment');
 		$RULESURL = new URL('houserules');
 		?>
 				<h4>Type your public comment</h4>
 				<a name="addcomment"></a>
-				
+
 				<p><small>
 Please read our <a href="<?php echo $RULESURL->generate(); ?>"><strong>House Rules</strong></a> before posting your first comment.</small></p>
 
@@ -3048,7 +3048,7 @@ Please read our <a href="<?php echo $RULESURL->generate(); ?>"><strong>House Rul
 	function display_commentreport ($data) {
 		// $data has key value pairs.
 		// Called from $COMMENT->display_report().
-		
+
 		if ($data['user_id'] > 0) {
 			$USERURL = new URL('userview');
 			$USERURL->insert(array('id'=>$data['user_id']));
@@ -3056,7 +3056,7 @@ Please read our <a href="<?php echo $RULESURL->generate(); ?>"><strong>House Rul
 		} else {
 			$username = htmlentities($data['user_name']);
 		}
-		?>	
+		?>
 				<div class="comment">
 					<p class="credit"><strong>Comment report</strong><br>
 					<small>Reported by <?php echo $username; ?> on <?php echo $data['reported']; ?></small></p>
@@ -3074,18 +3074,18 @@ Please read our <a href="<?php echo $RULESURL->generate(); ?>"><strong>House Rul
 <?php
 			// We could link to the person who resolved it with $data['resolvedby'],
 			// a user_id. But we don't have their name at the moment.
-		}	
-	
+		}
+
 	}
-	
-	
+
+
 	function display_commentreportlist ($data) {
 		// For the admin section.
 		// Gets an array of data from COMMENTLIST->render().
 		// Passes it on to $this->display_table().
 
 		if (count($data) > 0) {
-		
+
 			?>
 			<h3>Reported comments</h3>
 <?php
@@ -3096,16 +3096,16 @@ Please read our <a href="<?php echo $RULESURL->generate(); ?>"><strong>House Rul
 				'Reported on',
 				''
 			);
-			
+
 			$tabledata['rows'] = array();
-			
+
 			$EDITURL = new URL('admin_commentreport');
-		
+
 			foreach ($data as $n => $report) {
-				
+
 				if (!$report['locked']) {
 					// Yes, we could probably cope if we just passed the report_id
-					// through, but this isn't a public-facing page and life's 
+					// through, but this isn't a public-facing page and life's
 					// easier if we have the comment_id too.
 					$EDITURL->insert(array(
 						'rid' => $report['report_id'],
@@ -3115,55 +3115,55 @@ Please read our <a href="<?php echo $RULESURL->generate(); ?>"><strong>House Rul
 				} else {
 					$editlink = 'Locked';
 				}
-				
+
 				$body = trim_characters($report['body'], 0, 40);
-								
+
 				$tabledata['rows'][] = array (
 					htmlentities($report['firstname'] . ' ' . $report['lastname']),
 					htmlentities($body),
 					$report['reported'],
 					$editlink
 				);
-	
+
 			}
-			
+
 			$this->display_table($tabledata);
-			
+
 		} else {
-		
+
 			print "<p>There are no outstanding comment reports.</p>\n";
 		}
-	
+
 	}
-	
+
 
 
 	function display_calendar_month ($month, $year, $dateArray, $page) {
 		// From http://www.zend.com/zend/trick/tricks-Oct-2002.php
 		// Adjusted for style, putting Monday first, and the URL of the page linked to.
-		
+
 		// Used in templates/html/hansard_calendar.php
-		
+
 		// $month and $year are integers.
 		// $dateArray is an array of dates that should be links in this month.
 		// $page is the name of the page the dates should link to.
-	
+
 		// Create array containing abbreviations of days of week.
 		$daysOfWeek = array('Mon','Tue','Wed','Thu','Fri','Sat','Sun');
-		
+
 		// What is the first day of the month in question?
 		$firstDayOfMonth = mktime(0,0,0,$month,1,$year);
-		
+
 		// How many days does this month contain?
 		$numberDays = date('t',$firstDayOfMonth);
-		
+
 		// Retrieve some information about the first day of the
 		// month in question.
 		$dateComponents = getdate($firstDayOfMonth);
-		
+
 		// What is the name of the month in question?
 		$monthName = $dateComponents['month'];
-		
+
 		// If this calendar is for this current, real world, month
 		// we get the value of today, so we can highlight it.
 		$nowDateComponents = getdate();
@@ -3172,60 +3172,60 @@ Please read our <a href="<?php echo $RULESURL->generate(); ?>"><strong>House Rul
 		} else {
 			$toDay = '';
 		}
-		
+
 		// What is the index value (0-6) of the first day of the
 		// month in question.
-		
+
 		// Adjusted to cope with the week starting on Monday.
 		$dayOfWeek = $dateComponents['wday'] - 1;
-		
+
 		// Adjusted to cope with the week starting on Monday.
 		if ($dayOfWeek < 0) {
 			$dayOfWeek = 6;
 		}
-		
+
 		// Create the table tag opener and day headers
-		
+
 		$calendar  = "\t\t\t\t<div class=\"calendar\">\n";
 		$calendar .= "\t\t\t\t<table border=\"0\">\n";
 		$calendar .= "\t\t\t\t<caption>$monthName $year</caption>\n";
 		$calendar .= "\t\t\t\t<thead>\n\t\t\t\t<tr>";
-		
+
 		// Create the calendar headers
-		
+
 		foreach($daysOfWeek as $day) {
 			$calendar .= "<th>$day</th>";
-		} 
-		
+		}
+
 		// Create the rest of the calendar
-		
+
 		// Initiate the day counter, starting with the 1st.
-		
+
 		$currentDay = 1;
-		
+
 		$calendar .= "</tr>\n\t\t\t\t</thead>\n\t\t\t\t<tbody>\n\t\t\t\t<tr>";
-		
+
 		// The variable $dayOfWeek is used to
 		// ensure that the calendar
 		// display consists of exactly 7 columns.
-		
-		if ($dayOfWeek > 0) { 
-			$calendar .= "<td colspan=\"$dayOfWeek\">&nbsp;</td>"; 
+
+		if ($dayOfWeek > 0) {
+			$calendar .= "<td colspan=\"$dayOfWeek\">&nbsp;</td>";
 		}
-		
+
 		$DAYURL = new URL($page);
-		
+
 		while ($currentDay <= $numberDays) {
-		
+
 			// Seventh column (Sunday) reached. Start a new row.
-			
+
 			if ($dayOfWeek == 7) {
-			
+
 				$dayOfWeek = 0;
 				$calendar .= "</tr>\n\t\t\t\t<tr>";
 			}
-			
-		
+
+
 			// Is this day actually Today in the real world?
 			// If so, higlight it.
 			if ($currentDay == $toDay) {
@@ -3237,46 +3237,46 @@ Please read our <a href="<?php echo $RULESURL->generate(); ?>"><strong>House Rul
 			// Is the $currentDay a member of $dateArray? If so,
 			// the day should be linked.
 			if (in_array($currentDay,$dateArray)) {
-			
+
 				$date = sprintf("%04d-%02d-%02d", $year, $month, $currentDay);
-				
+
 				$DAYURL->insert(array('d'=>$date));
-				
+
 				$calendar .= "<a href=\"" . $DAYURL->generate() . "\">$currentDay</a></td>";
-				
+
 				// $currentDay is not a member of $dateArray.
-			
+
 			} else {
-			
+
 				$calendar .= "$currentDay</td>";
 			}
-			
+
 			// Increment counters
-			
+
 			$currentDay++;
 			$dayOfWeek++;
 		}
-		
+
 		// Complete the row of the last week in month, if necessary
-		
-		if ($dayOfWeek != 7) { 
-		
+
+		if ($dayOfWeek != 7) {
+
 			$remainingDays = 7 - $dayOfWeek;
-			$calendar .= "<td colspan=\"$remainingDays\">&nbsp;</td>"; 
+			$calendar .= "<td colspan=\"$remainingDays\">&nbsp;</td>";
 		}
-		
-		
+
+
 		$calendar .= "</tr>\n\t\t\t\t</tbody>\n\t\t\t\t</table>\n\t\t\t\t</div> <!-- end calendar -->\n\n";
-		
+
 		return $calendar;
-	
+
 	}
 
 
 	function display_table($data) {
 		/* Pass it data to be displayed in a <table> and it renders it
 			with stripes.
-		
+
 		$data is like (for example):
 		array (
 			'header' => array (
@@ -3307,7 +3307,7 @@ Please read our <a href="<?php echo $RULESURL->generate(); ?>"><strong>House Rul
 	</thead>
 <?php
 		}
-		
+
 		if (isset($data['rows']) && count($data['rows'])) {
 			?>
 	<tbody>
@@ -3330,25 +3330,25 @@ Please read our <a href="<?php echo $RULESURL->generate(); ?>"><strong>House Rul
 <?php
 
 	}
-	
-	
-	
+
+
+
 	function admin_menu () {
 		// Returns HTML suitable for putting in the sidebar on Admin pages.
 		global $this_page, $DATA;
-		
-		$pages = array ('admin_home', 
+
+		$pages = array ('admin_home',
                 'admin_comments','admin_trackbacks', 'admin_searchlogs', 'admin_popularsearches', 'admin_failedsearches',
-                'admin_statistics', 
+                'admin_statistics',
                 'admin_commentreports', 'admin_glossary', 'admin_glossary_pending', 'admin_badusers',
 		'admin_alerts',
                 );
-		
+
 		$links = array();
-	
+
 		foreach ($pages as $page) {
 			$title = $DATA->page_metadata($page, 'title');
-			
+
 			if ($page != $this_page) {
 				$URL = new URL($page);
 				$title = '<a href="' . $URL->generate() . '">' . $title . '</a>';
@@ -3358,13 +3358,13 @@ Please read our <a href="<?php echo $RULESURL->generate(); ?>"><strong>House Rul
 
 			$links[] = $title;
 		}
-		
+
 		$html = "<ul>\n";
-		
+
 		$html .= "<li>" . implode("</li>\n<li>", $links) . "</li>\n";
-		
+
 		$html .= "</ul>\n";
-		
+
 		return $html;
 	}
 }
