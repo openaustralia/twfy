@@ -83,33 +83,9 @@ if (isset($data['comments']) && count($data['comments']) > 0) {
 <?php
 
 		// COMMENT REPORTING LINK.
-		
-		if (($this_page != 'commentreport' && 
-			$this_page != 'addcomment'  && 
-			$this_page != 'admin_commentreport') 
-			&& $THEUSER->is_able_to('reportcomment')
-			&& $THEUSER->user_id() != $comment['user_id']
-			&& !$comment['modflagged']
-			) {
-			
-			// The comment hasn't been reported and we're on a page where we want to 
-			// display this link.
 
-			$URL = new URL('commentreport');
-			$URL->insert(array(
-				'id'	=> $comment['comment_id'],
-				'ret' 	=> $comment['url']
-			));
-			
-			$reporthtml = '(<a href="' . $URL->generate() . '" title="Notify moderators that this comment should be deleted">Report this comment</a>)';
+		$reporthtml = '';
 
-		} elseif ($comment['modflagged']) {
-			$reporthtml = '(This comment has been reported to moderators)';
-		} else {
-			// When previewing a comment...
-			$reporthtml = '';
-		}
-		
 
 		// USERNAME AND DATE AND TIME.
 

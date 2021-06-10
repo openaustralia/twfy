@@ -106,32 +106,6 @@ if (isset($data['comments']) && count($data['comments']) > 0) {
 			// There won't be a URL when we're just previewing a comment.
 			echo "\t\t$time";
 		}
-
-		if (($this_page != 'commentreport' && 
-			$this_page != 'addcomment'  && 
-			$this_page != 'admin_commentreport') 
-			&& $THEUSER->is_able_to('reportcomment')
-			&& !$comment['modflagged']
-			) {
-			
-			// The comment hasn't been reported and we're on a page where we want to 
-			// display this link.
-
-			$URL = new URL('commentreport');
-			$URL->insert(array(
-				'id'	=> $comment['comment_id'],
-				'ret' 	=> $comment['url']
-			));
-			
-			?><br>
-		<a href="<?php echo $URL->generate(); ?>" title="Notify moderators that this comment needs editing or deleting">Report this comment</a>
-<?php
-
-		} elseif ($comment['modflagged']) {
-			?><br>
-		This comment has been reported
-<?php
-		}
 		
 		?>
 		</p>
