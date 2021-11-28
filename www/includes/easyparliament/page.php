@@ -1764,14 +1764,14 @@ pr()//-->
 			$got_dream |= display_dream_comparison($extra_info, $member, 148, "getting rid of Sunday and public holiday penalty rates", false, "");
 			$got_dream |= display_dream_comparison($extra_info, $member, 149, "reducing the corporate tax rate", false, "");
 			$got_dream |= display_dream_comparison($extra_info, $member, 150, "the Coalition's Youth Jobs PaTH", false, "");
-			$got_dream |= display_dream_comparison($extra_info, $member, 151, "the Coalition's new schools funding policy ("Gonski 2.0")", false, "");
+			$got_dream |= display_dream_comparison($extra_info, $member, 151, "the Coalition's new schools funding policy (\"Gonski 2.0\")", false, "");
 			$got_dream |= display_dream_comparison($extra_info, $member, 152, "technology neutral emission reduction targets", false, "");
 			$got_dream |= display_dream_comparison($extra_info, $member, 153, "requiring every native title claimant to sign land use agreements", false, "");
 			$got_dream |= display_dream_comparison($extra_info, $member, 154, "giving approval for mining in the Liverpool Plains", false, "");
 			$got_dream |= display_dream_comparison($extra_info, $member, 155, "making sanitary items GST-free", false, "");
 			$got_dream |= display_dream_comparison($extra_info, $member, 156, "increasing access to medicinal cannabis products", false, "");
 			$got_dream |= display_dream_comparison($extra_info, $member, 157, "a Royal Commission into Violence and Abuse against People with Disability", false, "");
-			$got_dream |= display_dream_comparison($extra_info, $member, 158, "criminalising "revenge porn"", false, "");
+			$got_dream |= display_dream_comparison($extra_info, $member, 158, "criminalising \"revenge porn\"", false, "");
 			$got_dream |= display_dream_comparison($extra_info, $member, 160, "closing the gap between Indigenous and non-Indigenous Australians", false, "");
 			$got_dream |= display_dream_comparison($extra_info, $member, 161, "maintaining or increasing defence spending", false, "");
 			$got_dream |= display_dream_comparison($extra_info, $member, 162, "Adani's proposed Carmichael coal mine in the Galilee Basin", false, "");
