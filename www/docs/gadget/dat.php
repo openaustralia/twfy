@@ -105,19 +105,18 @@ print '<twfy>' . api_output_xml($output) . '</twfy>';
 function score_to_strongly($dmpscore) {
 	$dmpdesc = "unknown about";
 	if ($dmpscore > 0.95 && $dmpscore <= 1.0)
-		$dmpdesc = "very strongly against";
+		$dmpdesc = "consistently against";
 	elseif ($dmpscore > 0.85)
-		$dmpdesc = "strongly against";
+		$dmpdesc = "almost always against";
 	elseif ($dmpscore > 0.6)
-		$dmpdesc = "moderately against";
+		$dmpdesc = "generally against";
 	elseif ($dmpscore > 0.4)
 		$dmpdesc = "a mixture of for and against";
 	elseif ($dmpscore > 0.15)
-		$dmpdesc = "moderately for";
+		$dmpdesc = "generally for";
 	elseif ($dmpscore > 0.05)
-		$dmpdesc = "strongly for";
+		$dmpdesc = "almost always for";
 	elseif ($dmpscore >= 0.0)
-		$dmpdesc = "very strongly for";
+		$dmpdesc = "consistently for";
 	return $dmpdesc;
 }
-
