@@ -17,7 +17,7 @@ mySociety::Config::set_file('../conf/general');
 my $pwmembers = mySociety::Config::get('PWMEMBERS');
 
 use XML::Twig;
-use DBI; 
+use DBI;
 use File::Find;
 use HTML::Entities;
 use Data::Dumper;
@@ -63,7 +63,7 @@ find sub { $regmemfile = $_ if /^regmem.*\.xml$/ and $_ ge $regmemfile}, 'scrape
 
 # Read in all the files
 my $twig = XML::Twig->new(
-        twig_handlers => { 
+        twig_handlers => {
                 'memberinfo' => \&loadmemberinfo,
                 'personinfo' => \&loadpersoninfo,
                 'consinfo' => \&loadconsinfo,
@@ -188,7 +188,7 @@ foreach my $constituency (keys %$consinfohash) {
 
 # Handler for loading data pertaining to a member id
 sub loadmemberinfo
-{ 
+{
 	my ($twig, $memberinfo) = @_;
 	my $id = $memberinfo->att('id');
         foreach my $attname ($memberinfo->att_names())
@@ -201,7 +201,7 @@ sub loadmemberinfo
 
 # Handler for loading data pertaining to a person id
 sub loadpersoninfo
-{ 
+{
 	my ($twig, $personinfo) = @_;
 	my $id = $personinfo->att('id');
         foreach my $attname ($personinfo->att_names())
@@ -214,7 +214,7 @@ sub loadpersoninfo
 
 # Handler for loading data pertaining to a canonical constituency name
 sub loadconsinfo
-{ 
+{
 	my ($twig, $consinfo) = @_;
 	my $id = $consinfo->att('canonical');
         foreach my $attname ($consinfo->att_names())
@@ -234,13 +234,13 @@ sub loadregmeminfo
 
         my $htmlcontent = "";
 
-	for (my $category = $regmem->first_child('category'); $category; 
+	for (my $category = $regmem->first_child('category'); $category;
 		$category = $category->next_sibling('category'))
         {
                 $htmlcontent .= '<div class="regmemcategory">';
                 $htmlcontent .= $category->att("type") . ". " . $category->att("name");
                 $htmlcontent .= "</div>\n";
-                for (my $item = $category->first_child('item'); $item; 
+                for (my $item = $category->first_child('item'); $item;
                         $item = $item->next_sibling('item'))
                 {
                         $htmlcontent .= '<div class="regmemitem">';
@@ -260,9 +260,9 @@ sub loadregmeminfo
 # Generate rankings of number of times spoken
 sub makerankings {
         my $dbh = shift;
-        
+
         # Loop through MPs
-        my $query = "select member_id,person_id,entered_house,left_house from member 
+        my $query = "select member_id,person_id,entered_house,left_house from member
                 where person_id in ";
         my $sth = $dbh->prepare($query .
                 #"( 10001 )");
@@ -278,7 +278,7 @@ sub makerankings {
                 }
         }
         my %first_member;
-        while ( my @row = $sth->fetchrow_array() ) 
+        while ( my @row = $sth->fetchrow_array() )
         {
                 my $mp_id = $row[0];
                 my $person_id = $row[1];
@@ -298,7 +298,7 @@ sub makerankings {
                 }
 
                 my $tth = $dbh->prepare("select count(*) from hansard, epobject
-                        where hansard.epobject_id = epobject.epobject_id and speaker_id = ? and (major = 1 or major = 2) and 
+                        where hansard.epobject_id = epobject.epobject_id and speaker_id = ? and (major = 1 or major = 2) and
                         hdate >= date_sub(curdate(), interval 1 year) and
                         body not like '%rose&#8212;%' group by section_id");
                 my $rows = $tth->execute($mp_id);
@@ -320,7 +320,7 @@ sub makerankings {
                 my $speeches = $thisrow[0];
                 $personinfohash->{$person_fullid}->{"wrans_asked_inlastyear"} += $speeches;
 
-                $tth = $dbh->prepare("select count(*) from hansard where speaker_id = ? and major = 3 and minor = 2 and 
+                $tth = $dbh->prepare("select count(*) from hansard where speaker_id = ? and major = 3 and minor = 2 and
                         hdate >= date_sub(curdate(), interval 1 year)");
                 $tth->execute($mp_id);
                 @thisrow = $tth->fetchrow_array();
@@ -332,9 +332,9 @@ sub makerankings {
                         $memberinfohash->{$fullid}->{"swing_to_lose_seat_today"} = $memberinfohash->{$fullid}->{"swing_to_lose_seat"};
                 }
 
-                $tth = $dbh->prepare("select count(*) as c, body from hansard as h1 
-                                        left join epobject on h1.section_id = epobject.epobject_id 
-                                        where h1.major = 3 and h1.minor = 
+                $tth = $dbh->prepare("select count(*) as c, body from hansard as h1
+                                        left join epobject on h1.section_id = epobject.epobject_id
+                                        where h1.major = 3 and h1.minor =
                                         1 and h1.speaker_id = ? group by body");
                 $tth->execute($mp_id);
                 while (my @row = $tth->fetchrow_array()) {
@@ -344,9 +344,9 @@ sub makerankings {
                                 !defined($personinfohash->{$person_fullid}->{"wrans_departments"}->{$dept});
                         $personinfohash->{$person_fullid}->{"wrans_departments"}->{$dept} += $count;
                 }
-                $tth = $dbh->prepare("select count(*) as c, body from hansard as h1 
-                                        left join epobject on h1.subsection_id = epobject.epobject_id 
-                                        where h1.major = 3 and h1.minor = 
+                $tth = $dbh->prepare("select count(*) as c, body from hansard as h1
+                                        left join epobject on h1.subsection_id = epobject.epobject_id
+                                        where h1.major = 3 and h1.minor =
                                         1 and h1.speaker_id = ? group by body");
                 $tth->execute($mp_id);
                 while (my @row = $tth->fetchrow_array()) {
@@ -356,7 +356,7 @@ sub makerankings {
                                 !defined($personinfohash->{$person_fullid}->{"wrans_subjects"}->{$subject});
                         $personinfohash->{$person_fullid}->{"wrans_subjects"}->{$subject} += $count;
                 }
- 
+
                 $tth = $dbh->prepare("select body from epobject,hansard where hansard.epobject_id = epobject.epobject_id and speaker_id=? and (major=1 or major=2)");
                 $tth->execute($mp_id);
                 $personinfohash->{$person_fullid}->{'three_word_alliterations'} = 0 if !$personinfohash->{$person_fullid}->{'three_word_alliterations'};
@@ -371,7 +371,7 @@ sub makerankings {
                                 $personinfohash->{$person_fullid}->{'three_word_alliterations'} += 1;
                                 $personinfohash->{$person_fullid}->{'three_word_alliteration_content'} .= ":$1";
                         }
-                        
+
                         my @sent = split(/(?:(?<!Mr|St)(?<!Ltd)\.|!|\?)\s+/, $body);
                         $sentences += @sent;
                         for (split /\W+/, $body) {
@@ -428,7 +428,7 @@ sub makerankings {
         }
 
         # Loop through Lords
-        $query = "select member_id,person_id from member 
+        $query = "select member_id,person_id from member
                 where person_id in ";
         $sth = $dbh->prepare($query .
                 '(select person_id from member where house=2 AND curdate() <= left_house) order by member_id');
@@ -440,7 +440,7 @@ sub makerankings {
                 my $person_fullid = "uk.org.publicwhip/person/$person_id";
 
                 my $tth = $dbh->prepare("select count(*) from hansard, epobject
-                        where hansard.epobject_id = epobject.epobject_id and speaker_id = ? and major = 101 and 
+                        where hansard.epobject_id = epobject.epobject_id and speaker_id = ? and major = 101 and
                         hdate >= date_sub(curdate(), interval 1 year) and
                         body not like '%rose&#8212;%' group by section_id");
                 my $rows = $tth->execute($mp_id);
@@ -462,7 +462,7 @@ sub makerankings {
                 my $speeches = $thisrow[0];
                 $personinfohash->{$person_fullid}->{"Lwrans_asked_inlastyear"} += $speeches;
 
-                $tth = $dbh->prepare("select count(*) from hansard where speaker_id = ? and major = 3 and minor = 2 and 
+                $tth = $dbh->prepare("select count(*) from hansard where speaker_id = ? and major = 3 and minor = 2 and
                         hdate >= date_sub(curdate(), interval 1 year)");
                 $tth->execute($mp_id);
                 @thisrow = $tth->fetchrow_array();
