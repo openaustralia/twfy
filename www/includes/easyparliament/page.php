@@ -1588,7 +1588,7 @@ pr()//-->
 		if(defined('DISPLAY_VOTING_DATA') && DISPLAY_VOTING_DATA) {
 			// Voting Record.
 			?> <a name="votingrecord"></a> <?php
-			$this->block_start(array('id'=>'votingrecord', 'title'=>'See how ' . $member['full_name'] . ' voted on key issues on <a href="https://theyvoteforyou.org.au/mp.php?id=uk.org.publicwhip/member/' . $member['member_id'] . '">They Vote For You</a>'));
+			$this->block_start(array('id'=>'votingrecord', 'title'=>'See how <a href="https://theyvoteforyou.org.au/mp.php?id=uk.org.publicwhip/member/' . $member['member_id'] . '">' . $member['full_name'] . ' voted on key issues at They Vote For You</a>'));
 			$this->block_end();
 		} // End DISPLAY_VOTING_DATA feature flag
 
