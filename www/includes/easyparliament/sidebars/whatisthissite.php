@@ -20,9 +20,7 @@ $helpurl = $URL->generate();
     representatives in Parliament.</p>
 <p>The OpenAustralia Foundation is an independent, strictly non-partisan <a
         href="https://www.acnc.gov.au/charity/55c2c06e21ac71e9359a0590b9fc100e">charity</a>, powered by donations from
-    people like you. The Foundation is <a
-        href="http://www.abr.business.gov.au/(2bjbr1rb5qmkdwqjuus0fc55)/search.aspx?StartSearch=True&amp;SearchText=24138089942">endorsed
-        as a deductible gift recipient</a> - all donations over $2 from Australian taxpayers are tax-deductible. </p>
+    people like you.</p>
 
 <?php
 $this->block_end();
