@@ -10,6 +10,7 @@ little wrong with Parliament that a healthy mixture of transparency and public e
 <h3>Who runs this site?</h3>
 
 <p>OpenAustralia is a website run by a charity, the <a href="http://www.openaustraliafoundation.org.au">OpenAustralia Foundation</a>.
+OpenAustralia Foundation is a public digital online library.
 We owe a great debt to a UK charity, mySociety, which built <a href="http://theyworkforyou.com/">theyworkforyou.com</a> which this site is based on.
 </p>
 
