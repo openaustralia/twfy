@@ -1204,7 +1204,6 @@ pageTracker._trackPageview();
 		}
 		$links[] = '<a href="' . WEBPATH . 'api/">API</a> / <a href="http://data.openaustralia.org">XML</a>';
 		$links[] = '<a href="http://software.openaustralia.org">Source code</a>';
-		$links[] = '<a href="http://blog.openaustralia.org">Blog</a> / <a href="http://www.twitter.com/OpenAustralia/">Twitter</a>';
 
         $qs = $_SERVER['QUERY_STRING'];
         if (preg_match('/.*show_pc.*/i', $qs)) {
@@ -1959,6 +1958,7 @@ elseif ($member['house_disp']==0) print $member['full_name']; ?> speaks<?php
 			$html .= '	<li><a href="' . $links['mp_contact_form'] . '">Contact form</a> <small>(On the Australian Parliament website)</small></li>';
 		}
 
+		// TODO: shall we remove these?
 		if (isset($links['mp_twitter_url'])) {
 			$html .= '	<li><a href="' . $links['mp_twitter_url'] . '">'. $member->full_name(). ' on Twitter</a></li>';
 		}
