@@ -154,10 +154,6 @@ $includes = array(
 		'type' => 'include',
 		'content' => 'whatisthissite'
 	),
-	array (
-		'type' => 'include',
-		'content' => 'twitter'
-	),
 	array(
 		'type' => 'include',
 		'content' => 'comments_recent',
