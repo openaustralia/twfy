@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # Jobs that need running weekly
 #set -x
+#set -v
 
 source consts
 
@@ -9,14 +10,20 @@ read_conf "../conf/general"
 
 INDEX="`pwd`/all-titles-in-ns0"
 
-# Get new wikipedia titles database
-rm -f "$INDEX.gz" $INDEX
+# Get new Wikipedia titles database
+rm -f "${INDEX}.gz" $INDEX
 
-DUMPDATE=`curl -q -o - http://download.wikimedia.org/backup-index.html | grep "enwiki/" | perl -pi.bak -e "s/.*(\d\d\d\d\d\d\d\d).*/\\\$1/;"`
-#echo "Wikipedia dump date $DUMPDATE"
-curl -q -o "$INDEX.gz" http://download.wikimedia.org/enwiki/$DUMPDATE/enwiki-$DUMPDATE-all-titles-in-ns0.gz
-gunzip "$INDEX.gz"
-MYSQL="mysql -u $DB_USER --password=$DB_PASSWORD $DB_NAME"
+DUMPDATE=`curl -s "https://dumps.wikimedia.org/backup-index.html" | grep "\"enwiki/" | perl -pi.bak -e "s/.*(\d\d\d\d\d\d\d\d).*/\\\$1/;"`
+echo "Wikipedia dump date $DUMPDATE"
+
+echo "Downloading to ${INDEX}"
+URL="https://dumps.wikimedia.org/enwiki/${DUMPDATE}/enwiki-${DUMPDATE}-all-titles-in-ns0.gz"
+
+curl -s -o "$INDEX.gz" "${URL}"
+ls -lh "${INDEX}.gz"
+gunzip "${INDEX}.gz"
+MYSQL="mysql -u $DB_USER --password=$DB_PASSWORD --host=$DB_HOST $DB_NAME"
+
 echo "load data local infile '$INDEX' ignore into table titles;" | $MYSQL
 cat wikipedia-exceptions | $MYSQL
 # Cleanup
@@ -28,4 +35,3 @@ rm -f $INDEX
 
 #Full database:
 #http://download.wikimedia.org/enwiki/latest/enwiki-latest-pages-articles.xml.bz2
-
