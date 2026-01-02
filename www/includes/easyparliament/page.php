@@ -1223,8 +1223,7 @@ pageTracker._trackPageview();
 				Other Wonderful Projects from the OpenAustralia Foundation:
 				<a href="https://theyvoteforyou.org.au/">They Vote For You</a> |
 				<a href="https://www.righttoknow.org.au/">Right To Know</a> |
-				<a href="http://www.planningalerts.org.au/">PlanningAlerts</a> |
-				<a href="http://www.electionleaflets.org.au/">Election Leaflets</a>
+				<a href="http://www.planningalerts.org.au/">PlanningAlerts</a>
 	 		</p>
 		</div>
 
