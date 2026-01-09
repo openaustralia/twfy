@@ -111,8 +111,7 @@ if (get_http_var('modify') && (!get_http_var('submitterm'))) {
 		
 	$PAGE->glossary_display_term($GLOSSARY);
 
-}
-else {
+} else {
 	
 	// add a modification to the database
 	if (get_http_var('submitterm') && get_http_var('modify')) {

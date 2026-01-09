@@ -44,8 +44,7 @@ if ($THEUSER->constituency_is_set()) {
 	<p style="margin-bottom: 30px">If <?php echo $mpname; ?> is not your Representative, <a href="<?= $CHANGEURL->generate(); ?>">provide a new postcode</a>.</p>
 <?php
 	}
-}
-else {
+} else {
 ?>
 	<p style="margin-top: -30px; margin-bottom: 30px">Find out who <a href="<?= $MPURL->generate() ?>">your Representative</a> is. All you need is a postcode.</p>
 <?php

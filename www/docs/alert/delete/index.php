@@ -37,8 +37,8 @@ $ALERT = new ALERT;
 $success = $ALERT->delete( get_http_var('t') );
 	
 if ($success) {
-	delete_success();}
-else {
+	delete_success();
+} else {
 	delete_error();
 }
 

@@ -30,8 +30,8 @@ $ALERT = new ALERT;
 $success = $ALERT->confirm( get_http_var('t') );
 	
 if ($success) {
-	undelete_success();}
-else {
+	undelete_success();
+} else {
 	undelete_error();
 }
 

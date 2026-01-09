@@ -16,8 +16,7 @@ if ((get_http_var('g') != '') && (get_http_var('previewterm') == '') ) {
 	// We're searching for something.
 	$args['s'] = filter_user_input(get_http_var('g'), 'strict');
 	$GLOSSARY = new GLOSSARY($args);
-}
-else {
+} else {
 	$args['sort'] = "regexp_replace";
 	$GLOSSARY = new GLOSSARY($args);
 	$args['s'] = filter_user_input(get_http_var('g'), 'strict');
