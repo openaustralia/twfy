@@ -3,10 +3,13 @@ networks:
   twfy:
 services:
   webhost:
-    image: php:7.4.33-apache-bullseye
+    # image: php:7.4.33-apache-bullseye
+    image: twfy-app
     networks:
       - twfy
     ports:
       - 80:80
     volumes:
-      - ./www/docs:/var/www/html # Mount your application code
+      - ./www:/app/www
+      - ./conf:/app/conf
+      
