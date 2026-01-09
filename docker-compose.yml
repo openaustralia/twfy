@@ -1,0 +1,12 @@
+version: "3.7"
+networks:
+  twfy:
+services:
+  webhost:
+    image: php:7.4.33-apache-bullseye
+    networks:
+      - twfy
+    ports:
+      - 80:80
+    volumes:
+      - ./www/docs:/var/www/html # Mount your application code
