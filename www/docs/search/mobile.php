@@ -297,7 +297,7 @@ function find_constituency ($args) {
 		} else {
             $query = "select distinct
                     (select name from constituency where cons_id = o.cons_id and main_name) as name 
-                from constituency AS o where name like '%" . mysql_real_escape_string($try) . "%'
+                from constituency AS o where name like '%" . mysqli_real_escape_string($try) . "%'
                 and from_date <= date(now()) and date(now()) <= to_date";
             $q = $db->query($query);
             for ($n=0; $n<$q->rows(); $n++) {
@@ -411,7 +411,7 @@ function find_members ($args) {
 
 	$searchwords = explode(' ', preg_replace('#[^a-z ]#i', '', $searchstring));
     foreach ($searchwords as $i=>$searchword) {
-        $searchwords[$i] = mysql_real_escape_string(htmlentities($searchword));
+        $searchwords[$i] = mysqli_real_escape_string(htmlentities($searchword));
         if (!strcasecmp($searchword,'Opik'))
             $searchwords[$i] = '&Ouml;pik';
     }

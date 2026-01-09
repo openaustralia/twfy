@@ -63,7 +63,7 @@ function wikipedize ($source) {
   # Sort into order, largest first
   usort($phrases, "lensort");
   foreach ($phrases as $i => $phrase) {
-    $phrases[$i] = mysql_real_escape_string(str_replace(' ', '_', trim($phrase)));
+    $phrases[$i] = mysqli_real_escape_string(str_replace(' ', '_', trim($phrase)));
   }
  
   # Open up a db connection, and whittle our list down even further, against

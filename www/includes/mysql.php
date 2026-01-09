@@ -163,13 +163,14 @@ Class MySQLQuery {
 				$this->success = true;
 	
 				$result = array();
-				for ($i = 0; $i < mysql_num_fields($q); $i++) {
-					$fieldnames_byid[$i] = mysql_field_name($q, $i);
-					$fieldnames_byname[mysql_field_name($q, $i)] = $i;
+				for ($i = 0; $i < mysqli_num_fields($q); $i++) {
+					$field_info = mysqli_fetch_field_direct($q, $i);
+					$fieldnames_byid[$i] = $field_info->name;
+					$fieldnames_byname[$field_info->name] = $i;
 				}
 	
-				for ($row = 0; $row < mysql_num_rows($q); $row++) {
-					$result[$row] = mysql_fetch_row($q);
+				while ($row = mysqli_fetch_row($q)) {
+					$result[] = $row;
 				}
 	
 				if (sizeof($result) > 0) {
@@ -185,7 +186,7 @@ Class MySQLQuery {
 	
 				twfy_debug ("SQLRESULT", $this->_display_result());
 	
-				mysql_free_result($q);
+				mysqli_free_result($q);
 	
 				return;
 			}

@@ -127,12 +127,12 @@ function api_log_call($key) {
 	$query = preg_replace('#key=[A-Za-z0-9]+&?#', '', $query);
 	$db = new ParlDB;
 	$db->query("INSERT INTO api_stats (api_key, ip_address, query_time, query)
-		VALUES ('$key', '$ip', NOW(), '" . mysql_real_escape_string($query) . "')");
+		VALUES ('$key', '$ip', NOW(), '" . mysqli_real_escape_string($query) . "')");
 }
 
 function api_check_key($key) {
 	$db = new ParlDB;
-	$q = $db->query('SELECT user_id FROM api_key WHERE api_key="' . mysql_real_escape_string($key) . '"');
+	$q = $db->query('SELECT user_id FROM api_key WHERE api_key="' . mysqli_real_escape_string($key) . '"');
 	if (!$q->rows())
 		return false;
 	return true;
