@@ -13,9 +13,14 @@ RUN apt-get update && apt-get install -y vim
 # COPY ./inc/php/php.ini $PHP_INI_DIR/php.ini
 COPY conf/httpd-docker.conf /etc/apache2/sites-available/000-default.conf
 
+
+
 RUN a2enmod rewrite
 RUN service apache2 restart
 
+WORKDIR /app/www
 
 # Set the working directory (default for apache images is /var/www/html)
-WORKDIR /app/www
+RUN mkdir /app/shared
+RUN mkdir -p /app/shared/pwdata/members
+RUN mkdir -p /app/shared/backup
