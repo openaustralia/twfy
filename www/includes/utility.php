@@ -165,7 +165,9 @@ function error_handler ($errno, $errmsg, $filename, $linenum, $vars) {
 		
 	} else {
 		// On live sites we display a nice message and email the problem.
+		error_log($err);
 		
+
 		$message = array(
 			'title' => "Sorry, an error has occurred",
 			'text' => "We've been notified by email and will try to fix the problem soon!"
@@ -176,10 +178,10 @@ function error_handler ($errno, $errmsg, $filename, $linenum, $vars) {
 		} else {
 			print "<p>Oops, sorry, an error has occurred!</p>\n";
 		}
-		mail(BUGSLIST, "[TWFYBUG]: $errmsg", $err,
-			"From: Bug <beta@openaustralia.org>\n".
-			"X-Mailer: PHP/" . phpversion()
-		);
+		// mail(BUGSLIST, "[TWFYBUG]: $errmsg", $err,
+		// 	"From: Bug <beta@openaustralia.org>\n".
+		// 	"X-Mailer: PHP/" . phpversion()
+		// );
 	}	
 	
 
