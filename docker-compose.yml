@@ -10,6 +10,6 @@ services:
     ports:
       - 80:80
     volumes:
-      - ./www:/app/www
-      - ./conf:/app/conf
+      - ./www:/var/www
+      - ./conf:/var/conf # not a great location, but it works
       
