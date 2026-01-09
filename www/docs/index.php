@@ -100,9 +100,9 @@ function search_bullet_point() {
 function email_alert_bullet_point() {
 	if (get_http_var("keyword")) { ?>
 		<li><p><a href="<?=WEBPATH."alert?keyword=".htmlspecialchars(get_http_var('keyword'))?>&only=1"><strong>Sign up to be emailed when '<?=htmlspecialchars(get_http_var('keyword'))?>' is mentioned in Parliament</strong></a></p></li>
-	<? } else { ?>
+	<?php } else { ?>
 		<li><p><a href="<?=WEBPATH."alert/"?>"><strong>Sign up to be emailed when something relevant to you happens in Parliament</strong></a></p></li>
-	<? } 
+	<?php } 
 } 
 
 // Comment on (recent debates)

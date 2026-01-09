@@ -134,7 +134,7 @@ if ($THEUSER->postcode_is_set()) {
                                     array_push($correct_amount, $popular_search['display']);
                                 }
                                 print implode(", ", $correct_amount);
-                                ?> </p> <?
+				?> </p> <?php
                             }
                         ?>
 						</form>

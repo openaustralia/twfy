@@ -228,7 +228,7 @@ function front_page() {
 <p>This section of the site lets you see how MPs' entries in the Register of Members' Interests have changed over time, either by MP, or for a particular issue of the Register.</p>
 
 <blockquote>
-<p style="margin-top:0">The financial thresholds over which an interest must be registered are mainly based, for convenience, on percentages of an MP's salary: one per cent, or currently £590, for employment, gifts and hospitality; ten per cent, or £5,900, for rental income; and a hundred per cent, or £59,000, for property and shares. The exception is sponsorship, where the threshold has been set at £1,000 to match that set for registration with the Electoral Commission.</p>
+<p style="margin-top:0">The financial thresholds over which an interest must be registered are mainly based, for convenience, on percentages of an MP's salary: one per cent, or currently ï¿½590, for employment, gifts and hospitality; ten per cent, or ï¿½5,900, for rental income; and a hundred per cent, or ï¿½59,000, for property and shares. The exception is sponsorship, where the threshold has been set at ï¿½1,000 to match that set for registration with the Electoral Commission.</p>
 <p>Continuing interests like employment or property remain on the Register until the Member asks for them to be removed. 'One-off' benefits like gifts, visits and donations appear with their date of registration and remain on the Register for a year from that date and until they have appeared in one printed Register.</p>
 <p style="margin-bottom:0" align="right">&mdash; <a href="http://www.publications.parliament.uk/pa/cm/cmregmem/051214/memi01.htm">http://www.publications.parliament.uk/pa/cm/cmregmem/051214/memi01.htm</a> (with more information).</p>
 </blockquote>
@@ -262,7 +262,7 @@ function show_register($d) {
 	print $link;
 ?>
 <p>This page shows the Register of Members' Interests as released on <?=$d_pretty ?>, in alphabetical order by MP.
-<? if ($d_iso > '2002-05-14') { ?><a href="./?f=<?=$d_iso ?>">Compare this edition with the one before it</a></p><? } ?>
+<?php if ($d_iso > '2002-05-14') { ?><a href="./?f=<?=$d_iso ?>">Compare this edition with the one before it</a></p><?php } ?>
 <div id="regmem">
 <?
 	uksort($data, 'by_name_ref');

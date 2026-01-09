@@ -88,7 +88,7 @@ to help you find someone appropriate. When you've found someone,
 hit the "I want to write to this Lord" button on their results page
 to go back to WriteToThem.
 </big></strong></p>
-<?      }
+<?php      }
 ?>
 <p>Please note that this search is only for the exact word/phrase entered.
 For example, putting in 'autism' won't return results for 'autistic spectrum disorder',

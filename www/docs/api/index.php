@@ -82,7 +82,7 @@ function api_documentation_front($method, $explorer) {
 <p>Try out this function without writing any code!</p>
 <form method="get" action="?#output">
 <p>
-<? foreach ($methods[$method]['parameters'] as $parameter) {
+<?php foreach ($methods[$method]['parameters'] as $parameter) {
 	print $parameter . ': <input type="text" name="'.$parameter.'" value="';
 	if ($val = get_http_var($parameter))
 		print htmlspecialchars($val);
@@ -90,13 +90,13 @@ function api_documentation_front($method, $explorer) {
 }
 ?>
 Output:
-<input id="output_js" type="radio" name="output" value="js"<? if (get_http_var('output')=='js' || !get_http_var('output')) print ' checked'?>>
+<input id="output_js" type="radio" name="output" value="js"<?php if (get_http_var('output')=='js' || !get_http_var('output')) print ' checked'?>>
 <label for="output_js">JS</label>
-<input id="output_xml" type="radio" name="output" value="xml"<? if (get_http_var('output')=='xml') print ' checked'?>>
+<input id="output_xml" type="radio" name="output" value="xml"<?php if (get_http_var('output')=='xml') print ' checked'?>>
 <label for="output_xml">XML</label>
-<input id="output_php" type="radio" name="output" value="php"<? if (get_http_var('output')=='php') print ' checked'?>>
+<input id="output_php" type="radio" name="output" value="php"<?php if (get_http_var('output')=='php') print ' checked'?>>
 <label for="output_php">Serialised PHP</label>
-<input id="output_rabx" type="radio" name="output" value="rabx"<? if (get_http_var('output')=='rabx') print ' checked'?>>
+<input id="output_rabx" type="radio" name="output" value="rabx"<?php if (get_http_var('output')=='rabx') print ' checked'?>>
 <label for="output_rabx">RABX</label>
 
 <input type="submit" value="Go">
@@ -134,18 +134,18 @@ function api_front_page($error = '') {
 
 <ol style="font-size:130%">
 <li>
-<? if ($THEUSER->loggedin()) { ?>
+<?php if ($THEUSER->loggedin()) { ?>
 <a href="key">Get an API key (or view stats of existing keys)</a>.
-<? } else { ?>
+<?php } else { ?>
 <a href="key">Get an API key</a>.
-<? } ?>
+<?php } ?>
 <li>All requests are made by GETting a particular URL with a number of parameters. <em>key</em> is required;
 <em>output</em> is optional, and defaults to <kbd>js</kbd>.
 </ol>
 
 <p align="center"><strong>http://www.openaustralia.org/api/<em>function</em>?key=<em>key</em>&amp;output=<em>output</em>&amp;<em>other_variables</em></strong></p>
 
-<? api_key_current_message(); ?>
+<?php api_key_current_message(); ?>
 
 <p>The current version of the API is <em>1.0.0</em>. If we make changes to the
 API functions, we'll increase the version number and make it an argument so you

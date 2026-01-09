@@ -245,7 +245,7 @@ above.</li>
 				$LIST->listoptions($args);
 				?>
 				</select>
-			<? } ?>
+			<?php } ?>
 				</span>
 				</div>
 	<?php	}

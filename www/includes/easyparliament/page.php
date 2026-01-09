@@ -1596,7 +1596,7 @@ pr()//-->
 		if (0) {
 
 ?>	<a name="topics"></a>
-		<? $this->block_start(array('id'=>'topics', 'title'=>'Committees and topics of interest'));
+		<?php $this->block_start(array('id'=>'topics', 'title'=>'Committees and topics of interest'));
 		$topics_block_empty = true;
 
 		// Select committee membership

@@ -84,7 +84,7 @@ if (get_http_var('modify') && (!get_http_var('submitterm'))) {
 	?>
 	
 	<div class="glossaryaddbox">
-		<form action="<? echo $form_action; ?>" method="post">
+		<form action="<?php echo $form_action; ?>" method="post">
 		<input type="hidden" name="modify" value="<?php echo $glossary_id; ?>">
 		<input type="hidden" name="userid" value="<?php echo $user_id; ?>">
 		<input type="text" name="g" value="<?php echo $title; ?>" size="80">

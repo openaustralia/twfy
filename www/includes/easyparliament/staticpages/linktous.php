@@ -39,7 +39,7 @@ print $link_to_us_form;
 
 <p>Cut and paste the code below into your webpage:</p>
 <textarea class="sourcecode" style="width: 100%; height: 20em;">
-<? print htmlspecialchars($link_to_us_form); ?>
+<?php print htmlspecialchars($link_to_us_form); ?>
 </textarea>
 
 <p/>

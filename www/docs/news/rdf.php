@@ -12,7 +12,7 @@ print '<?xml version="1.0" encoding="iso-8859-1"?>' ?>
   xmlns:cc="http://web.resource.org/cc/"
   xmlns="http://purl.org/rss/1.0/">
 
-<channel rdf:about="http://<? DOMAIN . WEBPATH . "news/" ?>">
+<channel rdf:about="http://<?php DOMAIN . WEBPATH . "news/" ?>">
 <title>OpenAustralia News</title>
 <link>http://<?= DOMAIN . WEBPATH . "news/" ?></link>
 <description>The weblog for news about site updates, etc.</description>
@@ -24,7 +24,7 @@ print '<?xml version="1.0" encoding="iso-8859-1"?>' ?>
 
 <items>
 <rdf:Seq>
-<? 
+<?php 
 	$c = 0;
 	foreach ($all_news as $id => $news_row) {
 		if ($c++ == 10) break;
@@ -38,7 +38,7 @@ print '<?xml version="1.0" encoding="iso-8859-1"?>' ?>
 
 </channel>
 
-<? 
+<?php 
 	$c = 0;
 	foreach ($all_news as $id => $news_row) {
 		if ($c++ == 10) break;
