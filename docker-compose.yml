@@ -12,4 +12,14 @@ services:
     volumes:
       - ./www:/var/www
       - ./conf:/var/conf # not a great location, but it works
-      
+  mysql:
+    image: mysql:8.4.7
+    networks:
+      - twfy
+    environment:
+      MYSQL_ROOT_PASSWORD: examplepassword
+      MYSQL_DATABASE: twfy
+      MYSQL_USER: twfyuser
+      MYSQL_PASSWORD: twfypass
+    volumes:
+      - ./_mysqldata:/var/lib/mysql
