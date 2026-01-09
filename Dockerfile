@@ -2,10 +2,10 @@
 FROM php:7.4.33-apache-bullseye
 
 # Install necessary system libraries and PHP extensions (example: pdo_mysql)
-# RUN apt-get update && apt-get install -y \
-#     libpq-dev vim \
-#     && rm -rf /var/lib/apt/lists/* \
-#     && docker-php-ext-install pdo_mysql mysqli
+RUN apt-get update && apt-get install -y \
+    libpq-dev \
+    && rm -rf /var/lib/apt/lists/* \
+    && docker-php-ext-install pdo_mysql mysqli
 
 RUN apt-get update && apt-get install -y vim
 
