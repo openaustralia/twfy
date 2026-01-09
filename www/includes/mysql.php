@@ -134,7 +134,7 @@ Class MySQLQuery {
 				
 		twfy_debug ("SQL", $sql);
 		
-		$q = mysql_query($sql,$this->conn) or $this->error(mysql_errno().": ".mysql_error());
+		$q = mysqli_query($this->conn, $sql) or $this->error(mysqli_errno($this->conn).": ".mysqli_error($this->conn));
 		
 		if ($this->success) {
 			if ( (!$q) or (empty($q)) ) {
@@ -312,10 +312,10 @@ Class MySQL {
 		if (!$global_connection) {
 			$conn = mysqli_connect($db_host, $db_user, $db_pass, $db_name);
 			if(!$conn) {
-				print ("<p>DB connection attempt failed.</p>");
+				print ("<p>DB connection attempt failed: ". mysqli_connect_error() ."</p>");
 				exit;
 			}
-			if(!mysql_select_db($db_name, $conn)) {
+			if(!mysqli_select_db($conn, $db_name)) {
 				print ("<p>DB select failed</p>");
 				exit;
 			}
