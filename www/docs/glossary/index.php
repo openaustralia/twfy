@@ -42,7 +42,7 @@ if (isset($az) && array_key_exists($az, $GLOSSARY->alphabet)) {
 	$GLOSSARY->current_letter = $az;
 // Otherwise make it the first letter of the current term
 } elseif (isset($term)) {
-	$GLOSSARY->current_letter = strtoupper($term['title']{0});
+	$GLOSSARY->current_letter = strtoupper($term['title'][0]);
 // Otherwise make it "A" by default
 } else {
 	$GLOSSARY->current_letter = "A";
