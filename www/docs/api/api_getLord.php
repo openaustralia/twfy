@@ -1,4 +1,4 @@
-<?
+<?php
 
 function api_getLord_front() {
 ?>
@@ -10,7 +10,7 @@ function api_getLord_front() {
 <dd>If you know the person ID for the Senator you want, this will return data for that person.</dd>
 </dl>
 
-<?	
+<?php
 }
 
 function _api_getLord_row($row) {
@@ -26,7 +26,7 @@ function _api_getLord_row($row) {
 function api_getLord_id($id) {
 	$db = new ParlDB;
 	$q = $db->query("select * from member
-		where house=2 and person_id = '" . mysql_real_escape_string($id) . "'
+		where house=2 and person_id = '" . mysqli_real_escape_string($db, $id) . "'
 		order by left_house desc");
 	if ($q->rows()) {
 		$output = array();

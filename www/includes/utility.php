@@ -151,21 +151,23 @@ function error_handler ($errno, $errmsg, $filename, $linenum, $vars) {
 
 	if (DEVSITE) {
 		// On a devsite we just display the problem.
-		$message = array(
-			'title' => "Error",
-			'text' => "$err\n"
-		);
-		if (is_object($PAGE)) {
-			$PAGE->error_message($message, $fatal);
-			vardump(adodb_backtrace());
-		} else {
-			vardump($message);
-			vardump(adodb_backtrace());
-		}
-		
+		// $message = array(
+		// 	'title' => "Error",
+		// 	'text' => "$err\n"
+		// );
+		// if (is_object($PAGE)) {
+		// 	$PAGE->error_message($message, $fatal);
+		// 	vardump(adodb_backtrace());
+		// } else {
+		// 	vardump($message);
+		// 	vardump(adodb_backtrace());
+		// }
 	} else {
+		print("<pre>". htmlentities_notags($err) . "</pre>");
 		// On live sites we display a nice message and email the problem.
-		
+		error_log($err);
+
+
 		$message = array(
 			'title' => "Sorry, an error has occurred",
 			'text' => "We've been notified by email and will try to fix the problem soon!"
@@ -176,10 +178,13 @@ function error_handler ($errno, $errmsg, $filename, $linenum, $vars) {
 		} else {
 			print "<p>Oops, sorry, an error has occurred!</p>\n";
 		}
-		mail(BUGSLIST, "[TWFYBUG]: $errmsg", $err,
-			"From: Bug <beta@openaustralia.org>\n".
-			"X-Mailer: PHP/" . phpversion()
-		);
+
+		// TODO add honey badger
+		
+		// mail(BUGSLIST, "[TWFYBUG]: $errmsg", $err,
+		// 	"From: Bug <beta@openaustralia.org>\n".
+		// 	"X-Mailer: PHP/" . phpversion()
+		// );
 	}	
 	
 
@@ -554,10 +559,15 @@ function prepare_comment_for_display ($text) {
 	// Must go before the URL stuff.
 	$text = htmlentities_notags($text);
 	$link_length = 60;
-	$text = preg_replace(
-		"/((http(s?):\/\/)|(www\.))([a-zA-Z\d\_\.\+\,\;\?\%\~\-\/\#\='\*\$\!\(\)\&]+)([a-zA-Z\d\_\?\%\~\-\/\#\='\*\$\!\&])/e",
-		'(strlen(\'$0\')>$link_length) ? \'<a href="$0">\'.substr(\'$0\',0,$link_length)."...</a>" : \'<a href="$0" rel="nofollow">$0</a>\'',
-		$text);
+    $text = preg_replace_callback(
+        "/((http(s?):\/\/)|(www\.))([a-zA-Z\d\_\.\+\,\;\?\%\~\-\/\#\='\*\$\!\(\)\&]+)([a-zA-Z\d\_\?\%\~\-\/\#\='\*\$\!\&])/",
+        function($matches) use ($link_length) {
+            $url = $matches[0];
+            return (strlen($url) > $link_length) 
+                ? '<a href="' . $url . '">' . substr($url, 0, $link_length) . "...</a>" 
+                : '<a href="' . $url . '" rel="nofollow">' . $url . '</a>';
+        },
+        $text);
 	$text = str_replace('<a href="www', '<a href="http://www', $text);
 	$text = preg_replace("/([\w\.]+)(@)([\w\.\-]+)/i", "<a href=\"mailto:$0\">$0</a>", $text); 
 	$text = str_replace("\n", "<br>\n", $text);

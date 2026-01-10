@@ -1,4 +1,4 @@
-<?
+<?php
 
 include_once 'api_getLord.php';
 

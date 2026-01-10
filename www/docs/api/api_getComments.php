@@ -1,4 +1,4 @@
-<?
+<?php
 
 function api_getComments_front() {
 ?>
@@ -22,7 +22,7 @@ function api_getComments_front() {
 <dd>Number of results to return.</dd>
 </dl>
 
-<?
+<?php
 }
 
 function api_getComments_search($s) {
@@ -31,7 +31,7 @@ function api_getComments_search($s) {
     		'p' => get_http_var('page'),
     		'num' => get_http_var('num'),
     	);
-	$commentlist = new COMMENTLIST;    
+	$commentlist = new COMMENTLIST;
 	$commentlist->display('search', $args, 'api');
 }
 

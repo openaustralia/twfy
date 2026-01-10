@@ -37,7 +37,7 @@ class SEARCHLOG {
 
         $this->db->query("INSERT INTO search_query_log
             (query_string, page_number, count_hits, ip_address, query_time)
-            VALUES ('" . mysql_real_escape_string($searchlogdata['query']) . "',
+            VALUES ('" . mysqli_real_escape_string($db, $searchlogdata['query']) . "',
             '" . $searchlogdata['page'] . "', '" . $searchlogdata['hits'] . "', 
             '" . getenv('REMOTE_ADDR') . "', NOW())");
 
@@ -46,11 +46,14 @@ class SEARCHLOG {
     // Select popular queries
     function popular_recent ($count) {
 
-        $q =  $this->db->query("SELECT *, count(*) AS c FROM search_query_log 
-                WHERE count_hits != 0 AND query_string != 'twat'
-	       AND query_string != 'suffragettes'	
-                AND query_time > date_sub(NOW(), INTERVAL 1 DAY) 
-                GROUP BY query_string ORDER BY c desc LIMIT $count;");
+        $q =  $this->db->query("
+                SELECT query_string, count(*) AS c
+                FROM search_query_log 
+                WHERE count_hits != 0 
+                    AND query_time > date_sub(NOW(), INTERVAL 1 DAY) 
+                GROUP BY query_string
+                ORDER BY c desc
+                LIMIT $count;");
 
         $popular_searches = array();
         for ($row=0; $row<$q->rows(); $row++) {
@@ -65,7 +68,7 @@ class SEARCHLOG {
         $url = $this->SEARCHURL->generate();
 	$htmlescape = 1;
 	if ($pos = strpos($query, ':')) {
-		$qq = $this->db->query('SELECT first_name, last_name FROM member WHERE person_id="'.mysql_real_escape_string(substr($query, $pos+1)).'" LIMIT 1');
+		$qq = $this->db->query('SELECT first_name, last_name FROM member WHERE person_id="'.mysqli_real_escape_string($db, substr($query, $pos+1)).'" LIMIT 1');
 		if ($qq->rows()) {
 			$query = $qq->field(0, 'first_name') . ' ' . $qq->field(0, 'last_name');
 			$htmlescape = 0;

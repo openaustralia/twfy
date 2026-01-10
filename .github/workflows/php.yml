@@ -1,0 +1,21 @@
+name: "PHP checks"
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Setup PHP 7.4
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '7.4'
+          extensions: mbstring, pdo, sqlite
+          coverage: none # Use 'xdebug' or 'pcov' for code coverage
+      - name: Lint
+        run: make lint

@@ -2,7 +2,7 @@
 
 <p>Alternatively, if you would like to place an OpenAustralia search box on your site, like this one&hellip;</p>
 
-<?
+<?php
 $url = "http://" . DOMAIN . WEBPATH;
 $link_to_us_form = <<<END
 <!-- OpenAustralia box, begin -->
@@ -35,14 +35,14 @@ $link_to_us_form .= <<<END
 <!-- OpenAustralia box, end -->
 END;
 print $link_to_us_form;
-?>		
+?>
 
 <p>Cut and paste the code below into your webpage:</p>
 <textarea class="sourcecode" style="width: 100%; height: 20em;">
-<? print htmlspecialchars($link_to_us_form); ?>
+<?php print htmlspecialchars($link_to_us_form); ?>
 </textarea>
 
 <p/>
 <p>Please retain the link to <a href="<?= $url ?>">OpenAustralia.org</a> (Google points mean prizes). Any questions, just drop us a line at: <a href="<?= $url . 'contact/' ?>"><?= $url . 'contact/' ?></a>
 </p>
-																																																																																																																																																													
+

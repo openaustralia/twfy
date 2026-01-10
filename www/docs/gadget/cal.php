@@ -1,4 +1,4 @@
-<?
+<?php
 
 include_once '../../includes/easyparliament/init.php';
 $LIST = new DEBATELIST;

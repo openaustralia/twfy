@@ -1,0 +1,19 @@
+# Use the specified base image
+FROM php:7.4.33-apache-bullseye
+
+# Install necessary system libraries and PHP extensions (example: pdo_mysql)
+RUN apt-get update && apt-get install -y \
+    libpq-dev \
+    && rm -rf /var/lib/apt/lists/* \
+    && docker-php-ext-install pdo_mysql mysqli
+
+
+RUN a2enmod rewrite
+RUN service apache2 restart
+
+WORKDIR /app/www
+
+# Set the working directory (default for apache images is /var/www/html)
+RUN mkdir /app/shared
+RUN mkdir -p /app/shared/pwdata/members
+RUN mkdir -p /app/shared/backup

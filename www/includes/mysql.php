@@ -134,7 +134,11 @@ Class MySQLQuery {
 				
 		twfy_debug ("SQL", $sql);
 		
-		$q = mysql_query($sql,$this->conn) or $this->error(mysql_errno().": ".mysql_error());
+
+		$q = mysqli_query($this->conn, $sql);
+        if (!$q) {
+            $this->error(mysqli_errno($this->conn).": ".mysqli_error($this->conn));
+        }
 		
 		if ($this->success) {
 			if ( (!$q) or (empty($q)) ) {
@@ -149,9 +153,9 @@ Class MySQLQuery {
 				// SELECT, SHOW, EXPLAIN or DESCRIBE
 				
 				// For INSERTs that have generated an id from an AUTO_INCREMENT column.
-				$this->insert_id = mysql_insert_id();
+                $this->insert_id = mysqli_insert_id($this->conn);
 				
-				$this->affected_rows = mysql_affected_rows();
+                $this->affected_rows = mysqli_affected_rows($this->conn);
 				
 				$this->success = true;
 				
@@ -163,13 +167,14 @@ Class MySQLQuery {
 				$this->success = true;
 	
 				$result = array();
-				for ($i = 0; $i < mysql_num_fields($q); $i++) {
-					$fieldnames_byid[$i] = mysql_field_name($q, $i);
-					$fieldnames_byname[mysql_field_name($q, $i)] = $i;
+				for ($i = 0; $i < mysqli_num_fields($q); $i++) {
+					$field_info = mysqli_fetch_field_direct($q, $i);
+					$fieldnames_byid[$i] = $field_info->name;
+					$fieldnames_byname[$field_info->name] = $i;
 				}
 	
-				for ($row = 0; $row < mysql_num_rows($q); $row++) {
-					$result[$row] = mysql_fetch_row($q);
+				while ($row = mysqli_fetch_row($q)) {
+					$result[] = $row;
 				}
 	
 				if (sizeof($result) > 0) {
@@ -185,7 +190,7 @@ Class MySQLQuery {
 	
 				twfy_debug ("SQLRESULT", $this->_display_result());
 	
-				mysql_free_result($q);
+				mysqli_free_result($q);
 	
 				return;
 			}
@@ -195,8 +200,7 @@ Class MySQLQuery {
 		}
 		
 	}
-	
-	
+
 	function success() {
 		return $this->success;
 	}
@@ -310,12 +314,12 @@ Class MySQL {
 		// These vars come from config.php.
 
 		if (!$global_connection) {
-			$conn = mysql_connect($db_host, $db_user, $db_pass);
+			$conn = mysqli_connect($db_host, $db_user, $db_pass, $db_name);
 			if(!$conn) {
-				print ("<p>DB connection attempt failed.</p>");
+				print ("<p>DB connection attempt failed: ". mysqli_connect_error() ."</p>");
 				exit;
 			}
-			if(!mysql_select_db($db_name, $conn)) {
+			if(!mysqli_select_db($conn, $db_name)) {
 				print ("<p>DB select failed</p>");
 				exit;
 			}
@@ -348,6 +352,10 @@ Class MySQL {
 		return $q;
 
 	}
+
+    function escape($str) {
+        return mysqli_real_escape_string($this->conn, $str);
+    }
 
 
 	// Call at the end of a page.

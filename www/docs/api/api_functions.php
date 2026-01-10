@@ -1,4 +1,4 @@
-<?
+<?php
 
 include_once '../../../../phplib/rabx.php';
 
@@ -127,12 +127,12 @@ function api_log_call($key) {
 	$query = preg_replace('#key=[A-Za-z0-9]+&?#', '', $query);
 	$db = new ParlDB;
 	$db->query("INSERT INTO api_stats (api_key, ip_address, query_time, query)
-		VALUES ('$key', '$ip', NOW(), '" . mysql_real_escape_string($query) . "')");
+		VALUES ('$key', '$ip', NOW(), '" . mysqli_real_escape_string($db, $query) . "')");
 }
 
 function api_check_key($key) {
 	$db = new ParlDB;
-	$q = $db->query('SELECT user_id FROM api_key WHERE api_key="' . mysql_real_escape_string($key) . '"');
+	$q = $db->query('SELECT user_id FROM api_key WHERE api_key="' . mysqli_real_escape_string($db, $key) . '"');
 	if (!$q->rows())
 		return false;
 	return true;
@@ -209,7 +209,7 @@ function api_header($o, $last_mod=null) {
 			header('HTTP/1.0 304 Not Modified');
 			header('Last-Modified: ' . date('r', $last_mod));
 			return true;
-		} 
+		}
 	}
 	if ($o == 'xml') {
 		$type = 'text/xml';

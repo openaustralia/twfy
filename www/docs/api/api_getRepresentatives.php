@@ -1,4 +1,4 @@
-<?
+<?php
 
 include_once 'api_getMP.php';
 include_once 'api_getMPs.php';

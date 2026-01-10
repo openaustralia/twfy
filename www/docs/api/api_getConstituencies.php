@@ -1,4 +1,4 @@
-<?
+<?php
 
 include_once 'api_getGeometry.php';
 
@@ -25,7 +25,7 @@ function api_getConstituencies_front() {
 	...
 ]</pre>
 
-<?	
+<?php
 }
 
 function api_getConstituencies_search($s) {
@@ -36,7 +36,7 @@ function _api_getConstituencies_search($s) {
 	$db = new ParlDB;
 	$q = $db->query('select c_main.name from constituency, constituency as c_main
 		where constituency.cons_id = c_main.cons_id
-		and c_main.main_name and constituency.name like "%' . mysql_real_escape_string($s) .
+		and c_main.main_name and constituency.name like "%' . mysqli_real_escape_string($db, $s) .
 		'%" and constituency.from_date <= date(now())
 		and date(now()) <= constituency.to_date');
 	$output = array();

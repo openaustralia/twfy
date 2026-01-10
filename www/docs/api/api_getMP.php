@@ -1,4 +1,4 @@
-<?
+<?php
 
 include_once INCLUDESPATH . 'easyparliament/member.php';
 
@@ -14,7 +14,7 @@ function api_getMP_front() {
 <dd>The name of an electoral division; we will try and work it out from whatever you give us. :)</dd>
 <dt>always_return (optional)</dt>
 <dd>For the division option, sets whether to always try and return a Representative, even if the seat is currently vacant.</dd>
-<!-- 
+<!--
 <dt>extra (optional)</dt>
 <dd>Returns extra data in one or more categories, separated by commas.</dd>
 -->
@@ -50,7 +50,7 @@ function api_getMP_front() {
 }]
 </pre>
 
-<?	
+<?php
 }
 
 function _api_getMP_row($row) {
@@ -80,7 +80,7 @@ function _api_getMP_row($row) {
 function api_getMP_id($id) {
 	$db = new ParlDB;
 	$q = $db->query("select * from member
-		where house=1 and person_id = '" . mysql_real_escape_string($id) . "'
+		where house=1 and person_id = '" . mysqli_real_escape_string($db, $id) . "'
 		order by left_house desc");
 	if ($q->rows()) {
 		$output = array();
@@ -149,19 +149,19 @@ function _api_getMP_constituency($constituency) {
 	if ($normalised) $constituency = $normalised;
 
 	$q = $db->query("SELECT * FROM member
-		WHERE constituency = '" . mysql_real_escape_string($constituency) . "'
+		WHERE constituency = '" . mysqli_real_escape_string($db, $constituency) . "'
 		AND left_reason = 'still_in_office' AND house=1");
 	if ($q->rows > 0)
 		return _api_getMP_row($q->row(0));
 
 	if (get_http_var('always_return')) {
 		$q = $db->query("SELECT * FROM member
-			WHERE house=1 AND constituency = '".mysql_real_escape_string($constituency)."'
+			WHERE house=1 AND constituency = '".mysqli_real_escape_string($db, $constituency)."'
 			ORDER BY left_house DESC LIMIT 1");
 		if ($q->rows > 0)
 			return _api_getMP_row($q->row(0));
 	}
-	
+
 	return false;
 }
 
