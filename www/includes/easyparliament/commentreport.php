@@ -63,7 +63,7 @@ class COMMENTREPORT {
 									users.lastname AS u_lastname
 							FROM	commentreports,
 									users
-							WHERE	commentreports.report_id = '" . mysqli_real_escape_string($report_id) . "'
+							WHERE	commentreports.report_id = '" . mysqli_real_escape_string($db, $report_id) . "'
 							AND		commentreports.user_id = users.user_id
 							");
 	
@@ -103,7 +103,7 @@ class COMMENTREPORT {
 									commentreports.lastname,
 									commentreports.email
 							FROM	commentreports
-							WHERE	commentreports.report_id = '" . mysqli_real_escape_string($report_id) . "'");
+							WHERE	commentreports.report_id = '" . mysqli_real_escape_string($db, $report_id) . "'");
 	
 				if ($q->rows() > 0) {						
 				$this->report_id		= $report_id;
@@ -190,21 +190,21 @@ class COMMENTREPORT {
 		if ($THEUSER->isloggedin()) {
 			$sql = "INSERT INTO commentreports
 									(comment_id, body, reported, user_id)
-							VALUES	('" . mysqli_real_escape_string($COMMENT->comment_id()) . "',
-									'" . mysqli_real_escape_string($body) . "', 
+							VALUES	('" . mysqli_real_escape_string($db, $COMMENT->comment_id()) . "',
+									'" . mysqli_real_escape_string($db, $body) . "', 
 									'$time',
-									'" . mysqli_real_escape_string($THEUSER->user_id()) . "'
+									'" . mysqli_real_escape_string($db, $THEUSER->user_id()) . "'
 									) 
 						";
 		} else {
 			$sql = "INSERT INTO commentreports
 									(comment_id, body, reported, firstname, lastname, email)
-							VALUES	('" . mysqli_real_escape_string($COMMENT->comment_id()) . "',
-									'" . mysqli_real_escape_string($body) . "', 
+							VALUES	('" . mysqli_real_escape_string($db, $COMMENT->comment_id()) . "',
+									'" . mysqli_real_escape_string($db, $body) . "', 
 									'$time',
-									'" . mysqli_real_escape_string($reportdata['firstname']) . "',
-									'" . mysqli_real_escape_string($reportdata['lastname']) . "',
-									'" . mysqli_real_escape_string($reportdata['email']) . "'
+									'" . mysqli_real_escape_string($db, $reportdata['firstname']) . "',
+									'" . mysqli_real_escape_string($db, $reportdata['lastname']) . "',
+									'" . mysqli_real_escape_string($db, $reportdata['email']) . "'
 									) 
 						";
 		}
@@ -398,11 +398,11 @@ class COMMENTREPORT {
 		
 				$q = $this->db->query("UPDATE commentreports 
 								SET 	resolved = '$time',
-										resolvedby = '" . mysqli_real_escape_string($THEUSER->user_id()) . "',
+										resolvedby = '" . mysqli_real_escape_string($db, $THEUSER->user_id()) . "',
 										locked = NULL,
 										lockedby = NULL,
 										upheld = '$upheldsql'
-								WHERE 	report_id = '" . mysqli_real_escape_string($this->report_id) . "'
+								WHERE 	report_id = '" . mysqli_real_escape_string($db, $this->report_id) . "'
 								");
 								
 				if ($q->success()) {

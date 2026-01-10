@@ -53,7 +53,7 @@ foreach ($alertdata as $alertitem) {
 		}
 		$current_email = $email;
 		$email_text = '';
-		$q = $db->query('SELECT user_id FROM users WHERE email = \''.mysqli_real_escape_string($email)."'");
+		$q = $db->query('SELECT user_id FROM users WHERE email = \''.mysqli_real_escape_string($db, $email)."'");
                 if ($q->rows() > 0) {
                         $user_id = $q->field(0, 'user_id');
                         $registered++;

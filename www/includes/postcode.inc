@@ -66,7 +66,7 @@ function postcode_to_constituency_internal($postcode) {
   
 	$db = new ParlDB;
 
-	$q = $db->query('select name from postcode_lookup where postcode = "'. mysqli_real_escape_string($postcode).'"');
+	$q = $db->query('select name from postcode_lookup where postcode = "'. mysqli_real_escape_string($db, $postcode).'"');
 	if ($q->rows == 1) {
 		$name = $q->field(0, 'name');
 		return $name;

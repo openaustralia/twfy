@@ -26,7 +26,7 @@ function _api_getLord_row($row) {
 function api_getLord_id($id) {
 	$db = new ParlDB;
 	$q = $db->query("select * from member
-		where house=2 and person_id = '" . mysqli_real_escape_string($id) . "'
+		where house=2 and person_id = '" . mysqli_real_escape_string($db, $id) . "'
 		order by left_house desc");
 	if ($q->rows()) {
 		$output = array();

@@ -68,8 +68,8 @@ function create_key($commercial, $reason) {
 	$db = new ParlDB;
 	$db->query('INSERT INTO api_key (user_id, api_key, commercial, created, reason) VALUES
 		(' . $THEUSER->user_id() . ', "' . $key . '", '
-		. mysqli_real_escape_string($commercial) . ', NOW(), "'
-		. mysqli_real_escape_string($reason) . '")');
+		. mysqli_real_escape_string($db, $commercial) . ', NOW(), "'
+		. mysqli_real_escape_string($db, $reason) . '")');
 }
 
 function api_key_form() {

@@ -102,7 +102,7 @@ foreach ($alertdata as $alertitem) {
 			write_and_send_email($current_email, $user_id, $email_text);
 		$current_email = $email;
 		$email_text = '';
-		$q = $db->query('SELECT user_id FROM users WHERE email = \''.mysqli_real_escape_string($email)."'");
+		$q = $db->query('SELECT user_id FROM users WHERE email = \''.mysqli_real_escape_string($db, $email)."'");
 		if ($q->rows() > 0) {
 			$user_id = $q->field(0, 'user_id');
 			$registered++;
@@ -155,7 +155,7 @@ foreach ($alertdata as $alertitem) {
 			}
 			#mlog($row['major'] . " " . $row['gid'] ."\n");
 			if ($row['hdate'] < '2008-01-14') continue;
-			$q = $db->query('SELECT gid_from FROM gidredirect WHERE gid_to=\'uk.org.publicwhip/' . $sects_short[$major] . '/' . mysqli_real_escape_string($row['gid']) . "'");
+			$q = $db->query('SELECT gid_from FROM gidredirect WHERE gid_to=\'uk.org.publicwhip/' . $sects_short[$major] . '/' . mysqli_real_escape_string($db, $row['gid']) . "'");
 			if ($q->rows() > 0) continue;
 			--$k;
 			if ($k>=0) {

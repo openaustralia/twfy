@@ -196,8 +196,7 @@ Class MySQLQuery {
 		}
 		
 	}
-	
-	
+
 	function success() {
 		return $this->success;
 	}

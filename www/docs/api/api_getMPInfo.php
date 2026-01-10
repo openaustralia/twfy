@@ -22,7 +22,7 @@ function api_getMPinfo_id($id) {
 	$db = new ParlDB;
 	$last_mod = 0;
 	$q = $db->query("select data_key, data_value, lastupdate from personinfo
-		where person_id = '" . mysqli_real_escape_string($db->connection, $id) . "'");
+		where person_id = '" . mysqli_real_escape_string($db, $db->connection, $id) . "'");
 	if ($q->rows()) {
 		$output = array();
 		for ($i=0; $i<$q->rows(); $i++) {
@@ -35,7 +35,7 @@ function api_getMPinfo_id($id) {
 				$last_mod = $time;
 		}
 		$q = $db->query("select * from memberinfo
-			where member_id in (select member_id from member where person_id = '" . mysqli_real_escape_string($id) . "')
+			where member_id in (select member_id from member where person_id = '" . mysqli_real_escape_string($db, $id) . "')
 			order by member_id");
 		if ($q->rows()) {
 			$oldmid = 0; $count = -1;

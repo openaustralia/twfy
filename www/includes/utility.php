@@ -151,22 +151,22 @@ function error_handler ($errno, $errmsg, $filename, $linenum, $vars) {
 
 	if (DEVSITE) {
 		// On a devsite we just display the problem.
-		$message = array(
-			'title' => "Error",
-			'text' => "$err\n"
-		);
-		if (is_object($PAGE)) {
-			$PAGE->error_message($message, $fatal);
-			vardump(adodb_backtrace());
-		} else {
-			vardump($message);
-			vardump(adodb_backtrace());
-		}
-		
+		// $message = array(
+		// 	'title' => "Error",
+		// 	'text' => "$err\n"
+		// );
+		// if (is_object($PAGE)) {
+		// 	$PAGE->error_message($message, $fatal);
+		// 	vardump(adodb_backtrace());
+		// } else {
+		// 	vardump($message);
+		// 	vardump(adodb_backtrace());
+		// }
 	} else {
+		print("<pre>". htmlentities_notags($err) . "</pre>");
 		// On live sites we display a nice message and email the problem.
 		error_log($err);
-		
+
 
 		$message = array(
 			'title' => "Sorry, an error has occurred",
@@ -178,6 +178,9 @@ function error_handler ($errno, $errmsg, $filename, $linenum, $vars) {
 		} else {
 			print "<p>Oops, sorry, an error has occurred!</p>\n";
 		}
+
+		// TODO add honey badger
+		
 		// mail(BUGSLIST, "[TWFYBUG]: $errmsg", $err,
 		// 	"From: Bug <beta@openaustralia.org>\n".
 		// 	"X-Mailer: PHP/" . phpversion()
