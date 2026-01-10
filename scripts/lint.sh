@@ -15,7 +15,7 @@ while test $# -gt 0; do
     CURRENT=${1%/}
     shift
 
-    if [ ! -f "${CURRENT}" ] && [ ! -d ${CURRENT} ] ; then
+    if [ ! -f "${CURRENT}" ] && [ ! -d "${CURRENT}" ] ; then
         echo "${CURRENT} cannot be found"
         ERROR=true
         continue
