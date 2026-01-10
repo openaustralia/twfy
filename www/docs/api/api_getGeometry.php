@@ -31,7 +31,7 @@ no arguments and work through the list.
 	&lt;parts&gt;1&lt;/parts&gt;
 &lt;/twfy&gt;
 </pre>
-<?
+<?php
 }
 
 function api_getGeometry() {

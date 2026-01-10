@@ -40,7 +40,7 @@ function api_getCommittee_front() {
 	{ "person_id" : "10677", "name" : "Sandra Gidley" }
   ]
 }
-<?
+<?php
 }
 
 function api_getCommittee_name($name) {

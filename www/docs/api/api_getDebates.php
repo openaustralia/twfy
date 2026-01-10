@@ -66,7 +66,7 @@ function api_getDebates_front() {
 	}]
 }
 </pre>
-<?
+<?php
 }
 
 function api_getDebates_type($t) {

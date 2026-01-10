@@ -21,7 +21,7 @@ function api_getMSP_front() {
   &lt;/twfy&gt;
 </pre>
 
-<?
+<?php
 }
 
 function _api_getMSP_row($row) {

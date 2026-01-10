@@ -22,7 +22,7 @@ direction of that part of the polygon, whether it adds or subtracts from the are
 <dd>Name of the constituency.
 </dl>
 
-<?
+<?php
 }
 
 function api_getBoundary_name($name) {

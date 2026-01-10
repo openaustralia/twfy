@@ -50,7 +50,7 @@ function api_getMP_front() {
 }]
 </pre>
 
-<?
+<?php
 }
 
 function _api_getMP_row($row) {

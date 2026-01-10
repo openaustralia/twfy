@@ -14,7 +14,7 @@ function api_getMPsInfo_front() {
 
 <h4>Example Response</h4>
 
-<?
+<?php
 }
 
 function api_getMPsInfo_id($ids) {

@@ -30,7 +30,7 @@ function api_getMPs_front() {
 	i:1; ...
 }
 </pre>
-<?
+<?php
 }
 
 /* See api_getMembers.php for these shared functions */
