@@ -134,7 +134,11 @@ Class MySQLQuery {
 				
 		twfy_debug ("SQL", $sql);
 		
-		$q = mysqli_query($this->conn, $sql) or $this->error(mysqli_errno($this->conn).": ".mysqli_error($this->conn));
+
+		$q = mysqli_query($this->conn, $sql);
+        if (!$q) {
+            $this->error(mysqli_errno($this->conn).": ".mysqli_error($this->conn));
+        }
 		
 		if ($this->success) {
 			if ( (!$q) or (empty($q)) ) {
