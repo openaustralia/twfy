@@ -153,9 +153,9 @@ Class MySQLQuery {
 				// SELECT, SHOW, EXPLAIN or DESCRIBE
 				
 				// For INSERTs that have generated an id from an AUTO_INCREMENT column.
-				$this->insert_id = mysql_insert_id();
+                $this->insert_id = mysqli_insert_id($this->conn);
 				
-				$this->affected_rows = mysql_affected_rows();
+                $this->affected_rows = mysqli_affected_rows($this->conn);
 				
 				$this->success = true;
 				
@@ -352,6 +352,10 @@ Class MySQL {
 		return $q;
 
 	}
+
+    function escape($str) {
+        return mysqli_real_escape_string($this->conn, $str);
+    }
 
 
 	// Call at the end of a page.

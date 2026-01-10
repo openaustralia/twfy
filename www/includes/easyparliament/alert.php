@@ -192,11 +192,11 @@ class ALERT {
 
 		$criteria = alert_details_to_criteria($details);
 
-		$q = $this->db->query("SELECT * FROM alerts WHERE email='".mysqli_real_escape_string($db, $details['email'])."' AND criteria='".mysqli_real_escape_string($db, $criteria)."' AND confirmed=1");
+		$q = $this->db->query("SELECT * FROM alerts WHERE email='".mysqli_real_escape_string($this->db->conn, $details['email'])."' AND criteria='".mysqli_real_escape_string($this->db->conn, $criteria)."' AND confirmed=1");
 		if ($q->rows() > 0) {
 			$deleted = $q->field(0, 'deleted');
 			if ($deleted) {
-				$this->db->query("UPDATE alerts SET deleted=0 WHERE email='".mysqli_real_escape_string($db, $details['email'])."' AND criteria='".mysqli_real_escape_string($db, $criteria)."' AND confirmed=1");
+				$this->db->query("UPDATE alerts SET deleted=0 WHERE email='".$this->db->escape($details['email'])."' AND criteria='".$this->db->escape($criteria)."' AND confirmed=1");
 				return 1;
 			} else {
 				return -2;
@@ -205,12 +205,13 @@ class ALERT {
 
 		$sql ="INSERT INTO alerts (email, criteria, deleted, confirmed, recommended, created) ";
 		$sql.="VALUES (";
-		$sql.="'" . mysqli_real_escape_string($db, $details["email"]) . "',";
-		$sql.="'" . mysqli_real_escape_string($db, $criteria) . "', '0','0',";
-		if($details['recommended']==1) //MJ OA-437 add as recommendation
+		$sql.="'" . $this->db->escape($details["email"]) . "',";
+		$sql.="'" . $this->db->escape($criteria) . "', '0','0',";
+		if ($details['recommended']==1) {//MJ OA-437 add as recommendation
 		    $sql.="'1',";
-		else
-		    $sql.="'0',";
+        } else {
+            $sql.="'0',";
+        }
 		$sql.="NOW() )";
 
 		$q = $this->db->query($sql);
@@ -241,8 +242,8 @@ class ALERT {
 			// Add that to the database.
 
 			$r = $this->db->query("UPDATE alerts
-						SET registrationtoken = '" . mysqli_real_escape_string($db, $this->registrationtoken) . "'
-						WHERE alert_id = '" . mysqli_real_escape_string($db, $this->alert_id) . "'
+						SET registrationtoken = '" . mysqli_real_escape_string($this->db->conn, $this->registrationtoken) . "'
+						WHERE alert_id = '" . mysqli_real_escape_string($this->db->conn, $this->alert_id) . "'
 						");
 
 			if ($r->success()) {
@@ -263,7 +264,7 @@ class ALERT {
 					// No confirmation email needed.
 					$s = $this->db->query("UPDATE alerts
 						SET confirmed = '1'
-						WHERE alert_id = '" . mysqli_real_escape_string($db, $this->alert_id) . "'
+						WHERE alert_id = '" . mysqli_real_escape_string($this->db->conn, $this->alert_id) . "'
 						");
 					return 1;
 				}
@@ -328,7 +329,7 @@ class ALERT {
 		// Returns true if there's a user with this email address.
 
 		if ($email != "") {
-			$q = $this->db->query("SELECT alert_id FROM alerts WHERE email='" . mysqli_real_escape_string($db, $email) . "'");
+			$q = $this->db->query("SELECT alert_id FROM alerts WHERE email='" . mysqli_real_escape_string($this->db->conn, $email) . "'");
 			if ($q->rows() > 0) {
 				return true;
 			} else {
@@ -362,8 +363,8 @@ class ALERT {
 
 		$q = $this->db->query("SELECT email, criteria
 						FROM alerts
-						WHERE alert_id = '" . mysqli_real_escape_string($db, $alert_id) . "'
-						AND registrationtoken = '" . mysqli_real_escape_string($db, $registrationtoken) . "'
+						WHERE alert_id = '" . mysqli_real_escape_string($this->db->conn, $alert_id) . "'
+						AND registrationtoken = '" . mysqli_real_escape_string($this->db->conn, $registrationtoken) . "'
 						");
 
 		if ($q->rows() == 1) {
@@ -371,7 +372,7 @@ class ALERT {
 			$this->email = $q->field(0, 'email');
 			$r = $this->db->query("UPDATE alerts
 						SET confirmed = '1', deleted = '0'
-						WHERE	alert_id = '" . mysqli_real_escape_string($db, $alert_id) . "'
+						WHERE	alert_id = '" . mysqli_real_escape_string($this->db->conn, $alert_id) . "'
 						");
 
 			if ($r->success()) {
@@ -408,8 +409,8 @@ class ALERT {
 
 		$q = $this->db->query("SELECT email, criteria
 						FROM alerts
-						WHERE alert_id = '" . mysqli_real_escape_string($db, $alert_id) . "'
-						AND registrationtoken = '" . mysqli_real_escape_string($db, $registrationtoken) . "'
+						WHERE alert_id = '" . mysqli_real_escape_string($this->db->conn, $alert_id) . "'
+						AND registrationtoken = '" . mysqli_real_escape_string($this->db->conn, $registrationtoken) . "'
 						");
 
 		if ($q->rows() == 1) {
@@ -417,7 +418,7 @@ class ALERT {
 			// Set that they're confirmed in the DB.
 			$r = $this->db->query("UPDATE alerts
 						SET deleted = '1'
-						WHERE	alert_id = '" . mysqli_real_escape_string($db, $alert_id) . "'
+						WHERE	alert_id = '" . mysqli_real_escape_string($this->db->conn, $alert_id) . "'
 						");
 
 			if ($r->success()) {
