@@ -559,10 +559,15 @@ function prepare_comment_for_display ($text) {
 	// Must go before the URL stuff.
 	$text = htmlentities_notags($text);
 	$link_length = 60;
-	$text = preg_replace(
-		"/((http(s?):\/\/)|(www\.))([a-zA-Z\d\_\.\+\,\;\?\%\~\-\/\#\='\*\$\!\(\)\&]+)([a-zA-Z\d\_\?\%\~\-\/\#\='\*\$\!\&])/e",
-		'(strlen(\'$0\')>$link_length) ? \'<a href="$0">\'.substr(\'$0\',0,$link_length)."...</a>" : \'<a href="$0" rel="nofollow">$0</a>\'',
-		$text);
+    $text = preg_replace_callback(
+        "/((http(s?):\/\/)|(www\.))([a-zA-Z\d\_\.\+\,\;\?\%\~\-\/\#\='\*\$\!\(\)\&]+)([a-zA-Z\d\_\?\%\~\-\/\#\='\*\$\!\&])/",
+        function($matches) use ($link_length) {
+            $url = $matches[0];
+            return (strlen($url) > $link_length) 
+                ? '<a href="' . $url . '">' . substr($url, 0, $link_length) . "...</a>" 
+                : '<a href="' . $url . '" rel="nofollow">' . $url . '</a>';
+        },
+        $text);
 	$text = str_replace('<a href="www', '<a href="http://www', $text);
 	$text = preg_replace("/([\w\.]+)(@)([\w\.\-]+)/i", "<a href=\"mailto:$0\">$0</a>", $text); 
 	$text = str_replace("\n", "<br>\n", $text);
