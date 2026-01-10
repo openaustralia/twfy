@@ -1,4 +1,4 @@
-<?
+<?php
 
 include_once '../../../../phplib/mapit.php';
 
@@ -31,7 +31,7 @@ no arguments and work through the list.
 	&lt;parts&gt;1&lt;/parts&gt;
 &lt;/twfy&gt;
 </pre>
-<?	
+<?
 }
 
 function api_getGeometry() {

@@ -1,4 +1,4 @@
-<?
+<?php
 
 include_once 'api_getGeometry.php';
 
@@ -25,7 +25,7 @@ function api_getConstituencies_front() {
 	...
 ]</pre>
 
-<?	
+<?
 }
 
 function api_getConstituencies_search($s) {

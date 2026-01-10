@@ -1,4 +1,4 @@
-<?
+<?php
 
 include_once 'api_getMembers.php';
 
@@ -35,11 +35,11 @@ function api_getLords_front() {
 		&lt;name&gt;John Williams&lt;/name&gt;
 		&lt;party&gt;National Party&lt;/party&gt;
 		&lt;constituency&gt;NSW&lt;/constituency&gt;
-	&lt;/match&gt;	
+	&lt;/match&gt;
 	...
 &lt;/result&gt;
 </pre>
-<?	
+<?
 }
 
 /* See api_getMembers.php for these shared functions */

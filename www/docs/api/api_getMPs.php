@@ -1,4 +1,4 @@
-<?
+<?php
 
 include_once 'api_getMembers.php';
 
@@ -30,7 +30,7 @@ function api_getMPs_front() {
 	i:1; ...
 }
 </pre>
-<?	
+<?
 }
 
 /* See api_getMembers.php for these shared functions */

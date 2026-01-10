@@ -1,4 +1,4 @@
-<?
+<?php
 
 include_once INCLUDESPATH . 'easyparliament/member.php';
 
@@ -21,7 +21,7 @@ function api_getMSP_front() {
   &lt;/twfy&gt;
 </pre>
 
-<?	
+<?
 }
 
 function _api_getMSP_row($row) {

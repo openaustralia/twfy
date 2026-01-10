@@ -1,4 +1,4 @@
-<?
+<?php
 
 include_once '../../includes/easyparliament/init.php';
 include_once '../../includes/postcode.inc';
@@ -102,7 +102,7 @@ Output:
 <input type="submit" value="Go">
 </p>
 </form>
-<?
+<?php
 	if ($explorer) {
 		$qs = array();
 		foreach ($methods[$method]['parameters'] as $parameter) {
@@ -216,7 +216,7 @@ to discuss things.</p>
 <li><a href="https://github.com/henare/oa4wp/">OpenAustralia for WordPress</a> is another WordPress plugin. It displays your MP's most recent speeches on your blog.</li>
 </ul>
 
-<?
+<?php
 	$sidebar = api_sidebar();
 	$PAGE->stripe_end(array($sidebar));
 	$PAGE->page_end();

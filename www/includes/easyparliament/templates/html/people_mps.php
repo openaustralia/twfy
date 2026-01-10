@@ -28,7 +28,7 @@ $MP_RECENT_URL = new URL('yourmp_recent');
 if ($THEUSER->constituency_is_set()) {
 	// (We don't allow the user to search for a postcode if they
 	// already have one set in their prefs.)
-	
+
 	$MEMBER = new MEMBER(array ('constituency'=>$THEUSER->constituency()));
 	if ($MEMBER->valid) {
 		$pc_form = false;
@@ -124,8 +124,8 @@ foreach ($data['data'] as $pid => $mp) {
 ?>
 				</tbody>
 				</table>
-				
-<?
+
+<?php
 
 function manymins($p, $d) {
 	return prettify_office($p, $d);
@@ -133,7 +133,7 @@ function manymins($p, $d) {
 
 function render_mps_row($mp, &$style, $order, $MPURL) {
 
-	// Stripes	
+	// Stripes
 	$style = $style == '1' ? '2' : '1';
 
 	$name = member_full_name(1, $mp['title'], $mp['first_name'], $mp['last_name'], $mp['constituency']);

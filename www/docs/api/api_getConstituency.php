@@ -1,4 +1,4 @@
-<?
+<?php
 
 function api_getConstituency_front() {
 ?>
@@ -15,7 +15,7 @@ function api_getConstituency_front() {
 <h4>Error Codes</h4>
 <p></p>
 
-<?	
+<?
 }
 
 function api_getconstituency_postcode($pc) {

@@ -20,7 +20,7 @@ if (isset($data['info']) && isset($data['info']['date']) && $data['info']['date'
 <div style="padding: 4px; margin: 1em; color: #000000; background-color: #ffeeee; border: solid 2px #ff0000;">
 Warning: Showing data from the current day is <strong>experimental</strong> and may not work correctly.
 </div>
-<?
+<?php
 }
 
 if (isset ($data['rows'])) {
@@ -35,36 +35,36 @@ if (isset ($data['rows'])) {
 
 		// Start a top-level item, eg a section.
 		if ($row['htype'] == '10') {
-				
+
 			if ($prevlevel == 'sub') {
 				print "\t\t\t\t\t</ul>\n\t\t\t\t</li>\n";
-			
+
 			} elseif ($prevlevel == 'top') {
 				print "</li>\n";
 			}
-			
+
 			print "\t\t\t\t<li>";
-		
+
 		// Start a sub-level item, eg a subsection.
 		} else {
-		
+
 			if ($prevlevel == '') {
 				print "\t\t\t\t<li>\n";
-			
+
 			} elseif ($prevlevel == 'top') {
 				print "\n\t\t\t\t\t<ul>\n";
 			}
 			print "\t\t\t\t\t<li>";
 		}
 
-		
-		// Are we going to make this (sub)section a link 
+
+		// Are we going to make this (sub)section a link
 		// and does it contain printable speeches?
 		if ($row['htype'] == '10' && isset($row['excerpt']) && strstr($row['excerpt'], "was asked&#8212;")) {
 			// We fake it here. We hope this section only has a single line like
 			// "The Secretary of State was asked-" and we don't want to make it a link.
 			$has_content = false;
-			
+
 		} elseif (isset($row['contentcount']) && $row['contentcount'] > 0) {
 			$has_content = true;
 		} elseif ($row['htype'] == '11' && $hansardmajors[$row['major']]['type'] == 'other') {
@@ -72,37 +72,37 @@ if (isset ($data['rows'])) {
 		} else {
 			$has_content = true; # XXX
 		}
-		
-		
+
+
 		if ($has_content) {
-			
+
 			print '<a href="' . $row['listurl'] . '"><strong>' . $row['body'] . '</strong></a> ';
 
 			// For the "x speeches, x comments" text.
 			$moreinfo = array();
-			
+
 			if ($hansardmajors[$row['major']]['type'] != 'other') {
 				// All wrans have 2 speeches, so no need for this.
 				// All WMS have 1 speech
 				$plural = $row['contentcount'] == 1 ? 'speech' : 'speeches';
 				$moreinfo[] = $row['contentcount'] . " $plural";
 			}
-			
+
 			if ($row['totalcomments'] > 0) {
 				$plural = $row['totalcomments'] == 1 ? 'comment' : 'comments';
 				$moreinfo[] = $row['totalcomments'] . " $plural";
 			}
-			
+
 			if (count($moreinfo) > 0) {
 				print "<small>(" . implode (', ', $moreinfo) . ") </small>";
-			}	
-		
+			}
+
 		} else {
-			// Nothing in this item, so no link.	
+			// Nothing in this item, so no link.
 			print '<strong>' . $row['body'] . '</strong>';
 		}
 
-		
+
 		if (isset($row['excerpt'])) {
 			print "<br>\n\t\t\t\t\t<span class=\"excerpt-debates\">" . trim_characters($row['excerpt'], 0, 200) . "</span>";
 		}
@@ -111,21 +111,21 @@ if (isset ($data['rows'])) {
 		// End a top-level item.
 		if ($row['htype'] == '10') {
 			$prevlevel = 'top';
-			
+
 		// End a sub-level item.
 		} else {
 			print "</li>\n";
 			$prevlevel = 'sub';
 		}
-		
+
 
 	} // End cycling through rows.
-	
+
 	if ($prevlevel == 'sub') {
 		// Finish final sub-level list.
 		print "\t\t\t\t\t</ul>\n\t\t\t\t\t</li>\n";
 	}
-	
+
 	print "\n\t\t\t\t</ul> <!-- end hansard-day -->\n";
 
 } // End display of rows.

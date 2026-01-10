@@ -1,4 +1,4 @@
-<?
+<?php
 
 include_once 'api_getHansard.php';
 
@@ -66,7 +66,7 @@ function api_getDebates_front() {
 	}]
 }
 </pre>
-<?	
+<?
 }
 
 function api_getDebates_type($t) {

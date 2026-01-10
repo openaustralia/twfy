@@ -46,7 +46,7 @@ if (sizeof($errors)) {
             <input type="submit" class="submit" value="Send">
         </p>
     </form>
-    <?
+    <?php
 } else {
     $rep_name = $MEMBER->full_name();
     if ($MEMBER->house_disp == 1) {

@@ -1,4 +1,4 @@
-<?
+<?php
 
 include_once INCLUDESPATH."easyparliament/member.php";
 
@@ -21,7 +21,7 @@ function api_getHansard_front() {
 <dd>Number of results to return.</dd>
 </dl>
 
-<?	
+<?
 }
 
 function api_getHansard_search($s) {
@@ -77,7 +77,7 @@ function _api_getHansard_search($array) {
 	}
 
 	global $SEARCHENGINE;
-        $SEARCHENGINE = new SEARCHENGINE($search); 
+        $SEARCHENGINE = new SEARCHENGINE($search);
 	#        $query_desc_short = $SEARCHENGINE->query_description_short();
     	$pagenum = get_http_var('page');
     	$args = array (

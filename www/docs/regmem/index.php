@@ -25,7 +25,7 @@ table#regmem h4 { margin: 0; margin-top: 0.5em; padding-top: 0.5em; border-top: 
 	width: 23%;
 }
 </style>
-<?
+<?php
 $f = get_http_var('f'); if (!preg_match('#^\d\d\d\d-\d\d-\d\d$#', $f)) $f='';
 $p = get_http_var('p'); if (!ctype_digit($p)) $p='';
 $d = get_http_var('d'); if (!preg_match('#^\d\d\d\d-\d\d-\d\d$#', $d)) $d='';
@@ -65,7 +65,7 @@ function person_history($p) {
 <p>This page shows how <a href="/mp/?p=<?=$p ?>"><?=$name ?></a>'s entry in the Register of Members' Interests has changed over time, starting at the most recent and working back to the earliest we have managed to parse.</p>
 <table id="regmem">
 <tr><th width="50%">Removed</th><th width="50%">Added</th></tr>
-<?
+<?php
 			}
 			$name = $m[2]; $ddata = $m[4];
 			if (preg_match('/Nil\./', $ddata)) $nil[$_] = true;
@@ -147,7 +147,7 @@ function register_history($f) {
 <p>This page shows all the changes in the Register of Members' Interests between the editions of <a href="./?d=<?=$old_iso ?>"><?=$old_pretty ?></a> and <a href="./?d=<?=$new_iso ?>"><?=$new_pretty ?></a>, in alphabetical order by MP.</p>
 <table cellpadding="3" cellspacing="0" border="0" id="regmem">
 <tr><th width="50%">Removed</th><th width="50%">Added</th></tr>
-<?
+<?php
 
 	uksort($data, 'by_name_ref');
 	foreach ($data as $person_id => $v) {
@@ -237,7 +237,7 @@ function front_page() {
 <p><strong>View a particular edition of the Register of Members' Interests:</strong></p>
 <p align="center"><?=$view ?></p>
 <p>Or <strong>view the history of an MP's entry in the Register:</strong></p> <ul id="mps">
-<?
+<?php
 	uasort($names, 'by_name');
 	foreach ($names as $_ => $value) {
 		print '<li><a href="?p='.$_.'">'.$value.'</a>';
@@ -264,7 +264,7 @@ function show_register($d) {
 <p>This page shows the Register of Members' Interests as released on <?=$d_pretty ?>, in alphabetical order by MP.
 <?php if ($d_iso > '2002-05-14') { ?><a href="./?f=<?=$d_iso ?>">Compare this edition with the one before it</a></p><?php } ?>
 <div id="regmem">
-<?
+<?php
 	uksort($data, 'by_name_ref');
 	foreach ($data as $person_id => $v) {
 		$out = '';

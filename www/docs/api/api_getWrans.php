@@ -1,4 +1,4 @@
-<?
+<?php
 
 include_once 'api_getHansard.php';
 
@@ -43,7 +43,7 @@ function api_getWrans_front() {
 	]
 }</pre>
 
-<?	
+<?
 }
 
 function api_getWrans_date($d) {

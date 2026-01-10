@@ -1,4 +1,4 @@
-<?
+<?php
 // Constants of types used in epobjects and hansard objects
 // $Id: dbtypes.php,v 1.6 2008/01/25 17:43:27 twfy-staging Exp $
 
@@ -170,7 +170,7 @@ $hansardtypes = array (
 
 	60 => 'Written answer',
 	61 => 'Wrans question',
-	62 => 'Wrans reply',	
+	62 => 'Wrans reply',
 );
 
 // The edit_type field in the editqueue table

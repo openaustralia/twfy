@@ -1,4 +1,4 @@
-<?
+<?php
 
 include_once '../../../../phplib/mapit.php';
 include_once 'api_getGeometry.php';
@@ -22,7 +22,7 @@ direction of that part of the polygon, whether it adds or subtracts from the are
 <dd>Name of the constituency.
 </dl>
 
-<?	
+<?
 }
 
 function api_getBoundary_name($name) {

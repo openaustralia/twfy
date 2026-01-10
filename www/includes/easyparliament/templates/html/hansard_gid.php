@@ -1,5 +1,5 @@
 <?php
-// For displaying the main Hansard content listings (by gid), 
+// For displaying the main Hansard content listings (by gid),
 // and individual Hansard items (the comments are handled separately
 // by COMMENTLIST and the comments.php template).
 
@@ -17,7 +17,7 @@ include_once INCLUDESPATH."easyparliament/member.php";
 
 twfy_debug("TEMPLATE", "hansard_gid.php");
 
-// Will set the page headings and start the page HTML if it hasn't 
+// Will set the page headings and start the page HTML if it hasn't
 // already been started.
 if (!isset($data['info'])) {
 	// No data! We'll be exiting here! but send a 404 so that spiders stop indexing the page.
@@ -45,7 +45,7 @@ if ($data['info']['date'] == date('Y-m-d')) { ?>
 <div style="padding: 4px; margin: 1em; color: #000000; background-color: #ffeeee; border: solid 2px #ff0000;">
 Warning: Showing data from the current day is <strong>experimental</strong> and may not work correctly.
 </div>
-<?
+<?php
 }
 
 if (isset ($data['rows'])) {
@@ -57,7 +57,7 @@ if (isset ($data['rows'])) {
 
 	// Before we print the body text we need to insert glossary links
 	// and highlight search string words.
-	
+
 	// This doesn't quite work yet, as clashes with
 	// highlighting of constituency name. Also the link
 	// text comes out a bit long?
@@ -92,7 +92,7 @@ if (isset ($data['rows'])) {
 	$stripecount = 0; // Used to generate stripes.
 
 	$first_speech_displayed = 0; // We want to know when to insert the javascript that pulls in flash video
-	
+
 	// We're going to be just cycling through each row of data for this page.
 	// When we get the first section, we put its text in $section_title.
 	// When we get the first subsection, we put its text in $subsection_title.
@@ -112,7 +112,7 @@ if (isset ($data['rows'])) {
 		// DISPLAY SECTION AND SUBSECTION HEADINGS.
 		if (!$titles_displayed && $row['htype'] != '10' && $row['htype'] != '11') {
 			// Output the titles we've got so far.
-			
+
 			$PAGE->stripe_start('head-2');
 			?>
                         <!-- ADDTHIS JAVASCRIPT BEGIN -->
@@ -134,7 +134,7 @@ if (isset ($data['rows'])) {
 
 			$titles_displayed = true;
 		}
-		
+
 		// NOW, depending on the contents of this row, we do something different...
 		if ($row['htype'] == '10') {
 			$section_title = $row['body'];
@@ -143,18 +143,18 @@ if (isset ($data['rows'])) {
 			$subsection_title = $row['body'];
 		} elseif ($row['htype'] == '13') {
 			// DEBATE PROCEDURAL.
-			
+
 			$stripecount++;
-			$style = $stripecount % 2 == 0 ? '1' : '2';	
-			
+			$style = $stripecount % 2 == 0 ? '1' : '2';
+
 			$PAGE->stripe_start('procedural-'.$style);
-			
+
 			echo $row['body'];
-			
+
 			context_link($row);
-			
+
 			$sidebarhtml = generate_commentteaser($row, $data['info']['major']);
-			
+
 			$PAGE->stripe_end(array(
 				array (
 					'type' => 'html',
@@ -162,14 +162,14 @@ if (isset ($data['rows'])) {
 				)
 			));
 
-	
+
 
 		} elseif ( $row['htype'] == '12') {
 			// A STANDARD SPEECH OR WRANS TEXT.
-		
+
 			$stripecount++;
 			$style = $stripecount % 2 == 0 ? '1' : '2';
-			
+
 		        $video_content = '';
                         if ($data['info']['major'] == 1 && $first_speech_displayed == 0) { # only Commons debates currently
                                 $autostart = get_http_var('autoPlay');
@@ -181,14 +181,14 @@ if (isset ($data['rows'])) {
 				$video_content .= "&output=js-full\"></script></p>";
                                 $first_speech_displayed = true;
                         }
-	
+
 			// If this item is at a new time, then print the time.
 			if (substr($row['htime'],0,5) != $timetracker && $row['htime'] != "00:00:00") {
-				
+
 				$PAGE->stripe_start('time-'.$style);
-				
+
 				echo "\t\t\t\t<p>" . format_time($row['htime'], TIMEFORMAT) . "</p>\n";
-				
+
 				$PAGE->stripe_end();
 
 				// Set the timetracker to the current time
@@ -197,24 +197,24 @@ if (isset ($data['rows'])) {
 				$stripecount++;
 				$style = $stripecount % 2 == 0 ? '1' : '2';
 			}
-	
+
 
 			if (isset($row['speaker']) && ( (isset($row['speaker']['member_id']) && isset($data['info']['member_id']) && $row['speaker']['member_id'] == $data['info']['member_id']) || (isset($row['speaker']['person_id']) && isset($data['info']['person_id']) && $row['speaker']['person_id'] == $data['info']['person_id']) ) ) {
 				$style .= '-on';
 			}
-			
+
 			// gid_to_anchor() is in utility.php
 			$id = 'g' . gid_to_anchor($row['gid']);
-			
-			$PAGE->stripe_start($style, $id);	
-	
+
+			$PAGE->stripe_start($style, $id);
+
 			?>
 				<a name="<?php echo $id; ?>"></a>
 <?php
 
 			if (isset($row['speaker']) && count($row['speaker']) > 0) {
 			  // We have a speaker to print.
-			  
+
 				$speaker = $row['speaker'];
 				$speakername = ucfirst(member_full_name($speaker['house'], $speaker['title'], $speaker['first_name'], $speaker['last_name'], $speaker['constituency']));
 				echo '<p class="speaker"><a href="', $speaker['url'], '" title="See more information about ', $speakername, '">';
@@ -259,9 +259,9 @@ if (isset ($data['rows'])) {
 
                 #                if ($data['info']['major'] == 1) { # Commons debates only
                 if (0) {
-					?><!-- | <script type="text/javascript" src="http://parlvid.mysociety.org/video.cgi?gid=<?
+					?><!-- | <script type="text/javascript" src="http://parlvid.mysociety.org/video.cgi?gid=<?php
 					echo $row['gid'];
-				 	?>&output=js-link"></script> --><?
+				 	?>&output=js-link"></script> --><?php
 				}
 				echo "</small>";
 			}
@@ -284,12 +284,12 @@ if (isset ($data['rows'])) {
 			$body = str_replace('pwmotiontext="moved"', 'class="moved"', $body);
 			$body = str_replace('<a href="h', '<a rel="nofollow" href="h', $body); # As even sites in Hansard lapse and become spam-sites
 			echo str_replace('</p><p','</p> <p',$body); # NN4 font size bug
-			
+
 			context_link($row);
-			
+
 			$sidebarhtml = '';
 			$extrahtml = '';
-			
+
 			if (isset($row['votes']) && (!strstr($row['gid'], 'q'))) {
 				$sidebarhtml .= generate_votes ( $row['votes'], $row['major'], $row['epobject_id'], $row['gid'] );
 			}
@@ -299,7 +299,7 @@ if (isset ($data['rows'])) {
 #			if (($hansardmajors[$data['info']['major']]['type'] == 'debate') && isset($row['speaker']) && count($row['speaker']) > 0) {
 			$sidebarhtml .= generate_commentteaser($row, $data['info']['major']);
 #			}
-			
+
 			$PAGE->stripe_end(array(
 				#array (
 				#	'type' => 'html',
@@ -314,20 +314,20 @@ if (isset ($data['rows'])) {
 					'content' => $extrahtml
 				)
 			));
-			
-				
-		} // End htype 12.
-		
 
-		// TRACKBACK AUTO DISCOVERY 
+
+		} // End htype 12.
+
+
+		// TRACKBACK AUTO DISCOVERY
 /*		if (isset($row['trackback']) && count($row['trackback']) > 0) {
 
 			$PAGE->trackback_rss($row['trackback']);
 		} */
-		ob_flush(); //flush the output buffer		
-	
+		ob_flush(); //flush the output buffer
+
 	} // End cycling through rows.
-	
+
 	if (!$titles_displayed) {
 		$PAGE->stripe_start('head-2');
 		?>
@@ -370,9 +370,9 @@ if (isset ($data['rows'])) {
 				}
 				if (count($moreinfo) > 0) {
 					print "<small>(" . implode (', ', $moreinfo) . ") </small>";
-				}	
+				}
 			} else {
-				// Nothing in this item, so no link.	
+				// Nothing in this item, so no link.
 				print '<strong>' . $row['body'] . '</strong>';
 			}
 			if (isset($row['excerpt'])) {
@@ -393,7 +393,7 @@ if (isset ($data['rows'])) {
 
 if ($this_page == 'debates' || $this_page == 'whall' || $this_page == 'lordsdebates' || $this_page == 'nidebates') {
 	// Previous / Index / Next links, if any.
-	
+
 	$PAGE->stripe_start('foot');
 	?>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;<?php
 	$PAGE->stripe_end(array(
@@ -406,7 +406,7 @@ if ($this_page == 'debates' || $this_page == 'whall' || $this_page == 'lordsdeba
 
 function context_link (&$row) {
 	global $this_page;
-	
+
 	if ($this_page == 'debate') {
 		if ($row['htype'] == '12') {
 			$thing = 'speech';
@@ -437,21 +437,21 @@ function generate_commentteaser ($row, $major) {
 		)
 	*/
 	// $url is the URL of the item's page, which contains comments.
-	
+
 	global $this_page, $THEUSER, $hansardmajors;
-	
+
 	$html = '';
-	
+
 	if ($hansardmajors[$major]['type'] == 'debate' && $hansardmajors[$major]['page_all']==$this_page) {
 
 		if ($row['totalcomments'] > 0) {
 			$comment = $row['comment'];
-			
+
 			// If the comment is longer than the speech body, we want to trim it
 			// to be the same length so they fit next to each other.
 			// But the comment typeface is smaller, so we scale things slightly too...
 			$targetsize = round(strlen($row['body']) * 0.6);
-			
+
 			if ($targetsize > strlen($comment['body'])) {
 				// This comment will fit in its entirety.
 				$commentbody = $comment['body'];
@@ -461,7 +461,7 @@ function generate_commentteaser ($row, $major) {
 					$plural = $morecount == 1 ? 'comment' : 'comments';
 					$linktext = "Read $morecount more $plural";
 				}
-				
+
 			} else {
 				// This comment needs trimming.
 				$commentbody = htmlentities(trim_characters($comment['body'], 0, $targetsize));
@@ -473,13 +473,13 @@ function generate_commentteaser ($row, $major) {
 					$linktext = 'Continue reading';
 				}
 			}
-		
+
 			$html = '<em>' . htmlentities($comment['username']) . '</em>: ' . prepare_comment_for_display($commentbody);
-			
+
 			if (isset($linktext)) {
 				$html .= ' <a href="' . $row['commentsurl'] . '#c' . $comment['comment_id'] . '" title="See any comments posted about this">' . $linktext . '</a>';
 			}
-			
+
 			$html .= '<br><br>';
 		}
 
@@ -494,18 +494,18 @@ function generate_commentteaser ($row, $major) {
 
 		$html = "\t\t\t\t" . '<p class="comment-teaser">' . $html . "</p>\n";
 	}
-	
+
 	return $html;
 }
 
 $votelinks_so_far = 0;
 function generate_votes ($votes, $major, $id, $gid) {
 	/*
-	Returns HTML for the 'Interesting?' links (debates) or the 'Does this answer 
+	Returns HTML for the 'Interesting?' links (debates) or the 'Does this answer
 	the question?' links (wrans) in the sidebar.
-	
+
 	We have yes/no, even for debates, for which we only allow people to say 'yes'.
-	
+
 	$votes = => array (
 		'user'	=> array (
 			'yes'	=> '21',
@@ -516,19 +516,19 @@ function generate_votes ($votes, $major, $id, $gid) {
 			'no'	=> '30'
 		)
 	)
-	
+
 	$major is the htype of this item (eg, 12 or 13 for debates, 61 or 62 for wrans).
 	$id is an epobject_id.
 	*/
-			
+
 	global $this_page, $votelinks_so_far;
-	
+
 	// What we return.
 	$html = '';
-	
+
 	$URL = new URL($this_page);
 	$returl = $URL->generate();
-	
+
 	$VOTEURL = new URL('epvote');
 	$VOTEURL->insert(array('v'=>'1', 'id'=>$id, 'ret'=>$returl));
 
@@ -536,28 +536,28 @@ function generate_votes ($votes, $major, $id, $gid) {
 		// Wrans.
 		$yesvotes = $votes['user']['yes'] + $votes['anon']['yes'];
 		$novotes = $votes['user']['no'] + $votes['anon']['no'];
-		
+
 		$yesplural = $yesvotes == 1 ? 'person thinks' : 'people think';
 		$noplural = $novotes == 1 ? 'person thinks' : 'people think';
-		
+
 		$html .= '<strong>Does this answer the above question?</strong><br>';
-		
+
 		$html .= '<span class="wransvote"><a href="' . $VOTEURL->generate() . '" title="Rate this as answering the question">Yes!</a> ' . $yesvotes . ' ' . $yesplural . ' so!<br>';
 
 		$VOTEURL->insert(array('v'=>'0'));
-		
+
 		$html .= '<a href="' . $VOTEURL->generate() . '" title="Rate this as NOT answering the question">No!</a> ' . $novotes . ' ' . $noplural . ' not!</span>';
 
 	} elseif ($major == 1) {
 		// Debates.
-		
+
 		/*
 		We aren't putting Interesting? buttons in for now...
-		
+
 		$VOTEURL->insert(array('v'=>'1'));
 		$totalvotes = $votes['user']['yes'] + $votes['anon']['yes'];
 		$plural = $totalvotes == 1 ? 'person thinks' : 'people think';
-		
+
 		$html .= '<a href="' . $VOTEURL->generate() . '" title="Rate this as being interesting">Interesting?</a> ' . $totalvotes . ' ' . $plural . ' so!';
 		*/
 
@@ -566,7 +566,7 @@ function generate_votes ($votes, $major, $id, $gid) {
 	$votelinks_so_far++;
 	$html = "\t\t\t\t<p class=\"vote\">$html</p>\n";
 	return $html;
-	
+
 }
 
 /*
@@ -622,18 +622,18 @@ pairs along the lines of:
 	)
 	etc.
 
-Note: There are two URLs. 
-	'listurl' is a link to the item in context, in the list view. 
+Note: There are two URLs.
+	'listurl' is a link to the item in context, in the list view.
 	'commentsurl' is the page where we can see this item and all its comments.
 
 Note: The 'trackback' array won't always be there - only if we think we're going to
 	be using it for Auto Discovery on this page.
-	
+
 Note: Speaker's only there if there is a speaker for this item.
 
 
 $data = array (
-	
+
 	'info' => array (
 		'date'	=> '2003-12-31',
 		'text'	=> 'A brief bit of text for a title...',
@@ -642,7 +642,7 @@ $data = array (
 
 	'rows' => array (
 		0 => array ( HansardObjectData ),
-		1 => array ( HansardObjectData ), etc...		
+		1 => array ( HansardObjectData ), etc...
 	)
 );
 

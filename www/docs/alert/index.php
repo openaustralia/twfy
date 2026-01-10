@@ -12,14 +12,14 @@ There is only one function here which is to add an alert.
 Alerts are deleted through a confirmation token similar to that used to add alerts.
 
 A link at the bottom of the page will send you a list of all your alerts with links to delete them if you wish.
-	
-FUNCTIONS		
+
+FUNCTIONS
 check_input()	Validates the edited or added alert data and creates error messages.
 add_alert()	Adds alert to database depending on success.
 display_form()	Shows the form to enter alert data.
 set_criteria()	Sets search criteria from information in MP and Keyword fields.
 */
-		
+
 include_once "../../includes/easyparliament/init.php";
 include_once "../../includes/easyparliament/people.php";
 include_once "../../includes/easyparliament/member.php";
@@ -59,37 +59,37 @@ if (!sizeof($errors) && ( (get_http_var('submitted') && ($details['keyword'] || 
 	$PAGE->stripe_start();
 	$PAGE->block_start(array ('id'=>'alerts', 'title'=>'Request an OpenAustralia.org Email Alert'));
 	display_form($details, $errors);
-	$PAGE->block_end();	
+	$PAGE->block_end();
 	$end = array();
 	if (!get_http_var('only') || !$details['pid'] || $details['keyword']) {
 		$end[] = array('type' => 'include', 'content' => 'search');
 	}
 	$PAGE->stripe_end($end);
-	$PAGE->page_end(); 
+	$PAGE->page_end();
 }
 
 
 function check_input ($details) {
-	
+
 	global $ALERT, $this_page;
-	
+
 	$errors = array();
 
 	// Check each of the things the user has input.
 	// If there is a problem with any of them, set an entry in the $errors array.
 	// This will then be used to (a) indicate there were errors and (b) display
 	// error messages when we show the form again.
-	
+
 	// Check email address is valid and unique.
 	if ($details["email"] == "") {
 		$errors["email"] = "Please enter your email address";
-	
+
 	} elseif (!validate_email($details["email"])) {
 		// validate_email() is in includes/utilities.php
 		$errors["email"] = "Please enter a valid email address";
-	
-	} 
-	
+
+	}
+
 	if (!ctype_digit($details['pid']) && $details['pid'] != '')
 		$errors['pid'] = 'Please choose a valid person';
 #	if (!$details['keyword'])
@@ -123,18 +123,18 @@ function add_alert ($details) {
 		$confirm = true;
 	}
 
-	// If this goes well, the alert will be added to the database and a confirmation email 
+	// If this goes well, the alert will be added to the database and a confirmation email
 	// will be sent to them.
 	$success = $ALERT->add ( $details, $confirm );
-	
+
 	// Display results message on blank page for both success and failure
-	
+
 	$this_page = 'alertwelcome';
 	$URL = new URL('alertwelcome');
 	$backlink = $URL->generate();
 	$PAGE->page_start();
 	$PAGE->stripe_start();
-	
+
 	$advert = false;
 	if ($success>0 && !$confirm) {
 		if ($details['pid']) {
@@ -212,7 +212,7 @@ above.</li>
 <?	} ?>
 
 	<form method="post" action="<?php echo $ACTIONURL->generate(); ?>">
-	
+
 	<?php	if (!$THEUSER->loggedin()) {
 			if (isset($errors["email"]) && (get_http_var('submitted') || get_http_var('only'))) {
 				$PAGE->error_message($errors["email"]);
@@ -230,14 +230,14 @@ above.</li>
 	?>
 				<div class="row">
 				<span class="label"><label for="pid">Person you wish to receive alerts for:</label></span>
-				<span class="formw"><?
+				<span class="formw"><?php
 				if (get_http_var('only') && $details['pid']) {
 					$MEMBER = new MEMBER(array('person_id'=>$details['pid']));
 					print $MEMBER->full_name();
 					print '<input type="hidden" name="pid" value="' . htmlspecialchars($details['pid']) . '">';
 				} else { ?><select name="pid">
 				<option value="Any">Any Representative or Senator</option>
-				<?php 
+				<?php
 				// Get a list of MPs/Lords for displaying in the form using the PEOPLE class
 				$LIST = new PEOPLE;
 				$args['order'] = 'last_name';
@@ -254,14 +254,14 @@ above.</li>
 				$PAGE->error_message($errors["keyword"]);
 			}
 	?>
-				<div class="row"> 
+				<div class="row">
 				<span class="label"><label for="keyword">Word or phrase you wish to receive alerts for:</label></span>
 				<span class="formw"><input type="text" name="keyword" id="keyword" value="<?php if ($details['keyword']) { echo htmlentities($details['keyword']); } ?>" maxlength="255" size="30" class="form"></span>
 				</div>
 	<?php	}
 		$submittext = "Request Email Alert";
 	?>
-						
+
 				<div class="row">
 				<span class="label">&nbsp;</span>
 				<span class="formw"><input type="submit" class="submit" value="<?php echo $submittext; ?>"><!-- this space makes the submit button appear on Mac IE 5! --> </span>
@@ -279,7 +279,7 @@ above.</li>
 		if (get_http_var('r'))
 			echo '<input type="hidden" name="r" value="' . htmlspecialchars(get_http_var('r')) . '">';
 		echo '<input type="hidden" name="submitted" value="true"> </form>';
-} 
+}
 
 ?>
 

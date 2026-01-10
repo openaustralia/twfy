@@ -1641,7 +1641,7 @@ pr()//-->
 			$topics_block_empty = false;
 			$WRANSURL = new URL('search');
 			$WRANSURL->insert(array('pid'=>$member['person_id'], 's'=>'section:wrans', 'pop'=>1));
-		?>							<p><small>(based on <a href="<?=$WRANSURL->generate()?>">written questions asked by <?=$member['full_name']?></a> and answered by departments)</small></p><?
+		?>							<p><small>(based on <a href="<?=$WRANSURL->generate()?>">written questions asked by <?=$member['full_name']?></a> and answered by departments)</small></p><?php
 		}
 
 		# Public Bill Committees
@@ -1669,7 +1669,7 @@ and has had no written questions answered for which we know the department or su
 	if (!in_array(1, $member['houses']) || $member['party'] != 'Sinn Fein') {
 
 
-	?>		<a name="hansard"></a> <?
+	?>		<a name="hansard"></a> <?php
 		$title = 'Most recent appearances in parliament';
 		if ($rssurl = $DATA->page_metadata($this_page, 'rss')) {
 			$title = '<a href="' . WEBPATH . $rssurl . '"><img src="' . WEBPATH . 'images/rss.gif" alt="RSS feed" border="0" align="right"></a> ' . $title;
@@ -1771,7 +1771,7 @@ and has had no written questions answered for which we know the department or su
 		if (isset($extra_info['number_of_alerts'])) {
 			$displayed_stuff = 1;
 			?>
-		<li><strong><?=htmlentities($extra_info['number_of_alerts']) ?></strong> <?=($extra_info['number_of_alerts']==1?'person is':'people are') ?> tracking whenever <?
+		<li><strong><?=htmlentities($extra_info['number_of_alerts']) ?></strong> <?=($extra_info['number_of_alerts']==1?'person is':'people are') ?> tracking whenever <?php
 if ($member['house_disp']==1) print 'this Representative';
 elseif ($member['house_disp']==2) print 'this Senator';
 elseif ($member['house_disp']==3) print 'this MLA';
@@ -2357,7 +2357,7 @@ elseif ($member['house_disp']==0) print $member['full_name']; ?> speaks<?php
 	<form action="http://www.writetothem.com/lords" method="get">
 	<input type="hidden" name="pid" value="<?=htmlentities(get_http_var('pid')) ?>">
 	<input type="submit" style="font-size: 150%" value=" I want to write to this Lord "><br>
-<?
+<?php
 		}
 
 		if (!$wtt) {
@@ -2399,7 +2399,7 @@ elseif ($member['house_disp']==0) print $member['full_name']; ?> speaks<?php
                     <input type="radio" name="pid" value="<?php echo htmlentities($person_id) ?>" checked>Search only <?php echo htmlentities($name) ?>
                     <input type="radio" name="pid" value="">Search all speeches
                     </p>
-                <?
+                <?php
 	    			}
        			}
 		}
@@ -2694,13 +2694,13 @@ elseif ($member['house_disp']==0) print $member['full_name']; ?> speaks<?php
 			?>
 			<h4>Found <?php echo $GLOSSARY->num_search_matches; ?> matches for <em><?php echo $GLOSSARY->query; ?></em></h4>
 			<p>It seems we already have <?php echo $definition; ?> for that. Would you care to see <?php echo $plural; ?>?</p>
-			<ul class="glossary"><?
+			<ul class="glossary"><?php
 			foreach ($GLOSSARY->search_matches as $match) {
 				$URL = new URL('glossary');
 				$URL->insert(array('gl' => $match['glossary_id']));
 				$URL->remove(array('g'));
 				$term_link = $URL->generate('url');
-				?><li><a href="<?php echo $term_link ?>"><?php echo $match['title']?></a></li><?
+				?><li><a href="<?php echo $term_link ?>"><?php echo $match['title']?></a></li><?php
 			}
 			?></ul>
 <?php
@@ -3214,7 +3214,7 @@ function display_stats_line_house($house, $category, $blurb, $type, $inwhat, $ex
 
 function display_writetothem_numbers($year, $extra_info) {
 	if (isset($extra_info["writetothem_responsiveness_notes_$year"])) {
-	?><li>Responsiveness to messages sent via <a href="http://www.writetothem.com/stats/<?=$year?>/mps">WriteToThem.com</a> in <?=$year?>: <?=$extra_info["writetothem_responsiveness_notes_$year"]?>.</li><?
+	?><li>Responsiveness to messages sent via <a href="http://www.writetothem.com/stats/<?=$year?>/mps">WriteToThem.com</a> in <?=$year?>: <?=$extra_info["writetothem_responsiveness_notes_$year"]?>.</li><?php
 		return true;
 	} elseif (isset($extra_info["writetothem_responsiveness_mean_$year"])) {
 		$mean = $extra_info["writetothem_responsiveness_mean_$year"];

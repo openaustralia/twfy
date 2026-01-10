@@ -1,4 +1,4 @@
-<?
+<?php
 
 include_once '../../../../phplib/rabx.php';
 
@@ -209,7 +209,7 @@ function api_header($o, $last_mod=null) {
 			header('HTTP/1.0 304 Not Modified');
 			header('Last-Modified: ' . date('r', $last_mod));
 			return true;
-		} 
+		}
 	}
 	if ($o == 'xml') {
 		$type = 'text/xml';

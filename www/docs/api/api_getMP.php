@@ -1,4 +1,4 @@
-<?
+<?php
 
 include_once INCLUDESPATH . 'easyparliament/member.php';
 
@@ -14,7 +14,7 @@ function api_getMP_front() {
 <dd>The name of an electoral division; we will try and work it out from whatever you give us. :)</dd>
 <dt>always_return (optional)</dt>
 <dd>For the division option, sets whether to always try and return a Representative, even if the seat is currently vacant.</dd>
-<!-- 
+<!--
 <dt>extra (optional)</dt>
 <dd>Returns extra data in one or more categories, separated by commas.</dd>
 -->
@@ -50,7 +50,7 @@ function api_getMP_front() {
 }]
 </pre>
 
-<?	
+<?
 }
 
 function _api_getMP_row($row) {
@@ -161,7 +161,7 @@ function _api_getMP_constituency($constituency) {
 		if ($q->rows > 0)
 			return _api_getMP_row($q->row(0));
 	}
-	
+
 	return false;
 }
 

@@ -25,7 +25,7 @@ if (isset ($data['rows']) && count($data['rows']) > 0) {
 		$row = $data['rows'][$i];
 		?>
 <item>
-<title><?
+<title><?php
 		if (isset($row['parent']) && count($row['parent']) > 0) {
 			echo strip_tags($row['parent']['body']);
 		}
@@ -38,7 +38,7 @@ if (isset ($data['rows']) && count($data['rows']) > 0) {
 			$sp = $row['speaker'];
 			$name = ucfirst(member_full_name($sp['house'], $sp['title'], $sp['first_name'], $sp['last_name'], $sp['constituency']));
 			echo entities_to_numbers($name) . ': ';
-		} 
+		}
 		echo htmlspecialchars(str_replace(array('&#8212;', '<span class="hi">', '</span>'), array('-', '<b>', '</b>'), $row['body'])) . "</description>\n</item>\n";
 	}
 }

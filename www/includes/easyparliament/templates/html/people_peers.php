@@ -74,8 +74,8 @@ foreach ($data['data'] as $pid => $peer) {
 ?>
 				</tbody>
 				</table>
-				
-<?
+
+<?php
 
 function manymins($p, $d) {
 	return prettify_office($p, $d);
@@ -84,7 +84,7 @@ function manymins($p, $d) {
 function render_peers_row($peer, &$style, $order, $URL) {
 	global $parties;
 
-	// Stripes	
+	// Stripes
 	$style = $style == '1' ? '2' : '1';
 
 	$name = member_full_name(2, $peer['title'], $peer['first_name'], $peer['last_name'], $peer['constituency']);
@@ -92,7 +92,7 @@ function render_peers_row($peer, &$style, $order, $URL) {
 		$party = $parties[$peer['party']];
 	else
 		$party = $peer['party'];
-	
+
 #	$MPURL->insert(array('pid'=>$peer['person_id']));
 	$url = $URL->generate().make_member_url($name, $peer['constituency'], 2);
 	?>

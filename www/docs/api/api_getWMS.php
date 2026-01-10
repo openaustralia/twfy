@@ -1,4 +1,4 @@
-<?
+<?php
 
 include_once 'api_getHansard.php';
 
@@ -86,7 +86,7 @@ function api_getWMS_front() {
 	&lt;/match&gt;
 	...
 </pre>
-<?
+<?php
 }
 
 function api_getWMS_date($d) {

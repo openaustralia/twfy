@@ -1,4 +1,4 @@
-<?
+<?php
 
 # XXX Lots here copied from elsewhere... Damn you deadlines.
 
