@@ -8,12 +8,6 @@ RUN apt-get update && apt-get install -y \
     && docker-php-ext-install pdo_mysql mysqli
 
 
-# Copy custom configuration files if needed
-# COPY ./inc/php/php.ini $PHP_INI_DIR/php.ini
-COPY conf/httpd-docker.conf /etc/apache2/sites-available/000-default.conf
-
-
-
 RUN a2enmod rewrite
 RUN service apache2 restart
 

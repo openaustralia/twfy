@@ -10,8 +10,9 @@ services:
     ports:
       - 80:80
     volumes:
-      - ./www:/var/www
-      - ./conf:/var/conf # not a great location, but it works
+      - ./www:/var/www #not sure yet why it needs to be here, i got 403s when it /app instead
+      - ./conf/general-docker:/var/conf/general
+      - ./conf/httpd-docker.conf:/etc/apache2/sites-available/000-default.conf
       - ../phplib:/phplib
   mysql:
     image: mysql:8.4.7
