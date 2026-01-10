@@ -22,8 +22,7 @@ $MPURL = new URL('yourmp');
 $PAGE->block_start(array ('id'=>'intro', 'title'=>'At OpenAustralia.org you can:'));
 ?>
 						<ol>
-
-<?php 
+<?php
 
 // Find out more about your MP / Find out more about David Howarth, your MP
 function your_mp_bullet_point() {
@@ -33,7 +32,7 @@ function your_mp_bullet_point() {
 	if ($THEUSER->constituency_is_set()) {
 		// (We don't allow the user to search for a postcode if they
 		// already have one set in their prefs.)
-		
+
 		$MEMBER = new MEMBER(array ('constituency'=>$THEUSER->constituency()));
 		if ($MEMBER->valid) {
 			$pc_form = false;
@@ -70,12 +69,12 @@ function search_bullet_point() {
 						<form action="<?php echo $SEARCHURL->generate(); ?>" method="get">
 						<p><strong><label for="s">Search Hansard<?=get_http_var("keyword") ? ' for \'' . htmlspecialchars(get_http_var("keyword")) . '\'' : ''?>:</label></strong><br/>
 					<input type="text" name="s" id="s" size="15" maxlength="100" class="text" value="<?=htmlspecialchars(get_http_var("keyword"))?>">&nbsp;&nbsp;<input type="submit" value="SEARCH" class="submit"></p>
-                        <?
+                        <?php
                             // Display popular queries
                             global $SEARCHLOG;
                             $popular_searches = $SEARCHLOG->popular_recent(10);
                             if (count($popular_searches) > 0) {
-                                ?> <p>Popular searches today: <?
+                                ?> <p>Popular searches today: <?php
                                 $lentotal = 0;
                                 $correct_amount = array();
                                 // Select a number of queries that will fit in the space
@@ -88,7 +87,7 @@ function search_bullet_point() {
                                     array_push($correct_amount, $popular_search['display']);
                                 }
                                 print implode(", ", $correct_amount);
-                                ?> </p> <?
+                                ?> </p> <?php
                             }
                         ?>
 						</form>
@@ -96,15 +95,15 @@ function search_bullet_point() {
 <?php
 }
 
-// Sign up to be emailed when something relevant to you happens in Parliament 
+// Sign up to be emailed when something relevant to you happens in Parliament
 // Sign up to be emailed when 'mouse' is mentioned in Parliament
 function email_alert_bullet_point() {
 	if (get_http_var("keyword")) { ?>
 		<li><p><a href="<?=WEBPATH."alert?keyword=".htmlspecialchars(get_http_var('keyword'))?>&only=1"><strong>Sign up to be emailed when '<?=htmlspecialchars(get_http_var('keyword'))?>' is mentioned in Parliament</strong></a></p></li>
 	<? } else { ?>
 		<li><p><a href="<?=WEBPATH."alert/"?>"><strong>Sign up to be emailed when something relevant to you happens in Parliament</strong></a></p></li>
-	<? } 
-} 
+	<? }
+}
 
 // Comment on (recent debates)
 function comment_on_recent_bullet_point() {
@@ -112,7 +111,7 @@ function comment_on_recent_bullet_point() {
 ?>
 	<li><p><strong>Read and comment on:</strong></p>
 
-<?php 
+<?php
 	$DEBATELIST = new DEBATELIST; $data[1] = $DEBATELIST->most_recent_day();
 	$WRANSLIST = new WRANSLIST; $data[3] = $WRANSLIST->most_recent_day();
 	$WHALLLIST = new WHALLLIST; $data[2] = $WHALLLIST->most_recent_day();
@@ -122,25 +121,25 @@ function comment_on_recent_bullet_point() {
 	foreach (array_keys($hansardmajors) as $major) {
 		if (array_key_exists($major, $data)) {
 			unset($data[$major]['listurl']);
-			if (count($data[$major]) == 0) 
+			if (count($data[$major]) == 0)
 				unset($data[$major]);
 		}
 	}
 	major_summary($data, 10);
-	?> </li> <?php 
+	?> </li> <?php
 }
 
 if (get_http_var('keyword')) {
 	// This is for links from Google adverts, where we want to
 	// promote the features relating to their original search higher
 	// than "your MP"
-	search_bullet_point(); 
+	search_bullet_point();
 	//email_alert_bullet_point();
 	your_mp_bullet_point();
 	comment_on_recent_bullet_point();
 } else {
 	your_mp_bullet_point();
-	search_bullet_point(); 
+	search_bullet_point();
 	//email_alert_bullet_point();
 	comment_on_recent_bullet_point();
 }
@@ -168,4 +167,3 @@ $includes = array(
 //$PAGE->page_end();
 $PAGE->page_end_mobile();
 
-?>
