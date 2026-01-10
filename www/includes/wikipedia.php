@@ -62,10 +62,11 @@ function wikipedize ($source) {
   $phrases = array_unique(array_merge($propernounphrases1[0], $propernounphrases2[0], $propernounphrases3[1], $acronyms[0]));
   # Sort into order, largest first
   usort($phrases, "lensort");
+  $db = new ParlDB;
   foreach ($phrases as $i => $phrase) {
-    $phrases[$i] = mysqli_real_escape_string($db, str_replace(' ', '_', trim($phrase)));
+    $phrases[$i] = mysqli_real_escape_string($db->conn, str_replace(' ', '_', trim($phrase)));
   }
- 
+
   # Open up a db connection, and whittle our list down even further, against
   # the real titles.
   $matched = array();
