@@ -46,11 +46,14 @@ class SEARCHLOG {
     // Select popular queries
     function popular_recent ($count) {
 
-        $q =  $this->db->query("SELECT *, count(*) AS c FROM search_query_log 
-                WHERE count_hits != 0 AND query_string != 'twat'
-	       AND query_string != 'suffragettes'	
-                AND query_time > date_sub(NOW(), INTERVAL 1 DAY) 
-                GROUP BY query_string ORDER BY c desc LIMIT $count;");
+        $q =  $this->db->query("
+                SELECT query_string, count(*) AS c
+                FROM search_query_log 
+                WHERE count_hits != 0 
+                    AND query_time > date_sub(NOW(), INTERVAL 1 DAY) 
+                GROUP BY query_string
+                ORDER BY c desc
+                LIMIT $count;");
 
         $popular_searches = array();
         for ($row=0; $row<$q->rows(); $row++) {
