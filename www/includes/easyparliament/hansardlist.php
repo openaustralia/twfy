@@ -2636,7 +2636,7 @@ class DEBATELIST extends HANSARDLIST {
 		}
 			
 		
-		$q = $this->db->query("SELECT COUNT(*) AS count, 
+		$sql = "SELECT COUNT(*) AS count, 
 								body, 
 								h.hdate,
 								sech.htype,
@@ -2649,10 +2649,11 @@ class DEBATELIST extends HANSARDLIST {
 						AND 	$datewhere
 						AND  	h.subsection_id = e.epobject_id 
 						AND 	sech.epobject_id = h.subsection_id 
-						GROUP BY h.subsection_id 
+						GROUP BY h.subsection_id , h.hdate
 						ORDER BY count DESC 
 						LIMIT 	" . mysqli_real_escape_string($this->db->conn, $args['num']) . "
-						");
+						";
+		$q = $this->db->query($sql);
 		
 
 		for ($row=0; $row<$q->rows; $row++) {
@@ -2690,7 +2691,7 @@ class DEBATELIST extends HANSARDLIST {
 				
 				$r = $this->db->query("SELECT body
 								FROM	epobject
-								WHERE	epobject_id = '" . mysqli_real_escape_string($db, $item_data['section_id']) . "'
+								WHERE	epobject_id = '" . mysqli_real_escape_string($this->db->conn, $item_data['section_id']) . "'
 								");
 				$debate['parent']['body'] = $r->field(0, 'body');
 			}
