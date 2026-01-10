@@ -9,7 +9,7 @@ function api_convertURL_front()
     <dl>
         <dt>url (required)</dt>
         <dd>The aph.gov.au URL you wish to convert, e.g.
-            <? $db = new ParlDB;
+            <?php $db = new ParlDB;
             $q = $db->query('SELECT source_url FROM hansard WHERE major=1 AND hdate>"2006-07-01" ORDER BY RAND() LIMIT 1');
             print $q->field(0, 'source_url');
             ?>

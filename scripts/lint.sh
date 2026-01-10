@@ -28,9 +28,11 @@ while test $# -gt 0; do
         OUTPUT=$(echo -e "${OUTPUT}" | awk 'NF')
 
         if [ "${OUTPUT}" != "No syntax errors detected in ${FILE}" ] ; then
-            echo -e "${FILE}:"
+            echo -e "❌ ${FILE}:"
             echo -e "  ${OUTPUT//$'\n'/\\n  }\n"
             ERROR=true
+        # else
+        #   echo "✅ ${FILE}"
         fi
     done
 done
@@ -41,5 +43,5 @@ if [ "${ERROR}" = true ] ; then
     exit 1
 fi
 
-echo "No syntax errors found."
+echo "✅ No syntax errors found."
 exit 0
