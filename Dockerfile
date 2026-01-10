@@ -7,7 +7,6 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/* \
     && docker-php-ext-install pdo_mysql mysqli
 
-RUN apt-get install -y vim
 
 # Copy custom configuration files if needed
 # COPY ./inc/php/php.ini $PHP_INI_DIR/php.ini
