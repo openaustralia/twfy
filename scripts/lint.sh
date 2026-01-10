@@ -22,7 +22,7 @@ while test $# -gt 0; do
     fi
 
     for FILE in $(find "${CURRENT}" -type f -name "*.php") ; do
-        OUTPUT=$(php -l "${FILE}" 2> /dev/null)
+        OUTPUT=$(php -l "${FILE}" 2>&1)
 
         # Remove blank lines from the `php -l` output
         OUTPUT=$(echo -e "${OUTPUT}" | awk 'NF')
