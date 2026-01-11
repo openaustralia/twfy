@@ -1,7 +1,7 @@
 <?php
 
 include_once '../../includes/easyparliament/init.php';
-include_once '../../includes/postcode.inc';
+include_once '../../includes/postcode.php';
 include_once 'api_functions.php';
 include_once '../../../../phplib/auth.php';
 
