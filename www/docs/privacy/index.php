@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * @file
+ */
+
 $this_page = "privacy";
 
 include_once "../../includes/easyparliament/init.php";
@@ -23,5 +27,3 @@ $PAGE->stripe_start();
 $PAGE->stripe_end();
 
 $PAGE->page_end();
-
-?>

@@ -1,14 +1,18 @@
 <?php
-// This sidebar is used on every Site News pages.
+
+/**
+ * @file
+ * This sidebar is used on every Site News pages.
+ */
 
 $ARCHIVEURL = new URL('sitenews_archive');
 $url = $ARCHIVEURL->generate();
 
-$this->block_start(array('title'=>'News Archives', 'url'=>$url));
+$this->block_start(['title' => 'News Archives', 'url' => $url]);
 include BASEDIR . '/news/sidebar_archives.php';
 $this->block_end();
 
-$this->block_start(array('title'=>'RSS/XML'));
+$this->block_start(['title' => 'RSS/XML']);
 $RSSURL = new URL('sitenews_rss1');
 $rssurl = $RSSURL->generate();
 
@@ -20,4 +24,3 @@ $helpurl = $HELPURL->generate() . '#rss';
 
 <?php
 $this->block_end();
-?>

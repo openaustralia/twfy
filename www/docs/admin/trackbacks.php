@@ -1,7 +1,11 @@
 <?php
 
+/**
+ * @file
+ */
+
 include_once "../../includes/easyparliament/init.php";
-include_once (INCLUDESPATH."easyparliament/commentreportlist.php");
+include_once INCLUDESPATH . "easyparliament/commentreportlist.php";
 
 $this_page = "admin_trackbacks";
 
@@ -13,17 +17,17 @@ $PAGE->stripe_start();
 
 
 $TRACKBACK = new TRACKBACK();
-$TRACKBACK->display('recent', array('num'=>30));
+$TRACKBACK->display('recent', ['num' => 30]);
 
 
 $menu = $PAGE->admin_menu();
 
-$PAGE->stripe_end(array(
-	array(
-		'type'		=> 'html',
-		'content'	=> $menu
-	)
-));
+$PAGE->stripe_end([
+    [
+        'type'        => 'html',
+        'content'    => $menu
+    ]
+]);
 
 
 
@@ -38,5 +42,3 @@ $PAGE->stripe_end(array(
 
 
 $PAGE->page_end();
-
-?>

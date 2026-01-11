@@ -1,4 +1,9 @@
 <?php
+
+/**
+ * @file
+ */
+
 $_SERVER['DEVICE_TYPE'] = "mobile";
 
 include_once "../../includes/easyparliament/init.php";
@@ -11,9 +16,7 @@ $PAGE->stripe_start();
 
 include INCLUDESPATH . 'easyparliament/staticpages/help.php';
 
-//$PAGE->stripe_end();
+// $PAGE->stripe_end();
 
-//$PAGE->page_end();
+// $PAGE->page_end();
 $PAGE->page_end_mobile();
-
-?>

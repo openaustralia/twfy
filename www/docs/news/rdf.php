@@ -1,6 +1,11 @@
 <?php
+
+/**
+ * @file
+ */
+
 header('Content-type: application/rss+xml');
-include (dirname(__FILE__) . '/../../includes/easyparliament/init.php');
+include dirname(__FILE__) . '/../../includes/easyparliament/init.php';
 require_once "editme.php";
 print '<?xml version="1.0" encoding="iso-8859-1"?>' ?>
 
@@ -14,7 +19,7 @@ print '<?xml version="1.0" encoding="iso-8859-1"?>' ?>
 
 <channel rdf:about="http://<?php DOMAIN . WEBPATH . "news/" ?>">
 <title>OpenAustralia News</title>
-<link>http://<?= DOMAIN . WEBPATH . "news/" ?></link>
+<link>http://<?php echo DOMAIN . WEBPATH . "news/" ?></link>
 <description>The weblog for news about site updates, etc.</description>
 <dc:language>en-us</dc:language>
 <dc:creator></dc:creator>
@@ -25,13 +30,15 @@ print '<?xml version="1.0" encoding="iso-8859-1"?>' ?>
 <items>
 <rdf:Seq>
 <?php
-	$c = 0;
-	foreach ($all_news as $id => $news_row) {
-		if ($c++ == 10) break;
-		list($title, $content, $date) = $news_row;
-		$url = "http://".DOMAIN.news_individual_link($date, $title);
-		print "<rdf:li rdf:resource=\"$url\" />\n";
-	}
+$c = 0;
+foreach ($all_news as $id => $news_row) {
+  if ($c++ == 10) {
+    break;
+  }
+  [$title, $content, $date] = $news_row;
+  $url = "http://" . DOMAIN . news_individual_link($date, $title);
+  print "<rdf:li rdf:resource=\"$url\" />\n";
+}
 ?>
 </rdf:Seq>
 </items>
@@ -39,26 +46,27 @@ print '<?xml version="1.0" encoding="iso-8859-1"?>' ?>
 </channel>
 
 <?php
-	$c = 0;
-	foreach ($all_news as $id => $news_row) {
-		if ($c++ == 10) break;
-		list($title, $content, $date) = $news_row;
-		$url = "http://".DOMAIN.news_individual_link($date, $title);
-		$excerpt = trim_characters(news_format_body($content), 0, 250);
-		$date = str_replace(" ", "T", $date) . "+00:00";
-?>
-<item rdf:about="<?=$url?>">
-<title><?=htmlspecialchars($title)?></title>
-<link><?=$url?></link>
-<description><?=$excerpt?></description>
+$c = 0;
+foreach ($all_news as $id => $news_row) {
+  if ($c++ == 10) {
+    break;
+  }
+  [$title, $content, $date] = $news_row;
+  $url = "http://" . DOMAIN . news_individual_link($date, $title);
+  $excerpt = trim_characters(news_format_body($content), 0, 250);
+  $date = str_replace(" ", "T", $date) . "+00:00";
+  ?>
+<item rdf:about="<?php echo $url?>">
+<title><?php echo htmlspecialchars($title)?></title>
+<link><?php echo $url?></link>
+<description><?php echo $excerpt?></description>
 <dc:subject></dc:subject>
 <dc:creator>OpenAustralia</dc:creator>
-<dc:date><?=$date?></dc:date>
+<dc:date><?php echo $date?></dc:date>
 </item>
 
-<?php
-	}
+  <?php
+}
 ?>
 
 </rdf:RDF>
-

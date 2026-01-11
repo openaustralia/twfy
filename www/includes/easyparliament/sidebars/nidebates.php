@@ -1,8 +1,12 @@
 <?php
 
+/**
+ * @file
+ */
+
 $URL = new URL('help');
 $helpurl = $URL->generate();
-$this->block_start(array('id'=>'help', 'title'=>"What is the Northern Ireland Assembly?"));
+$this->block_start(['id' => 'help', 'title' => "What is the Northern Ireland Assembly?"]);
 ?>
 
 <p>"The <strong>Northern Ireland Assembly</strong> was established as part of the Belfast Agreement and meets in Parliament Buildings.
@@ -14,4 +18,3 @@ The Northern Ireland Assembly was suspended on the 14th of October 2002, and rem
 
 <?php
 $this->block_end();
-?>

@@ -1,10 +1,14 @@
 <?php
-// This sidebar is on the page the user sees after they've successfully clicked the link in their 'confirm' email, after joining.
+
+/**
+ * @file
+ * This sidebar is on the page the user sees after they've successfully clicked the link in their 'confirm' email, after joining.
+ */
 
 $URL = new URL('houserules');
 $houserulesurl = $URL->generate();
 
-$this->block_start(array('id'=>'help', 'title'=>"Every Community Needs A Few Rules"));
+$this->block_start(['id' => 'help', 'title' => "Every Community Needs A Few Rules"]);
 ?>
 
 <p>Before you add a comment, please read our <a href="<?php echo $houserulesurl; ?>">House Rules</a> for advice on the kind of language, tone and behaviour we want to encourage.</p>
@@ -13,4 +17,3 @@ $this->block_start(array('id'=>'help', 'title'=>"Every Community Needs A Few Rul
 
 <?php
 $this->block_end();
-?>

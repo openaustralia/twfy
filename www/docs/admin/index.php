@@ -1,11 +1,15 @@
 <?php
 
+/**
+ * @file
+ */
+
 include_once "../../includes/easyparliament/init.php";
-include_once (INCLUDESPATH."easyparliament/commentreportlist.php");
+include_once INCLUDESPATH . "easyparliament/commentreportlist.php";
 
 $this_page = "admin_home";
 
-$db = new ParlDB;
+$db = new ParlDB();
 
 
 $PAGE->page_start();
@@ -13,10 +17,10 @@ $PAGE->page_start();
 $PAGE->stripe_start();
 
 
-///////////////////////////////////////////////////////////////
+//
 // General stats.
 
-$PAGE->block_start(array('title'=>'Stats'));
+$PAGE->block_start(['title' => 'Stats']);
 
 $q = $db->query("SELECT COUNT(*) AS count FROM users WHERE confirmed = '1'");
 $confirmedusers = $q->field(0, 'count');
@@ -24,11 +28,11 @@ $confirmedusers = $q->field(0, 'count');
 $q = $db->query("SELECT COUNT(*) AS count FROM users WHERE confirmed = '0'");
 $unconfirmedusers = $q->field(0, 'count');
 
-$olddate = gmdate("Y-m-d H:i:s", time()-86400);
+$olddate = gmdate("Y-m-d H:i:s", time() - 86400);
 $q = $db->query("SELECT COUNT(*) AS count FROM users WHERE lastvisit > '$olddate'");
 $dayusers = $q->field(0, 'count');
 
-$olddate = gmdate("Y-m-d H:i:s", time()-86400*7);
+$olddate = gmdate("Y-m-d H:i:s", time() - 86400 * 7);
 $q = $db->query("SELECT COUNT(*) AS count FROM users WHERE lastvisit > '$olddate'");
 $weekusers = $q->field(0, 'count');
 ?>
@@ -43,7 +47,7 @@ $weekusers = $q->field(0, 'count');
 $PAGE->block_end();
 
 
-///////////////////////////////////////////////////////////////
+//
 // Recent users.
 
 ?>
@@ -61,41 +65,42 @@ $q = $db->query("SELECT firstname,
 				LIMIT 50
 				");
 
-$rows = array();
+$rows = [];
 $USERURL = new URL('userview');
 
-for ($row=0; $row<$q->rows(); $row++) {
+for ($row = 0; $row < $q->rows(); $row++) {
 
-	$user_id = $q->field($row, 'user_id');
-	
-	$USERURL->insert(array('u'=>$user_id));
-	
-	if ($q->field($row, 'confirmed') == 1) {
-		$confirmed = 'Yes';
-		$name = '<a href="' . $USERURL->generate() . '">' . htmlspecialchars($q->field($row, 'firstname'))
-			. ' ' . htmlspecialchars($q->field($row, 'lastname')) . '</a>';
-	} else {
-		$confirmed = 'No';
-		$name = htmlspecialchars($q->field($row, 'firstname') . ' ' . $q->field($row, 'lastname'));
-	}
-	
-	$rows[] = array (
-		$name,
-		'<a href="mailto:' . $q->field($row, 'email') . '">' . $q->field($row, 'email') . '</a>',
-		$confirmed,
-		$q->field($row, 'registrationtime')
-	);
+  $user_id = $q->field($row, 'user_id');
+
+  $USERURL->insert(['u' => $user_id]);
+
+  if ($q->field($row, 'confirmed') == 1) {
+    $confirmed = 'Yes';
+    $name = '<a href="' . $USERURL->generate() . '">' . htmlspecialchars($q->field($row, 'firstname'))
+    . ' ' . htmlspecialchars($q->field($row, 'lastname')) . '</a>';
+  }
+  else {
+    $confirmed = 'No';
+    $name = htmlspecialchars($q->field($row, 'firstname') . ' ' . $q->field($row, 'lastname'));
+  }
+
+  $rows[] = [
+        $name,
+        '<a href="mailto:' . $q->field($row, 'email') . '">' . $q->field($row, 'email') . '</a>',
+        $confirmed,
+        $q->field($row, 'registrationtime')
+    ];
 }
 
-$tabledata = array (
-	'header' => array (
-		'Name',
-		'Email',
-		'Confirmed?',
-		'Registration time'
-	),
-	'rows' => $rows
-);
+$tabledata = [
+    'header' => [
+        'Name',
+        'Email',
+        'Confirmed?',
+        'Registration time'
+    ],
+    'rows' => $rows
+];
 
 $PAGE->display_table($tabledata);
 
@@ -104,16 +109,14 @@ $PAGE->display_table($tabledata);
 
 $menu = $PAGE->admin_menu();
 
-$PAGE->stripe_end(array(
-	array(
-		'type'		=> 'html',
-		'content'	=> $menu
-	)
-));
+$PAGE->stripe_end([
+    [
+        'type'        => 'html',
+        'content'    => $menu
+    ]
+]);
 
 
 
 
 $PAGE->page_end();
-
-?>

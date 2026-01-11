@@ -1,9 +1,13 @@
 <?php
-// This sidebar is on the pages that show calendars of dates Westminster Hall debates have occurred on.
+
+/**
+ * @file
+ * This sidebar is on the pages that show calendars of dates Westminster Hall debates have occurred on.
+ */
 
 $URL = new URL('help');
 $helpurl = $URL->generate();
-$this->block_start(array('id'=>'help', 'title'=>"What are Westminster Hall Debates?"));
+$this->block_start(['id' => 'help', 'title' => "What are Westminster Hall Debates?"]);
 ?>
 
 <p>In December 1999, a new meeting place was opened up for debates - <strong>Westminster Hall</strong>. 
@@ -13,4 +17,3 @@ $this->block_start(array('id'=>'help', 'title'=>"What are Westminster Hall Debat
 The meetings are presided over by a Deputy Speaker and there are no votes.</p>
 <?php
 $this->block_end();
-?>
