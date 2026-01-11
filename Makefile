@@ -1,3 +1,6 @@
+# PLATFORM=linux/arm64,linux/amd64
+PLATFORM=linux/amd64
+
 all:
 	@echo "Available targets:"
 	@echo "  docker-build   Build the Docker image for the application"
@@ -5,7 +8,16 @@ all:
 	@echo "  lint           Run linting on the www directory"
 
 docker-build:
-	docker build -t twfy-app .
+	docker buildx build \
+		--build-arg VCS_REF=`git rev-parse --short HEAD` \
+		--build-arg VCS_URL=`git config --get remote.origin.url | sed 's#git@github.com:#https://github.com/#'` \
+		--build-arg BUILD_DATE=`date -u +"%Y-%m-%dT%H:%M:%SZ"` \
+		--no-cache \
+		--load \
+		--platform=$(PLATFORM) \
+		-t twfy-app \
+		.
+
 docker-run:
 	docker compose up -d
 
