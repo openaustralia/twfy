@@ -1,3 +1,9 @@
+<?php
+
+/**
+ * @file
+ */
+?>
 <ul>
 <li><a href="#moderation">How do you moderate comments?</a></li>
 <li><a href="#missing">Is this the whole of Hansard?</a></li>
@@ -20,15 +26,15 @@
 
 <dt><a name="moderation"></a>How do you moderate comments?</dt>
 <dd>
-<p>Ideally, we won't. If everyone keeps to the <a href="<?=WEBPATH?>houserules" title="link to House Rules">House Rules</a>, that is. But we're not naive enough to think that life online is that simple. OpenAustralia.org operates a 'reactive moderation' policy. We will only check whether a comment breaches our House Rules if someone lets us know of their concerns via the 'Report this Comment' link,  which can be found next to every comment. If we decide that the comment has breached our House Rules, we will delete it and let the original author know via email. We will also give them opportunity to rephrase and resubmit their orginal comment. If we deem the comment to be legit, we'll leave it up, and email the complainant to let them know why. We will do our utmost to respond to reports of potential breaches of our House Rules within forty-eight hours, but please bear in mind that this service is run by a small charity, and sometimes it might take us slightly longer.</p>
+<p>Ideally, we won't. If everyone keeps to the <a href="<?php echo WEBPATH?>houserules" title="link to House Rules">House Rules</a>, that is. But we're not naive enough to think that life online is that simple. OpenAustralia.org operates a 'reactive moderation' policy. We will only check whether a comment breaches our House Rules if someone lets us know of their concerns via the 'Report this Comment' link,  which can be found next to every comment. If we decide that the comment has breached our House Rules, we will delete it and let the original author know via email. We will also give them opportunity to rephrase and resubmit their orginal comment. If we deem the comment to be legit, we'll leave it up, and email the complainant to let them know why. We will do our utmost to respond to reports of potential breaches of our House Rules within forty-eight hours, but please bear in mind that this service is run by a small charity, and sometimes it might take us slightly longer.</p>
 </dd>
 <!-- end old faq entry -->
 
 <!-- start new faq entry -->
 <dt><a name="missing"></a>Is this the whole of Hansard?</dt>
 <dd>
-	<p>Not quite. This is everything in the Hansard for the House of Representatives and the Senate excluding written questions, petitions,
-		and the divisions (voting) and so far goes back to the beginning of 2006. It also does not include committees. Think of what we've done
+    <p>Not quite. This is everything in the Hansard for the House of Representatives and the Senate excluding written questions, petitions,
+        and the divisions (voting) and so far goes back to the beginning of 2006. It also does not include committees. Think of what we've done
 thus far as a mere taster of what could be possible.
 If you want the complete, definitive record, go to the <a href="http://www.aph.gov.au/" title="Link to Australian Parliament website">Australian Parliament</a> site, and you might be able to find what you want.</p>
 </dd>
@@ -90,10 +96,10 @@ things which we don't count yet, and some which we never could.  Even when we
 do, a count doesn't measure the quality of a Representative's contribution.</p>
 
 <p>On the UK site <a href="http://www.theyworkforyou.com">TheyWorkForYou</a>, they used to publish absolute rankings of, for
-	instance, the most verbose MPs. Then, they were hearing from real MP's researchers who
-	admitted to tabling questions to increase their boss' rankings. So, TheyWorkForYou
-	became concerned about the use of these statistics</p>
-	
+    instance, the most verbose MPs. Then, they were hearing from real MP's researchers who
+    admitted to tabling questions to increase their boss' rankings. So, TheyWorkForYou
+    became concerned about the use of these statistics</p>
+    
 <p> We've followed their lead by doing two things. We have silly statistics, to catch your attention.
 And we don't have absolute rankings. Instead of saying a Representative is exactly
 5th for giving out verbiage in the chamber, we just say that they are

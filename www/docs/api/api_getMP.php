@@ -1,9 +1,16 @@
 <?php
 
+/**
+ * @file
+ */
+
 include_once INCLUDESPATH . 'easyparliament/member.php';
 
+/**
+ *
+ */
 function api_getMP_front() {
-?>
+  ?>
 <p><big>Fetch a particular member of the House of Representatives.</big></p>
 
 <h4>Arguments</h4>
@@ -50,119 +57,148 @@ function api_getMP_front() {
 }]
 </pre>
 
-<?php
+  <?php
 }
 
+/**
+ *
+ */
 function _api_getMP_row($row) {
-	global $parties;
-	$row['full_name'] = member_full_name($row['house'], $row['title'], $row['first_name'],
-		$row['last_name'], $row['constituency']);
-  # We need 'name' to maintain backwards compatibility due to OA-476
+  global $parties;
+  $row['full_name'] = member_full_name($row['house'], $row['title'], $row['first_name'],
+        $row['last_name'], $row['constituency']);
+  // We need 'name' to maintain backwards compatibility due to OA-476.
   $row['name'] = $row['full_name'];
-	if (isset($parties[$row['party']]))
-		$row['party'] = $parties[$row['party']];
-	list($image,$sz) = find_rep_image($row['person_id']);
-	if ($image) $row['image'] = $image;
+  if (isset($parties[$row['party']])) {
+    $row['party'] = $parties[$row['party']];
+  }
+  [$image, $sz] = find_rep_image($row['person_id']);
+  if ($image) {
+    $row['image'] = $image;
+  }
 
-	# Ministerialships and Select Committees
-	$db = new ParlDB;
-	$q = $db->query('SELECT * FROM moffice WHERE to_date="9999-12-31" and person=' . $row['person_id'] . ' ORDER BY from_date DESC');
-	for ($i=0; $i<$q->rows(); $i++) {
-		$row['office'][] = $q->row($i);
-	}
+  // Ministerialships and Select Committees.
+  $db = new ParlDB();
+  $q = $db->query('SELECT * FROM moffice WHERE to_date="9999-12-31" and person=' . $row['person_id'] . ' ORDER BY from_date DESC');
+  for ($i = 0; $i < $q->rows(); $i++) {
+    $row['office'][] = $q->row($i);
+  }
 
-	foreach ($row as $k => $r) {
-		if (is_string($r)) $row[$k] = html_entity_decode($r);
-	}
-	return $row;
+  foreach ($row as $k => $r) {
+    if (is_string($r)) {
+      $row[$k] = html_entity_decode($r);
+    }
+  }
+  return $row;
 }
 
+/**
+ *
+ */
 function api_getMP_id($id) {
-	$db = new ParlDB;
-	$q = $db->query("select * from member
+  $db = new ParlDB();
+  $q = $db->query("select * from member
 		where house=1 and person_id = '" . mysqli_real_escape_string($db, $id) . "'
 		order by left_house desc");
-	if ($q->rows()) {
-		$output = array();
-		$last_mod = 0;
-		/*
-		$MEMBER = new MEMBER(array('person_id'=>$id));
-		$MEMBER->load_extra_info();
-		$extra_info = $MEMBER->extra_info();
-		if (array_key_exists('office', $extra_info)) {
-			$output['offices'] = $extra_info['office'];
-		}
-		*/
-		for ($i=0; $i<$q->rows(); $i++) {
-			$out = _api_getMP_row($q->row($i));
-			$output[] = $out;
-			$time = strtotime($q->field($i, 'lastupdate'));
-			if ($time > $last_mod)
-				$last_mod = $time;
-		}
-		api_output($output, $last_mod);
-	} else {
-		api_error('Unknown person ID');
-	}
+  if ($q->rows()) {
+    $output = [];
+    $last_mod = 0;
+    /*
+    $MEMBER = new MEMBER(array('person_id'=>$id));
+    $MEMBER->load_extra_info();
+    $extra_info = $MEMBER->extra_info();
+    if (array_key_exists('office', $extra_info)) {
+    $output['offices'] = $extra_info['office'];
+    }
+     */
+    for ($i = 0; $i < $q->rows(); $i++) {
+      $out = _api_getMP_row($q->row($i));
+      $output[] = $out;
+      $time = strtotime($q->field($i, 'lastupdate'));
+      if ($time > $last_mod) {
+        $last_mod = $time;
+      }
+    }
+    api_output($output, $last_mod);
+  }
+  else {
+    api_error('Unknown person ID');
+  }
 }
 
+/**
+ *
+ */
 function api_getMP_postcode($pc) {
-	$pc = preg_replace('#[^0-9]#i', '', $pc);
-	if (is_postcode($pc)) {
-		$constituency = postcode_to_constituency($pc);
-		if ($constituency == 'CONNECTION_TIMED_OUT') {
-			api_error('Connection timed out');
-		} elseif ($constituency) {
-			$person = _api_getMP_constituency($constituency);
-			$output = $person;
-			api_output($output, strtotime($output['lastupdate']));
-		} else {
-			api_error('Unknown postcode');
-		}
-	} else {
-		api_error('Invalid postcode');
-	}
+  $pc = preg_replace('#[^0-9]#i', '', $pc);
+  if (is_postcode($pc)) {
+    $constituency = postcode_to_constituency($pc);
+    if ($constituency == 'CONNECTION_TIMED_OUT') {
+      api_error('Connection timed out');
+    }
+    elseif ($constituency) {
+      $person = _api_getMP_constituency($constituency);
+      $output = $person;
+      api_output($output, strtotime($output['lastupdate']));
+    }
+    else {
+      api_error('Unknown postcode');
+    }
+  }
+  else {
+    api_error('Invalid postcode');
+  }
 }
 
+/**
+ *
+ */
 function api_getMP_constituency($constituency) {
-	$person = _api_getMP_constituency($constituency);
-	if ($person) {
-		$output = $person;
-		api_output($output, strtotime($output['lastupdate']));
-	} else {
-		api_error('Unknown constituency, or no MP for that constituency');
-	}
+  $person = _api_getMP_constituency($constituency);
+  if ($person) {
+    $output = $person;
+    api_output($output, strtotime($output['lastupdate']));
+  }
+  else {
+    api_error('Unknown constituency, or no MP for that constituency');
+  }
 }
 
-# Very similary to MEMBER's constituency_to_person_id
-# Should all be abstracted properly :-/
+/**
+ * Very similary to MEMBER's constituency_to_person_id
+ * Should all be abstracted properly :-/.
+ */
 function _api_getMP_constituency($constituency) {
-	$db = new ParlDB;
+  $db = new ParlDB();
 
-	if ($constituency == '')
-		return false;
+  if ($constituency == '') {
+    return FALSE;
+  }
 
-	if ($constituency == 'Orkney ')
-		$constituency = 'Orkney &amp; Shetland';
+  if ($constituency == 'Orkney ') {
+    $constituency = 'Orkney &amp; Shetland';
+  }
 
-	$normalised = normalise_constituency_name($constituency);
-	if ($normalised) $constituency = $normalised;
+  $normalised = normalise_constituency_name($constituency);
+  if ($normalised) {
+    $constituency = $normalised;
+  }
 
-	$q = $db->query("SELECT * FROM member
+  $q = $db->query("SELECT * FROM member
 		WHERE constituency = '" . mysqli_real_escape_string($db, $constituency) . "'
 		AND left_reason = 'still_in_office' AND house=1");
-	if ($q->rows > 0)
-		return _api_getMP_row($q->row(0));
+  if ($q->rows > 0) {
+    return _api_getMP_row($q->row(0));
+  }
 
-	if (get_http_var('always_return')) {
-		$q = $db->query("SELECT * FROM member
-			WHERE house=1 AND constituency = '".mysqli_real_escape_string($db, $constituency)."'
+  if (get_http_var('always_return')) {
+    $q = $db->query("SELECT * FROM member
+			WHERE house=1 AND constituency = '" . mysqli_real_escape_string($db, $constituency) . "'
 			ORDER BY left_house DESC LIMIT 1");
-		if ($q->rows > 0)
-			return _api_getMP_row($q->row(0));
-	}
+    if ($q->rows > 0) {
+      return _api_getMP_row($q->row(0));
+    }
+  }
 
-	return false;
+  return FALSE;
 }
-
-?>

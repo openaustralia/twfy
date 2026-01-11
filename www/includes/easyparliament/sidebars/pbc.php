@@ -1,8 +1,12 @@
 <?php
 
+/**
+ * @file
+ */
+
 $URL = new URL('help');
 $helpurl = $URL->generate();
-$this->block_start(array('id'=>'help', 'title'=>"What are Public Bill Committees?"));
+$this->block_start(['id' => 'help', 'title' => "What are Public Bill Committees?"]);
 ?>
 
 <p>Previously called Standing Committees, <strong>Public Bill Commitees</strong>

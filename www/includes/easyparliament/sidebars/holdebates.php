@@ -1,9 +1,13 @@
 <?php
-// This sidebar is on the pages that show calendars of dates House of Commons debates have occurred on.
+
+/**
+ * @file
+ * This sidebar is on the pages that show calendars of dates House of Commons debates have occurred on.
+ */
 
 $URL = new URL('help');
 $helpurl = $URL->generate();
-$this->block_start(array('id'=>'help', 'title'=>"What are Debates?"));
+$this->block_start(['id' => 'help', 'title' => "What are Debates?"]);
 ?>
 
 <p><strong>Debates</strong> in the Senate are an opportunity for Senators from all parties to <strong>scrutinise</strong> government legislation and <strong>raise important local, national or topical issues</strong>.</p>
@@ -15,4 +19,3 @@ $this->block_start(array('id'=>'help', 'title'=>"What are Debates?"));
 
 <?php
 $this->block_end();
-?>
