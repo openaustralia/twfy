@@ -176,18 +176,18 @@ else {
 
   // Commented out until we have more glossary terms for further examples
   // Devon county council
-  //    $URL->insert(array("gl" => "12"));
-  //    $devoncc_url = $URL->generate();
+  // $URL->insert(array("gl" => "12"));
+  // $devoncc_url = $URL->generate();
 
   // Hutton Report
-  //    $URL->insert(array("gl" => "7"));
-  //    $hutton_url = $URL->generate();
+  // $URL->insert(array("gl" => "7"));
+  // $hutton_url = $URL->generate();
 
   print "<p><small>For example:<br>";
   print "A technical term, or a piece of jargon e.g. <em>&quot;<a href=\"" . $standingorder94_url . "\">Standing Order 94A</a>&quot;</em> or <em>&quot;<a href=\"" . $interjecting_url . "\">interjecting</a>&quot;</em><br>";
   // Commented out until we have more glossary terms for further examples
-  //    print "An external organisation e.g. <em>&quot;<a href=\"".$devoncc_url."\">Devon County Council</a>&quot;(80 occurences)</em><br>";
-  //    print "An external web document e.g. <em>&quot;<a href=\"".$hutton_url."\">Hutton Report</a>&quot;(104 occurences)</em></small></p>";.
+  // print "An external organisation e.g. <em>&quot;<a href=\"".$devoncc_url."\">Devon County Council</a>&quot;(80 occurences)</em><br>";
+  // print "An external web document e.g. <em>&quot;<a href=\"".$hutton_url."\">Hutton Report</a>&quot;(104 occurences)</em></small></p>";.
   print "Or browse the existing entries:</small></p>";
 
   $PAGE->glossary_atoz($GLOSSARY);
