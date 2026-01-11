@@ -59,7 +59,7 @@ function twfy_debug($header, $text = "") {
 /**
  *
  */
-function error_handler($errno, $errmsg, $filename, $linenum, $vars) {
+function error_handler(string $errno, string $errmsg, string $filename, int $linenum, ?array $vars = []) {
   // Custom error-handling function.
   // Sends an email to BUGSLIST.
   global $PAGE;
