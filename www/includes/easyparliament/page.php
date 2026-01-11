@@ -1730,7 +1730,7 @@ class PAGE
                 $WRANSURL = new URL('search');
                 $WRANSURL->insert(array('pid' => $member['person_id'], 's' => 'section:wrans', 'pop' => 1));
                 ?>
-                <p><small>(based on <a href="<?= $WRANSURL->generate() ?>">written questions asked by <?= $member['full_name'] ?></a>
+                <p><small>(based on <a href="<?php echo $WRANSURL->generate() ?>">written questions asked by <?php echo $member['full_name'] ?></a>
                         and
                         answered by departments)</small></p><?php
             }
@@ -1820,7 +1820,7 @@ and has had no written questions answered for which we know the department or su
                 else
                     echo "Senators"; ?> may do other things
                 not currently covered
-                by this site.</em> (<a href="<?= WEBPATH ?>help/#numbers">More about this</a>)</p>
+                by this site.</em> (<a href="<?php echo WEBPATH ?>help/#numbers">More about this</a>)</p>
         <ul>
             <?php
 
@@ -1871,8 +1871,8 @@ and has had no written questions answered for which we know the department or su
             if (isset($extra_info['number_of_alerts'])) {
                 $displayed_stuff = 1;
                 ?>
-                <li><strong><?= htmlentities($extra_info['number_of_alerts']) ?></strong>
-                    <?= ($extra_info['number_of_alerts'] == 1 ? 'person is' : 'people are') ?> tracking whenever <?php
+                <li><strong><?php echo htmlentities($extra_info['number_of_alerts']) ?></strong>
+                    <?php echo ($extra_info['number_of_alerts'] == 1 ? 'person is' : 'people are') ?> tracking whenever <?php
                              if ($member['house_disp'] == 1)
                                  print 'this Representative';
                              elseif ($member['house_disp'] == 2)
@@ -2473,7 +2473,7 @@ and has had no written questions answered for which we know the department or su
 
         } else { ?>
                     <form action="http://www.writetothem.com/lords" method="get">
-                        <input type="hidden" name="pid" value="<?= htmlentities(get_http_var('pid')) ?>">
+                        <input type="hidden" name="pid" value="<?php echo htmlentities(get_http_var('pid')) ?>">
                         <input type="submit" style="font-size: 150%" value=" I want to write to this Lord "><br>
                         <?php
         }
@@ -2624,7 +2624,7 @@ and has had no written questions answered for which we know the department or su
                         <form action="<?php echo $URL->generate(); ?>" method="get">
                             <p>
                                 <input name="s" size="12">
-                                <input type="hidden" name="pid" value="<?= $person_id ?>">
+                                <input type="hidden" name="pid" value="<?php echo $person_id ?>">
                                 <input type="submit" class="submit" value="GO">
                             </p>
                         </form>
@@ -3389,8 +3389,8 @@ function display_writetothem_numbers($year, $extra_info)
     if (isset($extra_info["writetothem_responsiveness_notes_$year"])) {
         ?>
                     <li>Responsiveness to messages sent via <a
-                            href="http://www.writetothem.com/stats/<?= $year ?>/mps">WriteToThem.com</a> in <?= $year ?>:
-                        <?= $extra_info["writetothem_responsiveness_notes_$year"] ?>.
+                            href="http://www.writetothem.com/stats/<?php echo $year ?>/mps">WriteToThem.com</a> in <?php echo $year ?>:
+                        <?php echo $extra_info["writetothem_responsiveness_notes_$year"] ?>.
                     </li>
                     <?php
                     return true;

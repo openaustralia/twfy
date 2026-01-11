@@ -40,13 +40,13 @@ if ($THEUSER->constituency_is_set()) {
 			$former = 'former';
 		}
 ?>
-	<p style="margin-top: -30px; margin-bottom: 5px">Find out more about <a href="<?php echo $MPURL->generate(); ?>"><strong><?php echo $mpname; ?>, your <?= $former ?> Representative</strong></a>, including their <a href="<?= $MP_RECENT_URL->generate() ?>">most recent speeches</a>.</p>
-	<p style="margin-bottom: 30px">If <?php echo $mpname; ?> is not your Representative, <a href="<?= $CHANGEURL->generate(); ?>">provide a new postcode</a>.</p>
+	<p style="margin-top: -30px; margin-bottom: 5px">Find out more about <a href="<?php echo $MPURL->generate(); ?>"><strong><?php echo $mpname; ?>, your <?php echo $former ?> Representative</strong></a>, including their <a href="<?php echo $MP_RECENT_URL->generate() ?>">most recent speeches</a>.</p>
+	<p style="margin-bottom: 30px">If <?php echo $mpname; ?> is not your Representative, <a href="<?php echo $CHANGEURL->generate(); ?>">provide a new postcode</a>.</p>
 <?php
 	}
 } else {
 ?>
-	<p style="margin-top: -30px; margin-bottom: 30px">Find out who <a href="<?= $MPURL->generate() ?>">your Representative</a> is. All you need is a postcode.</p>
+	<p style="margin-top: -30px; margin-bottom: 30px">Find out who <a href="<?php echo $MPURL->generate() ?>">your Representative</a> is. All you need is a postcode.</p>
 <?php
 }
 
@@ -164,7 +164,7 @@ function render_mps_row($mp, &$style, $order, $MPURL) {
 <?php	} elseif ($order == 'debates') { ?>
 				<td class="row-<?php echo $style; ?>"><?php echo number_format($mp['data_value']); ?></td>
 <?php	} elseif ($order == 'safety') { ?>
-				<td class="row-<?php echo $style; ?>"><?=$mp['data_value'] ?></td>
+				<td class="row-<?php echo $style; ?>"><?php echo $mp['data_value'] ?></td>
 <?php	}
 ?>
 				</tr>
