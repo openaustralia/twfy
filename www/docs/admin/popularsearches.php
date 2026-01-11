@@ -9,8 +9,6 @@ include_once INCLUDESPATH . "easyparliament/searchlog.php";
 
 $this_page = "admin_popularsearches";
 
-
-
 $PAGE->page_start();
 
 $PAGE->stripe_start();
@@ -44,7 +42,5 @@ $PAGE->stripe_end([
         'content'    => $menu
     ]
 ]);
-
-
 
 $PAGE->page_end();

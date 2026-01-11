@@ -9,12 +9,9 @@ include_once INCLUDESPATH . "easyparliament/commentreportlist.php";
 
 $this_page = "admin_comments";
 
-
-
 $PAGE->page_start();
 
 $PAGE->stripe_start();
-
 
 // Most recent comments.
 $COMMENTLIST = new COMMENTLIST();
@@ -30,7 +27,5 @@ $PAGE->stripe_end([
         'content'    => $menu
     ]
 ]);
-
-
 
 $PAGE->page_end();

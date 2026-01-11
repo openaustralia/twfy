@@ -9,12 +9,9 @@ include_once INCLUDESPATH . "easyparliament/commentreportlist.php";
 
 $this_page = "admin_trackbacks";
 
-
-
 $PAGE->page_start();
 
 $PAGE->stripe_start();
-
 
 $TRACKBACK = new TRACKBACK();
 $TRACKBACK->display('recent', ['num' => 30]);
@@ -28,17 +25,5 @@ $PAGE->stripe_end([
         'content'    => $menu
     ]
 ]);
-
-
-
-
-
-
-
-
-
-
-
-
 
 $PAGE->page_end();

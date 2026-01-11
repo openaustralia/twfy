@@ -44,8 +44,6 @@ $REPORT = new COMMENTREPORT($report_id);
 
 $FORMURL = new URL($this_page);
 
-
-
 //
 // Check that the user is allowed to take action, and this report isn't locked.
 
@@ -74,8 +72,6 @@ elseif ($THEUSER->is_able_to('deletecomment')) {
   $REPORT->lock();
 
 }
-
-
 
 //
 // Now we decide what we're going to do on this page.

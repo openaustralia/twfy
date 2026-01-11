@@ -16,8 +16,6 @@ $PAGE->page_start();
 
 $PAGE->stripe_start();
 
-
-//
 // General stats.
 
 $PAGE->block_start(['title' => 'Stats']);
@@ -46,8 +44,6 @@ $weekusers = $q->field(0, 'count');
 <?php
 $PAGE->block_end();
 
-
-//
 // Recent users.
 
 ?>
@@ -104,9 +100,6 @@ $tabledata = [
 
 $PAGE->display_table($tabledata);
 
-
-
-
 $menu = $PAGE->admin_menu();
 
 $PAGE->stripe_end([
@@ -115,8 +108,5 @@ $PAGE->stripe_end([
         'content'    => $menu
     ]
 ]);
-
-
-
 
 $PAGE->page_end();

@@ -11,14 +11,9 @@ $this_page = "admin_badusers";
 
 $db = new ParlDB();
 
-
 $PAGE->page_start();
 
-
 $PAGE->stripe_start();
-
-
-
 
 ?>
 <h4>Users with lots of deleted comments</h4>
@@ -86,18 +81,9 @@ $tabledata = [
     'rows' => $rows
 ];
 $PAGE->display_table($tabledata);
-
-
-
-
-
-
 ?>
 <h4>Users who've made most rejected reports</h4>
 <?php
-
-
-
 $q = $db->query("SELECT COUNT(*) AS rejectedcount,
 						cr.user_id,
 						u.firstname,
@@ -142,10 +128,6 @@ $tabledata = [
 ];
 
 $PAGE->display_table($tabledata);
-
-
-
-
 
 $menu = $PAGE->admin_menu();
 
