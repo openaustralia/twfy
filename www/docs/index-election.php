@@ -75,9 +75,6 @@ else {
   $hansardline = "Comment on events in parliament";
 }
 
-
-
-
 $HANSARDURL = new URL('hansard');
 $MPURL = new URL('yourmp');
 
