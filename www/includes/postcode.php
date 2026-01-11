@@ -4,7 +4,7 @@
 // http://cvs.sourceforge.net/viewcvs.py/publicwhip/publicwhip/website/
 // is copied from this openaustralia.org version.
 
-include_once INCLUDESPATH."constituencies.inc";
+include_once INCLUDESPATH."constituencies.php";
 
 
 // Whether the form of the postcode is one or not
