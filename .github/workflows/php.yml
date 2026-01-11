@@ -17,5 +17,20 @@ jobs:
           php-version: '7.4'
           extensions: mbstring, pdo, sqlite
           coverage: none # Use 'xdebug' or 'pcov' for code coverage
+          tools: composer
+        env:
+          fail-fast: true
       - name: Lint
         run: make lint
+      - name: composer
+        run: composer install
+        env:
+          fail-fast: true
+      - name: audit
+        run: composer validate
+        env:
+          fail-fast: true
+      - name: phpcs
+        run: ./vendor/bin/phpcs --report=summary www scripts
+        env:
+          fail-fast: true
