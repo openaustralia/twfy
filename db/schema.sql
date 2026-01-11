@@ -2,6 +2,7 @@
 -- Data from XML files etc.
 --
 
+DROP TABLE IF EXISTS `consinfo`;
 CREATE TABLE `consinfo` (
   `constituency` varchar(100) NOT NULL default '',
   `data_key` varchar(100) NOT NULL default '',
@@ -10,10 +11,11 @@ CREATE TABLE `consinfo` (
   KEY `constituency` (`constituency`)
 );
 
+DROP TABLE IF EXISTS `constituency`;
 CREATE TABLE `constituency` (
   `name` varchar(100) NOT NULL default '',
   `main_name` tinyint(1) NOT NULL default '0',
-  `from_date` date NOT NULL default '1000-01-01',
+  `from_date` date NOT NULL default '0000-01-01',
   `to_date` date NOT NULL default '9999-12-31',
   `cons_id` int(11) default NULL,
   KEY `from_date` (`from_date`),
@@ -22,6 +24,7 @@ CREATE TABLE `constituency` (
   KEY `constituency` (`cons_id`)
 );
 
+DROP TABLE IF EXISTS `epobject`;
 CREATE TABLE `epobject` (
   `epobject_id` int(11) NOT NULL auto_increment,
   `title` varchar(255) default NULL,
@@ -33,15 +36,17 @@ CREATE TABLE `epobject` (
   KEY `type` (`type`)
 );
 
+DROP TABLE IF EXISTS `gidredirect`;
 CREATE TABLE `gidredirect` (
   `gid_from` char(60) default NULL,
   `gid_to` char(60) default NULL,
-  `hdate` date NOT NULL default '0000-00-00',
+  `hdate` date NOT NULL default '0000-01-01',
   `major` int(11) default NULL,
   UNIQUE KEY `gid_from` (`gid_from`),
   KEY `gid_to` (`gid_to`)
 );
 
+DROP TABLE IF EXISTS `hansard`;
 CREATE TABLE `hansard` (
   `epobject_id` int(11) NOT NULL default '0',
   `gid` varchar(100) default NULL,
@@ -51,7 +56,7 @@ CREATE TABLE `hansard` (
   `section_id` int(11) NOT NULL default '0',
   `subsection_id` int(11) NOT NULL default '0',
   `hpos` int(11) NOT NULL default '0',
-  `hdate` date NOT NULL default '0000-00-00',
+  `hdate` date NOT NULL default '0000-01-01',
   `htime` time default NULL,
   `source_url` varchar(255) NOT NULL default '',
   `minor` int(11) default NULL,
@@ -72,6 +77,7 @@ CREATE TABLE `hansard` (
   KEY `source_url` (`source_url`)
 );
 
+DROP TABLE IF EXISTS `member`;
 CREATE TABLE `member` (
   `member_id` int(11) NOT NULL default '0',
   `house` int(11) default NULL,
@@ -94,6 +100,7 @@ CREATE TABLE `member` (
   KEY `left_house_house` (`left_house`,`house`)
 );
 
+DROP TABLE IF EXISTS `memberinfo`;
 CREATE TABLE `memberinfo` (
   `member_id` int(11) NOT NULL default '0',
   `data_key` varchar(100) NOT NULL default '',
@@ -103,6 +110,7 @@ CREATE TABLE `memberinfo` (
   KEY `member_id` (`member_id`)
 );
 
+DROP TABLE IF EXISTS `moffice`;
 CREATE TABLE `moffice` (
   `moffice_id` int(11) NOT NULL auto_increment,
   `dept` varchar(100) NOT NULL default '',
@@ -115,6 +123,7 @@ CREATE TABLE `moffice` (
   KEY `person` (`person`)
 );
 
+DROP TABLE IF EXISTS `personinfo`;
 CREATE TABLE `personinfo` (
   `person_id` int(11) NOT NULL default '0',
   `data_key` varchar(100) NOT NULL default '',
@@ -124,6 +133,7 @@ CREATE TABLE `personinfo` (
   KEY `person_id` (`person_id`)
 );
 
+DROP TABLE IF EXISTS `postcode_lookup`;
 CREATE TABLE `postcode_lookup` (
   `postcode` varchar(10) NOT NULL default '',
   `name` varchar(100) NOT NULL default '',
@@ -132,6 +142,7 @@ CREATE TABLE `postcode_lookup` (
 
 -- each time we index, we increment the batch number;
 -- can use this to speed up search
+DROP TABLE IF EXISTS `indexbatch`;
 CREATE TABLE `indexbatch` (
   `indexbatch_id` int(11) NOT NULL auto_increment,
   `created` datetime default NULL,
@@ -139,6 +150,7 @@ CREATE TABLE `indexbatch` (
 );
 
 -- For Public Bill Committees originally
+DROP TABLE IF EXISTS `bills`;
 CREATE TABLE `bills` (
   `id` int(11) NOT NULL auto_increment,
   `title` varchar(255) NOT NULL default '',
@@ -150,6 +162,7 @@ CREATE TABLE `bills` (
   KEY `title` (`title`)
 );
 
+DROP TABLE IF EXISTS `pbc_members`;
 CREATE TABLE `pbc_members` (
   `id` int(11) NOT NULL auto_increment,
   `member_id` int(11) NOT NULL default '0',
@@ -162,6 +175,7 @@ CREATE TABLE `pbc_members` (
   KEY `bill_id` (`bill_id`)
 );
 
+DROP TABLE IF EXISTS `titles`;
 CREATE TABLE `titles` (
   `title` varchar(190) NOT NULL default '',
   PRIMARY KEY  (`title`)
@@ -171,6 +185,7 @@ CREATE TABLE `titles` (
 -- User content tables
 --
 
+DROP TABLE IF EXISTS `alerts`;
 CREATE TABLE `alerts` (
   `alert_id` mediumint(8) unsigned NOT NULL auto_increment,
   `email` varchar(255) NOT NULL default '',
@@ -178,13 +193,14 @@ CREATE TABLE `alerts` (
   `deleted` tinyint(1) NOT NULL default '0',
   `registrationtoken` varchar(34) NOT NULL default '',
   `confirmed` tinyint(1) NOT NULL default '0',
-  `created` datetime NOT NULL default '0000-00-00 00:00:00',
+  `created` datetime NOT NULL default '0000-01-01 00:00:00',
   `recommended` tinyint(1) NOT NULL default '0', 
   PRIMARY KEY  (`alert_id`),
   KEY `email` (`email`),
   KEY `confirmed` (`confirmed`,`deleted`)
 );
 
+DROP TABLE IF EXISTS `anonvotes`;
 CREATE TABLE `anonvotes` (
   `epobject_id` int(10) unsigned NOT NULL default '0',
   `yes_votes` int(10) unsigned NOT NULL default '0',
@@ -192,6 +208,7 @@ CREATE TABLE `anonvotes` (
   PRIMARY KEY  (`epobject_id`)
 );
 
+DROP TABLE IF EXISTS `commentreports`;
 CREATE TABLE `commentreports` (
   `report_id` int(11) NOT NULL auto_increment,
   `comment_id` int(11) default NULL,
@@ -209,6 +226,7 @@ CREATE TABLE `commentreports` (
   PRIMARY KEY  (`report_id`)
 );
 
+DROP TABLE IF EXISTS `comments`;
 CREATE TABLE `comments` (
   `comment_id` int(11) NOT NULL auto_increment,
   `user_id` int(11) NOT NULL default '0',
@@ -224,6 +242,7 @@ CREATE TABLE `comments` (
   KEY `visible` (`visible`)
 );
 
+DROP TABLE IF EXISTS `editqueue`;
 CREATE TABLE `editqueue` (
   `edit_id` int(11) NOT NULL auto_increment,
   `user_id` int(11) default NULL,
@@ -245,6 +264,7 @@ CREATE TABLE `editqueue` (
   KEY `glossary_id` (`glossary_id`)
 );
 
+DROP TABLE IF EXISTS `glossary`;
 CREATE TABLE `glossary` (
   `glossary_id` int(11) NOT NULL auto_increment,
   `title` varchar(255) default NULL,
@@ -258,6 +278,7 @@ CREATE TABLE `glossary` (
   KEY `visible` (`visible`)
 );
 
+DROP TABLE IF EXISTS `search_query_log`;
 CREATE TABLE `search_query_log` (
   `id` int(11) NOT NULL auto_increment,
   `query_string` text,
@@ -269,6 +290,7 @@ CREATE TABLE `search_query_log` (
   KEY `query_time` (`query_time`)
 );
 
+DROP TABLE IF EXISTS `trackbacks`;
 CREATE TABLE `trackbacks` (
   `trackback_id` int(11) NOT NULL auto_increment,
   `epobject_id` int(11) default NULL,
@@ -283,14 +305,15 @@ CREATE TABLE `trackbacks` (
   KEY `visible` (`visible`)
 );
 
+DROP TABLE IF EXISTS `users`;
 CREATE TABLE `users` (
   `user_id` mediumint(9) NOT NULL auto_increment,
   `firstname` varchar(255) NOT NULL default '',
   `lastname` varchar(255) NOT NULL default '',
   `email` varchar(255) NOT NULL default '',
   `password` varchar(102) NOT NULL default '',
-  `lastvisit` datetime NOT NULL default '0000-00-00 00:00:00',
-  `registrationtime` datetime NOT NULL default '0000-00-00 00:00:00',
+  `lastvisit` datetime NOT NULL default '0000-01-01 00:00:00',
+  `registrationtime` datetime NOT NULL default '0000-01-01 00:00:00',
   `registrationip` varchar(20) default NULL,
   `status` enum('Viewer','User','Moderator','Administrator','Superuser') default 'Viewer',
   `emailpublic` tinyint(1) NOT NULL default '0',
@@ -306,6 +329,7 @@ CREATE TABLE `users` (
   KEY `email` (`email`)
 );
 
+DROP TABLE IF EXISTS `uservotes`;
 CREATE TABLE `uservotes` (
   `user_id` int(10) unsigned NOT NULL default '0',
   `epobject_id` int(11) NOT NULL default '0',
@@ -313,6 +337,7 @@ CREATE TABLE `uservotes` (
   KEY `epobject_id` (`epobject_id`,`vote`)
 );
 
+DROP TABLE IF EXISTS `mentions`;
 CREATE TABLE `mentions` (
   `mention_id` int(11) NOT NULL auto_increment,
   `gid` varchar(100) default NULL,
@@ -325,6 +350,7 @@ CREATE TABLE `mentions` (
 );
 
 -- Free Our Bills
+DROP TABLE IF EXISTS `campaigners`;
 CREATE TABLE `campaigners` (
   `campaigner_id` mediumint(8) unsigned NOT NULL auto_increment,
   `email` varchar(255) NOT NULL default '',
@@ -340,6 +366,7 @@ CREATE TABLE `campaigners` (
 );
 
 -- who each email has been sent to so far
+DROP TABLE IF EXISTS `campaigners_sent_email`;
 CREATE TABLE `campaigners_sent_email` (
   `campaigner_id` int(11) NOT NULL,
   `email_name` varchar(100) NOT NULL,
@@ -347,6 +374,7 @@ CREATE TABLE `campaigners_sent_email` (
   UNIQUE KEY `campaigner_id` (`campaigner_id`,`email_name`)
 );
 
+DROP TABLE IF EXISTS `video_timestamps`;
 CREATE TABLE `video_timestamps` (
   `id` int(11) NOT NULL auto_increment,
   `gid` varchar(100) NOT NULL,
@@ -361,6 +389,7 @@ CREATE TABLE `video_timestamps` (
   UNIQUE KEY `gid_user_id` (`gid`, `user_id`)
 );
 
+DROP TABLE IF EXISTS `api_key`;
 CREATE TABLE `api_key` (
   `id` int(11) NOT NULL auto_increment,
   `user_id` mediumint(9) NOT NULL,
@@ -373,6 +402,7 @@ CREATE TABLE `api_key` (
   KEY `api_key` (`api_key`)
 );
 
+DROP TABLE IF EXISTS `api_stats`;
 CREATE TABLE `api_stats` (
   `id` int(11) NOT NULL auto_increment,
   `api_key` char(24) NOT NULL,
@@ -382,4 +412,3 @@ CREATE TABLE `api_stats` (
   PRIMARY KEY (`id`),
   KEY `api_key` (`api_key`)
 );
-
