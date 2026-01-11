@@ -30,7 +30,7 @@ include_once "../../includes/easyparliament/init.php";
 include_once INCLUDESPATH."easyparliament/member.php";
 
 // From http://cvs.sourceforge.net/viewcvs.py/publicwhip/publicwhip/website/
-include_once INCLUDESPATH."postcode.inc";
+include_once INCLUDESPATH."postcode.php";
 include_once INCLUDESPATH . 'technorati.php';
 include_once '../api/api_getGeometry.php';
 include_once '../api/api_getConstituencies.php';

@@ -1,6 +1,6 @@
 <?php
 
-include_once INCLUDESPATH."postcode.inc";
+include_once INCLUDESPATH."postcode.php";
 include_once INCLUDESPATH."easyparliament/glossary.php";
 
 class MEMBER {

@@ -2,7 +2,7 @@
 
 include_once "../../includes/easyparliament/init.php";
 include_once INCLUDESPATH."easyparliament/member.php";
-include_once INCLUDESPATH."postcode.inc";
+include_once INCLUDESPATH."postcode.php";
 
 $pc = get_http_var('pc');
 $pc = preg_replace('#[^a-z0-9 ]#i', '', $pc);
