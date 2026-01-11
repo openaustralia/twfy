@@ -5,7 +5,7 @@ include_once '../../includes/postcode.php';
 
 include_once 'api_functions.php';
 
-# XXX: Need to override error handling! XXX
+// XXX: Need to override error handling! XXX
 
 if ($q_method = get_http_var('method')) {
 	if (get_http_var('docs')) {

@@ -1,7 +1,11 @@
 <?php
 
-// The user comes to this page after clicking an 'add a comment' link
-// in hansard, if they aren't logged in.
+/**
+ * @file
+ * The user comes to this page after clicking an 'add a comment' link.
+ */
+
+// In hansard, if they aren't logged in.
 
 // This page will expect a 'ret' value with the URL of the page
 // the user should return to after logging in.
@@ -19,24 +23,25 @@ $type = get_http_var('type');
 $returl = get_http_var('ret');
 
 if ($type == 2) {
-	// Glossary.
-	$message = "Sorry, you must be logged in to add a glossary item.";
-	$message2 = "You'll be able to add your glossary item straight after.";
-	
-	$URL = new URL('glossary_addterm');
-	$URL->insert(array('g' => get_http_var('g')));
-	$glossary_returl = $URL->generate();
-	$anchor = '';
-	
-} else {
-	// Comment.
-	$message = "Sorry, you must be logged in to post a comment.";
-	$message2 = "You'll be able to post your comment straight after.";
-	$anchor = '#addcomment';
+  // Glossary.
+  $message = "Sorry, you must be logged in to add a glossary item.";
+  $message2 = "You'll be able to add your glossary item straight after.";
+
+  $URL = new URL('glossary_addterm');
+  $URL->insert(['g' => get_http_var('g')]);
+  $glossary_returl = $URL->generate();
+  $anchor = '';
+
+}
+else {
+  // Comment.
+  $message = "Sorry, you must be logged in to post a comment.";
+  $message2 = "You'll be able to post your comment straight after.";
+  $anchor = '#addcomment';
 }
 
 $URL = new URL('userjoin');
-$URL->insert(array('ret'=>$returl.$anchor));
+$URL->insert(['ret' => $returl . $anchor]);
 $joinurl = $URL->generate();
 
 
@@ -62,5 +67,3 @@ $PAGE->login_form();
 $PAGE->stripe_end();
 
 $PAGE->page_end();
-
-?>

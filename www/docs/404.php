@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * @file
+ */
+
 $this_page = '404';
 include_once dirname(__FILE__) . '/../includes/easyparliament/init.php';
 include_once INCLUDESPATH . 'easyparliament/member.php';
@@ -31,12 +35,12 @@ and so on.
 
 <?php
 
-$includes = array(
-	array (
-		'type' => 'include',
-		'content' => 'whatisthissite'
-	),
-);
+$includes = [
+    [
+        'type' => 'include',
+        'content' => 'whatisthissite'
+    ],
+];
 $PAGE->stripe_end($includes);
 $PAGE->page_end();
 exit;

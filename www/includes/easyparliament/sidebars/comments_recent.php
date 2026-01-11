@@ -1,4 +1,8 @@
 <?php
-$COMMENTLIST = new COMMENTLIST;
-$COMMENTLIST->display('recent', array('num'=>10));
-?>
+
+/**
+ * @file
+ */
+
+$COMMENTLIST = new COMMENTLIST();
+$COMMENTLIST->display('recent', ['num' => 10]);

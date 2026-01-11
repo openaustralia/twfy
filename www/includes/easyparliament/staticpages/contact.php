@@ -1,3 +1,9 @@
+<?php
+
+/**
+ * @file
+ */
+?>
 <h2>Contact the OpenAustralia team</h2>
 <p/>
 <p>
