@@ -11,10 +11,10 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-      - name: Setup PHP 7.4
+      - name: Setup PHP 8.4
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '7.4'
+          php-version: '8.4'
           extensions: mbstring, pdo, sqlite
           coverage: none # Use 'xdebug' or 'pcov' for code coverage
           tools: composer
