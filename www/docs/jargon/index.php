@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * @file
+ */
+
 $this_page = "glossary";
 
 include_once "../../includes/easyparliament/init.php";
@@ -16,5 +20,3 @@ $PAGE->page_start();
 <?php
 
 $PAGE->page_end();
-
-?>

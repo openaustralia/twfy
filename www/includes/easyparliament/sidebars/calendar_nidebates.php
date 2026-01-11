@@ -1,4 +1,9 @@
 <?php
+
+/**
+ * @file
+ */
+
 global $PAGE;
 
 // The calendar that appears in sidebars linking to debates.
@@ -7,28 +12,29 @@ global $PAGE;
 // Contents varies depending on the page we're on...
 
 if ($this_page == 'nidebatesday') {
-	$date = get_http_var('d');
-	list($year, $month, $day) = explode('-', $date);
-	
-	$args = array (
-		'year' => $year,
-		'month' => $month,
-		'onday' => $date
-	);
-	$title = 'Debates this month';
-	
-} else {
-	$args = array (
-		'months' => 1	// How many recent months to show.
-	);
-	$title = 'Recent debates';
+  $date = get_http_var('d');
+  [$year, $month, $day] = explode('-', $date);
+
+  $args = [
+        'year' => $year,
+        'month' => $month,
+        'onday' => $date
+    ];
+  $title = 'Debates this month';
+
+}
+else {
+  $args = [
+  // How many recent months to show.
+        'months' => 1
+    ];
+  $title = 'Recent debates';
 }
 
-$PAGE->block_start(array('title'=>$title));
+$PAGE->block_start(['title' => $title]);
 
-$LIST = new NILIST;
+$LIST = new NILIST();
 
 $LIST->display('calendar', $args);
 
 $PAGE->block_end();
-?>

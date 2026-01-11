@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * @file
+ */
+
 $this_page = 'gadget';
 
 include_once "../../includes/easyparliament/init.php";
@@ -22,12 +26,11 @@ and more, from your iGoogle page.</p>
 
 <?php
 
-$includes = array(
-	array (
-		'type' => 'include',
-		'content' => 'whatisthissite'
-	),
-);
+$includes = [
+    [
+        'type' => 'include',
+        'content' => 'whatisthissite'
+    ],
+];
 $PAGE->stripe_end($includes);
 $PAGE->page_end();
-

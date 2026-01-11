@@ -1,164 +1,174 @@
 <?php
 
+/**
+ * @file
+ */
+
 include_once "../../includes/easyparliament/init.php";
 include_once INCLUDESPATH . "easyparliament/glossary.php";
 
 
-// For displaying all the debates on a day, or a single debate. 
+// For displaying all the debates on a day, or a single debate.
 
 
 if (get_http_var("d") != "") {
-	if (get_http_var('c') != '') {
-		$this_page = 'debatescolumn';
-		$args = array(
-			'date' => get_http_var('d'),
-			'column' => get_http_var('c')
-		);
-		$LIST = new DEBATELIST;
-		$LIST->display('column', $args);
-	} else {
-	// We have a date. so show all debates on this day.
-	
-	$this_page = "debatesday";
-	
-	$args = array (
-		'date' => get_http_var('d')
-	);
-	
-	$LIST = new DEBATELIST;
-	
-	$LIST->display('date', $args);
-	}
-	
-} elseif (get_http_var('id') != "") {
-	// We have an id so show that item.
-	// Could be a section id (so we get a list of all the subsections in it),
-	// or a subsection id (so we'd get the whole debate),
-	// or an item id within a debate in which case we just get that item and some headings.
-	
-	$this_page = "debates";
+  if (get_http_var('c') != '') {
+    $this_page = 'debatescolumn';
+    $args = [
+    'date' => get_http_var('d'),
+    'column' => get_http_var('c')
+   ];
+    $LIST = new DEBATELIST();
+    $LIST->display('column', $args);
+  }
+  else {
+    // We have a date. so show all debates on this day.
 
-	$args = array (
-		'gid' => get_http_var('id'),
-		's'	=> get_http_var('s'),	// Search terms to be highlighted.
-		'member_id' => get_http_var('m'),	// Member's speeches to be highlighted.
-		'glossarise' => 1	// Glossary is on by default
-	);
+    $this_page = "debatesday";
 
-	if (preg_match('/speaker:(\d+)/', get_http_var('s'), $mmm))
-		$args['person_id'] = $mmm[1];
+    $args = [
+     'date' => get_http_var('d')
+    ];
 
-	// Glossary can be turned off in the url
-	if (get_http_var('ug') == 1) {
-		$args['glossarise'] = 0;
-	}
-	else {
-		$args['sort'] = "regexp_replace";
-		$GLOSSARY = new GLOSSARY($args);
-	}
+    $LIST = new DEBATELIST();
 
-	
-	$LIST = new DEBATELIST;
-	
-	$result = $LIST->display('gid', $args);
-	// If it is a redirect, change URL
-	if (is_string($result)) {
-		$URL = new URL('debates');
-		$URL->insert( array('id'=>$result) );
-		header('Location: http://' . DOMAIN . $URL->generate('none'), true, 301);
-		exit;
-	}
+    $LIST->display('date', $args);
+  }
 
-	
+}
+elseif (get_http_var('id') != "") {
+  // We have an id so show that item.
+  // Could be a section id (so we get a list of all the subsections in it),
+  // or a subsection id (so we'd get the whole debate),
+  // or an item id within a debate in which case we just get that item and some headings.
 
-	// We show trackbacks on this page.
-	
-	$args = array (
-		'epobject_id' => $LIST->epobject_id()
-	);
-	
-#	$TRACKBACK = new TRACKBACK;
-	
-#	$TRACKBACK->display('epobject_id', $args);
+  $this_page = "debates";
+
+  $args = [
+        'gid' => get_http_var('id'),
+  // Search terms to be highlighted.
+        's'    => get_http_var('s'),
+  // Member's speeches to be highlighted.
+        'member_id' => get_http_var('m'),
+  // Glossary is on by default.
+        'glossarise' => 1
+    ];
+
+  if (preg_match('/speaker:(\d+)/', get_http_var('s'), $mmm)) {
+    $args['person_id'] = $mmm[1];
+  }
+
+  // Glossary can be turned off in the url.
+  if (get_http_var('ug') == 1) {
+    $args['glossarise'] = 0;
+  }
+  else {
+    $args['sort'] = "regexp_replace";
+    $GLOSSARY = new GLOSSARY($args);
+  }
 
 
-	
-} elseif (get_http_var('y') != '') {
-	
-	// Show a calendar for a particular year's debates.
-	
-	$this_page = 'debatesyear';
-    $year = (is_numeric(get_http_var('y'))) ? get_http_var('y') : date('Y');
+  $LIST = new DEBATELIST();
 
-    $pagetitle = $DATA->page_metadata($this_page, 'title');
-    $DATA->set_page_metadata($this_page, 'title', $pagetitle.' '.$year);
-	
-	$PAGE->page_start();
+  $result = $LIST->display('gid', $args);
+  // If it is a redirect, change URL.
+  if (is_string($result)) {
+    $URL = new URL('debates');
+    $URL->insert(['id' => $result]);
+    header('Location: http://' . DOMAIN . $URL->generate('none'), TRUE, 301);
+    exit;
+  }
 
-	$PAGE->stripe_start();
 
-	$args = array (
-		'year' => $year
-	);
 
-	$LIST = new DEBATELIST;
-	
-	$LIST->display('calendar', $args);
+  // We show trackbacks on this page.
 
-	
-	$PAGE->stripe_end(array(
-		array (
-			'type' => 'nextprev'
-		),
-		array (
-			'type' => 'include',
-			'content' => "hocdebates"
-		)
-	));
-	
-} else {
-	// No date or debate id. Show recent years with debates on.
+  $args = [
+        'epobject_id' => $LIST->epobject_id()
+    ];
 
-	$this_page = "debatesfront";
-	
-	$PAGE->page_start();
+  // $TRACKBACK = new TRACKBACK;
 
-	$PAGE->stripe_start();
-	?>
-				<h4>Busiest debates from the most recent week</h4>
-<?php
-	
-	$DEBATELIST = new DEBATELIST;
-	$DEBATELIST->display('biggest_debates', array('days'=>7, 'num'=>20));
+  // $TRACKBACK->display('epobject_id', $args);
 
-	$rssurl = $DATA->page_metadata($this_page, 'rss');
-	$PAGE->stripe_end(array(
-		array (
-			'type' => 'nextprev'
-		),
-		array (
-			'type' => 'include',
-			'content' => 'calendar_hocdebates'
-		),
-		array (
-			'type' => 'include',
-			'content' => "hocdebates"
-		),
-		array (
-			'type' => 'html',
-			'content' => '<div class="block">
+
+
+}
+elseif (get_http_var('y') != '') {
+
+  // Show a calendar for a particular year's debates.
+
+  $this_page = 'debatesyear';
+  $year = (is_numeric(get_http_var('y'))) ? get_http_var('y') : date('Y');
+
+  $pagetitle = $DATA->page_metadata($this_page, 'title');
+  $DATA->set_page_metadata($this_page, 'title', $pagetitle . ' ' . $year);
+
+  $PAGE->page_start();
+
+  $PAGE->stripe_start();
+
+  $args = [
+        'year' => $year
+    ];
+
+  $LIST = new DEBATELIST();
+
+  $LIST->display('calendar', $args);
+
+
+  $PAGE->stripe_end([
+        [
+            'type' => 'nextprev'
+        ],
+        [
+            'type' => 'include',
+            'content' => "hocdebates"
+        ]
+    ]);
+
+}
+else {
+  // No date or debate id. Show recent years with debates on.
+
+  $this_page = "debatesfront";
+
+  $PAGE->page_start();
+
+  $PAGE->stripe_start();
+  ?>
+                <h4>Busiest debates from the most recent week</h4>
+  <?php
+
+  $DEBATELIST = new DEBATELIST();
+  $DEBATELIST->display('biggest_debates', ['days' => 7, 'num' => 20]);
+
+  $rssurl = $DATA->page_metadata($this_page, 'rss');
+  $PAGE->stripe_end([
+        [
+            'type' => 'nextprev'
+        ],
+        [
+            'type' => 'include',
+            'content' => 'calendar_hocdebates'
+        ],
+        [
+            'type' => 'include',
+            'content' => "hocdebates"
+        ],
+        [
+            'type' => 'html',
+            'content' => '<div class="block">
 <h4>RSS feed</h4>
 <p><a href="' . WEBPATH . $rssurl . '"><img align="middle" src="' . IMAGEPATH . 'rss.gif' . '" border="0" alt="RSS feed"></a>
 <a href="' . WEBPATH . $rssurl . '">RSS feed of most recent debates</a></p>
 </div>'
-		)
-	));
-	
+        ]
+    ]);
+
 }
 
 
 $PAGE->page_end();
 
 twfy_debug_timestamp("page end");
-
-?>

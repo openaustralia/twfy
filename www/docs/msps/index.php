@@ -1,43 +1,51 @@
 <?php
 
+/**
+ * @file
+ */
+
 include_once "../../includes/easyparliament/init.php";
-include_once INCLUDESPATH."easyparliament/people.php";
+include_once INCLUDESPATH . "easyparliament/people.php";
 
 $this_page = 'msps';
 
 if (get_http_var('f') != 'csv') {
-	$PAGE->page_start();
-	$PAGE->stripe_start();
-	$format = 'html';
-} else {
-	$format = 'csv';
+  $PAGE->page_start();
+  $PAGE->stripe_start();
+  $format = 'html';
+}
+else {
+  $format = 'csv';
 }
 
-$args = array();
+$args = [];
 
 if (get_http_var('o') == 'f') {
-	$args['order'] = 'first_name';
-} elseif (get_http_var('o') == 'l') {
-	$args['order'] = 'last_name';
-} elseif (get_http_var('o') == 'c') {
-	$args['order'] = 'constituency';
-} elseif (get_http_var('o') == 'p') {
-	$args['order'] = 'party';
-} elseif (get_http_var('o') == 'e') {
-	$args['order'] = 'expenses';
-} elseif (get_http_var('o') == 'd') {
-	$args['order'] = 'debates';
+  $args['order'] = 'first_name';
+}
+elseif (get_http_var('o') == 'l') {
+  $args['order'] = 'last_name';
+}
+elseif (get_http_var('o') == 'c') {
+  $args['order'] = 'constituency';
+}
+elseif (get_http_var('o') == 'p') {
+  $args['order'] = 'party';
+}
+elseif (get_http_var('o') == 'e') {
+  $args['order'] = 'expenses';
+}
+elseif (get_http_var('o') == 'd') {
+  $args['order'] = 'debates';
 }
 
-$PEOPLE = new PEOPLE;
+$PEOPLE = new PEOPLE();
 $PEOPLE->display('msps', $args, $format);
 
 if (get_http_var('f') != 'csv') {
-	$PAGE->stripe_end(array(
-		array('type'=>'include', 'content'=>'peers'),
-		array('type'=>'include', 'content'=>'donate')
-	));
-	$PAGE->page_end();
+  $PAGE->stripe_end([
+        ['type' => 'include', 'content' => 'peers'],
+        ['type' => 'include', 'content' => 'donate']
+    ]);
+  $PAGE->page_end();
 }
-
-?>

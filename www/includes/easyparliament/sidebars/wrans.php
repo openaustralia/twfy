@@ -1,10 +1,14 @@
 <?php
-// This sidebar is on the pages that show calendars of when Written Answers have occurred.
+
+/**
+ * @file
+ * This sidebar is on the pages that show calendars of when Written Answers have occurred.
+ */
 
 $URL = new URL('help');
 $helpurl = $URL->generate();
 
-$this->block_start(array('id'=>'help', 'title'=>"What are Written Answers?"));
+$this->block_start(['id' => 'help', 'title' => "What are Written Answers?"]);
 ?>
 
 <p>The <strong>parliamentary question</strong> is a great way for MPs and Peers to discover information which the government may not wish to reveal. Ministers reply via <strong>written answers</strong>, a list of which gets published daily. 
@@ -15,4 +19,3 @@ $this->block_start(array('id'=>'help', 'title'=>"What are Written Answers?"));
 </p>-->
 <?php
 $this->block_end();
-?>
