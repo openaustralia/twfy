@@ -9,6 +9,7 @@
   <arg value="np"/>
   <arg name="extensions" value="php"/>
   <arg name="encoding" value="UTF-8"/>
+  <arg name="tab-width" value="4"/>
 
   <!-- Disable a few sniffs. -->
   <rule ref="Drupal">

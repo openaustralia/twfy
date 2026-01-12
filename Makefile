@@ -24,7 +24,10 @@ docker-run:
 docker: docker-build docker-run
 
 lint:
-	./vendor/bin/phpcs --report=summary www scripts
+	./vendor/bin/phpcs --tab-width=4 --report=summary www scripts
+
+lint-verbose:
+	./vendor/bin/phpcs --tab-width=4 www scripts
 
 lint-ci:
-	./vendor/bin/phpcs www scripts --report=json --report-file=phpcs-report.json
+	./vendor/bin/phpcs --tab-width=4 www scripts --report=json --report-file=phpcs-report.json
