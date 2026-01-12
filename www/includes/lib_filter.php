@@ -27,10 +27,10 @@ class lib_filter {
    */
 
   public $allowed = [
-    'a' => ['href', 'target'],
-  // 'img' => array('src', 'width', 'height', 'alt'),
-    'b' => [],
-  ];
+        'a' => ['href', 'target'],
+        // 'img' => array('src', 'width', 'height', 'alt'),
+        'b' => [],
+    ];
 
 
   /**
@@ -91,7 +91,7 @@ class lib_filter {
    */
   public function check_tags($data) {
     $data = preg_replace_callback("/<(.*?)>/s", function ($matches) {
-      return $this->process_tag(stripslashes($matches[1]));
+        return $this->process_tag(stripslashes($matches[1]));
     }, $data);
 
     foreach (array_keys($this->tag_counts) as $tag) {

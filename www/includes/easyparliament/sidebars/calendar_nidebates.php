@@ -12,23 +12,22 @@ global $PAGE;
 // Contents varies depending on the page we're on...
 
 if ($this_page == 'nidebatesday') {
-  $date = get_http_var('d');
-  [$year, $month, $day] = explode('-', $date);
+    $date = get_http_var('d');
+    [$year, $month, $day] = explode('-', $date);
 
-  $args = [
+    $args = [
         'year' => $year,
         'month' => $month,
         'onday' => $date
     ];
-  $title = 'Debates this month';
+    $title = 'Debates this month';
 
-}
-else {
-  $args = [
-  // How many recent months to show.
+} else {
+    $args = [
+        // How many recent months to show.
         'months' => 1
     ];
-  $title = 'Recent debates';
+    $title = 'Recent debates';
 }
 
 $PAGE->block_start(['title' => $title]);

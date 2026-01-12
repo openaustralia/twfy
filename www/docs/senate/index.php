@@ -10,105 +10,101 @@ include_once INCLUDESPATH . "easyparliament/glossary.php";
 // For displaying all the Lords debates on a day, or a single debate.
 
 if (get_http_var("d") != "") {
-  if (get_http_var('c') != '') {
-    $this_page = 'lordsdebatescolumn';
+    if (get_http_var('c') != '') {
+        $this_page = 'lordsdebatescolumn';
+        $args = [
+            'date' => get_http_var('d'),
+            'column' => get_http_var('c')
+        ];
+        $LIST = new LORDSDEBATELIST();
+        $LIST->display('column', $args);
+    } else {
+        // We have a date. so show all debates on this day.
+
+        $this_page = "lordsdebatesday";
+
+        $args = [
+            'date' => get_http_var('d')
+        ];
+
+        $LIST = new LORDSDEBATELIST();
+
+        $LIST->display('date', $args);
+    }
+
+} elseif (get_http_var('id') != "") {
+    // We have an id so show that item.
+    // Could be a section id (so we get a list of all the subsections in it),
+    // or a subsection id (so we'd get the whole debate),
+    // or an item id within a debate in which case we just get that item and some headings.
+
+    $this_page = "lordsdebates";
+
     $args = [
-    'date' => get_http_var('d'),
-    'column' => get_http_var('c')
-   ];
-    $LIST = new LORDSDEBATELIST();
-    $LIST->display('column', $args);
-  }
-  else {
-    // We have a date. so show all debates on this day.
-
-    $this_page = "lordsdebatesday";
-
-    $args = [
-     'date' => get_http_var('d')
-    ];
-
-    $LIST = new LORDSDEBATELIST();
-
-    $LIST->display('date', $args);
-  }
-
-}
-elseif (get_http_var('id') != "") {
-  // We have an id so show that item.
-  // Could be a section id (so we get a list of all the subsections in it),
-  // or a subsection id (so we'd get the whole debate),
-  // or an item id within a debate in which case we just get that item and some headings.
-
-  $this_page = "lordsdebates";
-
-  $args = [
         'gid' => get_http_var('id'),
-  // Search terms to be highlighted.
-        's'    => get_http_var('s'),
-  // Member's speeches to be highlighted.
+        // Search terms to be highlighted.
+        's' => get_http_var('s'),
+        // Member's speeches to be highlighted.
         'member_id' => get_http_var('m'),
-  // Glossary is on by default.
+        // Glossary is on by default.
         'glossarise' => 1
     ];
 
-  if (preg_match('/speaker:(\d+)/', get_http_var('s'), $mmm)) {
-    $args['person_id'] = $mmm[1];
-  }
+    if (preg_match('/speaker:(\d+)/', get_http_var('s'), $mmm)) {
+        $args['person_id'] = $mmm[1];
+    }
 
-  // Glossary can be turned off in the url.
-  if (get_http_var('ug') == 1) {
-    $args['glossarise'] = 0;
-  }
-  else {
-    $args['sort'] = "regexp_replace";
-    $GLOSSARY = new GLOSSARY($args);
-  }
+    // Glossary can be turned off in the url.
+    if (get_http_var('ug') == 1) {
+        $args['glossarise'] = 0;
+    } else {
+        $args['sort'] = "regexp_replace";
+        $GLOSSARY = new GLOSSARY($args);
+    }
 
-  $LIST = new LORDSDEBATELIST();
+    $LIST = new LORDSDEBATELIST();
 
-  $result = $LIST->display('gid', $args);
-  // If it is a redirect, change URL.
-  if (is_string($result)) {
-    $URL = new URL('lordsdebates');
-    $URL->insert(['id' => $result]);
-    header('Location: http://' . DOMAIN . $URL->generate('none'), TRUE, 301);
-    exit;
-  }
+    $result = $LIST->display('gid', $args);
+    // If it is a redirect, change URL.
+    if (is_string($result)) {
+        $URL = new URL('lordsdebates');
+        $URL->insert(['id' => $result]);
+        header('Location: http://' . DOMAIN . $URL->generate('none'), TRUE, 301);
+        exit;
+    }
 
-  // We show trackbacks on this page.
-  // $args = array (
-  // 'epobject_id' => $LIST->epobject_id()
-  // );
-  // $TRACKBACK = new TRACKBACK;
-  // $TRACKBACK->display('epobject_id', $args);.
+    // We show trackbacks on this page.
+    // $args = array (
+    // 'epobject_id' => $LIST->epobject_id()
+    // );
+    // $TRACKBACK = new TRACKBACK;
+    // $TRACKBACK->display('epobject_id', $args);.
 
-}
-elseif (get_http_var('y') != '') {
+} elseif (get_http_var('y') != '') {
 
-  // Show a calendar for a particular year's debates.
+    // Show a calendar for a particular year's debates.
 
-  $this_page = 'lordsdebatesyear';
+    $this_page = 'lordsdebatesyear';
 
-  if (is_numeric(get_http_var('y'))) {
-    $pagetitle = $DATA->page_metadata($this_page, 'title');
-    $DATA->set_page_metadata($this_page, 'title', $pagetitle . ' ' . get_http_var('y'));
-  }
+    if (is_numeric(get_http_var('y'))) {
+        $pagetitle = $DATA->page_metadata($this_page, 'title');
+        $DATA->set_page_metadata($this_page, 'title', $pagetitle . ' ' . get_http_var('y'));
+    }
 
-  $PAGE->page_start();
+    $PAGE->page_start();
 
-  $PAGE->stripe_start();
+    $PAGE->stripe_start();
 
-  $args = [
+    $args = [
         'year' => get_http_var('y')
     ];
 
-  $LIST = new LORDSDEBATELIST();
+    $LIST = new LORDSDEBATELIST();
 
-  $LIST->display('calendar', $args);
+    $LIST->display('calendar', $args);
 
 
-  $PAGE->stripe_end([
+    $PAGE->stripe_end([
         [
             'type' => 'nextprev'
         ],
@@ -118,47 +114,45 @@ elseif (get_http_var('y') != '') {
         ]
     ]);
 
-}
-elseif (get_http_var('gid') != '') {
-  $this_page = 'lordsdebate';
-  $args = ['gid' => get_http_var('gid')];
-  $LORDSDEBATELIST = new LORDSDEBATELIST();
-  $result = $LORDSDEBATELIST->display('gid', $args);
-  // If it is a redirect, change URL.
-  if (is_string($result)) {
-    $URL = new URL('lordsdebate');
-    $URL->insert(['gid' => $result]);
-    header('Location: http://' . DOMAIN . $URL->generate('none'), TRUE, 301);
-    exit;
-  }
-  if ($LORDSDEBATELIST->htype() == '12' || $LORDSDEBATELIST->htype() == '13') {
-    $PAGE->stripe_start('side', 'comments');
-    $COMMENTLIST = new COMMENTLIST();
-    $args['user_id'] = get_http_var('u');
-    $args['epobject_id'] = $LORDSDEBATELIST->epobject_id();
-    $COMMENTLIST->display('ep', $args);
-    $PAGE->stripe_end();
-    // $TRACKBACK = new TRACKBACK;
-    // $TRACKBACK->display('epobject_id', $commendata);
-  }
-}
-else {
-  // No date or debate id. Show recent years with debates on.
+} elseif (get_http_var('gid') != '') {
+    $this_page = 'lordsdebate';
+    $args = ['gid' => get_http_var('gid')];
+    $LORDSDEBATELIST = new LORDSDEBATELIST();
+    $result = $LORDSDEBATELIST->display('gid', $args);
+    // If it is a redirect, change URL.
+    if (is_string($result)) {
+        $URL = new URL('lordsdebate');
+        $URL->insert(['gid' => $result]);
+        header('Location: http://' . DOMAIN . $URL->generate('none'), TRUE, 301);
+        exit;
+    }
+    if ($LORDSDEBATELIST->htype() == '12' || $LORDSDEBATELIST->htype() == '13') {
+        $PAGE->stripe_start('side', 'comments');
+        $COMMENTLIST = new COMMENTLIST();
+        $args['user_id'] = get_http_var('u');
+        $args['epobject_id'] = $LORDSDEBATELIST->epobject_id();
+        $COMMENTLIST->display('ep', $args);
+        $PAGE->stripe_end();
+        // $TRACKBACK = new TRACKBACK;
+        // $TRACKBACK->display('epobject_id', $commendata);
+    }
+} else {
+    // No date or debate id. Show recent years with debates on.
 
-  $this_page = "lordsdebatesfront";
+    $this_page = "lordsdebatesfront";
 
-  $PAGE->page_start();
+    $PAGE->page_start();
 
-  $PAGE->stripe_start();
-  ?>
-                <h4>Busiest debates from the most recent week</h4>
-  <?php
+    $PAGE->stripe_start();
+    ?>
+    <h4>Busiest debates from the most recent week</h4>
+    <?php
 
-  $LORDSDEBATELIST = new LORDSDEBATELIST();
-  $LORDSDEBATELIST->display('biggest_debates', ['days' => 7, 'num' => 20]);
+    $LORDSDEBATELIST = new LORDSDEBATELIST();
+    $LORDSDEBATELIST->display('biggest_debates', ['days' => 7, 'num' => 20]);
 
-  $rssurl = $DATA->page_metadata($this_page, 'rss');
-  $PAGE->stripe_end([
+    $rssurl = $DATA->page_metadata($this_page, 'rss');
+    $PAGE->stripe_end([
         [
             'type' => 'nextprev'
         ],
