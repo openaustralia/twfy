@@ -9,19 +9,19 @@ include_once '../../../../phplib/rabx.php';
 // The METHODS.
 
 $methods = [
-/*    'convertURL' => array(
-        'parameters' => array('url'),
-        'required' => true,
-        'help' => 'Converts a parliament.uk Hansard URL into a TheyWorkForYou one, if possible',
-    ),
- */
-  'getDivisions' => [
-// 'parameters' => array('date', 'search', 'latitude', 'longitude', 'distance'),
-    'parameters' => ['postcode', 'date', 'search'],
-    'required' => FALSE,
-    'help' => 'Returns list of electoral divisions',
-  ],
-  'getRepresentative' => [
+    /*    'convertURL' => array(
+            'parameters' => array('url'),
+            'required' => true,
+            'help' => 'Converts a parliament.uk Hansard URL into a TheyWorkForYou one, if possible',
+        ),
+     */
+    'getDivisions' => [
+        // 'parameters' => array('date', 'search', 'latitude', 'longitude', 'distance'),
+        'parameters' => ['postcode', 'date', 'search'],
+        'required' => FALSE,
+        'help' => 'Returns list of electoral divisions',
+    ],
+    'getRepresentative' => [
         'parameters' => ['id', 'division', 'always_return'],
         'required' => TRUE,
         'help' => 'Returns main details for a member of the House of Representatives'
@@ -37,21 +37,21 @@ $methods = [
         'help' => 'Returns extra information for one or more people'
     ),
      */
-  'getRepresentatives' => [
-    'parameters' => ['postcode', 'party', 'date', 'search'],
-    'required' => FALSE,
-    'help' => 'Returns list of members of the House of Representatives',
-  ],
-  'getSenator' => [
+    'getRepresentatives' => [
+        'parameters' => ['postcode', 'party', 'date', 'search'],
+        'required' => FALSE,
+        'help' => 'Returns list of members of the House of Representatives',
+    ],
+    'getSenator' => [
         'parameters' => ['id'],
         'required' => TRUE,
         'help' => 'Returns details for a Senator'
     ],
-  'getSenators' => [
-    'parameters' => ['date', 'party', 'state', 'search'],
-    'required' => FALSE,
-    'help' => 'Returns list of Senators',
-  ],
+    'getSenators' => [
+        'parameters' => ['date', 'party', 'state', 'search'],
+        'required' => FALSE,
+        'help' => 'Returns list of Senators',
+    ],
     /*    'getMLAs' => array(
         'parameters' => array('date', 'party', 'search'),
         'required' => false,
@@ -87,11 +87,11 @@ $methods = [
         'help' => 'Returns members of Select Committee',
     ),
      */
-  'getDebates' => [
-    'parameters' => ['type', 'date', 'search', 'person', 'gid', 'year', 'order', 'page', 'num'],
-    'required' => TRUE,
-    'help' => 'Returns Debates (either House of Representatives or Senate)',
-  ],
+    'getDebates' => [
+        'parameters' => ['type', 'date', 'search', 'person', 'gid', 'year', 'order', 'page', 'num'],
+        'required' => TRUE,
+        'help' => 'Returns Debates (either House of Representatives or Senate)',
+    ],
     /*    'getWrans' => array(
         'parameters' => array('date', 'search', 'person', 'gid', 'year', 'order', 'page', 'num'),
         'required' => true,
@@ -103,12 +103,12 @@ $methods = [
         'help' => 'Returns Written Ministerial Statements',
     ),
      */
-  'getHansard' => [
-    'parameters' => ['search', 'person', 'order', 'page', 'num'],
-    'required' => TRUE,
-    'help' => 'Returns any of the above',
-  ],
-  'getComments' => [
+    'getHansard' => [
+        'parameters' => ['search', 'person', 'order', 'page', 'num'],
+        'required' => TRUE,
+        'help' => 'Returns any of the above',
+    ],
+    'getComments' => [
         'parameters' => ['search', 'page', 'num', 'pid'],
         'required' => FALSE,
         'help' => 'Returns comments'
@@ -125,169 +125,173 @@ $methods = [
 /**
  * Key-related functions.
  */
-function api_log_call($key) {
-  if ($key == 'DOCS') {
-    return;
-  }
-  $ip = $_SERVER['REMOTE_ADDR'];
-  $query = $_SERVER['REQUEST_URI'];
-  $query = preg_replace('#key=[A-Za-z0-9]+&?#', '', $query);
-  $db = new ParlDB();
-  $db->query("INSERT INTO api_stats (api_key, ip_address, query_time, query)
+function api_log_call($key)
+{
+    if ($key == 'DOCS') {
+        return;
+    }
+    $ip = $_SERVER['REMOTE_ADDR'];
+    $query = $_SERVER['REQUEST_URI'];
+    $query = preg_replace('#key=[A-Za-z0-9]+&?#', '', $query);
+    $db = new ParlDB();
+    $db->query("INSERT INTO api_stats (api_key, ip_address, query_time, query)
 		VALUES ('$key', '$ip', NOW(), '" . mysqli_real_escape_string($db, $query) . "')");
 }
 
 /**
  *
  */
-function api_check_key($key) {
-  $db = new ParlDB();
-  $q = $db->query('SELECT user_id FROM api_key WHERE api_key="' . mysqli_real_escape_string($db, $key) . '"');
-  if (!$q->rows()) {
-    return FALSE;
-  }
-  return TRUE;
+function api_check_key($key)
+{
+    $db = new ParlDB();
+    $q = $db->query('SELECT user_id FROM api_key WHERE api_key="' . mysqli_real_escape_string($db, $key) . '"');
+    if (!$q->rows()) {
+        return FALSE;
+    }
+    return TRUE;
 }
 
 /**
  *
  */
-function api_key_current_message() {}
+function api_key_current_message()
+{
+}
 
 /**
  * Front-end sidebar of all methods.
  */
-function api_sidebar() {
-  global $methods;
-  $sidebar = '<div class="block"><h4>API Functions</h4> <div class="blockbody"><ul>';
-  foreach ($methods as $method => $data) {
-    $sidebar .= '<li';
-    if (isset($data['new'])) {
-      $sidebar .= ' style="border-top: solid 1px #999999;"';
+function api_sidebar()
+{
+    global $methods;
+    $sidebar = '<div class="block"><h4>API Functions</h4> <div class="blockbody"><ul>';
+    foreach ($methods as $method => $data) {
+        $sidebar .= '<li';
+        if (isset($data['new'])) {
+            $sidebar .= ' style="border-top: solid 1px #999999;"';
+        }
+        $sidebar .= '>';
+        if (!isset($data['working']) || $data['working']) {
+            $sidebar .= '<a href="' . WEBPATH . 'api/docs/' . $method . '">';
+        }
+        $sidebar .= $method;
+        if (!isset($data['working']) || $data['working']) {
+            $sidebar .= '</a>';
+        } else {
+            $sidebar .= ' - <em>not written yet</em>';
+        }
+        // If ($data['required'])
+        // $sidebar .= ' (parameter required)';
+        // else
+        // $sidebar .= ' (parameter optional)';.
+        $sidebar .= '<br>' . $data['help'];
+        // $sidebar .= '<ul>';
+        // foreach ($data['parameters'] as $parameter) {
+        // $sidebar .= '<li>' . $parameter . '</li>';
+        // }
+        // $sidebar .= '</ul>';
+        $sidebar .= '</li>';
     }
-    $sidebar .= '>';
-    if (!isset($data['working']) || $data['working']) {
-      $sidebar .= '<a href="' . WEBPATH . 'api/docs/' . $method . '">';
-    }
-    $sidebar .= $method;
-    if (!isset($data['working']) || $data['working']) {
-      $sidebar .= '</a>';
-    }
-    else {
-      $sidebar .= ' - <em>not written yet</em>';
-    }
-    // If ($data['required'])
-    // $sidebar .= ' (parameter required)';
-    // else
-    // $sidebar .= ' (parameter optional)';.
-    $sidebar .= '<br>' . $data['help'];
-    // $sidebar .= '<ul>';
-    // foreach ($data['parameters'] as $parameter) {
-    // $sidebar .= '<li>' . $parameter . '</li>';
-    // }
-    // $sidebar .= '</ul>';
-    $sidebar .= '</li>';
-  }
-  $sidebar .= '</ul></div></div>';
-  $sidebar = [
+    $sidebar .= '</ul></div></div>';
+    $sidebar = [
         'type' => 'html',
         'content' => $sidebar
     ];
-  return $sidebar;
+    return $sidebar;
 }
 
 /**
  * Output functions.
  */
-function api_output($arr, $last_mod = NULL) {
-  $output = get_http_var('output');
-  if (!get_http_var('docs')) {
-    $cond = api_header($output, $last_mod);
-    if ($cond) {
-      return;
+function api_output($arr, $last_mod = NULL)
+{
+    $output = get_http_var('output');
+    if (!get_http_var('docs')) {
+        $cond = api_header($output, $last_mod);
+        if ($cond) {
+            return;
+        }
     }
-  }
-  if ($output == 'xml') {
-    $out = '<?xml version="1.0" encoding="iso-8859-1"?>' . "\n";
-    $out .= '<result>' . api_output_xml($arr) . '</result>';
-  }
-  elseif ($output == 'php') {
-    $out = api_output_php($arr);
-  }
-  elseif ($output == 'rabx') {
-    $out = api_output_rabx($arr);
-  }
-  // JS.
-  else {
-    $out = api_output_js($arr);
-    $callback = get_http_var('callback');
-    if (preg_match('#^[A-Za-z0-9._[\]]+$#', $callback)) {
-      $out = "$callback($out)";
+    if ($output == 'xml') {
+        $out = '<?xml version="1.0" encoding="iso-8859-1"?>' . "\n";
+        $out .= '<result>' . api_output_xml($arr) . '</result>';
+    } elseif ($output == 'php') {
+        $out = api_output_php($arr);
+    } elseif ($output == 'rabx') {
+        $out = api_output_rabx($arr);
     }
-  }
-  print $out;
-}
-
-/**
- *
- */
-function api_header($o, $last_mod = NULL) {
-  if ($last_mod && array_key_exists('HTTP_IF_MODIFIED_SINCE', $_SERVER)) {
-    $t = cond_parse_http_date($_SERVER['HTTP_IF_MODIFIED_SINCE']);
-    if (isset($t) && $t >= $last_mod) {
-      header('HTTP/1.0 304 Not Modified');
-      header('Last-Modified: ' . date('r', $last_mod));
-      return TRUE;
+    // JS.
+    else {
+        $out = api_output_js($arr);
+        $callback = get_http_var('callback');
+        if (preg_match('#^[A-Za-z0-9._[\]]+$#', $callback)) {
+            $out = "$callback($out)";
+        }
     }
-  }
-  if ($o == 'xml') {
-    $type = 'text/xml';
-  }
-  elseif ($o == 'php') {
-    $type = 'text/php';
-  }
-  elseif ($o == 'rabx') {
-    $type = 'application/octet-stream';
-  }
-  else {
-    $type = 'text/javascript';
-  }
-  // $type = 'text/plain';
-  header("Content-Type: $type; charset=iso-8859-1");
-  if ($last_mod > 0) {
-    header('Last-Modified: ' . date('r', $last_mod));
-  }
-  return FALSE;
+    print $out;
 }
 
 /**
  *
  */
-function api_error($e) {
-  api_output(['error' => $e]);
+function api_header($o, $last_mod = NULL)
+{
+    if ($last_mod && array_key_exists('HTTP_IF_MODIFIED_SINCE', $_SERVER)) {
+        $t = cond_parse_http_date($_SERVER['HTTP_IF_MODIFIED_SINCE']);
+        if (isset($t) && $t >= $last_mod) {
+            header('HTTP/1.0 304 Not Modified');
+            header('Last-Modified: ' . date('r', $last_mod));
+            return TRUE;
+        }
+    }
+    if ($o == 'xml') {
+        $type = 'text/xml';
+    } elseif ($o == 'php') {
+        $type = 'text/php';
+    } elseif ($o == 'rabx') {
+        $type = 'application/octet-stream';
+    } else {
+        $type = 'text/javascript';
+    }
+    // $type = 'text/plain';
+    header("Content-Type: $type; charset=iso-8859-1");
+    if ($last_mod > 0) {
+        header('Last-Modified: ' . date('r', $last_mod));
+    }
+    return FALSE;
 }
 
 /**
  *
  */
-function api_output_php($arr) {
-  $out = serialize($arr);
-  if (get_http_var('verbose')) {
-    $out = str_replace(';', ";\n", $out);
-  }
-  return $out;
+function api_error($e)
+{
+    api_output(['error' => $e]);
 }
 
 /**
  *
  */
-function api_output_rabx($arr) {
-  $out = '';
-  rabx_wire_wr($arr, $out);
-  if (get_http_var('verbose')) {
-    $out = str_replace(',', ",\n", $out);
-  }
-  return $out;
+function api_output_php($arr)
+{
+    $out = serialize($arr);
+    if (get_http_var('verbose')) {
+        $out = str_replace(';', ";\n", $out);
+    }
+    return $out;
+}
+
+/**
+ *
+ */
+function api_output_rabx($arr)
+{
+    $out = '';
+    rabx_wire_wr($arr, $out);
+    if (get_http_var('verbose')) {
+        $out = str_replace(',', ",\n", $out);
+    }
+    return $out;
 }
 
 $api_xml_arr = 0;
@@ -295,92 +299,89 @@ $api_xml_arr = 0;
 /**
  *
  */
-function api_output_xml($v, $k = NULL) {
-  global $api_xml_arr;
-  $verbose = get_http_var('verbose') ? "\n" : '';
-  if (is_array($v)) {
-    if (count($v) && array_keys($v) === range(0, count($v) - 1)) {
-      $elt = 'match';
-      $api_xml_arr++;
-      $out = "<$elt>";
-      $out .= join("</$elt>$verbose<$elt>", array_map('api_output_xml', $v));
-      $out .= "</$elt>$verbose";
-      return $out;
+function api_output_xml($v, $k = NULL)
+{
+    global $api_xml_arr;
+    $verbose = get_http_var('verbose') ? "\n" : '';
+    if (is_array($v)) {
+        if (count($v) && array_keys($v) === range(0, count($v) - 1)) {
+            $elt = 'match';
+            $api_xml_arr++;
+            $out = "<$elt>";
+            $out .= join("</$elt>$verbose<$elt>", array_map('api_output_xml', $v));
+            $out .= "</$elt>$verbose";
+            return $out;
+        }
+        $out = '';
+        foreach ($v as $k => $vv) {
+            $out .= "<$k>";
+            $out .= api_output_xml($vv, $k);
+            $out .= "</$k>$verbose";
+        }
+        return $out;
+    } else {
+        return htmlspecialchars($v);
     }
-    $out = '';
-    foreach ($v as $k => $vv) {
-      $out .= "<$k>";
-      $out .= api_output_xml($vv, $k);
-      $out .= "</$k>$verbose";
-    }
-    return $out;
-  }
-  else {
-    return htmlspecialchars($v);
-  }
 }
 
 /**
  *
  */
-function api_output_js($v, $level = 0) {
-  $verbose = get_http_var('verbose') ? "\n" : '';
-  if (is_array($v)) {
-    // PHP arrays are both JS arrays and objects.
-    if (count($v) && array_keys($v) === range(0, count($v) - 1)) {
-      return '[' . join(",$verbose", array_map('api_output_js', $v)) . ']';
+function api_output_js($v, $level = 0)
+{
+    $verbose = get_http_var('verbose') ? "\n" : '';
+    if (is_array($v)) {
+        // PHP arrays are both JS arrays and objects.
+        if (count($v) && array_keys($v) === range(0, count($v) - 1)) {
+            return '[' . join(",$verbose", array_map('api_output_js', $v)) . ']';
+        }
+        $out = '{' . $verbose;
+        $b = FALSE;
+        foreach ($v as $k => $vv) {
+            if ($b) {
+                $out .= ",$verbose";
+            }
+            if ($verbose) {
+                $out .= str_repeat(' ', ($level + 1) * 2);
+                $out .= '"' . $k . '" : ';
+            } else {
+                $out .= '"' . $k . '":';
+            }
+            $out .= api_output_js($vv, $level + 1);
+            $b = TRUE;
+        }
+        if ($verbose) {
+            $out .= "\n" . str_repeat(' ', $level * 2);
+        }
+        $out .= '}';
+        return $out;
+    } elseif (is_null($v)) {
+        return "null";
+    } elseif (is_string($v)) {
+        return '"' . str_replace(
+            ["\\", '"', "\n", "\t", "\r"],
+            ["\\\\", '\"', '\n', '\t', '\r'],
+            $v
+        ) . '"';
+    } elseif (is_bool($v)) {
+        return $v ? 'true' : 'false';
+    } elseif (is_int($v) || is_float($v)) {
+        return $v;
     }
-    $out = '{' . $verbose;
-    $b = FALSE;
-    foreach ($v as $k => $vv) {
-      if ($b) {
-        $out .= ",$verbose";
-      }
-      if ($verbose) {
-        $out .= str_repeat(' ', ($level + 1) * 2);
-        $out .= '"' . $k . '" : ';
-      }
-      else {
-        $out .= '"' . $k . '":';
-      }
-      $out .= api_output_js($vv, $level + 1);
-      $b = TRUE;
-    }
-    if ($verbose) {
-      $out .= "\n" . str_repeat(' ', $level * 2);
-    }
-    $out .= '}';
-    return $out;
-  }
-  elseif (is_null($v)) {
-    return "null";
-  }
-  elseif (is_string($v)) {
-    return '"' . str_replace(
-    ["\\", '"', "\n", "\t", "\r"],
-    ["\\\\", '\"', '\n', '\t', '\r'], $v) . '"';
-  }
-  elseif (is_bool($v)) {
-    return $v ? 'true' : 'false';
-  }
-  elseif (is_int($v) || is_float($v)) {
-    return $v;
-  }
 }
 
 /**
  * Call an API function.
  */
-function api_call_user_func_or_error($function, $params, $error, $type) {
-  if (function_exists($function)) {
-    call_user_func_array($function, $params);
-  }
-  elseif ($type == 'api') {
-    api_error($error);
-  }
-  else {
-    print "<p style='color:#cc0000'>$error</p>";
-  }
+function api_call_user_func_or_error($function, $params, $error, $type)
+{
+    if (function_exists($function)) {
+        call_user_func_array($function, $params);
+    } elseif ($type == 'api') {
+        api_error($error);
+    } else {
+        print "<p style='color:#cc0000'>$error</p>";
+    }
 }
 
 // Used for testing for conditional responses.
@@ -390,17 +391,17 @@ $cond_weekday_re = '(Sunday|Monday|Tuesday|Wednesday|Thursday|Friday|Saturday)';
 $cond_month_re = '(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)';
 $cond_month_map = [
     'Jan' => 1,
-'Feb' => 2,
-'Mar' => 3,
-'Apr' => 4,
+    'Feb' => 2,
+    'Mar' => 3,
+    'Apr' => 4,
     'May' => 5,
-'Jun' => 6,
-'Jul' => 7,
-'Aug' => 8,
+    'Jun' => 6,
+    'Jul' => 7,
+    'Aug' => 8,
     'Sep' => 9,
-'Oct' => 10,
-'Nov' => 11,
-'Dec' => 12
+    'Oct' => 10,
+    'Nov' => 11,
+    'Dec' => 12
 ];
 
 $cond_date1_re = '(\d\d) ' . $cond_month_re . ' (\d\d\d\d)';
@@ -412,43 +413,41 @@ $cond_time_re = '([01][0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9]|6[012])';
 /**
  *
  */
-function cond_parse_http_date($date) {
-  $H = $M = $S = 0;
-  $Y = $m = $d = 0;
+function cond_parse_http_date($date)
+{
+    $H = $M = $S = 0;
+    $Y = $m = $d = 0;
 
-  $ma = [];
-  global $cond_wkday_re, $cond_weekday_re, $cond_month_re, $cond_month_map,
-  $cond_date1_re, $cond_date2_re, $cond_date3_re, $cond_time_re;
-  if (preg_match("/^$cond_wkday_re, $cond_date1_re $cond_time_re GMT\$/", $date, $ma)) {
-    /* RFC 1123 */
-    $d = $ma[2];
-    $m = $cond_month_map[$ma[3]];
-    $Y = $ma[4];
-    $H = $ma[5];
-    $M = $ma[6];
-    $S = $ma[7];
-  }
-  elseif (preg_match("/^$cond_weekday_re, $cond_date2_re $cond_time_re GMT\$/", $date, $ma)) {
-    /* RFC 850 */
-    $d = $ma[2];
-    $m = $cond_month_map[$ma[3]];
-    $Y = $ma[4] + ($ma[4] < 50 ? 2000 : 1900); /* XXX */
-    $H = $ma[5];
-    $M = $ma[6];
-    $S = $ma[7];
-  }
-  elseif (preg_match("/^$cond_wkday_re $cond_date3_re $cond_time_re (\\d{4})\$/", $date, $ma)) {
-    /* asctime(3) */
-    $d = preg_replace('/ /', '', $ma[3]);
-    $m = $cond_month_map[$ma[2]];
-    $Y = $ma[7];
-    $H = $ma[4];
-    $M = $ma[5];
-    $S = $ma[6];
-  }
-  else {
-    return NULL;
-  }
+    $ma = [];
+    global $cond_wkday_re, $cond_weekday_re, $cond_month_re, $cond_month_map,
+    $cond_date1_re, $cond_date2_re, $cond_date3_re, $cond_time_re;
+    if (preg_match("/^$cond_wkday_re, $cond_date1_re $cond_time_re GMT\$/", $date, $ma)) {
+        /* RFC 1123 */
+        $d = $ma[2];
+        $m = $cond_month_map[$ma[3]];
+        $Y = $ma[4];
+        $H = $ma[5];
+        $M = $ma[6];
+        $S = $ma[7];
+    } elseif (preg_match("/^$cond_weekday_re, $cond_date2_re $cond_time_re GMT\$/", $date, $ma)) {
+        /* RFC 850 */
+        $d = $ma[2];
+        $m = $cond_month_map[$ma[3]];
+        $Y = $ma[4] + ($ma[4] < 50 ? 2000 : 1900); /* XXX */
+        $H = $ma[5];
+        $M = $ma[6];
+        $S = $ma[7];
+    } elseif (preg_match("/^$cond_wkday_re $cond_date3_re $cond_time_re (\\d{4})\$/", $date, $ma)) {
+        /* asctime(3) */
+        $d = preg_replace('/ /', '', $ma[3]);
+        $m = $cond_month_map[$ma[2]];
+        $Y = $ma[7];
+        $H = $ma[4];
+        $M = $ma[5];
+        $S = $ma[6];
+    } else {
+        return NULL;
+    }
 
-  return gmmktime($H, $M, $S, $m, $d, $Y);
+    return gmmktime($H, $M, $S, $m, $d, $Y);
 }
