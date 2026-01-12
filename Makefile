@@ -24,4 +24,4 @@ docker-run:
 docker: docker-build docker-run
 
 lint:
-	./scripts/lint.sh www
+	./vendor/bin/phpcs --report=summary www scripts
