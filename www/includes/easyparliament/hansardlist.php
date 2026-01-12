@@ -49,6 +49,8 @@ include_once INCLUDESPATH . "easyparliament/searchlog.php";
 class HANSARDLIST
 {
 
+    private $db = null;
+
     // We add 'wrans' or 'debate' onto the end of this in the appropriate classes'
     // constructors.
     // If you change this, change it in COMMENTSLIST->_fix_gid() too!
@@ -56,7 +58,6 @@ class HANSARDLIST
      * And in TRACKBACK too.
      */
     public $gidprefix = 'uk.org.publicwhip/';
-
 
     // This will be used to cache information about speakers on this page.
     /**
@@ -116,9 +117,53 @@ class HANSARDLIST
     /**
      *
      */
-    public function HANSARDLIST()
-    {
-        $this->db = new ParlDB();
+    public function __construct() {
+      $this->db = new ParlDB();
+    }
+
+  /**
+   *
+   */
+  public function display($view, $args = [], $format = 'html') {
+    // $view is what we're viewing by:
+    //     'gid' is the gid of a hansard object,
+    //    'date' is all items on a date,
+    //    'person' is a person's recent debates/wrans,
+    //    'recent' is a number of recent dates with items in.
+    //  'recent_mostvotes' is the speeches with the most votes in the last x days.
+    //    'search' is all debates/wrans that match a search term.
+    //    'biggest_debates' is biggest recent debates (obviously only for DEBATESLIST).
+    //  'recent_wrans' is some recent written answers (obv only for WRANSLIST).
+
+    // $args is an associative array of stuff like
+    //    'gid' => '2003-10-30.422.4'  or
+    //    'd' => '2003-12-31' or
+    //    's' => 'my search term'
+    //    'o' => Sort order: 'r' for relevance, 'd' for date
+
+    // $format is the format the data should be rendered in,
+    // using that set of templates (or 'none' for just returning
+    // the data).
+
+    global $PAGE;
+
+    $validviews = ['calendar', 'date', 'gid', 'person', 'search', 'search_min', 'recent', 'recent_mostvotes', 'biggest_debates', 'recent_wrans', 'recent_wms', 'column', 'mp', 'bill', 'session', 'recent_debates'];
+    if (in_array($view, $validviews)) {
+
+      // What function do we call for this view?
+      $function = '_get_data_by_' . $view;
+      // Get all the data that's to be rendered.
+      $data = $this->$function($args);
+      if (isset($data['info']['redirected_gid'])) {
+        return $data['info']['redirected_gid'];
+      }
+
+    }
+    else {
+      // Don't have a valid $view.
+      $PAGE->error_message("You haven't specified a view type.");
+      return FALSE;
+>>>>>>> 7284246 (fix: Stop with all the errors.)
     }
 
     /**

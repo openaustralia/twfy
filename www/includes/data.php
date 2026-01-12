@@ -166,7 +166,7 @@ class DATA {
   /**
    * Only accessed through page_metadata() or section_metadata()
    */
-  public function _get_metadata($args = "", $type) {
+  public function _get_metadata($args, $type) {
     // $type is either 'page' or 'section'
     global $this_page, $this_section;
 
