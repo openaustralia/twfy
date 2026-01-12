@@ -8,7 +8,7 @@ OpenAustralia.org.au is a website run by the non-partisan charity, OpenAustralia
 
  == What is this data? ==
 
-Everything MPs say in Australia's Senate and Parliament is recorded in Australia's Official Hansard. This documentation is obtained using scapers (see https://github.com/openaustralia/openaustralia-parser/ )
+Everything elected politicians say in Australia's Senate and Parliament is recorded in Australia's Official Hansard. This documentation is obtained using scapers (see https://github.com/openaustralia/openaustralia-parser/ )
 and displayed on openaustralia.org.au. 
 
 === data feeds ==
