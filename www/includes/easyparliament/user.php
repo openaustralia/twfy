@@ -146,26 +146,26 @@ class USER {
 								deleted,
 								confirmed
 						FROM 	users
-						WHERE 	user_id='" . mysqli_real_escape_string($db, $user_id) . "'");
+						WHERE 	user_id='" . mysqli_real_escape_string($this->db->conn, $user_id) . "'");
 
     if ($q->rows() == 1) {
       // We've got a user, so set them up.
 
-      $this->user_id          = $user_id;
-      $this->firstname        = $q->field(0, "firstname");
-      $this->lastname         = $q->field(0, "lastname");
-      $this->password         = $q->field(0, "password");
-      $this->email            = $q->field(0, "email");
-      $this->emailpublic      = $q->field(0, "emailpublic") == 1 ? TRUE : FALSE;
-      $this->constituency     = $q->field(0, "constituency");
-      $this->url              = $q->field(0, "url");
-      $this->lastvisit        = $q->field(0, "lastvisit");
+      $this->user_id = $user_id;
+      $this->firstname = $q->field(0, "firstname");
+      $this->lastname = $q->field(0, "lastname");
+      $this->password = $q->field(0, "password");
+      $this->email = $q->field(0, "email");
+      $this->emailpublic = $q->field(0, "emailpublic") == 1 ? TRUE : FALSE;
+      $this->constituency = $q->field(0, "constituency");
+      $this->url = $q->field(0, "url");
+      $this->lastvisit = $q->field(0, "lastvisit");
       $this->registrationtime = $q->field(0, "registrationtime");
-      $this->registrationip   = $q->field(0, "registrationip");
-      $this->optin            = $q->field(0, "optin") == 1 ? TRUE : FALSE;
-      $this->status           = $q->field(0, "status");
-      $this->deleted          = $q->field(0, "deleted") == 1 ? TRUE : FALSE;
-      $this->confirmed        = $q->field(0, "confirmed") == 1 ? TRUE : FALSE;
+      $this->registrationip = $q->field(0, "registrationip");
+      $this->optin = $q->field(0, "optin") == 1 ? TRUE : FALSE;
+      $this->status = $q->field(0, "status");
+      $this->deleted = $q->field(0, "deleted") == 1 ? TRUE : FALSE;
+      $this->confirmed = $q->field(0, "confirmed") == 1 ? TRUE : FALSE;
 
       return TRUE;
 
@@ -231,17 +231,17 @@ class USER {
 				registrationip,
 				deleted
 			) VALUES (
-				'" . mysqli_real_escape_string($db, $details["firstname"]) . "',
-				'" . mysqli_real_escape_string($db, $details["lastname"]) . "',
-				'" . mysqli_real_escape_string($db, $details["email"]) . "',
-				'" . mysqli_real_escape_string($db, $emailpublic) . "',
-				'" . mysqli_real_escape_string($db, $details["constituency"]) . "',				
-				'" . mysqli_real_escape_string($db, $details["url"]) . "',
-				'" . mysqli_real_escape_string($db, $passwordforDB) . "',
-				'" . mysqli_real_escape_string($db, $optin) . "',
-				'" . mysqli_real_escape_string($db, $details["status"]) . "',
-				'" . mysqli_real_escape_string($db, $registrationtime) . "',
-				'" . mysqli_real_escape_string($db, $REMOTE_ADDR) . "',
+				'" . mysqli_real_escape_string($this->db->conn, $details["firstname"]) . "',
+				'" . mysqli_real_escape_string($this->db->conn, $details["lastname"]) . "',
+				'" . mysqli_real_escape_string($this->db->conn, $details["email"]) . "',
+				'" . mysqli_real_escape_string($this->db->conn, $emailpublic) . "',
+				'" . mysqli_real_escape_string($this->db->conn, $details["constituency"]) . "',
+				'" . mysqli_real_escape_string($this->db->conn, $details["url"]) . "',
+				'" . mysqli_real_escape_string($this->db->conn, $passwordforDB) . "',
+				'" . mysqli_real_escape_string($this->db->conn, $optin) . "',
+				'" . mysqli_real_escape_string($this->db->conn, $details["status"]) . "',
+				'" . mysqli_real_escape_string($this->db->conn, $registrationtime) . "',
+				'" . mysqli_real_escape_string($this->db->conn, $REMOTE_ADDR) . "',
 				'0'
 			)
 		");
@@ -268,8 +268,8 @@ class USER {
 
       // Add that to the DB.
       $r = $this->db->query("UPDATE users
-							SET	registrationtoken = '" . mysqli_real_escape_string($db, $this->registrationtoken) . "'
-							WHERE	user_id = '" . mysqli_real_escape_string($db, $this->user_id) . "'
+							SET	registrationtoken = '" . mysqli_real_escape_string($this->db->conn, $this->registrationtoken) . "'
+							WHERE	user_id = '" . mysqli_real_escape_string($this->db->conn, $this->user_id) . "'
 							");
 
       if ($r->success()) {
@@ -281,9 +281,9 @@ class USER {
           // No confirmation email, but don't automatically confirm.
           $ALERT = new ALERT();
           $ALERT->add([
-          'email' => $details['email'],
-          'pid' => $pid
-], FALSE, FALSE);
+            'email' => $details['email'],
+            'pid' => $pid
+            ], FALSE, FALSE);
         }
 
         if ($confirmation_required) {
@@ -327,9 +327,11 @@ class USER {
     // passed on to us here.
 
     // A brief check of the facts...
-    if (!is_numeric($this->user_id) ||
-    !isset($details['email']) ||
-    $details['email'] == '') {
+    if (
+          !is_numeric($this->user_id) ||
+          !isset($details['email']) ||
+          $details['email'] == ''
+      ) {
       return FALSE;
     }
 
@@ -342,15 +344,15 @@ class USER {
 
     // Arrays we need to send a templated email.
     $data = [
-    'to'         => $details['email'],
-    'template'     => 'join_confirmation'
-     ];
+          'to' => $details['email'],
+          'template' => 'join_confirmation'
+      ];
 
     $merge = [
-    'FIRSTNAME'     => $details['firstname'],
-    'LASTNAME'         => $details['lastname'],
-    'CONFIRMURL'    => $confirmurl
-     ];
+          'FIRSTNAME' => $details['firstname'],
+          'LASTNAME' => $details['lastname'],
+          'CONFIRMURL' => $confirmurl
+      ];
 
     $success = send_template_email($data, $merge);
 
@@ -460,7 +462,7 @@ class USER {
 
     $passwordforDB = crypt($pwd);
 
-    $q = $this->db->query("UPDATE users SET password = '" . mysqli_real_escape_string($db, $passwordforDB) . "' WHERE email='" . mysqli_real_escape_string($db, $email) . "'");
+    $q = $this->db->query("UPDATE users SET password = '" . mysqli_real_escape_string($this->db->conn, $passwordforDB) . "' WHERE email='" . mysqli_real_escape_string($this->db->conn, $email) . "'");
 
     if ($q->success()) {
       $this->password = $pwd;
@@ -488,17 +490,17 @@ class USER {
     }
 
     $data = [
-    'to'             => $this->email(),
-    'template'         => 'new_password'
-     ];
+          'to' => $this->email(),
+          'template' => 'new_password'
+      ];
 
     $URL = new URL("userlogin");
 
     $merge = [
-    'EMAIL'            => $this->email(),
-    'LOGINURL'         => "http://" . DOMAIN . $URL->generate(),
-    'PASSWORD'         => $this->password()
-     ];
+          'EMAIL' => $this->email(),
+          'LOGINURL' => "http://" . DOMAIN . $URL->generate(),
+          'PASSWORD' => $this->password()
+      ];
 
     // send_template_email in utility.php.
     $success = send_template_email($data, $merge);
@@ -514,7 +516,7 @@ class USER {
     // Returns true if there's a user with this user_id.
 
     if (is_numeric($user_id)) {
-      $q = $this->db->query("SELECT user_id FROM users WHERE user_id='" . mysqli_real_escape_string($db, $user_id) . "'");
+      $q = $this->db->query("SELECT user_id FROM users WHERE user_id='" . mysqli_real_escape_string($this->db->conn, $user_id) . "'");
       if ($q->rows() > 0) {
         return TRUE;
       }
@@ -535,7 +537,7 @@ class USER {
     // Returns true if there's a user with this email address.
 
     if ($email != "") {
-      $q = $this->db->query("SELECT user_id FROM users WHERE email='" . mysqli_real_escape_string($db, $email) . "'");
+      $q = $this->db->query("SELECT user_id FROM users WHERE email='" . mysqli_real_escape_string($this->db->conn, $email) . "'");
       if ($q->rows() > 0) {
         return TRUE;
       }
@@ -850,7 +852,7 @@ class USER {
 
     // Update email alerts if email address changed.
     if ($this->email != $details['email']) {
-      $this->db->query('UPDATE alerts SET email = "' . mysqli_real_escape_string($db, $details['email']) . '" WHERE email = "' . mysqli_real_escape_string($db, $this->email) . '"');
+      $this->db->query('UPDATE alerts SET email = "' . mysqli_real_escape_string($this->db->conn, $details['email']) . '" WHERE email = "' . mysqli_real_escape_string($this->db->conn, $this->email) . '"');
     }
 
     // These are used to put optional fragments of SQL in, depending
@@ -868,7 +870,7 @@ class USER {
       // We crypt all passwords going into DB.
       $passwordforDB = crypt($details["password"]);
 
-      $passwordsql = "password	= '" . mysqli_real_escape_string($db, $passwordforDB) . "', ";
+      $passwordsql = "password	= '" . mysqli_real_escape_string($this->db->conn, $passwordforDB) . "', ";
     }
 
     if (isset($details["deleted"])) {
@@ -902,7 +904,7 @@ class USER {
     if (isset($details["status"]) && $details["status"] != "") {
       // 'status' won't always be an option (ie, if the user is updating
       // their own info.
-      $statussql = "status	= '" . mysqli_real_escape_string($db, $details["status"]) . "', ";
+      $statussql = "status	= '" . mysqli_real_escape_string($this->db->conn, $details["status"]) . "', ";
 
     }
 
@@ -911,18 +913,18 @@ class USER {
     $optin = $details["optin"] == TRUE ? 1 : 0;
 
     $q = $this->db->query("UPDATE users
-						SET		firstname 	 = '" . mysqli_real_escape_string($db, $details["firstname"]) . "',
-								lastname 	 = '" . mysqli_real_escape_string($db, $details["lastname"]) . "',
-								email		 = '" . mysqli_real_escape_string($db, $details["email"]) . "',
+						SET		firstname 	 = '" . mysqli_real_escape_string($this->db->conn, $details["firstname"]) . "',
+								lastname 	 = '" . mysqli_real_escape_string($this->db->conn, $details["lastname"]) . "',
+								email		 = '" . mysqli_real_escape_string($this->db->conn, $details["email"]) . "',
 								emailpublic	 = '" . $emailpublic . "',
-								constituency = '" . mysqli_real_escape_string($db, $details["constituency"]) . "',
-								url			 = '" . mysqli_real_escape_string($db, $details["url"]) . "',"
-                                . $passwordsql
-                                . $deletedsql
-                                . $confirmedsql
-                                . $statussql . "
+								constituency = '" . mysqli_real_escape_string($this->db->conn, $details["constituency"]) . "',
+								url			 = '" . mysqli_real_escape_string($this->db->conn, $details["url"]) . "',"
+          . $passwordsql
+          . $deletedsql
+          . $confirmedsql
+          . $statussql . "
 								optin 		= '" . $optin . "'
-						WHERE 	user_id 	= '" . mysqli_real_escape_string($db, $details["user_id"]) . "'
+						WHERE 	user_id 	= '" . mysqli_real_escape_string($this->db->conn, $details["user_id"]) . "'
 						");
 
     // If we're returning to
@@ -1054,7 +1056,7 @@ class THEUSER extends USER {
     if ($this->isloggedin()) {
       // Set last_visit to now.
       $date_now = gmdate("Y-m-d H:i:s");
-      $q = $this->db->query("UPDATE users 
+      $q = $this->db->query("UPDATE users
 							SET 	lastvisit = '$date_now'
 							WHERE 	user_id = '" . $this->user_id() . "'");
 
@@ -1098,17 +1100,17 @@ class THEUSER extends USER {
     // are correct. We can then continue with logging the user in (taking into
     // account their cookie remembering settings etc) with $this->login().
 
-    $q = $this->db->query("SELECT user_id, password, deleted, confirmed FROM users WHERE email='" . mysqli_real_escape_string($db, $email) . "'");
+    $q = $this->db->query("SELECT user_id, password, deleted, confirmed FROM users WHERE email='" . mysqli_real_escape_string($this->db->conn, $email) . "'");
 
     if ($q->rows() == 1) {
       // OK.
       // The password in the DB is crypted.
       $dbpassword = $q->field(0, "password");
       if (crypt($userenteredpassword, $dbpassword) == $dbpassword) {
-        $this->user_id  = $q->field(0, "user_id");
+        $this->user_id = $q->field(0, "user_id");
         $this->password = $dbpassword;
         // We'll need these when we're going to log in.
-        $this->deleted   = $q->field(0, "deleted") == 1 ? TRUE : FALSE;
+        $this->deleted = $q->field(0, "deleted") == 1 ? TRUE : FALSE;
         $this->confirmed = $q->field(0, "confirmed") == 1 ? TRUE : FALSE;
         return TRUE;
 
@@ -1228,21 +1230,21 @@ class THEUSER extends USER {
 
     $q = $this->db->query("SELECT email, password, constituency
 						FROM	users
-						WHERE	user_id = '" . mysqli_real_escape_string($db, $user_id) . "'
-						AND		registrationtoken = '" . mysqli_real_escape_string($db, $registrationtoken) . "'
+						WHERE	user_id = '" . mysqli_real_escape_string($this->db->conn, $user_id) . "'
+						AND		registrationtoken = '" . mysqli_real_escape_string($this->db->conn, $registrationtoken) . "'
 						");
 
     if ($q->rows() == 1) {
 
       // We'll need these to be set before logging the user in.
-      $this->user_id  = $user_id;
-      $this->email    = $q->field(0, 'email');
+      $this->user_id = $user_id;
+      $this->email = $q->field(0, 'email');
       $this->password = $q->field(0, 'password');
 
       // Set that they're confirmed in the DB.
       $r = $this->db->query("UPDATE users
 							SET		confirmed = '1'
-							WHERE	user_id = '" . mysqli_real_escape_string($db, $user_id) . "'
+							WHERE	user_id = '" . mysqli_real_escape_string($this->db->conn, $user_id) . "'
 							");
 
       if ($q->field(0, 'constituency')) {
@@ -1250,8 +1252,8 @@ class THEUSER extends USER {
         $pid = $MEMBER->person_id();
         // This should probably be in the ALERT class.
         $this->db->query('update alerts set confirmed=1 where email="' .
-        mysqli_real_escape_string($db, $this->email) . '" and criteria="speaker:' .
-        mysqli_real_escape_string($db, $pid) . '"');
+          mysqli_real_escape_string($this->db->conn, $this->email) . '" and criteria="speaker:' .
+          mysqli_real_escape_string($this->db->conn, $pid) . '"');
       }
 
       if ($r->success()) {
@@ -1326,13 +1328,13 @@ class THEUSER extends USER {
         // The user's data was updated, so we'll change the object
         // variables accordingly.
 
-        $this->firstname    = $newdetails["firstname"];
-        $this->lastname     = $newdetails["lastname"];
-        $this->email        = $newdetails["email"];
-        $this->emailpublic  = $newdetails["emailpublic"];
+        $this->firstname = $newdetails["firstname"];
+        $this->lastname = $newdetails["lastname"];
+        $this->email = $newdetails["email"];
+        $this->emailpublic = $newdetails["emailpublic"];
         $this->constituency = $newdetails["constituency"];
-        $this->url          = $newdetails["url"];
-        $this->optin        = $newdetails["optin"];
+        $this->url = $newdetails["url"];
+        $this->optin = $newdetails["optin"];
         if (array_key_exists("password", $newdetails) && $newdetails["password"] != "") {
           $this->password = $newdetails["password"];
         }

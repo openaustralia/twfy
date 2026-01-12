@@ -26,146 +26,148 @@
 /**
  *
  */
-function lensort($a, $b) {
-  return strlen($a) < strlen($b);
+function lensort($a, $b)
+{
+    return strlen($a) < strlen($b);
 }
 
 /**
  *
  */
-function wikipedize($source) {
-  $was_array = FALSE;
-  if (is_array($source)) {
-    $source = join('|||', $source);
-    $was_array = TRUE;
-  }
-
-  // Set up various variables.
-  // Not starting with number, as catches too much.
-  $capsword = "[A-Z][a-zA-Z'0-9]*";
-  $fillerwords = "of|and|in|on|under|the";
-  $middlewordre = "(?:$capsword|$fillerwords)\s*";
-  // and, of etc. can't appear at ends.
-  $endwordre = "(?:$capsword)\s*";
-
-  // Match either "Two Endwords" or "Endword and Some Middle Words".
-  $greedyproperre = "/\b$endwordre(?:$middlewordre)*$endwordre\b/ms";
-  // Match without filler words (so if you have a phrase like
-  // "Amnesty International and Human Rights Watch" you also get both parts
-  // separately "Amnesty International" and "Human Rights Watch")
-  $frugalproperre = "/\b(?:$endwordre){2,}\b/ms";
-
-  // And do a greedy without the first word of a sentence.
-  $greedynotfirst = "/\.\s+\S+\s+($endwordre(?:$middlewordre)*$endwordre)\b/ms";
-
-  preg_match_all($greedyproperre, $source, $propernounphrases1);
-  preg_match_all($frugalproperre, $source, $propernounphrases2);
-  preg_match_all($greedynotfirst, $source, $propernounphrases3);
-
-  // Three Letter Acronyms.
-  preg_match_all("/\b[A-Z]{2,}/ms", $source, $acronyms);
-
-  // We don't want no steenking duplicates.
-  $phrases = array_unique(array_merge($propernounphrases1[0], $propernounphrases2[0], $propernounphrases3[1], $acronyms[0]));
-  // Sort into order, largest first.
-  usort($phrases, "lensort");
-  $db = new ParlDB();
-  foreach ($phrases as $i => $phrase) {
-    $phrases[$i] = mysqli_real_escape_string($db->conn, str_replace(' ', '_', trim($phrase)));
-  }
-
-  // Open up a db connection, and whittle our list down even further, against
-  // the real titles.
-  $matched = [];
-  $db = new ParlDB();
-  $source = explode('|||', $source);
-  $q = $db->query("SELECT title FROM titles WHERE title IN ('" . join("','", $phrases) . "')");
-  for ($i = 0; $i < $q->rows(); $i++) {
-    $wikistring = $q->field($i, 'title');
-    $phrase = str_replace('_', ' ', $wikistring);
-
-    // See if already matched a string this one is contained within.
-    foreach ($matched as $got) {
-      if (strstr($got, $phrase)) {
-        continue 2;
-      }
+function wikipedize($source)
+{
+    $was_array = FALSE;
+    if (is_array($source)) {
+        $source = join('|||', $source);
+        $was_array = TRUE;
     }
 
-    // Go ahead.
-    twfy_debug("WIKIPEDIA", "Matched '$phrase'");
-    // 1 means only replace one match for phrase per paragraph
-    $source = preg_replace("/{$phrase}/", "<a href=\"http://en.wikipedia.org/wiki/{$wikistring}\">{$phrase}</a>", $source, 1);
-    array_push($matched, $phrase);
-  }
+    // Set up various variables.
+    // Not starting with number, as catches too much.
+    $capsword = "[A-Z][a-zA-Z'0-9]*";
+    $fillerwords = "of|and|in|on|under|the";
+    $middlewordre = "(?:$capsword|$fillerwords)\s*";
+    // and, of etc. can't appear at ends.
+    $endwordre = "(?:$capsword)\s*";
 
-  if (!$was_array) {
-    $source = join('|||', $source);
-  }
+    // Match either "Two Endwords" or "Endword and Some Middle Words".
+    $greedyproperre = "/\b$endwordre(?:$middlewordre)*$endwordre\b/ms";
+    // Match without filler words (so if you have a phrase like
+    // "Amnesty International and Human Rights Watch" you also get both parts
+    // separately "Amnesty International" and "Human Rights Watch")
+    $frugalproperre = "/\b(?:$endwordre){2,}\b/ms";
 
-  return $source;
+    // And do a greedy without the first word of a sentence.
+    $greedynotfirst = "/\.\s+\S+\s+($endwordre(?:$middlewordre)*$endwordre)\b/ms";
+
+    preg_match_all($greedyproperre, $source, $propernounphrases1);
+    preg_match_all($frugalproperre, $source, $propernounphrases2);
+    preg_match_all($greedynotfirst, $source, $propernounphrases3);
+
+    // Three Letter Acronyms.
+    preg_match_all("/\b[A-Z]{2,}/ms", $source, $acronyms);
+
+    // We don't want no steenking duplicates.
+    $phrases = array_unique(array_merge($propernounphrases1[0], $propernounphrases2[0], $propernounphrases3[1], $acronyms[0]));
+    // Sort into order, largest first.
+    usort($phrases, "lensort");
+    $db = new ParlDB();
+    foreach ($phrases as $i => $phrase) {
+        $phrases[$i] = mysqli_real_escape_string($db->conn, str_replace(' ', '_', trim($phrase)));
+    }
+
+    // Open up a db connection, and whittle our list down even further, against
+    // the real titles.
+    $matched = [];
+    $db = new ParlDB();
+    $source = explode('|||', $source);
+    $q = $db->query("SELECT title FROM titles WHERE title IN ('" . join("','", $phrases) . "')");
+    for ($i = 0; $i < $q->rows(); $i++) {
+        $wikistring = $q->field($i, 'title');
+        $phrase = str_replace('_', ' ', $wikistring);
+
+        // See if already matched a string this one is contained within.
+        foreach ($matched as $got) {
+            if (strstr($got, $phrase)) {
+                continue 2;
+            }
+        }
+
+        // Go ahead.
+        twfy_debug("WIKIPEDIA", "Matched '$phrase'");
+        // 1 means only replace one match for phrase per paragraph
+        $source = preg_replace("/{$phrase}/", "<a href=\"http://en.wikipedia.org/wiki/{$wikistring}\">{$phrase}</a>", $source, 1);
+        array_push($matched, $phrase);
+    }
+
+    if (!$was_array) {
+        $source = join('|||', $source);
+    }
+
+    return $source;
 }
 
 /**
  * Credit: isaac schlueter (lifted from http://uk2.php.net/strip-tags)
  */
-function antiTagInTag($content = '', $format = 'htmlhead') {
-  if (!function_exists('format_to_output')) {
-    // Use the external function if it exists, or fall back on just strip_tags.
+function antiTagInTag($content = '', $format = 'htmlhead')
+{
+    if (!function_exists('format_to_output')) {
+        // Use the external function if it exists, or fall back on just strip_tags.
 
-    /**
-     *
-     */
-    function format_to_output($content, $format) {
-      return strip_tags($content);
+        /**
+         *
+         */
+        function format_to_output($content, $format)
+        {
+            return strip_tags($content);
+        }
+
     }
+    $contentwalker = 0;
+    $length = strlen($content);
+    $tagend = -1;
+    for ($tagstart = strpos($content, '<', $tagend + 1); $tagstart !== FALSE && $tagstart < strlen($content); $tagstart = strpos($content, '<', $tagend)) {
+        // Got the start of a tag.  Now find the proper end!
+        $walker = $tagstart + 1;
+        $open = 1;
+        while ($open != 0 && $walker < strlen($content)) {
+            $nextopen = strpos($content, '<', $walker);
+            $nextclose = strpos($content, '>', $walker);
+            if ($nextclose === FALSE) {
+                // ERROR! Open waka without close waka!
 
-  }
-  $contentwalker = 0;
-  $length = strlen($content);
-  $tagend = -1;
-  for ($tagstart = strpos($content, '<', $tagend + 1); $tagstart !== FALSE && $tagstart < strlen($content); $tagstart = strpos($content, '<', $tagend)) {
-    // Got the start of a tag.  Now find the proper end!
-    $walker = $tagstart + 1;
-    $open = 1;
-    while ($open != 0 && $walker < strlen($content)) {
-      $nextopen = strpos($content, '<', $walker);
-      $nextclose = strpos($content, '>', $walker);
-      if ($nextclose === FALSE) {
-        // ERROR! Open waka without close waka!
+                // Echo '<code>Error in antiTagInTag - malformed tag!</code> ';.
+                return $content;
+            }
+            if ($nextopen === FALSE || $nextopen > $nextclose) {
+                // No more opens, but there was a close; or, a close happens before the next open.
 
-        // Echo '<code>Error in antiTagInTag - malformed tag!</code> ';.
-        return $content;
-      }
-      if ($nextopen === FALSE || $nextopen > $nextclose) {
-        // No more opens, but there was a close; or, a close happens before the next open.
+                // Walker goes to the close+1, and open decrements.
+                $open--;
+                $walker = $nextclose + 1;
+            } elseif ($nextopen < $nextclose) {
+                // An open before the next close.
 
-        // Walker goes to the close+1, and open decrements.
-        $open--;
-        $walker = $nextclose + 1;
-      }
-      elseif ($nextopen < $nextclose) {
-        // An open before the next close.
-
-        $open++;
-        $walker = $nextopen + 1;
-      }
+                $open++;
+                $walker = $nextopen + 1;
+            }
+        }
+        $tagend = $walker;
+        if ($tagend > strlen($content)) {
+            $tagend = strlen($content);
+        } else {
+            $tagend--;
+            $tagstart++;
+        }
+        $tag = substr($content, $tagstart, $tagend - $tagstart);
+        $tags[] = '<' . $tag . '>';
+        $newtag = format_to_output($tag, $format);
+        $newtags[] = '<' . $newtag . '>';
+        $newtag = format_to_output($tag, $format);
     }
-    $tagend = $walker;
-    if ($tagend > strlen($content)) {
-      $tagend = strlen($content);
+    if (isset($tags) && isset($newtags)) {
+        $content = str_replace($tags, $newtags, $content);
     }
-    else {
-      $tagend--;
-      $tagstart++;
-    }
-    $tag = substr($content, $tagstart, $tagend - $tagstart);
-    $tags[] = '<' . $tag . '>';
-    $newtag = format_to_output($tag, $format);
-    $newtags[] = '<' . $newtag . '>';
-    $newtag = format_to_output($tag, $format);
-  }
-  if (isset($tags)&&isset($newtags)) {
-    $content = str_replace($tags, $newtags, $content);
-  }
-  return $content;
+    return $content;
 }

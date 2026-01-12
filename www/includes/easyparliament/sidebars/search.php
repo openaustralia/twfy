@@ -6,8 +6,8 @@
  */
 
 $this->block_start([
-    'id'    => 'help',
-    'title'    => "Search Tips"
+    'id' => 'help',
+    'title' => "Search Tips"
 ]);
 
 include INCLUDESPATH . 'easyparliament/staticpages/search_help.php';

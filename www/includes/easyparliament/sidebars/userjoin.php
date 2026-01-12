@@ -8,7 +8,8 @@
 $this->block_start(['id' => 'help', 'title' => "Your privacy"]);
 ?>
 
-<p>Welcome to <strong>OpenAustralia.org</strong> - the more you contribute and participate, the better the site will get for everyone.</p>
+<p>Welcome to <strong>OpenAustralia.org</strong> - the more you contribute and participate, the better the site will get
+    for everyone.</p>
 
 <p>Our <strong>Privacy Policy</strong> is very simple:</p>
 

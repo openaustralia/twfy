@@ -16,7 +16,7 @@ $PAGE->page_start_mobile();
 $PAGE->stripe_start();
 $message = $PAGE->recess_message();
 if ($message != '') {
-  print '<p id="warning">' . $message . '</p>';
+    print '<p id="warning">' . $message . '</p>';
 }
 
 //
@@ -32,33 +32,34 @@ $PAGE->block_start(['id' => 'intro', 'title' => 'At OpenAustralia.org you can:']
     /**
      * Find out more about your MP / Find out more about David Howarth, your MP.
      */
-    function your_mp_bullet_point() {
-      global $THEUSER, $MPURL;
-      print "<li>";
-      $pc_form = TRUE;
-      if ($THEUSER->constituency_is_set()) {
-        // (We don't allow the user to search for a postcode if they
-        // already have one set in their prefs.)
+    function your_mp_bullet_point()
+    {
+        global $THEUSER, $MPURL;
+        print "<li>";
+        $pc_form = TRUE;
+        if ($THEUSER->constituency_is_set()) {
+            // (We don't allow the user to search for a postcode if they
+            // already have one set in their prefs.)
 
-        $MEMBER = new MEMBER(['constituency' => $THEUSER->constituency()]);
-        if ($MEMBER->valid) {
-          $pc_form = FALSE;
-          $CHANGEURL = new URL('userchangepc');
-          $mpname = $MEMBER->first_name() . ' ' . $MEMBER->last_name();
-          $former = "";
-          $left_house = $MEMBER->left_house();
-          if ($left_house[1]['date'] != '9999-12-31') {
-            $former = 'former';
-          }
-          ?>
+            $MEMBER = new MEMBER(['constituency' => $THEUSER->constituency()]);
+            if ($MEMBER->valid) {
+                $pc_form = FALSE;
+                $CHANGEURL = new URL('userchangepc');
+                $mpname = $MEMBER->first_name() . ' ' . $MEMBER->last_name();
+                $former = "";
+                $left_house = $MEMBER->left_house();
+                if ($left_house[1]['date'] != '9999-12-31') {
+                    $former = 'former';
+                }
+                ?>
                 <p><a href="<?php echo $MPURL->generate(); ?>"><strong>Find out more about <?php echo $mpname; ?>, your
                             <?php echo $former ?> Representative</strong></a>
                     (<a href="<?php echo $CHANGEURL->generate(); ?>">Change</a>)</p>
                 <?php
+            }
         }
-      }
 
-      if ($pc_form) { ?>
+        if ($pc_form) { ?>
             <form action="<?php echo $MPURL->generate(); ?>" method="get">
                 <p><strong>Find out about the Representative for your postcode:</strong>
                     <input type="text" name="pc" id="pc" size="10" maxlength="10" class="text">&nbsp;&nbsp;<input type="submit"
@@ -66,16 +67,17 @@ $PAGE->block_start(['id' => 'intro', 'title' => 'At OpenAustralia.org you can:']
                 </p>
             </form>
             <?php
-      }
-      print "</li>";
+        }
+        print "</li>";
     }
 
     /**
      * Search / Search for 'mouse'.
      */
-    function search_bullet_point() {
-      global $SEARCHURL;
-      ?>
+    function search_bullet_point()
+    {
+        global $SEARCHURL;
+        ?>
         <li> <?php
         $SEARCHURL = new URL('search');
         ?>
@@ -91,18 +93,18 @@ $PAGE->block_start(['id' => 'intro', 'title' => 'At OpenAustralia.org you can:']
                 global $SEARCHLOG;
                 $popular_searches = $SEARCHLOG->popular_recent(10);
                 if (count($popular_searches) > 0) {
-                  ?>
+                    ?>
                     <p>Popular searches today: <?php
                     $lentotal = 0;
                     $correct_amount = [];
                     // Select a number of queries that will fit in the space.
                     foreach ($popular_searches as $popular_search) {
-                      $len = strlen($popular_search['visible_name']);
-                      if ($lentotal + $len > 32) {
-                        continue;
-                      }
-                      $lentotal += $len;
-                      array_push($correct_amount, $popular_search['display']);
+                        $len = strlen($popular_search['visible_name']);
+                        if ($lentotal + $len > 32) {
+                            continue;
+                        }
+                        $lentotal += $len;
+                        array_push($correct_amount, $popular_search['display']);
                     }
                     print implode(", ", $correct_amount);
                     ?> </p> <?php
@@ -118,28 +120,31 @@ $PAGE->block_start(['id' => 'intro', 'title' => 'At OpenAustralia.org you can:']
     /**
      * Sign up to be emailed when 'mouse' is mentioned in Parliament.
      */
-    function email_alert_bullet_point() {
-      if (get_http_var("keyword")) { ?>
+    function email_alert_bullet_point()
+    {
+        if (get_http_var("keyword")) { ?>
             <li>
-                <p><a href="<?php echo WEBPATH . "alert?keyword=" . htmlspecialchars(get_http_var('keyword')) ?>&only=1"><strong>Sign up to
+                <p><a href="<?php echo WEBPATH . "alert?keyword=" . htmlspecialchars(get_http_var('keyword')) ?>&only=1"><strong>Sign
+                            up to
                             be emailed when '<?php echo htmlspecialchars(get_http_var('keyword')) ?>' is mentioned in
                             Parliament</strong></a></p>
             </li>
-      <?php }
-      else { ?>
+        <?php } else { ?>
             <li>
-                <p><a href="<?php echo WEBPATH . "alert/" ?>"><strong>Sign up to be emailed when something relevant to you happens in
+                <p><a href="<?php echo WEBPATH . "alert/" ?>"><strong>Sign up to be emailed when something relevant to you
+                            happens in
                             Parliament</strong></a></p>
             </li>
-      <?php }
+        <?php }
     }
 
     /**
      * Comment on (recent debates)
      */
-    function comment_on_recent_bullet_point() {
-      global $hansardmajors;
-      ?>
+    function comment_on_recent_bullet_point()
+    {
+        global $hansardmajors;
+        ?>
         <li>
             <p><strong>Read and comment on:</strong></p>
 
@@ -157,12 +162,12 @@ $PAGE->block_start(['id' => 'intro', 'title' => 'At OpenAustralia.org you can:']
             $NILIST = new NILIST();
             $data[5] = $NILIST->most_recent_day();
             foreach (array_keys($hansardmajors) as $major) {
-              if (array_key_exists($major, $data)) {
-                unset($data[$major]['listurl']);
-                if (count($data[$major]) == 0) {
-                  unset($data[$major]);
+                if (array_key_exists($major, $data)) {
+                    unset($data[$major]['listurl']);
+                    if (count($data[$major]) == 0) {
+                        unset($data[$major]);
+                    }
                 }
-              }
             }
             major_summary($data, 10);
             ?>
@@ -171,19 +176,18 @@ $PAGE->block_start(['id' => 'intro', 'title' => 'At OpenAustralia.org you can:']
     }
 
     if (get_http_var('keyword')) {
-      // This is for links from Google adverts, where we want to
-      // promote the features relating to their original search higher
-      // than "your MP".
-      search_bullet_point();
-      // email_alert_bullet_point();
-      your_mp_bullet_point();
-      comment_on_recent_bullet_point();
-    }
-    else {
-      your_mp_bullet_point();
-      search_bullet_point();
-      // email_alert_bullet_point();
-      comment_on_recent_bullet_point();
+        // This is for links from Google adverts, where we want to
+        // promote the features relating to their original search higher
+        // than "your MP".
+        search_bullet_point();
+        // email_alert_bullet_point();
+        your_mp_bullet_point();
+        comment_on_recent_bullet_point();
+    } else {
+        your_mp_bullet_point();
+        search_bullet_point();
+        // email_alert_bullet_point();
+        comment_on_recent_bullet_point();
     }
 
     ?>
@@ -201,8 +205,8 @@ $includes = [
         'content' => 'sitenews_recent'
     ],
     [
-      'type' => 'include',
-      'content' => 'comments_recent',
+        'type' => 'include',
+        'content' => 'comments_recent',
     ]
 ];
 

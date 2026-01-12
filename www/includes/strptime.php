@@ -23,43 +23,52 @@ if (!function_exists('strptime')) {
     foreach ($date as $key => $val) {
       switch ($key) {
         case 'd':
-        case 'j': $dateTime['tm_mday'] = intval($val);
+        case 'j':
+          $dateTime['tm_mday'] = intval($val);
 
           break;
 
-        case 'D': $dateTime['tm_mday'] = intval(date('j', $val));
+        case 'D':
+          $dateTime['tm_mday'] = intval(date('j', $val));
 
           break;
 
         case 'm':
-        case 'n': $dateTime['tm_mon'] = intval($val);
+        case 'n':
+          $dateTime['tm_mon'] = intval($val);
 
           break;
 
-        case 'M': $dateTime['tm_mon'] = intval(date('n', $val));
+        case 'M':
+          $dateTime['tm_mon'] = intval(date('n', $val));
 
           break;
 
-        case 'Y': $dateTime['tm_year'] = intval($val);
+        case 'Y':
+          $dateTime['tm_year'] = intval($val);
 
           break;
 
-        case 'y': $dateTime['tm_year'] = intval($val) + 2000;
+        case 'y':
+          $dateTime['tm_year'] = intval($val) + 2000;
 
           break;
 
         case 'G':
         case 'g':
         case 'H':
-        case 'h': $dateTime['tm_hour'] = intval($val);
+        case 'h':
+          $dateTime['tm_hour'] = intval($val);
 
           break;
 
-        case 'i': $dateTime['tm_min'] = intval($val);
+        case 'i':
+          $dateTime['tm_min'] = intval($val);
 
           break;
 
-        case 's': $dateTime['tm_sec'] = intval($val);
+        case 's':
+          $dateTime['tm_sec'] = intval($val);
 
           break;
       }
@@ -84,25 +93,45 @@ if (!function_exists('strptime')) {
    */
   function strToDate($date, $format) {
     // Day.
-    $search = ['%d', '%D', '%j',
-    // Month.
-      '%m', '%M', '%n',
-    // Year.
-      '%Y', '%y',
-    // Hour.
-      '%G', '%g', '%H', '%h',
-      '%i', '%s'
-];
+    $search = [
+          '%d',
+          '%D',
+          '%j',
+          // Month.
+          '%m',
+          '%M',
+          '%n',
+          // Year.
+          '%Y',
+          '%y',
+          // Hour.
+          '%G',
+          '%g',
+          '%H',
+          '%h',
+          '%i',
+          '%s'
+      ];
     // Day.
-    $replace = ['(\d{2})', '(\w{3})', '(\d{1,2})',
-    // Month.
-      '(\d{2})', '(\w{3})', '(\d{1,2})',
-    // Year.
-      '(\d{4})', '(\d{2})',
-    // Hour.
-      '(\d{1,2})', '(\d{1,2})', '\d{2}', '\d{2}',
-      '(\d{2})', '(\d{2})'
-];
+    $replace = [
+          '(\d{2})',
+          '(\w{3})',
+          '(\d{1,2})',
+          // Month.
+          '(\d{2})',
+          '(\w{3})',
+          '(\d{1,2})',
+          // Year.
+          '(\d{4})',
+          '(\d{2})',
+          // Hour.
+          '(\d{1,2})',
+          '(\d{1,2})',
+          '\d{2}',
+          '\d{2}',
+          '(\d{2})',
+          '(\d{2})'
+      ];
 
     $pattern = str_replace($search, $replace, $format);
 

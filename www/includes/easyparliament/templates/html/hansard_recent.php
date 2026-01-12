@@ -12,7 +12,7 @@ global $PAGE;
 twfy_debug("TEMPLATE", "hansard_recent.php");
 
 
-// Will set the page headings and start the page HTML if it hasn't 
+// Will set the page headings and start the page HTML if it hasn't
 // already been started.
 // Includes the next/prev links.
 $PAGE->hansard_page_start($data['info']);
@@ -20,39 +20,38 @@ $PAGE->hansard_page_start($data['info']);
 ?>
 <div class="hansard">
 
-<?php
+    <?php
 
 
-if (isset ($data['rows']) && $data['rows'] > 0) {
+    if (isset($data['rows']) && $data['rows'] > 0) {
 
-	?>
-		<ul class="dates">
-<?php
+        ?>
+        <ul class="dates">
+            <?php
 
-	foreach ($data['rows'] as $n => $row) {
-		
-		if (isset($row['listurl'])) {
-			print "\t\t<li><a href=\"" . $row['listurl'] . "\">" . $row['body'] . "</a></li>\n";
-		} else {
-			print "\t\t<li>" . $row['body'] . "</li>\n";
-		}
-	}
-	
-	?>
-		</ul>
-<?php
+            foreach ($data['rows'] as $n => $row) {
 
+                if (isset($row['listurl'])) {
+                    print "\t\t<li><a href=\"" . $row['listurl'] . "\">" . $row['body'] . "</a></li>\n";
+                } else {
+                    print "\t\t<li>" . $row['body'] . "</li>\n";
+                }
+            }
 
-} // End display of rows.
-
-else {
-
-	?>
-<p>No data to display.</p>
-<?php
-}
+            ?>
+        </ul>
+        <?php
 
 
-?>
-	<div class="break"></div>
+    } // End display of rows.
+    else {
+
+        ?>
+        <p>No data to display.</p>
+        <?php
+    }
+
+
+    ?>
+    <div class="break"></div>
 </div> <!-- end hansard -->

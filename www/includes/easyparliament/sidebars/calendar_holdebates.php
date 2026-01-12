@@ -13,23 +13,23 @@ global $PAGE;
 
 $args = [];
 if ($this_page == 'lordsdebatesday') {
-  $date = get_http_var('d');
-  $datebits = explode('-', $date);
-  if (count($datebits) > 2) {
-    $args = [
-    'year' => $datebits[0],
-    'month' => $datebits[1],
-    'onday' => $date
-   ];
-    $title = 'Debates this month';
-  }
+    $date = get_http_var('d');
+    $datebits = explode('-', $date);
+    if (count($datebits) > 2) {
+        $args = [
+            'year' => $datebits[0],
+            'month' => $datebits[1],
+            'onday' => $date
+        ];
+        $title = 'Debates this month';
+    }
 }
 if (!$args) {
-  $args = [
-  // How many recent months to show.
+    $args = [
+        // How many recent months to show.
         'months' => 1
     ];
-  $title = 'Recent debates';
+    $title = 'Recent debates';
 }
 
 $PAGE->block_start(['title' => $title]);
