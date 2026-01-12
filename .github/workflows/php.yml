@@ -29,6 +29,6 @@ jobs:
         env:
           fail-fast: true
       - name: Lint
-        run: make lint
+        run: make lint-ci
         env:
           fail-fast: true

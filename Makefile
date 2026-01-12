@@ -25,3 +25,6 @@ docker: docker-build docker-run
 
 lint:
 	./vendor/bin/phpcs --report=summary www scripts
+
+lint-ci:
+	./vendor/bin/phpcs www scripts --report=json --report-file=phpcs-report.json
