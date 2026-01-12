@@ -72,13 +72,16 @@
  */
 class DATA {
 
+  private $metadata;
+
   /**
    *
    */
-  public function Data() {
+  public function __construct() {
 
     // Defined in config.php.
     include_once METADATAPATH;
+    $this->metadata = new Metadata();
 
   }
 
@@ -103,14 +106,14 @@ class DATA {
    * $key is the element of metadata you want to retrieve.
    */
   public function page_metadata($page, $key) {
-    return $this->_get_metadata(["page" => $page, "key" => $key], "page");
+    return $this->metadata->get_metadata(["page" => $page, "key" => $key], "page");
   }
 
   /**
    *
    */
   public function section_metadata($section, $key) {
-    return $this->_get_metadata(["section" => $section, "key" => $key], "section");
+    return $this->metadata->get_metadata(["section" => $section, "key" => $key], "section");
   }
 
   // Setting page and section.
@@ -119,14 +122,14 @@ class DATA {
    * $page/$section, $key and $value should make sense...
    */
   public function set_page_metadata($page, $key, $value) {
-    $this->_set_metadata(["page" => $page, "key" => $key, "value" => $value]);
+    $this->metadata->set_metadata(["page" => $page, "key" => $key, "value" => $value]);
   }
 
   /**
    *
    */
   public function set_section_metadata($section, $key, $value) {
-    $this->_set_metadata(["section" => $section, "key" => $key, "value" => $value]);
+    $this->metadata->set_metadata(["section" => $section, "key" => $key, "value" => $value]);
   }
 
   // DEPRECATED.
@@ -135,97 +138,9 @@ class DATA {
    * Directly access an item.
    */
   public function metadata($type, $item, $key) {
-    if ($this->test_for_metadata($type, $item, $key)) {
-      return $this->$type[$item][$key];
-    }
-    else {
-      return "INVALID METADATA: $type[$item][$key]";
-    }
+    return "ACCESS DEBIED FOR type[$item][$key] USE THE PUBLIC METHODS";
   }
 
-  // Test for the presence of something.
-
-  /**
-   * Eg $exists = $DATA->test_for_metadata("page", "about", "title")
-   */
-  public function test_for_metadata($type, $item, $key) {
-    $dataarray =& $this->$type;
-
-    if (isset($dataarray[$item][$key])) {
-      return TRUE;
-    }
-    else {
-      return FALSE;
-    }
-  }
-
-  //
-  // PRIVATE METADATA ACCESS FUNCTIONS //
-  // .
-
-  /**
-   * Only accessed through page_metadata() or section_metadata()
-   */
-  public function _get_metadata($args, $type) {
-    // $type is either 'page' or 'section'
-    global $this_page, $this_section;
-
-    if (is_array($args)) {
-      $item = $args[$type];
-      $key = $args['key'];
-    }
-    else {
-      $var = "this_" . $type;
-      // $this_page or $this_section.
-      $item = $$var;
-      $key = $args;
-    }
-
-    twfy_debug("DATA", "$type: $item, $key");
-    $dataarray =& $this->$type;
-
-    if ($this->test_for_metadata($type, $item, $key)) {
-      $return = $dataarray[$item][$key];
-      $debugtext = "Key: " . $type . "[" . $item . "][" . $key . "]";
-
-    }
-    elseif ($this->test_for_metadata($type, "default", $key)) {
-      $return = $dataarray["default"][$key];
-      $debugtext = "Key: " . $type . "['default'][" . $key . "]";
-
-    }
-    else {
-      $return = FALSE;
-      $debugtext = "No metadata found for key '$key'";
-    }
-
-    twfy_debug("DATA", "$debugtext, returning '" . print_r($return, TRUE) . "'.");
-
-    return $return;
-  }
-
-  /**
-   *
-   */
-  public function _set_metadata($args) {
-
-    if (isset($args["section"])) {
-      $type = "section";
-      $item = $args["section"];
-    }
-    else {
-      $type = "page";
-      $item = $args["page"];
-    }
-
-    $key = $args["key"];
-    $value = $args["value"];
-
-    twfy_debug("DATA", "Setting: " . $type . "[" . $item . "][" . $key . "] = '" . print_r($value, TRUE) . "'");
-
-    $dataarray =& $this->$type;
-    $dataarray[$item][$key] = $value;
-  }
 
 }
 
