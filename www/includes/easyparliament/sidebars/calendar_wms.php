@@ -12,31 +12,31 @@ global $PAGE;
 // Contents varies depending on the page we're on...
 
 if ($this_page == 'wmsday') {
-  $date = get_http_var('d');
-  if (preg_match('#^(\d\d\d\d)-(\d\d)-(\d\d)$#', $date, $m)) {
-    $year = $m[1];
-    $month = $m[2];
-    $day = $m[3];
-    $args = [
+    $date = get_http_var('d');
+    if (preg_match('#^(\d\d\d\d)-(\d\d)-(\d\d)$#', $date, $m)) {
+        $year = $m[1];
+        $month = $m[2];
+        $day = $m[3];
+        $args = [
           'year' => $year,
           'month' => $month,
           'onday' => $date
-      ];
-    $title = 'Written Ministerial Statements this month';
-  }
-  else {
-    $args = [
+        ];
+        $title = 'Written Ministerial Statements this month';
+    }
+    else {
+        $args = [
           'months' => 1
-      ];
-    $title = 'Recent Written Ministerial Statements';
-  }
+        ];
+        $title = 'Recent Written Ministerial Statements';
+    }
 }
 else {
-  $args = [
+    $args = [
         // How many recent months to show.
         'months' => 1
     ];
-  $title = 'Recent Written Ministerial Statements';
+    $title = 'Recent Written Ministerial Statements';
 }
 
 $PAGE->block_start(['title' => $title]);

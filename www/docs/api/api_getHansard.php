@@ -10,7 +10,7 @@ include_once INCLUDESPATH . "easyparliament/member.php";
  *
  */
 function api_getHansard_front() {
-  ?>
+    ?>
     <p><big>Fetch all Hansard.</big></p>
 
     <h4>Arguments</h4>
@@ -35,7 +35,7 @@ function api_getHansard_front() {
  *
  */
 function api_getHansard_search($s) {
-  _api_getHansard_search([
+    _api_getHansard_search([
         's' => $s,
         'pid' => get_http_var('person')
     ]);
@@ -45,7 +45,7 @@ function api_getHansard_search($s) {
  *
  */
 function api_getHansard_person($pid) {
-  _api_getHansard_search([
+    _api_getHansard_search([
         'pid' => $pid
     ]);
 }
@@ -54,90 +54,90 @@ function api_getHansard_person($pid) {
  *
  */
 function _api_getHansard_date($type, $d) {
-  $args = ['date' => $d];
-  $LIST = _api_getListObject($type);
-  $LIST->display('date', $args, 'api');
+    $args = ['date' => $d];
+    $LIST = _api_getListObject($type);
+    $LIST->display('date', $args, 'api');
 }
 
 /**
  *
  */
 function _api_getHansard_year($type, $y) {
-  $args = ['year' => $y];
-  $LIST = _api_getListObject($type);
-  $LIST->display('calendar', $args, 'api');
+    $args = ['year' => $y];
+    $LIST = _api_getListObject($type);
+    $LIST->display('calendar', $args, 'api');
 }
 
 /**
  *
  */
 function _api_getHansard_search($array) {
-  $search = isset($array['s']) ? trim($array['s']) : '';
-  $pid = trim($array['pid']);
-  $type = $array['type'] ?? '';
-  $search = filter_user_input($search, 'strict');
-  if ($pid) {
-    $search .= ($search ? ' ' : '') . 'speaker:' . $pid;
-  }
-  if ($type) {
-    $search .= " section:" . $type;
-  }
+    $search = isset($array['s']) ? trim($array['s']) : '';
+    $pid = trim($array['pid']);
+    $type = $array['type'] ?? '';
+    $search = filter_user_input($search, 'strict');
+    if ($pid) {
+        $search .= ($search ? ' ' : '') . 'speaker:' . $pid;
+    }
+    if ($type) {
+        $search .= " section:" . $type;
+    }
 
-  $o = get_http_var('order');
-  if ($o == 'p') {
-    $data = search_by_usage($search);
-    $out = [];
-    foreach ($data['speakers'] as $pid => $s) {
-      $out[$pid] = [
+    $o = get_http_var('order');
+    if ($o == 'p') {
+        $data = search_by_usage($search);
+        $out = [];
+        foreach ($data['speakers'] as $pid => $s) {
+            $out[$pid] = [
             'house' => $s['house'],
             'name' => $s['name'],
             'party' => $s['party'],
             'count' => $s['count'],
             'mindate' => substr($s['pmindate'], 0, 7),
             'maxdate' => substr($s['pmaxdate'], 0, 7),
-        ];
+            ];
+        }
+        api_output($out);
+        return;
     }
-    api_output($out);
-    return;
-  }
 
-  global $SEARCHENGINE;
-  $SEARCHENGINE = new SEARCHENGINE($search);
-  // $query_desc_short = $SEARCHENGINE->query_description_short();
-  $pagenum = get_http_var('page');
-  $args = [
+    global $SEARCHENGINE;
+    $SEARCHENGINE = new SEARCHENGINE($search);
+    // $query_desc_short = $SEARCHENGINE->query_description_short();
+    $pagenum = get_http_var('page');
+    $args = [
         's' => $search,
         'p' => $pagenum,
         'num' => get_http_var('num'),
         'pop' => 1,
         'o' => ($o == 'd' || $o == 'r') ? $o : 'd',
     ];
-  $LIST = new HANSARDLIST();
-  $LIST->display('search', $args, 'api');
+    $LIST = new HANSARDLIST();
+    $LIST->display('search', $args, 'api');
 }
 
 /**
  *
  */
 function _api_getHansard_gid($type, $gid) {
-  $args = ['gid' => $gid];
-  $LIST = _api_getListObject($type);
-  return $LIST->display('gid', $args, 'api');
+    $args = ['gid' => $gid];
+    $LIST = _api_getListObject($type);
+    return $LIST->display('gid', $args, 'api');
 }
 
 /**
  *
  */
 function _api_getHansard_department($type, $dept) {
-  $args = ['department' => $dept];
-  $LIST = _api_getListObject($type);
-  $LIST->display('department', $args, 'api');
+    $args = ['department' => $dept];
+    $LIST = _api_getListObject($type);
+    $LIST->display('department', $args, 'api');
 }
 
 /**
  *
  */
 function _api_getListObject($type) {
-  eval('$list = new ' . strtoupper($type) . 'LIST;');
-  return $list;
+    eval('$list = new ' . strtoupper($type) . 'LIST;');
+    return $list;
 }

@@ -49,7 +49,7 @@ twfy_debug_timestamp("after including utility.php");
 
 // Set the default timezone.
 if (function_exists('date_default_timezone_set')) {
-  date_default_timezone_set(TIMEZONE);
+    date_default_timezone_set(TIMEZONE);
 }
 
 // The error_handler function is in includes/utility.php.
@@ -59,9 +59,9 @@ $old_error_handler = set_error_handler("error_handler");
 // getmicrotime() is in utiltity.php.
 define("STARTTIME", getmicrotime());
 if (!isset($_SERVER['WINDIR'])) {
-  $rusage = getrusage();
-  define('STARTTIMES', $rusage['ru_stime.tv_sec'] * 1000000 + $rusage['ru_stime.tv_usec']);
-  define('STARTTIMEU', $rusage['ru_utime.tv_sec'] * 1000000 + $rusage['ru_utime.tv_usec']);
+    $rusage = getrusage();
+    define('STARTTIMES', $rusage['ru_stime.tv_sec'] * 1000000 + $rusage['ru_stime.tv_usec']);
+    define('STARTTIMEU', $rusage['ru_utime.tv_sec'] * 1000000 + $rusage['ru_utime.tv_usec']);
 }
 include_once INCLUDESPATH . "data.php";
 include_once INCLUDESPATH . "mysql.php";
@@ -71,12 +71,12 @@ include_once INCLUDESPATH . "mysql.php";
  */
 class ParlDB extends MySQL {
 
-  /**
-   *
-   */
-  public function ParlDB() {
-    $this->init(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME);
-  }
+    /**
+     *
+     */
+    public function ParlDB() {
+        $this->init(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME);
+    }
 
 }
 

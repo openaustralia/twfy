@@ -56,193 +56,193 @@
  */
 class URL {
 
-  /**
-   *
-   */
-  public function URL($pagename) {
-    // Initialise.
-    global $DATA;
+    /**
+     *
+     */
+    public function URL($pagename) {
+        // Initialise.
+        global $DATA;
 
-    // The page we're going to be generating URL(s) for.
-    $this->destinationpage = $pagename;
+        // The page we're going to be generating URL(s) for.
+        $this->destinationpage = $pagename;
 
-    // These stores an associative array of key/value pairs that
-    // we'll want passed on to other pages.
-    $this->session_vars = [];
+        // These stores an associative array of key/value pairs that
+        // we'll want passed on to other pages.
+        $this->session_vars = [];
 
-    // Set the contents of $this->session_vars.
-    // session_vars are variables we generally want to pass between pages, if any.
-    // Will only be added as vars if they have values.
+        // Set the contents of $this->session_vars.
+        // session_vars are variables we generally want to pass between pages, if any.
+        // Will only be added as vars if they have values.
 
-    $keys = $DATA->page_metadata($this->destinationpage, "session_vars");
-    foreach ($keys as $key) {
-      if (get_http_var($key) != "") {
-        $this->session_vars[$key] = get_http_var($key);
-      }
+        $keys = $DATA->page_metadata($this->destinationpage, "session_vars");
+        foreach ($keys as $key) {
+            if (get_http_var($key) != "") {
+                $this->session_vars[$key] = get_http_var($key);
+            }
+        }
+
+        // Some pages have the same URL, modified by a "pg" variable.
+        // See if this page is one such, and add the variable if so.
+        if ($pg = $DATA->page_metadata($this->destinationpage, "pg")) {
+            $this->session_vars["pg"] = $pg;
+        }
+
+        // So we can restore the originals.
+        $this->original_session_vars = $this->session_vars;
+
     }
 
-    // Some pages have the same URL, modified by a "pg" variable.
-    // See if this page is one such, and add the variable if so.
-    if ($pg = $DATA->page_metadata($this->destinationpage, "pg")) {
-      $this->session_vars["pg"] = $pg;
+    /**
+     *
+     */
+    public function restore() {
+        // Call this to reset the session vars to how they were when
+        // the object was instantiated.
+        $this->session_vars = $this->original_session_vars;
+
     }
 
-    // So we can restore the originals.
-    $this->original_session_vars = $this->session_vars;
-
-  }
-
-  /**
-   *
-   */
-  public function restore() {
-    // Call this to reset the session vars to how they were when
-    // the object was instantiated.
-    $this->session_vars = $this->original_session_vars;
-
-  }
-
-  /**
-   *
-   */
-  public function reset() {
-    // Call this to remove all the session_vars.
-    $this->session_vars = [];
-  }
-
-  /**
-   *
-   */
-  public function insert($arr) {
-    // $arr is an associative array of key/value pairs.
-    // These will be used as session_vars in addition to any that
-    // already exist.
-    foreach ($arr as $key => $val) {
-      $this->session_vars[$key] = $val;
-    }
-  }
-
-  /**
-   *
-   */
-  public function remove($arr) {
-    // $arr is a list array of key names. Any key/value pairs
-    // in session_vars with keys found in $arr will be removed.
-    foreach ($arr as $key) {
-      if (isset($this->session_vars[$key])) {
-        unset($this->session_vars[$key]);
-      }
-    }
-  }
-
-  /**
-   *
-   */
-  public function update($arr) {
-    // $arr is an associative array of key/value pairs.
-    // Any keys in session_vars that are also in $arr
-    // will have their values overwritten by those in $arr.
-    // Other session_var key/vals are not affected.
-    foreach ($arr as $key => $val) {
-      if (isset($this->session_vars[$key])) {
-        $this->session_vars[$key] = $arr[$key];
-      }
-    }
-  }
-
-  /**
-   *
-   */
-  public function generate($encode = "html", $overrideVars = []) {
-    // Returns a URL with the appropriate session_vars.
-    // If $encode is "html", the URL will be suitable to be put in HTML.
-    // If $encode is "none", the URL will be as is.
-    // If $encode is "url", the URL will...
-    //
-    // $overrideVars is a key=>value mapping which allows some
-    // specific variable/value pairs to be overridden/inserted
-    // into the query. Use this when you want to keep the standard
-    // 'session vars' in a url, but override just one or two of
-    // them.
-    global $DATA;
-
-    $url_args = [];
-
-    foreach (array_merge($this->session_vars, $overrideVars) as $key => $var) {
-      if ($var != NULL) {
-        $url_args[] = "$key=" . urlencode(stripslashes($var));
-      }
+    /**
+     *
+     */
+    public function reset() {
+        // Call this to remove all the session_vars.
+        $this->session_vars = [];
     }
 
-    $page_url = WEBPATH . $DATA->page_metadata($this->destinationpage, "url");
-
-    if (sizeof($url_args) == 0) {
-      return $page_url;
-    }
-    else {
-      if ($encode == "html") {
-        return $page_url . "?" . implode("&amp;", $url_args);
-      }
-      elseif ($encode == "none" || $encode == "url") {
-        return $page_url . "?" . implode("&", $url_args);
-      }
-    }
-  }
-
-  /*     DEPRECATED. Use hidden_form_vars() in utility.php instead. */
-
-  // Use this when you have a form and want to retain some/all of the
-  // variables in the URL get string.
-  // If you have a form that changes, say, $s, then you'll need to
-  // pass "s" in in the $remove_vars array, so it isn't created as a.
-
-  /**
-   * Hidden variable.
-   */
-  public function hidden_form_varsOLD($remove_vars = [], $insert_vars = []) {
-    // This should really be tidied up lots. That $dont_keep array for a start is NASTY!
-    // You can also pass in an array of variables to remove() and insert().
-
-    foreach ($_GET as $key => $val) {
-      $vars[$key] = get_http_var($key);
-    }
-    foreach ($_POST as $key => $val) {
-      $vars[$key] = get_http_var($key);
+    /**
+     *
+     */
+    public function insert($arr) {
+        // $arr is an associative array of key/value pairs.
+        // These will be used as session_vars in addition to any that
+        // already exist.
+        foreach ($arr as $key => $val) {
+            $this->session_vars[$key] = $val;
+        }
     }
 
-    // We'll want to reset things to this when we're done.
-    $old_session_vars = $this->session_vars;
-    $this->reset();
-    $this->insert($vars);
-    $this->remove($remove_vars);
-    $this->insert($insert_vars);
-
-    $html = "";
-
-    // Put keys of any variables you never want to hang on to in here:
-    // VERY BAD!
-    $dont_keep = [];
-    $this->remove($dont_keep);
-
-    foreach ($this->session_vars as $key => $val) {
-      if (!in_array($key, $dont_keep)) {
-        $html .= '<input type="hidden" name="' . $key . '" value="' . $val . "\">\n";
-
-      }
+    /**
+     *
+     */
+    public function remove($arr) {
+        // $arr is a list array of key names. Any key/value pairs
+        // in session_vars with keys found in $arr will be removed.
+        foreach ($arr as $key) {
+            if (isset($this->session_vars[$key])) {
+                unset($this->session_vars[$key]);
+            }
+        }
     }
 
-    // Reset $session_vars to how it was before.
-    // Otherwise if you call functions after you've generated hidden vars
-    // everything will be changed around from how it was before.
-    $this->session_vars = $old_session_vars;
-
-    if ($html != "") {
-      return $html . "\n";
+    /**
+     *
+     */
+    public function update($arr) {
+        // $arr is an associative array of key/value pairs.
+        // Any keys in session_vars that are also in $arr
+        // will have their values overwritten by those in $arr.
+        // Other session_var key/vals are not affected.
+        foreach ($arr as $key => $val) {
+            if (isset($this->session_vars[$key])) {
+                $this->session_vars[$key] = $arr[$key];
+            }
+        }
     }
-    else {
-      return $html;
+
+    /**
+     *
+     */
+    public function generate($encode = "html", $overrideVars = []) {
+        // Returns a URL with the appropriate session_vars.
+        // If $encode is "html", the URL will be suitable to be put in HTML.
+        // If $encode is "none", the URL will be as is.
+        // If $encode is "url", the URL will...
+        //
+        // $overrideVars is a key=>value mapping which allows some
+        // specific variable/value pairs to be overridden/inserted
+        // into the query. Use this when you want to keep the standard
+        // 'session vars' in a url, but override just one or two of
+        // them.
+        global $DATA;
+
+        $url_args = [];
+
+        foreach (array_merge($this->session_vars, $overrideVars) as $key => $var) {
+            if ($var != NULL) {
+                $url_args[] = "$key=" . urlencode(stripslashes($var));
+            }
+        }
+
+        $page_url = WEBPATH . $DATA->page_metadata($this->destinationpage, "url");
+
+        if (sizeof($url_args) == 0) {
+            return $page_url;
+        }
+        else {
+            if ($encode == "html") {
+                return $page_url . "?" . implode("&amp;", $url_args);
+            }
+            elseif ($encode == "none" || $encode == "url") {
+                return $page_url . "?" . implode("&", $url_args);
+            }
+        }
     }
 
-  }
+    /*     DEPRECATED. Use hidden_form_vars() in utility.php instead. */
+
+    // Use this when you have a form and want to retain some/all of the
+    // variables in the URL get string.
+    // If you have a form that changes, say, $s, then you'll need to
+    // pass "s" in in the $remove_vars array, so it isn't created as a.
+
+    /**
+     * Hidden variable.
+     */
+    public function hidden_form_varsOLD($remove_vars = [], $insert_vars = []) {
+        // This should really be tidied up lots. That $dont_keep array for a start is NASTY!
+        // You can also pass in an array of variables to remove() and insert().
+
+        foreach ($_GET as $key => $val) {
+            $vars[$key] = get_http_var($key);
+        }
+        foreach ($_POST as $key => $val) {
+            $vars[$key] = get_http_var($key);
+        }
+
+        // We'll want to reset things to this when we're done.
+        $old_session_vars = $this->session_vars;
+        $this->reset();
+        $this->insert($vars);
+        $this->remove($remove_vars);
+        $this->insert($insert_vars);
+
+        $html = "";
+
+        // Put keys of any variables you never want to hang on to in here:
+        // VERY BAD!
+        $dont_keep = [];
+        $this->remove($dont_keep);
+
+        foreach ($this->session_vars as $key => $val) {
+            if (!in_array($key, $dont_keep)) {
+                $html .= '<input type="hidden" name="' . $key . '" value="' . $val . "\">\n";
+
+            }
+        }
+
+        // Reset $session_vars to how it was before.
+        // Otherwise if you call functions after you've generated hidden vars
+        // everything will be changed around from how it was before.
+        $this->session_vars = $old_session_vars;
+
+        if ($html != "") {
+            return $html . "\n";
+        }
+        else {
+            return $html;
+        }
+
+    }
 
 }

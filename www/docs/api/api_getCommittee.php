@@ -8,7 +8,7 @@
  *
  */
 function api_getCommittee_front() {
-  ?>
+    ?>
     <p><big>Fetch the members of a Select Committee.</big></p>
 
     <h4>Arguments</h4>
@@ -55,66 +55,66 @@ function api_getCommittee_front() {
  *
  */
 function api_getCommittee_name($name) {
-  $db = new ParlDB();
+    $db = new ParlDB();
 
-  // Names in the database have & as &amp;...
-  $name = htmlspecialchars($name);
-  $name = preg_replace('#\s+Committee#', '', $name);
+    // Names in the database have & as &amp;...
+    $name = htmlspecialchars($name);
+    $name = preg_replace('#\s+Committee#', '', $name);
 
-  $date = parse_date(get_http_var('date'));
-  if ($date) {
-    $date = '"' . $date['iso'] . '"';
-  }
-  else {
-    $date = 'date(now())';
-  }
-  $q = $db->query("select distinct(dept) from moffice
+    $date = parse_date(get_http_var('date'));
+    if ($date) {
+        $date = '"' . $date['iso'] . '"';
+    }
+    else {
+        $date = 'date(now())';
+    }
+    $q = $db->query("select distinct(dept) from moffice
 		where dept like '%" . mysqli_real_escape_string($db, $name) . "%Committee'
 		and from_date <= " . $date . ' and '
         . $date . ' <= to_date');
-  if ($q->rows() > 1) {
-    // More than one committee matches.
-    for ($i = 0; $i < $q->rows(); $i++) {
-      $output['committees'][] = [
+    if ($q->rows() > 1) {
+        // More than one committee matches.
+        for ($i = 0; $i < $q->rows(); $i++) {
+            $output['committees'][] = [
             'name' => html_entity_decode($q->field($i, 'dept'))
-        ];
+            ];
+        }
+        api_output($output);
     }
-    api_output($output);
-  }
-  elseif ($q->rows()) {
-    // One committee.
-    $q = $db->query("select * from moffice,member
+    elseif ($q->rows()) {
+        // One committee.
+        $q = $db->query("select * from moffice,member
 			where moffice.person = member.person_id
 			and dept like '%" . mysqli_real_escape_string($db, $name) . "%Committee'
 			and from_date <= " . $date . ' and ' . $date . " <= to_date
 			and entered_house <= " . $date . ' and ' . $date . ' <= left_house');
-    if ($q->rows()) {
-      $output = [];
-      $output['committee'] = html_entity_decode($q->field(0, 'dept'));
-      for ($i = 0; $i < $q->rows(); $i++) {
-        $member = [
-            'person_id' => $q->field($i, 'person'),
-            'name' => $q->field($i, 'first_name') . ' ' . $q->field($i, 'last_name'),
-        ];
-        if ($q->field($i, 'position') == 'Chairman') {
-          $member['position'] = $q->field($i, 'position');
+        if ($q->rows()) {
+            $output = [];
+            $output['committee'] = html_entity_decode($q->field(0, 'dept'));
+            for ($i = 0; $i < $q->rows(); $i++) {
+                $member = [
+                  'person_id' => $q->field($i, 'person'),
+                  'name' => $q->field($i, 'first_name') . ' ' . $q->field($i, 'last_name'),
+                ];
+                if ($q->field($i, 'position') == 'Chairman') {
+                    $member['position'] = $q->field($i, 'position');
+                }
+                $output['members'][] = $member;
+            }
+            api_output($output);
         }
-        $output['members'][] = $member;
-      }
-      api_output($output);
+        else {
+            api_error('That committee has no members...?');
+        }
     }
     else {
-      api_error('That committee has no members...?');
+        api_error('That name was not recognised');
     }
-  }
-  else {
-    api_error('That name was not recognised');
-  }
 }
 
 /**
  *
  */
 function api_getCommittee_date($date) {
-  api_error('You need to give a name!');
+    api_error('You need to give a name!');
 }

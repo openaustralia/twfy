@@ -18,13 +18,13 @@ $search_recent = $SEARCHLOG->admin_failed_searches();
 
 $rows = [];
 foreach ($search_recent as $row) {
-  $host = gethostbyaddr($row['ip_address']);
-  $host = trim_characters($host, strlen($host) - 25, 100);
-  $min_time = relative_time($row['min_time']);
-  $max_time = relative_time($row['max_time']);
-  $min_time = str_replace(" ago", "", $min_time);
-  $max_time = str_replace(" ago", "", $max_time);
-  $rows[] = [
+    $host = gethostbyaddr($row['ip_address']);
+    $host = trim_characters($host, strlen($host) - 25, 100);
+    $min_time = relative_time($row['min_time']);
+    $max_time = relative_time($row['max_time']);
+    $min_time = str_replace(" ago", "", $min_time);
+    $max_time = str_replace(" ago", "", $max_time);
+    $rows[] = [
     $row['count_ips'],
     $row['group_count'],
     '<a href="' . $row['url'] . '">' . htmlentities($row['query']) . '</a>',

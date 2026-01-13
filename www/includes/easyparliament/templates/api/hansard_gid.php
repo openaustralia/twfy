@@ -14,75 +14,75 @@
 global $this_page, $hansardmajors;
 
 if (!isset($data['info'])) {
-  header("HTTP/1.0 404 Not Found");
-  exit;
+    header("HTTP/1.0 404 Not Found");
+    exit;
 }
 
 $out = [];
 if (isset($data['rows'])) {
-  for ($i = 0; $i < count($data['rows']); $i++) {
-    $row = $data['rows'][$i];
-    if (count($row) == 0) {
-      continue;
+    for ($i = 0; $i < count($data['rows']); $i++) {
+        $row = $data['rows'][$i];
+        if (count($row) == 0) {
+            continue;
+        }
+        if ($row['htype'] == '12') {
+            if (isset($row['speaker']) && count($row['speaker']) > 0) {
+                $speaker = $row['speaker'];
+                if (is_file(BASEDIR . IMAGEPATH . 'mps/' . $speaker['person_id'] . '.jpeg')) {
+                    $row['speaker']['image'] = IMAGEPATH . 'mps/' . $speaker['person_id'] . '.jpeg';
+                }
+                elseif (is_file(BASEDIR . IMAGEPATH . 'mps/' . $speaker['person_id'] . '.jpg')) {
+                    $row['speaker']['image'] = IMAGEPATH . 'mps/' . $speaker['person_id'] . '.jpg';
+                }
+                $desc = '';
+                if (isset($speaker['office'])) {
+                    $desc = $speaker['office'][0]['pretty'];
+                    if (strpos($desc, 'PPS') !== FALSE) {
+                        $desc .= ', ';
+                    }
+                }
+                if (!$desc || strpos($desc, 'PPS') !== FALSE) {
+                    if ($speaker['house'] == 1 && $speaker['party'] != 'Speaker' && $speaker['party'] != 'Deputy Speaker' && $speaker['constituency']) {
+                        $desc .= $speaker['constituency'] . ', ';
+                    }
+                    $desc .= htmlentities($speaker['party']);
+                }
+                if ($desc) {
+                    $row['speaker']['desc'] = $desc;
+                }
+            }
+        }
+        $out[] = $row;
     }
-    if ($row['htype'] == '12') {
-      if (isset($row['speaker']) && count($row['speaker']) > 0) {
-        $speaker = $row['speaker'];
-        if (is_file(BASEDIR . IMAGEPATH . 'mps/' . $speaker['person_id'] . '.jpeg')) {
-          $row['speaker']['image'] = IMAGEPATH . 'mps/' . $speaker['person_id'] . '.jpeg';
-        }
-        elseif (is_file(BASEDIR . IMAGEPATH . 'mps/' . $speaker['person_id'] . '.jpg')) {
-          $row['speaker']['image'] = IMAGEPATH . 'mps/' . $speaker['person_id'] . '.jpg';
-        }
-        $desc = '';
-        if (isset($speaker['office'])) {
-          $desc = $speaker['office'][0]['pretty'];
-          if (strpos($desc, 'PPS') !== FALSE) {
-            $desc .= ', ';
-          }
-        }
-        if (!$desc || strpos($desc, 'PPS') !== FALSE) {
-          if ($speaker['house'] == 1 && $speaker['party'] != 'Speaker' && $speaker['party'] != 'Deputy Speaker' && $speaker['constituency']) {
-            $desc .= $speaker['constituency'] . ', ';
-          }
-          $desc .= htmlentities($speaker['party']);
-        }
-        if ($desc) {
-          $row['speaker']['desc'] = $desc;
-        }
-      }
-    }
-    $out[] = $row;
-  }
 
-  if (isset($data['subrows'])) {
-    foreach ($data['subrows'] as $row) {
-      if (isset($row['contentcount']) && $row['contentcount'] > 0) {
-        $has_content = TRUE;
-      }
-      elseif ($row['htype'] == '11' && $hansardmajors[$row['major']]['type'] == 'other') {
-        $has_content = TRUE;
-      }
-      else {
-        $has_content = FALSE;
-      }
-      $entry = $row;
-      if (isset($row['excerpt'])) {
-        $entry['excerpt'] = trim_characters($entry['excerpt'], 0, 200);
-      }
-      if ($has_content) {
-      }
-      else {
-        unset($entry['listurl']);
-        unset($entry['commentsurl']);
-        unset($entry['comment']);
-        unset($entry['totalcomments']);
-      }
-      $out[] = $entry;
+    if (isset($data['subrows'])) {
+        foreach ($data['subrows'] as $row) {
+            if (isset($row['contentcount']) && $row['contentcount'] > 0) {
+                $has_content = TRUE;
+            }
+            elseif ($row['htype'] == '11' && $hansardmajors[$row['major']]['type'] == 'other') {
+                $has_content = TRUE;
+            }
+            else {
+                $has_content = FALSE;
+            }
+            $entry = $row;
+            if (isset($row['excerpt'])) {
+                $entry['excerpt'] = trim_characters($entry['excerpt'], 0, 200);
+            }
+            if ($has_content) {
+            }
+            else {
+                unset($entry['listurl']);
+                unset($entry['commentsurl']);
+                unset($entry['comment']);
+                unset($entry['totalcomments']);
+            }
+            $out[] = $entry;
+        }
     }
-  }
-  api_output($out);
+    api_output($out);
 }
 else {
-  api_error('Nothing');
+    api_error('Nothing');
 }

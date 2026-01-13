@@ -10,7 +10,7 @@ include_once 'api_getGeometry.php';
  *
  */
 function api_getConstituencies_front() {
-  ?>
+    ?>
     <p><big>Fetch a list of electoral divisions.</big></p>
 
     <h4>Arguments</h4>
@@ -39,62 +39,62 @@ function api_getConstituencies_front() {
  *
  */
 function api_getConstituencies_search($s) {
-  $output = _api_getConstituencies_search($s);
-  api_output($output);
+    $output = _api_getConstituencies_search($s);
+    api_output($output);
 }
 
 /**
  *
  */
 function _api_getConstituencies_search($s) {
-  $db = new ParlDB();
-  $q = $db->query('select c_main.name from constituency, constituency as c_main
+    $db = new ParlDB();
+    $q = $db->query('select c_main.name from constituency, constituency as c_main
 		where constituency.cons_id = c_main.cons_id
 		and c_main.main_name and constituency.name like "%' . mysqli_real_escape_string($db, $s) .
         '%" and constituency.from_date <= date(now())
 		and date(now()) <= constituency.to_date');
-  $output = [];
-  $done = [];
-  for ($i = 0; $i < $q->rows(); $i++) {
-    $name = html_entity_decode($q->field($i, 'name'));
-    if (!in_array($name, $done)) {
-      $output[] = [
+    $output = [];
+    $done = [];
+    for ($i = 0; $i < $q->rows(); $i++) {
+        $name = html_entity_decode($q->field($i, 'name'));
+        if (!in_array($name, $done)) {
+            $output[] = [
             // 'id' => $q->field($i, 'cons_id'),
             'name' => $name
-        ];
-      $done[] = $name;
+            ];
+            $done[] = $name;
+        }
     }
-  }
-  return $output;
+    return $output;
 }
 
 /**
  *
  */
 function api_getConstituencies_date($date) {
-  if ($date = parse_date($date)) {
-    api_getConstituencies('"' . $date['iso'] . '"');
-  }
-  else {
-    api_error('Invalid date format');
-  }
+    if ($date = parse_date($date)) {
+        api_getConstituencies('"' . $date['iso'] . '"');
+    }
+    else {
+        api_error('Invalid date format');
+    }
 }
 
 /**
  *
  */
 function api_getConstituencies($date = 'now()') {
-  $db = new ParlDB();
-  $q = $db->query('select cons_id, name from constituency
+    $db = new ParlDB();
+    $q = $db->query('select cons_id, name from constituency
 		where main_name and from_date <= date(' . $date . ') and date(' . $date . ') <= to_date');
-  $output = [];
-  for ($i = 0; $i < $q->rows(); $i++) {
-    $output[] = [
+    $output = [];
+    for ($i = 0; $i < $q->rows(); $i++) {
+        $output[] = [
           // 'id' => $q->field($i, 'cons_id'),
           'name' => html_entity_decode($q->field($i, 'name'))
-      ];
-  }
-  api_output($output);
+        ];
+    }
+    api_output($output);
 }
 
 /* R_e
@@ -107,32 +107,32 @@ define('R_e', 6372.8);
  *
  */
 function api_getConstituencies_latitude($lat) {
-  $lon = get_http_var('longitude') + 0;
-  $d = get_http_var('distance') + 0;
-  if (!$lat) {
-    api_error('You must supply a latitude and longitude');
-    return;
-  }
-  $out = _api_getConstituencies_latitude($lat, $lon, $d);
-  api_output($out);
+    $lon = get_http_var('longitude') + 0;
+    $d = get_http_var('distance') + 0;
+    if (!$lat) {
+        api_error('You must supply a latitude and longitude');
+        return;
+    }
+    $out = _api_getConstituencies_latitude($lat, $lon, $d);
+    api_output($out);
 }
 
 /**
  *
  */
 function _api_getConstituencies_latitude($lat, $lon, $d) {
-  $geometry = _api_getGeometry();
-  $out = [];
-  foreach ($geometry['data'] as $name => $data) {
-    if (!isset($data['centre_lat']) || !isset($data['centre_lon'])) {
-      continue;
-    }
-    $distance = R_e * acos(
+    $geometry = _api_getGeometry();
+    $out = [];
+    foreach ($geometry['data'] as $name => $data) {
+        if (!isset($data['centre_lat']) || !isset($data['centre_lon'])) {
+            continue;
+        }
+        $distance = R_e * acos(
           sin(deg2rad($lat)) * sin(deg2rad($data['centre_lat']))
           + cos(deg2rad($lat)) * cos(deg2rad($data['centre_lat']))
           * cos(deg2rad($lon - $data['centre_lon']))
-      );
-    if (
+        );
+        if (
           deg2rad($data['centre_lat']) > deg2rad($lat) - ($d / R_e)
           && deg2rad($data['centre_lat']) < deg2rad($lat) + ($d / R_e)
           // Case where search pt is near pole.
@@ -140,32 +140,32 @@ function _api_getConstituencies_latitude($lat, $lon, $d) {
               || _api_angle_between(deg2rad($data['centre_lon']), deg2rad($lon))
               < $d / (R_e * cos(deg2rad($lat + $d / R_e))))
           && $distance < $d
-      ) {
-      $out[] = array_merge(
-          $data,
-          ['distance' => $distance, 'name' => $name]
-        );
+        ) {
+            $out[] = array_merge(
+              $data,
+              ['distance' => $distance, 'name' => $name]
+            );
+        }
     }
-  }
-  usort($out, create_function('$a,$b', "
+    usort($out, create_function('$a,$b', "
 		if (\$a['distance'] > \$b['distance']) return 1;
 		if (\$a['distance'] < \$b['distance']) return -1;
 		return 0;"));
-  return $out;
+    return $out;
 }
 
 /**
  *
  */
 function api_getConstituencies_longitude($lon) {
-  api_error('You must supply a latitude');
+    api_error('You must supply a latitude');
 }
 
 /**
  *
  */
 function api_getConstituencies_distance($d) {
-  api_error('You must supply a latitude and longitude');
+    api_error('You must supply a latitude and longitude');
 }
 
 /**
@@ -174,8 +174,8 @@ function api_getConstituencies_distance($d) {
  * smallest angle between them.
  */
 function _api_angle_between($a1, $a2) {
-  if (abs($a1 - $a2) > M_PI) {
-    return 2 * M_PI - abs($a1 - $a2);
-  }
-  return abs($a1 - $a2);
+    if (abs($a1 - $a2) > M_PI) {
+        return 2 * M_PI - abs($a1 - $a2);
+    }
+    return abs($a1 - $a2);
 }

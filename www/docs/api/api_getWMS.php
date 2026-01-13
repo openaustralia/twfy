@@ -10,7 +10,7 @@ include_once 'api_getHansard.php';
  *
  */
 function api_getWMS_front() {
-  ?>
+    ?>
     <p><big>Fetch Written Ministerial Statements.</big></p>
 
     <h4>Arguments</h4>
@@ -100,21 +100,21 @@ function api_getWMS_front() {
  *
  */
 function api_getWMS_date($d) {
-  _api_getHansard_date('WMS', $d);
+    _api_getHansard_date('WMS', $d);
 }
 
 /**
  *
  */
 function api_getWMS_year($y) {
-  _api_getHansard_year('WMS', $y);
+    _api_getHansard_year('WMS', $y);
 }
 
 /**
  *
  */
 function api_getWMS_search($s) {
-  _api_getHansard_search([
+    _api_getHansard_search([
         's' => $s,
         'pid' => get_http_var('person'),
         'type' => 'wms',
@@ -125,7 +125,7 @@ function api_getWMS_search($s) {
  *
  */
 function api_getWMS_person($pid) {
-  _api_getHansard_search([
+    _api_getHansard_search([
         'pid' => $pid,
         'type' => 'wms',
     ]);
@@ -135,12 +135,12 @@ function api_getWMS_person($pid) {
  *
  */
 function api_getWMS_gid($gid) {
-  _api_getHansard_gid('WMS', $gid);
+    _api_getHansard_gid('WMS', $gid);
 }
 
 /**
  *
  */
 function api_getWMS_department($dept) {
-  _api_getHansard_department('WMS', $dept);
+    _api_getHansard_department('WMS', $dept);
 }

@@ -66,21 +66,21 @@ $USERURL = new URL('userview');
 
 for ($row = 0; $row < $q->rows(); $row++) {
 
-  $user_id = $q->field($row, 'user_id');
+    $user_id = $q->field($row, 'user_id');
 
-  $USERURL->insert(['u' => $user_id]);
+    $USERURL->insert(['u' => $user_id]);
 
-  if ($q->field($row, 'confirmed') == 1) {
-    $confirmed = 'Yes';
-    $name = '<a href="' . $USERURL->generate() . '">' . htmlspecialchars($q->field($row, 'firstname'))
-    . ' ' . htmlspecialchars($q->field($row, 'lastname')) . '</a>';
-  }
-  else {
-    $confirmed = 'No';
-    $name = htmlspecialchars($q->field($row, 'firstname') . ' ' . $q->field($row, 'lastname'));
-  }
+    if ($q->field($row, 'confirmed') == 1) {
+        $confirmed = 'Yes';
+        $name = '<a href="' . $USERURL->generate() . '">' . htmlspecialchars($q->field($row, 'firstname'))
+        . ' ' . htmlspecialchars($q->field($row, 'lastname')) . '</a>';
+    }
+    else {
+        $confirmed = 'No';
+        $name = htmlspecialchars($q->field($row, 'firstname') . ' ' . $q->field($row, 'lastname'));
+    }
 
-  $rows[] = [
+    $rows[] = [
         $name,
         '<a href="mailto:' . $q->field($row, 'email') . '">' . $q->field($row, 'email') . '</a>',
         $confirmed,

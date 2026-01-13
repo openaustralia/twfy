@@ -8,12 +8,12 @@
  */
 
 if (isset($data['comments']) && count($data['comments']) > 0) {
-  $USERURL = new URL('userview');
-  foreach ($data['comments'] as $key => $value) {
-    unset($data['comments'][$key]['modflagged']);
-    unset($data['comments'][$key]['visible']);
-    $USERURL->insert(['u' => $value['user_id']]);
-    $data['comments'][$key]['userurl'] = $USERURL->generate();
-  }
+    $USERURL = new URL('userview');
+    foreach ($data['comments'] as $key => $value) {
+        unset($data['comments'][$key]['modflagged']);
+        unset($data['comments'][$key]['visible']);
+        $USERURL->insert(['u' => $value['user_id']]);
+        $data['comments'][$key]['userurl'] = $USERURL->generate();
+    }
 }
 api_output($data);

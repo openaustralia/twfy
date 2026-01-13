@@ -10,7 +10,7 @@ include_once 'api_getMembers.php';
  *
  */
 function api_getLords_front() {
-  ?>
+    ?>
     <p><big>Fetch a list of Senators.</big></p>
 
     <h4>Arguments</h4>
@@ -53,33 +53,33 @@ function api_getLords_front() {
  * See api_getMembers.php for these shared functions .
  */
 function api_getLords_party($s) {
-  api_getMembers_party(2, $s);
+    api_getMembers_party(2, $s);
 }
 
 /**
  *
  */
 function api_getLords_state($s) {
-  api_getMembers_state(2, $s);
+    api_getMembers_state(2, $s);
 }
 
 /**
  *
  */
 function api_getLords_search($s) {
-  api_getMembers_search(2, $s);
+    api_getMembers_search(2, $s);
 }
 
 /**
  *
  */
 function api_getLords_date($date) {
-  api_getMembers_date(2, $date);
+    api_getMembers_date(2, $date);
 }
 
 /**
  *
  */
 function api_getLords($date = 'now()') {
-  api_getMembers(2, $date);
+    api_getMembers(2, $date);
 }

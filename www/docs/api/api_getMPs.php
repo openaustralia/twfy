@@ -10,7 +10,7 @@ include_once 'api_getMembers.php';
  *
  */
 function api_getMPs_front() {
-  ?>
+    ?>
     <p><big>Fetch a list of members of the House of Representatives.</big></p>
 
     <h4>Arguments</h4>
@@ -45,26 +45,26 @@ function api_getMPs_front() {
  * See api_getMembers.php for these shared functions .
  */
 function api_getMPs_party($s) {
-  api_getMembers_party(1, $s);
+    api_getMembers_party(1, $s);
 }
 
 /**
  *
  */
 function api_getMPs_search($s) {
-  api_getMembers_search(1, $s);
+    api_getMembers_search(1, $s);
 }
 
 /**
  *
  */
 function api_getMPs_date($date) {
-  api_getMembers_date(1, $date);
+    api_getMembers_date(1, $date);
 }
 
 /**
  *
  */
 function api_getMPs($date = 'now()') {
-  api_getMembers(1, $date);
+    api_getMembers(1, $date);
 }

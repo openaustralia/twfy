@@ -43,52 +43,52 @@ $ALERT = new ALERT();
 $success = $ALERT->confirm(get_http_var('t'));
 
 if ($success) {
-  confirm_success($ALERT);
+    confirm_success($ALERT);
 }
 else {
-  confirm_error();
+    confirm_error();
 }
 
 /**
  * FUNCTION:  confirm_success.
  */
 function confirm_success($ALERT) {
-  global $PAGE, $this_page, $THEUSER;
-  $this_page = 'alertconfirmsucceeded';
-  $criteria = $ALERT->criteria_pretty(TRUE);
-  $email = $ALERT->email();
-  $extra = NULL;
-  $PAGE->page_start();
-  $PAGE->stripe_start();
-  ?>
+    global $PAGE, $this_page, $THEUSER;
+    $this_page = 'alertconfirmsucceeded';
+    $criteria = $ALERT->criteria_pretty(TRUE);
+    $email = $ALERT->email();
+    $extra = NULL;
+    $PAGE->page_start();
+    $PAGE->stripe_start();
+    ?>
     <p>Your alert has been confirmed.</p>
     <p>You will now receive email alerts for the following criteria:</p>
     <ul><?php echo $criteria?></ul>
     <p>This is normally the day after, but could conceivably be later due to issues at our or aph.gov.au's end.</p>
-  <?php
+    <?php
 
-  $extra = alert_confirmation_advert(['email' => $email, 'pid' => strstr($ALERT->criteria(), 'speaker:')]);
-  if ($extra) {
-    $extra = "advert=$extra";
-  }
-  $PAGE->stripe_end();
-  $PAGE->page_end($extra);
+    $extra = alert_confirmation_advert(['email' => $email, 'pid' => strstr($ALERT->criteria(), 'speaker:')]);
+    if ($extra) {
+        $extra = "advert=$extra";
+    }
+    $PAGE->stripe_end();
+    $PAGE->page_end($extra);
 }
 
 /**
  * FUNCTION:  confirm_error.
  */
 function confirm_error() {
-  // Friendly error, not a normal one!
-  global $PAGE, $this_page;
-  $this_page = 'alertconfirmfailed';
-  $PAGE->page_start();
-  $PAGE->stripe_start();
-  ?>
+    // Friendly error, not a normal one!
+    global $PAGE, $this_page;
+    $this_page = 'alertconfirmfailed';
+    $PAGE->page_start();
+    $PAGE->stripe_start();
+    ?>
     <p>The link you followed to reach this page appears to be incomplete.</p>
     <p>If you clicked a link in your confirmation email you may need to manually copy and paste the entire link to the 'Location' bar of the web browser and try again.</p>
     <p>If you still get this message, please do <a href="mailto:<?php echo CONTACTEMAIL; ?>">email us</a> and let us know, and we'll help out!</p>
-  <?php
-  $PAGE->stripe_end();
-  $PAGE->page_end();
+    <?php
+    $PAGE->stripe_end();
+    $PAGE->page_end();
 }

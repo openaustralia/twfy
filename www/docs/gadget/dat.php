@@ -16,8 +16,8 @@ $q = $db->query("select * from member
 	where house=1 and person_id = '" . mysqli_real_escape_string($db, $pid) . "'
 	order by left_house desc limit 1");
 if (!$q->rows()) {
-  print '<error>Unknown ID</error>';
-  exit;
+    print '<error>Unknown ID</error>';
+    exit;
 }
 
 $row = $q->row(0);
@@ -29,18 +29,18 @@ $row['full_name'] = member_full_name(
     $row['constituency']
 );
 if (isset($parties[$row['party']])) {
-  $row['party'] = $parties[$row['party']];
+    $row['party'] = $parties[$row['party']];
 }
 [$image, $sz] = find_rep_image($row['person_id'], TRUE);
 if ($image) {
-  $row['image'] = $image;
+    $row['image'] = $image;
 }
 
 $q = $db->query("SELECT position,dept FROM moffice WHERE to_date='9999-12-31'
 	and source='chgpages/selctee' and person=" .
     mysqli_real_escape_string($db, $pid) . ' ORDER BY from_date DESC');
 for ($i = 0; $i < $q->rows(); $i++) {
-  $row['selctee'][] = prettify_office($q->field($i, 'position'), $q->field($i, 'dept'));
+    $row['selctee'][] = prettify_office($q->field($i, 'position'), $q->field($i, 'dept'));
 }
 
 /*
@@ -62,23 +62,23 @@ $q = $db->query("select data_key, data_value from personinfo
 $none = FALSE;
 $output = [];
 for ($i = 0; $i < $q->rows(); $i++) {
-  $key = str_replace(['public_whip_dreammp', '_distance'], '', $q->field($i, 'data_key'));
-  if (preg_match('#_absent$#', $key)) {
-    continue;
-  }
-  if ($none) {
-    $none = FALSE;
-    $output[$key] = -1;
-    continue;
-  }
-  $value = $q->field($i, 'data_value');
-  if (preg_match('#_both_voted$#', $key)) {
-    if ($value == 0) {
-      $none = TRUE;
+    $key = str_replace(['public_whip_dreammp', '_distance'], '', $q->field($i, 'data_key'));
+    if (preg_match('#_absent$#', $key)) {
+        continue;
     }
-    continue;
-  }
-  $output[$key] = $value;
+    if ($none) {
+        $none = FALSE;
+        $output[$key] = -1;
+        continue;
+    }
+    $value = $q->field($i, 'data_value');
+    if (preg_match('#_both_voted$#', $key)) {
+        if ($value == 0) {
+            $none = TRUE;
+        }
+        continue;
+    }
+    $output[$key] = $value;
 }
 $pw = '<ul>';
 display_dream_comparison(996, "a <strong>transparent Parliament</strong>");
@@ -97,21 +97,21 @@ display_dream_comparison(826, "equal <strong>gay rights</strong>");
  *
  */
 function display_dream_comparison($id, $text, $inverse = FALSE) {
-  global $pw, $output;
-  if (!array_key_exists($id, $output)) {
-    return;
-  }
-  $score = $output[$id];
-  if ($score == -1) {
-    $pw .= '<li>Has never voted on';
-  }
-  else {
-    if ($inverse) {
-      $score = 1 - $score;
+    global $pw, $output;
+    if (!array_key_exists($id, $output)) {
+        return;
     }
-    $pw .= '<li>Voted <strong>' . score_to_strongly($score) . '</strong>';
-  }
-  $pw .= ' ' . $text . '</li>';
+    $score = $output[$id];
+    if ($score == -1) {
+        $pw .= '<li>Has never voted on';
+    }
+    else {
+        if ($inverse) {
+            $score = 1 - $score;
+        }
+        $pw .= '<li>Voted <strong>' . score_to_strongly($score) . '</strong>';
+    }
+    $pw .= ' ' . $text . '</li>';
 }
 
 $pw .= '</ul>';
@@ -122,8 +122,8 @@ $output['pw_data'] = $pw;
 $q = $db->query("select * from memberinfo where member_id = " . $row['member_id']
     . " and data_key in ('swing_to_lose_seat_today', 'majority_in_seat')");
 for ($i = 0; $i < $q->rows(); $i++) {
-  $key = $q->field($i, 'data_key');
-  $output[$key] = number_format($q->field($i, 'data_value'));
+    $key = $q->field($i, 'data_key');
+    $output[$key] = number_format($q->field($i, 'data_value'));
 }
 
 print '<twfy>' . api_output_xml($output) . '</twfy>';
@@ -132,27 +132,27 @@ print '<twfy>' . api_output_xml($output) . '</twfy>';
  *
  */
 function score_to_strongly($dmpscore) {
-  $dmpdesc = "unknown about";
-  if ($dmpscore > 0.95 && $dmpscore <= 1.0) {
-    $dmpdesc = "consistently against";
-  }
-  elseif ($dmpscore > 0.85) {
-    $dmpdesc = "almost always against";
-  }
-  elseif ($dmpscore > 0.6) {
-    $dmpdesc = "generally against";
-  }
-  elseif ($dmpscore > 0.4) {
-    $dmpdesc = "a mixture of for and against";
-  }
-  elseif ($dmpscore > 0.15) {
-    $dmpdesc = "generally for";
-  }
-  elseif ($dmpscore > 0.05) {
-    $dmpdesc = "almost always for";
-  }
-  elseif ($dmpscore >= 0.0) {
-    $dmpdesc = "consistently for";
-  }
-  return $dmpdesc;
+    $dmpdesc = "unknown about";
+    if ($dmpscore > 0.95 && $dmpscore <= 1.0) {
+        $dmpdesc = "consistently against";
+    }
+    elseif ($dmpscore > 0.85) {
+        $dmpdesc = "almost always against";
+    }
+    elseif ($dmpscore > 0.6) {
+        $dmpdesc = "generally against";
+    }
+    elseif ($dmpscore > 0.4) {
+        $dmpdesc = "a mixture of for and against";
+    }
+    elseif ($dmpscore > 0.15) {
+        $dmpdesc = "generally for";
+    }
+    elseif ($dmpscore > 0.05) {
+        $dmpdesc = "almost always for";
+    }
+    elseif ($dmpscore >= 0.0) {
+        $dmpdesc = "consistently for";
+    }
+    return $dmpdesc;
 }

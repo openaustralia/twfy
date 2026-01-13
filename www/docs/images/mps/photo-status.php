@@ -16,17 +16,17 @@ $query = 'SELECT person_id, first_name, last_name, constituency, party
 $q = $db->query($query . "ORDER BY last_name, first_name");
 $out = ['both' => '', 'small' => '', 'none' => ''];
 for ($i = 0; $i < $q->rows(); $i++) {
-  $p_id = $q->field($i, 'person_id');
-  [$dummy, $sz] = find_rep_image($p_id);
-  if ($sz == 'L') {
-    $out['both'] .= $q->field($i, 'first_name') . ' ' . $q->field($i, 'last_name') . ', ';
-  }
-  elseif ($sz == 'S') {
-    $out['small'] .= $q->field($i, 'first_name') . ' ' . $q->field($i, 'last_name') . ', ';
-  }
-  else {
-    $out['none'] .= '<li>' . $q->field($i, 'first_name') . ' ' . $q->field($i, 'last_name') . ' (' . $q->field($i, 'party') . ')' . ', ' . $q->field($i, 'constituency');
-  }
+    $p_id = $q->field($i, 'person_id');
+    [$dummy, $sz] = find_rep_image($p_id);
+    if ($sz == 'L') {
+        $out['both'] .= $q->field($i, 'first_name') . ' ' . $q->field($i, 'last_name') . ', ';
+    }
+    elseif ($sz == 'S') {
+        $out['small'] .= $q->field($i, 'first_name') . ' ' . $q->field($i, 'last_name') . ', ';
+    }
+    else {
+        $out['none'] .= '<li>' . $q->field($i, 'first_name') . ' ' . $q->field($i, 'last_name') . ' (' . $q->field($i, 'party') . ')' . ', ' . $q->field($i, 'constituency');
+    }
 }
 print '<h3>Missing completely</h3> <ul>';
 print $out['none'];

@@ -12,31 +12,31 @@ global $PAGE;
 // Contents varies depending on the page we're on...
 
 if ($this_page == 'whallday') {
-  $date = get_http_var('d');
-  if (preg_match('#^(\d\d\d\d)-(\d\d)-(\d\d)$#', $date, $m)) {
-    $year = $m[1];
-    $month = $m[2];
-    $day = $m[3];
-    $args = [
+    $date = get_http_var('d');
+    if (preg_match('#^(\d\d\d\d)-(\d\d)-(\d\d)$#', $date, $m)) {
+        $year = $m[1];
+        $month = $m[2];
+        $day = $m[3];
+        $args = [
           'year' => $year,
           'month' => $month,
           'onday' => $date
-      ];
-    $title = 'Westminster Hall debates this month';
-  }
-  else {
-    $args = [
+        ];
+        $title = 'Westminster Hall debates this month';
+    }
+    else {
+        $args = [
           'months' => 1
-      ];
-    $title = 'Recent Westminster Hall debates';
-  }
+        ];
+        $title = 'Recent Westminster Hall debates';
+    }
 }
 else {
-  $args = [
+    $args = [
         // How many recent months to show.
         'months' => 1
     ];
-  $title = 'Recent Westminster Hall debates';
+    $title = 'Recent Westminster Hall debates';
 }
 
 $PAGE->block_start(['title' => $title]);

@@ -12,32 +12,32 @@ include_once INCLUDESPATH . "easyparliament/glossary.php";
  */
 class MEMBER {
 
-  public $member_id;
-  public $person_id;
-  public $first_name;
-  public $title;
-  public $last_name;
-  public $constituency;
-  public $party;
-  public $other_parties;
-  public $houses = [];
-  public $entered_house = [];
-  public $left_house = [];
-  public $extra_info = [];
-  /**
-   * Is this MP THEUSERS's MP?
-   */
-  public $the_users_mp = FALSE;
-  public $canonical = TRUE;
-  /**
-   * Which house we should display this person in.
-   */
-  public $house_disp = 0;
+    public $member_id;
+    public $person_id;
+    public $first_name;
+    public $title;
+    public $last_name;
+    public $constituency;
+    public $party;
+    public $other_parties;
+    public $houses = [];
+    public $entered_house = [];
+    public $left_house = [];
+    public $extra_info = [];
+    /**
+     * Is this MP THEUSERS's MP?
+     */
+    public $the_users_mp = FALSE;
+    public $canonical = TRUE;
+    /**
+     * Which house we should display this person in.
+     */
+    public $house_disp = 0;
 
-  /**
-   * Mapping member table 'house' numbers to text.
-   */
-  public $houses_pretty = [
+    /**
+     * Mapping member table 'house' numbers to text.
+     */
+    public $houses_pretty = [
         0 => 'Royal Family',
         1 => 'House of Commons',
         2 => 'House of Lords',
@@ -45,10 +45,10 @@ class MEMBER {
         4 => 'Scottish Parliament',
     ];
 
-  /**
-   * Mapping member table reasons to text.
-   */
-  public $reasons = [
+    /**
+     * Mapping member table reasons to text.
+     */
+    public $reasons = [
         'became_peer' => 'Became peer',
         'by_election' => 'Byelection',
         'changed_party' => 'Changed party',
@@ -68,113 +68,113 @@ class MEMBER {
 
     ];
 
-  /**
-   *
-   */
-  public function MEMBER($args) {
-    // $args is a hash like one of:
-    // member_id         => 237
-    // person_id         => 345
-    // constituency     => 'Braintree'
-    // postcode            => 'e9 6dw'
+    /**
+     *
+     */
+    public function MEMBER($args) {
+        // $args is a hash like one of:
+        // member_id         => 237
+        // person_id         => 345
+        // constituency     => 'Braintree'
+        // postcode            => 'e9 6dw'
 
-    // If just a constituency we currently just get the current member for
-    // that constituency.
+        // If just a constituency we currently just get the current member for
+        // that constituency.
 
-    global $PAGE, $this_page;
+        global $PAGE, $this_page;
 
-    $this->db = new ParlDB();
-    $person_id = '';
-    if (isset($args['member_id']) && is_numeric($args['member_id'])) {
-      $person_id = $this->member_id_to_person_id($args['member_id']);
-    }
-    elseif (isset($args['name'])) {
-      $con = $args['constituency'] ?? '';
-      $person_id = $this->name_to_person_id($args['name'], $con);
-    }
-    elseif (isset($args['constituency'])) {
-      $person_id = $this->constituency_to_person_id($args['constituency']);
-    }
-    elseif (isset($args['postcode'])) {
-      $person_id = $this->postcode_to_person_id($args['postcode']);
-    }
-    elseif (isset($args['person_id']) && is_numeric($args['person_id'])) {
-      $person_id = $args['person_id'];
-    }
+        $this->db = new ParlDB();
+        $person_id = '';
+        if (isset($args['member_id']) && is_numeric($args['member_id'])) {
+            $person_id = $this->member_id_to_person_id($args['member_id']);
+        }
+        elseif (isset($args['name'])) {
+            $con = $args['constituency'] ?? '';
+            $person_id = $this->name_to_person_id($args['name'], $con);
+        }
+        elseif (isset($args['constituency'])) {
+            $person_id = $this->constituency_to_person_id($args['constituency']);
+        }
+        elseif (isset($args['postcode'])) {
+            $person_id = $this->postcode_to_person_id($args['postcode']);
+        }
+        elseif (isset($args['person_id']) && is_numeric($args['person_id'])) {
+            $person_id = $args['person_id'];
+        }
 
-    if (!$person_id) {
-      $this->valid = FALSE;
-      return;
-    }
+        if (!$person_id) {
+            $this->valid = FALSE;
+            return;
+        }
 
-    if (is_array($person_id)) {
-      if ($this_page == 'peer') {
-        // Hohoho, how long will I get away with this for?
-        // Not very long, it made Lord Patel go wrong.
-        $person_id = $person_id[0];
-      }
-      else {
-        $this->valid = FALSE;
-        $this->person_id = $person_id;
-        return;
-      }
-    }
-    $this->valid = TRUE;
+        if (is_array($person_id)) {
+            if ($this_page == 'peer') {
+                // Hohoho, how long will I get away with this for?
+                // Not very long, it made Lord Patel go wrong.
+                $person_id = $person_id[0];
+            }
+            else {
+                $this->valid = FALSE;
+                $this->person_id = $person_id;
+                return;
+            }
+        }
+        $this->valid = TRUE;
 
-    // Get the data.
-    $q = $this->db->query("SELECT member_id, house, title,
+        // Get the data.
+        $q = $this->db->query("SELECT member_id, house, title,
 			first_name, last_name, constituency, party,
 			entered_house, left_house, entered_reason, left_reason, person_id
 			FROM member
 			WHERE person_id = '" . mysqli_real_escape_string($this->db->conn, $person_id) . "'
                         ORDER BY left_house DESC, house");
 
-    if (!$q->rows() > 0) {
-      $this->valid = FALSE;
-      return;
-    }
+        if (!$q->rows() > 0) {
+            $this->valid = FALSE;
+            return;
+        }
 
-    $this->house_disp = 0;
-    for ($row = 0; $row < $q->rows(); $row++) {
-      $house = $q->field($row, 'house');
-      if (!in_array($house, $this->houses)) {
-        $this->houses[] = $house;
-      }
-      $const = $q->field($row, 'constituency');
-      $party = $q->field($row, 'party');
-      $entered_house = $q->field($row, 'entered_house');
-      $left_house = $q->field($row, 'left_house');
-      $entered_reason = $q->field($row, 'entered_reason');
-      $left_reason = $q->field($row, 'left_reason');
+        $this->house_disp = 0;
+        for ($row = 0; $row < $q->rows(); $row++) {
+            $house = $q->field($row, 'house');
+            if (!in_array($house, $this->houses)) {
+                $this->houses[] = $house;
+            }
+            $const = $q->field($row, 'constituency');
+            $party = $q->field($row, 'party');
+            $entered_house = $q->field($row, 'entered_house');
+            $left_house = $q->field($row, 'left_house');
+            $entered_reason = $q->field($row, 'entered_reason');
+            $left_reason = $q->field($row, 'left_reason');
 
-      $entered_time = strtotime($entered_house);
-      $left_time = strtotime($left_house);
-      if ($left_time === -1) {
-        $left_time = FALSE;
-      }
+            $entered_time = strtotime($entered_house);
+            $left_time = strtotime($left_house);
+            if ($left_time === -1) {
+                $left_time = FALSE;
+            }
 
-      if (!isset($this->entered_house[$house]) || $entered_time < $this->entered_house[$house]['time']) {
-        $this->entered_house[$house] = [
-              'time' => $entered_time,
-              'date' => $entered_house,
-              'date_pretty' => $this->entered_house_text($entered_house),
-              'reason' => $this->entered_reason_text($entered_reason),
-          ];
-      }
+            if (!isset($this->entered_house[$house]) || $entered_time < $this->entered_house[$house]['time']) {
+                $this->entered_house[$house] = [
+                    'time' => $entered_time,
+                    'date' => $entered_house,
+                    'date_pretty' => $this->entered_house_text($entered_house),
+                    'reason' => $this->entered_reason_text($entered_reason),
+                ];
+            }
 
-      if (!isset($this->left_house[$house])) {
-        $this->left_house[$house] = [
-              'time' => $left_time,
-              'date' => $left_house,
-              'date_pretty' => $this->left_house_text($left_house),
-              'reason' => $this->left_reason_text($left_reason),
-              'constituency' => $const,
-              'party' => $this->party_text($party)
-          ];
-      }
+            if (!isset($this->left_house[$house])) {
+                $this->left_house[$house] = [
+                    'time' => $left_time,
+                    'date' => $left_house,
+                    'date_pretty' => $this->left_house_text($left_house),
+                    'reason' => $this->left_reason_text($left_reason),
+                    'constituency' => $const,
+                    'party' => $this->party_text($party)
+                ];
+            }
 
-      // The Monarch.
-      if (
+            // The Monarch.
+            if (
             $house == 0
             // MSPs and.
             || (!$this->house_disp && $house == 4)
@@ -184,656 +184,656 @@ class MEMBER {
             || ($this->house_disp != 2 && $house == 2)
             // MPs have higher priority than MLAs.
             || ((!$this->house_disp || $this->house_disp == 3) && $house == 1)
-        ) {
-        // OA-306 assure that person's party affiliation and constituency
-        // are derived from thier latest membership role.
-        if (
-              !isset($this->left_house[$this->house_disp])
-              || ($left_house >= $this->left_house[$this->house_disp]['date'])
-          ) {
-          $this->house_disp = $house;
-          $this->constituency = $const;
-          $this->party = $party;
+            ) {
+                // OA-306 assure that person's party affiliation and constituency
+                // are derived from thier latest membership role.
+                if (
+                    !isset($this->left_house[$this->house_disp])
+                    || ($left_house >= $this->left_house[$this->house_disp]['date'])
+                ) {
+                    $this->house_disp = $house;
+                    $this->constituency = $const;
+                    $this->party = $party;
 
-          $this->member_id = $q->field($row, 'member_id');
-          $this->title = $q->field($row, 'title');
-          $this->first_name = $q->field($row, 'first_name');
-          $this->last_name = $q->field($row, 'last_name');
-          $this->person_id = $q->field($row, 'person_id');
+                    $this->member_id = $q->field($row, 'member_id');
+                    $this->title = $q->field($row, 'title');
+                    $this->first_name = $q->field($row, 'first_name');
+                    $this->last_name = $q->field($row, 'last_name');
+                    $this->person_id = $q->field($row, 'person_id');
+                }
+            }
+
+            if ($left_reason == 'changed_party') {
+                $this->other_parties[] = [
+                    'from' => $this->party_text($q->field($row, 'party')),
+                    'date' => $q->field($row, 'left_house')
+                ];
+            }
         }
-      }
 
-      if ($left_reason == 'changed_party') {
-        $this->other_parties[] = [
-              'from' => $this->party_text($q->field($row, 'party')),
-              'date' => $q->field($row, 'left_house')
-          ];
-      }
+        // Loads extra info from DB - you now have to call this from outside
+        // when you need it, as some uses of MEMBER are lightweight (e.g.
+        // in searchengine.php)
+        // $this->load_extra_info();
+
+        $this->set_users_mp();
     }
 
-    // Loads extra info from DB - you now have to call this from outside
-    // when you need it, as some uses of MEMBER are lightweight (e.g.
-    // in searchengine.php)
-    // $this->load_extra_info();
-
-    $this->set_users_mp();
-  }
-
-  /**
-   *
-   */
-  public function member_id_to_person_id($member_id) {
-    global $PAGE;
-    $q = $this->db->query("SELECT person_id FROM member
+    /**
+     *
+     */
+    public function member_id_to_person_id($member_id) {
+        global $PAGE;
+        $q = $this->db->query("SELECT person_id FROM member
 					WHERE member_id = '" . mysqli_real_escape_string($this->db->conn, $member_id) . "'");
-    if ($q->rows > 0) {
-      return $q->field(0, 'person_id');
-    }
-    else {
-      // $PAGE->error_message("Sorry, there is no member with a member ID of '" . htmlentities($member_id) . "'.");
-      return FALSE;
-    }
-  }
-
-  /**
-   *
-   */
-  public function postcode_to_person_id($postcode) {
-    twfy_debug('MP', "postcode_to_person_id converting postcode to person");
-    $constituency = strtolower(postcode_to_constituency($postcode));
-    return $this->constituency_to_person_id($constituency);
-  }
-
-  /**
-   *
-   */
-  public function constituency_to_person_id($constituency) {
-    global $PAGE;
-    if ($constituency == '') {
-      $PAGE->error_message("Sorry, no constituency was found.");
-      return FALSE;
+        if ($q->rows > 0) {
+            return $q->field(0, 'person_id');
+        }
+        else {
+            // $PAGE->error_message("Sorry, there is no member with a member ID of '" . htmlentities($member_id) . "'.");
+            return FALSE;
+        }
     }
 
-    if ($constituency == 'Orkney ') {
-      $constituency = 'Orkney &amp; Shetland';
+    /**
+     *
+     */
+    public function postcode_to_person_id($postcode) {
+        twfy_debug('MP', "postcode_to_person_id converting postcode to person");
+        $constituency = strtolower(postcode_to_constituency($postcode));
+        return $this->constituency_to_person_id($constituency);
     }
 
-    $normalised = normalise_constituency_name($constituency);
-    if ($normalised) {
-      $constituency = $normalised;
-    }
+    /**
+     *
+     */
+    public function constituency_to_person_id($constituency) {
+        global $PAGE;
+        if ($constituency == '') {
+            $PAGE->error_message("Sorry, no constituency was found.");
+            return FALSE;
+        }
 
-    $q = $this->db->query("SELECT person_id FROM member
+        if ($constituency == 'Orkney ') {
+            $constituency = 'Orkney &amp; Shetland';
+        }
+
+        $normalised = normalise_constituency_name($constituency);
+        if ($normalised) {
+            $constituency = $normalised;
+        }
+
+        $q = $this->db->query("SELECT person_id FROM member
 					WHERE constituency = '" . mysqli_real_escape_string($this->db->conn, $constituency) . "'
 					AND left_reason = 'still_in_office'");
 
-    if ($q->rows > 0) {
-      return $q->field(0, 'person_id');
+        if ($q->rows > 0) {
+            return $q->field(0, 'person_id');
+        }
+        else {
+            $q = $this->db->query("SELECT person_id FROM member WHERE constituency = '" . mysqli_real_escape_string($this->db->conn, $constituency) . "' ORDER BY left_house DESC LIMIT 1");
+            if ($q->rows > 0) {
+                return $q->field(0, 'person_id');
+            }
+            else {
+                // $PAGE->error_message("Sorry, there is no current member for the '" . htmlentities(html_entity_decode($constituency)) . "' constituency.");
+                return FALSE;
+            }
+        }
     }
-    else {
-      $q = $this->db->query("SELECT person_id FROM member WHERE constituency = '" . mysqli_real_escape_string($this->db->conn, $constituency) . "' ORDER BY left_house DESC LIMIT 1");
-      if ($q->rows > 0) {
-        return $q->field(0, 'person_id');
-      }
-      else {
-        // $PAGE->error_message("Sorry, there is no current member for the '" . htmlentities(html_entity_decode($constituency)) . "' constituency.");
-        return FALSE;
-      }
-    }
-  }
 
-  /**
-   *
-   */
-  public function name_to_person_id($name, $const = '') {
-    global $PAGE, $this_page;
-    if ($name == '') {
-      $PAGE->error_message('Sorry, no name was found.');
-      return FALSE;
-    }
-    // Matthew made this change, but I don't know why.  It broke
-    // Iain Duncan Smith, so I've put it back.  FAI 2005-03-14.
-    // $success = preg_match('#^(.*? .*?) (.*?)$#', $name, $m);.
-    $q = "SELECT DISTINCT person_id,constituency,left_house FROM member WHERE ";
-    // If ($this_page=='peer') {
-    // $success = preg_match('#^(.*?) (.*?) of (.*?)$#', $name, $m);
-    // if (!$success)
-    // $success = preg_match('#^(.*?)() of (.*?)$#', $name, $m);
-    // if (!$success)
-    // $success = preg_match('#^(.*?) (.*?)()$#', $name, $m);
-    // if (!$success) {
-    // $PAGE->error_message('Sorry, that name was not recognised.');
-    // return false;
-    // }
-    // $title = mysqli_real_escape_string($this->db->conn ,$m[1]);
-    // $last_name = mysqli_real_escape_string($this->db->conn ,$m[2]);
-    // $const = $m[3];
-    // $q .= "house = 2 AND title = '$title' AND last_name='$last_name'";
-    // }.
-    if ($this_page == 'msp') {
-      $success = preg_match('#^(.*?) (.*?) (.*?)$#', $name, $m);
-      if (!$success) {
-        $success = preg_match('#^(.*?)() (.*)$#', $name, $m);
-      }
-      if (!$success) {
-        $PAGE->error_message('Sorry, that name was not recognised.');
-        return FALSE;
-      }
-      $first_name = mysqli_real_escape_string($this->db->conn, $m[1]);
-      $middle_name = mysqli_real_escape_string($this->db->conn, $m[2]);
-      $last_name = mysqli_real_escape_string($this->db->conn, $m[3]);
-      $q .= "house = 4 AND (";
-      $q .= "(first_name='$first_name $middle_name' AND last_name='$last_name')";
-      $q .= " or (first_name='$first_name' AND last_name='$middle_name $last_name') )";
-    }
-    elseif ($this_page == 'mla') {
-      $success = preg_match('#^(.*?) (.*?) (.*?)$#', $name, $m);
-      if (!$success) {
-        $success = preg_match('#^(.*?)() (.*)$#', $name, $m);
-      }
-      if (!$success) {
-        $PAGE->error_message('Sorry, that name was not recognised.');
-        return FALSE;
-      }
-      $first_name = mysqli_real_escape_string($this->db->conn, $m[1]);
-      $middle_name = mysqli_real_escape_string($this->db->conn, $m[2]);
-      $last_name = mysqli_real_escape_string($this->db->conn, $m[3]);
-      $q .= "house = 3 AND (";
-      $q .= "(first_name='$first_name $middle_name' AND last_name='$last_name')";
-      $q .= " or (first_name='$first_name' AND last_name='$middle_name $last_name') )";
-    }
-    elseif (strstr($this_page, 'mp') || $this_page == 'peer') {
-      $success = preg_match('#^(.*?) (.*?) (.*?)$#', $name, $m);
-      if (!$success) {
-        $success = preg_match('#^(.*?)() (.*)$#', $name, $m);
-      }
-      if (!$success) {
-        $PAGE->error_message('Sorry, that name was not recognised.');
-        return FALSE;
-      }
-      $first_name = $m[1];
-      $middle_name = $m[2];
-      $last_name = $m[3];
-      if (strstr($this_page, 'mp')) {
-        $house = 1;
-      }
-      else {
-        $house = 2;
-      }
-      // If ($title) $q .= 'title = \'' . mysqli_real_escape_string($this->db->conn ,$title) . '\' AND ';.
-      $q .= "house = " . $house . " AND ((first_name='" . mysqli_real_escape_string($this->db->conn, $first_name . " " . $middle_name) . "' AND last_name='" . mysqli_real_escape_string($this->db->conn, $last_name) . "') OR " .
+    /**
+     *
+     */
+    public function name_to_person_id($name, $const = '') {
+        global $PAGE, $this_page;
+        if ($name == '') {
+            $PAGE->error_message('Sorry, no name was found.');
+            return FALSE;
+        }
+        // Matthew made this change, but I don't know why.  It broke
+        // Iain Duncan Smith, so I've put it back.  FAI 2005-03-14.
+        // $success = preg_match('#^(.*? .*?) (.*?)$#', $name, $m);.
+        $q = "SELECT DISTINCT person_id,constituency,left_house FROM member WHERE ";
+        // If ($this_page=='peer') {
+        // $success = preg_match('#^(.*?) (.*?) of (.*?)$#', $name, $m);
+        // if (!$success)
+        // $success = preg_match('#^(.*?)() of (.*?)$#', $name, $m);
+        // if (!$success)
+        // $success = preg_match('#^(.*?) (.*?)()$#', $name, $m);
+        // if (!$success) {
+        // $PAGE->error_message('Sorry, that name was not recognised.');
+        // return false;
+        // }
+        // $title = mysqli_real_escape_string($this->db->conn ,$m[1]);
+        // $last_name = mysqli_real_escape_string($this->db->conn ,$m[2]);
+        // $const = $m[3];
+        // $q .= "house = 2 AND title = '$title' AND last_name='$last_name'";
+        // }.
+        if ($this_page == 'msp') {
+            $success = preg_match('#^(.*?) (.*?) (.*?)$#', $name, $m);
+            if (!$success) {
+                $success = preg_match('#^(.*?)() (.*)$#', $name, $m);
+            }
+            if (!$success) {
+                $PAGE->error_message('Sorry, that name was not recognised.');
+                return FALSE;
+            }
+            $first_name = mysqli_real_escape_string($this->db->conn, $m[1]);
+            $middle_name = mysqli_real_escape_string($this->db->conn, $m[2]);
+            $last_name = mysqli_real_escape_string($this->db->conn, $m[3]);
+            $q .= "house = 4 AND (";
+            $q .= "(first_name='$first_name $middle_name' AND last_name='$last_name')";
+            $q .= " or (first_name='$first_name' AND last_name='$middle_name $last_name') )";
+        }
+        elseif ($this_page == 'mla') {
+            $success = preg_match('#^(.*?) (.*?) (.*?)$#', $name, $m);
+            if (!$success) {
+                $success = preg_match('#^(.*?)() (.*)$#', $name, $m);
+            }
+            if (!$success) {
+                $PAGE->error_message('Sorry, that name was not recognised.');
+                return FALSE;
+            }
+            $first_name = mysqli_real_escape_string($this->db->conn, $m[1]);
+            $middle_name = mysqli_real_escape_string($this->db->conn, $m[2]);
+            $last_name = mysqli_real_escape_string($this->db->conn, $m[3]);
+            $q .= "house = 3 AND (";
+            $q .= "(first_name='$first_name $middle_name' AND last_name='$last_name')";
+            $q .= " or (first_name='$first_name' AND last_name='$middle_name $last_name') )";
+        }
+        elseif (strstr($this_page, 'mp') || $this_page == 'peer') {
+            $success = preg_match('#^(.*?) (.*?) (.*?)$#', $name, $m);
+            if (!$success) {
+                $success = preg_match('#^(.*?)() (.*)$#', $name, $m);
+            }
+            if (!$success) {
+                $PAGE->error_message('Sorry, that name was not recognised.');
+                return FALSE;
+            }
+            $first_name = $m[1];
+            $middle_name = $m[2];
+            $last_name = $m[3];
+            if (strstr($this_page, 'mp')) {
+                $house = 1;
+            }
+            else {
+                $house = 2;
+            }
+            // If ($title) $q .= 'title = \'' . mysqli_real_escape_string($this->db->conn ,$title) . '\' AND ';.
+            $q .= "house = " . $house . " AND ((first_name='" . mysqli_real_escape_string($this->db->conn, $first_name . " " . $middle_name) . "' AND last_name='" . mysqli_real_escape_string($this->db->conn, $last_name) . "') OR " .
                 "(first_name='" . mysqli_real_escape_string($this->db->conn, $first_name) . "' AND last_name='" . mysqli_real_escape_string($this->db->conn, $middle_name . " " . $last_name) . "'))";
-      if ($const) {
-        $normalised = normalise_constituency_name($const);
-        if ($normalised && strtolower($normalised) != strtolower($const)) {
-          $this->canonical = FALSE;
-          $const = $normalised;
+            if ($const) {
+                $normalised = normalise_constituency_name($const);
+                if ($normalised && strtolower($normalised) != strtolower($const)) {
+                    $this->canonical = FALSE;
+                    $const = $normalised;
+                }
+            }
         }
-      }
-    }
-    elseif ($this_page == 'royal') {
-      $q .= ' house = 0';
-    }
-
-    if ($const) {
-      $q .= ' AND constituency=\'' . mysqli_real_escape_string($this->db->conn, $const) . "'";
-    }
-    $q .= ' ORDER BY left_house DESC';
-    $q = $this->db->query($q);
-    if ($q->rows > 1) {
-      // Hacky as a very hacky thing that's graduated in hacking from the University of Hacksville
-      // Anyone who wants to do it properly, feel free.
-
-      $person_ids = [];
-      $consts = [];
-      for ($i = 0; $i < $q->rows(); ++$i) {
-        $pid = $q->field($i, 'person_id');
-        if (!in_array($pid, $person_ids)) {
-          $person_ids[] = $pid;
-          $consts[] = $q->field($i, 'constituency');
+        elseif ($this_page == 'royal') {
+            $q .= ' house = 0';
         }
-      }
-      if (sizeof($person_ids) == 1) {
-        return $person_ids[0];
-      }
-      $this->constituency = $consts;
-      return $person_ids;
-    }
-    elseif ($q->rows > 0) {
-      return $q->field(0, 'person_id');
-    }
-    elseif ($const && $this_page != 'peer') {
-      $this->canonical = FALSE;
-      return $this->name_to_person_id($name);
-    }
-    else {
-      $PAGE->error_message("Sorry, there is no current member with that name.");
-      return FALSE;
-    }
-  }
 
-  /**
-   *
-   */
-  public function set_users_mp() {
-    // Is this MP THEUSER's MP?
-    global $THEUSER;
-    if (is_object($THEUSER) && $THEUSER->constituency_is_set() && $this->current_member(1)) {
-      twfy_debug('MP', "set_users_mp converting postcode to person");
-      $constituency = $THEUSER->constituency();
-      if ($constituency == $this->constituency()) {
-        $this->the_users_mp = TRUE;
-      }
+        if ($const) {
+            $q .= ' AND constituency=\'' . mysqli_real_escape_string($this->db->conn, $const) . "'";
+        }
+        $q .= ' ORDER BY left_house DESC';
+        $q = $this->db->query($q);
+        if ($q->rows > 1) {
+            // Hacky as a very hacky thing that's graduated in hacking from the University of Hacksville
+            // Anyone who wants to do it properly, feel free.
+
+            $person_ids = [];
+            $consts = [];
+            for ($i = 0; $i < $q->rows(); ++$i) {
+                $pid = $q->field($i, 'person_id');
+                if (!in_array($pid, $person_ids)) {
+                    $person_ids[] = $pid;
+                    $consts[] = $q->field($i, 'constituency');
+                }
+            }
+            if (sizeof($person_ids) == 1) {
+                return $person_ids[0];
+            }
+            $this->constituency = $consts;
+            return $person_ids;
+        }
+        elseif ($q->rows > 0) {
+            return $q->field(0, 'person_id');
+        }
+        elseif ($const && $this_page != 'peer') {
+            $this->canonical = FALSE;
+            return $this->name_to_person_id($name);
+        }
+        else {
+            $PAGE->error_message("Sorry, there is no current member with that name.");
+            return FALSE;
+        }
     }
-  }
 
-  /**
-   * Grabs extra information (e.g. external links) from the database.
-   */
-  public function load_extra_info() {
+    /**
+     *
+     */
+    public function set_users_mp() {
+        // Is this MP THEUSER's MP?
+        global $THEUSER;
+        if (is_object($THEUSER) && $THEUSER->constituency_is_set() && $this->current_member(1)) {
+            twfy_debug('MP', "set_users_mp converting postcode to person");
+            $constituency = $THEUSER->constituency();
+            if ($constituency == $this->constituency()) {
+                $this->the_users_mp = TRUE;
+            }
+        }
+    }
 
-    $q = $this->db->query('SELECT * FROM moffice WHERE person=' .
+    /**
+     * Grabs extra information (e.g. external links) from the database.
+     */
+    public function load_extra_info() {
+
+        $q = $this->db->query('SELECT * FROM moffice WHERE person=' .
           mysqli_real_escape_string($this->db->conn, $this->person_id) . ' ORDER BY from_date DESC');
-    for ($row = 0; $row < $q->rows(); $row++) {
-      $this->extra_info['office'][] = $q->row($row);
-    }
+        for ($row = 0; $row < $q->rows(); $row++) {
+            $this->extra_info['office'][] = $q->row($row);
+        }
 
-    // Info specific to member id (e.g. attendance during that period of office)
-    // $q = $this->db->query("SELECT data_key, data_value,.
-    // (SELECT count(member_id) FROM memberinfo AS m2
-    // WHERE m2.data_key=memberinfo.data_key AND m2.data_value=memberinfo.data_value) AS joint
-    // FROM     memberinfo
-    // WHERE    member_id = '" . mysqli_real_escape_string($this->db->conn ,$this->member_id) . "'
-    // ");.
-    $q = $this->db->query("SELECT data_key, data_value
+        // Info specific to member id (e.g. attendance during that period of office)
+        // $q = $this->db->query("SELECT data_key, data_value,.
+        // (SELECT count(member_id) FROM memberinfo AS m2
+        // WHERE m2.data_key=memberinfo.data_key AND m2.data_value=memberinfo.data_value) AS joint
+        // FROM     memberinfo
+        // WHERE    member_id = '" . mysqli_real_escape_string($this->db->conn ,$this->member_id) . "'
+        // ");.
+        $q = $this->db->query("SELECT data_key, data_value
                         FROM 	memberinfo
                         WHERE	member_id = '" . mysqli_real_escape_string($this->db->conn, $this->member_id) . "'
                         ");
-    for ($row = 0; $row < $q->rows(); $row++) {
-      $this->extra_info[$q->field($row, 'data_key')] = $q->field($row, 'data_value');
-      // If ($q->field($row, 'joint') > 1)
-      // $this->extra_info[$q->field($row, 'data_key').'_joint'] = true;.
-    }
+        for ($row = 0; $row < $q->rows(); $row++) {
+            $this->extra_info[$q->field($row, 'data_key')] = $q->field($row, 'data_value');
+            // If ($q->field($row, 'joint') > 1)
+            // $this->extra_info[$q->field($row, 'data_key').'_joint'] = true;.
+        }
 
-    // Info specific to person id (e.g. their permanent page on the Guardian website)
-    // $q = $this->db->query("SELECT data_key, data_value, (SELECT person_id FROM personinfo AS p2.
-    // WHERE p2.person_id <> personinfo.person_id AND p2.data_key=personinfo.data_key AND p2.data_value=personinfo.data_value LIMIT 1) AS count
-    // FROM     personinfo
-    // WHERE    person_id = '" . mysqli_real_escape_string($this->db->conn ,$this->person_id) . "'
-    // ");.
-    $q = $this->db->query("SELECT data_key, data_value
+        // Info specific to person id (e.g. their permanent page on the Guardian website)
+        // $q = $this->db->query("SELECT data_key, data_value, (SELECT person_id FROM personinfo AS p2.
+        // WHERE p2.person_id <> personinfo.person_id AND p2.data_key=personinfo.data_key AND p2.data_value=personinfo.data_value LIMIT 1) AS count
+        // FROM     personinfo
+        // WHERE    person_id = '" . mysqli_real_escape_string($this->db->conn ,$this->person_id) . "'
+        // ");.
+        $q = $this->db->query("SELECT data_key, data_value
                         FROM 	personinfo
                         WHERE	person_id = '" . mysqli_real_escape_string($this->db->conn, $this->person_id) . "'
                         ");
-    for ($row = 0; $row < $q->rows(); $row++) {
-      $this->extra_info[$q->field($row, 'data_key')] = $q->field($row, 'data_value');
-      // If ($q->field($row, 'count') > 1)
-      // $this->extra_info[$q->field($row, 'data_key').'_joint'] = true;.
-    }
+        for ($row = 0; $row < $q->rows(); $row++) {
+            $this->extra_info[$q->field($row, 'data_key')] = $q->field($row, 'data_value');
+            // If ($q->field($row, 'count') > 1)
+            // $this->extra_info[$q->field($row, 'data_key').'_joint'] = true;.
+        }
 
-    // Info specific to constituency (e.g. election results page on Guardian website)
-    $q = $this->db->query("SELECT	data_key,
+        // Info specific to constituency (e.g. election results page on Guardian website)
+        $q = $this->db->query("SELECT	data_key,
                                 data_value
                         FROM 	consinfo
                         WHERE	constituency = '" . mysqli_real_escape_string($this->db->conn, $this->constituency) . "'
                         ");
-    for ($row = 0; $row < $q->rows(); $row++) {
-      $this->extra_info[$q->field($row, 'data_key')] = $q->field($row, 'data_value');
-    }
+        for ($row = 0; $row < $q->rows(); $row++) {
+            $this->extra_info[$q->field($row, 'data_key')] = $q->field($row, 'data_value');
+        }
 
-    if (array_key_exists('guardian_mp_summary', $this->extra_info)) {
-      $guardian_url = $this->extra_info['guardian_mp_summary'];
-      $this->extra_info['guardian_register_member_interests'] =
+        if (array_key_exists('guardian_mp_summary', $this->extra_info)) {
+            $guardian_url = $this->extra_info['guardian_mp_summary'];
+            $this->extra_info['guardian_register_member_interests'] =
                 str_replace("/person/", "/person/parliamentrmi/", $guardian_url);
-      $this->extra_info['guardian_parliament_history'] =
+            $this->extra_info['guardian_parliament_history'] =
                 str_replace("/person/", "/person/parliament/", $guardian_url);
-      $this->extra_info['guardian_biography'] =
+            $this->extra_info['guardian_biography'] =
                 $guardian_url;
-      // str_replace("/person/", "/person/biography/", $guardian_url);.
-      $this->extra_info['guardian_candidacies'] =
+            // str_replace("/person/", "/person/biography/", $guardian_url);.
+            $this->extra_info['guardian_candidacies'] =
                 str_replace("/person/", "/person/candidacies/", $guardian_url);
-      $this->extra_info['guardian_howtheyvoted'] =
+            $this->extra_info['guardian_howtheyvoted'] =
                 str_replace("/person/", "/person/howtheyvoted/", $guardian_url);
-      $this->extra_info['guardian_contactdetails'] =
+            $this->extra_info['guardian_contactdetails'] =
                 str_replace("/person/", "/person/contactdetails/", $guardian_url);
-    }
+        }
 
-    if (array_key_exists('public_whip_rebellions', $this->extra_info)) {
-      $rebellions = $this->extra_info['public_whip_rebellions'];
-      $rebel_desc = "<unknown>";
-      if ($rebellions == 0) {
-        $rebel_desc = "never";
-      }
-      elseif ($rebellions <= 1) {
-        $rebel_desc = "hardly ever";
-      }
-      elseif ($rebellions <= 3) {
-        $rebel_desc = "occasionally";
-      }
-      elseif ($rebellions <= 5) {
-        $rebel_desc = "sometimes";
-      }
-      elseif ($rebellions > 5) {
-        $rebel_desc = "quite often";
-      }
-      $this->extra_info['public_whip_rebel_description'] = $rebel_desc;
-    }
+        if (array_key_exists('public_whip_rebellions', $this->extra_info)) {
+            $rebellions = $this->extra_info['public_whip_rebellions'];
+            $rebel_desc = "<unknown>";
+            if ($rebellions == 0) {
+                $rebel_desc = "never";
+            }
+            elseif ($rebellions <= 1) {
+                $rebel_desc = "hardly ever";
+            }
+            elseif ($rebellions <= 3) {
+                $rebel_desc = "occasionally";
+            }
+            elseif ($rebellions <= 5) {
+                $rebel_desc = "sometimes";
+            }
+            elseif ($rebellions > 5) {
+                $rebel_desc = "quite often";
+            }
+            $this->extra_info['public_whip_rebel_description'] = $rebel_desc;
+        }
 
-    if (isset($this->extra_info['public_whip_attendrank'])) {
-      $prefix = ($this->house(2) ? 'L' : '');
-      $this->extra_info[$prefix . 'public_whip_division_attendance_rank'] = $this->extra_info['public_whip_attendrank'];
-      $this->extra_info[$prefix . 'public_whip_division_attendance_rank_outof'] = $this->extra_info['public_whip_attendrank_outof'];
-      $this->extra_info[$prefix . 'public_whip_division_attendance_quintile'] = floor($this->extra_info['public_whip_attendrank'] / ($this->extra_info['public_whip_attendrank_outof'] + 1) * 5);
-    }
-    if ($this->house(2) && isset($this->extra_info['public_whip_division_attendance'])) {
-      $this->extra_info['Lpublic_whip_division_attendance'] = $this->extra_info['public_whip_division_attendance'];
-      unset($this->extra_info['public_whip_division_attendance']);
-    }
+        if (isset($this->extra_info['public_whip_attendrank'])) {
+            $prefix = ($this->house(2) ? 'L' : '');
+            $this->extra_info[$prefix . 'public_whip_division_attendance_rank'] = $this->extra_info['public_whip_attendrank'];
+            $this->extra_info[$prefix . 'public_whip_division_attendance_rank_outof'] = $this->extra_info['public_whip_attendrank_outof'];
+            $this->extra_info[$prefix . 'public_whip_division_attendance_quintile'] = floor($this->extra_info['public_whip_attendrank'] / ($this->extra_info['public_whip_attendrank_outof'] + 1) * 5);
+        }
+        if ($this->house(2) && isset($this->extra_info['public_whip_division_attendance'])) {
+            $this->extra_info['Lpublic_whip_division_attendance'] = $this->extra_info['public_whip_division_attendance'];
+            unset($this->extra_info['public_whip_division_attendance']);
+        }
 
-    if (array_key_exists('register_member_interests_html', $this->extra_info) && ($this->extra_info['register_member_interests_html'] != '')) {
-      $args = [
+        if (array_key_exists('register_member_interests_html', $this->extra_info) && ($this->extra_info['register_member_interests_html'] != '')) {
+            $args = [
             "sort" => "regexp_replace"
-        ];
-      $GLOSSARY = new GLOSSARY($args);
-      $this->extra_info['register_member_interests_html'] =
+            ];
+            $GLOSSARY = new GLOSSARY($args);
+            $this->extra_info['register_member_interests_html'] =
                 $GLOSSARY->glossarise($this->extra_info['register_member_interests_html']);
-    }
+        }
 
-    $q = $this->db->query('select count(*) as c from alerts where criteria like "%speaker:' . $this->person_id . '%" and confirmed and not deleted');
-    $this->extra_info['number_of_alerts'] = $q->field(0, 'c');
+        $q = $this->db->query('select count(*) as c from alerts where criteria like "%speaker:' . $this->person_id . '%" and confirmed and not deleted');
+        $this->extra_info['number_of_alerts'] = $q->field(0, 'c');
 
-    if (isset($this->extra_info['reading_ease'])) {
-      $this->extra_info['reading_ease'] = round($this->extra_info['reading_ease'], 2);
-      $this->extra_info['reading_year'] = round($this->extra_info['reading_year'], 0);
-      $this->extra_info['reading_age'] = $this->extra_info['reading_year'] + 4;
-      $this->extra_info['reading_age'] .= '&ndash;' . ($this->extra_info['reading_year'] + 5);
-    }
+        if (isset($this->extra_info['reading_ease'])) {
+            $this->extra_info['reading_ease'] = round($this->extra_info['reading_ease'], 2);
+            $this->extra_info['reading_year'] = round($this->extra_info['reading_year'], 0);
+            $this->extra_info['reading_age'] = $this->extra_info['reading_year'] + 4;
+            $this->extra_info['reading_age'] .= '&ndash;' . ($this->extra_info['reading_year'] + 5);
+        }
 
-    // Public Bill Committees.
-    $q = $this->db->query('select bill_id,session,title,sum(attending) as a,sum(chairman) as c
+        // Public Bill Committees.
+        $q = $this->db->query('select bill_id,session,title,sum(attending) as a,sum(chairman) as c
 		from pbc_members, bills
 		where bill_id = bills.id and member_id = ' . $this->member_id()
           . ' group by bill_id');
-    $this->extra_info['pbc'] = [];
-    for ($i = 0; $i < $q->rows(); $i++) {
-      $bill_id = $q->field($i, 'bill_id');
-      $c = $this->db->query('select count(*) as c from hansard where major=6 and minor=' . $bill_id . ' and htype=10');
-      $c = $c->field(0, 'c');
-      $title = $q->field($i, 'title');
-      $attending = $q->field($i, 'a');
-      $chairman = $q->field($i, 'c');
-      $this->extra_info['pbc'][$bill_id] = [
+        $this->extra_info['pbc'] = [];
+        for ($i = 0; $i < $q->rows(); $i++) {
+            $bill_id = $q->field($i, 'bill_id');
+            $c = $this->db->query('select count(*) as c from hansard where major=6 and minor=' . $bill_id . ' and htype=10');
+            $c = $c->field(0, 'c');
+            $title = $q->field($i, 'title');
+            $attending = $q->field($i, 'a');
+            $chairman = $q->field($i, 'c');
+            $this->extra_info['pbc'][$bill_id] = [
             'title' => $title,
             'session' => $q->field($i, 'session'),
             'attending' => $attending,
             'chairman' => ($chairman > 0),
             'outof' => $c
-        ];
+            ];
+        }
+
     }
 
-  }
-
-  /**
-   * Functions for accessing things about this Member.
-   */
-  public function member_id() {
-    return $this->member_id;
-  }
-
-  /**
-   *
-   */
-  public function person_id() {
-    return $this->person_id;
-  }
-
-  /**
-   *
-   */
-  public function first_name() {
-    return $this->first_name;
-  }
-
-  /**
-   *
-   */
-  public function last_name() {
-    return $this->last_name;
-  }
-
-  /**
-   *
-   */
-  public function full_name($no_mp_title = FALSE) {
-    $title = $this->title;
-    if ($no_mp_title && $this->house_disp == 1) {
-      $title = '';
+    /**
+     * Functions for accessing things about this Member.
+     */
+    public function member_id() {
+        return $this->member_id;
     }
-    return member_full_name($this->house_disp, $title, $this->first_name, $this->last_name, $this->constituency);
-  }
 
-  /**
-   *
-   */
-  public function houses() {
-    return $this->houses;
-  }
+    /**
+     *
+     */
+    public function person_id() {
+        return $this->person_id;
+    }
 
-  /**
-   *
-   */
-  public function house($house) {
-    return in_array($house, $this->houses) ? TRUE : FALSE;
-  }
+    /**
+     *
+     */
+    public function first_name() {
+        return $this->first_name;
+    }
 
-  /**
-   *
-   */
-  public function house_text($house) {
-    return $this->houses_pretty[$house];
-  }
+    /**
+     *
+     */
+    public function last_name() {
+        return $this->last_name;
+    }
 
-  /**
-   *
-   */
-  public function constituency() {
-    return $this->constituency;
-  }
+    /**
+     *
+     */
+    public function full_name($no_mp_title = FALSE) {
+        $title = $this->title;
+        if ($no_mp_title && $this->house_disp == 1) {
+            $title = '';
+        }
+        return member_full_name($this->house_disp, $title, $this->first_name, $this->last_name, $this->constituency);
+    }
 
-  /**
-   *
-   */
-  public function party() {
-    return $this->party;
-  }
+    /**
+     *
+     */
+    public function houses() {
+        return $this->houses;
+    }
 
-  /**
-   *
-   */
-  public function party_text($party = NULL) {
-    global $parties;
-    if (!$party) {
-      $party = $this->party;
+    /**
+     *
+     */
+    public function house($house) {
+        return in_array($house, $this->houses) ? TRUE : FALSE;
     }
-    if (isset($parties[$party])) {
-      return $parties[$party];
-    }
-    else {
-      return $party;
-    }
-  }
 
-  /**
-   *
-   */
-  public function entered_house($house = 0) {
-    if ($house) {
-      return array_key_exists($house, $this->entered_house) ? $this->entered_house[$house] : NULL;
+    /**
+     *
+     */
+    public function house_text($house) {
+        return $this->houses_pretty[$house];
     }
-    return $this->entered_house;
-  }
 
-  /**
-   *
-   */
-  public function entered_house_text($entered_house) {
-    if (!$entered_house) {
-      return '';
+    /**
+     *
+     */
+    public function constituency() {
+        return $this->constituency;
     }
-    [$year, $month, $day] = explode('-', $entered_house);
-    if ($month == 1 && $day == 1 && $this->house(2)) {
-      return $year;
-    }
-    elseif (checkdate($month, $day, $year) && $year != '9999') {
-      return format_date($entered_house, LONGDATEFORMAT);
-    }
-    else {
-      return "n/a";
-    }
-  }
 
-  /**
-   *
-   */
-  public function left_house($house = NULL) {
-    if (!is_null($house)) {
-      return array_key_exists($house, $this->left_house) ? $this->left_house[$house] : NULL;
+    /**
+     *
+     */
+    public function party() {
+        return $this->party;
     }
-    return $this->left_house;
-  }
 
-  /**
-   *
-   */
-  public function left_house_text($left_house) {
-    if (!$left_house) {
-      return '';
-    }
-    [$year, $month, $day] = explode('-', $left_house);
-    if (checkdate($month, $day, $year) && $year != '9999') {
-      return format_date($left_house, LONGDATEFORMAT);
-    }
-    else {
-      return "n/a";
-    }
-  }
-
-  /**
-   *
-   */
-  public function entered_reason() {
-    return $this->entered_reason;
-  }
-
-  /**
-   *
-   */
-  public function entered_reason_text($entered_reason) {
-    if (isset($this->reasons[$entered_reason])) {
-      return $this->reasons[$entered_reason];
-    }
-    else {
-      return $entered_reason;
-    }
-  }
-
-  /**
-   *
-   */
-  public function left_reason() {
-    return $this->left_reason;
-  }
-
-  /**
-   *
-   */
-  public function left_reason_text($left_reason, $mponly = 0) {
-    if (isset($this->reasons[$left_reason])) {
-      $left_reason = $this->reasons[$left_reason];
-      if (is_array($left_reason)) {
-        $q = $this->db->query("SELECT MAX(left_house) AS max FROM member");
-        $max = $q->field(0, 'max');
-        if ((!$mponly && $max == $this->left_house) || ($mponly && $max == $this->mp_left_house)) {
-          return $left_reason[0];
+    /**
+     *
+     */
+    public function party_text($party = NULL) {
+        global $parties;
+        if (!$party) {
+            $party = $this->party;
+        }
+        if (isset($parties[$party])) {
+            return $parties[$party];
         }
         else {
-          return $left_reason[1];
+            return $party;
         }
-      }
-      else {
-        return $left_reason;
-      }
     }
-    else {
-      return $left_reason;
-    }
-  }
 
-  /**
-   *
-   */
-  public function extra_info() {
-    return $this->extra_info;
-  }
+    /**
+     *
+     */
+    public function entered_house($house = 0) {
+        if ($house) {
+            return array_key_exists($house, $this->entered_house) ? $this->entered_house[$house] : NULL;
+        }
+        return $this->entered_house;
+    }
 
-  /**
-   *
-   */
-  public function current_member($house = 0) {
-    $current = [];
-    foreach (array_keys($this->houses_pretty) as $h) {
-      $lh = $this->left_house($h);
-      $current[$h] = ($lh['date'] == '9999-12-31');
+    /**
+     *
+     */
+    public function entered_house_text($entered_house) {
+        if (!$entered_house) {
+            return '';
+        }
+        [$year, $month, $day] = explode('-', $entered_house);
+        if ($month == 1 && $day == 1 && $this->house(2)) {
+            return $year;
+        }
+        elseif (checkdate($month, $day, $year) && $year != '9999') {
+            return format_date($entered_house, LONGDATEFORMAT);
+        }
+        else {
+            return "n/a";
+        }
     }
-    if ($house) {
-      return $current[$house];
-    }
-    return $current;
-  }
 
-  /**
-   *
-   */
-  public function the_users_mp() {
-    return $this->the_users_mp;
-  }
+    /**
+     *
+     */
+    public function left_house($house = NULL) {
+        if (!is_null($house)) {
+            return array_key_exists($house, $this->left_house) ? $this->left_house[$house] : NULL;
+        }
+        return $this->left_house;
+    }
 
-  /**
-   *
-   */
-  public function url($absolute = TRUE) {
-    $house = $this->house_disp;
-    if ($house == 1) {
-      $URL = new URL('mp');
+    /**
+     *
+     */
+    public function left_house_text($left_house) {
+        if (!$left_house) {
+            return '';
+        }
+        [$year, $month, $day] = explode('-', $left_house);
+        if (checkdate($month, $day, $year) && $year != '9999') {
+            return format_date($left_house, LONGDATEFORMAT);
+        }
+        else {
+            return "n/a";
+        }
     }
-    elseif ($house == 2) {
-      $URL = new URL('peer');
-    }
-    elseif ($house == 3) {
-      $URL = new URL('mla');
-    }
-    elseif ($house == 4) {
-      $URL = new URL('msp');
-    }
-    elseif ($house == 0) {
-      $URL = new URL('royal');
-    }
-    $member_url = make_member_url($this->full_name(TRUE), $this->constituency(), $house);
-    if ($absolute) {
-      return 'http://' . DOMAIN . $URL->generate('none') . $member_url;
-    }
-    else {
-      return $URL->generate('none') . $member_url;
-    }
-  }
 
-  /**
-   *
-   */
-  public function display() {
-    global $PAGE;
+    /**
+     *
+     */
+    public function entered_reason() {
+        return $this->entered_reason;
+    }
 
-    $member = [
+    /**
+     *
+     */
+    public function entered_reason_text($entered_reason) {
+        if (isset($this->reasons[$entered_reason])) {
+            return $this->reasons[$entered_reason];
+        }
+        else {
+            return $entered_reason;
+        }
+    }
+
+    /**
+     *
+     */
+    public function left_reason() {
+        return $this->left_reason;
+    }
+
+    /**
+     *
+     */
+    public function left_reason_text($left_reason, $mponly = 0) {
+        if (isset($this->reasons[$left_reason])) {
+            $left_reason = $this->reasons[$left_reason];
+            if (is_array($left_reason)) {
+                $q = $this->db->query("SELECT MAX(left_house) AS max FROM member");
+                $max = $q->field(0, 'max');
+                if ((!$mponly && $max == $this->left_house) || ($mponly && $max == $this->mp_left_house)) {
+                    return $left_reason[0];
+                }
+                else {
+                    return $left_reason[1];
+                }
+            }
+            else {
+                return $left_reason;
+            }
+        }
+        else {
+            return $left_reason;
+        }
+    }
+
+    /**
+     *
+     */
+    public function extra_info() {
+        return $this->extra_info;
+    }
+
+    /**
+     *
+     */
+    public function current_member($house = 0) {
+        $current = [];
+        foreach (array_keys($this->houses_pretty) as $h) {
+            $lh = $this->left_house($h);
+            $current[$h] = ($lh['date'] == '9999-12-31');
+        }
+        if ($house) {
+            return $current[$house];
+        }
+        return $current;
+    }
+
+    /**
+     *
+     */
+    public function the_users_mp() {
+        return $this->the_users_mp;
+    }
+
+    /**
+     *
+     */
+    public function url($absolute = TRUE) {
+        $house = $this->house_disp;
+        if ($house == 1) {
+            $URL = new URL('mp');
+        }
+        elseif ($house == 2) {
+            $URL = new URL('peer');
+        }
+        elseif ($house == 3) {
+            $URL = new URL('mla');
+        }
+        elseif ($house == 4) {
+            $URL = new URL('msp');
+        }
+        elseif ($house == 0) {
+            $URL = new URL('royal');
+        }
+        $member_url = make_member_url($this->full_name(TRUE), $this->constituency(), $house);
+        if ($absolute) {
+            return 'http://' . DOMAIN . $URL->generate('none') . $member_url;
+        }
+        else {
+            return $URL->generate('none') . $member_url;
+        }
+    }
+
+    /**
+     *
+     */
+    public function display() {
+        global $PAGE;
+
+        $member = [
           'member_id' => $this->member_id(),
           'person_id' => $this->person_id(),
           'constituency' => $this->constituency(),
@@ -846,55 +846,55 @@ class MEMBER {
           'full_name' => $this->full_name(),
           'the_users_mp' => $this->the_users_mp(),
           'house_disp' => $this->house_disp,
-      ];
+        ];
 
-    $PAGE->display_member($member, $this->extra_info);
-  }
+        $PAGE->display_member($member, $this->extra_info);
+    }
 
-  /**
-   *
-   */
-  public function previous_mps() {
-    $previous_people = '';
-    $entered_house = $this->entered_house(1);
-    if (is_null($entered_house)) {
-      return '';
+    /**
+     *
+     */
+    public function previous_mps() {
+        $previous_people = '';
+        $entered_house = $this->entered_house(1);
+        if (is_null($entered_house)) {
+            return '';
+        }
+        $q = $this->db->query('SELECT DISTINCT(person_id), first_name, last_name FROM member WHERE house=1 AND constituency = "' . $this->constituency() . '" AND person_id != ' . $this->person_id() . ' AND entered_house < "' . $entered_house['date'] . '"');
+        for ($r = 0; $r < $q->rows(); $r++) {
+            $pid = $q->field($r, 'person_id');
+            $name = $q->field($r, 'first_name') . ' ' . $q->field($r, 'last_name');
+            $previous_people .= '<li><a href="' . WEBPATH . 'mp/?pid=' . $pid . '">' . $name . '</a></li>';
+        }
+        // XXX: This is because George's enter date is before Oona's enter date...
+        // Can't think of an easy fix without another pointless DB lookup
+        // Guess the starting setup of this class should store more information.
+        if ($this->person_id() == 10218) {
+            $previous_people = '<li><a href="' . WEBPATH . 'mp/?pid=10341">Oona King</a></li>';
+        }
+        return $previous_people;
     }
-    $q = $this->db->query('SELECT DISTINCT(person_id), first_name, last_name FROM member WHERE house=1 AND constituency = "' . $this->constituency() . '" AND person_id != ' . $this->person_id() . ' AND entered_house < "' . $entered_house['date'] . '"');
-    for ($r = 0; $r < $q->rows(); $r++) {
-      $pid = $q->field($r, 'person_id');
-      $name = $q->field($r, 'first_name') . ' ' . $q->field($r, 'last_name');
-      $previous_people .= '<li><a href="' . WEBPATH . 'mp/?pid=' . $pid . '">' . $name . '</a></li>';
-    }
-    // XXX: This is because George's enter date is before Oona's enter date...
-    // Can't think of an easy fix without another pointless DB lookup
-    // Guess the starting setup of this class should store more information.
-    if ($this->person_id() == 10218) {
-      $previous_people = '<li><a href="' . WEBPATH . 'mp/?pid=10341">Oona King</a></li>';
-    }
-    return $previous_people;
-  }
 
-  /**
-   *
-   */
-  public function future_mps() {
-    $future_people = '';
-    $entered_house = $this->entered_house(1);
-    if (is_null($entered_house)) {
-      return '';
+    /**
+     *
+     */
+    public function future_mps() {
+        $future_people = '';
+        $entered_house = $this->entered_house(1);
+        if (is_null($entered_house)) {
+            return '';
+        }
+        $q = $this->db->query('SELECT DISTINCT(person_id), first_name, last_name FROM member WHERE house=1 AND constituency = "' . $this->constituency() . '" AND person_id != ' . $this->person_id() . ' AND entered_house > "' . $entered_house['date'] . '"');
+        if ($this->person_id() == 10218) {
+            return;
+        }
+        for ($r = 0; $r < $q->rows(); $r++) {
+            $pid = $q->field($r, 'person_id');
+            $name = $q->field($r, 'first_name') . ' ' . $q->field($r, 'last_name');
+            $future_people .= '<li><a href="' . WEBPATH . 'mp/?pid=' . $pid . '">' . $name . '</a></li>';
+        }
+        return $future_people;
     }
-    $q = $this->db->query('SELECT DISTINCT(person_id), first_name, last_name FROM member WHERE house=1 AND constituency = "' . $this->constituency() . '" AND person_id != ' . $this->person_id() . ' AND entered_house > "' . $entered_house['date'] . '"');
-    if ($this->person_id() == 10218) {
-      return;
-    }
-    for ($r = 0; $r < $q->rows(); $r++) {
-      $pid = $q->field($r, 'person_id');
-      $name = $q->field($r, 'first_name') . ' ' . $q->field($r, 'last_name');
-      $future_people .= '<li><a href="' . WEBPATH . 'mp/?pid=' . $pid . '">' . $name . '</a></li>';
-    }
-    return $future_people;
-  }
 
 }
 
@@ -929,44 +929,44 @@ $party_colours = [
  *
  */
 function party_to_colour($party) {
-  global $party_colours;
-  if (isset($party_colours[$party])) {
-    return $party_colours[$party];
-  }
-  else {
-    return "#eeeeee";
-  }
+    global $party_colours;
+    if (isset($party_colours[$party])) {
+        return $party_colours[$party];
+    }
+    else {
+        return "#eeeeee";
+    }
 }
 
 /**
  *
  */
 function find_rep_image($pid, $smallonly = FALSE) {
-  $image = NULL;
-  $sz = NULL;
-  if (!$smallonly && is_file(FILEIMAGEPATH . 'mpsL/' . $pid . '.jpg')) {
-    $image = IMAGEPATH . 'mpsL/' . $pid . '.jpg';
-    $sz = 'L';
-  }
-  elseif (!$smallonly && is_file(FILEIMAGEPATH . 'mpsL/' . $pid . '.jpeg')) {
-    $image = IMAGEPATH . 'mpsL/' . $pid . '.jpeg';
-    $sz = 'L';
-  }
-  elseif (!$smallonly && is_file(FILEIMAGEPATH . 'mpsL/' . $pid . '.png')) {
-    $image = IMAGEPATH . 'mpsL/' . $pid . '.png';
-    $sz = 'L';
-  }
-  elseif (is_file(FILEIMAGEPATH . 'mps/' . $pid . '.jpg')) {
-    $image = IMAGEPATH . 'mps/' . $pid . '.jpg';
-    $sz = 'S';
-  }
-  elseif (is_file(FILEIMAGEPATH . 'mps/' . $pid . '.jpeg')) {
-    $image = IMAGEPATH . 'mps/' . $pid . '.jpeg';
-    $sz = 'S';
-  }
-  elseif (is_file(FILEIMAGEPATH . 'mps/' . $pid . '.png')) {
-    $image = IMAGEPATH . 'mps/' . $pid . '.png';
-    $sz = 'S';
-  }
-  return [$image, $sz];
+    $image = NULL;
+    $sz = NULL;
+    if (!$smallonly && is_file(FILEIMAGEPATH . 'mpsL/' . $pid . '.jpg')) {
+        $image = IMAGEPATH . 'mpsL/' . $pid . '.jpg';
+        $sz = 'L';
+    }
+    elseif (!$smallonly && is_file(FILEIMAGEPATH . 'mpsL/' . $pid . '.jpeg')) {
+        $image = IMAGEPATH . 'mpsL/' . $pid . '.jpeg';
+        $sz = 'L';
+    }
+    elseif (!$smallonly && is_file(FILEIMAGEPATH . 'mpsL/' . $pid . '.png')) {
+        $image = IMAGEPATH . 'mpsL/' . $pid . '.png';
+        $sz = 'L';
+    }
+    elseif (is_file(FILEIMAGEPATH . 'mps/' . $pid . '.jpg')) {
+        $image = IMAGEPATH . 'mps/' . $pid . '.jpg';
+        $sz = 'S';
+    }
+    elseif (is_file(FILEIMAGEPATH . 'mps/' . $pid . '.jpeg')) {
+        $image = IMAGEPATH . 'mps/' . $pid . '.jpeg';
+        $sz = 'S';
+    }
+    elseif (is_file(FILEIMAGEPATH . 'mps/' . $pid . '.png')) {
+        $image = IMAGEPATH . 'mps/' . $pid . '.png';
+        $sz = 'S';
+    }
+    return [$image, $sz];
 }

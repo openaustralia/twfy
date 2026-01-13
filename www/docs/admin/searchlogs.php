@@ -18,11 +18,11 @@ $search_recent = $SEARCHLOG->admin_recent_searches(50);
 
 $rows = [];
 foreach ($search_recent as $row) {
-  $host = gethostbyaddr($row['ip_address']);
-  $host = trim_characters($host, strlen($host) - 25, 100);
-  $time = relative_time($row['query_time']);
-  $time = str_replace(" ago", "", $time);
-  $rows[] = [
+    $host = gethostbyaddr($row['ip_address']);
+    $host = trim_characters($host, strlen($host) - 25, 100);
+    $time = relative_time($row['query_time']);
+    $time = str_replace(" ago", "", $time);
+    $rows[] = [
     '<a href="' . $row['url'] . '">' . htmlentities($row['query']) . '</a>',
     $row['page_number'],
     $row['count_hits'],

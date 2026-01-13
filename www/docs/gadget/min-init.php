@@ -13,11 +13,11 @@ include_once INCLUDESPATH . "mysql.php";
  */
 class ParlDB extends MySQL {
 
-  /**
-   *
-   */
-  public function ParlDB() {
-    $this->init(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME);
-  }
+    /**
+     *
+     */
+    public function ParlDB() {
+        $this->init(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME);
+    }
 
 }
