@@ -14,9 +14,20 @@
   <!-- Disable a few sniffs. -->
   <rule ref="Drupal">
     <exclude name="Drupal.Arrays.Array"/>
+    <exclude name="Drupal.Classes.ClassFileName"/>
     <exclude name="Drupal.Commenting.DocComment"/>
+    <exclude name="Drupal.Commenting.VariableComment"/>
+    <exclude name="Drupal.NamingConventions.ValidClassName"/>
     <exclude name="Drupal.NamingConventions.ValidGlobal"/>
+    <exclude name="Drupal.NamingConventions.ValidFunctionName"/>
     <exclude name="Drupal.NamingConventions.ValidVariableName"/>
+  </rule>
+
+  <!-- Override some settings -->
+  <rule ref="Drupal.WhiteSpace.ScopeIndent">
+    <properties>
+      <property name="indent" value="4"/>
+    </properties>
   </rule>
 
   <!--Exclude third party code.-->
