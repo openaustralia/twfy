@@ -82,15 +82,15 @@ class SEARCHENGINE {
 
     // Split words up into individual words, and quoted phrases.
     preg_match_all('/(' .
-    // Match either a quote, or...
-            '"|' .
-    // Optionally a - (exclude)
-            '(?:(?<![' . $this->wordchars . '])-)?' .
-            // If at start of word (i.e. not preceded by a word character, in
-            // which case it is probably a hyphenated-word)
-    // followed by a string of word-characters.
-            '[' . $this->wordchars . ']+' .
-            ')/', $query, $all_words);
+          // Match either a quote, or...
+          '"|' .
+          // Optionally a - (exclude)
+          '(?:(?<![' . $this->wordchars . '])-)?' .
+          // If at start of word (i.e. not preceded by a word character, in
+          // which case it is probably a hyphenated-word)
+          // followed by a string of word-characters.
+          '[' . $this->wordchars . ']+' .
+          ')/', $query, $all_words);
     if ($all_words) {
       $all_words = $all_words[0];
     }

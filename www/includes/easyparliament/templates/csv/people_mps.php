@@ -61,7 +61,7 @@ function render_mps_row($mp, $order) {
   print ',' . $con . ',' . 'http://' . DOMAIN . WEBPATH . 'mp/' .
         make_member_url($mp['first_name'] . ' ' . $mp['last_name'], $mp['constituency']);
   if ($order == 'expenses') {
-    print ', £' . $mp['data_value'];
+    print ', ï¿½' . $mp['data_value'];
   }
   elseif ($order == 'debates') {
     print ', ' . $mp['data_value'];

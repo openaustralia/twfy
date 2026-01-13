@@ -34,9 +34,9 @@ function postcode_to_constituency($postcode) {
 
   if ($last_postcode == $postcode) {
     twfy_debug("TIME", "Postcode "
-                          . print_r($postcode, TRUE)
-                          . " looked up last time, is "
-                          . print_r($last_postcode_value, TRUE));
+          . print_r($postcode, TRUE)
+          . " looked up last time, is "
+          . print_r($last_postcode_value, TRUE));
     return $last_postcode_value;
   }
 
@@ -45,9 +45,9 @@ function postcode_to_constituency($postcode) {
   $ret = postcode_to_constituency_internal($postcode);
   $duration = getmicrotime() - $start;
   twfy_debug("TIME", "Postcode "
-                        . print_r($postcode, TRUE)
-                        . " lookup took $duration seconds, returned "
-                        . print_r($ret, TRUE));
+        . print_r($postcode, TRUE)
+        . " lookup took $duration seconds, returned "
+        . print_r($ret, TRUE));
   twfy_debug_timestamp();
   $last_postcode = $postcode;
   $last_postcode_value = $ret;

@@ -4,7 +4,8 @@
  * @file
  */
 ?>
-<p><strong>Link Policy:</strong> No person or organisation needs permission to link to us. Be our guest. You can deep link to any page you like, from any page, at any time, without asking.</p>
+<p><strong>Link Policy:</strong> No person or organisation needs permission to link to us. Be our guest. You can deep
+    link to any page you like, from any page, at any time, without asking.</p>
 
 <p>Alternatively, if you would like to place an OpenAustralia search box on your site, like this one&hellip;</p>
 
@@ -48,6 +49,7 @@ print $link_to_us_form;
 <?php print htmlspecialchars($link_to_us_form); ?>
 </textarea>
 
-<p/>
-<p>Please retain the link to <a href="<?php echo $url ?>">OpenAustralia.org</a> (Google points mean prizes). Any questions, just drop us a line at: <a href="<?php echo $url . 'contact/' ?>"><?php echo $url . 'contact/' ?></a>
+<p />
+<p>Please retain the link to <a href="<?php echo $url ?>">OpenAustralia.org</a> (Google points mean prizes). Any
+    questions, just drop us a line at: <a href="<?php echo $url . 'contact/' ?>"><?php echo $url . 'contact/' ?></a>
 </p>

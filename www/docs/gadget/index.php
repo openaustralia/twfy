@@ -13,15 +13,17 @@ $PAGE->stripe_start();
 
 ?>
 
-<p><img align="left" src="screenshot.png" width="280" height="341" alt="OpenAustralia google gadget screenshot" hspace="8">
+<p><img align="left" src="screenshot.png" width="280" height="341" alt="OpenAustralia google gadget screenshot"
+        hspace="8">
 
-As part of the <a href="http://www.google.co.uk/politics/">Google UK
-Politics</a> site, we've created a OpenAustralia gadget that lets
-you keep up to date with your MP's activities, search OpenAustralia,
-and more, from your iGoogle page.</p>
+    As part of the <a href="http://www.google.co.uk/politics/">Google UK
+        Politics</a> site, we've created a OpenAustralia gadget that lets
+    you keep up to date with your MP's activities, search OpenAustralia,
+    and more, from your iGoogle page.</p>
 
 <p>
-<a href="http://www.google.co.uk/ig/adde?moduleurl=http://www.openaustralia.org/gadget/twfy.xml"><img src="http://www.google.co.uk/politics/images/add.gif" alt="Add to Google"></a>
+    <a href="http://www.google.co.uk/ig/adde?moduleurl=http://www.openaustralia.org/gadget/twfy.xml"><img
+            src="http://www.google.co.uk/politics/images/add.gif" alt="Add to Google"></a>
 </p>
 
 <?php

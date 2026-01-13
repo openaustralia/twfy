@@ -194,10 +194,10 @@ class MySQLQuery {
           $this->rows = 0;
         }
 
-        $this->fieldnames_byid   = $fieldnames_byid;
+        $this->fieldnames_byid = $fieldnames_byid;
         $this->fieldnames_byname = $fieldnames_byname;
-        $this->fields            = sizeof($fieldnames_byid);
-        $this->data              = $result;
+        $this->fields = sizeof($fieldnames_byid);
+        $this->data = $result;
 
         twfy_debug("SQLRESULT", $this->_display_result());
 
