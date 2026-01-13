@@ -1,56 +1,70 @@
 <?php
 
-/*
-Used on the 'All MPs' page to produce the list of MPs in CSV format.
-*/
+/**
+ * @file
+ * Used on the 'All MPs' page to produce the list of MPs in CSV format.
+ */
 
 global $this_page;
 
-twfy_debug ("TEMPLATE", "people_mps.php");
+twfy_debug("TEMPLATE", "people_mps.php");
 
 $order = $data['info']['order'];
 
 header('Content-Type: text/csv');
 header('Content-Disposition: attachment; filename=representatives.csv');
 print "Person ID,First name,Last name,Party,Division,URI";
-if ($order == 'expenses') print ', 2004 Expenses Grand Total';
-elseif ($order == 'debates') print ',Debates spoken in the last year';
+if ($order == 'expenses') {
+  print ', 2004 Expenses Grand Total';
+}
+elseif ($order == 'debates') {
+  print ',Debates spoken in the last year';
+}
 print "\n";
 
-$opik = array();
+$opik = [];
 
 foreach ($data['data'] as $n => $mp) {
 
-	// Lembit Opik is special
-	if ($mp['last_name']=='&Ouml;pik') {
-		$opik = $mp;
-		continue;
-	}
-	if ($opik && strcmp('Opik', $mp['last_name'])<0) {
-		render_mps_row($opik, $order);
-		$opik = array();
-	}
+  // Lembit Opik is special.
+  if ($mp['last_name'] == '&Ouml;pik') {
+    $opik = $mp;
+    continue;
+  }
+  if ($opik && strcmp('Opik', $mp['last_name']) < 0) {
+    render_mps_row($opik, $order);
+    $opik = [];
+  }
 
-	render_mps_row($mp, $order);
+  render_mps_row($mp, $order);
 
 }
 
+/**
+ *
+ */
 function render_mps_row($mp, $order) {
-	global $parties;
-	$con = html_entity_decode($mp['constituency']);
-	if (strstr($con, ',')) $con = "\"$con\"";
-	print $mp['person_id'] . ',';
-	print html_entity_decode($mp['first_name']) . ',' .
-		html_entity_decode($mp['last_name']) . ',';
-	if (array_key_exists($mp['party'], $parties))
-		print $parties[$mp['party']];
-	else
-		print $mp['party'];
-	print ',' . $con . ',' .  'http://' . DOMAIN . WEBPATH . 'mp/' . 
-		make_member_url($mp['first_name'].' '.$mp['last_name'], $mp['constituency']);
-	if ($order == 'expenses') print ', £' . $mp['data_value'];
-	elseif ($order == 'debates') print ', ' . $mp['data_value'];
-	print "\n";
+  global $parties;
+  $con = html_entity_decode($mp['constituency']);
+  if (strstr($con, ',')) {
+    $con = "\"$con\"";
+  }
+  print $mp['person_id'] . ',';
+  print html_entity_decode($mp['first_name']) . ',' .
+        html_entity_decode($mp['last_name']) . ',';
+  if (array_key_exists($mp['party'], $parties)) {
+    print $parties[$mp['party']];
+  }
+  else {
+    print $mp['party'];
+  }
+  print ',' . $con . ',' . 'http://' . DOMAIN . WEBPATH . 'mp/' .
+        make_member_url($mp['first_name'] . ' ' . $mp['last_name'], $mp['constituency']);
+  if ($order == 'expenses') {
+    print ', ï¿½' . $mp['data_value'];
+  }
+  elseif ($order == 'debates') {
+    print ', ' . $mp['data_value'];
+  }
+  print "\n";
 }
-
-?>

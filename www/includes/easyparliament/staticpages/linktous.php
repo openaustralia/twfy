@@ -1,8 +1,15 @@
-<p><strong>Link Policy:</strong> No person or organisation needs permission to link to us. Be our guest. You can deep link to any page you like, from any page, at any time, without asking.</p>
+<?php
+
+/**
+ * @file
+ */
+?>
+<p><strong>Link Policy:</strong> No person or organisation needs permission to link to us. Be our guest. You can deep
+    link to any page you like, from any page, at any time, without asking.</p>
 
 <p>Alternatively, if you would like to place an OpenAustralia search box on your site, like this one&hellip;</p>
 
-<?
+<?php
 $url = "http://" . DOMAIN . WEBPATH;
 $link_to_us_form = <<<END
 <!-- OpenAustralia box, begin -->
@@ -14,7 +21,7 @@ $link_to_us_form .= <<<END
 ' style='color: #957676; text-decoration: none; font-weight: normal;'><em style='font-weight: bold; font-style: normal;'><span style='color: #7CA3B0'>Open</span>Australia</em></a></h5>
   <form action='
 END;
-$link_to_us_form .= $url. 'mp/';
+$link_to_us_form .= $url . 'mp/';
 $link_to_us_form .= <<<END
 ' method='get' style='margin: 0; padding: 5px 0 0 0;' title='Find out about your Representative'>
     <label for='pc' style='display: block; font-size: small; font-weight: bold; margin: 0 0 9px 0;'>Find out more about your Representative</label>
@@ -35,14 +42,14 @@ $link_to_us_form .= <<<END
 <!-- OpenAustralia box, end -->
 END;
 print $link_to_us_form;
-?>		
+?>
 
 <p>Cut and paste the code below into your webpage:</p>
 <textarea class="sourcecode" style="width: 100%; height: 20em;">
-<? print htmlspecialchars($link_to_us_form); ?>
+<?php print htmlspecialchars($link_to_us_form); ?>
 </textarea>
 
-<p/>
-<p>Please retain the link to <a href="<?= $url ?>">OpenAustralia.org</a> (Google points mean prizes). Any questions, just drop us a line at: <a href="<?= $url . 'contact/' ?>"><?= $url . 'contact/' ?></a>
+<p />
+<p>Please retain the link to <a href="<?php echo $url ?>">OpenAustralia.org</a> (Google points mean prizes). Any
+    questions, just drop us a line at: <a href="<?php echo $url . 'contact/' ?>"><?php echo $url . 'contact/' ?></a>
 </p>
-																																																																																																																																																													

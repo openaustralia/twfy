@@ -1,0 +1,30 @@
+version: "3.8"
+networks:
+  twfy:
+services:
+  webhost:
+    # image: php:7.4.33-apache-bullseye
+    image: twfy-app
+    networks:
+      - twfy
+    ports:
+      - 80:80
+    volumes:
+      - ./www:/var/www #not sure yet why it needs to be here, i got 403s when it /app instead
+      - ./conf/general-docker:/var/conf/general
+      - ./conf/httpd-docker.conf:/etc/apache2/sites-available/000-default.conf
+      - ../phplib:/phplib
+  mysql:
+    image: mysql:8.4.7
+    ports:
+      - 3306:3306
+    networks:
+      - twfy
+    environment:
+      MYSQL_ROOT_PASSWORD: examplepassword
+      MYSQL_DATABASE: twfy
+      MYSQL_USER: twfyuser
+      MYSQL_PASSWORD: twfypass
+    volumes:
+      - ./_mysqldata:/var/lib/mysql
+      - ./data:/app/data

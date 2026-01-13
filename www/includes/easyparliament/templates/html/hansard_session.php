@@ -17,38 +17,38 @@ $PAGE->stripe_start();
 print "\t\t\t\t<ul class=\"hansard-day\">\n";
 foreach ($data as $row) {
 
-	// Cycle through each row...
-	print "\t\t\t\t<li>";
-	print '<a href="' . $row['url'] . '"><strong>' . $row['title'] . '</strong></a> ';
+    // Cycle through each row...
+    print "\t\t\t\t<li>";
+    print '<a href="' . $row['url'] . '"><strong>' . $row['title'] . '</strong></a> ';
 
-	$plural = $row['contentcount'] == 1 ? 'speech' : 'speeches';
-	$moreinfo = array(
-		$row['contentcount'] . " $plural"
-	);
-	#if ($row['totalcomments'] > 0) {
-	#	$plural = $row['totalcomments'] == 1 ? 'comment' : 'comments';
-	#	$moreinfo[] = $row['totalcomments'] . " $plural";
-	#}
-	if (count($moreinfo) > 0) {
-		print "<small>(" . implode (', ', $moreinfo) . ") </small>";
-	}	
+    $plural = $row['contentcount'] == 1 ? 'speech' : 'speeches';
+    $moreinfo = array(
+        $row['contentcount'] . " $plural"
+    );
+    #if ($row['totalcomments'] > 0) {
+    #	$plural = $row['totalcomments'] == 1 ? 'comment' : 'comments';
+    #	$moreinfo[] = $row['totalcomments'] . " $plural";
+    #}
+    if (count($moreinfo) > 0) {
+        print "<small>(" . implode(', ', $moreinfo) . ") </small>";
+    }
 }
 print "\n\t\t\t\t</ul> <!-- end hansard-day -->\n";
 
 $sidebar = $hansardmajors[$this->major]['sidebar'];
 
 $PAGE->stripe_end(array(
-	array (
-		'type' 	=> 'nextprev'
-	),
-	array (
-		'type' => 'include',
-		'content' => 'calendar_'.$sidebar
-	),
-	array (
-		'type'	=> 'include',
-		'content'	=> $sidebar
-	)
+    array(
+        'type' => 'nextprev'
+    ),
+    array(
+        'type' => 'include',
+        'content' => 'calendar_' . $sidebar
+    ),
+    array(
+        'type' => 'include',
+        'content' => $sidebar
+    )
 ));
 
 ?>

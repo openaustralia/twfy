@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * @file
+ */
+
 $this_page = "skin";
 
 include_once "../../includes/easyparliament/init.php";
@@ -14,11 +18,11 @@ $URL = new URL($this_page);
 
 <ul>
 
-<?php $URL->insert(array('newskin'=>'default')); ?>
-<li><a href="<?php echo $URL->generate(); ?>">Default skin.</a></li>
+    <?php $URL->insert(['newskin' => 'default']); ?>
+    <li><a href="<?php echo $URL->generate(); ?>">Default skin.</a></li>
 
-<?php $URL->insert(array('newskin'=>'none')); ?>
-<li><a href="<?php echo $URL->generate(); ?>">No stylesheets.</a></li>
+    <?php $URL->insert(['newskin' => 'none']); ?>
+    <li><a href="<?php echo $URL->generate(); ?>">No stylesheets.</a></li>
 
 </ul>
 
@@ -28,5 +32,3 @@ $URL = new URL($this_page);
 $PAGE->stripe_end();
 
 $PAGE->page_end();
-
-?>

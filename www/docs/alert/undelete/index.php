@@ -1,6 +1,9 @@
 <?php
 
-// This the page users come to when they undelete an alert
+/**
+ * @file
+ * This the page users come to when they undelete an alert.
+ */
 
 // What happens? They will come here with t=23-adsf7897fd78d9sfsd200501021500
 // where the value of 't' is a form of their registration token.
@@ -13,57 +16,58 @@
 
 // We then print a nice message.
 
-// This depends on there being page definitions in metadata.php
+// This depends on there being page definitions in metadata.php.
 
 // FUNCTIONS
-// undelete_success()		Displays a page with a success message
-// undelete_error()		Displays a page with an error message
+// undelete_success()        Displays a page with a success message
+// undelete_error()        Displays a page with an error message.
 
-// INITIALISATION
+// INITIALISATION.
 
 include_once "../../../includes/easyparliament/init.php";
 
-// Instantiate an instance of ALERT
+// Instantiate an instance of ALERT.
 
-$ALERT = new ALERT;
+$ALERT = new ALERT();
 
-$success = $ALERT->confirm( get_http_var('t') );
-	
+$success = $ALERT->confirm(get_http_var('t'));
+
 if ($success) {
-	undelete_success();}
+  undelete_success();
+}
 else {
-	undelete_error();
+  undelete_error();
 }
 
-// FUNCTION:  undelete_success
-
-function undelete_success () {
-	global $PAGE, $this_page;
-	$this_page = 'alertundeletesucceeded';
-	$PAGE->page_start();
-	$PAGE->stripe_start();
-	?>
-	<p>Your alert has been resubscribed.</p>
-	<p>You will now receive email alerts on any day when there are entries in Hansard that match your criteria.</p>
-<?php
-	$PAGE->stripe_end();
-	$PAGE->page_end();
+/**
+ * FUNCTION:  undelete_success.
+ */
+function undelete_success() {
+  global $PAGE, $this_page;
+  $this_page = 'alertundeletesucceeded';
+  $PAGE->page_start();
+  $PAGE->stripe_start();
+  ?>
+    <p>Your alert has been resubscribed.</p>
+    <p>You will now receive email alerts on any day when there are entries in Hansard that match your criteria.</p>
+  <?php
+  $PAGE->stripe_end();
+  $PAGE->page_end();
 }
 
-// FUNCTION:  undelete_error
-
+/**
+ * FUNCTION:  undelete_error.
+ */
 function undelete_error() {
-	// Friendly error, not a normal one!
-	global $PAGE, $this_page;
-	$this_page = 'alertundeletefailed';
-	$PAGE->page_start();
-	$PAGE->stripe_start();
-	?>
-	<p>The link you followed to reach this page appears to be incomplete.</p>
-	<p>Please do <a href="mailto:<?php echo CONTACTEMAIL; ?>">email us</a> and let us know, and we'll help out!</p>
-<?php
-	$PAGE->stripe_end();
-	$PAGE->page_end();
+  // Friendly error, not a normal one!
+  global $PAGE, $this_page;
+  $this_page = 'alertundeletefailed';
+  $PAGE->page_start();
+  $PAGE->stripe_start();
+  ?>
+    <p>The link you followed to reach this page appears to be incomplete.</p>
+    <p>Please do <a href="mailto:<?php echo CONTACTEMAIL; ?>">email us</a> and let us know, and we'll help out!</p>
+  <?php
+  $PAGE->stripe_end();
+  $PAGE->page_end();
 }
-
-?>

@@ -1,0 +1,34 @@
+name: "PHP checks"
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Setup PHP 8.3
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: mbstring, pdo, sqlite
+          coverage: none # Use 'xdebug' or 'pcov' for code coverage
+          tools: composer
+        env:
+          fail-fast: true
+      - name: composer
+        run: composer install
+        env:
+          fail-fast: true
+      - name: audit
+        run: composer validate
+        env:
+          fail-fast: true
+      - name: Lint
+        run: make lint-ci
+        env:
+          fail-fast: true

@@ -1,0 +1,16 @@
+; https://editorconfig.org/
+; EditorConfig is awesome: https://EditorConfig.org
+
+root = true
+
+[*]
+insert_final_newline = true
+charset = utf-8
+trim_trailing_whitespace = true
+indent_style = space
+indent_size = 4
+
+[*.md]
+indent_size = unset
+trim_trailing_whitespace = false
+eclint_indent_style = unset

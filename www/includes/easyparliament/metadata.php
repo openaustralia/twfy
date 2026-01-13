@@ -1,5 +1,10 @@
 <?php
-// This file will be included by data.php
+
+/**
+ * @file
+ * This file will be included by data.php.
+ */
+
 // The path of the file should be set as METADATAPATH in config.php.
 
 // What are session_vars ?
@@ -9,996 +14,996 @@
 
 // For example, in this metadata we might have:
 // 'search' => array (
-// 		'url' => 'search/',
-//		'sidebar' => 'search',
-//		'session_vars' => array ('s')
-// ),
+//         'url' => 'search/',
+//        'sidebar' => 'search',
+//        'session_vars' => array ('s')
+// ),.
 
 // If we are at the URL www.domain.org/search/?s=blair&page=2
 // and we used the URL class to generate a link to the search page like this:
-// 		$URL = new URL('search');
-//		$newurl = $URL->generate();
+//         $URL = new URL('search');
+//        $newurl = $URL->generate();
 
-// then $newurl would be: /search/?s=blair
+// Then $newurl would be: /search/?s=blair
 //
 // sidebar:
 // If you have a 'sidebar' element for a page then that page will have its content
-// set to a restricted width and a sidebar will be inserted. The contents of this 
+// set to a restricted width and a sidebar will be inserted. The contents of this
 // will be include()d from a file in template/sidebars/ of the name of the 'sidebar'
 // value ('search.php' in the example above).
 
 /* Items a page might have:
 
-	menu		An array of 'text' and 'title' which are used if the page 
-				appears in the site menu.
-	title		Used for the <title> and the page's heading on the page.
-	heading		If present *this* is used for the page's heading on the page, in 
-				in place of the title.
-	url			The URL from the site webroot for this page.
-	parent		What page is this page's parent (see below).
-	session_vars		If present, whenever a URL is generated to this page using the
-						URL class, any POST/GET variables with matching names are
-						automatically appended to the url.
-	track (deprecated)     	Do we want to include the Extreme Tracker javascript on this page?
-	rss			Does the content of this page (or some of it) have an RSS version?
-					If so, 'rss' should be set to '/a/path/to/the/feed.rdf'.
-						
-	
-	PARENTS
-	The site's menu has a top menu and a bottom, sub-menu. What is displayed in the 
-	sub-menu depends on which page is selected in the top menu. This is worked out
-	from the bottom up, by looking at pages' parents. Here's an example top and bottom
-	menu, with the capitalised items hilited:
-	
-	Home	HANSARD		Glossary	Help
-	
-		DEBATES		Written Answers
+menu        An array of 'text' and 'title' which are used if the page
+appears in the site menu.
+title        Used for the <title> and the page's heading on the page.
+heading        If present *this* is used for the page's heading on the page, in
+in place of the title.
+url            The URL from the site webroot for this page.
+parent        What page is this page's parent (see below).
+session_vars        If present, whenever a URL is generated to this page using the
+URL class, any POST/GET variables with matching names are
+automatically appended to the url.
+track (deprecated)         Do we want to include the Extreme Tracker javascript on this page?
+rss            Does the content of this page (or some of it) have an RSS version?
+If so, 'rss' should be set to '/a/path/to/the/feed.rdf'.
 
-	If we were viewing a particular debate, we would be on the 'debate' page. The parent 
-	of this is 'debatesfront', which is the DEBATES link in the bottom menu - hence its 
-	hilite. The parent of 'debatesfront' is 'hansard', hence its hilite in the top menu.
-	
-	This may, of course, make no sense at all...
-	
-	If a page has no parent it is either in the top menu or no menu items should be hilited.
-	The actual contents of each menu is determined in $PAGE->menu().
-	
-*/
 
-$this->page = array (
+PARENTS
+The site's menu has a top menu and a bottom, sub-menu. What is displayed in the
+sub-menu depends on which page is selected in the top menu. This is worked out
+from the bottom up, by looking at pages' parents. Here's an example top and bottom
+menu, with the capitalised items hilited:
 
-// Things used on EVERY page, unless overridden for a page:
-	'default' => array (
-		'parent'	=> '',
-		'session_vars' => array('super_debug'),
-		'sitetitle'		=> 'OpenAustralia.org',
-		//deprecated   'track'		=> false
-	),
-	
-	
-	
-// Every page on the site should have an entry below...	
+Home    HANSARD        Glossary    Help
 
-// KEEP THE PAGES IN ALPHABETICAL ORDER! TA.
-	
-	'about' => array (
-		'title'			=> 'About us',
-		'url'			=> 'about/'
-	),
+DEBATES        Written Answers
 
-	'addcomment'  => array (
-		'url'			=> 'addcomment/',
-	),
+If we were viewing a particular debate, we would be on the 'debate' page. The parent
+of this is 'debatesfront', which is the DEBATES link in the bottom menu - hence its
+hilite. The parent of 'debatesfront' is 'hansard', hence its hilite in the top menu.
 
-	'admin_alerts' => array (
-		'title'			=> 'Email alerts',
-		'parent'		=> 'admin',
-		'url'			=> 'admin/alerts.php',
-	),
-	'alert_stats' => array (
-		'title'			=> 'Email alerts',
-		'parent'		=> 'admin',
-		'url'			=> 'admin/alert_stats.php',
-	),
-	'admin_badusers' => array (
-		'title'			=> 'Bad users',
-		'parent'		=> 'admin',
-		'url'			=> 'admin/badusers.php'
-	),
-	'admin_home' => array (
-		'title'			=> 'Home',
-		'parent'		=> 'admin',
-		'url'			=> 'admin/'
-	),
-	'admin_comments' => array (
-		'title'			=> 'Recent comments',
-		'parent'		=> 'admin',
-		'url'			=> 'admin/comments.php'
-	),
-	'admin_commentreport' => array (
-		'title'			=> 'Processing a comment report',
-		'parent'		=> 'admin',
-		'url'			=> 'admin/report.php',
-		'session_vars'	=> array ('rid', 'cid')
-	),
-	'admin_commentreports' => array (
-		'title'			=> 'Outstanding comment reports',
-		'parent'		=> 'admin',
-		'url'			=> 'admin/reports.php'
-	),
-	'admin_failedsearches' => array (
-		'title'			=> 'Failed searches',
-		'parent'		=> 'admin',
-		'url'			=> 'admin/failedsearches.php'
-	),
-	'admin_glossary' => array (
-		'title'			=> 'Manage glossary entries',
-		'parent'		=> 'admin',
-		'url'			=> 'admin/glossary.php'
-	),
-	'admin_glossary_pending' => array (
-		'title'			=> 'Review pending glossary entries',
-		'parent'		=> 'admin',
-		'url'			=> 'admin/glossary_pending.php'
-	),
-	'admin_searchlogs' => array (
-		'title'			=> 'Recent searches',
-		'parent'		=> 'admin',
-		'url'			=> 'admin/searchlogs.php'
-	),
-	'admin_popularsearches' => array (
-		'title'			=> 'Popular searches in last 30 days (first 1000)',
-		'parent'		=> 'admin',
-		'url'			=> 'admin/popularsearches.php'
-	),
-	'admin_statistics' => array (
-		'title'			=> 'General statistics',
-		'parent'		=> 'admin',
-		'url'			=> 'admin/statistics.php'
-	),
-	'admin_trackbacks' => array (
-		'title'			=> 'Recent trackbacks',
-		'parent'		=> 'admin',
-		'url'			=> 'admin/trackbacks.php'
-	),
-	
-// Added by Richard Allan for email alert functions
+This may, of course, make no sense at all...
 
-	'alert' => array (
-		'menu'			=> array (
-			'text'			=> 'Email Alerts',
-			'title'			=> "Set up alerts for updates on a Representative by email",
-			'sidebar'		=> 'alert'
+If a page has no parent it is either in the top menu or no menu items should be hilited.
+The actual contents of each menu is determined in $PAGE->menu().
 
-		),
-		'title'			=> 'OpenAustralia.org Email Alerts',
-		'url'			=> 'alert/',
-	),		
-	'alertconfirm' => array (
-		'track'			=> true,
-		'url'			=> 'alert/confirm/'
-	),
-	'alertconfirmfailed' => array (
-		'title'			=> 'Oops!',
-		'track'			=> true,
-		'url'			=> 'alert/confirm/'
-	),
-	'alertconfirmsucceeded' => array (
-		'title'			=> 'Alert Confirmed!',
-		'track'			=> true,
-		'url'			=> 'alert/confirm/'
-	),
-	'alertdelete' => array (
-		'track'			=> true,
-		'url'			=> 'alert/delete/'
-	),
-	'alertdeletefailed' => array (
-		'title'			=> 'Oops!',
-		'track'			=> true,
-		'url'			=> 'alert/delete/'
-	),
-	'alertdeletesucceeded' => array (
-		'title'			=> 'Alert Unsubscribed!',
-		'track'			=> true,
-		'url'			=> 'alert/delete/'
-	),
-	'alertundeletesucceeded' => array (
-		'title'			=> 'Alert Resubscribed!',
-		'track'			=> true,
-		'url'			=> 'alert/undelete/'
-	),
-	'alertundeletefailed' => array (
-		'title'			=> 'Oops!',
-		'track'			=> true,
-		'url'			=> 'alert/undelete/'
-	),
-	'alertwelcome' => array (
-		'title'			=> 'Email Alerts',
-		'url'			=> 'alert/',
-	),
+ */
 
-// End of ALERTS additions
-		
-	#'api_front'		=> array (
-	#	'menu'			=> array (
-	#		'text'			=> 'API',
-	#		'title'			=> 'Access our data'
-	#	),
-	#	'title'			=> 'OpenAustralia API',
-	#	'url'			=> 'api/'
-	#),
-	'api_doc_front'		=> array (
-		'menu'			=> array (
-			'text'			=> 'API',
-			'title'			=> 'Access our data'
-		),
-		'parent'		=> 'api_front',
-		'url'			=> 'api/'
-	),
-	'api_key'		=> array (
-		'title'			=> 'API Key',
-		'parent'		=> 'api_front',
-		'url'			=> 'api/'
-	),
+$this->page = [
 
-	'cards' => array (
-		'title'			=> 'MP Stats Cards',
-		'url'			=> 'cards/'
-	),
+    // Things used on EVERY page, unless overridden for a page:
+    'default' => [
+        'parent' => '',
+        'session_vars' => ['super_debug'],
+        'sitetitle' => 'OpenAustralia.org',
+        // Deprecated   'track'        => false.
+    ],
 
-	'commentreport' => array (
-		'title'			=> 'Reporting a comment',
-		'url'			=> 'report/',
-		'session_vars'	=> array ('id')
-	),
 
-	'comments_recent' => array (
-		'menu'			=> array (
-			'text'			=> 'Recent comments',
-			'title'			=> "Recently posted comments"
-		),
-		'title'			=> "Recent comments",
-		'url'			=> 'comments/recent/'
-	),
 
-	'contact' => array (
-		'title'			=> 'Contact OpenAustralia.org',
-		'url'			=> 'contact/'
-	),
-	
-	'debate'  => array (	
-		'parent'		=> 'debatesfront',
-		'track'			=> true,
-		'url'			=> 'debate/',
-		'session_vars'	=> array ('id'),
-	),
-	'debates'  => array (
-		'parent'		=> 'debatesfront',
-		'track'			=> true,
-		'url'			=> 'debates/',
-		'session_vars'	=> array ('id'),
-	),
-	'debatesday' => array (
-		'parent'		=> 'debatesfront',
-		'session_vars'	=> array ('d'),
-		'track'			=> true,
-		'url'			=> 'debates/',
-	),			
-	'debatesfront' => array (
-		'menu'			=> array (
-			'text'			=> 'House Debates',
-			'title'			=> "House debates"
-		),
-		'parent'		=> 'hansard',
-		'title'			=> 'House debates',
-		'track'			=> true,
-		'rss'			=> 'debates/debates.rss',
-		'url'			=> 'debates/'
-	),
-	'debatesyear' => array (
-		'parent'		=> 'debatesfront',
-		'title'			=> 'Debates for ',
-		'url'			=> 'debates/'
-	),
-	'epvote' => array (
-		'url'			=> 'vote/'
-	),
+    // Every page on the site should have an entry below...
 
-	'gadget' => array(
-		'url'			=> 'gadget/',
-		'title'			=> 'OpenAustralia Google gadget',
-	),
+    // KEEP THE PAGES IN ALPHABETICAL ORDER! TA.
 
-	'glossary' => array (
-		'heading'		=> 'Glossary',
-		'parent'		=> 'help_us_out',
-		'track'			=> true,
-		'url'			=> 'glossary/'
-	),
-	'glossary_addterm' => array (
-		'menu'			=> array (
-			'text'			=> 'Add a term',
-			'title'			=> "Add a definition for a term to the glossary"
-		),
-		'parent'		=> 'help_us_out',
-		'title'			=> 'Add a glossary item',
-		'url'			=> 'addterm/',
-		'session_vars'	=> array ('g')
-	),
-	'glossary_addlink' => array (
-		'menu'			=> array (
-			'text'			=> 'Add a link',
-			'title'			=> "Add an external link"
-		),
-		'parent'		=> 'help_us_out',
-		'title'			=> 'Add a link',
-		'url'			=> 'addlink/',
-		'session_vars'	=> array ('g')
-	),
-	'glossary_item' => array (
-		'heading'		=> 'Glossary heading',
-		'parent'		=> 'help_us_out',
-		'track'			=> true,
-		'url'			=> 'glossary/',
-		'session_vars'	=> array ('g')
-	),
-	'hansard' => array (
-		'menu'			=> array (
-			'text'			=> 'Debates',
-			'title'			=> "House of Representatives and Senate debates"
-		),
-		'title'			=> 'House of Representatives and Senate debates',
-		'track'			=> true,
-		'url'			=> 'hansard/'
-	),	
-	'hansard_date' => array (
-		'parent'		=> 'hansard',
-		'title'			=> 'House of Representatives',
-		'track'			=> true,
-		'url'			=> 'hansard/'
-	),	
-	'help' => array (
-		'menu'			=> array (
-			'text'			=> 'Help',
-			'title'			=> "Answers to your questions"
-		),
-		'title'			=> 'Help',
-		'track'			=> true,
-		'url'			=> 'help/'
-	),
-	'help_us_out' => array (
-		'menu'			=> array (
-			'text'			=> 'Glossary',
-			'title'			=> "Parliament's jargon explained"
-		),
-		'title'			=> 'Glossary',
-		'heading'		=> 'Add a glossary item',
-		'url'			=> 'addterm/',
-		'sidebar'		=> 'glossary_add'
-	),
-	'home' => array (
-		'menu'			=> array (
-			'text'			=> 'Home',
-			'title'			=> "The front page of the site"
-		),
-		'title'			=> "Are your Representatives and Senators working for you in Australia's Parliament?",
-		'track'			=> true,
-		'rss'			=> 'news/index.rdf',
-		'url'			=> ''
-	),
-	'houserules' => array (
-		'title'			=> 'House rules',
-		'url'			=> 'houserules/'
-	),
+    'about' => [
+        'title' => 'About us',
+        'url' => 'about/'
+    ],
 
-	'linktous' => array (
-		'title'			=> 'Link to us',
-		'heading'		=> 'How to link to us',
-		'url'			=> 'help/linktous/'
-	),
+    'addcomment' => [
+        'url' => 'addcomment/',
+    ],
 
-	'lordsdebate'  => array (
-		'parent'		=> 'lordsdebatesfront',
-		'track'			=> true,
-		'url'			=> 'senate/',
-		'session_vars'	=> array ('gid'),
-	),
-	'lordsdebates'  => array (
-		'parent'		=> 'lordsdebatesfront',
-		'track'			=> true,
-		'url'			=> 'senate/',
-		'session_vars'	=> array ('id'),
-	),
-	'lordsdebatesday' => array (
-		'parent'		=> 'lordsdebatesfront',
-		'session_vars'	=> array ('d'),
-		'track'			=> true,
-		'url'			=> 'senate/',
-	),			
-	'lordsdebatesfront' => array (
-		'menu'			=> array (
-			'text'			=> 'Senate Debates',
-			'title'			=> "Senate debates"
-		),
-		'parent'		=> 'hansard',
-		'title'			=> 'Senate debates',
-		'track'			=> true,
-		'rss'			=> 'senate/senate.rss',
-		'url'			=> 'senate/'
-	),
-	'lordsdebatesyear' => array (
-		'parent'		=> 'lordsdebatesfront',
-		'title'			=> 'Debates for ',
-		'url'			=> 'senate/'
-	),
+    'admin_alerts' => [
+        'title' => 'Email alerts',
+        'parent' => 'admin',
+        'url' => 'admin/alerts.php',
+    ],
+    'alert_stats' => [
+        'title' => 'Email alerts',
+        'parent' => 'admin',
+        'url' => 'admin/alert_stats.php',
+    ],
+    'admin_badusers' => [
+        'title' => 'Bad users',
+        'parent' => 'admin',
+        'url' => 'admin/badusers.php'
+    ],
+    'admin_home' => [
+        'title' => 'Home',
+        'parent' => 'admin',
+        'url' => 'admin/'
+    ],
+    'admin_comments' => [
+        'title' => 'Recent comments',
+        'parent' => 'admin',
+        'url' => 'admin/comments.php'
+    ],
+    'admin_commentreport' => [
+        'title' => 'Processing a comment report',
+        'parent' => 'admin',
+        'url' => 'admin/report.php',
+        'session_vars' => ['rid', 'cid']
+    ],
+    'admin_commentreports' => [
+        'title' => 'Outstanding comment reports',
+        'parent' => 'admin',
+        'url' => 'admin/reports.php'
+    ],
+    'admin_failedsearches' => [
+        'title' => 'Failed searches',
+        'parent' => 'admin',
+        'url' => 'admin/failedsearches.php'
+    ],
+    'admin_glossary' => [
+        'title' => 'Manage glossary entries',
+        'parent' => 'admin',
+        'url' => 'admin/glossary.php'
+    ],
+    'admin_glossary_pending' => [
+        'title' => 'Review pending glossary entries',
+        'parent' => 'admin',
+        'url' => 'admin/glossary_pending.php'
+    ],
+    'admin_searchlogs' => [
+        'title' => 'Recent searches',
+        'parent' => 'admin',
+        'url' => 'admin/searchlogs.php'
+    ],
+    'admin_popularsearches' => [
+        'title' => 'Popular searches in last 30 days (first 1000)',
+        'parent' => 'admin',
+        'url' => 'admin/popularsearches.php'
+    ],
+    'admin_statistics' => [
+        'title' => 'General statistics',
+        'parent' => 'admin',
+        'url' => 'admin/statistics.php'
+    ],
+    'admin_trackbacks' => [
+        'title' => 'Recent trackbacks',
+        'parent' => 'admin',
+        'url' => 'admin/trackbacks.php'
+    ],
 
-	'peer' => array (
-		'title'			=> 'Senator',
-		'track'			=> true,
-		'url'			=> 'senator/'
-	),
-	'peers' => array (
-		 'menu'			=> array (
-			'text'			=> 'Senators',
-			'title'			=> "List of all Senators"
-		),
-		'title'			=> 'All Senators',
-		'track'			=> true,
-		'url'			=> 'senators/'
-	),
+    // Added by Richard Allan for email alert functions.
 
-	'mla' => array (
-		'title'			=> 'MLA',
-		'track'			=> true,
-		'url'			=> 'mla/'
-	),
-	'mlas' => array (
-		 'menu'			=> array (
-			'text'			=> 'All MLAs',
-			'title'			=> "List of all MLAs"
-		),
-		'title'			=> 'All MLAs',
-		'track'			=> true,
-		'url'			=> 'mlas/'
-	),
+    'alert' => [
+        'menu' => [
+            'text' => 'Email Alerts',
+            'title' => "Set up alerts for updates on a Representative by email",
+            'sidebar' => 'alert'
 
-	'msp' => array (
-		'title'			=> 'MSP',
-		'track'			=> true,
-		'url'			=> 'msp/'
-	),
-	'msps' => array (
-		 'menu'			=> array (
-			'text'			=> 'All MSPs',
-			'title'			=> "List of all MSPs"
-		),
-		'title'			=> 'All MSPs',
-		'track'			=> true,
-		'url'			=> 'msps/'
-	),
+        ],
+        'title' => 'OpenAustralia.org Email Alerts',
+        'url' => 'alert/',
+    ],
+    'alertconfirm' => [
+        'track' => TRUE,
+        'url' => 'alert/confirm/'
+    ],
+    'alertconfirmfailed' => [
+        'title' => 'Oops!',
+        'track' => TRUE,
+        'url' => 'alert/confirm/'
+    ],
+    'alertconfirmsucceeded' => [
+        'title' => 'Alert Confirmed!',
+        'track' => TRUE,
+        'url' => 'alert/confirm/'
+    ],
+    'alertdelete' => [
+        'track' => TRUE,
+        'url' => 'alert/delete/'
+    ],
+    'alertdeletefailed' => [
+        'title' => 'Oops!',
+        'track' => TRUE,
+        'url' => 'alert/delete/'
+    ],
+    'alertdeletesucceeded' => [
+        'title' => 'Alert Unsubscribed!',
+        'track' => TRUE,
+        'url' => 'alert/delete/'
+    ],
+    'alertundeletesucceeded' => [
+        'title' => 'Alert Resubscribed!',
+        'track' => TRUE,
+        'url' => 'alert/undelete/'
+    ],
+    'alertundeletefailed' => [
+        'title' => 'Oops!',
+        'track' => TRUE,
+        'url' => 'alert/undelete/'
+    ],
+    'alertwelcome' => [
+        'title' => 'Email Alerts',
+        'url' => 'alert/',
+    ],
 
-	/* Not 'Your MP', whose name is 'yourmp'... */
-	'mp' => array (
-		'title'			=> 'MP',
-		'track'			=> true,
-		'url'			=> 'mp/'
-	),
-	'emailfriend' => array (
-		'title'			=> 'Send this page to a friend',
-		'track'			=> true,
-		'url'			=> 'email/'
-	),
-	'c4_mp' => array (
-		'title'			=> 'MP',
-		'track'			=> true,
-		'url'			=> 'mp/c4/'
-	),
-	'c4x_mp' => array (
-		'title'			=> 'MP',
-		'track'			=> true,
-		'url'			=> 'mp/c4x/'
-	),
-	// The directory MPs' RSS feeds are stored in.
-	'mp_rss' => array (
-		'url'			=> 'rss/mp/'
-	),
+    // End of ALERTS additions.
 
-	'mps' => array (
-		 'menu'			=> array (
-			'text'			=> 'Representatives',
-			'title'			=> "Your Representative and list of all Members of the House of Representatives"
-		),
-		'title'			=> 'All Members of the House of Representatives',
-		'track'			=> true,
-		'url'			=> 'mps/'
-	),
-	'c4_mps' => array (
-		'title' => 'All MPs',
-		'track' => true,
-		'url' => 'mps/c4/'
-	),
-	'c4x_mps' => array (
-		'title' => 'All MPs',
-		'track' => true,
-		'url' => 'mps/c4x/'
-	),
+    // 'api_front'        => array (
+    // 'menu'            => array (
+    // 'text'            => 'API',
+    // 'title'            => 'Access our data'
+    // ),
+    // 'title'            => 'OpenAustralia API',
+    // 'url'            => 'api/'
+    // ),
+    'api_doc_front' => [
+        'menu' => [
+            'text' => 'API',
+            'title' => 'Access our data'
+        ],
+        'parent' => 'api_front',
+        'url' => 'api/'
+    ],
+    'api_key' => [
+        'title' => 'API Key',
+        'parent' => 'api_front',
+        'url' => 'api/'
+    ],
 
-	'nidebate'  => array (
-		'parent'		=> 'nidebatesfront',
-		'track'			=> true,
-		'url'			=> 'ni/',
-		'session_vars'	=> array ('gid'),
-	),
-	'nidebates'  => array (
-		'parent'		=> 'nidebatesfront',
-		'track'			=> true,
-		'url'			=> 'ni/',
-		'session_vars'	=> array ('id'),
-	),
-	'nidebatesday' => array (
-		'parent'		=> 'nidebatesfront',
-		'session_vars'	=> array ('d'),
-		'track'			=> true,
-		'url'			=> 'ni/',
-	),			
-	'nidebatesfront' => array (
-		'menu'			=> array (
-			'text'			=> 'NIA Debates',
-			'title'			=> "Northern Ireland Assembly debates"
-		),
-		'parent'		=> 'hansard',
-		'title'			=> 'Northern Ireland Assembly debates',
-		'track'			=> true,
-		'rss'			=> 'ni/ni.rss',
-		'url'			=> 'ni/'
-	),
-	'nidebatesyear' => array (
-		'parent'		=> 'nidebatesfront',
-		'title'			=> 'Debates for ',
-		'url'			=> 'ni/'
-	),
+    'cards' => [
+        'title' => 'MP Stats Cards',
+        'url' => 'cards/'
+    ],
 
-	'otheruseredit' => array (
-		'pg'			=> 'editother',
-		'title'			=> "Editing a user's data",
-		'url'			=> 'user/'
-	),			
-	'privacy' => array (
-		'title'			=> 'Privacy Policy',
-		'url'			=> 'privacy/'
-	),
+    'commentreport' => [
+        'title' => 'Reporting a comment',
+        'url' => 'report/',
+        'session_vars' => ['id']
+    ],
 
-	/* Public bill committees */
-	'pbc_front' => array (
-		'menu'			=> array (
-			'text'			=> 'Public Bill Committees',
-			'title'			=> "Public Bill Committees (formerly Standing Committees) debates"
-		),
-		'parent'		=> 'hansard',
-		'title'			=> 'Public Bill Committees',
-		'rss'			=> 'pbc/pbc.rss',
-		'url'			=> 'pbc/'
-	),
-	'pbc_session' => array(
-		'title' => 'Session',
-		'url' => 'pbc/',
-		'parent' => 'pbc_front',
-	),
-	'pbc_bill' => array(
-		'title' => '',
-		'url' => 'pbc/',
-		'parent' => 'pbc_front',
-		'session_vars'	=> array ('bill'),
-	),
-	'pbc_clause' => array(
-		'parent'		=> 'pbc_front',
-		'url'			=> 'pbc/',
-		'session_vars'	=> array ('id'),
-	),
-	'pbc_speech' => array(
-		'parent'		=> 'pbc_front',
-		'url'			=> 'pbc/',
-		'session_vars'	=> array ('id'),
-	),
+    'comments_recent' => [
+        'menu' => [
+            'text' => 'Recent comments',
+            'title' => "Recently posted comments"
+        ],
+        'title' => "Recent comments",
+        'url' => 'comments/recent/'
+    ],
 
-	'raw' => array (
-		'title'			=> 'Raw data',
-		'url'			=> 'raw/'
-	),
+    'contact' => [
+        'title' => 'Contact OpenAustralia.org',
+        'url' => 'contact/'
+    ],
 
-	'regmem' => array (
-		'title'			=> 'Changes to the Register of Members\' Interests',
-		'url'			=> 'regmem/'
-	),
-	
-	'regmem_date' => array (
-		'url'			=> 'regmem/',
-		'parent'		=> 'regmem'
-	),
-	
-	'regmem_mp' => array (
-		'url'			=> 'regmem/',
-		'parent'		=> 'regmem'
-	),
-	
-	'regmem_diff' => array (
-		'url'			=> 'regmem/',
-		'parent'		=> 'regmem'
-	),
-	
-	'royal' => array (
-		'title'			=> 'Royal',
-		'url'			=> 'royal/'
-	),
+    'debate' => [
+        'parent' => 'debatesfront',
+        'track' => TRUE,
+        'url' => 'debate/',
+        'session_vars' => ['id'],
+    ],
+    'debates' => [
+        'parent' => 'debatesfront',
+        'track' => TRUE,
+        'url' => 'debates/',
+        'session_vars' => ['id'],
+    ],
+    'debatesday' => [
+        'parent' => 'debatesfront',
+        'session_vars' => ['d'],
+        'track' => TRUE,
+        'url' => 'debates/',
+    ],
+    'debatesfront' => [
+        'menu' => [
+            'text' => 'House Debates',
+            'title' => "House debates"
+        ],
+        'parent' => 'hansard',
+        'title' => 'House debates',
+        'track' => TRUE,
+        'rss' => 'debates/debates.rss',
+        'url' => 'debates/'
+    ],
+    'debatesyear' => [
+        'parent' => 'debatesfront',
+        'title' => 'Debates for ',
+        'url' => 'debates/'
+    ],
+    'epvote' => [
+        'url' => 'vote/'
+    ],
 
-	'search'		=> array (
-		'sidebar'		=> 'search',
-		'track'			=> true,
-		'url'			=> 'search/',
-		'session_vars'	=> array ('s', 'pid', 'o', 'pop')
-	),
-	'search_help'		=> array (
-		'sidebar'		=> 'search',
-		'title'			=> 'Help with searching',
-		'url'			=> 'search/'
-	),
-	
-	'sitenews'		=> array (
-		'menu'			=> array (
-			'text'			=> 'News',
-			'title'			=> "News about changes to this website"
-		),
-		'rss'			=> 'news/index.rdf',
-		'sidebar'		=> 'sitenews',
-		'title'			=> 'OpenAustralia news',
-		'track'			=> true,
-		'url'			=> 'news/'
-	),
-	'sitenews_archive'		=> array (
-		'parent'		=> 'sitenews',
-		'rss'			=> 'news/index.rdf',
-		'sidebar'		=> 'sitenews',
-		'title'			=> 'Archive',
-		'track'			=> true,
-		'url'			=> 'news/archives/'
-	),
-	'sitenews_atom' 	=> array (
-		'url'			=> 'news/atom.xml'
-	),
-	'sitenews_date'	=> array (
-		'parent'		=> 'sitenews',
-		'rss'			=> 'news/index.rdf',
-		'sidebar'		=> 'sitenews'
-	),
-	'sitenews_individual'	=> array (
-		'parent'		=> 'sitenews',
-		'rss'			=> 'news/index.rdf',
-		'sidebar'		=> 'sitenews',
-// deprecated 		'track'			=> true
-	),
-	'sitenews_rss1' 	=> array (
-		'url'			=> 'news/index.rdf'
-	),
-	'sitenews_rss2' 	=> array (
-		'url'			=> 'news/index.xml'
-	),
-	
-	'skin'		=> array (
-		'title'			=> 'Skin this site',
-		'url'			=> 'skin/'
-	),
-	
-	/* Scottish Parliament */
-	'spdebate'  => array (
-		'parent'		=> 'spdebatesfront',
-		'track'			=> true,
-		'url'			=> 'sp/',
-		'session_vars'	=> array ('id'),
-	),
-	'spdebates'  => array (
-		'parent'		=> 'spdebatesfront',
-		'track'			=> true,
-		'url'			=> 'sp/',
-		'session_vars'	=> array ('id'),
-	),
-	'spdebatesday' => array (
-		'parent'		=> 'spdebatesfront',
-		'session_vars'	=> array ('d'),
-		'track'			=> true,
-		'url'			=> 'sp/',
-	),			
-	'spdebatesfront' => array (
-		'menu'			=> array (
-			'text'			=> 'Scottish Parliament Debates',
-			'title'			=> "Scottish Parliament debates"
-		),
-		'parent'		=> 'hansard',
-		'title'			=> 'Scottish Parliament debates',
-		'track'			=> true,
-		'rss'			=> 'sp/sp.rss',
-		'url'			=> 'sp/'
-	),
-	'spdebatesyear' => array (
-		'parent'		=> 'spdebatesfront',
-		'title'			=> 'Debates for ',
-		'url'			=> 'sp/'
-	),
-	'spwrans'  => array (
-		'parent'		=> 'spwransfront',
-		'url'			=> 'spwrans/',
-		'session_vars'	=> array ('id')
-	),
-	'spwransday'  => array (
-		'parent'		=> 'spwransfront',
-		'url'			=> 'spwrans/'
-	),
-	'spwransfront'  => array (
-		'menu'			=> array (
-			'text'			=> 'SP written answers',
-			'title'			=> "Written Answers"
-		),
-		'parent'		=> 'hansard',
-		'title'			=> 'Scottish Parliament Written answers',
-		'url'			=> 'spwrans/'
-	),
-	'spwransmp' => array(
-		'parent'		=> 'spwransfront',
-		'title'			=> 'For questions asked by ',
-		'url'			=> 'spwrans/'
-	),
-	'spwransyear' => array (
-		'parent'		=> 'spwransfront',
-		'title'			=> 'Scottish Parliament Written answers for ',
-		'url'			=> 'spwrans/'
-	),
+    'gadget' => [
+        'url' => 'gadget/',
+        'title' => 'OpenAustralia Google gadget',
+    ],
 
-	// The URL 3rd parties need to ping something here.
-	'trackback' => array (
-		'url'			=> 'trackback/'
-	),
+    'glossary' => [
+        'heading' => 'Glossary',
+        'parent' => 'help_us_out',
+        'track' => TRUE,
+        'url' => 'glossary/'
+    ],
+    'glossary_addterm' => [
+        'menu' => [
+            'text' => 'Add a term',
+            'title' => "Add a definition for a term to the glossary"
+        ],
+        'parent' => 'help_us_out',
+        'title' => 'Add a glossary item',
+        'url' => 'addterm/',
+        'session_vars' => ['g']
+    ],
+    'glossary_addlink' => [
+        'menu' => [
+            'text' => 'Add a link',
+            'title' => "Add an external link"
+        ],
+        'parent' => 'help_us_out',
+        'title' => 'Add a link',
+        'url' => 'addlink/',
+        'session_vars' => ['g']
+    ],
+    'glossary_item' => [
+        'heading' => 'Glossary heading',
+        'parent' => 'help_us_out',
+        'track' => TRUE,
+        'url' => 'glossary/',
+        'session_vars' => ['g']
+    ],
+    'hansard' => [
+        'menu' => [
+            'text' => 'Debates',
+            'title' => "House of Representatives and Senate debates"
+        ],
+        'title' => 'House of Representatives and Senate debates',
+        'track' => TRUE,
+        'url' => 'hansard/'
+    ],
+    'hansard_date' => [
+        'parent' => 'hansard',
+        'title' => 'House of Representatives',
+        'track' => TRUE,
+        'url' => 'hansard/'
+    ],
+    'help' => [
+        'menu' => [
+            'text' => 'Help',
+            'title' => "Answers to your questions"
+        ],
+        'title' => 'Help',
+        'track' => TRUE,
+        'url' => 'help/'
+    ],
+    'help_us_out' => [
+        'menu' => [
+            'text' => 'Glossary',
+            'title' => "Parliament's jargon explained"
+        ],
+        'title' => 'Glossary',
+        'heading' => 'Add a glossary item',
+        'url' => 'addterm/',
+        'sidebar' => 'glossary_add'
+    ],
+    'home' => [
+        'menu' => [
+            'text' => 'Home',
+            'title' => "The front page of the site"
+        ],
+        'title' => "Are your Representatives and Senators working for you in Australia's Parliament?",
+        'track' => TRUE,
+        'rss' => 'news/index.rdf',
+        'url' => ''
+    ],
+    'houserules' => [
+        'title' => 'House rules',
+        'url' => 'houserules/'
+    ],
 
-	'useralerts' => array(
-		'menu'			=> array(
-			'text'			=> 'Email Alerts',
-			'title'			=> 'Check your email alerts'
-		),
-		'title'			=> 'Your Email Alerts',
-		'url'			=> 'user/alerts/',
-		'parent'		=> 'userviewself'
-	),
-	'userchangepc' => array (
-		'title'			=> 'Change your Representative',
-		'url'			=> 'user/changepc/'
-	),
-	'userconfirm' => array (
-	//deprecated 	'track'			=> true,
-		'url'			=> 'user/confirm/'
-	),
-	'userconfirmed' => array (
-		'sidebar'		=> 'userconfirmed',
-		'title'			=> 'Welcome to OpenAustralia.org!',
-	//deprecated 	'track'			=> true,
-		'url'			=> 'user/confirm/'
-	),
-	'userconfirmfailed' => array (
-		'title'			=> 'Oops!',
-	//deprecated 	'track'			=> true,
-		'url'			=> 'user/confirm/'
-	),
-	'useredit' => array (
-		'pg'			=> 'edit',
-		'title'			=> 'Edit your details',
-		'url'			=> 'user/'
-	),'userjoin' => array (
-                'menu'                  => array (
-                        'text'                  => 'Join',
-                        'title'                 => "Joining is free and allows you to post comments"
-                ),
-                'pg'                    => 'join',
-                'sidebar'               => 'userjoin',
-                'title'                 => 'Join OpenAustralia.org',
-        //deprecated    'track'                 => true,
-                'url'                   => 'user/'
-        ),  	
-	'getinvolved' => array (
-		'menu'			=> array (
-			'text'			=> 'Get involved',
-			'title'			=> "Contribute to OpenAustralia.org"
-		),
-		'pg'			=> 'getinvolved',
-		'sidebar'		=> 'userjoin',
-		'title'			=> 'Contribute to OpenAustralia.org',
-	//deprecated 	'track'			=> true,
-		'url'			=> 'getinvolved/'
-	),		
-	'userlogin' => array (
-		'menu'			=> array (
-			'text'			=> 'Log in',
-			'title'			=> "If you've already joined, log in to post comments"
-		),
-		'sidebar'		=> 'userlogin',
-		'title'			=> 'Log in',
-	//deprecated 	'track'			=> true,
-		'url'			=> 'user/login/'
-	),
-	
-	'userlogout' => array (
-		'menu'			=> array (
-			'text'			=> 'Log out',
-			'title'			=> "Log out"
-		),
-		'url'			=> 'user/logout/'
-	),		
-	'userpassword' => array (
-		'title'			=> 'Change password',
-		'url'			=> 'user/password/'
-	),
-	'userprompt' => array (
-		'title'			=> 'Please log in',
-		'url'			=> 'user/prompt/'
-	),
-	'userview' => array (
-		'session_vars'	=> array('u'),
-		'url'			=> 'user/'
-	),
-	'userviewself' => array (
-		'menu'			=> array (
-			'text'			=> 'Your details',
-			'title'			=> "View and edit your details"
-		),
-		'url'			=> 'user/'
-	),
-	'userwelcome' => array (
-		'title'			=> 'Welcome!',
-		'url'			=> 'user/'
-	),
-	'whall'  => array (	
-		'parent'		=> 'whallfront',
-		'url'			=> 'whall/',
-		'session_vars'	=> array ('id'),
-	),
-	'whalls'  => array (	
-		'parent'		=> 'whallfront',
-		'url'			=> 'whall/',
-		'session_vars'	=> array ('id'),
-	),
-	'whallday' => array (
-		'parent'		=> 'whallfront',
-		'session_vars'	=> array ('d'),
-		'url'			=> 'whall/',
-	),			
-	'whallfront' => array (
-		'menu'			=> array (
-			'text'			=> 'Westminster Hall',
-			'title'			=> "Westminster Hall debates"
-		),
-		'parent'		=> 'hansard',
-		'title'			=> 'Westminster Hall debates',
-		'rss'			=> 'whall/whall.rss',
-		'url'			=> 'whall/'
-	),
-	'whallyear' => array (
-		'parent'		=> 'whallfront',
-		'title'			=> 'Westminster Hall debates for ',
-		'url'			=> 'whall/'
-	),
+    'linktous' => [
+        'title' => 'Link to us',
+        'heading' => 'How to link to us',
+        'url' => 'help/linktous/'
+    ],
 
-	'wms' => array (
-		'parent'		=> 'wmsfront',
-		'url'			=> 'wms/',
-		'session_vars'	=> array('id')
-	),
-	'wmsday' => array (
-		'parent'		=> 'wmsfront',
-		'session_vars'	=> array('d'),
-		'url'			=> 'wms/'
-	),
-	'wmsfront' => array (
-		'menu'			=> array (
-			'text'			=> 'Written Ministerial Statements',
-			'title'			=> 'Written Ministerial Statements'
-		),
-		'parent'		=> 'hansard',
-		'title'			=> 'Written Ministerial Statements',
-		'rss'			=> 'wms/wms.rss',
-		'url'			=> 'wms/'
-	),
-	'wmsyear' => array (
-		'parent'		=> 'wmsfront',
-		'title'			=> 'Written Ministerial Statements for ',
-		'url'			=> 'wms/'
-	),
+    'lordsdebate' => [
+        'parent' => 'lordsdebatesfront',
+        'track' => TRUE,
+        'url' => 'senate/',
+        'session_vars' => ['gid'],
+    ],
+    'lordsdebates' => [
+        'parent' => 'lordsdebatesfront',
+        'track' => TRUE,
+        'url' => 'senate/',
+        'session_vars' => ['id'],
+    ],
+    'lordsdebatesday' => [
+        'parent' => 'lordsdebatesfront',
+        'session_vars' => ['d'],
+        'track' => TRUE,
+        'url' => 'senate/',
+    ],
+    'lordsdebatesfront' => [
+        'menu' => [
+            'text' => 'Senate Debates',
+            'title' => "Senate debates"
+        ],
+        'parent' => 'hansard',
+        'title' => 'Senate debates',
+        'track' => TRUE,
+        'rss' => 'senate/senate.rss',
+        'url' => 'senate/'
+    ],
+    'lordsdebatesyear' => [
+        'parent' => 'lordsdebatesfront',
+        'title' => 'Debates for ',
+        'url' => 'senate/'
+    ],
 
-	'wrans'  => array (
-		'parent'		=> 'wransfront',
-		'url'			=> 'wrans/',
-		'session_vars'	=> array ('id')
-	),
-	'wransday'  => array (
-		'parent'		=> 'wransfront',
-		'url'			=> 'wrans/'
-	),
-	'wransfront'  => array (
-		'menu'			=> array (
-			'text'			=> 'Written Answers',
-			'title'			=> "Written Answers"
-		),
-		'parent'		=> 'hansard',
-		'title'			=> 'Written answers',
-		'url'			=> 'wrans/'
-	),
-	'wransmp' => array(
-		'parent'		=> 'wransfront',
-		'title'			=> 'For questions asked by ',
-		'url'			=> 'wrans/'
-	),
-	'wransyear' => array (
-		'parent'		=> 'wransfront',
-		'title'			=> 'Written answers for ',
-		'url'			=> 'wrans/'
-	),
+    'peer' => [
+        'title' => 'Senator',
+        'track' => TRUE,
+        'url' => 'senator/'
+    ],
+    'peers' => [
+        'menu' => [
+            'text' => 'Senators',
+            'title' => "List of all Senators"
+        ],
+        'title' => 'All Senators',
+        'track' => TRUE,
+        'url' => 'senators/'
+    ],
 
-	'yourmp' => array (
-		'menu'			=> array (
-			'text'			=> '<em>Your</em> Representative',
-			'title'			=> "Find out about your Member of the House of Representatives"
-		),
-		'sidebar'		=> 'yourmp',
-		'title'			=> 'Your MP',
-		'url'			=> 'mp/'
-	),
-	'yourmp_recent' => array (
-		'menu'			=> array (
-			'text'			=> 'Recent appearances',
-			'title'			=> "Recent speeches and written answers by this MP"
-		),
-		'parent'		=> 'yourmp',
-		'title'			=> "Your MP's recent appearances in parliament",
-		'url'			=> 'mp/?recent=1'
-	),
-);
+    'mla' => [
+        'title' => 'MLA',
+        'track' => TRUE,
+        'url' => 'mla/'
+    ],
+    'mlas' => [
+        'menu' => [
+            'text' => 'All MLAs',
+            'title' => "List of all MLAs"
+        ],
+        'title' => 'All MLAs',
+        'track' => TRUE,
+        'url' => 'mlas/'
+    ],
+
+    'msp' => [
+        'title' => 'MSP',
+        'track' => TRUE,
+        'url' => 'msp/'
+    ],
+    'msps' => [
+        'menu' => [
+            'text' => 'All MSPs',
+            'title' => "List of all MSPs"
+        ],
+        'title' => 'All MSPs',
+        'track' => TRUE,
+        'url' => 'msps/'
+    ],
+
+    /* Not 'Your MP', whose name is 'yourmp'... */
+    'mp' => [
+        'title' => 'MP',
+        'track' => TRUE,
+        'url' => 'mp/'
+    ],
+    'emailfriend' => [
+        'title' => 'Send this page to a friend',
+        'track' => TRUE,
+        'url' => 'email/'
+    ],
+    'c4_mp' => [
+        'title' => 'MP',
+        'track' => TRUE,
+        'url' => 'mp/c4/'
+    ],
+    'c4x_mp' => [
+        'title' => 'MP',
+        'track' => TRUE,
+        'url' => 'mp/c4x/'
+    ],
+    // The directory MPs' RSS feeds are stored in.
+    'mp_rss' => [
+        'url' => 'rss/mp/'
+    ],
+
+    'mps' => [
+        'menu' => [
+            'text' => 'Representatives',
+            'title' => "Your Representative and list of all Members of the House of Representatives"
+        ],
+        'title' => 'All Members of the House of Representatives',
+        'track' => TRUE,
+        'url' => 'mps/'
+    ],
+    'c4_mps' => [
+        'title' => 'All MPs',
+        'track' => TRUE,
+        'url' => 'mps/c4/'
+    ],
+    'c4x_mps' => [
+        'title' => 'All MPs',
+        'track' => TRUE,
+        'url' => 'mps/c4x/'
+    ],
+
+    'nidebate' => [
+        'parent' => 'nidebatesfront',
+        'track' => TRUE,
+        'url' => 'ni/',
+        'session_vars' => ['gid'],
+    ],
+    'nidebates' => [
+        'parent' => 'nidebatesfront',
+        'track' => TRUE,
+        'url' => 'ni/',
+        'session_vars' => ['id'],
+    ],
+    'nidebatesday' => [
+        'parent' => 'nidebatesfront',
+        'session_vars' => ['d'],
+        'track' => TRUE,
+        'url' => 'ni/',
+    ],
+    'nidebatesfront' => [
+        'menu' => [
+            'text' => 'NIA Debates',
+            'title' => "Northern Ireland Assembly debates"
+        ],
+        'parent' => 'hansard',
+        'title' => 'Northern Ireland Assembly debates',
+        'track' => TRUE,
+        'rss' => 'ni/ni.rss',
+        'url' => 'ni/'
+    ],
+    'nidebatesyear' => [
+        'parent' => 'nidebatesfront',
+        'title' => 'Debates for ',
+        'url' => 'ni/'
+    ],
+
+    'otheruseredit' => [
+        'pg' => 'editother',
+        'title' => "Editing a user's data",
+        'url' => 'user/'
+    ],
+    'privacy' => [
+        'title' => 'Privacy Policy',
+        'url' => 'privacy/'
+    ],
+
+    /* Public bill committees */
+    'pbc_front' => [
+        'menu' => [
+            'text' => 'Public Bill Committees',
+            'title' => "Public Bill Committees (formerly Standing Committees) debates"
+        ],
+        'parent' => 'hansard',
+        'title' => 'Public Bill Committees',
+        'rss' => 'pbc/pbc.rss',
+        'url' => 'pbc/'
+    ],
+    'pbc_session' => [
+        'title' => 'Session',
+        'url' => 'pbc/',
+        'parent' => 'pbc_front',
+    ],
+    'pbc_bill' => [
+        'title' => '',
+        'url' => 'pbc/',
+        'parent' => 'pbc_front',
+        'session_vars' => ['bill'],
+    ],
+    'pbc_clause' => [
+        'parent' => 'pbc_front',
+        'url' => 'pbc/',
+        'session_vars' => ['id'],
+    ],
+    'pbc_speech' => [
+        'parent' => 'pbc_front',
+        'url' => 'pbc/',
+        'session_vars' => ['id'],
+    ],
+
+    'raw' => [
+        'title' => 'Raw data',
+        'url' => 'raw/'
+    ],
+
+    'regmem' => [
+        'title' => 'Changes to the Register of Members\' Interests',
+        'url' => 'regmem/'
+    ],
+
+    'regmem_date' => [
+        'url' => 'regmem/',
+        'parent' => 'regmem'
+    ],
+
+    'regmem_mp' => [
+        'url' => 'regmem/',
+        'parent' => 'regmem'
+    ],
+
+    'regmem_diff' => [
+        'url' => 'regmem/',
+        'parent' => 'regmem'
+    ],
+
+    'royal' => [
+        'title' => 'Royal',
+        'url' => 'royal/'
+    ],
+
+    'search' => [
+        'sidebar' => 'search',
+        'track' => TRUE,
+        'url' => 'search/',
+        'session_vars' => ['s', 'pid', 'o', 'pop']
+    ],
+    'search_help' => [
+        'sidebar' => 'search',
+        'title' => 'Help with searching',
+        'url' => 'search/'
+    ],
+
+    'sitenews' => [
+        'menu' => [
+            'text' => 'News',
+            'title' => "News about changes to this website"
+        ],
+        'rss' => 'news/index.rdf',
+        'sidebar' => 'sitenews',
+        'title' => 'OpenAustralia news',
+        'track' => TRUE,
+        'url' => 'news/'
+    ],
+    'sitenews_archive' => [
+        'parent' => 'sitenews',
+        'rss' => 'news/index.rdf',
+        'sidebar' => 'sitenews',
+        'title' => 'Archive',
+        'track' => TRUE,
+        'url' => 'news/archives/'
+    ],
+    'sitenews_atom' => [
+        'url' => 'news/atom.xml'
+    ],
+    'sitenews_date' => [
+        'parent' => 'sitenews',
+        'rss' => 'news/index.rdf',
+        'sidebar' => 'sitenews'
+    ],
+    'sitenews_individual' => [
+        'parent' => 'sitenews',
+        'rss' => 'news/index.rdf',
+        'sidebar' => 'sitenews',
+        // Deprecated         'track'            => true.
+    ],
+    'sitenews_rss1' => [
+        'url' => 'news/index.rdf'
+    ],
+    'sitenews_rss2' => [
+        'url' => 'news/index.xml'
+    ],
+
+    'skin' => [
+        'title' => 'Skin this site',
+        'url' => 'skin/'
+    ],
+
+    /* Scottish Parliament */
+    'spdebate' => [
+        'parent' => 'spdebatesfront',
+        'track' => TRUE,
+        'url' => 'sp/',
+        'session_vars' => ['id'],
+    ],
+    'spdebates' => [
+        'parent' => 'spdebatesfront',
+        'track' => TRUE,
+        'url' => 'sp/',
+        'session_vars' => ['id'],
+    ],
+    'spdebatesday' => [
+        'parent' => 'spdebatesfront',
+        'session_vars' => ['d'],
+        'track' => TRUE,
+        'url' => 'sp/',
+    ],
+    'spdebatesfront' => [
+        'menu' => [
+            'text' => 'Scottish Parliament Debates',
+            'title' => "Scottish Parliament debates"
+        ],
+        'parent' => 'hansard',
+        'title' => 'Scottish Parliament debates',
+        'track' => TRUE,
+        'rss' => 'sp/sp.rss',
+        'url' => 'sp/'
+    ],
+    'spdebatesyear' => [
+        'parent' => 'spdebatesfront',
+        'title' => 'Debates for ',
+        'url' => 'sp/'
+    ],
+    'spwrans' => [
+        'parent' => 'spwransfront',
+        'url' => 'spwrans/',
+        'session_vars' => ['id']
+    ],
+    'spwransday' => [
+        'parent' => 'spwransfront',
+        'url' => 'spwrans/'
+    ],
+    'spwransfront' => [
+        'menu' => [
+            'text' => 'SP written answers',
+            'title' => "Written Answers"
+        ],
+        'parent' => 'hansard',
+        'title' => 'Scottish Parliament Written answers',
+        'url' => 'spwrans/'
+    ],
+    'spwransmp' => [
+        'parent' => 'spwransfront',
+        'title' => 'For questions asked by ',
+        'url' => 'spwrans/'
+    ],
+    'spwransyear' => [
+        'parent' => 'spwransfront',
+        'title' => 'Scottish Parliament Written answers for ',
+        'url' => 'spwrans/'
+    ],
+
+    // The URL 3rd parties need to ping something here.
+    'trackback' => [
+        'url' => 'trackback/'
+    ],
+
+    'useralerts' => [
+        'menu' => [
+            'text' => 'Email Alerts',
+            'title' => 'Check your email alerts'
+        ],
+        'title' => 'Your Email Alerts',
+        'url' => 'user/alerts/',
+        'parent' => 'userviewself'
+    ],
+    'userchangepc' => [
+        'title' => 'Change your Representative',
+        'url' => 'user/changepc/'
+    ],
+    'userconfirm' => [
+        // Deprecated     'track'            => true,.
+        'url' => 'user/confirm/'
+    ],
+    'userconfirmed' => [
+        'sidebar' => 'userconfirmed',
+        'title' => 'Welcome to OpenAustralia.org!',
+        // Deprecated     'track'            => true,.
+        'url' => 'user/confirm/'
+    ],
+    'userconfirmfailed' => [
+        'title' => 'Oops!',
+        // Deprecated     'track'            => true,.
+        'url' => 'user/confirm/'
+    ],
+    'useredit' => [
+        'pg' => 'edit',
+        'title' => 'Edit your details',
+        'url' => 'user/'
+    ],
+    'userjoin' => [
+        'menu' => [
+            'text' => 'Join',
+            'title' => "Joining is free and allows you to post comments"
+        ],
+        'pg' => 'join',
+        'sidebar' => 'userjoin',
+        'title' => 'Join OpenAustralia.org',
+        // Deprecated    'track'                 => true,.
+        'url' => 'user/'
+    ],
+    'getinvolved' => [
+        'menu' => [
+            'text' => 'Get involved',
+            'title' => "Contribute to OpenAustralia.org"
+        ],
+        'pg' => 'getinvolved',
+        'sidebar' => 'userjoin',
+        'title' => 'Contribute to OpenAustralia.org',
+        // Deprecated     'track'            => true,.
+        'url' => 'getinvolved/'
+    ],
+    'userlogin' => [
+        'menu' => [
+            'text' => 'Log in',
+            'title' => "If you've already joined, log in to post comments"
+        ],
+        'sidebar' => 'userlogin',
+        'title' => 'Log in',
+        // Deprecated     'track'            => true,.
+        'url' => 'user/login/'
+    ],
+
+    'userlogout' => [
+        'menu' => [
+            'text' => 'Log out',
+            'title' => "Log out"
+        ],
+        'url' => 'user/logout/'
+    ],
+    'userpassword' => [
+        'title' => 'Change password',
+        'url' => 'user/password/'
+    ],
+    'userprompt' => [
+        'title' => 'Please log in',
+        'url' => 'user/prompt/'
+    ],
+    'userview' => [
+        'session_vars' => ['u'],
+        'url' => 'user/'
+    ],
+    'userviewself' => [
+        'menu' => [
+            'text' => 'Your details',
+            'title' => "View and edit your details"
+        ],
+        'url' => 'user/'
+    ],
+    'userwelcome' => [
+        'title' => 'Welcome!',
+        'url' => 'user/'
+    ],
+    'whall' => [
+        'parent' => 'whallfront',
+        'url' => 'whall/',
+        'session_vars' => ['id'],
+    ],
+    'whalls' => [
+        'parent' => 'whallfront',
+        'url' => 'whall/',
+        'session_vars' => ['id'],
+    ],
+    'whallday' => [
+        'parent' => 'whallfront',
+        'session_vars' => ['d'],
+        'url' => 'whall/',
+    ],
+    'whallfront' => [
+        'menu' => [
+            'text' => 'Westminster Hall',
+            'title' => "Westminster Hall debates"
+        ],
+        'parent' => 'hansard',
+        'title' => 'Westminster Hall debates',
+        'rss' => 'whall/whall.rss',
+        'url' => 'whall/'
+    ],
+    'whallyear' => [
+        'parent' => 'whallfront',
+        'title' => 'Westminster Hall debates for ',
+        'url' => 'whall/'
+    ],
+
+    'wms' => [
+        'parent' => 'wmsfront',
+        'url' => 'wms/',
+        'session_vars' => ['id']
+    ],
+    'wmsday' => [
+        'parent' => 'wmsfront',
+        'session_vars' => ['d'],
+        'url' => 'wms/'
+    ],
+    'wmsfront' => [
+        'menu' => [
+            'text' => 'Written Ministerial Statements',
+            'title' => 'Written Ministerial Statements'
+        ],
+        'parent' => 'hansard',
+        'title' => 'Written Ministerial Statements',
+        'rss' => 'wms/wms.rss',
+        'url' => 'wms/'
+    ],
+    'wmsyear' => [
+        'parent' => 'wmsfront',
+        'title' => 'Written Ministerial Statements for ',
+        'url' => 'wms/'
+    ],
+
+    'wrans' => [
+        'parent' => 'wransfront',
+        'url' => 'wrans/',
+        'session_vars' => ['id']
+    ],
+    'wransday' => [
+        'parent' => 'wransfront',
+        'url' => 'wrans/'
+    ],
+    'wransfront' => [
+        'menu' => [
+            'text' => 'Written Answers',
+            'title' => "Written Answers"
+        ],
+        'parent' => 'hansard',
+        'title' => 'Written answers',
+        'url' => 'wrans/'
+    ],
+    'wransmp' => [
+        'parent' => 'wransfront',
+        'title' => 'For questions asked by ',
+        'url' => 'wrans/'
+    ],
+    'wransyear' => [
+        'parent' => 'wransfront',
+        'title' => 'Written answers for ',
+        'url' => 'wrans/'
+    ],
+
+    'yourmp' => [
+        'menu' => [
+            'text' => '<em>Your</em> Representative',
+            'title' => "Find out about your Member of the House of Representatives"
+        ],
+        'sidebar' => 'yourmp',
+        'title' => 'Your MP',
+        'url' => 'mp/'
+    ],
+    'yourmp_recent' => [
+        'menu' => [
+            'text' => 'Recent appearances',
+            'title' => "Recent speeches and written answers by this MP"
+        ],
+        'parent' => 'yourmp',
+        'title' => "Your MP's recent appearances in parliament",
+        'url' => 'mp/?recent=1'
+    ],
+];
 
 
 
 // We just use the sections for creating page headings/titles.
 // The 'title' is always used for the <title> tag of the page.
-// The text displayed on the page itself will also be this, 
+// The text displayed on the page itself will also be this,
 // UNLESS the section has a 'heading', in which case that's used instead.
 
-$this->section = array (
+$this->section = [
 
 
-	'about' => array (
-		'title' 	=> 'About Us'
-	),
-	'admin' => array (
-		'title'		=> 'Admin'
-	),
-	'debates' => array (
-		'title' 	=> 'Debates',
-		'heading'	=> 'House of Commons Debates'
-	),
-	'help_us_out' => array (
-		'title' 	=> 'Help Us Out'
-	),
-	'hansard' => array (
-		'title' 	=> 'Hansard'
-	),
-	'home' => array (
-		'title' 	=> 'Home'
-	),
-	'mp' => array (
-		'title' 	=> 'Your MP'
-	),
-	'search' => array (
-		'title' 	=> 'Search'
-	),
-	'sitenews' => array (
-		'title' 	=> 'OpenAustralia news'
-	),
-	'wrans' => array (
-		'title' 	=> 'Written Answers'
-	)
+    'about' => [
+        'title' => 'About Us'
+    ],
+    'admin' => [
+        'title' => 'Admin'
+    ],
+    'debates' => [
+        'title' => 'Debates',
+        'heading' => 'House of Commons Debates'
+    ],
+    'help_us_out' => [
+        'title' => 'Help Us Out'
+    ],
+    'hansard' => [
+        'title' => 'Hansard'
+    ],
+    'home' => [
+        'title' => 'Home'
+    ],
+    'mp' => [
+        'title' => 'Your MP'
+    ],
+    'search' => [
+        'title' => 'Search'
+    ],
+    'sitenews' => [
+        'title' => 'OpenAustralia news'
+    ],
+    'wrans' => [
+        'title' => 'Written Answers'
+    ]
 
-);
-?>
+];

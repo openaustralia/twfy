@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * @file
+ */
+
 $this_page = "about";
 
 include_once "../../includes/easyparliament/init.php";
@@ -13,5 +17,3 @@ include INCLUDESPATH . 'easyparliament/staticpages/about.php';
 $PAGE->stripe_end();
 
 $PAGE->page_end();
-
-?>

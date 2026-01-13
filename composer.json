@@ -1,0 +1,33 @@
+{
+    "name": "openaustralia/twfy",
+    "description": "Web Application component for Open Australia (twfy module)",
+    "type": "project",
+    "license": "BSD-3-Clause",
+    "minimum-stability": "stable",
+    "require": {
+        "php": "^8.3.0"
+    },
+    "scripts": {
+      "git-hooks": "test -d .git && git config core.hooksPath git-hooks || exit 0",
+      "phpcs": "./vendor/bin/phpcs --standard=phpcs.xml .",
+      "post-install-cmd": [
+          "@git-hooks"
+      ],
+      "post-update-cmd": [
+          "@git-hooks"
+      ]
+    },
+    "config": {
+        "bin-dir": "vendor/bin/",
+        "audit": {
+            "abandoned": "report"
+        },
+        "allow-plugins": {
+            "dealerdirect/phpcodesniffer-composer-installer": true
+        }
+    },
+    "require-dev": {
+        "drupal/coder": "^8.3",
+        "squizlabs/php_codesniffer": "^3.13"
+    }
+}
