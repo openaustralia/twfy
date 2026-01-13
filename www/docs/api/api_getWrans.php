@@ -9,9 +9,8 @@ include_once 'api_getHansard.php';
 /**
  *
  */
-function api_getWrans_front()
-{
-    ?>
+function api_getWrans_front() {
+  ?>
     <p><big>Fetch Written Questions/Answers.</big></p>
 
     <h4>Arguments</h4>
@@ -57,25 +56,22 @@ function api_getWrans_front()
 /**
  *
  */
-function api_getWrans_date($d)
-{
-    _api_getHansard_date('WRANS', $d);
+function api_getWrans_date($d) {
+  _api_getHansard_date('WRANS', $d);
 }
 
 /**
  *
  */
-function api_getWrans_year($y)
-{
-    _api_getHansard_year('WRANS', $y);
+function api_getWrans_year($y) {
+  _api_getHansard_year('WRANS', $y);
 }
 
 /**
  *
  */
-function api_getWrans_search($s)
-{
-    _api_getHansard_search([
+function api_getWrans_search($s) {
+  _api_getHansard_search([
         's' => $s,
         'pid' => get_http_var('person'),
         'type' => 'wrans',
@@ -85,9 +81,8 @@ function api_getWrans_search($s)
 /**
  *
  */
-function api_getWrans_person($pid)
-{
-    _api_getHansard_search([
+function api_getWrans_person($pid) {
+  _api_getHansard_search([
         'pid' => $pid,
         'type' => 'wrans',
     ]);
@@ -96,21 +91,19 @@ function api_getWrans_person($pid)
 /**
  *
  */
-function api_getWrans_gid($gid)
-{
-    $result = _api_getHansard_gid('WRANS', $gid);
-    if (is_string($result)) {
-        $URL = $_SERVER['REQUEST_URI'];
-        $URL = str_replace($gid, $result, $URL);
-        header('Location: http://' . DOMAIN . $URL);
-        exit;
-    }
+function api_getWrans_gid($gid) {
+  $result = _api_getHansard_gid('WRANS', $gid);
+  if (is_string($result)) {
+    $URL = $_SERVER['REQUEST_URI'];
+    $URL = str_replace($gid, $result, $URL);
+    header('Location: http://' . DOMAIN . $URL);
+    exit;
+  }
 }
 
 /**
  *
  */
-function api_getWrans_department($dept)
-{
-    _api_getHansard_department('WRANS', $dept);
+function api_getWrans_department($dept) {
+  _api_getHansard_department('WRANS', $dept);
 }

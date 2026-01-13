@@ -21,18 +21,18 @@ include_once "../../../includes/easyparliament/member.php";
 
 
 if (get_http_var('welcome') == 't') {
-    // The user has successfully clicked the link, been logged in, and
-    // then been redirected here.
-    // So welcome them!
+  // The user has successfully clicked the link, been logged in, and
+  // then been redirected here.
+  // So welcome them!
 
-    $this_page = 'userconfirmed';
+  $this_page = 'userconfirmed';
 
-    $PAGE->page_start();
+  $PAGE->page_start();
 
-    $PAGE->stripe_start();
+  $PAGE->stripe_start();
 
-    if ($THEUSER->isloggedin()) {
-        ?>
+  if ($THEUSER->isloggedin()) {
+    ?>
 
         <p>Hi, and welcome to OpenAustralia.org! You are now logged in.</p>
 
@@ -45,54 +45,56 @@ if (get_http_var('welcome') == 't') {
                 href="mailto:<?php echo CONTACTEMAIL; ?>">let us know</a> if you find a bug, or have a suggestion.</p>
 
         <?php
-    } else {
-        // Oops, something must have gone wrong when the user was logged in.
-        // It shouldn't do, but...
-        $PAGE->error_message("Sorry, we couldn't log you in");
-    }
+  }
+  else {
+    // Oops, something must have gone wrong when the user was logged in.
+    // It shouldn't do, but...
+    $PAGE->error_message("Sorry, we couldn't log you in");
+  }
 
-    $PAGE->stripe_end([
+  $PAGE->stripe_end([
         [
             'type' => 'include',
             'content' => 'userconfirmed'
         ]
     ]);
 
-    $PAGE->page_end();
+  $PAGE->page_end();
 
 
-} elseif (get_http_var('t') != '') {
-    // The user's first visit to this page, and they have a registration token.
-    // So let's confirm them and hope they get logged in...
+}
+elseif (get_http_var('t') != '') {
+  // The user's first visit to this page, and they have a registration token.
+  // So let's confirm them and hope they get logged in...
 
-    $success = $THEUSER->confirm(get_http_var('t'));
+  $success = $THEUSER->confirm(get_http_var('t'));
 
-    if (!$success) {
-        confirm_error();
-    }
-
-} else {
-    // We have no registration token, and no notification of welcome...
-
+  if (!$success) {
     confirm_error();
+  }
+
+}
+else {
+  // We have no registration token, and no notification of welcome...
+
+  confirm_error();
 
 }
 
 /**
  *
  */
-function confirm_error()
-{
-    // Friendly error, not a normal one!
-    global $PAGE, $this_page;
+function confirm_error() {
+  // Friendly error, not a normal one!
+  global $PAGE, $this_page;
 
-    $this_page = 'userconfirmfailed';
+  $this_page = 'userconfirmfailed';
 
-    $PAGE->page_start();
+  $PAGE->page_start();
 
-    $PAGE->stripe_start();
+  $PAGE->stripe_start();
 
-    ?>
+  ?>
 
     <p>The link you followed to reach this page appears to be incomplete.</p>
 

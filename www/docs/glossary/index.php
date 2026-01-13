@@ -5,9 +5,10 @@
  */
 
 if ($term) {
-    $this_page = 'glossary_item';
-} else {
-    $this_page = "glossary";
+  $this_page = 'glossary_item';
+}
+else {
+  $this_page = "glossary";
 }
 
 include_once "../../includes/easyparliament/init.php";
@@ -20,11 +21,11 @@ $args = [
 ];
 
 if (get_http_var('gl')) {
-    // We've already got something, so display it.
-    $this_page = 'glossary';
-    if (is_numeric(get_http_var('gl'))) {
-        $args['glossary_id'] = filter_user_input(get_http_var('gl'), 'strict');
-    }
+  // We've already got something, so display it.
+  $this_page = 'glossary';
+  if (is_numeric(get_http_var('gl'))) {
+    $args['glossary_id'] = filter_user_input(get_http_var('gl'), 'strict');
+  }
 }
 
 // Stop the title generator making nasty glossary titles.
@@ -36,28 +37,31 @@ $term = $GLOSSARY->current_term;
 
 // Check if we're on a letter index page.
 if ((get_http_var('az') != '') && is_string(get_http_var('az'))) {
-    // We have a letter!
-    // make sure it's only one and uppercase.
-    $az = strtoupper(substr(get_http_var('az'), 0, 1));
+  // We have a letter!
+  // make sure it's only one and uppercase.
+  $az = strtoupper(substr(get_http_var('az'), 0, 1));
 }
 
 // Now check it's in the populated glossary alphabet.
 if (isset($az) && array_key_exists($az, $GLOSSARY->alphabet)) {
-    $GLOSSARY->current_letter = $az;
-    // Otherwise make it the first letter of the current term.
-} elseif (isset($term)) {
-    $GLOSSARY->current_letter = strtoupper($term['title'][0]);
-    // Otherwise make it "A" by default.
-} else {
-    $GLOSSARY->current_letter = "A";
+  $GLOSSARY->current_letter = $az;
+  // Otherwise make it the first letter of the current term.
+}
+elseif (isset($term)) {
+  $GLOSSARY->current_letter = strtoupper($term['title'][0]);
+  // Otherwise make it "A" by default.
+}
+else {
+  $GLOSSARY->current_letter = "A";
 }
 
 if ($term) {
-    $DATA->set_page_metadata($this_page, 'title', $term['title'] . ': Glossary item');
-    $DATA->set_page_metadata($this_page, 'heading', $term['title']);
-} else {
-    $DATA->set_page_metadata($this_page, 'title', $GLOSSARY->current_letter . ': Glossary index');
-    $DATA->set_page_metadata($this_page, 'heading', 'Glossary index');
+  $DATA->set_page_metadata($this_page, 'title', $term['title'] . ': Glossary item');
+  $DATA->set_page_metadata($this_page, 'heading', $term['title']);
+}
+else {
+  $DATA->set_page_metadata($this_page, 'title', $GLOSSARY->current_letter . ': Glossary index');
+  $DATA->set_page_metadata($this_page, 'heading', 'Glossary index');
 }
 
 $PAGE->page_start();
@@ -72,17 +76,17 @@ $PAGE->glossary_search_form($args);
  */
 
 if ($GLOSSARY->glossary_id != '') {
-    // Deal with a single instance in the form of a glossary_id.
+  // Deal with a single instance in the form of a glossary_id.
 
-    // Set up next/prev for this page.
-    $URL = new URL('glossary');
-    $up_link = $URL->generate();
-    $URL->insert(["gl" => $GLOSSARY->previous_term['glossary_id']]);
-    $previous_link = $URL->generate('url');
-    $URL->update(["gl" => $GLOSSARY->next_term['glossary_id']]);
-    $next_link = $URL->generate('url');
+  // Set up next/prev for this page.
+  $URL = new URL('glossary');
+  $up_link = $URL->generate();
+  $URL->insert(["gl" => $GLOSSARY->previous_term['glossary_id']]);
+  $previous_link = $URL->generate('url');
+  $URL->update(["gl" => $GLOSSARY->next_term['glossary_id']]);
+  $next_link = $URL->generate('url');
 
-    $nextprev = [
+  $nextprev = [
         'next' => [
             'url' => $next_link,
             'title' => 'Next term',
@@ -101,30 +105,31 @@ if ($GLOSSARY->glossary_id != '') {
             'title'    => ''
         )*/
     ];
-    $DATA->set_page_metadata($this_page, 'nextprev', $nextprev);
+  $DATA->set_page_metadata($this_page, 'nextprev', $nextprev);
 
-    $PAGE->glossary_display_term($GLOSSARY);
+  $PAGE->glossary_display_term($GLOSSARY);
 
-} else {
+}
+else {
 
 
-    // Display the results.
-    if (isset($GLOSSARY->terms)) {
-        ?>
+  // Display the results.
+  if (isset($GLOSSARY->terms)) {
+    ?>
         <ul class="glossary">
             <?php
             $URL = new URL('glossary');
             foreach ($GLOSSARY->alphabet[$GLOSSARY->current_letter] as $glossary_id) {
-                $URL->insert(['gl' => $glossary_id]);
-                $term_link = $URL->generate('url');
-                ?>
+              $URL->insert(['gl' => $glossary_id]);
+              $term_link = $URL->generate('url');
+              ?>
                 <li><a href="<?php echo $term_link ?>"><?php echo $GLOSSARY->terms[$glossary_id]['title']; ?></a></li>
                 <?php
             }
             ?>
         </ul>
         <?php
-    }
+  }
 }
 
 $URL = new URL('glossary_addterm');

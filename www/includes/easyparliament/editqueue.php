@@ -44,45 +44,42 @@
 /**
  * [TODO] what happens when two things with the same name are in the editqueue?
  */
-class EDITQUEUE
-{
+class EDITQUEUE {
 
-    public $pending_count = '';
+  public $pending_count = '';
 
-    /**
-     *
+  /**
+   *
+   */
+  public function EDITQUEUE() {
+    $this->db = new ParlDB();
+  }
+
+  /**
+   *
+   */
+  public function add($data) {
+    // This does the bare minimum.
+    // The upper object should make sure it's passsing good data.
+    // (for now!)
+
+    /*
+    print "<pre>";
+    print_r ($data);
+    print "</pre>";
      */
-    public function EDITQUEUE()
-    {
-        $this->db = new ParlDB();
-    }
 
-    /**
-     *
-     */
-    public function add($data)
-    {
-        // This does the bare minimum.
-        // The upper object should make sure it's passsing good data.
-        // (for now!)
+    // For editqueue in this instance we need:
+    //        user_id INTEGER,
+    //        edit_type INTEGER,
+    //        (epobject_id_l),
+    //        title VARCHAR(255),
+    //        body TEXT,
+    //        submitted DATETIME,.
 
-        /*
-        print "<pre>";
-        print_r ($data);
-        print "</pre>";
-         */
+    global $THEUSER;
 
-        // For editqueue in this instance we need:
-        //        user_id INTEGER,
-        //        edit_type INTEGER,
-        //        (epobject_id_l),
-        //        title VARCHAR(255),
-        //        body TEXT,
-        //        submitted DATETIME,.
-
-        global $THEUSER;
-
-        $q = $this->db->query("INSERT INTO editqueue
+    $q = $this->db->query("INSERT INTO editqueue
 						(user_id, edit_type, title, body, submitted)
 						VALUES
 						(
@@ -93,52 +90,52 @@ class EDITQUEUE
 						'" . $data['posted'] . "'
 						);");
 
-        if ($q->success()) {
-            // Set the object variables up.
-            $this->editqueue_id = $q->insert_id();
-            $this->title = $data['title'];
-            $this->body = $data['body'];
-            $this->posted = $data['posted'];
+    if ($q->success()) {
+      // Set the object variables up.
+      $this->editqueue_id = $q->insert_id();
+      $this->title = $data['title'];
+      $this->body = $data['body'];
+      $this->posted = $data['posted'];
 
-            return $this->editqueue_id;
+      return $this->editqueue_id;
 
-        } else {
-            return FALSE;
-        }
     }
+    else {
+      return FALSE;
+    }
+  }
 
-    /**
-     *
-     */
-    public function approve($data)
-    {
-        // Approve items for inclusion
-        // Create new epobject and update the editqueue.
+  /**
+   *
+   */
+  public function approve($data) {
+    // Approve items for inclusion
+    // Create new epobject and update the editqueue.
 
-        global $THEUSER;
+    global $THEUSER;
 
-        // We need a list of editqueue items to play with.
-        $this->get_pending();
-        if (!isset($this->pending)) {
-            return FALSE;
-        }
-        $timestamp = date('Y-m-d H:i:s', time());
+    // We need a list of editqueue items to play with.
+    $this->get_pending();
+    if (!isset($this->pending)) {
+      return FALSE;
+    }
+    $timestamp = date('Y-m-d H:i:s', time());
 
-        foreach ($data['approvals'] as $approval_id) {
-            // Create a new epobject
-            //         title VARCHAR(255),
-            //         body TEXT,
-            //         type INTEGER,
-            //         created DATETIME,
-            //         modified DATETIME,.
-            /*print "<pre>";
-            print_r($data);
-            print "</pre>";*/
-            // Check to see that we actually have something to approve.
-            if (!isset($this->pending[$approval_id])) {
-                break;
-            }
-            $q = $this->db->query("INSERT INTO epobject
+    foreach ($data['approvals'] as $approval_id) {
+      // Create a new epobject
+      //         title VARCHAR(255),
+      //         body TEXT,
+      //         type INTEGER,
+      //         created DATETIME,
+      //         modified DATETIME,.
+      /*print "<pre>";
+      print_r($data);
+      print "</pre>";*/
+      // Check to see that we actually have something to approve.
+      if (!isset($this->pending[$approval_id])) {
+        break;
+      }
+      $q = $this->db->query("INSERT INTO epobject
 							(title, body, type, created)
 							VALUES
 							('" . addslashes($this->pending[$approval_id]['title']) . "',
@@ -146,174 +143,173 @@ class EDITQUEUE
 							'" . $data['epobject_type'] . "',
 							'" . $timestamp . "');");
 
-            // If that didn't work we can't go any further...
-            if (!$q->success()) {
-                print "epobject trouble";
-                return FALSE;
-            }
-            $this->current_epobject_id = $q->insert_id();
+      // If that didn't work we can't go any further...
+      if (!$q->success()) {
+        print "epobject trouble";
+        return FALSE;
+      }
+      $this->current_epobject_id = $q->insert_id();
 
-            // Depending on the epobject type, we'll need to make
-            // entries in different tables.
-            switch ($data['epobject_type']) {
+      // Depending on the epobject type, we'll need to make
+      // entries in different tables.
+      switch ($data['epobject_type']) {
 
-                // Glossary item.
-                case 2:
-                    $previous_insert_id = $q->insert_id();
-                    $q = $this->db->query("INSERT INTO glossary
+        // Glossary item.
+        case 2:
+          $previous_insert_id = $q->insert_id();
+          $q = $this->db->query("INSERT INTO glossary
 									(epobject_id, type, visible)
 									VALUES
 									('" . $q->insert_id() . "',
 									'2',
 									'1');");
-                    // Again, no point carrying on if this fails,
-                    // so remove the previous entry.
-                    if (!$q->success()) {
-                        print "glossary trouble!";
-                        $q = $this->db->query("delete from epobject where epobject_id=" . $previous_insert_id . "");
-                        return FALSE;
-                    }
-                    break;
+          // Again, no point carrying on if this fails,
+          // so remove the previous entry.
+          if (!$q->success()) {
+            print "glossary trouble!";
+            $q = $this->db->query("delete from epobject where epobject_id=" . $previous_insert_id . "");
+            return FALSE;
+          }
+          break;
 
-            }
-            $this->current_subclass_id = $q->insert_id();
+      }
+      $this->current_subclass_id = $q->insert_id();
 
-            // Then finally update the editqueue with
-            // the new epobject id and approval details.
-            $q = $this->db->query("UPDATE editqueue
+      // Then finally update the editqueue with
+      // the new epobject id and approval details.
+      $q = $this->db->query("UPDATE editqueue
 							SET
 							epobject_id_l='" . $this->current_epobject_id . "',
 							editor_id='" . addslashes($THEUSER->user_id()) . "',
 							approved='1',
 							decided='" . $timestamp . "'
 							WHERE edit_id=" . $approval_id . ";");
-            if (!$q->success()) {
-                break;
-            } else {
-                // Now send them an email telling them they've been approved.
+      if (!$q->success()) {
+        break;
+      }
+      else {
+        // Now send them an email telling them they've been approved.
 
-                // Scrub that one from the list of pending items.
-                unset($this->pending[$approval_id]);
-            }
-        }
-
-        $this->update_pending_count();
-
-        return TRUE;
+        // Scrub that one from the list of pending items.
+        unset($this->pending[$approval_id]);
+      }
     }
 
-    /**
-     *
-     */
-    public function decline($data)
-    {
-        // Decline a list of term submissions from users.
+    $this->update_pending_count();
 
-        global $THEUSER;
+    return TRUE;
+  }
 
-        // We need a list of editqueue items to play with.
-        $this->get_pending();
-        if (!isset($this->pending)) {
-            return FALSE;
-        }
-        $timestamp = date('Y-m-d H:i:s', time());
+  /**
+   *
+   */
+  public function decline($data) {
+    // Decline a list of term submissions from users.
 
-        foreach ($data['declines'] as $decline_id) {
-            // Check to see that we actually have something to decline.
-            if (!isset($this->pending[$decline_id])) {
-                break;
-            }
+    global $THEUSER;
 
-            // Update the editqueue with setting approved=0.
-            $q = $this->db->query("UPDATE editqueue
+    // We need a list of editqueue items to play with.
+    $this->get_pending();
+    if (!isset($this->pending)) {
+      return FALSE;
+    }
+    $timestamp = date('Y-m-d H:i:s', time());
+
+    foreach ($data['declines'] as $decline_id) {
+      // Check to see that we actually have something to decline.
+      if (!isset($this->pending[$decline_id])) {
+        break;
+      }
+
+      // Update the editqueue with setting approved=0.
+      $q = $this->db->query("UPDATE editqueue
 							SET
 							editor_id='" . addslashes($THEUSER->user_id()) . "',
 							approved='0',
 							decided='" . $timestamp . "'
 							WHERE edit_id=" . $decline_id . ";");
-            if (!$q->success()) {
-                break;
-            } else {
-                // Scrub that one from the list of pending items.
-                unset($this->pending[$decline_id]);
-            }
-        }
-
-        $this->update_pending_count();
-
-        return TRUE;
-
+      if (!$q->success()) {
+        break;
+      }
+      else {
+        // Scrub that one from the list of pending items.
+        unset($this->pending[$decline_id]);
+      }
     }
 
-    /**
-     *
-     */
-    public function modify($args)
-    {
-        // Moderate a post,
-        // log it in editqueue,
-        // update glossary_id.
+    $this->update_pending_count();
 
-        // 1. Add the new item into the queue
-        $q = $this->db->query();
+    return TRUE;
 
-        // 2. if successful, set the previous editqueue item to approved=0;
+  }
 
+  /**
+   *
+   */
+  public function modify($args) {
+    // Moderate a post,
+    // log it in editqueue,
+    // update glossary_id.
+
+    // 1. Add the new item into the queue
+    $q = $this->db->query();
+
+    // 2. if successful, set the previous editqueue item to approved=0;
+
+  }
+
+  /**
+   *
+   */
+  public function get_pending() {
+    // Fetch all pending editqueue items.
+    // Sets $this->pending and returns a body count.
+    // Return organised by type? - maybe not for the moment.
+
+    $q = $this->db->query("SELECT eq.edit_id, eq.user_id, u.firstname, u.lastname, eq.glossary_id, eq.title, eq.body, eq.submitted FROM editqueue AS eq, users AS u WHERE eq.user_id = u.user_id AND eq.approved IS NULL ORDER BY eq.submitted DESC;");
+    if ($q->success() && $q->rows()) {
+      for ($i = 0; $i < ($q->rows()); $i++) {
+        $this->pending[$q->field($i, "edit_id")] = $q->row($i);
+      }
+
+      $this->update_pending_count();
+
+      return TRUE;
     }
-
-    /**
-     *
-     */
-    public function get_pending()
-    {
-        // Fetch all pending editqueue items.
-        // Sets $this->pending and returns a body count.
-        // Return organised by type? - maybe not for the moment.
-
-        $q = $this->db->query("SELECT eq.edit_id, eq.user_id, u.firstname, u.lastname, eq.glossary_id, eq.title, eq.body, eq.submitted FROM editqueue AS eq, users AS u WHERE eq.user_id = u.user_id AND eq.approved IS NULL ORDER BY eq.submitted DESC;");
-        if ($q->success() && $q->rows()) {
-            for ($i = 0; $i < ($q->rows()); $i++) {
-                $this->pending[$q->field($i, "edit_id")] = $q->row($i);
-            }
-
-            $this->update_pending_count();
-
-            return TRUE;
-        } else {
-            return FALSE;
-        }
+    else {
+      return FALSE;
     }
+  }
 
-    /**
-     *
-     */
-    public function display()
-    {
-        // Print all our pending items out in a nice list or something
-        // Add links later for "approve, decline, refer"
-        // Just get the fucker working for now.
+  /**
+   *
+   */
+  public function display() {
+    // Print all our pending items out in a nice list or something
+    // Add links later for "approve, decline, refer"
+    // Just get the fucker working for now.
 
-        $URL = new URL('admin_glossary_pending');
-        $URL->reset();
-        $form_link = $URL->generate('url');
+    $URL = new URL('admin_glossary_pending');
+    $URL->reset();
+    $form_link = $URL->generate('url');
 
-        ?>
+    ?>
         <form action="<?php echo $form_link ?>" method="post"><?php
-           foreach ($this->pending as $editqueue_id => $pender) {
+        foreach ($this->pending as $editqueue_id => $pender) {
 
-               $URL = new URL('admin_glossary_pending');
-               $URL->insert(['approve' => $editqueue_id]);
-               $approve_link = $URL->generate('url');
+          $URL = new URL('admin_glossary_pending');
+          $URL->insert(['approve' => $editqueue_id]);
+          $approve_link = $URL->generate('url');
 
-               $URL = new URL('admin_glossary_pending');
-               $URL->insert(['modify' => $editqueue_id]);
-               $modify_link = $URL->generate('url');
+          $URL = new URL('admin_glossary_pending');
+          $URL->insert(['modify' => $editqueue_id]);
+          $modify_link = $URL->generate('url');
 
-               $URL = new URL('admin_glossary_pending');
-               $URL->insert(['decline' => $editqueue_id]);
-               $decline_link = $URL->generate('url');
+          $URL = new URL('admin_glossary_pending');
+          $URL->insert(['decline' => $editqueue_id]);
+          $decline_link = $URL->generate('url');
 
-               ?>
+          ?>
                 <div class="pending-item"><label for="<?php echo $editqueue_id; ?>"><input type="checkbox" name="approve[]"
                             value="<?php echo $editqueue_id; ?>"
                             id="<?php echo $editqueue_id; ?>"><strong><?php echo $pender['title']; ?></strong></label>
@@ -329,20 +325,19 @@ class EDITQUEUE
                     </p>
                 </div>
                 <?php
-           }
-           ?><input type="submit" value="Approve checked items">
+        }
+        ?><input type="submit" value="Approve checked items">
         </form>
         <?php
-    }
+  }
 
-    /**
-     * PRIVATE FUNCTIONS.
-     */
-    public function update_pending_count()
-    {
-        // Just makes sure we're showing the right number of pending items.
-        $this->pending_count = count($this->pending);
-    }
+  /**
+   * PRIVATE FUNCTIONS.
+   */
+  public function update_pending_count() {
+    // Just makes sure we're showing the right number of pending items.
+    $this->pending_count = count($this->pending);
+  }
 
 }
 
@@ -350,41 +345,39 @@ class EDITQUEUE
 /**
  * Glossary overrides.
  */
-class GLOSSEDITQUEUE extends EDITQUEUE
-{
+class GLOSSEDITQUEUE extends EDITQUEUE {
 
-    /**
-     *
-     */
-    public function approve($data)
-    {
-        // Approve items for inclusion
-        // Create new epobject and update the editqueue.
+  /**
+   *
+   */
+  public function approve($data) {
+    // Approve items for inclusion
+    // Create new epobject and update the editqueue.
 
-        global $THEUSER;
+    global $THEUSER;
 
-        // We need a list of editqueue items to play with.
-        $this->get_pending();
-        if (!isset($this->pending)) {
-            return FALSE;
-        }
-        $timestamp = date('Y-m-d H:i:s', time());
+    // We need a list of editqueue items to play with.
+    $this->get_pending();
+    if (!isset($this->pending)) {
+      return FALSE;
+    }
+    $timestamp = date('Y-m-d H:i:s', time());
 
-        foreach ($data['approvals'] as $approval_id) {
-            // Create a new epobject
-            //         title VARCHAR(255),
-            //         body TEXT,
-            //         type INTEGER,
-            //         created DATETIME,
-            //         modified DATETIME,.
-            /*print "<pre>";
-            print_r($data);
-            print "</pre>";*/
-            // Check to see that we actually have something to approve.
-            if (!isset($this->pending[$approval_id])) {
-                break;
-            }
-            $q = $this->db->query("INSERT INTO glossary
+    foreach ($data['approvals'] as $approval_id) {
+      // Create a new epobject
+      //         title VARCHAR(255),
+      //         body TEXT,
+      //         type INTEGER,
+      //         created DATETIME,
+      //         modified DATETIME,.
+      /*print "<pre>";
+      print_r($data);
+      print "</pre>";*/
+      // Check to see that we actually have something to approve.
+      if (!isset($this->pending[$approval_id])) {
+        break;
+      }
+      $q = $this->db->query("INSERT INTO glossary
 							(title, body, type, created, visible)
 							VALUES
 							('" . addslashes($this->pending[$approval_id]['title']) . "',
@@ -393,33 +386,34 @@ class GLOSSEDITQUEUE extends EDITQUEUE
 							'" . $timestamp . "',
 							1);");
 
-            // If that didn't work we can't go any further...
-            if (!$q->success()) {
-                print "glossary trouble";
-                return FALSE;
-            }
-            $this->current_epobject_id = $q->insert_id();
+      // If that didn't work we can't go any further...
+      if (!$q->success()) {
+        print "glossary trouble";
+        return FALSE;
+      }
+      $this->current_epobject_id = $q->insert_id();
 
-            // Then finally update the editqueue with
-            // the new epobject id and approval details.
-            $q = $this->db->query("UPDATE editqueue
+      // Then finally update the editqueue with
+      // the new epobject id and approval details.
+      $q = $this->db->query("UPDATE editqueue
 							SET
 							glossary_id='" . $this->current_epobject_id . "',
 							editor_id='" . addslashes($THEUSER->user_id()) . "',
 							approved='1',
 							decided='" . $timestamp . "'
 							WHERE edit_id=" . $approval_id . ";");
-            if (!$q->success()) {
-                break;
-            } else {
-                // Scrub that one from the list of pending items.
-                unset($this->pending[$approval_id]);
-            }
-        }
-
-        $this->update_pending_count();
-
-        return TRUE;
+      if (!$q->success()) {
+        break;
+      }
+      else {
+        // Scrub that one from the list of pending items.
+        unset($this->pending[$approval_id]);
+      }
     }
+
+    $this->update_pending_count();
+
+    return TRUE;
+  }
 
 }

@@ -9,9 +9,8 @@ include_once INCLUDESPATH . 'easyparliament/member.php';
 /**
  *
  */
-function api_getMSP_front()
-{
-    ?>
+function api_getMSP_front() {
+  ?>
     <p><big>Fetch a particular MSP.</big></p>
 
     <h4>Arguments</h4>
@@ -36,120 +35,119 @@ function api_getMSP_front()
 /**
  *
  */
-function _api_getMSP_row($row)
-{
-    global $parties;
-    $row['full_name'] = member_full_name(
+function _api_getMSP_row($row) {
+  global $parties;
+  $row['full_name'] = member_full_name(
         $row['house'],
         $row['title'],
         $row['first_name'],
         $row['last_name'],
         $row['constituency']
     );
-    if (isset($parties[$row['party']])) {
-        $row['party'] = $parties[$row['party']];
-    }
-    [$image, $sz] = find_rep_image($row['person_id']);
-    if ($image) {
-        $row['image'] = $image;
-    }
-    $row = array_map('html_entity_decode', $row);
-    return $row;
+  if (isset($parties[$row['party']])) {
+    $row['party'] = $parties[$row['party']];
+  }
+  [$image, $sz] = find_rep_image($row['person_id']);
+  if ($image) {
+    $row['image'] = $image;
+  }
+  $row = array_map('html_entity_decode', $row);
+  return $row;
 }
 
 /**
  *
  */
-function api_getMSP_id($id)
-{
-    $db = new ParlDB();
-    $q = $db->query("select * from member
+function api_getMSP_id($id) {
+  $db = new ParlDB();
+  $q = $db->query("select * from member
 		where house=4 and person_id = '" . mysqli_real_escape_string($db, $id) . "'
 		order by left_house desc");
-    if ($q->rows()) {
-        _api_getMSP_output($q);
-    } else {
-        api_error('Unknown person ID');
-    }
+  if ($q->rows()) {
+    _api_getMSP_output($q);
+  }
+  else {
+    api_error('Unknown person ID');
+  }
 }
 
 /**
  *
  */
-function api_getMSP_postcode($pc)
-{
-    $pc = preg_replace('#[^a-z0-9 ]#i', '', $pc);
-    if (validate_postcode($pc)) {
-        $constituencies = postcode_to_constituencies($pc);
-        if ($constituencies == 'CONNECTION_TIMED_OUT') {
-            api_error('Connection timed out');
-        } elseif (isset($constituencies['SPC'])) {
-            _api_getMSP_constituency($constituencies);
-        } elseif (isset($constituencies['WMC'])) {
-            api_error('Non-Scottish postcode');
-        } else {
-            api_error('Unknown postcode');
-        }
-    } else {
-        api_error('Invalid postcode');
+function api_getMSP_postcode($pc) {
+  $pc = preg_replace('#[^a-z0-9 ]#i', '', $pc);
+  if (validate_postcode($pc)) {
+    $constituencies = postcode_to_constituencies($pc);
+    if ($constituencies == 'CONNECTION_TIMED_OUT') {
+      api_error('Connection timed out');
     }
+    elseif (isset($constituencies['SPC'])) {
+      _api_getMSP_constituency($constituencies);
+    }
+    elseif (isset($constituencies['WMC'])) {
+      api_error('Non-Scottish postcode');
+    }
+    else {
+      api_error('Unknown postcode');
+    }
+  }
+  else {
+    api_error('Invalid postcode');
+  }
 }
 
 /**
  *
  */
-function api_getMSP_constituency($constituency)
-{
-    $output = _api_getMSP_constituency([$constituency]);
-    if (!$output) {
-        api_error('Unknown constituency, or no MSP for that constituency');
-    }
+function api_getMSP_constituency($constituency) {
+  $output = _api_getMSP_constituency([$constituency]);
+  if (!$output) {
+    api_error('Unknown constituency, or no MSP for that constituency');
+  }
 }
 
 /**
  * Very similary to MEMBER's constituency_to_person_id
  * Should all be abstracted properly :-/.
  */
-function _api_getMSP_constituency($constituencies)
-{
-    $db = new ParlDB();
+function _api_getMSP_constituency($constituencies) {
+  $db = new ParlDB();
 
-    $cons = [];
-    foreach ($constituencies as $constituency) {
-        if ($constituency == '') {
-            continue;
-        }
-        if ($constituency == 'Orkney ') {
-            $constituency = 'Orkney &amp; Shetland';
-        }
-        $cons[] = mysqli_real_escape_string($db, $constituency);
+  $cons = [];
+  foreach ($constituencies as $constituency) {
+    if ($constituency == '') {
+      continue;
     }
+    if ($constituency == 'Orkney ') {
+      $constituency = 'Orkney &amp; Shetland';
+    }
+    $cons[] = mysqli_real_escape_string($db, $constituency);
+  }
 
-    $q = $db->query("SELECT * FROM member
+  $q = $db->query("SELECT * FROM member
 		WHERE constituency in ('" . join("','", $cons) . "')
 		AND left_reason = 'still_in_office' AND house=4");
-    if ($q->rows > 0) {
-        _api_getMSP_output($q);
-        return TRUE;
-    }
+  if ($q->rows > 0) {
+    _api_getMSP_output($q);
+    return TRUE;
+  }
 
-    return FALSE;
+  return FALSE;
 }
 
 /**
  *
  */
-function _api_getMSP_output($q)
-{
-    $output = [];
-    $last_mod = 0;
-    for ($i = 0; $i < $q->rows(); $i++) {
-        $out = _api_getMSP_row($q->row($i));
-        $output[] = $out;
-        $time = strtotime($q->field($i, 'lastupdate'));
-        if ($time > $last_mod) {
-            $last_mod = $time;
-        }
+function _api_getMSP_output($q) {
+  $output = [];
+  $last_mod = 0;
+  for ($i = 0; $i < $q->rows(); $i++) {
+    $out = _api_getMSP_row($q->row($i));
+    $output[] = $out;
+    $time = strtotime($q->field($i, 'lastupdate'));
+    if ($time > $last_mod) {
+      $last_mod = $time;
     }
-    api_output($output, $last_mod);
+  }
+  api_output($output, $last_mod);
 }

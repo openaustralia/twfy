@@ -40,17 +40,20 @@ global $PAGE, $DATA, $this_page, $THEUSER;
 // Something's telling me these subheadings shouldn't be in this template...!
 
 if (isset($data['comments'][0]['preview']) && $data['comments'][0]['preview'] == TRUE) {
-    // If we're just previewing a comment, we passed in 'preview' => true.
-    $subheading = 'Your comment would look like this:';
+  // If we're just previewing a comment, we passed in 'preview' => true.
+  $subheading = 'Your comment would look like this:';
 
-} elseif ($this_page == 'addcomment') {
-    $subheading = 'Previous comments';
+}
+elseif ($this_page == 'addcomment') {
+  $subheading = 'Previous comments';
 
-} elseif ($this_page == 'commentreport' || $this_page == 'admin_commentreport') {
-    $subheading = "";
+}
+elseif ($this_page == 'commentreport' || $this_page == 'admin_commentreport') {
+  $subheading = "";
 
-} else {
-    $subheading = 'Comments';
+}
+else {
+  $subheading = 'Comments';
 }
 
 
@@ -58,41 +61,42 @@ if (isset($data['comments'][0]['preview']) && $data['comments'][0]['preview'] ==
 <a name="comments"></a>
 <?php
 if ($subheading != '') {
-    echo "\t\t\t\t<h4>$subheading</h4>\n";
+  echo "\t\t\t\t<h4>$subheading</h4>\n";
 }
 
 
 
 if (isset($data['comments']) && count($data['comments']) > 0) {
 
-    foreach ($data['comments'] as $n => $comment) {
-        $style = $n % 2 != 0 ? '1' : '2';
+  foreach ($data['comments'] as $n => $comment) {
+    $style = $n % 2 != 0 ? '1' : '2';
 
-        if (
-            isset($data['info']['user_id']) &&
-            $comment['user_id'] == $data['info']['user_id']
-        ) {
-            $style .= '-on';
-        }
+    if (
+          isset($data['info']['user_id']) &&
+          $comment['user_id'] == $data['info']['user_id']
+      ) {
+      $style .= '-on';
+    }
 
-        if (isset($comment['comment_id'])) {
-            $id = 'c' . $comment['comment_id'];
-        } else {
-            $id = '';
-        }
+    if (isset($comment['comment_id'])) {
+      $id = 'c' . $comment['comment_id'];
+    }
+    else {
+      $id = '';
+    }
 
-        ?>
+    ?>
         <div class="comment" id="<?php echo $id; ?>">
             <a name="<?php echo $id; ?>"></a>
             <?php
 
             // COMMENT REPORTING LINK.
-    
+
             $reporthtml = '';
 
 
             // USERNAME AND DATE AND TIME.
-    
+
             $USERURL = new URL('userview');
             $USERURL->insert(['u' => $comment['user_id']]);
 
@@ -105,11 +109,12 @@ if (isset($data['comments']) && count($data['comments']) > 0) {
                 <small>Posted on <?php echo $date;
 
                 if (isset($comment['url'])) {
-                    print ' <a href="' . $comment['url'] . '" title="Link to this comment">' . $time . '</a>';
+                  print ' <a href="' . $comment['url'] . '" title="Link to this comment">' . $time . '</a>';
 
-                } else {
-                    // There won't be a URL when we're just previewing a comment.
-                    print ' ' . $time;
+                }
+                else {
+                  // There won't be a URL when we're just previewing a comment.
+                  print ' ' . $time;
                 }
                 ?>         <?php echo $reporthtml; ?></small>
             </p>
@@ -117,7 +122,7 @@ if (isset($data['comments']) && count($data['comments']) > 0) {
             <?php
 
             // THE COMMENT BODY.
-    
+
             // Make URLs into links and do <br>s.
             // In utility.php.
             $body = prepare_comment_for_display($comment['body']);
@@ -128,12 +133,13 @@ if (isset($data['comments']) && count($data['comments']) > 0) {
             ?>
         </div> <!-- end .comment -->
         <?php
-    }
+  }
 
 
-} else {
+}
+else {
 
-    ?>
+  ?>
     <div class="comment">
         <p>No comments</p>
     </div>

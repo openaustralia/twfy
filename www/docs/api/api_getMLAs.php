@@ -9,9 +9,8 @@ include_once 'api_getMembers.php';
 /**
  *
  */
-function api_getMLAs_front()
-{
-    ?>
+function api_getMLAs_front() {
+  ?>
     <p><big>Fetch a list of MLAs.</big></p>
 
     <h4>Arguments</h4>
@@ -42,31 +41,27 @@ function api_getMLAs_front()
 /**
  * See api_getMembers.php for these shared functions .
  */
-function api_getMLAs_party($s)
-{
-    api_getMembers_party(3, $s);
+function api_getMLAs_party($s) {
+  api_getMembers_party(3, $s);
 }
 
 /**
  *
  */
-function api_getMLAs_search($s)
-{
-    api_getMembers_search(3, $s);
+function api_getMLAs_search($s) {
+  api_getMembers_search(3, $s);
 }
 
 /**
  *
  */
-function api_getMLAs_date($date)
-{
-    api_getMembers_date(3, $date);
+function api_getMLAs_date($date) {
+  api_getMembers_date(3, $date);
 }
 
 /**
  *
  */
-function api_getMLAs($date = 'now()')
-{
-    api_getMembers(3, $date);
+function api_getMLAs($date = 'now()') {
+  api_getMembers(3, $date);
 }

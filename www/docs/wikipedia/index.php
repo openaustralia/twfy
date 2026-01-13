@@ -14,7 +14,7 @@ $site = [
 ];
 $ip = get_http_var('ip');
 if (!array_key_exists($ip, $site)) {
-    $ip = '194.60.38.10';
+  $ip = '194.60.38.10';
 }
 
 $this_page = 'wikipedia';
@@ -36,12 +36,13 @@ $PAGE->stripe_start();
     <?php
     $out = [];
     foreach ($site as $k => $v) {
-        if ($k == $ip) {
-            $o = "<strong>$v</strong>";
-        } else {
-            $o = "<a href=\"./?ip=$k\">$v</a>";
-        }
-        $out[] = $o;
+      if ($k == $ip) {
+        $o = "<strong>$v</strong>";
+      }
+      else {
+        $o = "<a href=\"./?ip=$k\">$v</a>";
+      }
+      $out[] = $o;
     }
     print join(' | ', $out);
     ?>
@@ -80,14 +81,15 @@ $PAGE->stripe_start();
 $file = file_get_contents("cache/$ip");
 preg_match_all('#<li>.*? \(<a[^>]*>hist</a>\) \(<a href=".*?title=(.*?)&.*?oldid=(.*?)"[^>]*>diff</a>\)  <a[^>]*>(.*?)</a> .*?</li>#', $file, $m, PREG_SET_ORDER);
 foreach ($m as $row) {
-    $file = file_get_contents("cache/$row[1].$row[2]");
-    $file = str_replace(["\xe2\x86\x90", "\xe2\x86\x92"], ['&larr;', '&rarr;'], $file);
-    print "<h3>$row[3]</h3>";
-    if (preg_match('#<table.*?</table>#s', $file, $m)) {
-        print preg_replace('#href=(\'|")(.*?)\1#', 'href=\1http://en.wikipedia.org\2\1', $m[0]);
-    } elseif (preg_match('#<div class="firstrevisionheader.*?</div>#s', $file, $m)) {
-        print preg_replace('#href=(\'|")(.*?)\1#', 'href=\1http://en.wikipedia.org\2\1', $m[0]);
-    }
+  $file = file_get_contents("cache/$row[1].$row[2]");
+  $file = str_replace(["\xe2\x86\x90", "\xe2\x86\x92"], ['&larr;', '&rarr;'], $file);
+  print "<h3>$row[3]</h3>";
+  if (preg_match('#<table.*?</table>#s', $file, $m)) {
+    print preg_replace('#href=(\'|")(.*?)\1#', 'href=\1http://en.wikipedia.org\2\1', $m[0]);
+  }
+  elseif (preg_match('#<div class="firstrevisionheader.*?</div>#s', $file, $m)) {
+    print preg_replace('#href=(\'|")(.*?)\1#', 'href=\1http://en.wikipedia.org\2\1', $m[0]);
+  }
 }
 
 

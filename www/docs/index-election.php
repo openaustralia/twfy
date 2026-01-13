@@ -31,44 +31,48 @@ $WMSLIST = new WMSLIST();
 $wmsdata = $WMSLIST->most_recent_day();
 
 if (count($debatesdata) > 0 && count($wransdata) > 0 && count($whalldata) > 0 && count($wmsdata) > 0) {
-    // Links to Debates and Wrans.
-    $debatestext = '<a href="' . $debatesdata['listurl'] . '">Debates</a>';
-    $wranstext = '<a href="' . $wransdata['listurl'] . '">Written Answers</a>';
-    $whalltext = '<a href="' . $whalldata['listurl'] . '">Westminster Hall debates</a>';
-    $wmstext = '<a href="' . $wmsdata['listurl'] . '">Written Ministerial Statements</a>';
+  // Links to Debates and Wrans.
+  $debatestext = '<a href="' . $debatesdata['listurl'] . '">Debates</a>';
+  $wranstext = '<a href="' . $wransdata['listurl'] . '">Written Answers</a>';
+  $whalltext = '<a href="' . $whalldata['listurl'] . '">Westminster Hall debates</a>';
+  $wmstext = '<a href="' . $wmsdata['listurl'] . '">Written Ministerial Statements</a>';
 
-    // Now we work out whether the debates/wrans are from yesterday or another day...
-    // And create the appropriate text ($daytext) to display accordingly.
+  // Now we work out whether the debates/wrans are from yesterday or another day...
+  // And create the appropriate text ($daytext) to display accordingly.
 
-    $todaystime = gmmktime(0, 0, 0, date('m'), date('d'), date('Y'));
+  $todaystime = gmmktime(0, 0, 0, date('m'), date('d'), date('Y'));
 
-    if ($debatesdata['hdate'] == $wransdata['hdate'] && $debatesdata['hdate'] == $whalldata['hdate'] && $debatesdata['hdate'] == $wmsdata['hdate']) {
-        // They're on the same day, which is nice, and most common.
+  if ($debatesdata['hdate'] == $wransdata['hdate'] && $debatesdata['hdate'] == $whalldata['hdate'] && $debatesdata['hdate'] == $wmsdata['hdate']) {
+    // They're on the same day, which is nice, and most common.
 
-        if ($todaystime - $debatesdata['timestamp'] == 86400) {
-            $daytext = "yesterday's";
+    if ($todaystime - $debatesdata['timestamp'] == 86400) {
+      $daytext = "yesterday's";
 
-        } elseif ($todaystime - $debatesdata['timestamp'] <= (6 * 86400)) {
-            // Less than a week ago, so like "last Tuesday's".
-            $daytext = gmdate('l', $debatesdata['timestamp']) . "'s";
+    }
+    elseif ($todaystime - $debatesdata['timestamp'] <= (6 * 86400)) {
+      // Less than a week ago, so like "last Tuesday's".
+      $daytext = gmdate('l', $debatesdata['timestamp']) . "'s";
 
-        } else {
+    }
+    else {
 
-            // Over a week ago.
-            $daytext = "the most recent ";
-        }
-
-    } else {
-        // Debates and Wrans are from different dates. We'll just do this for now:
-        $daytext = "the most recent ";
+      // Over a week ago.
+      $daytext = "the most recent ";
     }
 
-    // $hansardline = "Comment on $daytext <ul><li>$debatestext</li><li>$wranstext</li><li>$whalltext</li><li>$wmstext</li></ul>";
-    $hansardline = "Comment on $daytext $debatestext, $wranstext, $whalltext, and $wmstext";
+  }
+  else {
+    // Debates and Wrans are from different dates. We'll just do this for now:
+    $daytext = "the most recent ";
+  }
 
-} else {
-    // We didn't get some or all of the data, so just...
-    $hansardline = "Comment on events in parliament";
+  // $hansardline = "Comment on $daytext <ul><li>$debatestext</li><li>$wranstext</li><li>$whalltext</li><li>$wmstext</li></ul>";
+  $hansardline = "Comment on $daytext $debatestext, $wranstext, $whalltext, and $wmstext";
+
+}
+else {
+  // We didn't get some or all of the data, so just...
+  $hansardline = "Comment on events in parliament";
 }
 
 $HANSARDURL = new URL('hansard');
@@ -81,28 +85,30 @@ $PAGE->block_start(['id' => 'intro', 'title' => 'Election special! Find out how 
     <li>
         <?php
         if ($THEUSER->postcode_is_set()) {
-            // User is logged in and has a postcode, or not logged in with a cookied postcode.
+          // User is logged in and has a postcode, or not logged in with a cookied postcode.
 
-            // (We don't allow the user to search for a postcode if they
-            // already have one set in their prefs.)
+          // (We don't allow the user to search for a postcode if they
+          // already have one set in their prefs.)
 
-            if ($THEUSER->isloggedin()) {
-                $CHANGEURL = new URL('useredit');
-            } else {
-                $CHANGEURL = new URL('userchangepc');
-            }
-            $MEMBER = new MEMBER(['postcode' => $THEUSER->postcode()]);
-            $mpname = $MEMBER->first_name() . ' ' . $MEMBER->last_name();
-            ?>
+          if ($THEUSER->isloggedin()) {
+            $CHANGEURL = new URL('useredit');
+          }
+          else {
+            $CHANGEURL = new URL('userchangepc');
+          }
+          $MEMBER = new MEMBER(['postcode' => $THEUSER->postcode()]);
+          $mpname = $MEMBER->first_name() . ' ' . $MEMBER->last_name();
+          ?>
             <p><a href="<?php echo $MPURL->generate(); ?>"><strong>Find out more about how <?php echo $mpname; ?>, your
                         ex-MP, represented you over the last parliament</strong></a><br>
                 In <?php echo strtoupper(htmlentities($THEUSER->postcode())); ?> (<a
                     href="<?php echo $CHANGEURL->generate(); ?>">Change your postcode</a>)</p>
             <?php
 
-        } else {
-            // User is not logged in and doesn't have a personal postcode set.
-            ?>
+        }
+        else {
+          // User is not logged in and doesn't have a personal postcode set.
+          ?>
             <form action="<?php echo $MPURL->generate(); ?>" method="get">
                 <p><strong>Now that the election has been called, you can use this site to find out what your ex-MP did
                         throughout the last parliament. We have performance stats, speeches, voting records and
@@ -131,19 +137,19 @@ $PAGE->block_start(['id' => 'intro', 'title' => 'Election special! Find out how 
             global $SEARCHLOG;
             $popular_searches = $SEARCHLOG->popular_recent(10);
             if (count($popular_searches) > 0) {
-                ?>
+              ?>
                 <p>Popular searches today:
                     <?php
                     $lentotal = 0;
                     $correct_amount = [];
                     // Select a number of queries that will fit in the space.
                     foreach ($popular_searches as $popular_search) {
-                        $len = strlen($popular_search['visible_name']);
-                        if ($lentotal + $len > 32) {
-                            // continue;.
-                        }
-                        $lentotal += $len;
-                        array_push($correct_amount, $popular_search['display']);
+                      $len = strlen($popular_search['visible_name']);
+                      if ($lentotal + $len > 32) {
+                        // continue;.
+                      }
+                      $lentotal += $len;
+                      array_push($correct_amount, $popular_search['display']);
                     }
                     print implode(", ", $correct_amount);
                     ?>

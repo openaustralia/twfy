@@ -55,12 +55,11 @@
  * v1.2    2003-11-16
  * Changed from using global variables to constants.
  */
-class SKIN
-{
+class SKIN {
 
-    public $skin = 'default';
+  public $skin = 'default';
 
-    public $skins = [
+  public $skins = [
         'default' => [
             'global' => 'default',
             'screen' => '',
@@ -84,130 +83,127 @@ class SKIN
         ]
     ];
 
-    /**
-     *
-     */
-    public function SKIN()
-    {
-        global $this_page;
+  /**
+   *
+   */
+  public function SKIN() {
+    global $this_page;
 
-        if ($this_page == "skin" && get_http_var("newskin") != "") {
-            // We only allow the reskinning on the "skin" page.
-            $this->new_skin(get_http_var("newskin"));
-        } else {
-            $this->set_skin(get_cookie_var("skin"));
-        }
-
+    if ($this_page == "skin" && get_http_var("newskin") != "") {
+      // We only allow the reskinning on the "skin" page.
+      $this->new_skin(get_http_var("newskin"));
+    }
+    else {
+      $this->set_skin(get_cookie_var("skin"));
     }
 
-    /**
-     *
-     */
-    public function new_skin($skin)
-    {
-        // If this is a valid skin, then set a cookie.
+  }
 
-        if (isset($skin) && isset($this->skins[$skin])) {
-            setcookie("skin", "$skin", time() + (86400 * 365), WEBPATH, COOKIEDOMAIN, 0);
-            // So the new skin works on the current page.
-            $this->set_skin($skin);
-        }
+  /**
+   *
+   */
+  public function new_skin($skin) {
+    // If this is a valid skin, then set a cookie.
+
+    if (isset($skin) && isset($this->skins[$skin])) {
+      setcookie("skin", "$skin", time() + (86400 * 365), WEBPATH, COOKIEDOMAIN, 0);
+      // So the new skin works on the current page.
+      $this->set_skin($skin);
+    }
+  }
+
+  /**
+   *
+   */
+  public function get_skin() {
+    return $this->skin;
+  }
+
+  /**
+   *
+   */
+  public function set_skin($skin) {
+
+    if (isset($skin) && isset($this->skins[$skin])) {
+      $this->skin = $skin;
+    }
+    else {
+      $this->skin = "default";
     }
 
-    /**
-     *
-     */
-    public function get_skin()
-    {
-        return $this->skin;
-    }
+    twfy_debug("SKIN", "Skin set to '" . $this->skin . "'");
+  }
 
-    /**
-     *
-     */
-    public function set_skin($skin)
-    {
+  /**
+   *
+   */
+  public function output_stylesheets() {
 
-        if (isset($skin) && isset($this->skins[$skin])) {
-            $this->skin = $skin;
-        } else {
-            $this->skin = "default";
-        }
+    print "\t<!-- skin: " . $this->skin . " -->\n";
 
-        twfy_debug("SKIN", "Skin set to '" . $this->skin . "'");
-    }
+    // The array of stylesheets to use for this skin.
+    $skinstyles = $this->skins[$this->skin];
 
-    /**
-     *
-     */
-    public function output_stylesheets()
-    {
-
-        print "\t<!-- skin: " . $this->skin . " -->\n";
-
-        // The array of stylesheets to use for this skin.
-        $skinstyles = $this->skins[$this->skin];
-
-        if (isset($skinstyles["global"]) && $skinstyles["global"] != "") {
-            ?>
+    if (isset($skinstyles["global"]) && $skinstyles["global"] != "") {
+      ?>
             <link rel="stylesheet" href="<?php echo WEBPATH; ?>style/<?php echo $skinstyles['global']; ?>/global.css"
                 type="text/css">
             <?php
             if (isset($_SERVER['HTTP_USER_AGENT']) && !(preg_match("/MSIE 4.0/", $_SERVER['HTTP_USER_AGENT'])) && (isset($skinstyles["mobile"]))) {
-                // Hide this from IE4 and Mac AOL5.
-                ?>
+              // Hide this from IE4 and Mac AOL5.
+              ?>
                 <style type="text/css">
                     @import url(<?php echo WEBPATH; ?>style/<?php echo $skinstyles['global']; ?>/global_non_ns4.css);
                 </style>
                 <?php
             }
-        }
-        if (isset($skinstyles["screen"]) && $skinstyles["screen"] != "") {
-            ?>
+    }
+    if (isset($skinstyles["screen"]) && $skinstyles["screen"] != "") {
+      ?>
             <link rel="stylesheet" href="<?php echo WEBPATH; ?>style/<?php echo $skinstyles['screen']; ?>/screen.css"
                 type="text/css" media="screen">
             <?php
-        }
-        if (isset($skinstyles["mobile"]) && $skinstyles["mobile"] != "") {
-            ?>
+    }
+    if (isset($skinstyles["mobile"]) && $skinstyles["mobile"] != "") {
+      ?>
             <link rel="stylesheet" href="<?php echo WEBPATH; ?>style/<?php echo $skinstyles['mobile']; ?>/global_non_ns4_mobile.css"
                 type="text/css">
             <link rel="stylesheet" href="<?php echo WEBPATH; ?>style/<?php echo $skinstyles['mobile']; ?>/mobile.css"
                 type="text/css">
             <?php
             // Link tag should end in media="handheld"> but mobile's don't always obey that - I'm looking at you Windows Mobile 8/.
-        }
-        if (isset($skinstyles["extra"]) && $skinstyles["extra"] != "") {
-            ?>
+    }
+    if (isset($skinstyles["extra"]) && $skinstyles["extra"] != "") {
+      ?>
             <link rel="stylesheet" href="<?php echo WEBPATH; ?>style/<?php echo $skinstyles['extra']; ?>/extra.css" type="text/css"
                 media="screen">
             <?php
-        }
-        if (
-            isset($skinstyles["print"]) &&
-            $skinstyles["print"] != "" &&
-            (isset($_SERVER['HTTP_USER_AGENT']) && !(preg_match("/MSIE 4.0/", $_SERVER['HTTP_USER_AGENT'])))
-        ) {
-            // Hide this from IE4 and Mac AOL5.
-            ?>
+    }
+    if (
+          isset($skinstyles["print"]) &&
+          $skinstyles["print"] != "" &&
+          (isset($_SERVER['HTTP_USER_AGENT']) && !(preg_match("/MSIE 4.0/", $_SERVER['HTTP_USER_AGENT'])))
+      ) {
+      // Hide this from IE4 and Mac AOL5.
+      ?>
             <link rel="stylesheet" href="<?php echo WEBPATH; ?>style/<?php echo $skinstyles['print']; ?>/print.css" type="text/css"
                 media="print">
             <?php
-        }
+    }
 
-        if (get_http_var('c4') || get_http_var('c4x')) {
-            $x = get_http_var('c4x') ? 'X' : ''; ?>
+    if (get_http_var('c4') || get_http_var('c4x')) {
+      $x = get_http_var('c4x') ? 'X' : ''; ?>
             <link rel="stylesheet" href="<?php echo WEBPATH; ?>style/channel4/global<?php echo $x ?>.css" type="text/css">
             <?php
             if (isset($_SERVER['HTTP_USER_AGENT']) && !(preg_match("/MSIE 4.0/", $_SERVER['HTTP_USER_AGENT']))) {
-                // Hide this from IE4 and Mac AOL5.
-                ?>
+              // Hide this from IE4 and Mac AOL5.
+              ?>
                 <style type="text/css">
                     @import url(<?php echo WEBPATH; ?>style/channel4/global<?php echo $x ?>_non_ns4.css);
                 </style>
                 <?php
             }
-        }
     }
+  }
 
 }

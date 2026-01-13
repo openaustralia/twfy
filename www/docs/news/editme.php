@@ -16,7 +16,7 @@ To make it easier to see just what's changed in this update you can also now <a 
 
 You might be wondering why we update the Register of Senators' Interests before we update the Register of Members' Interests. This is because the Senate is able to send us a digital scanned copy of their register, while the House of Representatives sends us only a hardcopy of their register. It simply takes us a little time to organise someone who will scan the document for us.
 EOT
-        ,
+,
         '2010-06-25 15:05:00',
         'Matthew'
     ],
@@ -30,7 +30,7 @@ Thanks to David Elder and Lynnette Eager of the Clerk's office for sending us th
 
 This is a unique resource for interested citizens and journalists. The register, which is only available online from this website, now runs to nearly 2000 pages and within it are buried all sorts of interesting and potentially important connections between politicians, corporations, charities, religious and sporting organisations, foreign countries and financial institutions. Ignore it at your peril.
 EOT
-        ,
+,
         '2010-05-03 12:30:00',
         'Matthew'
     ],
@@ -46,7 +46,7 @@ For a quick example see the updated register for <a href="/regmem/scan/register_
 
 As always you can find the link to the Register of Interests at the bottom of each Senator or Representative's page on OpenAustralia.
 EOT
-        ,
+,
         '2010-03-09 09:52:00',
         'Matthew'
     ],
@@ -62,7 +62,7 @@ You don't need to be a software developer or 'hacker' to come along - everyone i
 
 We're all looking forward to seeing you there!
 EOT
-        ,
+,
         '2009-10-22 22:03:00',
         'Henare'
     ],
@@ -80,7 +80,7 @@ If you have a <a href="http://www.wordpress.org/">Wordpress blog</a> that you ho
 
 We hope you enjoy the new features and if you have any ideas for what you'd like to see on OpenAustralia, <a href="mailto:contact@openaustralia.org">please get in touch</a>!
 EOT
-        ,
+,
         '2009-09-29 12:58:00',
         'Henare'
     ],
@@ -92,7 +92,7 @@ If you're a user of Facebook, come and visit <a href="http://www.facebook.com/pa
 
 Also, you can talk amongst your fellow OpenAustralia fans, leave comments, post links and all the usual stuff.
 EOT
-        ,
+,
         '2009-05-12 16:30:00',
         'Matthew'
     ],
@@ -108,7 +108,7 @@ We hadn't included it in the past because we simply hadn't supported the transla
 
 Also, we have a further incentive. It's also preparation for some very exciting new developments which we hope to announce soon!
 EOT
-        ,
+,
         '2009-05-06 18:15:00',
         'Kat'
     ],
@@ -128,7 +128,7 @@ See, for instance, the <a href="/mp/kevin_rudd/griffith#register">Register of In
 This latest addition was largely made possible by the generous help of volunteer <a href="http://shiny.thorne.id.au/">Stephen Thorne</a> at <a href="http://netboxblue.com/">Netbox Blue</a> who scanned the 1500 pages of the Register of Members' Interests and <a href="http://www.aph.gov.au/HOUSE/dept/bios/bw.htm">Bernard Wright</a>, the Registrar of Members' Interests, for providing us with the hardcopy material.
 
 EOT
-        ,
+,
         '2009-02-26 08:30:00',
         'Matthew'
     ],
@@ -140,7 +140,7 @@ EOT
 
 <p>As always, if you find a problem or something isn't working as expected please do let us know by <a href="mailto:contact@openaustralia.org">emailing us at contact@openaustralia.org</a>.</p>
 EOT
-        ,
+,
         '2009-02-19 17:29:00',
         'Matthew'
     ],
@@ -154,7 +154,7 @@ The register is available on each Senator's page. For example, <a href="/senator
 
 As soon as we can we will also make the Register of Members' Interests available online, the equivalent document for the Representatives. Our main obstacle right now is getting our paper copy of the register scanned. If you have access to a bulk scanner and can help please <a href="mailto:contact&#64;openaustralia.org">contact us</a>.</p>
 EOT
-        ,
+,
         '2009-01-05 11:05:00',
         'Matthew'
     ],
@@ -168,7 +168,7 @@ The outage of new update has only been over the last couple of weeks (from 13 Oc
 
 Catch up on the debates that happened while we were down. As of next week when parliament resumes, email updates will be back in action too.
 EOT
-        ,
+,
         '2008-11-03 23:57:00',
         'Matthew'
     ],
@@ -180,7 +180,7 @@ OpenAustralia has a lovely and sleek new look courtesy of <a href="http://www.pu
 
 We're always interested in feedback, so let us know what you think by <a href="mailto:contact@openaustralia.org">emailing us</a> at the usual place. Enjoy!
 EOT
-        ,
+,
         '2008-10-04 12:26:00',
         'Matthew'
     ],
@@ -197,7 +197,7 @@ write to them and ask them what they've been doing on your behalf over the reces
 While we've tried to bring you a perfectly working website, it is in beta, so if you find anything broken,
 or see anything wrong, please <a href="mailto:contact@openaustralia.org">drop us a line</a>.
 EOT
-        ,
+,
         '2008-08-17 19:40:00',
         'Katherine'
     ],
@@ -211,7 +211,7 @@ There have been some pretty exciting developments behind the scenes, which you c
 <a href="http://blog.openaustralia.org">blog.openaustralia.org</a>. There's a link at the bottom of every page as well.
 
 EOT
-        ,
+,
         '2008-07-06 19:56:00',
         'Matthew'
     ],
@@ -222,7 +222,7 @@ EOT
 On the "<a href="/mps">All Representatives</a>" page you now get a photo for each member so you can more easily
 browse through the list and find the person you're looking for.
 EOT
-        ,
+,
         '2008-07-06 19:35:00',
         'Matthew'
     ],
@@ -252,7 +252,7 @@ that looks wrong please email us at contact@openaustralia.org.
 
 Enjoy!
 EOT
-        ,
+,
         '2008-06-16 09:00:00',
         'Matthew'
     ],
@@ -261,25 +261,22 @@ EOT
 /**
  * General news functions.
  */
-function news_format_body($content)
-{
-    return "<p>" . str_replace("\n\n", "<p>", $content);
+function news_format_body($content) {
+  return "<p>" . str_replace("\n\n", "<p>", $content);
 }
 
 /**
  *
  */
-function news_format_ref($title)
-{
-    $x = preg_replace("/[^a-z0-9 ]/", "", strtolower($title));
-    $x = substr(str_replace(" ", "_", $x), 0, 16);
-    return $x;
+function news_format_ref($title) {
+  $x = preg_replace("/[^a-z0-9 ]/", "", strtolower($title));
+  $x = substr(str_replace(" ", "_", $x), 0, 16);
+  return $x;
 }
 
 /**
  *
  */
-function news_individual_link($date, $title)
-{
-    return WEBPATH . "news/archives/" . str_replace("-", "/", substr($date, 0, 10)) . "/" . news_format_ref($title);
+function news_individual_link($date, $title) {
+  return WEBPATH . "news/archives/" . str_replace("-", "/", substr($date, 0, 10)) . "/" . news_format_ref($title);
 }

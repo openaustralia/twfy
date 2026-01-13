@@ -12,29 +12,31 @@ global $PAGE;
 // Contents varies depending on the page we're on...
 
 if ($this_page == 'wransday') {
-    $date = get_http_var('d');
-    if (preg_match('#^(\d\d\d\d)-(\d\d)-(\d\d)$#', $date, $m)) {
-        $year = $m[1];
-        $month = $m[2];
-        $day = $m[3];
-        $args = [
-            'year' => $year,
-            'month' => $month,
-            'onday' => $date
-        ];
-        $title = 'Answers this month';
-    } else {
-        $args = [
-            'months' => 1
-        ];
-        $title = 'Recent written answers';
-    }
-} else {
+  $date = get_http_var('d');
+  if (preg_match('#^(\d\d\d\d)-(\d\d)-(\d\d)$#', $date, $m)) {
+    $year = $m[1];
+    $month = $m[2];
+    $day = $m[3];
     $args = [
+          'year' => $year,
+          'month' => $month,
+          'onday' => $date
+      ];
+    $title = 'Answers this month';
+  }
+  else {
+    $args = [
+          'months' => 1
+      ];
+    $title = 'Recent written answers';
+  }
+}
+else {
+  $args = [
         // How many recent months to show.
         'months' => 1
     ];
-    $title = 'Recent written answers';
+  $title = 'Recent written answers';
 }
 
 $PAGE->block_start(['title' => $title]);

@@ -7,9 +7,8 @@
 /**
  *
  */
-function api_convertURL_front()
-{
-    ?>
+function api_convertURL_front() {
+  ?>
     <p><big>Converts an aph.gov.au Hansard URL into an OpenAustralia one, if possible.</big></p>
 
     <h4>Arguments</h4>
@@ -46,75 +45,73 @@ function api_convertURL_front()
 /**
  * Very similar to function in hansardlist.php, but separated .
  */
-function get_listurl($q)
-{
-    global $hansardmajors;
-    $id_data = [
+function get_listurl($q) {
+  global $hansardmajors;
+  $id_data = [
         'gid' => fix_gid_from_db($q->field(0, 'gid')),
         'major' => $q->field(0, 'major'),
         'htype' => $q->field(0, 'htype'),
         'subsection_id' => $q->field(0, 'subsection_id'),
     ];
-    $db = new ParlDB();
-    $LISTURL = new URL($hansardmajors[$id_data['major']]['page_all']);
-    $fragment = '';
-    if ($id_data['htype'] == '11' || $id_data['htype'] == '10') {
-        $LISTURL->insert(['id' => $id_data['gid']]);
-    } else {
-        $parent_epobject_id = $id_data['subsection_id'];
-        $parent_gid = '';
-        $r = $db->query("SELECT gid
+  $db = new ParlDB();
+  $LISTURL = new URL($hansardmajors[$id_data['major']]['page_all']);
+  $fragment = '';
+  if ($id_data['htype'] == '11' || $id_data['htype'] == '10') {
+    $LISTURL->insert(['id' => $id_data['gid']]);
+  }
+  else {
+    $parent_epobject_id = $id_data['subsection_id'];
+    $parent_gid = '';
+    $r = $db->query("SELECT gid
 				FROM 	hansard
 				WHERE	epobject_id = '" . mysqli_real_escape_string($db, $parent_epobject_id) . "'
 				");
-        if ($r->rows() > 0) {
-            $parent_gid = fix_gid_from_db($r->field(0, 'gid'));
-        }
-        if ($parent_gid != '') {
-            $LISTURL->insert(['id' => $parent_gid]);
-            $fragment = '#g' . gid_to_anchor($id_data['gid']);
-        }
+    if ($r->rows() > 0) {
+      $parent_gid = fix_gid_from_db($r->field(0, 'gid'));
     }
-    return $LISTURL->generate('none') . $fragment;
+    if ($parent_gid != '') {
+      $LISTURL->insert(['id' => $parent_gid]);
+      $fragment = '#g' . gid_to_anchor($id_data['gid']);
+    }
+  }
+  return $LISTURL->generate('none') . $fragment;
 }
 
 /**
  *
  */
-function api_converturl_url_output($q)
-{
-    $gid = $q->field(0, 'gid');
-    $url = get_listurl($q);
-    $output = [
+function api_converturl_url_output($q) {
+  $gid = $q->field(0, 'gid');
+  $url = get_listurl($q);
+  $output = [
         'gid' => $gid,
         'url' => 'http://www.openaustralia.org' . $url
     ];
-    api_output($output);
+  api_output($output);
 }
 
 /**
  *
  */
-function api_converturl_url($url)
-{
-    $db = new ParlDB();
-    $url_nohash = preg_replace('/#.*/', '', $url);
-    $q = $db->query('select gid,major,htype,subsection_id from hansard where source_url = "' . mysqli_real_escape_string($db, $url) . '" order by gid limit 1');
-    if ($q->rows()) {
-        return api_converturl_url_output($q);
-    }
+function api_converturl_url($url) {
+  $db = new ParlDB();
+  $url_nohash = preg_replace('/#.*/', '', $url);
+  $q = $db->query('select gid,major,htype,subsection_id from hansard where source_url = "' . mysqli_real_escape_string($db, $url) . '" order by gid limit 1');
+  if ($q->rows()) {
+    return api_converturl_url_output($q);
+  }
 
-    $q = $db->query('select gid,major,htype,subsection_id from hansard where source_url like "' . mysqli_real_escape_string($db, $url_nohash) . '%" order by gid limit 1');
-    if ($q->rows()) {
-        return api_converturl_url_output($q);
-    }
+  $q = $db->query('select gid,major,htype,subsection_id from hansard where source_url like "' . mysqli_real_escape_string($db, $url_nohash) . '%" order by gid limit 1');
+  if ($q->rows()) {
+    return api_converturl_url_output($q);
+  }
 
-    $url_bound = str_replace('cmhansrd/cm', 'cmhansrd/vo', $url_nohash);
-    if ($url_bound != $url_nohash) {
-        $q = $db->query('select gid,major,htype,subsection_id from hansard where source_url like "' . mysqli_real_escape_string($db, $url_bound) . '%" order by gid limit 1');
-        if ($q->rows()) {
-            return api_converturl_url_output($q);
-        }
+  $url_bound = str_replace('cmhansrd/cm', 'cmhansrd/vo', $url_nohash);
+  if ($url_bound != $url_nohash) {
+    $q = $db->query('select gid,major,htype,subsection_id from hansard where source_url like "' . mysqli_real_escape_string($db, $url_bound) . '%" order by gid limit 1');
+    if ($q->rows()) {
+      return api_converturl_url_output($q);
     }
-    api_error('Sorry, URL could not be converted');
+  }
+  api_error('Sorry, URL could not be converted');
 }

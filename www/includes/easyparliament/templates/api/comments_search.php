@@ -7,9 +7,9 @@
  */
 
 if (isset($data['comments'])) {
-    foreach ($data['comments'] as $key => $row) {
-        unset($data['comments'][$key]['modflagged']);
-        unset($data['comments'][$key]['visible']);
-    }
+  foreach ($data['comments'] as $key => $row) {
+    unset($data['comments'][$key]['modflagged']);
+    unset($data['comments'][$key]['visible']);
+  }
 }
 api_output($data);

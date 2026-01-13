@@ -7,9 +7,8 @@
 /**
  *
  */
-function api_getComments_front()
-{
-    ?>
+function api_getComments_front() {
+  ?>
     <p><big>Fetch comments left on OpenAustralia.</big></p>
 
     <p>With no arguments, returns most recent comments in reverse date order.</p>
@@ -36,40 +35,37 @@ function api_getComments_front()
 /**
  *
  */
-function api_getComments_search($s)
-{
-    $args = [
+function api_getComments_search($s) {
+  $args = [
         's' => $s,
         'p' => get_http_var('page'),
         'num' => get_http_var('num'),
     ];
-    $commentlist = new COMMENTLIST();
-    $commentlist->display('search', $args, 'api');
+  $commentlist = new COMMENTLIST();
+  $commentlist->display('search', $args, 'api');
 }
 
 /**
  *
  */
-function api_getComments()
-{
-    $args = [
+function api_getComments() {
+  $args = [
         'page' => get_http_var('p'),
         'num' => get_http_var('num'),
     ];
-    $COMMENTLIST = new COMMENTLIST();
-    $COMMENTLIST->display('recent', $args, 'api');
+  $COMMENTLIST = new COMMENTLIST();
+  $COMMENTLIST->display('recent', $args, 'api');
 }
 
 /**
  *
  */
-function api_getComments_pid($pid)
-{
-    $args = [
+function api_getComments_pid($pid) {
+  $args = [
         'page' => get_http_var('p'),
         'num' => get_http_var('num'),
         'pid' => $pid
     ];
-    $COMMENTLIST = new COMMENTLIST();
-    $COMMENTLIST->display('recent', $args, 'api');
+  $COMMENTLIST = new COMMENTLIST();
+  $COMMENTLIST->display('recent', $args, 'api');
 }

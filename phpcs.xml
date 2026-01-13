@@ -1,22 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ruleset name="oaf">
-  <rule ref="./vendor/drupal/coder/coder_sniffer/Drupal" />
-
   <description>Basic PHP CodeSniffer configuration for OAF, Drupal rules.</description>
+  <rule ref="./vendor/drupal/coder/coder_sniffer/Drupal"/>
+  <arg name="tab-width" value="4"/>
   <arg name="basepath" value="."/>
   <arg name="colors"/>
   <arg name="parallel" value="75"/>
   <arg value="np"/>
   <arg name="extensions" value="php"/>
   <arg name="encoding" value="UTF-8"/>
-  <arg name="tab-width" value="4"/>
 
   <!-- Disable a few sniffs. -->
   <rule ref="Drupal">
     <exclude name="Drupal.Arrays.Array"/>
+    <exclude name="Drupal.Classes.ClassFileName"/>
     <exclude name="Drupal.Commenting.DocComment"/>
+    <exclude name="Drupal.Commenting.VariableComment"/>
+    <exclude name="Drupal.NamingConventions.ValidClassName"/>
     <exclude name="Drupal.NamingConventions.ValidGlobal"/>
+    <exclude name="Drupal.NamingConventions.ValidFunctionName"/>
     <exclude name="Drupal.NamingConventions.ValidVariableName"/>
+  </rule>
+
+  <!-- Override some settings -->
+  <rule ref="Drupal.WhiteSpace.ScopeIndent">
+    <properties>
+      <property name="indent" value="4"/>
+    </properties>
   </rule>
 
   <!--Exclude third party code.-->

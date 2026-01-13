@@ -28,12 +28,12 @@ print '<?xml version="1.0" encoding="iso-8859-1"?>' ?>
                 <?php
                 $c = 0;
                 foreach ($all_news as $id => $news_row) {
-                    if ($c++ == 10) {
-                        break;
-                    }
-                    [$title, $content, $date] = $news_row;
-                    $url = "http://" . DOMAIN . news_individual_link($date, $title);
-                    print "<rdf:li rdf:resource=\"$url\" />\n";
+                  if ($c++ == 10) {
+                    break;
+                  }
+                  [$title, $content, $date] = $news_row;
+                  $url = "http://" . DOMAIN . news_individual_link($date, $title);
+                  print "<rdf:li rdf:resource=\"$url\" />\n";
                 }
                 ?>
             </rdf:Seq>
@@ -44,14 +44,14 @@ print '<?xml version="1.0" encoding="iso-8859-1"?>' ?>
     <?php
     $c = 0;
     foreach ($all_news as $id => $news_row) {
-        if ($c++ == 10) {
-            break;
-        }
-        [$title, $content, $date] = $news_row;
-        $url = "http://" . DOMAIN . news_individual_link($date, $title);
-        $excerpt = trim_characters(news_format_body($content), 0, 250);
-        $date = str_replace(" ", "T", $date) . "+00:00";
-        ?>
+      if ($c++ == 10) {
+        break;
+      }
+      [$title, $content, $date] = $news_row;
+      $url = "http://" . DOMAIN . news_individual_link($date, $title);
+      $excerpt = trim_characters(news_format_body($content), 0, 250);
+      $date = str_replace(" ", "T", $date) . "+00:00";
+      ?>
         <item rdf:about="<?php echo $url ?>">
             <title><?php echo htmlspecialchars($title) ?></title>
             <link><?php echo $url ?></link>

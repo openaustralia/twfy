@@ -10,9 +10,9 @@ global $MEMBER;
 $SEARCHURL = new URL("emailfriend");
 
 if ($MEMBER->person_id()) {
-    $pid = $MEMBER->person_id();
-    $this->block_start(['id' => 'emailfriend', 'title' => "Email this page to a friend"]);
-    ?>
+  $pid = $MEMBER->person_id();
+  $this->block_start(['id' => 'emailfriend', 'title' => "Email this page to a friend"]);
+  ?>
     <style type="text/css">
         label {
             font-weight: bold;

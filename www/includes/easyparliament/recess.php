@@ -288,18 +288,17 @@ $GLOBALS['recessdates'][1] = [
  * return false;
  * }
  */
-function recess_prettify($day, $month, $year, $body)
-{
-    global $recessdates;
-    $dates = $recessdates[$body];
-    foreach ($dates as $range) {
-        $from = strptime($range[0], '%Y-%m-%d');
-        $to = strptime($range[1], '%Y-%m-%d');
-        $from_time = mktime(0, 0, 0, $from['tm_mon'] + 1, $from['tm_mday'], $from['tm_year'] + 1900);
-        $to_time = mktime(0, 0, 0, $to['tm_mon'] + 1, $to['tm_mday'], $to['tm_year'] + 1900);
-        $time = mktime(0, 0, 0, $month, $day, $year);
-        if ($time >= $from_time && $time <= $to_time) {
-            return ['recess', $range[0], $range[1]];
-        }
+function recess_prettify($day, $month, $year, $body) {
+  global $recessdates;
+  $dates = $recessdates[$body];
+  foreach ($dates as $range) {
+    $from = strptime($range[0], '%Y-%m-%d');
+    $to = strptime($range[1], '%Y-%m-%d');
+    $from_time = mktime(0, 0, 0, $from['tm_mon'] + 1, $from['tm_mday'], $from['tm_year'] + 1900);
+    $to_time = mktime(0, 0, 0, $to['tm_mon'] + 1, $to['tm_mday'], $to['tm_year'] + 1900);
+    $time = mktime(0, 0, 0, $month, $day, $year);
+    if ($time >= $from_time && $time <= $to_time) {
+      return ['recess', $range[0], $range[1]];
     }
+  }
 }

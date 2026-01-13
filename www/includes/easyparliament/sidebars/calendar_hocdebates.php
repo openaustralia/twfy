@@ -12,29 +12,31 @@ global $PAGE;
 // Contents varies depending on the page we're on...
 
 if ($this_page == 'debatesday') {
-    $date = get_http_var('d');
-    if (preg_match('#^(\d\d\d\d)-(\d\d)-(\d\d)$#', $date, $m)) {
-        $year = $m[1];
-        $month = $m[2];
-        $day = $m[3];
-        $args = [
-            'year' => $year,
-            'month' => $month,
-            'onday' => $date
-        ];
-        $title = 'Debates this month';
-    } else {
-        $args = [
-            'months' => 1
-        ];
-        $title = 'Recent debates';
-    }
-} else {
+  $date = get_http_var('d');
+  if (preg_match('#^(\d\d\d\d)-(\d\d)-(\d\d)$#', $date, $m)) {
+    $year = $m[1];
+    $month = $m[2];
+    $day = $m[3];
     $args = [
+          'year' => $year,
+          'month' => $month,
+          'onday' => $date
+      ];
+    $title = 'Debates this month';
+  }
+  else {
+    $args = [
+          'months' => 1
+      ];
+    $title = 'Recent debates';
+  }
+}
+else {
+  $args = [
         // How many recent months to show.
         'months' => 1
     ];
-    $title = 'Recent debates';
+  $title = 'Recent debates';
 }
 
 $PAGE->block_start(['title' => $title]);
