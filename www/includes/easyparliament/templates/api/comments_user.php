@@ -14,8 +14,6 @@
 
 global $PAGE, $DATA, $this_page;
 
-
-
 if (isset($data['comments']) && count($data['comments']) > 0) {
 
     $PAGE->stripe_start();

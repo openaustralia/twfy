@@ -39,7 +39,7 @@ function render_mlas_row($mla, $order)
     } else {
         print $mla['party'];
     }
-    print ',' . $con . ',' . 'http://www.openaustralia.org/mla/' .
+    print ',' . $con . ',http://www.openaustralia.org/mla/' .
         make_member_url($mla['first_name'] . ' ' . $mla['last_name']);
     print "\n";
 }

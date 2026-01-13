@@ -32,45 +32,48 @@
 // will be include()d from a file in template/sidebars/ of the name of the 'sidebar'
 // value ('search.php' in the example above).
 
-/* Items a page might have:
-
-menu        An array of 'text' and 'title' which are used if the page
-appears in the site menu.
-title        Used for the <title> and the page's heading on the page.
-heading        If present *this* is used for the page's heading on the page, in
-in place of the title.
-url            The URL from the site webroot for this page.
-parent        What page is this page's parent (see below).
-session_vars        If present, whenever a URL is generated to this page using the
-URL class, any POST/GET variables with matching names are
-automatically appended to the url.
-track (deprecated)         Do we want to include the Extreme Tracker javascript on this page?
-rss            Does the content of this page (or some of it) have an RSS version?
-If so, 'rss' should be set to '/a/path/to/the/feed.rdf'.
-
-
-PARENTS
-The site's menu has a top menu and a bottom, sub-menu. What is displayed in the
-sub-menu depends on which page is selected in the top menu. This is worked out
-from the bottom up, by looking at pages' parents. Here's an example top and bottom
-menu, with the capitalised items hilited:
-
-Home    HANSARD        Glossary    Help
-
-DEBATES        Written Answers
-
-If we were viewing a particular debate, we would be on the 'debate' page. The parent
-of this is 'debatesfront', which is the DEBATES link in the bottom menu - hence its
-hilite. The parent of 'debatesfront' is 'hansard', hence its hilite in the top menu.
-
-This may, of course, make no sense at all...
-
-If a page has no parent it is either in the top menu or no menu items should be hilited.
-The actual contents of each menu is determined in $PAGE->menu().
-
+/**
+ * Items a page might have:
+ *
+ * menu        An array of 'text' and 'title' which are used if the page
+ * appears in the site menu.
+ * title        Used for the <title> and the page's heading on the page.
+ * heading        If present *this* is used for the page's heading on the page, in
+ * in place of the title.
+ * url            The URL from the site webroot for this page.
+ * parent        What page is this page's parent (see below).
+ * session_vars        If present, whenever a URL is generated to this page using the
+ * URL class, any POST/GET variables with matching names are
+ * automatically appended to the url.
+ * track (deprecated)         Do we want to include the Extreme Tracker javascript on this page?
+ * rss            Does the content of this page (or some of it) have an RSS version?
+ * If so, 'rss' should be set to '/a/path/to/the/feed.rdf'.
+ *
+ *
+ * PARENTS
+ * The site's menu has a top menu and a bottom, sub-menu. What is displayed in the
+ * sub-menu depends on which page is selected in the top menu. This is worked out
+ * from the bottom up, by looking at pages' parents. Here's an example top and bottom
+ * menu, with the capitalised items hilited:
+ *
+ * Home    HANSARD        Glossary    Help
+ *
+ * DEBATES        Written Answers
+ *
+ * If we were viewing a particular debate, we would be on the 'debate' page. The parent
+ * of this is 'debatesfront', which is the DEBATES link in the bottom menu - hence its
+ * hilite. The parent of 'debatesfront' is 'hansard', hence its hilite in the top menu.
+ *
+ * This may, of course, make no sense at all...
+ *
+ * If a page has no parent it is either in the top menu or no menu items should be hilited.
+ * The actual contents of each menu is determined in $PAGE->menu().
+ *
+ *
  */
+class Metadata {
 
-$this->page = [
+  private $page = [
 
     // Things used on EVERY page, unless overridden for a page:
     'default' => [
@@ -79,8 +82,6 @@ $this->page = [
         'sitetitle' => 'OpenAustralia.org',
         // Deprecated   'track'        => false.
     ],
-
-
 
     // Every page on the site should have an entry below...
 
@@ -966,12 +967,14 @@ $this->page = [
 
 
 
-// We just use the sections for creating page headings/titles.
-// The 'title' is always used for the <title> tag of the page.
-// The text displayed on the page itself will also be this,
-// UNLESS the section has a 'heading', in which case that's used instead.
+  // We just use the sections for creating page headings/titles.
+  // The 'title' is always used for the <title> tag of the page.
+  // The text displayed on the page itself will also be this,.
+  /**
+   * UNLESS the section has a 'heading', in which case that's used instead.
+   */
 
-$this->section = [
+  private $section = [
 
 
     'about' => [
@@ -1006,4 +1009,58 @@ $this->section = [
         'title' => 'Written Answers'
     ]
 
-];
+    ];
+
+  /**
+   *
+   */
+  public function set_metadata($args) {
+
+    if (isset($args["section"])) {
+      $type = "section";
+      $item = $args["section"];
+    }
+    else {
+      $type = "page";
+      $item = $args["page"];
+    }
+
+    $key = $args["key"];
+    $value = $args["value"];
+
+    twfy_debug("DATA", "Setting: " . $type . "[" . $item . "][" . $key . "] = '" . print_r($value, TRUE) . "'");
+
+    $this->$type[$item][$key] = $value;
+  }
+
+  /**
+   *
+   */
+  public function get_metadata($args, $type) {
+
+    if (is_array($args)) {
+      $item = $args[$type];
+      $key = $args['key'];
+    }
+    else {
+      $var = "this_" . $type;
+      // $this_page or $this_section.
+      $item = $$var;
+      $key = $args;
+    }
+
+    twfy_debug("DATA", "$type: $item, $key");
+
+    // If the item requested exists, return it.
+    if (isset($this->$type[$item][$key])) {
+      return $this->$type[$item][$key];
+    }
+    elseif (isset($this->$type['default'][$key])) {
+      return $this->$type['default'][$key];
+    }
+
+    // We got nothin'.
+    return FALSE;
+  }
+
+}
