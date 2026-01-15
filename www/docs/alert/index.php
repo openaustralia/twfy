@@ -26,7 +26,8 @@ $this_page = "alert";
 $args = ['action' => $this_page];
 
 // Put all the user-submitted data in an array.
-$details = []
+$details = [];
+
 if ($THEUSER->loggedin()) {
     $details['email'] = $THEUSER->email();
 }

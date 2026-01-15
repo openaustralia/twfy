@@ -30,9 +30,6 @@ class TRACKBACK {
 
     private $trackbacks_enabled = FALSE;
 
-    private $moderate_trackbacks;
-
-
     /**
      * Do trackbacks need moderation before appearing on the site?
      */
