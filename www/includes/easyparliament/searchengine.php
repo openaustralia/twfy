@@ -54,7 +54,7 @@ class SEARCHENGINE {
 
     public $query = NULL;
     public $stemerr = NULL;
-    public $enquire = NULL
+    public $enquire = NULL;
     public $wordchars = '';
     public $words = [];
     public $phrases = [];
