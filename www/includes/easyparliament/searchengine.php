@@ -52,10 +52,19 @@ global $xapiandb;
  */
 class SEARCHENGINE {
 
+    public $query = null;
+    public $stemerr = null;
+    public $enquire = null
+    public $wordchars = '';
+    public $words = [];
+    public $phrases = [];
+    public $prefixed = [];
+    public $excluded = [];
+
     /**
      *
      */
-    public function SEARCHENGINE($query) {
+    public function __construct($query) {
         if (!defined('XAPIANDB') || !XAPIANDB) {
             return NULL;
         }

@@ -10,10 +10,12 @@
  */
 class PEOPLE {
 
+    private $db = null;
+
     /**
      *
      */
-    public function PEOPLE() {
+    public function __construct() {
         $this->db = new ParlDB();
     }
 

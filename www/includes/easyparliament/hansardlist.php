@@ -2580,6 +2580,7 @@ class HANSARDLIST {
  *
  */
 class WMSLIST extends WRANSLIST {
+
     public $major = 4;
     public $listpage = 'wms';
     public $commentspage = 'wms';
@@ -2587,7 +2588,7 @@ class WMSLIST extends WRANSLIST {
     /**
      *
      */
-    public function wmslist() {
+    public function __construct() {
         $this->db = new ParlDB();
         $this->gidprefix .= 'wms/';
     }
@@ -2612,7 +2613,7 @@ class WHALLLIST extends DEBATELIST {
     /**
      *
      */
-    public function whalllist() {
+    public function __construct() {
         $this->db = new ParlDB();
         $this->gidprefix .= 'westminhall/';
     }
@@ -2630,7 +2631,7 @@ class NILIST extends DEBATELIST {
     /**
      *
      */
-    public function nilist() {
+    public function __construct() {
         $this->db = new ParlDB();
         $this->gidprefix .= 'ni/';
     }
@@ -2648,7 +2649,7 @@ class SPLIST extends DEBATELIST {
     /**
      *
      */
-    public function splist() {
+    public function __construct() {
         $this->db = new ParlDB();
         $this->gidprefix .= 'spor/';
     }
@@ -2666,7 +2667,7 @@ class SPWRANSLIST extends WRANSLIST {
     /**
      *
      */
-    public function spwranslist() {
+    public function __construct() {
         $this->db = new ParlDB();
         $this->gidprefix .= 'spwa/';
     }
@@ -2696,7 +2697,7 @@ class LORDSDEBATELIST extends DEBATELIST {
     /**
      *
      */
-    public function lordsdebatelist() {
+    public function __construct() {
         $this->db = new ParlDB();
         $this->gidprefix .= 'lords/';
     }
@@ -2719,7 +2720,7 @@ class DEBATELIST extends HANSARDLIST {
     /**
      *
      */
-    public function debatelist() {
+    public function __construct() {
         $this->db = new ParlDB();
         $this->gidprefix .= 'debate/';
     }
@@ -2981,7 +2982,7 @@ class WRANSLIST extends HANSARDLIST {
     /**
      *
      */
-    public function wranslist() {
+    public function __construct() {
         $this->db = new ParlDB();
         $this->gidprefix .= 'wrans/';
     }
@@ -3189,7 +3190,7 @@ class StandingCommittee extends DEBATELIST {
     /**
      *
      */
-    public function StandingCommittee($session = '', $title = '') {
+    public function __construct($session = '', $title = '') {
         $this->db = new ParlDB();
         $this->gidprefix .= 'standing/';
         $this->bill_title = $title;

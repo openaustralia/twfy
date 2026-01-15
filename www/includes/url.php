@@ -65,7 +65,7 @@ class URL {
     /**
      *
      */
-    public function URL($pagename) {
+    public function __construct($pagename) {
         // Initialise.
         global $DATA;
 

@@ -86,7 +86,7 @@ class SKIN {
     /**
      *
      */
-    public function SKIN() {
+    public function __construct() {
         global $this_page;
 
         if ($this_page == "skin" && get_http_var("newskin") != "") {

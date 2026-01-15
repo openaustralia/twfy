@@ -64,6 +64,8 @@
  */
 class USER {
 
+    private $db = null;
+
     /**
      * So we have an ID for non-logged in users reporting comments etc.
      */
@@ -118,7 +120,7 @@ class USER {
     /**
      * Change things in the add/edit/view user page.
      */
-    public function USER() {
+    public function __construct() {
         $this->db = new ParlDB();
     }
 
@@ -942,13 +944,18 @@ class USER {
 
     }
 
-} /**
-   * End USER class.
-   */
+}
+/**
+ * End USER class.
+ */
+
+/**
+ * Handles all the login/out functionality and checking for the user
+ * who is using the site right NOW. Yes, them, over there.
+ */
 class THEUSER extends USER {
 
-    // Handles all the login/out functionality and checking for the user
-    // who is using the site right NOW. Yes, him, over there.
+    private $db = null;
 
     /**
      * This will become true if all goes well...
@@ -958,7 +965,7 @@ class THEUSER extends USER {
     /**
      *
      */
-    public function THEUSER() {
+    public function __construct() {
         // This function is run automatically when a THEUSER
         // object is instantiated.
 

@@ -126,6 +126,8 @@ function alert_details_to_criteria($details) {
  */
 class ALERT {
 
+    private $db = null;
+
     public $alert_id = "";
     public $email = "";
     /**
@@ -143,7 +145,7 @@ class ALERT {
     /**
      *
      */
-    public function ALERT() {
+    public function __construct() {
         $this->db = new ParlDB();
     }
 

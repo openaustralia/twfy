@@ -22,6 +22,8 @@
  */
 class COMMENT {
 
+    private $db = null;
+
     public $comment_id = '';
     public $user_id = '';
     public $epobject_id = '';
@@ -47,7 +49,7 @@ class COMMENT {
     /**
      *
      */
-    public function COMMENT($comment_id = '') {
+    public function __construct($comment_id = '') {
 
         $this->db = new ParlDB();
 

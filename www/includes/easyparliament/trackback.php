@@ -26,6 +26,12 @@
  */
 class TRACKBACK {
 
+    private $db = null;
+
+    private $trackbacks_enabled = FALSE;
+
+    private $moderate_trackbacks;
+
 
     /**
      * Do trackbacks need moderation before appearing on the site?
@@ -36,7 +42,7 @@ class TRACKBACK {
     /**
      * But switching this to true will mark all incoming trackbacks as invisible.
      */
-    public function TRACKBACK() {
+    public function __construct() {
 
         $this->db = new ParlDB();
 

@@ -30,6 +30,8 @@ include_once INCLUDESPATH . "wikipedia.php";
  */
 class GLOSSARY {
 
+    private $db = null;
+
     /**
      * How many glossary entries do we have.
      */
@@ -55,7 +57,7 @@ class GLOSSARY {
     /**
      * Constructor...
      */
-    public function GLOSSARY($args = []) {
+    public function __construct($args = []) {
         // We can optionally start the glossary with one of several arguments
         //        1. glossary_id - treat the glossary as a single term
         //        2. glossary_term - search within glossary for a term
