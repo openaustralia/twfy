@@ -73,13 +73,15 @@ class TRACKBACK {
      *
      */
     public function display($view, $args = [], $format = 'html') {
-        // $view is one of:
-        //    'epobject_id' - display the pings for one epobject.
-        //     'recent' - to get the most recent pings to anywhere.
-
-        // $args will have one of:
-        //    'gid' - the gid of a hansard item (of the form 'debate_2003-02-28.475.3').
-        //    'num' - the number of recent pings to show.
+        /*
+         * $view is one of:
+         *    'epobject_id' - display the pings for one epobject.
+         *     'recent' - to get the most recent pings to anywhere.
+         *
+         * $args will have one of:
+         *    'gid' - the gid of a hansard item (of the form 'debate_2003-02-28.475.3').
+         *    'num' - the number of recent pings to show.
+         */
         global $PAGE;
 
         if ($view == 'epobject_id' || $view == 'recent') {
@@ -120,7 +122,7 @@ class TRACKBACK {
         // We currently only have one kind of trackback template, so
         // we're ignoring $view here I'm afraid...
 
-        include INCLUDESPATH . "easyparliament/templates/$format/trackbacks" . ".php";
+        include INCLUDESPATH . "easyparliament/templates/{$format}/trackbacks.php";
 
     }
 
