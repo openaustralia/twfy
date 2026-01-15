@@ -249,20 +249,22 @@ class COMMENTREPORT {
      *
      */
     public function create($COMMENT, $reportdata) {
-        // For when a user posts a report on a comment.
-        // $reportdata is an array like:
-        //    array (
-        //        'body' => 'some text',
-        //        'firstname'    => 'Billy',
-        //        'lastname'    => 'Nomates',
-        //        'email'        => 'billy@nomates.com'
-        //    )
-        // But if the report was made by a logged-in user, only the
-        // 'body' element should really contain anything, because
-        // we use $THEUSER's id to get the rest.
-
-        // $COMMENT is an existing COMMENT object, needed for setting
-        // its modflag and comment_id.
+        /*
+         * For when a user posts a report on a comment.
+         * $reportdata is an array like:
+         *    array (
+         *        'body' => 'some text',
+         *        'firstname'    => 'Billy',
+         *        'lastname'    => 'Nomates',
+         *        'email'        => 'billy@nomates.com'
+         *    )
+         * But if the report was made by a logged-in user, only the
+         * 'body' element should really contain anything, because
+         * we use $THEUSER's id to get the rest.
+         *
+         * $COMMENT is an existing COMMENT object, needed for setting
+         * its modflag and comment_id.
+         */
 
         global $THEUSER, $PAGE;
 
