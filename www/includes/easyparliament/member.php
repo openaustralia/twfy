@@ -395,7 +395,7 @@ class MEMBER {
                     $consts[] = $q->field($i, 'constituency');
                 }
             }
-            if (sizeof($person_ids) == 1) {
+            if (count($person_ids) == 1) {
                 return $person_ids[0];
             }
             $this->constituency = $consts;
