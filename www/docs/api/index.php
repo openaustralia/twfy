@@ -1,16 +1,21 @@
 <?php
 
+/**
+ * @file
+ */
+
 include_once '../../includes/easyparliament/init.php';
 include_once '../../includes/postcode.php';
 
 include_once 'api_functions.php';
 
-// XXX: Need to override error handling! XXX
+// @todo: Need to override error handling.
 
 if ($q_method = get_http_var('method')) {
     if (get_http_var('docs')) {
         $key = 'DOCS';
-    } else {
+    }
+    else {
         if (!get_http_var('key')) {
             api_error('No API key provided. Please see http://www.openaustralia.org/api/key for more information.');
             exit;
@@ -34,7 +39,7 @@ if ($q_method = get_http_var('method')) {
                 if ($q_param = trim(get_http_var($parameter))) {
                     $match++;
                     include_once 'api_' . $method . '.php';
-                    api_call_user_func_or_error('api_' . $method . '_' . $parameter, array($q_param), 'API call not yet functional', 'api');
+                    api_call_user_func_or_error('api_' . $method . '_' . $parameter, [$q_param], 'API call not yet functional', 'api');
                     break;
                 }
             }
@@ -43,10 +48,11 @@ if ($q_method = get_http_var('method')) {
                     api_error('No parameter provided to function "' .
                         htmlspecialchars($q_method) .
                         '". Possible choices are: ' .
-                        join(', ', $data['parameters']));
-                } else {
+                        implode(', ', $data['parameters']));
+                }
+                else {
                     include_once 'api_' . $method . '.php';
-                    api_call_user_func_or_error('api_' . $method, array(), 'API call not yet functional', 'api');
+                    api_call_user_func_or_error('api_' . $method, [], 'API call not yet functional', 'api');
                     break;
                 }
             }
@@ -57,19 +63,23 @@ if ($q_method = get_http_var('method')) {
         api_log_call($key);
         api_front_page('Unknown function "' . htmlspecialchars($q_method) .
             '". Possible functions are: ' .
-            join(', ', array_keys($methods)));
-    } else {
+           implodeoin(', ', array_keys($methods)));
+    }
+    else {
         if (get_http_var('docs')) {
             $explorer = ob_get_clean();
             api_documentation_front($method, $explorer);
         }
     }
-} else {
+}
+else {
     api_front_page();
 }
 
-function api_documentation_front($method, $explorer)
-{
+/**
+ *
+ */
+function api_documentation_front($method, $explorer) {
     global $PAGE, $this_page, $DATA, $methods;
     $this_page = 'api_doc_front';
     $DATA->set_page_metadata($this_page, 'title', "$method function");
@@ -77,7 +87,7 @@ function api_documentation_front($method, $explorer)
     $PAGE->stripe_start();
     include_once 'api_' . $method . '.php';
     print '<p align="center"><strong>http://www.openaustralia.org/api/' . $method . '</strong></p>';
-    api_call_user_func_or_error('api_' . $method . '_front', array(), 'No documentation yet', 'html');
+    api_call_user_func_or_error('api_' . $method . '_front', [], 'No documentation yet', 'html');
     ?>
     <h4>Explorer</h4>
     <p>Try out this function without writing any code!</p>
@@ -85,14 +95,15 @@ function api_documentation_front($method, $explorer)
         <p>
             <?php foreach ($methods[$method]['parameters'] as $parameter) {
                 print $parameter . ': <input type="text" name="' . $parameter . '" value="';
-                if ($val = get_http_var($parameter))
+                if ($val = get_http_var($parameter)) {
                     print htmlspecialchars($val);
+                }
                 print '" size="30"><br>';
             }
             ?>
             Output:
             <input id="output_js" type="radio" name="output" value="js" <?php if (get_http_var('output') == 'js' || !get_http_var('output'))
-                print ' checked' ?>>
+                print ' checked'; ?>>
                 <label for="output_js">JS</label>
                 <input id="output_xml" type="radio" name="output" value="xml" <?php if (get_http_var('output') == 'xml')
                 print ' checked' ?>>
@@ -107,25 +118,28 @@ function api_documentation_front($method, $explorer)
                 <input type="submit" value="Go">
             </p>
         </form>
-        <?php
-            if ($explorer) {
-                $qs = array();
-                foreach ($methods[$method]['parameters'] as $parameter) {
-                    if (get_http_var($parameter))
-                        $qs[] = htmlspecialchars(rawurlencode($parameter) . '=' . urlencode(get_http_var($parameter)));
-                }
-                print '<h4><a name="output"></a>Output</h4>';
-                print '<p>URL for this: <strong>http://www.openaustralia.org/api/';
-                print $method . '?' . join('&amp;', $qs) . '&amp;output=' . get_http_var('output') . '</strong></p>';
-                print '<pre>' . htmlspecialchars($explorer) . '</pre>';
+    <?php
+    if ($explorer) {
+        $qs = [];
+        foreach ($methods[$method]['parameters'] as $parameter) {
+            if (get_http_var($parameter)) {
+                $qs[] = htmlspecialchars(rawurlencode($parameter) . '=' . urlencode(get_http_var($parameter)));
             }
-            $sidebar = api_sidebar();
-            $PAGE->stripe_end(array($sidebar));
-            $PAGE->page_end();
+        }
+        print '<h4><a name="output"></a>Output</h4>';
+        print '<p>URL for this: <strong>http://www.openaustralia.org/api/';
+        print $method . '?' . implode('&amp;', $qs) . '&amp;output=' . get_http_var('output') . '</strong></p>';
+        print '<pre>' . htmlspecialchars($explorer) . '</pre>';
+    }
+    $sidebar = api_sidebar();
+    $PAGE->stripe_end([$sidebar]);
+    $PAGE->page_end();
 }
 
-function api_front_page($error = '')
-{
+/**
+ *
+ */
+function api_front_page($error = '') {
     global $PAGE, $methods, $this_page, $THEUSER;
     $this_page = 'api_front';
     $PAGE->page_start();
@@ -134,17 +148,20 @@ function api_front_page($error = '')
         print "<p style='color: #cc0000'>$error</p>";
     }
     ?>
-    <p>Welcome to OpenAustralia's API section, where you can learn how to query our database for information.</p>
 
-    <h3>Overview</h3>
+<p>Welcome to OpenAustralia's API section, where you can learn how to query our database for information.</p>
 
-    <ol style="font-size:130%">
+<h3>Overview</h3>
+
+<ol style="font-size:130%">
         <li>
-            <?php if ($THEUSER->loggedin()) { ?>
+    <?php if ($THEUSER->loggedin()) { ?>
                 <a href="key">Get an API key (or view stats of existing keys)</a>.
-            <?php } else { ?>
+    <?php }
+    else {
+        ?>
                 <a href="key">Get an API key</a>.
-            <?php } ?>
+    <?php } ?>
         <li>All requests are made by GETting a particular URL with a number of parameters. <em>key</em> is required;
             <em>output</em> is optional, and defaults to <kbd>js</kbd>.
     </ol>
@@ -242,6 +259,6 @@ function api_front_page($error = '')
 
     <?php
     $sidebar = api_sidebar();
-    $PAGE->stripe_end(array($sidebar));
+    $PAGE->stripe_end([$sidebar]);
     $PAGE->page_end();
 }
