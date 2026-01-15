@@ -23,13 +23,15 @@ if ($this_page == 'debatesday') {
             'onday' => $date
         ];
         $title = 'Debates this month';
-    } else {
+    }
+    else {
         $args = [
             'months' => 1
         ];
         $title = 'Recent debates';
     }
-} else {
+}
+else {
     $args = [
         // How many recent months to show.
         'months' => 1

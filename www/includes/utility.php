@@ -10,8 +10,7 @@ include_once 'strptime.php';
 /**
  *
  */
-function twfy_debug($header, $text = "")
-{
+function twfy_debug($header, $text = "") {
     // Pass it a brief header word and some debug text and it'll be output.
 
     // We set ?DEBUGTAG=n in the URL.
@@ -41,7 +40,8 @@ function twfy_debug($header, $text = "")
 
         if ($debug_level > count($levels)) {
             $max_level_to_show = count($levels);
-        } else {
+        }
+        else {
             $max_level_to_show = $debug_level;
         }
 
@@ -59,8 +59,7 @@ function twfy_debug($header, $text = "")
 /**
  *
  */
-function error_handler(string $errno, string $errmsg, string $filename, int $linenum, ?array $vars = [])
-{
+function error_handler(string $errno, string $errmsg, string $filename, int $linenum, ?array $vars = []) {
     // Custom error-handling function.
     // Sends an email to BUGSLIST.
     global $PAGE;
@@ -100,17 +99,20 @@ function error_handler(string $errno, string $errmsg, string $filename, int $lin
     $err = '';
     if (isset($_SERVER['REQUEST_URI'])) {
         $err .= "URL:\t\thttp://" . DOMAIN . $_SERVER['REQUEST_URI'] . "\n";
-    } else {
+    }
+    else {
         $err .= "URL:\t\tNone - running from command line?\n";
     }
     if (isset($_SERVER['HTTP_REFERER'])) {
         $err .= "Referer:\t" . $_SERVER['HTTP_REFERER'] . "\n";
-    } else {
+    }
+    else {
         $err .= "Referer:\tNone\n";
     }
     if (isset($_SERVER['HTTP_USER_AGENT'])) {
         $err .= "User-Agent:\t" . $_SERVER['HTTP_USER_AGENT'] . "\n";
-    } else {
+    }
+    else {
         $err .= "User-Agent:\tNone\n";
     }
     $err .= "Number:\t\t$errno\n";
@@ -149,7 +151,8 @@ function error_handler(string $errno, string $errmsg, string $filename, int $lin
     $fatal_errors = [E_ERROR, E_USER_ERROR];
     if (in_array($errno, $fatal_errors)) {
         $fatal = TRUE;
-    } else {
+    }
+    else {
         $fatal = FALSE;
     }
 
@@ -168,7 +171,8 @@ function error_handler(string $errno, string $errmsg, string $filename, int $lin
         //     vardump($message);
         //     vardump(adodb_backtrace());
         // }
-    } else {
+    }
+    else {
         print ("<pre>" . htmlentities_notags($err) . "</pre>");
         // On live sites we display a nice message and email the problem.
         error_log($err);
@@ -180,7 +184,8 @@ function error_handler(string $errno, string $errmsg, string $filename, int $lin
 
         if (is_object($PAGE)) {
             $PAGE->error_message($message, $fatal);
-        } else {
+        }
+        else {
             print "<p>Oops, sorry, an error has occurred!</p>\n";
         }
 
@@ -203,8 +208,7 @@ function error_handler(string $errno, string $errmsg, string $filename, int $lin
 /**
  * Replacement for var_dump()
  */
-function vardump($blah)
-{
+function vardump($blah) {
     print "<pre>\n";
     var_dump($blah);
     print "</pre>\n";
@@ -213,8 +217,7 @@ function vardump($blah)
 /**
  * Pretty prints the backtrace, copied from http://uk.php.net/manual/en/function.debug-backtrace.php.
  */
-function adodb_backtrace($print = TRUE)
-{
+function adodb_backtrace($print = TRUE) {
     $s = '';
     if (phpversion() >= 4.3) {
 
@@ -237,13 +240,17 @@ function adodb_backtrace($print = TRUE)
                 foreach ($arr['args'] as $v) {
                     if (is_null($v)) {
                         $args[] = 'null';
-                    } elseif (is_array($v)) {
+                    }
+                    elseif (is_array($v)) {
                         $args[] = 'Array[' . sizeof($v) . ']';
-                    } elseif (is_object($v)) {
+                    }
+                    elseif (is_object($v)) {
                         $args[] = 'Object:' . get_class($v);
-                    } elseif (is_bool($v)) {
+                    }
+                    elseif (is_bool($v)) {
                         $args[] = $v ? 'true' : 'false';
-                    } else {
+                    }
+                    else {
                         $v = (string) @$v;
                         $str = htmlspecialchars(substr($v, 0, $MAXSTRLEN));
                         if (strlen($v) > $MAXSTRLEN) {
@@ -270,8 +277,7 @@ function adodb_backtrace($print = TRUE)
 /**
  * Far from foolproof, but better than nothing.
  */
-function validate_email($string)
-{
+function validate_email($string) {
     if (
         !preg_match('/^[-!#$%&\'*+\\.\\0-9=?A-Z^_`a-z{|}~]+' .
             '@' .
@@ -279,7 +285,8 @@ function validate_email($string)
             '[-!#$%&\'*+\\.\\0-9=?A-Z^_`a-z{|}~]+$/', $string)
     ) {
         return FALSE;
-    } else {
+    }
+    else {
         return TRUE;
     }
 }
@@ -287,14 +294,14 @@ function validate_email($string)
 /**
  *
  */
-function validate_postcode($postcode)
-{
+function validate_postcode($postcode) {
     $postcode = trim($postcode);
 
     $num = '0123456789';
     if (preg_match("/^[$num][$num][$num][$num]/", $postcode)) {
         return TRUE;
-    } else {
+    }
+    else {
         return FALSE;
     }
 }
@@ -302,8 +309,7 @@ function validate_postcode($postcode)
 /**
  * Returns the unixtime in microseconds.
  */
-function getmicrotime()
-{
+function getmicrotime() {
     $mtime = microtime();
     $mtime = explode(" ", $mtime);
     $mtime = $mtime[1] + $mtime[0];
@@ -318,8 +324,7 @@ $timestamp_last = $timestamp_start = getmicrotime();
 /**
  *
  */
-function twfy_debug_timestamp($label = "")
-{
+function twfy_debug_timestamp($label = "") {
     global $timestamp_last, $timestamp_start;
     $t = getmicrotime();
     twfy_debug("TIME", sprintf(
@@ -334,8 +339,7 @@ function twfy_debug_timestamp($label = "")
 /**
  *
  */
-function format_timestamp($timestamp, $format)
-{
+function format_timestamp($timestamp, $format) {
     // Pass it a MYSQL TIMESTAMP (YYYYMMDDHHMMSS) and a
     // PHP date format string (eg, "Y-m-d H:i:s")
     // and it returns a nicely formatted string according to requirements.
@@ -346,7 +350,8 @@ function format_timestamp($timestamp, $format)
         [$string, $year, $month, $day, $hour, $min, $sec] = $matches;
 
         return gmdate($format, gmmktime($hour, $min, $sec, $month, $day, $year));
-    } else {
+    }
+    else {
         return "";
     }
 
@@ -355,8 +360,7 @@ function format_timestamp($timestamp, $format)
 /**
  *
  */
-function format_date($date, $format)
-{
+function format_date($date, $format) {
     // Pass it a date (YYYY-MM-DD) and a
     // PHP date format string (eg, "Y-m-d H:i:s")
     // and it returns a nicely formatted string according to requirements.
@@ -365,7 +369,8 @@ function format_date($date, $format)
         [$string, $year, $month, $day] = $matches;
 
         return gmdate($format, gmmktime(0, 0, 0, $month, $day, $year));
-    } else {
+    }
+    else {
         return "";
     }
 
@@ -374,8 +379,7 @@ function format_date($date, $format)
 /**
  *
  */
-function format_time($time, $format)
-{
+function format_time($time, $format) {
     // Pass it a time (HH:MM:SS) and a
     // PHP date format string (eg, "H:i")
     // and it returns a nicely formatted string according to requirements.
@@ -384,7 +388,8 @@ function format_time($time, $format)
         [$string, $hour, $min, $sec] = $matches;
 
         return gmdate($format, gmmktime($hour, $min, $sec));
-    } else {
+    }
+    else {
         return "";
     }
 }
@@ -392,8 +397,7 @@ function format_time($time, $format)
 /**
  *
  */
-function relative_time($datetime)
-{
+function relative_time($datetime) {
     // Pass it a 'YYYY-MM-DD HH:MM:SS' and it will return something
     // like "Two hours ago", "Last week", etc.
 
@@ -424,24 +428,29 @@ function relative_time($datetime)
         $date = substr($datetime, 0, 10);
         return format_date($date, LONGDATEFORMAT);
 
-    } else {
+    }
+    else {
         $relative_date = '';
         if ($weeks > 0) {
             // Weeks and days.
             $relative_date .= ($relative_date ? ', ' : '') . $weeks . ' week' . ($weeks > 1 ? 's' : '');
             $relative_date .= $days > 0 ? ($relative_date ? ', ' : '') . $days . ' day' . ($days > 1 ? 's' : '') : '';
-        } elseif ($days > 0) {
+        }
+        elseif ($days > 0) {
             // Days and hours.
             $relative_date .= ($relative_date ? ', ' : '') . $days . ' day' . ($days > 1 ? 's' : '');
             $relative_date .= $hours > 0 ? ($relative_date ? ', ' : '') . $hours . ' hour' . ($hours > 1 ? 's' : '') : '';
-        } elseif ($hours > 0) {
+        }
+        elseif ($hours > 0) {
             // Hours and minutes.
             $relative_date .= ($relative_date ? ', ' : '') . $hours . ' hour' . ($hours > 1 ? 's' : '');
             $relative_date .= $minutes > 0 ? ($relative_date ? ', ' : '') . $minutes . ' minute' . ($minutes > 1 ? 's' : '') : '';
-        } elseif ($minutes > 0) {
+        }
+        elseif ($minutes > 0) {
             // Minutes only.
             $relative_date .= ($relative_date ? ', ' : '') . $minutes . ' minute' . ($minutes > 1 ? 's' : '');
-        } else {
+        }
+        else {
             // Seconds only.
             $relative_date .= ($relative_date ? ', ' : '') . $seconds . ' second' . ($seconds > 1 ? 's' : '');
         }
@@ -455,8 +464,7 @@ function relative_time($datetime)
 /**
  *
  */
-function parse_date($date)
-{
+function parse_date($date) {
     $now = time();
     $date = preg_replace('#\b([a-z]|on|an|of|in|the|year of our lord)\b#i', '', $date);
     $date = preg_replace('#[\x80-\xff]#', '', $date);
@@ -475,24 +483,29 @@ function parse_date($date)
         if ($year < 100) {
             $year += 2000;
         }
-    } elseif (preg_match('#(\d+)/(\d+)#', $date, $m)) {
+    }
+    elseif (preg_match('#(\d+)/(\d+)#', $date, $m)) {
         $day = $m[1];
         $month = $m[2];
         $year = date('Y');
-    } elseif (preg_match('#^([0123][0-9])([01][0-9])([0-9][0-9])$#', $date, $m)) {
+    }
+    elseif (preg_match('#^([0123][0-9])([01][0-9])([0-9][0-9])$#', $date, $m)) {
         $day = $m[1];
         $month = $m[2];
         $year = $m[3];
-    } else {
+    }
+    else {
         // 0 Sunday, 6 Saturday
         $dayofweek = date('w');
         if (preg_match('#next\s+(sun|sunday|mon|monday|tue|tues|tuesday|wed|wednes|wednesday|thu|thur|thurs|thursday|fri|friday|sat|saturday)\b#i', $date, $m)) {
             $date = preg_replace('#next#i', 'this', $date);
             if ($dayofweek == 5) {
                 $now = strtotime('3 days', $now);
-            } elseif ($dayofweek == 4) {
+            }
+            elseif ($dayofweek == 4) {
                 $now = strtotime('4 days', $now);
-            } else {
+            }
+            else {
                 $now = strtotime('5 days', $now);
             }
         }
@@ -529,8 +542,7 @@ function parse_date($date)
  * Return a copy of TEXT in which certain block-level HTML tags have been
  * replaced by single spaces, and other HTML tags have been removed.
  */
-function strip_tags_tospaces($text)
-{
+function strip_tags_tospaces($text) {
     $text = preg_replace("#\<(p|br|div|td|tr|th|table)[^>]*\>#i", " ", $text);
     return strip_tags(trim($text));
 }
@@ -538,8 +550,7 @@ function strip_tags_tospaces($text)
 /**
  *
  */
-function trim_characters($text, $start, $length)
-{
+function trim_characters($text, $start, $length) {
     // Pass it a string, a numeric start position and a numeric length.
     // If the start position is > 0, the string will be trimmed to start at the
     // nearest word boundary after (or at) that position.
@@ -595,8 +606,7 @@ function trim_characters($text, $start, $length)
 /**
  *
  */
-function filter_user_input($text, $filter_type)
-{
+function filter_user_input($text, $filter_type) {
     // We use this to filter any major user input, especially comments.
     // Gets rid of bad HTML, basically.
     // Uses iamcal.com's lib_filter class.
@@ -616,7 +626,8 @@ function filter_user_input($text, $filter_type)
         // No tags allowed at all!
         $filter->allowed = [];
 
-    } else {
+    }
+    else {
         // Comment.
         // Only allowing <b> and <i> tags.
         $filter->allowed = [
@@ -634,8 +645,7 @@ function filter_user_input($text, $filter_type)
 /**
  *
  */
-function prepare_comment_for_display($text)
-{
+function prepare_comment_for_display($text) {
     // Makes any URLs into HTML links.
     // Turns \n's into <br>.
 
@@ -663,8 +673,7 @@ function prepare_comment_for_display($text)
 /**
  *
  */
-function htmlentities_notags($text)
-{
+function htmlentities_notags($text) {
     // If you want to do htmlentities() on some text that has HTML tags
     // in it, then you need this function.
 
@@ -697,8 +706,7 @@ function htmlentities_notags($text)
 /**
  *
  */
-function fix_gid_from_db($gid, $keepmajor = FALSE)
-{
+function fix_gid_from_db($gid, $keepmajor = FALSE) {
     // The gids in the database are longer than we use in the site.
     // Feed this a gid from the db and it will be returned truncated.
 
@@ -714,7 +722,8 @@ function fix_gid_from_db($gid, $keepmajor = FALSE)
     if ($keepmajor) {
         $newgid = substr($gid, strpos($gid, '/') + 1);
         $newgid = str_replace('/', '_', $newgid);
-    } else {
+    }
+    else {
         $newgid = substr($gid, strrpos($gid, '/') + 1);
     }
 
@@ -725,8 +734,7 @@ function fix_gid_from_db($gid, $keepmajor = FALSE)
 /**
  *
  */
-function gid_to_anchor($gid)
-{
+function gid_to_anchor($gid) {
     // For trimming gids to be used as #anchors in pages.
     // Extracted here so we keep it consistent.
     // The gid should already be truncated using fix_gid_from_db(), so it
@@ -739,8 +747,7 @@ function gid_to_anchor($gid)
 /**
  *
  */
-function send_template_email($data, $merge, $bulk = FALSE)
-{
+function send_template_email($data, $merge, $bulk = FALSE) {
     // We should have some email templates in INCLUDESPATH/easyparliament/templates/emails/.
 
     // $data is like:
@@ -796,16 +803,19 @@ function send_template_email($data, $merge, $bulk = FALSE)
     if (preg_match("/Subject:/", $firstline)) {
         if (isset($data['subject'])) {
             $subject = trim($data['subject']);
-        } else {
+        }
+        else {
             $subject = trim(substr($firstline, 8));
         }
 
         // Either way, remove this subject line from the template.
         $emailtext = substr($emailtext, strpos($emailtext, "\n"));
 
-    } elseif (isset($data['subject'])) {
+    }
+    elseif (isset($data['subject'])) {
         $subject = $data['subject'];
-    } else {
+    }
+    else {
         $PAGE->error_message("We don't have a subject line for the email, so it wasn't sent.");
         return FALSE;
     }
@@ -831,8 +841,7 @@ function send_template_email($data, $merge, $bulk = FALSE)
 /**
  *
  */
-function send_email($to, $subject, $message, $bulk = FALSE)
-{
+function send_email($to, $subject, $message, $bulk = FALSE) {
     // Use this rather than PHP's mail() direct, so we can make alterations
     // easily to all the emails we send out from the site.
 
@@ -866,8 +875,7 @@ function send_email($to, $subject, $message, $bulk = FALSE)
 /**
  * Call this with a key name to get a GET or POST variable.
  */
-function get_http_var($name, $default = '')
-{
+function get_http_var($name, $default = '') {
     if (array_key_exists($name, $_GET)) {
         return clean_var($_GET[$name]);
     }
@@ -880,21 +888,20 @@ function get_http_var($name, $default = '')
 /**
  *
  */
-function clean_var($a)
-{
+function clean_var($a) {
     return (ini_get("magic_quotes_gpc") == 1) ? recursive_strip($a) : $a;
 }
 
 /**
  *
  */
-function recursive_strip($a)
-{
+function recursive_strip($a) {
     if (is_array($a)) {
         while ([$key, $val] = each($a)) {
             $a[$key] = recursive_strip($val);
         }
-    } else {
+    }
+    else {
         $a = stripslashes($a);
     }
     return $a;
@@ -903,8 +910,7 @@ function recursive_strip($a)
 /**
  * Call this with a key name to get a COOKIE variable.
  */
-function get_cookie_var($name, $default = '')
-{
+function get_cookie_var($name, $default = '') {
     if (array_key_exists($name, $_COOKIE)) {
         return clean_var($_COOKIE[$name]);
     }
@@ -916,8 +922,7 @@ function get_cookie_var($name, $default = '')
  * hidden form variables. It then outputs hidden form variables
  * based on the session_vars for this page.
  */
-function hidden_form_vars($omit = [])
-{
+function hidden_form_vars($omit = []) {
     global $DATA, $this_page;
 
     $session_vars = $DATA->page_metadata($this_page, "session_vars");
@@ -932,8 +937,7 @@ function hidden_form_vars($omit = [])
 /**
  * Deprecated. Use hidden_form_vars, above, instead.
  */
-function hidden_vars($omit = [])
-{
+function hidden_vars($omit = []) {
     global $DATA;
 
     foreach ($args as $key => $val) {
@@ -946,8 +950,7 @@ function hidden_vars($omit = [])
 /**
  *
  */
-function make_ranking($rank)
-{
+function make_ranking($rank) {
     // 11th, 12th, 13th use "th" not "st", "nd", "rd"
     if (floor(($rank % 100) / 10) == 1) {
         return $rank . "th";
@@ -971,8 +974,7 @@ function make_ranking($rank)
 /**
  *
  */
-function make_plural($word, $number)
-{
+function make_plural($word, $number) {
     if ($number == 1) {
         return $word;
     }
@@ -983,8 +985,7 @@ function make_plural($word, $number)
  * Can't have the entities in XML so replace all theones we currently have with numerical entities
  * This is yucky. XXX.
  */
-function entities_to_numbers($string)
-{
+function entities_to_numbers($string) {
     $string = str_replace(
         ['&Ouml;', '&acirc;', '&uacute;', '&aacute;', '&iacute;', '&ocirc;'],
         ['&#214;', '&#226;', '&#250;', '&#225;', '&#237;', '&#244;'],
@@ -996,15 +997,15 @@ function entities_to_numbers($string)
 /**
  *
  */
-function make_member_url($name, $const = '', $house = 1)
-{
+function make_member_url($name, $const = '', $house = 1) {
     $s = [' ', '&amp;', '&ocirc;', '&ouml;', '&acirc;', '&iacute;', '&aacute;', '&uacute;'];
     $r = ['_', 'and', 'o', 'o', 'a', 'i', 'a', 'u'];
     $name = preg_replace('#^the #', '', strtolower($name));
     $out = urlencode(str_replace($s, $r, $name));
     if ($const && ($house == 1 || $house == 2)) {
         $out .= '/' . urlencode(str_replace($s, $r, strtolower($const)));
-    } elseif ($house == 0) {
+    }
+    elseif ($house == 0) {
         $out = 'elizabeth_the_second';
     }
     return $out;
@@ -1013,8 +1014,7 @@ function make_member_url($name, $const = '', $house = 1)
 /**
  *
  */
-function member_full_name($house, $title, $first_name, $last_name, $constituency)
-{
+function member_full_name($house, $title, $first_name, $last_name, $constituency) {
     $s = 'ERROR';
     if ($house == 1 || $house == 2 || $house == 3 || $house == 4) {
         $s = $first_name . ' ' . $last_name;
@@ -1038,8 +1038,7 @@ function member_full_name($house, $title, $first_name, $last_name, $constituency
 /**
  *
  */
-function prettify_office($pos, $dept)
-{
+function prettify_office($pos, $dept) {
     $lookup = [
         'Prime Minister, HM Treasury' => 'Prime Minister',
         'Secretary of State, Foreign & Commonwealth Office' => 'Foreign Secretary',
@@ -1058,7 +1057,8 @@ function prettify_office($pos, $dept)
         if (array_key_exists($pretty, $lookup)) {
             $pretty = $lookup[$pretty];
         }
-    } elseif ($pos) {
+    }
+    elseif ($pos) {
         $pretty = $pos;
     }
     // Member of Select Committee.
@@ -1071,8 +1071,7 @@ function prettify_office($pos, $dept)
 /**
  *
  */
-function major_summary($data, $limit = "")
-{
+function major_summary($data, $limit = "") {
     global $hansardmajors;
     $db = new ParlDB();
     $one_date = FALSE;
@@ -1090,9 +1089,11 @@ function major_summary($data, $limit = "")
         foreach ($data as $major => $array) {
             if ($todaystime - $array['timestamp'] == 86400) {
                 $daytext[$major] = "Yesterday's";
-            } elseif ($todaystime - $array['timestamp'] <= (6 * 86400)) {
+            }
+            elseif ($todaystime - $array['timestamp'] <= (6 * 86400)) {
                 $daytext[$major] = gmdate('l', $array['timestamp']) . "'s";
-            } else {
+            }
+            else {
                 $daytext[$major] = "The most recent ";
             }
         }
@@ -1108,7 +1109,8 @@ function major_summary($data, $limit = "")
 
         if ($one_date) {
             $date = $data['date'];
-        } else {
+        }
+        else {
             $date = $data[$printed_majors[0]]['hdate'];
         }
         $q = $db->query('SELECT major, body, gid
@@ -1146,7 +1148,8 @@ function major_summary($data, $limit = "")
     if (array_key_exists(4, $data)) {
         if ($one_date) {
             $date = $data['date'];
-        } else {
+        }
+        else {
             $date = $data[4]['hdate'];
         }
         $q = $db->query('SELECT section_id, body, gid FROM hansard,epobject
@@ -1166,7 +1169,8 @@ function major_summary($data, $limit = "")
                     }
                     print '<li>' . $body . '<ul>';
 
-                } else {
+                }
+                else {
                     $LISTURL->insert(['id' => $gid]);
                     print '<li><a href="' . $LISTURL->generate() . '">';
                     print $body . '</a>';
@@ -1181,8 +1185,7 @@ function major_summary($data, $limit = "")
 /**
  *
  */
-function _major_summary_title($major, $data, $LISTURL, $daytext)
-{
+function _major_summary_title($major, $data, $LISTURL, $daytext) {
     global $hansardmajors;
     print '<li><strong>';
     if (isset($daytext[$major])) {
@@ -1191,7 +1194,8 @@ function _major_summary_title($major, $data, $LISTURL, $daytext)
     print '<a href="';
     if (isset($data[$major]['listurl'])) {
         print $data[$major]['listurl'];
-    } else {
+    }
+    else {
         print $LISTURL->generate();
     }
     print '">' . $hansardmajors[$major]['title'] . '</a>';

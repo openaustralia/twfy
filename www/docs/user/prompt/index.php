@@ -32,7 +32,8 @@ if ($type == 2) {
     $glossary_returl = $URL->generate();
     $anchor = '';
 
-} else {
+}
+else {
     // Comment.
     $message = "Sorry, you must be logged in to post a comment.";
     $message2 = "You'll be able to post your comment straight after.";

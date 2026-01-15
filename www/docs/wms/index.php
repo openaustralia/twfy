@@ -19,7 +19,8 @@ if (get_http_var("d") != "") {
     $LIST = new WMSLIST();
     $LIST->display('date', $args);
 
-} elseif (get_http_var('y') != '') {
+}
+elseif (get_http_var('y') != '') {
 
     // Show a calendar for a particular year's WMS.
 
@@ -52,7 +53,8 @@ if (get_http_var("d") != "") {
             'content' => "wms"
         ]
     ]);
-} elseif (get_http_var('id') != '') {
+}
+elseif (get_http_var('id') != '') {
     $this_page = 'wms';
     $args = [
         'gid' => get_http_var('id'),
@@ -71,7 +73,8 @@ if (get_http_var("d") != "") {
     // Glossary can be turned off in the url.
     if (get_http_var('ug') == 1) {
         $args['glossarise'] = 0;
-    } else {
+    }
+    else {
         $args['sort'] = "regexp_replace";
         $GLOSSARY = new GLOSSARY($args);
     }
@@ -95,7 +98,8 @@ if (get_http_var("d") != "") {
     $PAGE->stripe_end();
     // $TRACKBACK = new TRACKBACK;
     // $TRACKBACK->display('epobject_id', $commendata);
-} else {
+}
+else {
     // No date or debate id. Show recent WMS.
 
     $this_page = "wmsfront";

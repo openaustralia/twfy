@@ -19,7 +19,8 @@ if (get_http_var('d')) {
     $LIST = new SPWRANSLIST();
     $LIST->display('date', $args);
 
-} elseif (get_http_var('spid')) {
+}
+elseif (get_http_var('spid')) {
     // We have a Scottish Parliament ID, need to find the date.
     $spid = get_http_var('spid');
     $SPWRANSLIST = new SPWRANSLIST();
@@ -32,7 +33,8 @@ if (get_http_var('d')) {
     }
     $PAGE->error_message("Couldn't match that Scottish Parliament ID to a GID.");
 
-} elseif (get_http_var('id')) {
+}
+elseif (get_http_var('id')) {
     // We have an id so show that item.
     // Could be a section id or a q/a id.
     // Either way, we'll get a section heading and the q/as beneath it.
@@ -55,7 +57,8 @@ if (get_http_var('d')) {
     // Glossary can be turned off in the url.
     if (get_http_var('ug') == 1) {
         $args['glossarise'] = 0;
-    } else {
+    }
+    else {
         $args['sort'] = "regexp_replace";
         $GLOSSARY = new GLOSSARY($args);
     }
@@ -96,7 +99,8 @@ if (get_http_var('d')) {
 
 
 
-} elseif (get_http_var('y') != '') {
+}
+elseif (get_http_var('y') != '') {
 
     // Show a calendar for a particular year's debates.
 
@@ -133,7 +137,8 @@ if (get_http_var('d')) {
 
 
 
-} elseif (get_http_var('pid')) {
+}
+elseif (get_http_var('pid')) {
     $this_page = "spwransmp";
     $args = [
         'person_id' => get_http_var('pid'),
@@ -146,7 +151,8 @@ if (get_http_var('d')) {
     }
     $LIST = new SPWRANSLIST();
     $LIST->display('mp', $args);
-} else {
+}
+else {
 
     // No date or wrans id. Show recent days with wrans on.
 

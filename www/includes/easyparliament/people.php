@@ -8,22 +8,19 @@
  * $PEOPLE = new PEOPLE;
  * $PEOPLE->display('mps');
  */
-class PEOPLE
-{
+class PEOPLE {
 
     /**
      *
      */
-    public function PEOPLE()
-    {
+    public function PEOPLE() {
         $this->db = new ParlDB();
     }
 
     /**
      *
      */
-    public function display($view, $args = [], $format = 'html')
-    {
+    public function display($view, $args = [], $format = 'html') {
         global $PAGE;
 
         $validviews = ['mps', 'peers'];
@@ -36,7 +33,8 @@ class PEOPLE
             // Get all the data that's to be rendered.
             $data = $this->$function($args);
 
-        } else {
+        }
+        else {
             $PAGE->error_message("You haven't specified a view type.");
             return FALSE;
         }
@@ -49,8 +47,7 @@ class PEOPLE
     /**
      *
      */
-    public function render($view, $data, $format = 'html')
-    {
+    public function render($view, $data, $format = 'html') {
         // Once we have the data that's to be rendered,
         // include the template.
 
@@ -67,8 +64,7 @@ class PEOPLE
     /**
      *
      */
-    public function _get_data_by_msps($args)
-    {
+    public function _get_data_by_msps($args) {
         $args['house'] = 4;
         return $this->_get_data_by_group($args);
     }
@@ -76,8 +72,7 @@ class PEOPLE
     /**
      *
      */
-    public function _get_data_by_mlas($args)
-    {
+    public function _get_data_by_mlas($args) {
         $args['house'] = 3;
         return $this->_get_data_by_group($args);
     }
@@ -85,8 +80,7 @@ class PEOPLE
     /**
      *
      */
-    public function _get_data_by_peers($args)
-    {
+    public function _get_data_by_peers($args) {
         $args['house'] = 2;
         return $this->_get_data_by_group($args);
     }
@@ -94,8 +88,7 @@ class PEOPLE
     /**
      *
      */
-    public function _get_data_by_mps($args)
-    {
+    public function _get_data_by_mps($args) {
         $args['house'] = 1;
         return $this->_get_data_by_group($args);
     }
@@ -103,8 +96,7 @@ class PEOPLE
     /**
      *
      */
-    public function _get_data_by_group($args)
-    {
+    public function _get_data_by_group($args) {
         // $args can have an optional 'order' element.
 
         $order = 'last_name';
@@ -116,30 +108,36 @@ class PEOPLE
             // Lords.
             if ($args['order'] == 'name') {
                 $order = 'last_name';
-            } elseif ($args['order'] == 'first_name') {
+            }
+            elseif ($args['order'] == 'first_name') {
                 $order = 'first_name';
                 $sqlorder = 'first_name, last_name';
-            } elseif ($args['order'] == 'constituency') {
+            }
+            elseif ($args['order'] == 'constituency') {
                 $order = 'constituency';
                 $sqlorder = 'constituency';
-            } elseif ($args['order'] == 'party') {
+            }
+            elseif ($args['order'] == 'party') {
                 $order = 'party';
                 $sqlorder = 'party, last_name, first_name, constituency';
-            } elseif ($args['order'] == 'expenses') {
+            }
+            elseif ($args['order'] == 'expenses') {
                 $order = 'expenses';
                 $sqlorder = 'data_value+0 DESC, last_name, first_name';
                 $query = 'SELECT member.person_id, title, first_name, last_name, constituency, party, dept, position, data_value
 					FROM member LEFT OUTER JOIN moffice ON member.person_id=moffice.person AND to_date="9999-12-31", personinfo
 					WHERE member.person_id = personinfo.person_id AND house=1 AND left_house = (SELECT MAX(left_house) FROM member)
 					AND data_key="expenses2004_total" ';
-            } elseif ($args['order'] == 'debates') {
+            }
+            elseif ($args['order'] == 'debates') {
                 $order = 'debates';
                 $sqlorder = 'data_value+0 DESC, last_name, first_name';
                 $query = 'SELECT member.person_id, title, first_name, last_name, constituency, party, dept, position, data_value
 					FROM member LEFT OUTER JOIN moffice ON member.person_id=moffice.person AND to_date="9999-12-31", personinfo
 					WHERE member.person_id = personinfo.person_id AND house=1 AND left_house = (SELECT MAX(left_house) FROM member)
 					AND data_key="debate_sectionsspoken_inlastyear" ';
-            } elseif ($args['order'] == 'safety') {
+            }
+            elseif ($args['order'] == 'safety') {
                 $order = 'safety';
                 $sqlorder = 'data_value+0 DESC, last_name, first_name';
                 $query = 'SELECT member.person_id, title, first_name, last_name, constituency, party, dept, position, data_value
@@ -160,7 +158,8 @@ class PEOPLE
             if (isset($data[$p_id])) {
                 $data[$p_id]['dept'] = array_merge((array) $data[$p_id]['dept'], (array) $dept);
                 $data[$p_id]['pos'] = array_merge((array) $data[$p_id]['pos'], (array) $pos);
-            } else {
+            }
+            else {
                 $narray = [
                     'person_id' => $p_id,
                     'title' => $q->field($row, 'title'),
@@ -179,15 +178,18 @@ class PEOPLE
                     $narray['party'] = '-';
                     $narray['pos'] = 'Speaker';
                     $narray['dept'] = 'House of Representatives';
-                } elseif ($narray['party'] == 'CWM' || $narray['party'] == 'DCWM') {
+                }
+                elseif ($narray['party'] == 'CWM' || $narray['party'] == 'DCWM') {
                     $narray['party'] = '-';
                     $narray['pos'] = 'Deputy Speaker';
                     $narray['dept'] = 'House of Representatives';
-                } elseif ($narray['party'] == 'PRES') {
+                }
+                elseif ($narray['party'] == 'PRES') {
                     $narray['party'] = '-';
                     $narray['pos'] = 'President';
                     $narray['dept'] = 'Senate';
-                } elseif ($narray['party'] == 'DPRES') {
+                }
+                elseif ($narray['party'] == 'DPRES') {
                     $narray['party'] = '-';
                     $narray['pos'] = 'Deputy President';
                     $narray['dept'] = 'Senate';
@@ -213,8 +215,7 @@ class PEOPLE
     /**
      *
      */
-    public function by_peer_name($a, $b)
-    {
+    public function by_peer_name($a, $b) {
         if (!$a['last_name'] && !$b['last_name']) {
             return strcmp($a['constituency'], $b['constituency']);
         }
@@ -233,8 +234,7 @@ class PEOPLE
     /**
      *
      */
-    public function listoptions($args)
-    {
+    public function listoptions($args) {
         global $THEUSER;
         $data = $this->_get_data_by_mps($args);
         if ($THEUSER->constituency_is_set()) {

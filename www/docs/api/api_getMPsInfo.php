@@ -7,8 +7,7 @@
 /**
  *
  */
-function api_getMPsInfo_front()
-{
+function api_getMPsInfo_front() {
     ?>
     <p><big>Fetch extra information for particular people.</big></p>
 
@@ -28,8 +27,7 @@ function api_getMPsInfo_front()
 /**
  *
  */
-function api_getMPsInfo_id($ids)
-{
+function api_getMPsInfo_id($ids) {
     $fields = preg_split('#\s*,\s*#', get_http_var('fields'), -1, PREG_SPLIT_NO_EMPTY);
     $ids = preg_split('#\s*,\s*#', $ids, -1, PREG_SPLIT_NO_EMPTY);
     $safe_ids = [0];
@@ -88,7 +86,8 @@ function api_getMPsInfo_id($ids)
         }
         ksort($output);
         api_output($output, $last_mod);
-    } else {
+    }
+    else {
         api_error('Unknown person ID');
     }
 }
@@ -96,7 +95,6 @@ function api_getMPsInfo_id($ids)
 /**
  *
  */
-function api_getMPsInfo_fields($f)
-{
+function api_getMPsInfo_fields($f) {
     api_error('You must supply a person ID');
 }

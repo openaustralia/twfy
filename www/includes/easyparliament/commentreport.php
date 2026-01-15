@@ -18,8 +18,7 @@
  *
  * And finally you can $REPORT->resolve() to approve or reject the report.
  */
-class COMMENTREPORT
-{
+class COMMENTREPORT {
 
     public $report_id = '';
     public $comment_id = '';
@@ -35,15 +34,15 @@ class COMMENTREPORT
      */
     public $resolved = NULL;
     public $resolvedby = '';     /**
-             * User_id.
-             */
+                                  * User_id.
+                                  */
     /**
      * Datetime.
      */
     public $locked = NULL;
     public $lockedby = '';        /**
-                * User_id.
-                */
+                                   * User_id.
+                                   */
     /**
      * Boolean.
      */
@@ -61,8 +60,7 @@ class COMMENTREPORT
     /**
      *
      */
-    public function COMMENTREPORT($report_id = '')
-    {
+    public function COMMENTREPORT($report_id = '') {
         // Pass it a report id and it gets and sets this report's data.
 
         $this->db = new ParlDB();
@@ -105,13 +103,15 @@ class COMMENTREPORT
                     $this->firstname = $q->field(0, 'firstname');
                     $this->lastname = $q->field(0, 'lastname');
                     $this->email = $q->field(0, 'email');
-                } else {
+                }
+                else {
                     // The report was made by a logged-in user.
                     $this->firstname = $q->field(0, 'u_firstname');
                     $this->lastname = $q->field(0, 'u_lastname');
                     $this->user_id = $q->field(0, 'user_id');
                 }
-            } else {
+            }
+            else {
                 $q = $this->db->query("SELECT commentreports.comment_id,
 									commentreports.user_id,
 									commentreports.body,
@@ -148,120 +148,105 @@ class COMMENTREPORT
     /**
      *
      */
-    public function report_id()
-    {
+    public function report_id() {
         return $this->report_id;
     }
 
     /**
      *
      */
-    public function comment_id()
-    {
+    public function comment_id() {
         return $this->comment_id;
     }
 
     /**
      *
      */
-    public function user_id()
-    {
+    public function user_id() {
         return $this->user_id;
     }
 
     /**
      *
      */
-    public function user_name()
-    {
+    public function user_name() {
         return $this->firstname . ' ' . $this->lastname;
     }
 
     /**
      *
      */
-    public function firstname()
-    {
+    public function firstname() {
         return $this->firstname;
     }
 
     /**
      *
      */
-    public function lastname()
-    {
+    public function lastname() {
         return $this->lastname;
     }
 
     /**
      *
      */
-    public function email()
-    {
+    public function email() {
         return $this->email;
     }
 
     /**
      *
      */
-    public function body()
-    {
+    public function body() {
         return $this->body;
     }
 
     /**
      *
      */
-    public function reported()
-    {
+    public function reported() {
         return $this->reported;
     }
 
     /**
      *
      */
-    public function resolved()
-    {
+    public function resolved() {
         return $this->resolved;
     }
 
     /**
      *
      */
-    public function resolvedby()
-    {
+    public function resolvedby() {
         return $this->resolvedby;
     }
 
     /**
      *
      */
-    public function locked()
-    {
+    public function locked() {
         return $this->locked;
     }
 
     /**
      *
      */
-    public function lockedby()
-    {
+    public function lockedby() {
         return $this->lockedby;
     }
 
     /**
      *
      */
-    public function upheld()
-    {
+    public function upheld() {
         return $this->upheld;
     }
 
     /**
      *
      */
-    public function create($COMMENT, $reportdata)
-    {
+    public function create($COMMENT, $reportdata) {
         // For when a user posts a report on a comment.
         // $reportdata is an array like:
         //    array (
@@ -318,7 +303,8 @@ class COMMENTREPORT
 									'" . mysqli_real_escape_string($db, $THEUSER->user_id()) . "'
 									)
 						";
-        } else {
+        }
+        else {
             $sql = "INSERT INTO commentreports
 									(comment_id, body, reported, firstname, lastname, email)
 							VALUES	('" . mysqli_real_escape_string($db, $COMMENT->comment_id()) . "',
@@ -344,7 +330,8 @@ class COMMENTREPORT
                 $this->user_id = $THEUSER->user_id();
                 $this->firstname = $THEUSER->firstname();
                 $this->lastname = $THEUSER->lastname();
-            } else {
+            }
+            else {
                 $this->email = $reportdata['email'];
                 $this->firstname = $reportdata['firstname'];
                 $this->lastname = $reportdata['lastname'];
@@ -372,7 +359,8 @@ class COMMENTREPORT
 
             if ($THEUSER->isloggedin()) {
                 $email = $THEUSER->email();
-            } else {
+            }
+            else {
                 $email = $this->email();
             }
 
@@ -391,7 +379,8 @@ class COMMENTREPORT
             send_template_email($data, $merge);
 
             return TRUE;
-        } else {
+        }
+        else {
             return FALSE;
         }
 
@@ -400,8 +389,7 @@ class COMMENTREPORT
     /**
      *
      */
-    public function display()
-    {
+    public function display() {
 
         $data = [];
 
@@ -427,8 +415,7 @@ class COMMENTREPORT
     /**
      *
      */
-    public function render($data)
-    {
+    public function render($data) {
         global $PAGE;
 
         $PAGE->display_commentreport($data);
@@ -438,8 +425,7 @@ class COMMENTREPORT
     /**
      *
      */
-    public function lock()
-    {
+    public function lock() {
         // Called when an admin user goes to examine a report, so that
         // only one person can edit at once.
 
@@ -458,11 +444,13 @@ class COMMENTREPORT
                 $this->locked = $time;
                 $this->lockedby = $THEUSER->user_id();
                 return TRUE;
-            } else {
+            }
+            else {
                 $PAGE->error_message("Sorry, we were unable to lock this report.");
                 return FALSE;
             }
-        } else {
+        }
+        else {
             $PAGE->error_message("You are not authorised to delete comments.");
             return FALSE;
         }
@@ -471,8 +459,7 @@ class COMMENTREPORT
     /**
      *
      */
-    public function unlock()
-    {
+    public function unlock() {
         // Unlock a comment so it can be examined by someone else.
 
         $q = $this->db->query("UPDATE commentreports
@@ -485,7 +472,8 @@ class COMMENTREPORT
             $this->locked = NULL;
             $this->lockedby = NULL;
             return TRUE;
-        } else {
+        }
+        else {
             return FALSE;
         }
     }
@@ -493,8 +481,7 @@ class COMMENTREPORT
     /**
      *
      */
-    public function resolve($upheld, $COMMENT)
-    {
+    public function resolve($upheld, $COMMENT) {
         // Resolve a report.
         // $upheld is true or false.
         // $COMMENT is an existing COMMENT object - we need this so
@@ -520,7 +507,8 @@ class COMMENTREPORT
 
                     $upheldsql = '1';
 
-                } else {
+                }
+                else {
                     $upheldsql = '0';
 
                     // Report has been removed, so un-modflag this comment.
@@ -545,16 +533,19 @@ class COMMENTREPORT
                     $this->upheld = $upheld;
 
                     return TRUE;
-                } else {
+                }
+                else {
                     $PAGE->error_message("Sorry, we couldn't resolve this report.");
                     return FALSE;
                 }
-            } else {
+            }
+            else {
                 $PAGE->error_message("This report has already been resolved (on " . $this->resolved . ")");
                 return FALSE;
             }
 
-        } else {
+        }
+        else {
             $PAGE->error_message("You are not authorised to resolve reports.");
             return FALSE;
         }

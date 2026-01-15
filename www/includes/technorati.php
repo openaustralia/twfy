@@ -7,8 +7,7 @@
 /**
  * Mysql> load data infile '/home/stefan/whitelabel.org/wp/convertedtitles' ignore into table titles;
  */
-function technorati_pretty()
-{
+function technorati_pretty() {
     global $arItems;
     technorati('http://www.openaustralia.org' . $_SERVER['REQUEST_URI']);
     $body = '';
@@ -47,8 +46,7 @@ function technorati_pretty()
 /**
  *
  */
-class xItem
-{
+class xItem {
     public $xTitle;
     public $xLink;
     public $xPermalink;
@@ -58,8 +56,7 @@ class xItem
 /**
  *
  */
-function technorati($url)
-{
+function technorati($url) {
     global $arItems, $itemCount;
 
     // Array of technorati links.
@@ -79,8 +76,7 @@ function technorati($url)
 /**
  * From http://wordpress.org/support/10/2363.
  */
-function doCosmos($urlstring)
-{
+function doCosmos($urlstring) {
 
     $techRati = "http://api.technorati.com/cosmos?format=xml&url=$urlstring&key=7e64960cc7e9b1cb4315e56a6544fce7";
 
@@ -133,8 +129,7 @@ function doCosmos($urlstring)
 /**
  *
  */
-function start1Element($parser, $tagName, $attrs)
-{
+function start1Element($parser, $tagName, $attrs) {
     global $curTag;
     $curTag .= "^$tagName";
     // Echo $counter." ".$curTag."<br> ";.
@@ -143,8 +138,7 @@ function start1Element($parser, $tagName, $attrs)
 /**
  *
  */
-function end1Element($parser, $tagName)
-{
+function end1Element($parser, $tagName) {
     global $curTag;
     $caret_pos = strrpos($curTag, '^');
     $curTag = substr($curTag, 0, $caret_pos);
@@ -154,8 +148,7 @@ function end1Element($parser, $tagName)
 /**
  *
  */
-function character1Data($parser, $data)
-{
+function character1Data($parser, $data) {
     global $itemCount, $curTag, $arItems;
     $titleKey = "^TAPI^DOCUMENT^ITEM^WEBLOG^NAME";
     $permalinkKey = "^TAPI^DOCUMENT^ITEM^NEARESTPERMALINK";
@@ -167,13 +160,16 @@ function character1Data($parser, $data)
         $arItems[$itemCount] = new xItem();
         // Set new item object's properties.
         $arItems[$itemCount]->xTitle = $data;
-    } elseif ($curTag == $permalinkKey) {
+    }
+    elseif ($curTag == $permalinkKey) {
         $arItems[$itemCount]->xPermalink = $data;
         // $itemCount++;
-    } elseif ($curTag == $linkKey) {
+    }
+    elseif ($curTag == $linkKey) {
         $arItems[$itemCount]->xLink = $data;
         // $itemCount++;
-    } elseif ($curTag == $createdKey) {
+    }
+    elseif ($curTag == $createdKey) {
         $arItems[$itemCount]->xCreated = $data;
         $itemCount++;
     }

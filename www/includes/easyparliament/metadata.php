@@ -73,7 +73,7 @@
  */
 class Metadata {
 
-  private $page = [
+    private $page = [
 
     // Things used on EVERY page, unless overridden for a page:
     'default' => [
@@ -967,14 +967,14 @@ class Metadata {
 
 
 
-  // We just use the sections for creating page headings/titles.
-  // The 'title' is always used for the <title> tag of the page.
-  // The text displayed on the page itself will also be this,.
-  /**
-   * UNLESS the section has a 'heading', in which case that's used instead.
-   */
+    // We just use the sections for creating page headings/titles.
+    // The 'title' is always used for the <title> tag of the page.
+    // The text displayed on the page itself will also be this,.
+    /**
+     * UNLESS the section has a 'heading', in which case that's used instead.
+     */
 
-  private $section = [
+    private $section = [
 
 
     'about' => [
@@ -1011,56 +1011,56 @@ class Metadata {
 
     ];
 
-  /**
-   *
-   */
-  public function set_metadata($args) {
+    /**
+     *
+     */
+    public function set_metadata($args) {
 
-    if (isset($args["section"])) {
-      $type = "section";
-      $item = $args["section"];
-    }
-    else {
-      $type = "page";
-      $item = $args["page"];
-    }
+        if (isset($args["section"])) {
+            $type = "section";
+            $item = $args["section"];
+        }
+        else {
+            $type = "page";
+            $item = $args["page"];
+        }
 
-    $key = $args["key"];
-    $value = $args["value"];
+        $key = $args["key"];
+        $value = $args["value"];
 
-    twfy_debug("DATA", "Setting: " . $type . "[" . $item . "][" . $key . "] = '" . print_r($value, TRUE) . "'");
+        twfy_debug("DATA", "Setting: " . $type . "[" . $item . "][" . $key . "] = '" . print_r($value, TRUE) . "'");
 
-    $this->$type[$item][$key] = $value;
-  }
-
-  /**
-   *
-   */
-  public function get_metadata($args, $type) {
-
-    if (is_array($args)) {
-      $item = $args[$type];
-      $key = $args['key'];
-    }
-    else {
-      $var = "this_" . $type;
-      // $this_page or $this_section.
-      $item = $$var;
-      $key = $args;
+        $this->$type[$item][$key] = $value;
     }
 
-    twfy_debug("DATA", "$type: $item, $key");
+    /**
+     *
+     */
+    public function get_metadata($args, $type) {
 
-    // If the item requested exists, return it.
-    if (isset($this->$type[$item][$key])) {
-      return $this->$type[$item][$key];
-    }
-    elseif (isset($this->$type['default'][$key])) {
-      return $this->$type['default'][$key];
-    }
+        if (is_array($args)) {
+            $item = $args[$type];
+            $key = $args['key'];
+        }
+        else {
+            $var = "this_" . $type;
+            // $this_page or $this_section.
+            $item = $$var;
+            $key = $args;
+        }
 
-    // We got nothin'.
-    return FALSE;
-  }
+        twfy_debug("DATA", "$type: $item, $key");
+
+        // If the item requested exists, return it.
+        if (isset($this->$type[$item][$key])) {
+            return $this->$type[$item][$key];
+        }
+        elseif (isset($this->$type['default'][$key])) {
+            return $this->$type['default'][$key];
+        }
+
+        // We got nothin'.
+        return FALSE;
+    }
 
 }

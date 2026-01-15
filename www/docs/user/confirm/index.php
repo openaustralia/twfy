@@ -45,7 +45,8 @@ if (get_http_var('welcome') == 't') {
                 href="mailto:<?php echo CONTACTEMAIL; ?>">let us know</a> if you find a bug, or have a suggestion.</p>
 
         <?php
-    } else {
+    }
+    else {
         // Oops, something must have gone wrong when the user was logged in.
         // It shouldn't do, but...
         $PAGE->error_message("Sorry, we couldn't log you in");
@@ -61,7 +62,8 @@ if (get_http_var('welcome') == 't') {
     $PAGE->page_end();
 
 
-} elseif (get_http_var('t') != '') {
+}
+elseif (get_http_var('t') != '') {
     // The user's first visit to this page, and they have a registration token.
     // So let's confirm them and hope they get logged in...
 
@@ -71,7 +73,8 @@ if (get_http_var('welcome') == 't') {
         confirm_error();
     }
 
-} else {
+}
+else {
     // We have no registration token, and no notification of welcome...
 
     confirm_error();
@@ -81,8 +84,7 @@ if (get_http_var('welcome') == 't') {
 /**
  *
  */
-function confirm_error()
-{
+function confirm_error() {
     // Friendly error, not a normal one!
     global $PAGE, $this_page;
 

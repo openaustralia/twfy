@@ -23,11 +23,14 @@ if (isset($data['rows'])) {
             // We fake it here. We hope this section only has a single line like
             // "The Secretary of State was asked-" and we don't want to make it a link.
             $has_content = FALSE;
-        } elseif (isset($row['contentcount']) && $row['contentcount'] > 0) {
+        }
+        elseif (isset($row['contentcount']) && $row['contentcount'] > 0) {
             $has_content = TRUE;
-        } elseif ($row['htype'] == '11' && $hansardmajors[$row['major']]['type'] == 'other') {
+        }
+        elseif ($row['htype'] == '11' && $hansardmajors[$row['major']]['type'] == 'other') {
             $has_content = TRUE;
-        } else {
+        }
+        else {
             $has_content = FALSE;
         }
 
@@ -36,7 +39,8 @@ if (isset($data['rows'])) {
             $entry['excerpt'] = trim_characters($entry['excerpt'], 0, 200);
         }
         if ($has_content) {
-        } else {
+        }
+        else {
             unset($entry['listurl']);
             unset($entry['commentsurl']);
             unset($entry['comment']);
@@ -52,6 +56,7 @@ if (isset($data['rows'])) {
 
     }
     api_output($out);
-} else {
+}
+else {
     api_error('No data to display');
 }

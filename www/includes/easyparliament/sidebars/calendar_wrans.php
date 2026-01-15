@@ -23,13 +23,15 @@ if ($this_page == 'wransday') {
             'onday' => $date
         ];
         $title = 'Answers this month';
-    } else {
+    }
+    else {
         $args = [
             'months' => 1
         ];
         $title = 'Recent written answers';
     }
-} else {
+}
+else {
     $args = [
         // How many recent months to show.
         'months' => 1
