@@ -52,9 +52,9 @@ global $xapiandb;
  */
 class SEARCHENGINE {
 
-    public $query = null;
-    public $stemerr = null;
-    public $enquire = null
+    public $query = NULL;
+    public $stemerr = NULL;
+    public $enquire = NULL
     public $wordchars = '';
     public $words = [];
     public $phrases = [];

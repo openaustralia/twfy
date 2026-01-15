@@ -126,7 +126,7 @@ function alert_details_to_criteria($details) {
  */
 class ALERT {
 
-    private $db = null;
+    private $db = NULL;
 
     public $alert_id = "";
     public $email = "";

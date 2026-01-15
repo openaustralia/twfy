@@ -30,7 +30,7 @@ include_once INCLUDESPATH . "wikipedia.php";
  */
 class GLOSSARY {
 
-    private $db = null;
+    private $db = NULL;
 
     /**
      * How many glossary entries do we have.

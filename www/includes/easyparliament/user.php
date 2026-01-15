@@ -64,7 +64,7 @@
  */
 class USER {
 
-    private $db = null;
+    private $db = NULL;
 
     /**
      * So we have an ID for non-logged in users reporting comments etc.
@@ -955,7 +955,7 @@ class USER {
  */
 class THEUSER extends USER {
 
-    private $db = null;
+    private $db = NULL;
 
     /**
      * This will become true if all goes well...

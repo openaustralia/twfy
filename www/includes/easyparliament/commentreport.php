@@ -20,7 +20,7 @@
  */
 class COMMENTREPORT {
 
-    private $db = null;
+    private $db = NULL;
 
     public $report_id = '';
     public $comment_id = '';

@@ -22,7 +22,7 @@
  */
 class COMMENT {
 
-    private $db = null;
+    private $db = NULL;
 
     public $comment_id = '';
     public $user_id = '';

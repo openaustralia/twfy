@@ -10,7 +10,7 @@
  */
 class PEOPLE {
 
-    private $db = null;
+    private $db = NULL;
 
     /**
      *

@@ -12,7 +12,7 @@ include_once INCLUDESPATH . "easyparliament/glossary.php";
  */
 class MEMBER {
 
-    private $db = null;
+    private $db = NULL;
 
     public $member_id;
     public $person_id;

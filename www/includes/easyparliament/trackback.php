@@ -26,7 +26,7 @@
  */
 class TRACKBACK {
 
-    private $db = null;
+    private $db = NULL;
 
     private $trackbacks_enabled = FALSE;
 
