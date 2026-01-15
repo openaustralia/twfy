@@ -58,10 +58,12 @@ class GLOSSARY {
      * Constructor...
      */
     public function __construct($args = []) {
-        // We can optionally start the glossary with one of several arguments
-        //        1. glossary_id - treat the glossary as a single term
-        //        2. glossary_term - search within glossary for a term
-        // With no argument it will pick up all items.
+        /*
+         * We can optionally start the glossary with one of several arguments
+         *        1. glossary_id - treat the glossary as a single term
+         *        2. glossary_term - search within glossary for a term
+         * With no argument it will pick up all items.
+         */
 
         $this->db = new ParlDB();
 
@@ -198,24 +200,26 @@ class GLOSSARY {
 
         $EDITQUEUE = new GLOSSEDITQUEUE();
 
-        // Assuming that everything is ok, we will need:
-        // For epobject:
-        //         title VARCHAR(255),
-        //         body TEXT,
-        //         type INTEGER,
-        //         created DATETIME,
-        //         modified DATETIME,
-        // and for editqueue:
-        //        edit_id INTEGER PRIMARY KEY NOT NULL,
-        //        user_id INTEGER,
-        //        edit_type INTEGER,
-        //        epobject_id_l INTEGER,
-        //        title VARCHAR(255),
-        //        body TEXT,
-        //        submitted DATETIME,
-        //        editor_id INTEGER,
-        //        approved BOOLEAN,
-        //        decided DATETIME.
+        /*
+         * Assuming that everything is ok, we will need:
+         * For epobject:
+         *         title VARCHAR(255),
+         *         body TEXT,
+         *         type INTEGER,
+         *         created DATETIME,
+         *         modified DATETIME,
+         * and for editqueue:
+         *        edit_id INTEGER PRIMARY KEY NOT NULL,
+         *        user_id INTEGER,
+         *        edit_type INTEGER,
+         *        epobject_id_l INTEGER,
+         *        title VARCHAR(255),
+         *        body TEXT,
+         *        submitted DATETIME,
+         *        editor_id INTEGER,
+         *        approved BOOLEAN,
+         *        decided DATETIME.
+         *        */
 
         global $THEUSER;
 
