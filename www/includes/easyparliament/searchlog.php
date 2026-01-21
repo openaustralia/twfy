@@ -25,13 +25,13 @@
 class SEARCHLOG
 {
 
+    private $db = null;
+
     /**
      *
      */
-    public function SEARCHLOG()
-    {
+    public function __construct() {
         $this->SEARCHURL = new URL('search');
-
         $this->db = new ParlDB();
     }
 

@@ -20,6 +20,10 @@ jobs:
           tools: composer
         env:
           fail-fast: true
+      - name: Lint
+        run: make lint-ci
+        env:
+          fail-fast: true
       - name: composer
         run: composer install
         env:
@@ -28,7 +32,7 @@ jobs:
         run: composer validate
         env:
           fail-fast: true
-      - name: Lint
-        run: make lint-ci
+      - name: phpcs
+        run: make phpcs-ci
         env:
           fail-fast: true

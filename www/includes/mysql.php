@@ -110,6 +110,8 @@ $mysqltotalduration = 0.0;
  */
 class MySQLQuery {
 
+  private $conn = null;
+
   public $fieldnames_byid = [];
   public $fieldnames_byname = [];
   public $success = TRUE;
@@ -122,7 +124,7 @@ class MySQLQuery {
   /**
    *
    */
-  public function MySQLQuery($conn) {
+  public function __construct($conn) {
     $this->conn = $conn;
   }
 
@@ -346,6 +348,11 @@ $global_connection = NULL;
  *
  */
 class MySQL {
+
+  private $conn = null;
+
+  public function __construct() {
+  }
 
   /**
    *

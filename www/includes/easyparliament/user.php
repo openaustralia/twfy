@@ -1132,7 +1132,7 @@ class THEUSER extends USER {
   /**
    *
    */
-  public function login($returl = "", $expire) {
+  public function login($returl = "", $expire = "session") {
 
     // This is used to log the user in. Duh.
     // You should already have checked the user's email and password using

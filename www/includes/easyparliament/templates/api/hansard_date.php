@@ -45,8 +45,9 @@ if (isset($data['rows'])) {
 
         if ($row['htype'] == '10') {
             $out[] = ['entry' => $entry, 'subs' => []];
-        } else {
-            $out[sizeof($out) - 1]['subs'][] = $entry;
+        }
+        else {
+            $out[count($out) - 1]['subs'][] = $entry;
         }
 
     }

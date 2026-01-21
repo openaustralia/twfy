@@ -56,6 +56,12 @@
  */
 class URL {
 
+  private $session_vars = [];
+
+  private $original_session_vars;
+
+  private $destinationpage;
+
   /**
    *
    */

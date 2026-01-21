@@ -24,10 +24,15 @@ docker-run:
 docker: docker-build docker-run
 
 lint:
-	./vendor/bin/phpcs --tab-width=4 --report=summary www scripts
+	find -L www scripts -iregex '.*\.php$$' -print0 | xargs -0 -n 1 -P 4 php -l
 
-lint-verbose:
-	./vendor/bin/phpcs --tab-width=4 www scripts
+lint-ci: lint
 
-lint-ci:
-	./vendor/bin/phpcs --tab-width=4 www scripts --report=json --report-file=phpcs-report.json
+phpcs:
+	./vendor/bin/phpcs --standard=phpcs.xml --tab-width=4 --report=summary www scripts
+
+phpcs-verbose:
+	./vendor/bin/phpcs --standard=phpcs.xml --tab-width=4 www scripts
+
+phpcs-ci:
+	./vendor/bin/phpcs --standard=phpcs.xml --tab-width=4 www scripts --report=json --report-file=phpcs-report.json
