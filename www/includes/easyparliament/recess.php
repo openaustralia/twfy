@@ -244,7 +244,8 @@ $GLOBALS['recessdates'][1] = [
     ['2025-10-31', '2025-11-02'],
     ['2025-11-07', '2025-11-23'],
     ['2025-11-28', '2025-12-31'],
-    ['2026-01-01', '2026-02-02'],
+    ['2026-01-01', '2026-01-18'],
+    ['2026-01-21', '2026-02-02'],
     ['2026-02-06', '2026-02-08'],
     ['2026-02-13', '2026-03-01'],
     ['2026-03-06', '2026-03-09'],
@@ -263,7 +264,7 @@ $GLOBALS['recessdates'][1] = [
     ['2026-10-16', '2026-10-25'],
     ['2026-10-30', '2026-11-15'],
     ['2026-11-20', '2026-11-22'],
-    ['2026-11-27', '2026-12-31']
+    ['2026-11-27', '2026-12-31'],
 ];
 
 /**
@@ -274,7 +275,7 @@ $GLOBALS['recessdates'][1] = [
  * while ($line = fgets($h)){
  * list($name, $from, $to) = split(",", $line);
  * if ($from <= $today and $today <= $to) {
- * return array($name, trim($from), trim($to));
+ * return [$name, trim($from), trim($to)];
  * }
  * }
  * Second manual override file.
@@ -282,7 +283,7 @@ $GLOBALS['recessdates'][1] = [
  * while ($line = fgets($h)){
  * list($name, $from, $to) = split(",", $line);
  * if ($from <= $today and $today <= $to) {
- * return array($name, trim($from), trim($to));
+ * return [$name, trim($from), trim($to)];
  * }
  * }
  * return false;

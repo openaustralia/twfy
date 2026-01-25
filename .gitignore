@@ -12,6 +12,5 @@ scripts/run-with-lockfile
 scripts/rssgenerate-lockfile
 scripts/alerts-lastsent
 conf/general
-_mysqldata
-
 /vendor/
+_mysqldata/*
