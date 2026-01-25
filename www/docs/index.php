@@ -31,8 +31,7 @@ $PAGE->block_start(['id' => 'intro', 'title' => 'At OpenAustralia.org you can:']
     /**
      * Find out more about your MP / Find out more about David Howarth, your MP.
      */
-    function your_mp_bullet_point()
-    {
+    function your_mp_bullet_point() {
         global $THEUSER, $MPURL;
         print "<li>";
         $pc_form = TRUE;
@@ -73,8 +72,7 @@ $PAGE->block_start(['id' => 'intro', 'title' => 'At OpenAustralia.org you can:']
     /**
      * Search / Search for 'mouse'.
      */
-    function search_bullet_point()
-    {
+    function search_bullet_point() {
         global $SEARCHURL;
         ?>
         <li>
@@ -121,15 +119,15 @@ $PAGE->block_start(['id' => 'intro', 'title' => 'At OpenAustralia.org you can:']
      * Sign up to be emailed when something relevant to you happens in Parliament
      * Sign up to be emailed when 'mouse' is mentioned in Parliament.
      */
-    function email_alert_bullet_point()
-    {
+    function email_alert_bullet_point() {
         if (get_http_var("keyword")) { ?>
             <li>
                 <p><a href="<?php echo WEBPATH . "alert?keyword=" . htmlspecialchars(get_http_var('keyword')) ?>&only=1"><strong>Sign
                             up to be emailed when '<?php echo htmlspecialchars(get_http_var('keyword')) ?>' is mentioned in
                             Parliament</strong></a></p>
             </li>
-        <?php } else { ?>
+        <?php }
+        else { ?>
             <li>
                 <p><a href="<?php echo WEBPATH . "alert/" ?>"><strong>Sign up to be emailed when something relevant to you
                             happens in Parliament</strong></a></p>
@@ -140,8 +138,7 @@ $PAGE->block_start(['id' => 'intro', 'title' => 'At OpenAustralia.org you can:']
     /**
      * Comment on (recent debates)
      */
-    function comment_on_recent_bullet_point()
-    {
+    function comment_on_recent_bullet_point() {
         global $hansardmajors;
         ?>
         <li>
@@ -182,7 +179,8 @@ $PAGE->block_start(['id' => 'intro', 'title' => 'At OpenAustralia.org you can:']
         email_alert_bullet_point();
         your_mp_bullet_point();
         comment_on_recent_bullet_point();
-    } else {
+    }
+    else {
         your_mp_bullet_point();
         search_bullet_point();
         email_alert_bullet_point();

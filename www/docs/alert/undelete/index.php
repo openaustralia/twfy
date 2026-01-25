@@ -33,41 +33,41 @@ $ALERT = new ALERT();
 $success = $ALERT->confirm(get_http_var('t'));
 
 if ($success) {
-  undelete_success();
+    undelete_success();
 }
 else {
-  undelete_error();
+    undelete_error();
 }
 
 /**
  * FUNCTION:  undelete_success.
  */
 function undelete_success() {
-  global $PAGE, $this_page;
-  $this_page = 'alertundeletesucceeded';
-  $PAGE->page_start();
-  $PAGE->stripe_start();
-  ?>
+    global $PAGE, $this_page;
+    $this_page = 'alertundeletesucceeded';
+    $PAGE->page_start();
+    $PAGE->stripe_start();
+    ?>
     <p>Your alert has been resubscribed.</p>
     <p>You will now receive email alerts on any day when there are entries in Hansard that match your criteria.</p>
-  <?php
-  $PAGE->stripe_end();
-  $PAGE->page_end();
+    <?php
+    $PAGE->stripe_end();
+    $PAGE->page_end();
 }
 
 /**
  * FUNCTION:  undelete_error.
  */
 function undelete_error() {
-  // Friendly error, not a normal one!
-  global $PAGE, $this_page;
-  $this_page = 'alertundeletefailed';
-  $PAGE->page_start();
-  $PAGE->stripe_start();
-  ?>
+    // Friendly error, not a normal one!
+    global $PAGE, $this_page;
+    $this_page = 'alertundeletefailed';
+    $PAGE->page_start();
+    $PAGE->stripe_start();
+    ?>
     <p>The link you followed to reach this page appears to be incomplete.</p>
     <p>Please do <a href="mailto:<?php echo CONTACTEMAIL; ?>">email us</a> and let us know, and we'll help out!</p>
-  <?php
-  $PAGE->stripe_end();
-  $PAGE->page_end();
+    <?php
+    $PAGE->stripe_end();
+    $PAGE->page_end();
 }

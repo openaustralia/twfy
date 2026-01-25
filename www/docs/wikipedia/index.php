@@ -38,7 +38,8 @@ $PAGE->stripe_start();
     foreach ($site as $k => $v) {
         if ($k == $ip) {
             $o = "<strong>$v</strong>";
-        } else {
+        }
+        else {
             $o = "<a href=\"./?ip=$k\">$v</a>";
         }
         $out[] = $o;
@@ -85,7 +86,8 @@ foreach ($m as $row) {
     print "<h3>$row[3]</h3>";
     if (preg_match('#<table.*?</table>#s', $file, $m)) {
         print preg_replace('#href=(\'|")(.*?)\1#', 'href=\1http://en.wikipedia.org\2\1', $m[0]);
-    } elseif (preg_match('#<div class="firstrevisionheader.*?</div>#s', $file, $m)) {
+    }
+    elseif (preg_match('#<div class="firstrevisionheader.*?</div>#s', $file, $m)) {
         print preg_replace('#href=(\'|")(.*?)\1#', 'href=\1http://en.wikipedia.org\2\1', $m[0]);
     }
 }

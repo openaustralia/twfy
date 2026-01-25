@@ -17,7 +17,8 @@ if (get_http_var("d") != "") {
     $LIST = new SPLIST();
     $LIST->display('date', $args);
 
-} elseif (get_http_var('id') != "") {
+}
+elseif (get_http_var('id') != "") {
     $this_page = "spdebates";
     $args = [
         'gid' => get_http_var('id'),
@@ -36,7 +37,8 @@ if (get_http_var("d") != "") {
     // Glossary can be turned off in the url.
     if (get_http_var('ug') == 1) {
         $args['glossarise'] = 0;
-    } else {
+    }
+    else {
         $args['sort'] = "regexp_replace";
         $GLOSSARY = new GLOSSARY($args);
     }
@@ -52,7 +54,8 @@ if (get_http_var("d") != "") {
         exit;
     }
 
-} elseif (get_http_var('y') != '') {
+}
+elseif (get_http_var('y') != '') {
 
     $this_page = 'spdebatesyear';
 
@@ -83,7 +86,8 @@ if (get_http_var("d") != "") {
         ]
     ]);
 
-} elseif (get_http_var('gid') != '') {
+}
+elseif (get_http_var('gid') != '') {
     $this_page = 'spdebate';
     $args = ['gid' => get_http_var('gid')];
     $LIST = new SPLIST();
@@ -103,7 +107,8 @@ if (get_http_var("d") != "") {
         $COMMENTLIST->display('ep', $args);
         $PAGE->stripe_end();
     }
-} else {
+}
+else {
     $this_page = "spdebatesfront";
     $PAGE->page_start();
     $PAGE->stripe_start();

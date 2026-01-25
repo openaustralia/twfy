@@ -22,7 +22,8 @@ if ($this_page == 'spdebatesday') {
     ];
     $title = 'Debates this month';
 
-} else {
+}
+else {
     $args = [
         // How many recent months to show.
         'months' => 1

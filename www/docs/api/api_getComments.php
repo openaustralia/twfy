@@ -7,8 +7,7 @@
 /**
  *
  */
-function api_getComments_front()
-{
+function api_getComments_front() {
     ?>
     <p><big>Fetch comments left on OpenAustralia.</big></p>
 
@@ -36,8 +35,7 @@ function api_getComments_front()
 /**
  *
  */
-function api_getComments_search($s)
-{
+function api_getComments_search($s) {
     $args = [
         's' => $s,
         'p' => get_http_var('page'),
@@ -50,8 +48,7 @@ function api_getComments_search($s)
 /**
  *
  */
-function api_getComments()
-{
+function api_getComments() {
     $args = [
         'page' => get_http_var('p'),
         'num' => get_http_var('num'),
@@ -63,8 +60,7 @@ function api_getComments()
 /**
  *
  */
-function api_getComments_pid($pid)
-{
+function api_getComments_pid($pid) {
     $args = [
         'page' => get_http_var('p'),
         'num' => get_http_var('num'),

@@ -28,8 +28,9 @@ include_once INCLUDESPATH . "wikipedia.php";
 /**
  *
  */
-class GLOSSARY
-{
+class GLOSSARY {
+
+    private $db = NULL;
 
     /**
      * How many glossary entries do we have.
@@ -39,29 +40,30 @@ class GLOSSARY
      * (changes depending on how GLOSSARY is called.
      */
     public $hansard_count;        /**
-              * How many times does the phrase appear in hansard?
-              */
+                                   * How many times does the phrase appear in hansard?
+                                   */
     /**
      * Search term.
      */
     public $query;
     public $glossary_id;        /**
-              * If this is set then we only have 1 glossary term.
-              */
+                                 * If this is set then we only have 1 glossary term.
+                                 */
     public $current_term;        /**
-              * Will only be set if we have a valid epobject_id.
-              */
+                                  * Will only be set if we have a valid epobject_id.
+                                  */
     public $current_letter;
 
     /**
      * Constructor...
      */
-    public function GLOSSARY($args = [])
-    {
-        // We can optionally start the glossary with one of several arguments
-        //        1. glossary_id - treat the glossary as a single term
-        //        2. glossary_term - search within glossary for a term
-        // With no argument it will pick up all items.
+    public function __construct($args = []) {
+        /*
+         * We can optionally start the glossary with one of several arguments
+         *        1. glossary_id - treat the glossary as a single term
+         *        2. glossary_term - search within glossary for a term
+         * With no argument it will pick up all items.
+         */
 
         $this->db = new ParlDB();
 
@@ -103,8 +105,7 @@ class GLOSSARY
     /**
      *
      */
-    public function get_glossary_item($args = [])
-    {
+    public function get_glossary_item($args = []) {
         // Search for and fetch glossary item with title or glossary_id
         // We could also search glossary text that contains the title text, for cross references.
 
@@ -135,12 +136,14 @@ class GLOSSARY
                     if ($next == 1) {
                         $this->next_term = $term;
                         break;
-                    } elseif ($term['glossary_id'] == $args['glossary_id']) {
+                    }
+                    elseif ($term['glossary_id'] == $args['glossary_id']) {
                         $this->glossary_id = $args['glossary_id'];
                         $this->current_term = $term;
                         $next = 1;
 
-                    } else {
+                    }
+                    else {
                         $this->previous_term = $term;
                     }
                 }
@@ -155,7 +158,8 @@ class GLOSSARY
             }
 
             return ($this->num_terms);
-        } else {
+        }
+        else {
             return FALSE;
         }
     }
@@ -163,8 +167,7 @@ class GLOSSARY
     /**
      *
      */
-    public function search_glossary($args = [])
-    {
+    public function search_glossary($args = []) {
         // Search for and fetch glossary item with a title
         // Useful for the search page, and nowhere else (so far)
 
@@ -189,8 +192,7 @@ class GLOSSARY
     /**
      *
      */
-    public function create(&$data)
-    {
+    public function create(&$data) {
         // Add a Glossary definition.
         // Sets visiblity to 0, and awaits moderator intervention.
         // For this we need to start up an epobject of type 2 and then an editqueue item
@@ -198,24 +200,26 @@ class GLOSSARY
 
         $EDITQUEUE = new GLOSSEDITQUEUE();
 
-        // Assuming that everything is ok, we will need:
-        // For epobject:
-        //         title VARCHAR(255),
-        //         body TEXT,
-        //         type INTEGER,
-        //         created DATETIME,
-        //         modified DATETIME,
-        // and for editqueue:
-        //        edit_id INTEGER PRIMARY KEY NOT NULL,
-        //        user_id INTEGER,
-        //        edit_type INTEGER,
-        //        epobject_id_l INTEGER,
-        //        title VARCHAR(255),
-        //        body TEXT,
-        //        submitted DATETIME,
-        //        editor_id INTEGER,
-        //        approved BOOLEAN,
-        //        decided DATETIME.
+        /*
+         * Assuming that everything is ok, we will need:
+         * For epobject:
+         *         title VARCHAR(255),
+         *         body TEXT,
+         *         type INTEGER,
+         *         created DATETIME,
+         *         modified DATETIME,
+         * and for editqueue:
+         *        edit_id INTEGER PRIMARY KEY NOT NULL,
+         *        user_id INTEGER,
+         *        edit_type INTEGER,
+         *        epobject_id_l INTEGER,
+         *        title VARCHAR(255),
+         *        body TEXT,
+         *        submitted DATETIME,
+         *        editor_id INTEGER,
+         *        approved BOOLEAN,
+         *        decided DATETIME.
+         *        */
 
         global $THEUSER;
 
@@ -270,7 +274,8 @@ class GLOSSARY
 
         if ($success) {
             return ($success);
-        } else {
+        }
+        else {
             return FALSE;
         }
     }
@@ -278,8 +283,7 @@ class GLOSSARY
     /**
      *
      */
-    public function delete($glossary_id)
-    {
+    public function delete($glossary_id) {
         $q = $this->db->query("DELETE from glossary where glossary_id=$glossary_id LIMIT 1;");
         // If that worked, we need to update the editqueue,
         // and remove the term from the already generated object list.
@@ -292,8 +296,7 @@ class GLOSSARY
     /**
      *
      */
-    public function glossarise($body, $tokenize = 0, $urlize = 0)
-    {
+    public function glossarise($body, $tokenize = 0, $urlize = 0) {
         // Turn a body of text into a link-up wonderland of glossary joy.
 
         global $this_page;
@@ -334,10 +337,12 @@ class GLOSSARY
             // Catch glossary terms within their own definitions.
             if ($glossary_id == $this->glossary_id) {
                 $replacewords[] = "<strong>\\1</strong>";
-            } else {
+            }
+            else {
                 if ($this_page == "admin_glossary") {
                     $link_url = "#gl" . $glossary_id;
-                } else {
+                }
+                else {
                     $link_url = $URL->generate('url');
                 }
                 $title = htmlentities(trim_characters($term_body, 0, 80));
@@ -367,13 +372,13 @@ class GLOSSARY
     /**
      *
      */
-    public function glossarise_titletags($body)
-    {
+    public function glossarise_titletags($body) {
         if (is_array($body)) {
             foreach ($body as $i => $t) {
                 $body[$i] = antiTagInTag($t);
             }
-        } else {
+        }
+        else {
             $body = antiTagInTag($body);
         }
         return $body;

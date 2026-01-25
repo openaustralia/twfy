@@ -9,8 +9,7 @@ include_once 'api_getMembers.php';
 /**
  *
  */
-function api_getMSPs_front()
-{
+function api_getMSPs_front() {
     ?>
     <p><big>Fetch a list of MSPs.</big></p>
 
@@ -42,31 +41,27 @@ function api_getMSPs_front()
 /**
  * See api_getMembers.php for these shared functions .
  */
-function api_getMSPs_party($s)
-{
+function api_getMSPs_party($s) {
     api_getMembers_party(4, $s);
 }
 
 /**
  *
  */
-function api_getMSPs_search($s)
-{
+function api_getMSPs_search($s) {
     api_getMembers_search(4, $s);
 }
 
 /**
  *
  */
-function api_getMSPs_date($date)
-{
+function api_getMSPs_date($date) {
     api_getMembers_date(4, $date);
 }
 
 /**
  *
  */
-function api_getMSPs($date = 'now()')
-{
+function api_getMSPs($date = 'now()') {
     api_getMembers(4, $date);
 }

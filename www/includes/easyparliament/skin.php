@@ -55,8 +55,7 @@
  * v1.2    2003-11-16
  * Changed from using global variables to constants.
  */
-class SKIN
-{
+class SKIN {
 
     public $skin = 'default';
 
@@ -87,14 +86,14 @@ class SKIN
     /**
      *
      */
-    public function SKIN()
-    {
+    public function __construct() {
         global $this_page;
 
         if ($this_page == "skin" && get_http_var("newskin") != "") {
             // We only allow the reskinning on the "skin" page.
             $this->new_skin(get_http_var("newskin"));
-        } else {
+        }
+        else {
             $this->set_skin(get_cookie_var("skin"));
         }
 
@@ -103,8 +102,7 @@ class SKIN
     /**
      *
      */
-    public function new_skin($skin)
-    {
+    public function new_skin($skin) {
         // If this is a valid skin, then set a cookie.
 
         if (isset($skin) && isset($this->skins[$skin])) {
@@ -117,20 +115,19 @@ class SKIN
     /**
      *
      */
-    public function get_skin()
-    {
+    public function get_skin() {
         return $this->skin;
     }
 
     /**
      *
      */
-    public function set_skin($skin)
-    {
+    public function set_skin($skin) {
 
         if (isset($skin) && isset($this->skins[$skin])) {
             $this->skin = $skin;
-        } else {
+        }
+        else {
             $this->skin = "default";
         }
 
@@ -140,8 +137,7 @@ class SKIN
     /**
      *
      */
-    public function output_stylesheets()
-    {
+    public function output_stylesheets() {
 
         print "\t<!-- skin: " . $this->skin . " -->\n";
 

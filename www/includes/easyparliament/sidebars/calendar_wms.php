@@ -23,13 +23,15 @@ if ($this_page == 'wmsday') {
             'onday' => $date
         ];
         $title = 'Written Ministerial Statements this month';
-    } else {
+    }
+    else {
         $args = [
             'months' => 1
         ];
         $title = 'Recent Written Ministerial Statements';
     }
-} else {
+}
+else {
     $args = [
         // How many recent months to show.
         'months' => 1

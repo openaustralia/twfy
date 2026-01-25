@@ -9,8 +9,7 @@ include_once INCLUDESPATH . 'easyparliament/member.php';
 /**
  *
  */
-function api_getMSP_front()
-{
+function api_getMSP_front() {
     ?>
     <p><big>Fetch a particular MSP.</big></p>
 
@@ -36,8 +35,7 @@ function api_getMSP_front()
 /**
  *
  */
-function _api_getMSP_row($row)
-{
+function _api_getMSP_row($row) {
     global $parties;
     $row['full_name'] = member_full_name(
         $row['house'],
@@ -60,15 +58,15 @@ function _api_getMSP_row($row)
 /**
  *
  */
-function api_getMSP_id($id)
-{
+function api_getMSP_id($id) {
     $db = new ParlDB();
     $q = $db->query("select * from member
 		where house=4 and person_id = '" . mysqli_real_escape_string($db, $id) . "'
 		order by left_house desc");
     if ($q->rows()) {
         _api_getMSP_output($q);
-    } else {
+    }
+    else {
         api_error('Unknown person ID');
     }
 }
@@ -76,21 +74,24 @@ function api_getMSP_id($id)
 /**
  *
  */
-function api_getMSP_postcode($pc)
-{
+function api_getMSP_postcode($pc) {
     $pc = preg_replace('#[^a-z0-9 ]#i', '', $pc);
     if (validate_postcode($pc)) {
         $constituencies = postcode_to_constituencies($pc);
         if ($constituencies == 'CONNECTION_TIMED_OUT') {
             api_error('Connection timed out');
-        } elseif (isset($constituencies['SPC'])) {
+        }
+        elseif (isset($constituencies['SPC'])) {
             _api_getMSP_constituency($constituencies);
-        } elseif (isset($constituencies['WMC'])) {
+        }
+        elseif (isset($constituencies['WMC'])) {
             api_error('Non-Scottish postcode');
-        } else {
+        }
+        else {
             api_error('Unknown postcode');
         }
-    } else {
+    }
+    else {
         api_error('Invalid postcode');
     }
 }
@@ -98,8 +99,7 @@ function api_getMSP_postcode($pc)
 /**
  *
  */
-function api_getMSP_constituency($constituency)
-{
+function api_getMSP_constituency($constituency) {
     $output = _api_getMSP_constituency([$constituency]);
     if (!$output) {
         api_error('Unknown constituency, or no MSP for that constituency');
@@ -110,8 +110,7 @@ function api_getMSP_constituency($constituency)
  * Very similary to MEMBER's constituency_to_person_id
  * Should all be abstracted properly :-/.
  */
-function _api_getMSP_constituency($constituencies)
-{
+function _api_getMSP_constituency($constituencies) {
     $db = new ParlDB();
 
     $cons = [];
@@ -139,8 +138,7 @@ function _api_getMSP_constituency($constituencies)
 /**
  *
  */
-function _api_getMSP_output($q)
-{
+function _api_getMSP_output($q) {
     $output = [];
     $last_mod = 0;
     for ($i = 0; $i < $q->rows(); $i++) {

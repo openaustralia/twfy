@@ -665,17 +665,17 @@ class PAGE {
           'help' => []
       ];
 
-    // If the user's postcode is set, then we allow them to view the
-    // bottom menu link to this page...
-    // if ($THEUSER->constituency_is_set()) {
-    //  $items['yourmp'] = array ('yourmp_recent');
-    // }.
+    // If the user's postcode is set, then we allow them to view the bottom menu link to this page.
+    /*
+     * if ($THEUSER->constituency_is_set()) {
+     *     $items['yourmp'] = array ('yourmp_recent');
+     * }
+     */
 
     $top_links = [];
     $bottom_links = [];
 
-    // We work out which of the items in the top and bottom menus
-    // are highlighted - $top_hilite and $bottom_hilite respectively.
+    // We work out which of the items in the top and bottom menus are highlighted - $top_hilite and $bottom_hilite respectively.
 
     $this_parent = $DATA->page_metadata($this_page, 'parent');
 
@@ -780,17 +780,17 @@ class PAGE {
           'help' => []
       ];
 
-    // If the user's postcode is set, then we allow them to view the
-    // bottom menu link to this page...
-    // if ($THEUSER->constituency_is_set()) {
-    //  $items['yourmp'] = array ('yourmp_recent');
-    // }.
+    // If the user's postcode is set, then we allow them to view the bottom menu link to this page.
+    /*
+     * if ($THEUSER->constituency_is_set()) {
+     *     $items['yourmp'] = array ('yourmp_recent');
+     * }
+     */
 
     $top_links = [];
     $bottom_links = [];
 
-    // We work out which of the items in the top and bottom menus
-    // are highlighted - $top_hilite and $bottom_hilite respectively.
+    // We work out which of the items in the top and bottom menus are highlighted - $top_hilite and $bottom_hilite respectively.
 
     $this_parent = $DATA->page_metadata($this_page, 'parent');
 
@@ -895,16 +895,18 @@ class PAGE {
 
     $GETINVURL = new URL('getinvolved');
     if ($this_page != 'getinvolved') {
-      // If ($this_page != "userlogout" &&
-      //  $this_page != "userpassword" &&
-      //  $this_page != 'userjoin') {
-      // We don't do this on the logout page, because then the user
-      // will return straight to the logout page and be logged out
-      // immediately!
-      // And it's also silly if we're sent back to Change Password.
-      // And the join page.
-      //  $LOGINURL->insert(array("ret"=>$returl));
-      // }.
+        /*
+         * If ($this_page != "userlogout" &&
+         *  $this_page != "userpassword" &&
+         *  $this_page != 'userjoin') {
+         * We don't do this on the logout page, because then the user
+         * will return straight to the logout page and be logged out
+         * immediately!
+         * And it's also silly if we're sent back to Change Password.
+         * And the join page.
+         *  $LOGINURL->insert(array("ret"=>$returl));
+         * }
+         */
       $getinvolvedclass = '';
     }
     else {
@@ -1032,84 +1034,79 @@ class PAGE {
   }
 
   /**
-   *
+   * $type is one of:
+   *  'side' - a white stripe with a coloured sidebar.
+   *           (Has extra padding at the bottom, often used for whole pages.)
+   *  'head-1' - used for the page title headings in hansard.
+   *  'head-2' - used for section/subsection titles in hansard.
+   *  '1', '2' - For alternating stripes in listings.
+   *  'time-1', 'time-2' - For displaying the times in hansard listings.
+   *  'procedural-1', 'procedural-2' - For the proecdures in hansard listings.
+   *  'foot' - For the bottom stripe on hansard debates/wrans listings.
+   * $id is the value of an id for this div (if blank, not used).
    */
   public function stripe_start($type = 'side', $id = '') {
-    // $type is one of:
-    //  'side' - a white stripe with a coloured sidebar.
-    //           (Has extra padding at the bottom, often used for whole pages.)
-    //  'head-1' - used for the page title headings in hansard.
-    //  'head-2' - used for section/subsection titles in hansard.
-    //  '1', '2' - For alternating stripes in listings.
-    //  'time-1', 'time-2' - For displaying the times in hansard listings.
-    //  'procedural-1', 'procedural-2' - For the proecdures in hansard listings.
-    //  'foot' - For the bottom stripe on hansard debates/wrans listings.
-    // $id is the value of an id for this div (if blank, not used).
-    ?>
-                            <div class="stripe-<?php echo $type; ?>" <?php
-                            if ($id != '') {
-                              print ' id="' . $id . '"';
-                            }
-                            ?>>
-                                <div class="main">
-                                    <?php
-                                    $this->within_stripe_main = TRUE;
-                                    // On most, uncomplicated pages, the first stripe on a page will include
-                                    // the page heading. So, if we haven't already printed a heading on this
-                                    // page, we do it now...
-                                    if (!$this->heading_displayed()) {
-                                      $this->heading();
-                                    }
+      print '<div class="stripe-' . htmlspecialchars($type) . '"';
+      if (!empty($id)) {
+          print ' id="' . htmlspecialchars($id) . '"';
+      }
+      print '>';
+      print '<div class="main">';
+
+      $this->within_stripe_main = TRUE;
+      // On most, uncomplicated pages, the first stripe on a page will include
+      // the page heading. So, if we haven't already printed a heading on this
+      // page, we do it now...
+      if (!$this->heading_displayed()) {
+          $this->heading();
+      }
   }
 
   /**
+   * $contents is an array containing 0 or more hashes.
+   * Each hash has two values, 'type' and 'content'.
+   * 'Type' could be one of these:
+   *  'include' - will include a sidebar named after the value of 'content'.php.
+   *  'nextprev' - $this->nextprevlinks() is called ('content' currently ignored).
+   *  'html' - The value of the 'content' is simply displayed.
+   *  'extrahtml' - The value of the 'content' is displayed after the sidebar has
+   *                  closed, but within this stripe.
    *
+   * If $contents is empty then '&nbsp;' will be output.
+   *
+   * eg, take this hypothetical array:
+   *   $contents = [
+   *       [
+   *           'type'  => 'include',
+   *           'content'   => 'mp'
+   *       ],
+   *       [
+   *           'type'  => 'html',
+   *           'content'   => "<p>This is your MP</p>\n"
+   *       ],
+   *       [
+   *           'type'  => 'nextprev'
+   *       ],
+   *       [
+   *           'extrahtml' => '<a href="blah">Source</a>'
+   *       ]
+   *   ];
+   *
+   *  The sidebar div would be opened.
+   *  This would first include /includes/easyparliament/templates/sidebars/mp.php.
+   *  Then display "<p>This is your MP</p>\n".
+   *  Then call $this->nextprevlinks().
+   *  The sidebar div would be closed.
+   *  '<a href="blah">Source</a>' is displayed.
+   *  The stripe div is closed.
+   *
+   *  But in most cases we only have 0 or 1 hashes in $contents.
+   *
+   * $extra is html that will go after the sidebar has closed, but within
+   * this stripe.
+   *  // eg, the 'Source' bit on Hansard pages.
    */
   public function stripe_end($contents = [], $extra = '') {
-    // $contents is an array containing 0 or more hashes.
-    // Each hash has two values, 'type' and 'content'.
-    // 'Type' could be one of these:
-    //  'include' - will include a sidebar named after the value of 'content'.php.
-    //  'nextprev' - $this->nextprevlinks() is called ('content' currently ignored).
-    //  'html' - The value of the 'content' is simply displayed.
-    //  'extrahtml' - The value of the 'content' is displayed after the sidebar has
-    //                  closed, but within this stripe.
-
-    // If $contents is empty then '&nbsp;' will be output.
-
-    /* eg, take this hypothetical array:
-    $contents = array(
-    array (
-    'type'  => 'include',
-    'content'   => 'mp'
-    ),
-    array (
-    'type'  => 'html',
-    'content'   => "<p>This is your MP</p>\n"
-    ),
-    array (
-    'type'  => 'nextprev'
-    ),
-    array (
-    'extrahtml' => '<a href="blah">Source</a>'
-    )
-    );
-
-    The sidebar div would be opened.
-    This would first include /includes/easyparliament/templates/sidebars/mp.php.
-    Then display "<p>This is your MP</p>\n".
-    Then call $this->nextprevlinks().
-    The sidebar div would be closed.
-    '<a href="blah">Source</a>' is displayed.
-    The stripe div is closed.
-
-    But in most cases we only have 0 or 1 hashes in $contents.
-
-     */
-
-    // $extra is html that will go after the sidebar has closed, but within
-    // this stripe.
-    // eg, the 'Source' bit on Hansard pages.
     global $DATA, $this_page;
 
     $this->within_stripe_main = FALSE;
@@ -1176,17 +1173,19 @@ class PAGE {
   }
 
   /**
+   * Starts a 'block' div, used mostly on the home page on the MP page, and in the sidebars.
    *
+   * $data is a hash like this:
+   *  'id'    => 'help',
+   *  'title' => 'What are debates?'
+   *  'url'   => '/help/#debates'     [if present, will be wrapped round 'title']
+   *  'body'  => false    [If not present, assumed true. If false, no 'blockbody' div]
+   * Both items are optional (although it'll look odd without a title).
+   *
+   * @param array $data
+   *   A hash with some elements.
    */
   public function block_start($data = []) {
-    // Starts a 'block' div, used mostly on the home page,
-    // on the MP page, and in the sidebars.
-    // $data is a hash like this:
-    //  'id'    => 'help',
-    //  'title' => 'What are debates?'
-    //  'url'   => '/help/#debates'     [if present, will be wrapped round 'title']
-    //  'body'  => false    [If not present, assumed true. If false, no 'blockbody' div]
-    // Both items are optional (although it'll look odd without a title).
 
     $this->blockbody_open = FALSE;
 
@@ -1564,7 +1563,7 @@ class PAGE {
       foreach ($member['other_parties'] as $r) {
         $out[] = 'from ' . $r['from'] . ' on ' . format_date($r['date'], SHORTDATEFORMAT);
       }
-      print join('; ', $out);
+      print implode('; ', $out);
       print '</li>';
     }
 
@@ -1579,7 +1578,7 @@ class PAGE {
         }
       }
       if ($mins) {
-        print '<li>' . join('<br>', $mins) . '</li>';
+        print '<li>' . implode('<br>', $mins) . '</li>';
       }
     }
 
@@ -2339,20 +2338,25 @@ $displayed_stuff = 0;
   }
 
   /**
+   * Generates a very simple but common page content.
    *
+   * Used for when a user logs out, or votes, or any simple thing
+   * where there's a little message and probably a link elsewhere.
+   * $message is an array like:
+   *      'title' => 'You are now logged out'.
+   *      'text'  => 'Some more text here',
+   *      'linkurl' => 'http://www.easyparliament.org/debates/',
+   *      'linktext' => 'Back to previous page'
+   * All fields optional.
+   * 'linkurl' should already have htmlentities done on it.
+   * $class is a class name that will be applied to the message's HTML elements.
+   *
+   * @param array $message
+   *   A message array.
+   * @param string $class
+   *   A class name.
    */
   public function message($message, $class = '') {
-    // Generates a very simple but common page content.
-    // Used for when a user logs out, or votes, or any simple thing
-    // where there's a little message and probably a link elsewhere.
-    // $message is an array like:
-    //      'title' => 'You are now logged out'.
-    //      'text'  => 'Some more text here',
-    //      'linkurl' => 'http://www.easyparliament.org/debates/',
-    //      'linktext' => 'Back to previous page'
-    // All fields optional.
-    // 'linkurl' should already have htmlentities done on it.
-    // $class is a class name that will be applied to the message's HTML elements.
 
     if ($class != '') {
       $class = ' class="' . $class . '"';

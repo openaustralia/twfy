@@ -34,7 +34,7 @@ $PAGE->display_table($tabledata);
 
 $order = 'email, alert_id';
 if (isset($_GET['o']) && $_GET['o'] == 'c') {
-  $order = 'created, alert_id';
+    $order = 'created, alert_id';
 }
 
 print '<h4>Active alerts</h4>';
@@ -69,27 +69,27 @@ $PAGE->page_end();
  *
  */
 function generate_rows($q) {
-  global $db;
-  $rows = [];
-  $USERURL = new URL('userview');
-  for ($row = 0; $row < $q->rows(); $row++) {
-    $email = $q->field($row, 'email');
-    $criteria = $q->field($row, 'criteria');
-    $SEARCHENGINE = new SEARCHENGINE($criteria);
-    $r = $db->query("SELECT user_id,firstname,lastname FROM users WHERE email = '" . mysqli_real_escape_string($db, $email) . "'");
-    if ($r->rows() > 0) {
-      $user_id = $r->field(0, 'user_id');
-      $USERURL->insert(['u' => $user_id]);
-      $name = '<a href="' . $USERURL->generate() . '">' . $r->field(0, 'firstname') . ' ' . $r->field(0, 'lastname') . '</a>';
+    global $db;
+    $rows = [];
+    $USERURL = new URL('userview');
+    for ($row = 0; $row < $q->rows(); $row++) {
+        $email = $q->field($row, 'email');
+        $criteria = $q->field($row, 'criteria');
+        $SEARCHENGINE = new SEARCHENGINE($criteria);
+        $r = $db->query("SELECT user_id,firstname,lastname FROM users WHERE email = '" . mysqli_real_escape_string($db, $email) . "'");
+        if ($r->rows() > 0) {
+            $user_id = $r->field(0, 'user_id');
+            $USERURL->insert(['u' => $user_id]);
+            $name = '<a href="' . $USERURL->generate() . '">' . $r->field(0, 'firstname') . ' ' . $r->field(0, 'lastname') . '</a>';
+        }
+        else {
+            $name = $email;
+        }
+        $created = $q->field($row, 'created');
+        if ($created == '0000-00-00 00:00:00') {
+            $created = '&nbsp;';
+        }
+        $rows[] = [$name, $SEARCHENGINE->query_description_long(), $created];
     }
-    else {
-      $name = $email;
-    }
-    $created = $q->field($row, 'created');
-    if ($created == '0000-00-00 00:00:00') {
-      $created = '&nbsp;';
-    }
-    $rows[] = [$name, $SEARCHENGINE->query_description_long(), $created];
-  }
-  return $rows;
+    return $rows;
 }
