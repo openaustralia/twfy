@@ -1,6 +1,6 @@
 # They Work For You (aussie rules)
 
-This is a fork of a 2001-ish era PHP app from MySociety in the UK, repurposed for Australia. This is the software running on https://openausralia.org.au
+This is a fork of a 2001-ish era PHP app from MySociety in the UK, repurposed for Australia. This is the software running on https://openaustralia.org.au
 
 ## What is OpenAustralia.org.au ?
 
