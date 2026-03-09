@@ -8,8 +8,7 @@
 /**
  *
  */
-function normalise_constituency_name($name)
-{
+function normalise_constituency_name($name) {
     // HACK.
     return $name;
 
@@ -37,8 +36,7 @@ function normalise_constituency_name($name)
 /**
  * As I don't want to do 646*2 DB queries!
  */
-function normalise_constituency_names($names)
-{
+function normalise_constituency_names($names) {
     $db = new ParlDB();
     $q = $db->query('select constituency.name as name,c_main.name as canonical_name
 		from constituency, constituency as c_main

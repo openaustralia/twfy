@@ -13,8 +13,7 @@ include_once INCLUDESPATH . "constituencies.php";
 /**
  * Whether the form of the postcode is one or not.
  */
-function is_postcode($postcode)
-{
+function is_postcode($postcode) {
     // Return preg_match("/^[A-Z]{1,2}\d[A-Z\d]? ?\d[ABD-HJLNP-UW-Z]{2}$/i", $postcode);.
     // In utility.php.
     return validate_postcode($postcode);
@@ -23,8 +22,7 @@ function is_postcode($postcode)
 /**
  * Returns the constituency name, given uh, a postcode.
  */
-function postcode_to_constituency($postcode)
-{
+function postcode_to_constituency($postcode) {
     global $last_postcode;
     global $last_postcode_value;
 
@@ -59,8 +57,7 @@ function postcode_to_constituency($postcode)
 /**
  * Map a postcode to an MP, random but deterministic.
  */
-function fake_postcode($postcode)
-{
+function fake_postcode($postcode) {
     $db = new ParlDB();
     $fake_cons_id = abs(crc32($postcode) % 630);
     $query = "select name from constituency where main_name and cons_id = '" . $fake_cons_id . "'";
@@ -75,8 +72,7 @@ function fake_postcode($postcode)
 /**
  *
  */
-function postcode_to_constituency_internal($postcode)
-{
+function postcode_to_constituency_internal($postcode) {
     // Try and match with regexp to exclude non postcodes quickly.
     if (!is_postcode($postcode)) {
         return '';
@@ -88,12 +84,14 @@ function postcode_to_constituency_internal($postcode)
     if ($q->rows == 1) {
         $name = $q->field(0, 'name');
         return $name;
-    } elseif ($q->rows > 1) {
+    }
+    elseif ($q->rows > 1) {
         for ($i = 0; $i < $q->rows; $i++) {
             $name[] = $q->field($i, 'name');
         }
         return $name;
-    } else {
+    }
+    else {
         return '';
     }
 }
@@ -101,8 +99,7 @@ function postcode_to_constituency_internal($postcode)
 /**
  *
  */
-function canonicalise_postcode($pc)
-{
+function canonicalise_postcode($pc) {
     $pc = str_replace(' ', '', $pc);
     $pc = trim($pc);
     $pc = strtoupper($pc);

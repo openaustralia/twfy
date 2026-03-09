@@ -9,8 +9,7 @@ include_once 'api_getGeometry.php';
 /**
  *
  */
-function api_getConstituencies_front()
-{
+function api_getConstituencies_front() {
     ?>
     <p><big>Fetch a list of electoral divisions.</big></p>
 
@@ -39,8 +38,7 @@ function api_getConstituencies_front()
 /**
  *
  */
-function api_getConstituencies_search($s)
-{
+function api_getConstituencies_search($s) {
     $output = _api_getConstituencies_search($s);
     api_output($output);
 }
@@ -48,8 +46,7 @@ function api_getConstituencies_search($s)
 /**
  *
  */
-function _api_getConstituencies_search($s)
-{
+function _api_getConstituencies_search($s) {
     $db = new ParlDB();
     $q = $db->query('select c_main.name from constituency, constituency as c_main
 		where constituency.cons_id = c_main.cons_id
@@ -74,11 +71,11 @@ function _api_getConstituencies_search($s)
 /**
  *
  */
-function api_getConstituencies_date($date)
-{
+function api_getConstituencies_date($date) {
     if ($date = parse_date($date)) {
         api_getConstituencies('"' . $date['iso'] . '"');
-    } else {
+    }
+    else {
         api_error('Invalid date format');
     }
 }
@@ -86,8 +83,7 @@ function api_getConstituencies_date($date)
 /**
  *
  */
-function api_getConstituencies($date = 'now()')
-{
+function api_getConstituencies($date = 'now()') {
     $db = new ParlDB();
     $q = $db->query('select cons_id, name from constituency
 		where main_name and from_date <= date(' . $date . ') and date(' . $date . ') <= to_date');
@@ -110,8 +106,7 @@ define('R_e', 6372.8);
 /**
  *
  */
-function api_getConstituencies_latitude($lat)
-{
+function api_getConstituencies_latitude($lat) {
     $lon = get_http_var('longitude') + 0;
     $d = get_http_var('distance') + 0;
     if (!$lat) {
@@ -125,8 +120,7 @@ function api_getConstituencies_latitude($lat)
 /**
  *
  */
-function _api_getConstituencies_latitude($lat, $lon, $d)
-{
+function _api_getConstituencies_latitude($lat, $lon, $d) {
     $geometry = _api_getGeometry();
     $out = [];
     foreach ($geometry['data'] as $name => $data) {
@@ -163,16 +157,14 @@ function _api_getConstituencies_latitude($lat, $lon, $d)
 /**
  *
  */
-function api_getConstituencies_longitude($lon)
-{
+function api_getConstituencies_longitude($lon) {
     api_error('You must supply a latitude');
 }
 
 /**
  *
  */
-function api_getConstituencies_distance($d)
-{
+function api_getConstituencies_distance($d) {
     api_error('You must supply a latitude and longitude');
 }
 
@@ -181,8 +173,7 @@ function api_getConstituencies_distance($d)
  * Given two angles A1 and A2 on a circle expressed in radians, return the
  * smallest angle between them.
  */
-function _api_angle_between($a1, $a2)
-{
+function _api_angle_between($a1, $a2) {
     if (abs($a1 - $a2) > M_PI) {
         return 2 * M_PI - abs($a1 - $a2);
     }

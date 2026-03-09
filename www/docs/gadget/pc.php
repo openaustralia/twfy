@@ -13,29 +13,30 @@ if (validate_postcode($pc)) {
     $constituency = postcode_to_constituency($pc);
     if ($constituency == 'CONNECTION_TIMED_OUT') {
         error('Connection timed out');
-    } elseif ($constituency) {
+    }
+    elseif ($constituency) {
         $pid = get_person_id($constituency);
         echo 'pid,', $pid;
-    } else {
+    }
+    else {
         error('Unknown postcode');
     }
-} else {
+}
+else {
     error('Invalid postcode');
 }
 
 /**
  *
  */
-function error($s)
-{
+function error($s) {
     echo 'error,', $s;
 }
 
 /**
  *
  */
-function get_person_id($c)
-{
+function get_person_id($c) {
     $db = new ParlDB();
     if ($c == '') {
         return FALSE;

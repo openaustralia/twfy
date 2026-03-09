@@ -7,8 +7,7 @@
 /**
  *
  */
-function api_getMPInfo_front()
-{
+function api_getMPInfo_front() {
     ?>
     <p><big>Fetch extra information for a particular person.</big></p>
 
@@ -28,8 +27,7 @@ function api_getMPInfo_front()
 /**
  *
  */
-function api_getMPinfo_id($id)
-{
+function api_getMPinfo_id($id) {
     $fields = preg_split('#\s*,\s*#', get_http_var('fields'), -1, PREG_SPLIT_NO_EMPTY);
     $db = new ParlDB();
     $last_mod = 0;
@@ -77,7 +75,8 @@ function api_getMPinfo_id($id)
         }
         ksort($output);
         api_output($output, $last_mod);
-    } else {
+    }
+    else {
         api_error('Unknown person ID');
     }
 }
@@ -85,7 +84,6 @@ function api_getMPinfo_id($id)
 /**
  *
  */
-function api_getMPinfo_fields($f)
-{
+function api_getMPinfo_fields($f) {
     api_error('You must supply a person ID');
 }
