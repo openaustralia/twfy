@@ -22,14 +22,16 @@
  * Note that the url includes "pop=1" which stops popular searches feeding back
  * into being more popular.
  */
-class SEARCHLOG {
+class SEARCHLOG
+{
 
     private $db = NULL;
 
     /**
      *
      */
-    public function __construct() {
+    public function __construct()
+    {
         $this->SEARCHURL = new URL('search');
         $this->db = new ParlDB();
     }
@@ -37,11 +39,12 @@ class SEARCHLOG {
     /**
      *
      */
-    public function add($searchlogdata) {
+    public function add($searchlogdata)
+    {
 
         $this->db->query("INSERT INTO search_query_log
             (query_string, page_number, count_hits, ip_address, query_time)
-            VALUES ('" . mysqli_real_escape_string($db, $searchlogdata['query']) . "',
+            VALUES ('" . $this->db->escape($searchlogdata['query']) . "',
             '" . $searchlogdata['page'] . "', '" . $searchlogdata['hits'] . "',
             '" . getenv('REMOTE_ADDR') . "', NOW())");
 
@@ -50,7 +53,8 @@ class SEARCHLOG {
     /**
      * Select popular queries.
      */
-    public function popular_recent($count) {
+    public function popular_recent($count)
+    {
 
         $q = $this->db->query("
                 SELECT query_string, count(*) AS c
@@ -71,13 +75,14 @@ class SEARCHLOG {
     /**
      *
      */
-    public function _db_row_to_array($q, $row) {
+    public function _db_row_to_array($q, $row)
+    {
         $query = $q->field($row, 'query_string');
         $this->SEARCHURL->insert(['s' => $query, 'pop' => 1]);
         $url = $this->SEARCHURL->generate();
         $htmlescape = 1;
         if ($pos = strpos($query, ':')) {
-            $qq = $this->db->query('SELECT first_name, last_name FROM member WHERE person_id="' . mysqli_real_escape_string($db, substr($query, $pos + 1)) . '" LIMIT 1');
+            $qq = $this->db->query('SELECT first_name, last_name FROM member WHERE person_id="' . $this->db->escape(substr($query, $pos + 1)) . '" LIMIT 1');
             if ($qq->rows()) {
                 $query = $qq->field(0, 'first_name') . ' ' . $qq->field(0, 'last_name');
                 $htmlescape = 0;
@@ -97,7 +102,8 @@ class SEARCHLOG {
     /**
      *
      */
-    public function admin_recent_searches($count) {
+    public function admin_recent_searches($count)
+    {
 
         $q = $this->db->query("SELECT query_string, page_number, count_hits, ip_address, query_time
                 FROM search_query_log ORDER BY query_time desc LIMIT $count");
@@ -111,7 +117,8 @@ class SEARCHLOG {
     /**
      *
      */
-    public function admin_popular_searches($count) {
+    public function admin_popular_searches($count)
+    {
 
         $q = $this->db->query("SELECT *, count(*) AS c FROM search_query_log
                 WHERE count_hits != 0 AND query_string NOT LIKE '%speaker:%'
@@ -128,7 +135,8 @@ class SEARCHLOG {
     /**
      *
      */
-    public function admin_failed_searches() {
+    public function admin_failed_searches()
+    {
 
         $q = $this->db->query("SELECT query_string, page_number, count_hits, ip_address, query_time,
                 COUNT(*) AS group_count, MIN(query_time) AS min_time, MAX(query_time) AS max_time,
