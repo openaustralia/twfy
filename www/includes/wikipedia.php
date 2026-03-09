@@ -26,14 +26,16 @@
 /**
  *
  */
-function lensort($a, $b) {
+function lensort($a, $b)
+{
     return strlen($a) < strlen($b);
 }
 
 /**
  *
  */
-function wikipedize($source) {
+function wikipedize($source)
+{
     $was_array = FALSE;
     if (is_array($source)) {
         $source = join('|||', $source);
@@ -71,7 +73,7 @@ function wikipedize($source) {
     usort($phrases, "lensort");
     $db = new ParlDB();
     foreach ($phrases as $i => $phrase) {
-        $phrases[$i] = mysqli_real_escape_string($db->conn, str_replace(' ', '_', trim($phrase)));
+        $phrases[$i] = $db->escape(str_replace(' ', '_', trim($phrase)));
     }
 
     // Open up a db connection, and whittle our list down even further, against
@@ -108,14 +110,16 @@ function wikipedize($source) {
 /**
  * Credit: isaac schlueter (lifted from http://uk2.php.net/strip-tags)
  */
-function antiTagInTag($content = '', $format = 'htmlhead') {
+function antiTagInTag($content = '', $format = 'htmlhead')
+{
     if (!function_exists('format_to_output')) {
         // Use the external function if it exists, or fall back on just strip_tags.
 
         /**
          *
          */
-        function format_to_output($content, $format) {
+        function format_to_output($content, $format)
+        {
             return strip_tags($content);
         }
 
@@ -142,8 +146,7 @@ function antiTagInTag($content = '', $format = 'htmlhead') {
                 // Walker goes to the close+1, and open decrements.
                 $open--;
                 $walker = $nextclose + 1;
-            }
-            elseif ($nextopen < $nextclose) {
+            } elseif ($nextopen < $nextclose) {
                 // An open before the next close.
 
                 $open++;
@@ -153,8 +156,7 @@ function antiTagInTag($content = '', $format = 'htmlhead') {
         $tagend = $walker;
         if ($tagend > strlen($content)) {
             $tagend = strlen($content);
-        }
-        else {
+        } else {
             $tagend--;
             $tagstart++;
         }

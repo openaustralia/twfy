@@ -38,7 +38,8 @@
 /**
  * CLASS:  ALERT.
  */
-function suggest_alerts($email, $criteria, $maxresults) {
+function suggest_alerts($email, $criteria, $maxresults)
+{
     $db = new ParlDB();
     // Speaker only.
     if (stripos($criteria, "speaker:") == 0) {
@@ -62,21 +63,21 @@ function suggest_alerts($email, $criteria, $maxresults) {
         if ($resultcount > 0) {
             print "<p>You may also be interested in being alerted when these people speak too.</p>";
         } {
-        if ($resultcount > $maxresults) {
-            // Cap results.
-            $resultcount = $maxresults;
-        }
-
-        // Iterate through results.
-        for ($i = 0; $i < $resultcount; $i++) {
-            // Ignore suggestion where only one other has an alert for.
-            if ($q->field($i, 'c') > 1) {
-                // Extract members PID.
-                $pid = substr($q->field($i, 'criteria'), -5);
-                $member = new MEMBER(['person_id' => $pid]);
-                print '<p><a href="' . WEBPATH . 'alert/?r=1&only=1&amp;pid=' . $member->person_id() . '"><strong>Email me whenever ' . $member->full_name() . ' speaks</strong></a></p>';
+            if ($resultcount > $maxresults) {
+                // Cap results.
+                $resultcount = $maxresults;
             }
-        }
+
+            // Iterate through results.
+            for ($i = 0; $i < $resultcount; $i++) {
+                // Ignore suggestion where only one other has an alert for.
+                if ($q->field($i, 'c') > 1) {
+                    // Extract members PID.
+                    $pid = substr($q->field($i, 'criteria'), -5);
+                    $member = new MEMBER(['person_id' => $pid]);
+                    print '<p><a href="' . WEBPATH . 'alert/?r=1&only=1&amp;pid=' . $member->person_id() . '"><strong>Email me whenever ' . $member->full_name() . ' speaks</strong></a></p>';
+                }
+            }
         }
     }
 }
@@ -84,7 +85,8 @@ function suggest_alerts($email, $criteria, $maxresults) {
 /**
  *
  */
-function alert_confirmation_advert($details) {
+function alert_confirmation_advert($details)
+{
     if ($details['pid']) {
         $advert_shown = 'twfy-alert-word';
         ?>
@@ -93,8 +95,7 @@ function alert_confirmation_advert($details) {
             keep you informed about your interests - find out what's happening straight from the horse's mouth.
             <a href="<?php echo WEBPATH ?>alert/"><strong>Sign up for an email alert</strong></a>
         </p>
-    <?php }
-    else {
+    <?php } else {
         $advert_shown = 'twfy-alert-person';
         ?>
         <p>Did you know that OpenAustralia can also email you when a certain representative contributes in parliament? Don't
@@ -109,7 +110,8 @@ function alert_confirmation_advert($details) {
 /**
  *
  */
-function alert_details_to_criteria($details) {
+function alert_details_to_criteria($details)
+{
     $criteria = [];
     if (isset($details['keyword']) && $details['keyword']) {
         $criteria[] = $details['keyword'];
@@ -124,7 +126,8 @@ function alert_details_to_criteria($details) {
 /**
  *
  */
-class ALERT {
+class ALERT
+{
 
     private $db = NULL;
 
@@ -135,8 +138,8 @@ class ALERT {
      */
     public $criteria = "";
     public $deleted = "";        /**
-                                  * Flag set when user requests deletion of alert.
-                                  */
+                * Flag set when user requests deletion of alert.
+                */
     /**
      * Boolean - Has the user confirmed via email?
      */
@@ -145,14 +148,16 @@ class ALERT {
     /**
      *
      */
-    public function __construct() {
+    public function __construct()
+    {
         $this->db = new ParlDB();
     }
 
     /**
      * FUNCTION: fetch.
      */
-    public function fetch($confirmed, $deleted) {
+    public function fetch($confirmed, $deleted)
+    {
         // Pass it an alert id and it will fetch data about alerts from the db
         // and put it all in the appropriate variables.
         // Normal usage is for $confirmed variable to be set to true
@@ -168,20 +173,20 @@ class ALERT {
 						confirmed
 						FROM alerts
 						WHERE confirmed =" . $confirmed .
-          " AND deleted=" . $deleted .
-          ' ORDER BY email');
+            " AND deleted=" . $deleted .
+            ' ORDER BY email');
 
         $data = [];
 
         for ($row = 0; $row < $q->rows(); $row++) {
             $contents = [
-              'alert_id' => $q->field($row, 'alert_id'),
-              'email' => $q->field($row, 'email'),
-              'criteria' => $q->field($row, 'criteria'),
-              'registrationtoken' => $q->field($row, 'registrationtoken'),
-              'confirmed' => $q->field($row, 'confirmed'),
-              'deleted' => $q->field($row, 'deleted')
-          ];
+                'alert_id' => $q->field($row, 'alert_id'),
+                'email' => $q->field($row, 'email'),
+                'criteria' => $q->field($row, 'criteria'),
+                'registrationtoken' => $q->field($row, 'registrationtoken'),
+                'confirmed' => $q->field($row, 'confirmed'),
+                'deleted' => $q->field($row, 'deleted')
+            ];
             $data[] = $contents;
         }
         $info = "Alert";
@@ -193,7 +198,8 @@ class ALERT {
     /**
      * FUNCTION: listalserts.
      */
-    public function listalerts() {
+    public function listalerts()
+    {
 
         // Lists all live alerts.
 
@@ -212,7 +218,8 @@ class ALERT {
     /**
      * FUNCTION: add.
      */
-    public function add($details, $confirmation_email = FALSE, $instantly_confirm = TRUE) {
+    public function add($details, $confirmation_email = FALSE, $instantly_confirm = TRUE)
+    {
 
         // Adds a new alert's info into the database.
         // Then calls another function to send them a confirmation email.
@@ -232,14 +239,13 @@ class ALERT {
 
         $criteria = alert_details_to_criteria($details);
 
-        $q = $this->db->query("SELECT * FROM alerts WHERE email='" . mysqli_real_escape_string($this->db->conn, $details['email']) . "' AND criteria='" . mysqli_real_escape_string($this->db->conn, $criteria) . "' AND confirmed=1");
+        $q = $this->db->query("SELECT * FROM alerts WHERE email='" . $this->db->escape($details['email']) . "' AND criteria='" . $this->db->escape($criteria) . "' AND confirmed=1");
         if ($q->rows() > 0) {
             $deleted = $q->field(0, 'deleted');
             if ($deleted) {
                 $this->db->query("UPDATE alerts SET deleted=0 WHERE email='" . $this->db->escape($details['email']) . "' AND criteria='" . $this->db->escape($criteria) . "' AND confirmed=1");
                 return 1;
-            }
-            else {
+            } else {
                 return -2;
             }
         }
@@ -251,8 +257,7 @@ class ALERT {
         // MJ OA-437 add as recommendation.
         if ($details['recommended'] == 1) {
             $sql .= "'1',";
-        }
-        else {
+        } else {
             $sql .= "'0',";
         }
         $sql .= "NOW() )";
@@ -285,8 +290,8 @@ class ALERT {
             // Add that to the database.
 
             $r = $this->db->query("UPDATE alerts
-						SET registrationtoken = '" . mysqli_real_escape_string($this->db->conn, $this->registrationtoken) . "'
-						WHERE alert_id = '" . mysqli_real_escape_string($this->db->conn, $this->alert_id) . "'
+                        SET registrationtoken = '" . $this->db->escape($this->registrationtoken) . "'
+                        WHERE alert_id = '" . $this->db->escape($this->alert_id) . "'
 						");
 
             if ($r->success()) {
@@ -299,28 +304,24 @@ class ALERT {
                     if ($success) {
                         // Email sent OK.
                         return 1;
-                    }
-                    else {
+                    } else {
                         // Couldn't send the email.
                         return -1;
                     }
-                }
-                elseif ($instantly_confirm) {
+                } elseif ($instantly_confirm) {
                     // No confirmation email needed.
                     $s = $this->db->query("UPDATE alerts
 						SET confirmed = '1'
-						WHERE alert_id = '" . mysqli_real_escape_string($this->db->conn, $this->alert_id) . "'
+                        WHERE alert_id = '" . $this->db->escape($this->alert_id) . "'
 						");
                     return 1;
                 }
-            }
-            else {
+            } else {
                 // Couldn't add the registration token to the DB.
                 return -1;
             }
 
-        }
-        else {
+        } else {
             // Couldn't add the user's data to the DB.
             return -1;
         }
@@ -329,7 +330,8 @@ class ALERT {
     /**
      * FUNCTION:  send_confirmation_email.
      */
-    public function send_confirmation_email($details) {
+    public function send_confirmation_email($details)
+    {
 
         // After we've add()ed an alert we'll be sending them
         // a confirmation email with a link to confirm their address.
@@ -337,9 +339,9 @@ class ALERT {
         // passed on to us here.
         // A brief check of the facts...
         if (
-          !is_numeric($this->alert_id) ||
-          !isset($details['email']) ||
-          $details['email'] == ''
+            !is_numeric($this->alert_id) ||
+            !isset($details['email']) ||
+            $details['email'] == ''
         ) {
             return FALSE;
         }
@@ -353,22 +355,21 @@ class ALERT {
 
         // Arrays we need to send a templated email.
         $data = [
-          'to' => $details['email'],
-          'template' => 'alert_confirmation'
+            'to' => $details['email'],
+            'template' => 'alert_confirmation'
         ];
 
         $merge = [
-          'FIRSTNAME' => 'THEY WORK FOR YOU',
-          'LASTNAME' => ' ALERT CONFIRMATION',
-          'CONFIRMURL' => $confirmurl,
-          'CRITERIA' => $this->criteria_pretty()
+            'FIRSTNAME' => 'THEY WORK FOR YOU',
+            'LASTNAME' => ' ALERT CONFIRMATION',
+            'CONFIRMURL' => $confirmurl,
+            'CRITERIA' => $this->criteria_pretty()
         ];
 
         $success = send_template_email($data, $merge);
         if ($success) {
             return TRUE;
-        }
-        else {
+        } else {
             return FALSE;
         }
     }
@@ -376,19 +377,18 @@ class ALERT {
     /**
      * FUNCTION: email_exists.
      */
-    public function email_exists($email) {
+    public function email_exists($email)
+    {
         // Returns true if there's a user with this email address.
 
         if ($email != "") {
-            $q = $this->db->query("SELECT alert_id FROM alerts WHERE email='" . mysqli_real_escape_string($this->db->conn, $email) . "'");
+            $q = $this->db->query("SELECT alert_id FROM alerts WHERE email='" . $this->db->escape($email) . "'");
             if ($q->rows() > 0) {
                 return TRUE;
-            }
-            else {
+            } else {
                 return FALSE;
             }
-        }
-        else {
+        } else {
             return FALSE;
         }
 
@@ -397,7 +397,8 @@ class ALERT {
     /**
      * FUNCTION: confirm.
      */
-    public function confirm($token) {
+    public function confirm($token)
+    {
         // The user has clicked the link in their confirmation email
         // and the confirm page has passed the token from the URL to here.
         // If all goes well the alert will be confirmed.
@@ -406,8 +407,7 @@ class ALERT {
         // Split the token into its parts.
         if (strstr($token, '::')) {
             $arg = '::';
-        }
-        else {
+        } else {
             $arg = '-';
         }
         $token_parts = explode($arg, $token);
@@ -422,8 +422,8 @@ class ALERT {
 
         $q = $this->db->query("SELECT email, criteria
 						FROM alerts
-						WHERE alert_id = '" . mysqli_real_escape_string($this->db->conn, $alert_id) . "'
-						AND registrationtoken = '" . mysqli_real_escape_string($this->db->conn, $registrationtoken) . "'
+                        WHERE alert_id = '" . $this->db->escape($alert_id) . "'
+                        AND registrationtoken = '" . $this->db->escape($registrationtoken) . "'
 						");
 
         if ($q->rows() == 1) {
@@ -431,18 +431,16 @@ class ALERT {
             $this->email = $q->field(0, 'email');
             $r = $this->db->query("UPDATE alerts
 						SET confirmed = '1', deleted = '0'
-						WHERE	alert_id = '" . mysqli_real_escape_string($this->db->conn, $alert_id) . "'
+                        WHERE	alert_id = '" . $this->db->escape($alert_id) . "'
 						");
 
             if ($r->success()) {
                 $this->confirmed = TRUE;
                 return TRUE;
-            }
-            else {
+            } else {
                 return FALSE;
             }
-        }
-        else {
+        } else {
             // Couldn't find this alert in the DB. Maybe the token was
             // wrong or incomplete?
             return FALSE;
@@ -452,7 +450,8 @@ class ALERT {
     /**
      * FUNCTION:  delete.
      */
-    public function delete($token) {
+    public function delete($token)
+    {
         // The user has clicked the link in their delete confirmation email
         // and the deletion page has passed the token from the URL to here.
         // If all goes well the alert will be flagged as deleted.
@@ -460,8 +459,7 @@ class ALERT {
         // Split the token into its parts.
         if (strstr($token, '::')) {
             $arg = '::';
-        }
-        else {
+        } else {
             $arg = '-';
         }
         $bits = explode($arg, $token);
@@ -476,8 +474,8 @@ class ALERT {
 
         $q = $this->db->query("SELECT email, criteria
 						FROM alerts
-						WHERE alert_id = '" . mysqli_real_escape_string($this->db->conn, $alert_id) . "'
-						AND registrationtoken = '" . mysqli_real_escape_string($this->db->conn, $registrationtoken) . "'
+                        WHERE alert_id = '" . $this->db->escape($alert_id) . "'
+                        AND registrationtoken = '" . $this->db->escape($registrationtoken) . "'
 						");
 
         if ($q->rows() == 1) {
@@ -485,7 +483,7 @@ class ALERT {
             // Set that they're confirmed in the DB.
             $r = $this->db->query("UPDATE alerts
 						SET deleted = '1'
-						WHERE	alert_id = '" . mysqli_real_escape_string($this->db->conn, $alert_id) . "'
+                        WHERE	alert_id = '" . $this->db->escape($alert_id) . "'
 						");
 
             if ($r->success()) {
@@ -493,14 +491,12 @@ class ALERT {
                 $this->deleted = TRUE;
                 return TRUE;
 
-            }
-            else {
+            } else {
                 // Couldn't delete this alert in the DB.
                 return FALSE;
             }
 
-        }
-        else {
+        } else {
             // Couldn't find this alert in the DB. Maybe the token was
             // wrong or incomplete?
             return FALSE;
@@ -510,28 +506,32 @@ class ALERT {
     /**
      * Functions for accessing the user's variables.
      */
-    public function alert_id() {
+    public function alert_id()
+    {
         return $this->alert_id;
     }
 
     /**
      *
      */
-    public function email() {
+    public function email()
+    {
         return $this->email;
     }
 
     /**
      *
      */
-    public function criteria() {
+    public function criteria()
+    {
         return $this->criteria;
     }
 
     /**
      *
      */
-    public function criteria_pretty($html = FALSE) {
+    public function criteria_pretty($html = FALSE)
+    {
         $criteria = explode(' ', $this->criteria);
         $words = [];
         $spokenby = '';
@@ -539,8 +539,7 @@ class ALERT {
             if (preg_match('#^speaker:(\d+)#', $c, $m)) {
                 $MEMBER = new MEMBER(['person_id' => $m[1]]);
                 $spokenby = $MEMBER->full_name();
-            }
-            else {
+            } else {
                 $words[] = $c;
             }
         }
@@ -557,14 +556,16 @@ class ALERT {
     /**
      *
      */
-    public function deleted() {
+    public function deleted()
+    {
         return $this->deleted;
     }
 
     /**
      *
      */
-    public function confirmed() {
+    public function confirmed()
+    {
         return $this->confirmed;
     }
 
