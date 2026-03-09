@@ -9,8 +9,7 @@ include_once '../../../../phplib/mapit.php';
 /**
  *
  */
-function api_getGeometry_front()
-{
+function api_getGeometry_front() {
     ?>
     <p><big>Returns geometry information for constituencies.</big></p>
 
@@ -45,8 +44,7 @@ function api_getGeometry_front()
 /**
  *
  */
-function api_getGeometry()
-{
+function api_getGeometry() {
     $geometry = _api_getGeometry();
     api_output($geometry);
 }
@@ -54,12 +52,12 @@ function api_getGeometry()
 /**
  *
  */
-function api_getGeometry_name($name)
-{
+function api_getGeometry_name($name) {
     $out = _api_getGeometry_name($name);
     if ($out) {
         api_output($out);
-    } else {
+    }
+    else {
         api_error('Name not recognised');
     }
 }
@@ -67,8 +65,7 @@ function api_getGeometry_name($name)
 /**
  *
  */
-function _api_getGeometry_name($name)
-{
+function _api_getGeometry_name($name) {
     $geometry = _api_getGeometry();
     // XXX.
     $name = html_entity_decode(normalise_constituency_name($name));
@@ -84,8 +81,7 @@ function _api_getGeometry_name($name)
 /**
  *
  */
-function _api_cacheCheck($fn, $arg)
-{
+function _api_cacheCheck($fn, $arg) {
     $cache = INCLUDESPATH . '../docs/api/cache/' . $fn;
     if (is_file($cache)) {
         return unserialize(file_get_contents($cache));
@@ -102,8 +98,7 @@ function _api_cacheCheck($fn, $arg)
 /**
  *
  */
-function _api_getGeometry()
-{
+function _api_getGeometry() {
     if (!defined('OPTION_MAPIT_URL') || !OPTION_MAPIT_URL) {
         return ['data' => []];
     }

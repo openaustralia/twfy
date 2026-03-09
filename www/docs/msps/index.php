@@ -13,7 +13,8 @@ if (get_http_var('f') != 'csv') {
     $PAGE->page_start();
     $PAGE->stripe_start();
     $format = 'html';
-} else {
+}
+else {
     $format = 'csv';
 }
 
@@ -21,15 +22,20 @@ $args = [];
 
 if (get_http_var('o') == 'f') {
     $args['order'] = 'first_name';
-} elseif (get_http_var('o') == 'l') {
+}
+elseif (get_http_var('o') == 'l') {
     $args['order'] = 'last_name';
-} elseif (get_http_var('o') == 'c') {
+}
+elseif (get_http_var('o') == 'c') {
     $args['order'] = 'constituency';
-} elseif (get_http_var('o') == 'p') {
+}
+elseif (get_http_var('o') == 'p') {
     $args['order'] = 'party';
-} elseif (get_http_var('o') == 'e') {
+}
+elseif (get_http_var('o') == 'e') {
     $args['order'] = 'expenses';
-} elseif (get_http_var('o') == 'd') {
+}
+elseif (get_http_var('o') == 'd') {
     $args['order'] = 'debates';
 }
 

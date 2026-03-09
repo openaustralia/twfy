@@ -35,9 +35,11 @@ if ($THEUSER->loggedin()) {
         echo '<li><span style="font-size:200%">' . $key . '</span><br><span style="color: #666666;">';
         if ($commercial == 1) {
             echo 'Commercial key';
-        } elseif ($commercial == -1) {
+        }
+        elseif ($commercial == -1) {
             echo 'Key';
-        } else {
+        }
+        else {
             echo 'Non-commercial key';
         }
         // , ' ', $reason;
@@ -58,7 +60,8 @@ if ($THEUSER->loggedin()) {
         echo '</ul>';
     }
     api_key_form();
-} else {
+}
+else {
     echo ' The key is tied to your OpenAustralia account,
 so if you don\'t yet have one, please <a href="/user/?pg=join">sign up</a>, then
 return here to get a key.</p>';
@@ -72,8 +75,7 @@ $PAGE->page_end();
 /**
  * ---
  */
-function create_key($commercial, $reason)
-{
+function create_key($commercial, $reason) {
     global $THEUSER;
     $key = auth_ab64_encode(urandom_bytes(16));
     $db = new ParlDB();
@@ -86,8 +88,7 @@ function create_key($commercial, $reason)
 /**
  *
  */
-function api_key_form()
-{
+function api_key_form() {
     ?>
     <br>
     <h3>Apply for a new key</h3>

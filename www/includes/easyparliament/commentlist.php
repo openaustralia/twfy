@@ -32,16 +32,15 @@ include_once INCLUDESPATH . 'dbtypes.php';
 /**
  *
  */
-class COMMENTLIST
-{
+class COMMENTLIST {
 
-  private $db  = null;
+    private $db = NULL;
 
-  /**
-   *
-   */
-  public function __construct() {
-    global $this_page;
+    /**
+     *
+     */
+    public function __construct() {
+        global $this_page;
 
         $this->db = new ParlDB();
 
@@ -55,8 +54,7 @@ class COMMENTLIST
     /**
      *
      */
-    public function display($view, $args = [], $format = 'html')
-    {
+    public function display($view, $args = [], $format = 'html') {
         // $view is what we're viewing by:
         //    'ep' is all the comments attached to an epobject.
         //    'user' is all the comments written by a user.
@@ -78,7 +76,8 @@ class COMMENTLIST
             // Get all the dta that's to be rendered.
             $data = $this->$function($args);
 
-        } else {
+        }
+        else {
             // Don't have a valid $view;.
             $PAGE->error_message("You haven't specified a view type.");
             return FALSE;
@@ -86,11 +85,14 @@ class COMMENTLIST
 
         if ($view == 'user') {
             $template = 'comments_user';
-        } elseif ($view == 'recent') {
+        }
+        elseif ($view == 'recent') {
             $template = 'comments_recent';
-        } elseif ($view == 'search') {
+        }
+        elseif ($view == 'search') {
             $template = 'comments_search';
-        } else {
+        }
+        else {
             $template = 'comments';
         }
 
@@ -102,16 +104,14 @@ class COMMENTLIST
     /**
      *
      */
-    public function render($data, $format = 'html', $template = 'comments')
-    {
+    public function render($data, $format = 'html', $template = 'comments') {
         include INCLUDESPATH . "easyparliament/templates/$format/$template.php";
     }
 
     /**
      *
      */
-    public function _get_data_by_ep($args)
-    {
+    public function _get_data_by_ep($args) {
         // Get all the data attached to an epobject.
         global $PAGE;
 
@@ -152,8 +152,7 @@ class COMMENTLIST
     /**
      *
      */
-    public function _get_data_by_user($args)
-    {
+    public function _get_data_by_user($args) {
         // Get a user's most recent comments.
         // Could perhaps be modified to get different lists of a user's
         // comments by things in $args?
@@ -171,13 +170,15 @@ class COMMENTLIST
 
         if (isset($args['num']) && is_numeric($args['num'])) {
             $num = $args['num'];
-        } else {
+        }
+        else {
             $num = 10;
         }
 
         if (isset($args['page']) && is_numeric($args['page'])) {
             $page = $args['page'];
-        } else {
+        }
+        else {
             $page = 1;
         }
 
@@ -288,8 +289,7 @@ class COMMENTLIST
     /**
      *
      */
-    public function _get_data_by_recent($args)
-    {
+    public function _get_data_by_recent($args) {
         // $args should contain 'num', indicating how many to get.
         // and perhaps pid too, for a particular person
 
@@ -300,13 +300,15 @@ class COMMENTLIST
 
         if (isset($args['num']) && is_numeric($args['num'])) {
             $num = $args['num'];
-        } else {
+        }
+        else {
             $num = 25;
         }
 
         if (isset($args['page']) && is_numeric($args['page'])) {
             $page = $args['page'];
-        } else {
+        }
+        else {
             $page = 1;
         }
 
@@ -338,7 +340,8 @@ class COMMENTLIST
             $q = $this->db->query($q);
             $data['full_name'] = member_full_name($q->field(0, 'house'), $q->field(0, 'title'), $q->field(0, 'first_name'), $q->field(0, 'last_name'), $q->field(0, 'constituency'));
             $q = 'SELECT COUNT(*) AS count FROM comments,hansard,member WHERE visible=1 AND comments.epobject_id = hansard.epobject_id and hansard.speaker_id = member.member_id and person_id = ' . $args['pid'];
-        } else {
+        }
+        else {
             $q = 'SELECT COUNT(*) AS count FROM comments WHERE visible=1';
         }
         $q = $this->db->query($q);
@@ -349,8 +352,7 @@ class COMMENTLIST
     /**
      *
      */
-    public function _get_data_by_search($args)
-    {
+    public function _get_data_by_search($args) {
         // $args should contain 'num', indicating how many to get.
 
         twfy_debug(get_class($this), "getting data by search");
@@ -360,13 +362,15 @@ class COMMENTLIST
 
         if (isset($args['num']) && is_numeric($args['num'])) {
             $num = $args['num'];
-        } else {
+        }
+        else {
             $num = 10;
         }
 
         if (isset($args['page']) && is_numeric($args['page'])) {
             $page = $args['page'];
-        } else {
+        }
+        else {
             $page = 1;
         }
 
@@ -397,8 +401,7 @@ class COMMENTLIST
     /**
      *
      */
-    public function _comment_url($urldata)
-    {
+    public function _comment_url($urldata) {
         global $hansardmajors;
 
         // Pass it the major and gid of the comment's epobject and the comment_id.
@@ -462,8 +465,7 @@ class COMMENTLIST
      *
      * }
      */
-    public function _get_comment_data($input)
-    {
+    public function _get_comment_data($input) {
         // Generic function for getting hansard data from the DB.
         // It returns an empty array if no data was found.
         // It returns an array of items if 1 or more were found.

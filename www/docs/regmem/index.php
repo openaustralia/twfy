@@ -76,11 +76,14 @@ if (!preg_match('#^\d\d\d\d-\d\d-\d\d$#', $d)) {
 $link = '<p align="center"><a href="./"><strong>List all MPs and Register editions</strong></a></p>';
 if ($f) {
     register_history($f);
-} elseif ($p) {
+}
+elseif ($p) {
     person_history($p);
-} elseif ($d) {
+}
+elseif ($d) {
     show_register($d);
-} else {
+}
+else {
     $this_page = 'regmem';
     $PAGE->stripe_start();
     front_page();
@@ -91,8 +94,7 @@ $PAGE->page_end();
 /**
  *
  */
-function person_history($p)
-{
+function person_history($p) {
     global $files, $dir, $DATA, $PAGE, $this_page, $link, $cats;
     $this_page = 'regmem_mp';
     $name = '';
@@ -181,8 +183,7 @@ function person_history($p)
 /**
  *
  */
-function register_history($f)
-{
+function register_history($f) {
     global $dir, $files, $cats, $names, $DATA, $PAGE, $link, $this_page;
     $this_page = 'regmem_diff';
     $new = 0;
@@ -241,14 +242,14 @@ function register_history($f)
 /**
  *
  */
-function by_name_ref($a, $b)
-{
+function by_name_ref($a, $b) {
     global $names;
     $a = preg_replace('/^.* /', '', $names[$a]);
     $b = preg_replace('/^.* /', '', $names[$b]);
     if ($a > $b) {
         return 1;
-    } elseif ($a < $b) {
+    }
+    elseif ($a < $b) {
         return -1;
     }
     return 0;
@@ -257,8 +258,7 @@ function by_name_ref($a, $b)
 /**
  *
  */
-function parse_file($file, $type, &$out)
-{
+function parse_file($file, $type, &$out) {
     global $cats, $names;
     preg_match_all('#<regmem personid="uk.org.publicwhip/person/(.*?)" memberid="(.*?)" membername="(.*?)" date="(.*?)">(.*?)</regmem>#s', $file, $mm, PREG_SET_ORDER);
     foreach ($mm as $k => $m) {
@@ -283,8 +283,7 @@ function parse_file($file, $type, &$out)
 /**
  *
  */
-function front_page()
-{
+function front_page() {
     global $files;
     foreach ($files as $_) {
         $file = file_get_contents($_);
@@ -361,8 +360,7 @@ function front_page()
 /**
  *
  */
-function show_register($d)
-{
+function show_register($d) {
     global $dir, $files, $cats, $names, $PAGE, $DATA, $this_page, $link;
     $d = "$dir/regmem$d.xml";
     if (!in_array($d, $files)) {
@@ -407,13 +405,13 @@ function show_register($d)
 /**
  *
  */
-function by_name($a, $b)
-{
+function by_name($a, $b) {
     $a = preg_replace('/^.* /', '', $a);
     $b = preg_replace('/^.* /', '', $b);
     if ($a > $b) {
         return 1;
-    } elseif ($a < $b) {
+    }
+    elseif ($a < $b) {
         return -1;
     }
     return 0;
@@ -422,8 +420,7 @@ function by_name($a, $b)
 /**
  *
  */
-function canonicalise_data($cat_data)
-{
+function canonicalise_data($cat_data) {
     $cat_data = preg_replace('#^.*?<item#s', '<item', $cat_data);
     $cat_data = str_replace(['<i>', '</i>'], '', $cat_data);
     $cat_data = preg_replace('/<item subcategory="(.*?)">\s*/', '<item>($1) ', $cat_data);
@@ -436,8 +433,7 @@ function canonicalise_data($cat_data)
 /**
  *
  */
-function clean_diff($old, $new)
-{
+function clean_diff($old, $new) {
     $old = explode("\n", $old);
     $new = explode("\n", $new);
     $r = array_diff($old, $new);
@@ -457,8 +453,7 @@ function clean_diff($old, $new)
 /**
  *
  */
-function prettify($s)
-{
+function prettify($s) {
     $s = preg_replace('#<item>(.*?)</item>#', '<li>$1</li>', $s);
     return "<ul>$s</ul>";
 }
@@ -466,8 +461,7 @@ function prettify($s)
 /**
  *
  */
-function cat_heading($cat_type, $table = TRUE)
-{
+function cat_heading($cat_type, $table = TRUE) {
     global $cats;
     $row = "<h5>$cat_type. $cats[$cat_type]</h5>";
     if ($table) {
@@ -479,8 +473,7 @@ function cat_heading($cat_type, $table = TRUE)
 /**
  *
  */
-function span_row($s, $heading = FALSE)
-{
+function span_row($s, $heading = FALSE) {
     if ($heading) {
         return "<tr><th colspan=\"2\">$s</th></tr>\n";
     }

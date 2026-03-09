@@ -20,8 +20,9 @@
  * posts a report about a comment. The flag is unset when/if the report is
  * rejected.
  */
-class COMMENT
-{
+class COMMENT {
+
+    private $db = NULL;
 
     public $comment_id = '';
     public $user_id = '';
@@ -34,8 +35,8 @@ class COMMENT
      */
     public $modflagged = NULL;
     public $firstname = '';    /**
-            * Of the person who posted it.
-            */
+                                * Of the person who posted it.
+                                */
     public $lastname = '';
     public $url = '';
 
@@ -48,15 +49,15 @@ class COMMENT
     /**
      *
      */
-    public function COMMENT($comment_id = '')
-    {
+    public function __construct($comment_id = '') {
 
         $this->db = new ParlDB();
 
         // Set in init.php.
         if (ALLOWCOMMENTS == TRUE) {
             $this->comments_enabled = TRUE;
-        } else {
+        }
+        else {
             $this->comments_enabled = FALSE;
         }
 
@@ -88,7 +89,8 @@ class COMMENT
                 $this->_set_username();
 
                 $this->exists = TRUE;
-            } else {
+            }
+            else {
                 $this->exists = FALSE;
             }
         }
@@ -97,104 +99,91 @@ class COMMENT
     /**
      * Use these for accessing the object's variables externally.
      */
-    public function comment_id()
-    {
+    public function comment_id() {
         return $this->comment_id;
     }
 
     /**
      *
      */
-    public function user_id()
-    {
+    public function user_id() {
         return $this->user_id;
     }
 
     /**
      *
      */
-    public function epobject_id()
-    {
+    public function epobject_id() {
         return $this->epobject_id;
     }
 
     /**
      *
      */
-    public function body()
-    {
+    public function body() {
         return $this->body;
     }
 
     /**
      *
      */
-    public function posted()
-    {
+    public function posted() {
         return $this->posted;
     }
 
     /**
      *
      */
-    public function visible()
-    {
+    public function visible() {
         return $this->visible;
     }
 
     /**
      *
      */
-    public function modflagged()
-    {
+    public function modflagged() {
         return $this->modflagged;
     }
 
     /**
      *
      */
-    public function exists()
-    {
+    public function exists() {
         return $this->exists;
     }
 
     /**
      *
      */
-    public function firstname()
-    {
+    public function firstname() {
         return $this->firstname;
     }
 
     /**
      *
      */
-    public function lastname()
-    {
+    public function lastname() {
         return $this->lastname;
     }
 
     /**
      *
      */
-    public function url()
-    {
+    public function url() {
         return $this->url;
     }
 
     /**
      *
      */
-    public function comments_enabled()
-    {
+    public function comments_enabled() {
         return $this->comments_enabled;
     }
 
     /**
      *
      */
-    public function create($data)
-    {
+    public function create($data) {
         // Inserts data for this comment into the database.
         // $data has 'epobject_id' and 'body' elements.
         // Returns the new comment_id if successful, false otherwise.
@@ -291,7 +280,8 @@ class COMMENT
 
             return $this->comment_id();
 
-        } else {
+        }
+        else {
             return FALSE;
         }
     }
@@ -299,8 +289,7 @@ class COMMENT
     /**
      *
      */
-    public function display($format = 'html', $template = 'comments')
-    {
+    public function display($format = 'html', $template = 'comments') {
 
         $data['comments'][0] = [
             'comment_id' => $this->comment_id,
@@ -324,8 +313,7 @@ class COMMENT
     /**
      *
      */
-    public function set_modflag($switch)
-    {
+    public function set_modflag($switch) {
         // $switch is either 'on' or 'off'.
         // The comment's modflag goes to on when someone reports the comment.
         // It goes to off when a commentreport has been resolved but the
@@ -336,11 +324,13 @@ class COMMENT
             $date = gmdate("Y-m-d H:i:s");
             $flag = "'$date'";
 
-        } elseif ($switch == 'off') {
+        }
+        elseif ($switch == 'off') {
             $date = NULL;
             $flag = 'NULL';
 
-        } else {
+        }
+        else {
             $PAGE->error_message("Why are you trying to switch this comment's modflag to '" . htmlentities($switch) . "'!");
         }
 
@@ -352,7 +342,8 @@ class COMMENT
         if ($q->success()) {
             $this->modflagged = $date;
             return TRUE;
-        } else {
+        }
+        else {
             $message = [
                 'title' => 'Sorry',
                 'text' => "We couldn't update the comment's modflag."
@@ -366,8 +357,7 @@ class COMMENT
     /**
      *
      */
-    public function delete()
-    {
+    public function delete() {
         // Mark the comment as invisible.
 
         global $THEUSER, $PAGE;
@@ -377,7 +367,8 @@ class COMMENT
 
             if ($q->success()) {
                 return TRUE;
-            } else {
+            }
+            else {
                 $message = [
                     'title' => 'Sorry',
                     'text' => "We were unable to delete the comment."
@@ -386,7 +377,8 @@ class COMMENT
                 return FALSE;
             }
 
-        } else {
+        }
+        else {
             $message = [
                 'title' => 'Sorry',
                 'text' => "You are not authorised to delete comments."
@@ -400,8 +392,7 @@ class COMMENT
     /**
      *
      */
-    public function _set_url()
-    {
+    public function _set_url() {
         global $hansardmajors;
         // Creates and sets the URL for the comment.
 
@@ -434,8 +425,7 @@ class COMMENT
     /**
      *
      */
-    public function _set_username()
-    {
+    public function _set_username() {
         // Gets and sets the user's name who posted the comment.
 
         if ($this->firstname == '' && $this->lastname == '') {

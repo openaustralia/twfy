@@ -21,56 +21,56 @@ $db = $HANSARDLIST->db;
 $q = $db->query("SELECT person_id, group_concat(member_id order by member_id separator ',') as member_ids
 			FROM member GROUP BY person_id HAVING max(left_house)='9999-12-31'");
 if ($q->rows() <= 0) {
-  exit;
+    exit;
 }
 
 $starttime = time();
 for ($personrow = 0; $personrow < $q->rows(); $personrow++) {
-  $person_id = $q->field($personrow, 'person_id');
-  $member_ids = $q->field($personrow, 'member_ids');
+    $person_id = $q->field($personrow, 'person_id');
+    $member_ids = $q->field($personrow, 'member_ids');
 
-  $args = ['member_ids' => $member_ids];
-  $speeches = $HANSARDLIST->display('person', $args, 'none');
+    $args = ['member_ids' => $member_ids];
+    $speeches = $HANSARDLIST->display('person', $args, 'none');
 
-  // Some data about this person that we'll need for the feed.
-  $MEMBER = new MEMBER(['person_id' => $person_id]);
-  $MPURL = new URL('mp');
-  $MPURL->insert(['pid' => $person_id]);
-  $mpurl = $MPURL->generate();
+    // Some data about this person that we'll need for the feed.
+    $MEMBER = new MEMBER(['person_id' => $person_id]);
+    $MPURL = new URL('mp');
+    $MPURL->insert(['pid' => $person_id]);
+    $mpurl = $MPURL->generate();
 
-  $date = gmdate('Y-m-d');
-  $time = gmdate('H:i:s');
-  $datenow = $date . 'T' . $time . '+00:00';
+    $date = gmdate('Y-m-d');
+    $time = gmdate('H:i:s');
+    $datenow = $date . 'T' . $time . '+00:00';
 
-  // Prepare the meat of the RSS file.
-  $items = '';
-  $entries = '';
-  if (isset($speeches['rows']) && count($speeches['rows']) > 0) {
+    // Prepare the meat of the RSS file.
+    $items = '';
+    $entries = '';
+    if (isset($speeches['rows']) && count($speeches['rows']) > 0) {
 
-    foreach ($speeches['rows'] as $n => $row) {
+        foreach ($speeches['rows'] as $n => $row) {
 
-      // While we're linking to individual speeches,
-      // the text is the body of the parent, ie (sub)section.
-      $title = htmlentities(str_replace('&#8212;', '-', $row['parent']['body']));
+            // While we're linking to individual speeches,
+            // the text is the body of the parent, ie (sub)section.
+            $title = htmlentities(str_replace('&#8212;', '-', $row['parent']['body']));
 
-      $link = $row['listurl'] ?? '';
-      $link = 'http://' . DOMAIN . $link;
+            $link = $row['listurl'] ?? '';
+            $link = 'http://' . DOMAIN . $link;
 
-      $description = htmlentities(trim_characters($row['body'], 0, 200));
-      $contentencoded = $row['body'];
+            $description = htmlentities(trim_characters($row['body'], 0, 200));
+            $contentencoded = $row['body'];
 
-      $hdate = format_date($row['hdate'], 'Y-m-d');
-      if ($row['htime'] != NULL) {
-        $htime = format_time($row['htime'], 'H:i:s');
-      }
-      else {
-        $htime = '00:00:00';
-      }
+            $hdate = format_date($row['hdate'], 'Y-m-d');
+            if ($row['htime'] != NULL) {
+                $htime = format_time($row['htime'], 'H:i:s');
+            }
+            else {
+                $htime = '00:00:00';
+            }
 
-      $date = $hdate . 'T' . $htime . '+00:00';
+            $date = $hdate . 'T' . $htime . '+00:00';
 
-      $items .= '<rdf:li rdf:resource="' . $link . '" />' . "\n";
-      $entries .= "<item rdf:about=\"$link\">
+            $items .= '<rdf:li rdf:resource="' . $link . '" />' . "\n";
+            $entries .= "<item rdf:about=\"$link\">
 	<title>$title</title>
 	<link>$link</link>
 	<description>$description</description>
@@ -79,11 +79,11 @@ for ($personrow = 0; $personrow < $q->rows(); $personrow++) {
 </item>
 ";
 
+        }
     }
-  }
 
-  // Prepare the whole text of the RSS file.
-  $rsstext = '<?xml version="1.0" encoding="iso-8859-1"?>
+    // Prepare the whole text of the RSS file.
+    $rsstext = '<?xml version="1.0" encoding="iso-8859-1"?>
 <rdf:RDF
   xmlns:dc="http://purl.org/dc/elements/1.1/"
   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
@@ -109,13 +109,13 @@ for ($personrow = 0; $personrow < $q->rows(); $personrow++) {
 
 </rdf:RDF>';
 
-  // Write the text to the file...
-  $filename = $rsspath . $person_id . '.rdf';
-  $fh = fopen($filename, "w");
-  if (fwrite($fh, $rsstext) === FALSE) {
-    echo "Could not write to file ($filename)\n";
-  }
-  fclose($fh);
+    // Write the text to the file...
+    $filename = $rsspath . $person_id . '.rdf';
+    $fh = fopen($filename, "w");
+    if (fwrite($fh, $rsstext) === FALSE) {
+        echo "Could not write to file ($filename)\n";
+    }
+    fclose($fh);
 
 }
 

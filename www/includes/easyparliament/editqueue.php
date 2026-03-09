@@ -44,24 +44,23 @@
 /**
  * [TODO] what happens when two things with the same name are in the editqueue?
  */
-class EDITQUEUE
-{
+class EDITQUEUE {
+
+    private $db = NULL;
 
     public $pending_count = '';
 
     /**
      *
      */
-    public function EDITQUEUE()
-    {
+    public function __construct() {
         $this->db = new ParlDB();
     }
 
     /**
      *
      */
-    public function add($data)
-    {
+    public function add($data) {
         // This does the bare minimum.
         // The upper object should make sure it's passsing good data.
         // (for now!)
@@ -102,7 +101,8 @@ class EDITQUEUE
 
             return $this->editqueue_id;
 
-        } else {
+        }
+        else {
             return FALSE;
         }
     }
@@ -110,8 +110,7 @@ class EDITQUEUE
     /**
      *
      */
-    public function approve($data)
-    {
+    public function approve($data) {
         // Approve items for inclusion
         // Create new epobject and update the editqueue.
 
@@ -173,7 +172,7 @@ class EDITQUEUE
                         $q = $this->db->query("delete from epobject where epobject_id=" . $previous_insert_id . "");
                         return FALSE;
                     }
-                    break;
+                  break;
 
             }
             $this->current_subclass_id = $q->insert_id();
@@ -189,7 +188,8 @@ class EDITQUEUE
 							WHERE edit_id=" . $approval_id . ";");
             if (!$q->success()) {
                 break;
-            } else {
+            }
+            else {
                 // Now send them an email telling them they've been approved.
 
                 // Scrub that one from the list of pending items.
@@ -205,8 +205,7 @@ class EDITQUEUE
     /**
      *
      */
-    public function decline($data)
-    {
+    public function decline($data) {
         // Decline a list of term submissions from users.
 
         global $THEUSER;
@@ -233,7 +232,8 @@ class EDITQUEUE
 							WHERE edit_id=" . $decline_id . ";");
             if (!$q->success()) {
                 break;
-            } else {
+            }
+            else {
                 // Scrub that one from the list of pending items.
                 unset($this->pending[$decline_id]);
             }
@@ -248,8 +248,7 @@ class EDITQUEUE
     /**
      *
      */
-    public function modify($args)
-    {
+    public function modify($args) {
         // Moderate a post,
         // log it in editqueue,
         // update glossary_id.
@@ -264,8 +263,7 @@ class EDITQUEUE
     /**
      *
      */
-    public function get_pending()
-    {
+    public function get_pending() {
         // Fetch all pending editqueue items.
         // Sets $this->pending and returns a body count.
         // Return organised by type? - maybe not for the moment.
@@ -279,7 +277,8 @@ class EDITQUEUE
             $this->update_pending_count();
 
             return TRUE;
-        } else {
+        }
+        else {
             return FALSE;
         }
     }
@@ -287,8 +286,7 @@ class EDITQUEUE
     /**
      *
      */
-    public function display()
-    {
+    public function display() {
         // Print all our pending items out in a nice list or something
         // Add links later for "approve, decline, refer"
         // Just get the fucker working for now.
@@ -299,21 +297,21 @@ class EDITQUEUE
 
         ?>
         <form action="<?php echo $form_link ?>" method="post"><?php
-           foreach ($this->pending as $editqueue_id => $pender) {
+        foreach ($this->pending as $editqueue_id => $pender) {
 
-               $URL = new URL('admin_glossary_pending');
-               $URL->insert(['approve' => $editqueue_id]);
-               $approve_link = $URL->generate('url');
+            $URL = new URL('admin_glossary_pending');
+            $URL->insert(['approve' => $editqueue_id]);
+            $approve_link = $URL->generate('url');
 
-               $URL = new URL('admin_glossary_pending');
-               $URL->insert(['modify' => $editqueue_id]);
-               $modify_link = $URL->generate('url');
+            $URL = new URL('admin_glossary_pending');
+            $URL->insert(['modify' => $editqueue_id]);
+            $modify_link = $URL->generate('url');
 
-               $URL = new URL('admin_glossary_pending');
-               $URL->insert(['decline' => $editqueue_id]);
-               $decline_link = $URL->generate('url');
+            $URL = new URL('admin_glossary_pending');
+            $URL->insert(['decline' => $editqueue_id]);
+            $decline_link = $URL->generate('url');
 
-               ?>
+            ?>
                 <div class="pending-item"><label for="<?php echo $editqueue_id; ?>"><input type="checkbox" name="approve[]"
                             value="<?php echo $editqueue_id; ?>"
                             id="<?php echo $editqueue_id; ?>"><strong><?php echo $pender['title']; ?></strong></label>
@@ -329,8 +327,8 @@ class EDITQUEUE
                     </p>
                 </div>
                 <?php
-           }
-           ?><input type="submit" value="Approve checked items">
+        }
+        ?><input type="submit" value="Approve checked items">
         </form>
         <?php
     }
@@ -338,8 +336,7 @@ class EDITQUEUE
     /**
      * PRIVATE FUNCTIONS.
      */
-    public function update_pending_count()
-    {
+    public function update_pending_count() {
         // Just makes sure we're showing the right number of pending items.
         $this->pending_count = count($this->pending);
     }
@@ -350,14 +347,12 @@ class EDITQUEUE
 /**
  * Glossary overrides.
  */
-class GLOSSEDITQUEUE extends EDITQUEUE
-{
+class GLOSSEDITQUEUE extends EDITQUEUE {
 
     /**
      *
      */
-    public function approve($data)
-    {
+    public function approve($data) {
         // Approve items for inclusion
         // Create new epobject and update the editqueue.
 
@@ -411,7 +406,8 @@ class GLOSSEDITQUEUE extends EDITQUEUE
 							WHERE edit_id=" . $approval_id . ";");
             if (!$q->success()) {
                 break;
-            } else {
+            }
+            else {
                 // Scrub that one from the list of pending items.
                 unset($this->pending[$approval_id]);
             }

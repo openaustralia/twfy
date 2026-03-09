@@ -9,8 +9,7 @@ include_once INCLUDESPATH . 'easyparliament/member.php';
 /**
  *
  */
-function api_getMP_front()
-{
+function api_getMP_front() {
     ?>
     <p><big>Fetch a particular member of the House of Representatives.</big></p>
 
@@ -67,8 +66,7 @@ function api_getMP_front()
 /**
  *
  */
-function _api_getMP_row($row)
-{
+function _api_getMP_row($row) {
     global $parties;
     $row['full_name'] = member_full_name(
         $row['house'],
@@ -105,8 +103,7 @@ function _api_getMP_row($row)
 /**
  *
  */
-function api_getMP_id($id)
-{
+function api_getMP_id($id) {
     $db = new ParlDB();
     $q = $db->query("select * from member
 		where house=1 and person_id = '" . mysqli_real_escape_string($db, $id) . "'
@@ -131,7 +128,8 @@ function api_getMP_id($id)
             }
         }
         api_output($output, $last_mod);
-    } else {
+    }
+    else {
         api_error('Unknown person ID');
     }
 }
@@ -139,21 +137,23 @@ function api_getMP_id($id)
 /**
  *
  */
-function api_getMP_postcode($pc)
-{
+function api_getMP_postcode($pc) {
     $pc = preg_replace('#[^0-9]#i', '', $pc);
     if (is_postcode($pc)) {
         $constituency = postcode_to_constituency($pc);
         if ($constituency == 'CONNECTION_TIMED_OUT') {
             api_error('Connection timed out');
-        } elseif ($constituency) {
+        }
+        elseif ($constituency) {
             $person = _api_getMP_constituency($constituency);
             $output = $person;
             api_output($output, strtotime($output['lastupdate']));
-        } else {
+        }
+        else {
             api_error('Unknown postcode');
         }
-    } else {
+    }
+    else {
         api_error('Invalid postcode');
     }
 }
@@ -161,13 +161,13 @@ function api_getMP_postcode($pc)
 /**
  *
  */
-function api_getMP_constituency($constituency)
-{
+function api_getMP_constituency($constituency) {
     $person = _api_getMP_constituency($constituency);
     if ($person) {
         $output = $person;
         api_output($output, strtotime($output['lastupdate']));
-    } else {
+    }
+    else {
         api_error('Unknown constituency, or no MP for that constituency');
     }
 }
@@ -176,8 +176,7 @@ function api_getMP_constituency($constituency)
  * Very similary to MEMBER's constituency_to_person_id
  * Should all be abstracted properly :-/.
  */
-function _api_getMP_constituency($constituency)
-{
+function _api_getMP_constituency($constituency) {
     $db = new ParlDB();
 
     if ($constituency == '') {
