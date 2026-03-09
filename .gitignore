@@ -14,3 +14,4 @@ scripts/alerts-lastsent
 conf/general
 /vendor/
 _mysqldata/*
+phpcs-report.json
