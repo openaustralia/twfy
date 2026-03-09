@@ -355,9 +355,9 @@ class MEMBER
             } else {
                 $house = 2;
             }
-            // If ($title) $q .= 'title = \'' . mysqli_real_escape_string($this->db->conn ,$title) . '\' AND ';.
-            $q .= "house = " . $house . " AND ((first_name='" . mysqli_real_escape_string($this->db->conn, $first_name . " " . $middle_name) . "' AND last_name='" . mysqli_real_escape_string($this->db->conn, $last_name) . "') OR " .
-                "(first_name='" . mysqli_real_escape_string($this->db->conn, $first_name) . "' AND last_name='" . mysqli_real_escape_string($this->db->conn, $middle_name . " " . $last_name) . "'))";
+            // If ($title) $q .= 'title = \'' . $this->db->escape($title) . '\' AND ';.
+            $q .= "house = " . $house . " AND ((first_name='" . $this->db->escape($first_name . " " . $middle_name) . "' AND last_name='" . $this->db->escape($last_name) . "') OR " .
+                "(first_name='" . $this->db->escape($first_name) . "' AND last_name='" . $this->db->escape($middle_name . " " . $last_name) . "'))";
             if ($const) {
                 $normalised = normalise_constituency_name($const);
                 if ($normalised && strtolower($normalised) != strtolower($const)) {
