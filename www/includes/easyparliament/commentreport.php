@@ -533,11 +533,11 @@ class COMMENTREPORT
 
                 $q = $this->db->query("UPDATE commentreports
 								SET 	resolved = '$time',
-										resolvedby = '" . mysqli_real_escape_string($db, $THEUSER->user_id()) . "',
+										resolvedby = '" . $this->db->escape($THEUSER->user_id()) . "',
 										locked = NULL,
 										lockedby = NULL,
 										upheld = '$upheldsql'
-								WHERE 	report_id = '" . mysqli_real_escape_string($db, $this->report_id) . "'
+								WHERE 	report_id = '" . $this->db->escape($this->report_id) . "'
 								");
 
                 if ($q->success()) {
