@@ -556,11 +556,9 @@ function display_form($details = array(), $errors = array())
         ?>
         <div class="row">
             <span class="label"><label for="firstname">Your first name:</label></span>
-            <span class="formw"><input type="text" name="firstname" id="firstname"
-                    value="<?php if (isset($details["firstname"])) {
-                        echo htmlentities($details["firstname"]);
-                    } ?>"
-                    maxlength="255" size="30" class="form"></span>
+            <span class="formw"><input type="text" name="firstname" id="firstname" value="<?php if (isset($details["firstname"])) {
+                echo htmlentities($details["firstname"]);
+            } ?>" maxlength="255" size="30" class="form"></span>
         </div>
 
         <?php
@@ -570,11 +568,9 @@ function display_form($details = array(), $errors = array())
         ?>
         <div class="row">
             <span class="label"><label for="lastname">Your last name:</label></span>
-            <span class="formw"><input type="text" name="lastname" id="lastname"
-                    value="<?php if (isset($details["lastname"])) {
-                        echo htmlentities($details["lastname"]);
-                    } ?>"
-                    maxlength="255" size="30" class="form"></span>
+            <span class="formw"><input type="text" name="lastname" id="lastname" value="<?php if (isset($details["lastname"])) {
+                echo htmlentities($details["lastname"]);
+            } ?>" maxlength="255" size="30" class="form"></span>
         </div>
 
         <?php
@@ -584,11 +580,9 @@ function display_form($details = array(), $errors = array())
         ?>
         <div class="row">
             <span class="label"><label for="em">Email address:</label></span>
-            <span class="formw"><input type="text" name="em" id="em"
-                    value="<?php if (isset($details["email"])) {
-                        echo htmlentities($details["email"]);
-                    } ?>" maxlength="255"
-                    size="30" class="form"></span>
+            <span class="formw"><input type="text" name="em" id="em" value="<?php if (isset($details["email"])) {
+                echo htmlentities($details["email"]);
+            } ?>" maxlength="255" size="30" class="form"></span>
         </div>
 
         <?php
@@ -628,11 +622,9 @@ function display_form($details = array(), $errors = array())
 
         <br style="clear: left;">&nbsp;<br>
 
-        <span class="formw"><input type="hidden" name="constituency" id="constituency"
-                value="<?php if (isset($details["constituency"])) {
-                    echo htmlentities($details["constituency"]);
-                } ?>"
-                maxlength="20" size="20" class="form"></span>
+        <span class="formw"><input type="hidden" name="constituency" id="constituency" value="<?php if (isset($details["constituency"])) {
+            echo htmlentities($details["constituency"]);
+        } ?>" maxlength="20" size="20" class="form"></span>
         <?php
         if (isset($errors["url"])) {
             $PAGE->error_message($errors["url"]);
@@ -640,11 +632,9 @@ function display_form($details = array(), $errors = array())
         ?>
         <div class="row">
             <span class="label"><label for="url">Your website:</label></span>
-            <span class="formw"><input type="url" name="url" id="url"
-                    value="<?php if (isset($details['url'])) {
-                        echo htmlentities($details['url']);
-                    } ?>" maxlength="255"
-                    size="20" class="form"> <small>Optional and public</small></span>
+            <span class="formw"><input type="url" name="url" id="url" value="<?php if (isset($details['url'])) {
+                echo htmlentities($details['url']);
+            } ?>" maxlength="255" size="20" class="form"> <small>Optional and public</small></span>
         </div>
 
 
@@ -1011,7 +1001,7 @@ function display_user($user_id = "")
             ?>
             <p><strong>This is how other people see you.</strong> <a href="<?php echo $EDITURL->generate(); ?>">Edit your
                     details</a>.</p>
-        <?php
+            <?php
         }
 
         ?>
@@ -1071,7 +1061,8 @@ function display_user($user_id = "")
                 if (isset($emailpublic)) {
                     ?>
             <div class="row">&nbsp;<br>Let other people see your email address?
-                <strong><?php echo htmlentities($emailpublic); ?></strong></div>
+                <strong><?php echo htmlentities($emailpublic); ?></strong>
+            </div>
 
             <?php
                 }
@@ -1116,7 +1107,7 @@ function display_user($user_id = "")
                     $PAGE->stripe_start();
                     print '<h3>Your email alerts</h3>';
                     $db = new ParlDB;
-                    $q = $db->query('SELECT * FROM alerts WHERE email = "' . mysqli_real_escape_string($db, $THEUSER->email()) . '" ORDER BY confirmed,deleted,alert_id');
+                    $q = $db->query('SELECT * FROM alerts WHERE email = "' . $db->escape($THEUSER->email()) . '" ORDER BY confirmed,deleted,alert_id');
                     $out = '';
                     for ($i = 0; $i < $q->rows(); ++$i) {
                         $row = $q->row($i);
