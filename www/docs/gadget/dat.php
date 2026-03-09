@@ -13,7 +13,7 @@ $pid = $_GET['pid'];
 
 $db = new ParlDB();
 $q = $db->query("select * from member
-	where house=1 and person_id = '" . mysqli_real_escape_string($db, $pid) . "'
+	where house=1 and person_id = '" . $db->escape($pid) . "'
 	order by left_house desc limit 1");
 if (!$q->rows()) {
     print '<error>Unknown ID</error>';
@@ -38,7 +38,7 @@ if ($image) {
 
 $q = $db->query("SELECT position,dept FROM moffice WHERE to_date='9999-12-31'
 	and source='chgpages/selctee' and person=" .
-    mysqli_real_escape_string($db, $pid) . ' ORDER BY from_date DESC');
+    $db->escape($pid) . ' ORDER BY from_date DESC');
 for ($i = 0; $i < $q->rows(); $i++) {
     $row['selctee'][] = prettify_office($q->field($i, 'position'), $q->field($i, 'dept'));
 }
@@ -56,7 +56,7 @@ $row['selctee'][] = $member . ', ' . $q->field($i, 'title');
  */
 
 $q = $db->query("select data_key, data_value from personinfo
-	where data_key like 'public\_whip%' and person_id = '" . mysqli_real_escape_string($db, $pid) . "'
+	where data_key like 'public\_whip%' and person_id = '" . $db->escape($pid) . "'
 // order so both_voted is always first...
 	order by data_key");
 $none = FALSE;
@@ -96,7 +96,8 @@ display_dream_comparison(826, "equal <strong>gay rights</strong>");
 /**
  *
  */
-function display_dream_comparison($id, $text, $inverse = FALSE) {
+function display_dream_comparison($id, $text, $inverse = FALSE)
+{
     global $pw, $output;
     if (!array_key_exists($id, $output)) {
         return;
@@ -104,8 +105,7 @@ function display_dream_comparison($id, $text, $inverse = FALSE) {
     $score = $output[$id];
     if ($score == -1) {
         $pw .= '<li>Has never voted on';
-    }
-    else {
+    } else {
         if ($inverse) {
             $score = 1 - $score;
         }
@@ -131,27 +131,22 @@ print '<twfy>' . api_output_xml($output) . '</twfy>';
 /**
  *
  */
-function score_to_strongly($dmpscore) {
+function score_to_strongly($dmpscore)
+{
     $dmpdesc = "unknown about";
     if ($dmpscore > 0.95 && $dmpscore <= 1.0) {
         $dmpdesc = "consistently against";
-    }
-    elseif ($dmpscore > 0.85) {
+    } elseif ($dmpscore > 0.85) {
         $dmpdesc = "almost always against";
-    }
-    elseif ($dmpscore > 0.6) {
+    } elseif ($dmpscore > 0.6) {
         $dmpdesc = "generally against";
-    }
-    elseif ($dmpscore > 0.4) {
+    } elseif ($dmpscore > 0.4) {
         $dmpdesc = "a mixture of for and against";
-    }
-    elseif ($dmpscore > 0.15) {
+    } elseif ($dmpscore > 0.15) {
         $dmpdesc = "generally for";
-    }
-    elseif ($dmpscore > 0.05) {
+    } elseif ($dmpscore > 0.05) {
         $dmpdesc = "almost always for";
-    }
-    elseif ($dmpscore >= 0.0) {
+    } elseif ($dmpscore >= 0.0) {
         $dmpdesc = "consistently for";
     }
     return $dmpdesc;
