@@ -271,7 +271,8 @@ class MEMBER {
 
         if ($q->rows > 0) {
             return $q->field(0, 'person_id');
-        } else {
+        }
+        else {
             $q = $this->db->query("SELECT person_id FROM member WHERE constituency = '" . $this->db->escape($constituency) . "' ORDER BY left_house DESC LIMIT 1");
             if ($q->rows > 0) {
                 return $q->field(0, 'person_id');
