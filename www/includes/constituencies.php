@@ -8,7 +8,8 @@
 /**
  *
  */
-function normalise_constituency_name($name) {
+function normalise_constituency_name($name)
+{
     // HACK.
     return $name;
 
@@ -18,7 +19,7 @@ function normalise_constituency_name($name) {
     $name = str_replace("&amp;", "&", $name);
     $name = str_replace("&", "&amp;", $name);
 
-    $query = "select cons_id from constituency where name like '" . mysqli_real_escape_string($db, $name) . "' and from_date <= date(now()) and date(now()) <= to_date";
+    $query = "select cons_id from constituency where name like '" . $db->escape($name) . "' and from_date <= date(now()) and date(now()) <= to_date";
     $q1 = $db->query($query);
     if ($q1->rows <= 0) {
         return FALSE;
@@ -36,7 +37,8 @@ function normalise_constituency_name($name) {
 /**
  * As I don't want to do 646*2 DB queries!
  */
-function normalise_constituency_names($names) {
+function normalise_constituency_names($names)
+{
     $db = new ParlDB();
     $q = $db->query('select constituency.name as name,c_main.name as canonical_name
 		from constituency, constituency as c_main
