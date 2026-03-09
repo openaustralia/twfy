@@ -7,7 +7,8 @@
 /**
  *
  */
-function api_convertURL_front() {
+function api_convertURL_front()
+{
     ?>
     <p><big>Converts an aph.gov.au Hansard URL into an OpenAustralia one, if possible.</big></p>
 
@@ -24,9 +25,9 @@ function api_convertURL_front() {
 
     <h4>Example Response</h4>
     <pre>{
-            gid : "uk.org.publicwhip/debate/2006-07-11a.1352.2",
-            url : "http://www.openaustralia.org/debates/?id=2006-07-11a.1311.0#g1352.2"
-        }</pre>
+                    gid : "uk.org.publicwhip/debate/2006-07-11a.1352.2",
+                    url : "http://www.openaustralia.org/debates/?id=2006-07-11a.1311.0#g1352.2"
+                }</pre>
 
     <h4>Example Use</h4>
     <p>This probably counts as "AJAX", though it doesn't use XMLHTTP, asynchronicity, or XML, only cross-site JavaScript...
@@ -45,7 +46,8 @@ function api_convertURL_front() {
 /**
  * Very similar to function in hansardlist.php, but separated .
  */
-function get_listurl($q) {
+function get_listurl($q)
+{
     global $hansardmajors;
     $id_data = [
         'gid' => fix_gid_from_db($q->field(0, 'gid')),
@@ -58,13 +60,12 @@ function get_listurl($q) {
     $fragment = '';
     if ($id_data['htype'] == '11' || $id_data['htype'] == '10') {
         $LISTURL->insert(['id' => $id_data['gid']]);
-    }
-    else {
+    } else {
         $parent_epobject_id = $id_data['subsection_id'];
         $parent_gid = '';
         $r = $db->query("SELECT gid
 				FROM 	hansard
-				WHERE	epobject_id = '" . mysqli_real_escape_string($db, $parent_epobject_id) . "'
+				WHERE	epobject_id = '" . $db->escape($parent_epobject_id) . "'
 				");
         if ($r->rows() > 0) {
             $parent_gid = fix_gid_from_db($r->field(0, 'gid'));
@@ -80,7 +81,8 @@ function get_listurl($q) {
 /**
  *
  */
-function api_converturl_url_output($q) {
+function api_converturl_url_output($q)
+{
     $gid = $q->field(0, 'gid');
     $url = get_listurl($q);
     $output = [
@@ -93,22 +95,23 @@ function api_converturl_url_output($q) {
 /**
  *
  */
-function api_converturl_url($url) {
+function api_converturl_url($url)
+{
     $db = new ParlDB();
     $url_nohash = preg_replace('/#.*/', '', $url);
-    $q = $db->query('select gid,major,htype,subsection_id from hansard where source_url = "' . mysqli_real_escape_string($db, $url) . '" order by gid limit 1');
+    $q = $db->query('select gid,major,htype,subsection_id from hansard where source_url = "' . $db->escape($url) . '" order by gid limit 1');
     if ($q->rows()) {
         return api_converturl_url_output($q);
     }
 
-    $q = $db->query('select gid,major,htype,subsection_id from hansard where source_url like "' . mysqli_real_escape_string($db, $url_nohash) . '%" order by gid limit 1');
+    $q = $db->query('select gid,major,htype,subsection_id from hansard where source_url like "' . $db->escape($url_nohash) . '%" order by gid limit 1');
     if ($q->rows()) {
         return api_converturl_url_output($q);
     }
 
     $url_bound = str_replace('cmhansrd/cm', 'cmhansrd/vo', $url_nohash);
     if ($url_bound != $url_nohash) {
-        $q = $db->query('select gid,major,htype,subsection_id from hansard where source_url like "' . mysqli_real_escape_string($db, $url_bound) . '%" order by gid limit 1');
+        $q = $db->query('select gid,major,htype,subsection_id from hansard where source_url like "' . $db->escape($url_bound) . '%" order by gid limit 1');
         if ($q->rows()) {
             return api_converturl_url_output($q);
         }

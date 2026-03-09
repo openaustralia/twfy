@@ -10,7 +10,8 @@ include_once 'api_getGeometry.php';
 /**
  *
  */
-function api_getBoundary_front() {
+function api_getBoundary_front()
+{
     ?>
     <p><big>Returns boundary information for a constituency.</big></p>
 
@@ -35,7 +36,8 @@ function api_getBoundary_front() {
 /**
  *
  */
-function api_getBoundary_name($name) {
+function api_getBoundary_name($name)
+{
     // XXX.
     $name = html_entity_decode(normalise_constituency_name($name));
     if (!$name) {
@@ -59,8 +61,7 @@ function api_getBoundary_name($name) {
     $out = mapit_get_voting_area_geometry($id, 'wgs84');
     if (isset($out['polygon'])) {
         api_output($out['polygon']);
-    }
-    else {
+    } else {
         api_error('Nothing returned from get_voting_areas_geometry');
     }
 }

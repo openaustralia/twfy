@@ -7,7 +7,8 @@
 /**
  *
  */
-function api_getMPInfo_front() {
+function api_getMPInfo_front()
+{
     ?>
     <p><big>Fetch extra information for a particular person.</big></p>
 
@@ -27,12 +28,13 @@ function api_getMPInfo_front() {
 /**
  *
  */
-function api_getMPinfo_id($id) {
+function api_getMPinfo_id($id)
+{
     $fields = preg_split('#\s*,\s*#', get_http_var('fields'), -1, PREG_SPLIT_NO_EMPTY);
     $db = new ParlDB();
     $last_mod = 0;
     $q = $db->query("select data_key, data_value, lastupdate from personinfo
-		where person_id = '" . mysqli_real_escape_string($db, $db->connection, $id) . "'");
+		where person_id = '" . $db->escape($db->connection, $id) . "'");
     if ($q->rows()) {
         $output = [];
         for ($i = 0; $i < $q->rows(); $i++) {
@@ -47,7 +49,7 @@ function api_getMPinfo_id($id) {
             }
         }
         $q = $db->query("select * from memberinfo
-			where member_id in (select member_id from member where person_id = '" . mysqli_real_escape_string($db, $id) . "')
+			where member_id in (select member_id from member where person_id = '" . $db->escape($id) . "')
 			order by member_id");
         if ($q->rows()) {
             $oldmid = 0;
@@ -75,8 +77,7 @@ function api_getMPinfo_id($id) {
         }
         ksort($output);
         api_output($output, $last_mod);
-    }
-    else {
+    } else {
         api_error('Unknown person ID');
     }
 }
@@ -84,6 +85,7 @@ function api_getMPinfo_id($id) {
 /**
  *
  */
-function api_getMPinfo_fields($f) {
+function api_getMPinfo_fields($f)
+{
     api_error('You must supply a person ID');
 }
