@@ -128,7 +128,7 @@ class MEMBER {
 			first_name, last_name, constituency, party,
 			entered_house, left_house, entered_reason, left_reason, person_id
 			FROM member
-			WHERE person_id = '" . mysqli_real_escape_string($this->db->conn, $person_id) . "'
+			WHERE person_id = '" . $this->db->escape($person_id) . "'
                         ORDER BY left_house DESC, house");
 
         if (!$q->rows() > 0) {
@@ -227,7 +227,7 @@ class MEMBER {
     public function member_id_to_person_id($member_id) {
         global $PAGE;
         $q = $this->db->query("SELECT person_id FROM member
-					WHERE member_id = '" . mysqli_real_escape_string($this->db->conn, $member_id) . "'");
+					WHERE member_id = '" . $this->db->escape($member_id) . "'");
         if ($q->rows > 0) {
             return $q->field(0, 'person_id');
         }
@@ -266,14 +266,13 @@ class MEMBER {
         }
 
         $q = $this->db->query("SELECT person_id FROM member
-					WHERE constituency = '" . mysqli_real_escape_string($this->db->conn, $constituency) . "'
+					WHERE constituency = '" . $this->db->escape($constituency) . "'
 					AND left_reason = 'still_in_office'");
 
         if ($q->rows > 0) {
             return $q->field(0, 'person_id');
-        }
-        else {
-            $q = $this->db->query("SELECT person_id FROM member WHERE constituency = '" . mysqli_real_escape_string($this->db->conn, $constituency) . "' ORDER BY left_house DESC LIMIT 1");
+        } else {
+            $q = $this->db->query("SELECT person_id FROM member WHERE constituency = '" . $this->db->escape($constituency) . "' ORDER BY left_house DESC LIMIT 1");
             if ($q->rows > 0) {
                 return $q->field(0, 'person_id');
             }
@@ -321,9 +320,9 @@ class MEMBER {
                 $PAGE->error_message('Sorry, that name was not recognised.');
                 return FALSE;
             }
-            $first_name = mysqli_real_escape_string($this->db->conn, $m[1]);
-            $middle_name = mysqli_real_escape_string($this->db->conn, $m[2]);
-            $last_name = mysqli_real_escape_string($this->db->conn, $m[3]);
+            $first_name = $this->db->escape($m[1]);
+            $middle_name = $this->db->escape($m[2]);
+            $last_name = $this->db->escape($m[3]);
             $q .= "house = 4 AND (";
             $q .= "(first_name='$first_name $middle_name' AND last_name='$last_name')";
             $q .= " or (first_name='$first_name' AND last_name='$middle_name $last_name') )";
@@ -378,7 +377,7 @@ class MEMBER {
         }
 
         if ($const) {
-            $q .= ' AND constituency=\'' . mysqli_real_escape_string($this->db->conn, $const) . "'";
+            $q .= ' AND constituency=\'' . $this->db->escape($const) . "'";
         }
         $q .= ' ORDER BY left_house DESC';
         $q = $this->db->query($q);
