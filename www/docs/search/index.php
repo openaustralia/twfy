@@ -303,7 +303,7 @@ function find_constituency($args)
         } else {
             $query = "select distinct
                     (select name from constituency where cons_id = o.cons_id and main_name) as name
-                from constituency AS o where name like '%" . mysqli_real_escape_string($db, $try) . "%'
+                from constituency AS o where name like '%" . $db->escape($try) . "%'
                 and from_date <= date(now()) and date(now()) <= to_date";
             $q = $db->query($query);
             for ($n = 0; $n < $q->rows(); $n++) {
@@ -421,7 +421,7 @@ function find_members($args)
 
     $searchwords = explode(' ', preg_replace('#[^a-z ]#i', '', $searchstring));
     foreach ($searchwords as $i => $searchword) {
-        $searchwords[$i] = mysqli_real_escape_string($db, htmlentities($searchword));
+        $searchwords[$i] = $db->escape(htmlentities($searchword));
         if (!strcasecmp($searchword, 'Opik'))
             $searchwords[$i] = '&Ouml;pik';
     }
@@ -516,10 +516,10 @@ function find_glossary_items($args)
             foreach ($GLOSSARY->search_matches as $glossary_id => $term) {
                 $URL->update(array("gl" => $glossary_id));
                 ?><a href="<?php echo $URL->generate(); ?>"><strong><?php echo htmlentities($term['title']); ?></strong></a><?php
-                      if ($n < $GLOSSARY->num_search_matches) {
-                          print ", ";
-                      }
-                      $n++;
+                              if ($n < $GLOSSARY->num_search_matches) {
+                                  print ", ";
+                              }
+                              $n++;
             }
             ?></p>
             <?php
