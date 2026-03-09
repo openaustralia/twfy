@@ -116,17 +116,23 @@ if (get_http_var('recent')) {
 
 if (get_http_var('c4')) {
     $this_page = 'c4_mp';
-} elseif (get_http_var('c4x')) {
+}
+elseif (get_http_var('c4x')) {
     $this_page = 'c4x_mp';
-} elseif (get_http_var('peer')) {
+}
+elseif (get_http_var('peer')) {
     $this_page = 'peer';
-} elseif (get_http_var('royal')) {
+}
+elseif (get_http_var('royal')) {
     $this_page = 'royal';
-} elseif (get_http_var('mla')) {
+}
+elseif (get_http_var('mla')) {
     $this_page = 'mla';
-} elseif (get_http_var('msp')) {
+}
+elseif (get_http_var('msp')) {
     $this_page = 'msp';
-} else {
+}
+else {
     $this_page = 'mp';
 }
 
@@ -135,7 +141,8 @@ if (is_numeric(get_http_var('m'))) {
     $MEMBER = new MEMBER(['member_id' => get_http_var('m')]);
     member_redirect($MEMBER);
 
-} elseif (is_numeric($pid)) {
+}
+elseif (is_numeric($pid)) {
 
     // Normal, plain, displaying an MP by person ID.
     $MEMBER = new MEMBER(['person_id' => $pid]);
@@ -144,7 +151,8 @@ if (is_numeric(get_http_var('m'))) {
     //
     // CHECK SUBMITTED POSTCODE.
 
-} elseif (get_http_var('pc') != '') {
+}
+elseif (get_http_var('pc') != '') {
     // User has submitted a postcode, so we want to display that.
     $pc = get_http_var('pc');
     $pc = preg_replace('#[^a-z0-9 ]#i', '', $pc);
@@ -153,16 +161,19 @@ if (is_numeric(get_http_var('m'))) {
         // Only do lookup of constituency via postcode if the constituency isn't set.
         if ($cconstituency == "") {
             $constituency = postcode_to_constituency($pc);
-        } else {
+        }
+        else {
             $constituency = $cconstituency;
         }
 
         if ($constituency == "connection_timed_out") {
             $errors['pc'] = "Sorry, we couldn't check your postcode right now, as our postcode lookup server is under quite a lot of load. Please use the 'All MPs' link above to browse all the MPs.";
-        } elseif ($constituency == "") {
+        }
+        elseif ($constituency == "") {
             $errors['pc'] = "Sorry, " . htmlentities($pc) . " isn't a known postcode";
             twfy_debug('MP', "Can't display an MP, as submitted postcode didn't match a constituency");
-        } elseif (is_array($constituency)) {
+        }
+        elseif (is_array($constituency)) {
             $PAGE->page_start_mobile();
             $PAGE->stripe_start();
             print '<p>There are several electoral divisions within your postcode. Please select from the following:</p><ul>';
@@ -181,7 +192,8 @@ if (is_numeric(get_http_var('m'))) {
             ];
 
             // $PAGE->stripe_end(array($sidebar));
-        } else {
+        }
+        else {
             // Redirect to the canonical MP page, with a person id.
             $MEMBER = new MEMBER(['constituency' => $constituency]);
             if ($MEMBER->person_id()) {
@@ -199,14 +211,16 @@ if (is_numeric(get_http_var('m'))) {
                     ];
                     $success = $THEUSER->update_self($details);
                     // TODO: Check success of database update.
-                } else {
+                }
+                else {
                     // This will cookie the postcode.
                     $THEUSER->set_constituency_cookie($constituency);
                 }
             }
             member_redirect($MEMBER);
         }
-    } else {
+    }
+    else {
         $errors['pc'] = "Sorry, " . htmlentities($pc) . " isn't a valid postcode";
         twfy_debug('MP', "Can't display an MP because the submitted postcode wasn't of a valid form.");
     }
@@ -215,10 +229,12 @@ if (is_numeric(get_http_var('m'))) {
     // DOES THE USER HAVE A POSTCODE ALREADY SET?
     // (Either in their logged-in details or in a cookie from a previous search.)
 
-} elseif ($THEUSER->constituency_is_set() && $name == '' && $cconstituency == '') {
+}
+elseif ($THEUSER->constituency_is_set() && $name == '' && $cconstituency == '') {
     $MEMBER = new MEMBER(['constituency' => $THEUSER->constituency()]);
     member_redirect($MEMBER);
-} elseif ($name && $cconstituency) {
+}
+elseif ($name && $cconstituency) {
     $MEMBER = new MEMBER(['name' => $name, 'constituency' => $cconstituency]);
     if (!$MEMBER->canonical || $redirect) {
         member_redirect($MEMBER);
@@ -227,7 +243,8 @@ if (is_numeric(get_http_var('m'))) {
         $this_page = 'yourmp';
     }
     twfy_debug('MP', 'Displaying MP by name');
-} elseif ($name) {
+}
+elseif ($name) {
     $MEMBER = new MEMBER(['name' => $name]);
     if (
         ((($MEMBER->house_disp == 1)
@@ -236,7 +253,8 @@ if (is_numeric(get_http_var('m'))) {
     ) {
         member_redirect($MEMBER);
     }
-} elseif ($cconstituency) {
+}
+elseif ($cconstituency) {
 
     if ($cconstituency == 'your &amp; my society') {
         header('Location: /mp/stom%20teinberg');
@@ -244,7 +262,8 @@ if (is_numeric(get_http_var('m'))) {
     }
     $MEMBER = new MEMBER(['constituency' => $cconstituency]);
     member_redirect($MEMBER);
-} else {
+}
+else {
     // No postcode, member_id or person_id to use.
     twfy_debug('MP', "We don't have any way of telling what MP to display");
 }
@@ -276,7 +295,8 @@ if (isset($MEMBER) && is_array($MEMBER->person_id())) {
 
     // $PAGE->stripe_end(array($sidebar));
 
-} elseif (isset($MEMBER) && $MEMBER->person_id()) {
+}
+elseif (isset($MEMBER) && $MEMBER->person_id()) {
 
     twfy_debug_timestamp("before load_extra_info");
     $MEMBER->load_extra_info();
@@ -286,12 +306,14 @@ if (isset($MEMBER) && is_array($MEMBER->person_id())) {
 
     if ($MEMBER->current_member(2)) {
         $subtitle = "Senator " . $member_name . ', ' . $MEMBER->constituency();
-    } else {
+    }
+    else {
         $subtitle = $member_name;
         if ($MEMBER->house(1)) {
             if (!$MEMBER->current_member(1)) {
                 $subtitle .= ', former Representative';
-            } else {
+            }
+            else {
                 $subtitle .= ' MP';
             }
             $subtitle .= ', ' . $MEMBER->constituency();
@@ -452,7 +474,8 @@ keeping these sorts of records on you...</p></div></div>'
     ];
     // $PAGE->stripe_end($sidebars);
 
-} else {
+}
+else {
     // Something went wrong.
 
     //
@@ -480,8 +503,7 @@ $PAGE->page_end_mobile();
 /**
  *
  */
-function member_redirect(&$MEMBER)
-{
+function member_redirect(&$MEMBER) {
     global $this_page;
     // We come here after creating a MEMBER object by various methods.
     // Now we redirect to the canonical MP page, with a person_id.

@@ -72,75 +72,74 @@
  */
 class DATA {
 
-  private $metadata;
+    private $metadata;
 
-  /**
-   *
-   */
-  public function __construct() {
+    /**
+     *
+     */
+    public function __construct() {
 
-    // Defined in config.php.
-    include_once METADATAPATH;
-    $this->metadata = new Metadata();
+        // Defined in config.php.
+        include_once METADATAPATH;
+        $this->metadata = new Metadata();
 
-  }
+    }
 
-  //
-  // PUBLIC METADATA ACCESS FUNCTIONS //
-  // .
+    //
+    // PUBLIC METADATA ACCESS FUNCTIONS //
+    // .
 
-  /**
-   * Special function for setting $this_section depending on the value of $this_page.
-   */
-  public function set_section() {
-    // This should be called at the start of a page.
-    global $this_section, $this_page;
+    /**
+     * Special function for setting $this_section depending on the value of $this_page.
+     */
+    public function set_section() {
+        // This should be called at the start of a page.
+        global $this_section, $this_page;
 
-    $this_section = $this->page_metadata($this_page, "section");
-  }
+        $this_section = $this->page_metadata($this_page, "section");
+    }
 
-  // Getting page and section metadata
-  // $page/$section is a page name.
+    // Getting page and section metadata
+    // $page/$section is a page name.
 
-  /**
-   * $key is the element of metadata you want to retrieve.
-   */
-  public function page_metadata($page, $key) {
-    return $this->metadata->get_metadata(["page" => $page, "key" => $key], "page");
-  }
+    /**
+     * $key is the element of metadata you want to retrieve.
+     */
+    public function page_metadata($page, $key) {
+        return $this->metadata->get_metadata(["page" => $page, "key" => $key], "page");
+    }
 
-  /**
-   *
-   */
-  public function section_metadata($section, $key) {
-    return $this->metadata->get_metadata(["section" => $section, "key" => $key], "section");
-  }
+    /**
+     *
+     */
+    public function section_metadata($section, $key) {
+        return $this->metadata->get_metadata(["section" => $section, "key" => $key], "section");
+    }
 
-  // Setting page and section.
+    // Setting page and section.
 
-  /**
-   * $page/$section, $key and $value should make sense...
-   */
-  public function set_page_metadata($page, $key, $value) {
-    $this->metadata->set_metadata(["page" => $page, "key" => $key, "value" => $value]);
-  }
+    /**
+     * $page/$section, $key and $value should make sense...
+     */
+    public function set_page_metadata($page, $key, $value) {
+        $this->metadata->set_metadata(["page" => $page, "key" => $key, "value" => $value]);
+    }
 
-  /**
-   *
-   */
-  public function set_section_metadata($section, $key, $value) {
-    $this->metadata->set_metadata(["section" => $section, "key" => $key, "value" => $value]);
-  }
+    /**
+     *
+     */
+    public function set_section_metadata($section, $key, $value) {
+        $this->metadata->set_metadata(["section" => $section, "key" => $key, "value" => $value]);
+    }
 
-  // DEPRECATED.
+    // DEPRECATED.
 
-  /**
-   * Directly access an item.
-   */
-  public function metadata($type, $item, $key) {
-    return "ACCESS DEBIED FOR type[$item][$key] USE THE PUBLIC METHODS";
-  }
-
+    /**
+     * Directly access an item.
+     */
+    public function metadata($type, $item, $key) {
+        return "ACCESS DEBIED FOR type[$item][$key] USE THE PUBLIC METHODS";
+    }
 
 }
 

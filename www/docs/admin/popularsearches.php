@@ -18,7 +18,7 @@ $search_popular = $SEARCHLOG->admin_popular_searches(1000);
 
 $rows = [];
 foreach ($search_popular as $row) {
-  $rows[] = [
+    $rows[] = [
     '<a href="' . $row['url'] . '">' . htmlentities($row['query']) . '</a>',
     $row['c'],
   ];

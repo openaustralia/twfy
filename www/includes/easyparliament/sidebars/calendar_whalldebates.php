@@ -23,13 +23,15 @@ if ($this_page == 'whallday') {
             'onday' => $date
         ];
         $title = 'Westminster Hall debates this month';
-    } else {
+    }
+    else {
         $args = [
             'months' => 1
         ];
         $title = 'Recent Westminster Hall debates';
     }
-} else {
+}
+else {
     $args = [
         // How many recent months to show.
         'months' => 1

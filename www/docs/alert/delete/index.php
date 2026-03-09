@@ -41,10 +41,10 @@ $ALERT = new ALERT();
 $success = $ALERT->delete(get_http_var('t'));
 
 if ($success) {
-  delete_success();
+    delete_success();
 }
 else {
-  delete_error();
+    delete_error();
 }
 
 /**
@@ -52,15 +52,15 @@ else {
  */
 function delete_success() {
 
-  global $PAGE, $this_page;
+    global $PAGE, $this_page;
 
-  $this_page = 'alertdeletesucceeded';
+    $this_page = 'alertdeletesucceeded';
 
-  $PAGE->page_start();
+    $PAGE->page_start();
 
-  $PAGE->stripe_start();
+    $PAGE->stripe_start();
 
-  ?>
+    ?>
     
     <p>Your alert has been unsubscribed.</p>
     
@@ -70,11 +70,11 @@ function delete_success() {
     <p><strong>If you didn't mean to do this, <a href="<?php echo WEBPATH ?>alert/undelete/?t=<?php echo get_http_var('t') ?>">resubscribe to this alert</a></strong></p>
 
 
-  <?php
+    <?php
 
-  $PAGE->stripe_end();
+    $PAGE->stripe_end();
 
-  $PAGE->page_end();
+    $PAGE->page_end();
 }
 
 /**
@@ -82,17 +82,17 @@ function delete_success() {
  */
 function delete_error() {
 
-  // Friendly error, not a normal one!
+    // Friendly error, not a normal one!
 
-  global $PAGE, $this_page;
+    global $PAGE, $this_page;
 
-  $this_page = 'alertdeletefailed';
+    $this_page = 'alertdeletefailed';
 
-  $PAGE->page_start();
+    $PAGE->page_start();
 
-  $PAGE->stripe_start();
+    $PAGE->stripe_start();
 
-  ?>
+    ?>
     
     <p>The link you followed to reach this page appears to be incomplete.</p>
     
@@ -100,9 +100,9 @@ function delete_error() {
 
     <p>If you still get this message, please do <a href="mailto:<?php echo CONTACTEMAIL; ?>">email us</a> and let us know, and we'll help out!</p>
 
-  <?php
+    <?php
 
-  $PAGE->stripe_end();
+    $PAGE->stripe_end();
 
-  $PAGE->page_end();
+    $PAGE->page_end();
 }

@@ -20,9 +20,11 @@ for ($i = 0; $i < $q->rows(); $i++) {
     [$dummy, $sz] = find_rep_image($p_id);
     if ($sz == 'L') {
         $out['both'] .= $q->field($i, 'first_name') . ' ' . $q->field($i, 'last_name') . ', ';
-    } elseif ($sz == 'S') {
+    }
+    elseif ($sz == 'S') {
         $out['small'] .= $q->field($i, 'first_name') . ' ' . $q->field($i, 'last_name') . ', ';
-    } else {
+    }
+    else {
         $out['none'] .= '<li>' . $q->field($i, 'first_name') . ' ' . $q->field($i, 'last_name') . ' (' . $q->field($i, 'party') . ')' . ', ' . $q->field($i, 'constituency');
     }
 }

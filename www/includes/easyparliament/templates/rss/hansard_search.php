@@ -29,13 +29,13 @@ global $this_page;
 twfy_debug("TEMPLATE", "rss/hansard_search.php");
 
 if (isset($data['rows']) && count($data['rows']) > 0) {
-  for ($i = 0; $i < count($data['rows']); $i++) {
-    $row = $data['rows'][$i];
-    ?>
+    for ($i = 0; $i < count($data['rows']); $i++) {
+        $row = $data['rows'][$i];
+        ?>
 <item>
 <title><?php
 if (isset($row['parent']) && count($row['parent']) > 0) {
-  echo strip_tags($row['parent']['body']);
+    echo strip_tags($row['parent']['body']);
 }
 echo (' (' . format_date($row['hdate'], SHORTDATEFORMAT) . ')');
 ?></title>
@@ -43,12 +43,12 @@ echo (' (' . format_date($row['hdate'], SHORTDATEFORMAT) . ')');
 <guid>http://www.openaustralia.org<?php echo $row['listurl'] ?></guid>
 <description><?php
 if (isset($row['speaker']) && count($row['speaker'])) {
-  $sp = $row['speaker'];
-  $name = ucfirst(member_full_name($sp['house'], $sp['title'], $sp['first_name'], $sp['last_name'], $sp['constituency']));
-  echo entities_to_numbers($name) . ': ';
+    $sp = $row['speaker'];
+    $name = ucfirst(member_full_name($sp['house'], $sp['title'], $sp['first_name'], $sp['last_name'], $sp['constituency']));
+    echo entities_to_numbers($name) . ': ';
 }
 echo htmlspecialchars(str_replace(['&#8212;', '<span class="hi">', '</span>'], ['-', '<b>', '</b>'], $row['body'])) . "</description>\n</item>\n";
-  }
+    }
 }
 ?>
 </channel>

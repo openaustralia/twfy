@@ -24,9 +24,11 @@
  * $TRACKBACK = new TRACKBACK;
  * $TRACKBACK->display('epobject_id', $args);
  */
-class TRACKBACK
-{
+class TRACKBACK {
 
+    private $db = NULL;
+
+    private $trackbacks_enabled = FALSE;
 
     /**
      * Do trackbacks need moderation before appearing on the site?
@@ -37,15 +39,15 @@ class TRACKBACK
     /**
      * But switching this to true will mark all incoming trackbacks as invisible.
      */
-    public function TRACKBACK()
-    {
+    public function __construct() {
 
         $this->db = new ParlDB();
 
         // Set in init.php.
         if (ALLOWTRACKBACKS == TRUE) {
             $this->trackbacks_enabled = TRUE;
-        } else {
+        }
+        else {
             $this->trackbacks_enabled = FALSE;
         }
     }
@@ -53,31 +55,30 @@ class TRACKBACK
     /**
      *
      */
-    public function trackbacks_enabled()
-    {
+    public function trackbacks_enabled() {
         return $this->trackbacks_enabled;
     }
 
     /**
      *
      */
-    public function moderate_trackbacks()
-    {
+    public function moderate_trackbacks() {
         return $this->moderate_trackbacks;
     }
 
     /**
      *
      */
-    public function display($view, $args = [], $format = 'html')
-    {
-        // $view is one of:
-        //    'epobject_id' - display the pings for one epobject.
-        //     'recent' - to get the most recent pings to anywhere.
-
-        // $args will have one of:
-        //    'gid' - the gid of a hansard item (of the form 'debate_2003-02-28.475.3').
-        //    'num' - the number of recent pings to show.
+    public function display($view, $args = [], $format = 'html') {
+        /*
+         * $view is one of:
+         *    'epobject_id' - display the pings for one epobject.
+         *     'recent' - to get the most recent pings to anywhere.
+         *
+         * $args will have one of:
+         *    'gid' - the gid of a hansard item (of the form 'debate_2003-02-28.475.3').
+         *    'num' - the number of recent pings to show.
+         */
         global $PAGE;
 
         if ($view == 'epobject_id' || $view == 'recent') {
@@ -87,7 +88,8 @@ class TRACKBACK
             // Get all the data that's to be rendered.
             $trackbackdata = $this->$function($args);
 
-        } else {
+        }
+        else {
             $PAGE->error_message("You haven't specified a valid view type.");
             return FALSE;
         }
@@ -108,8 +110,7 @@ class TRACKBACK
     /**
      *
      */
-    public function render($view, $data, $format = 'html')
-    {
+    public function render($view, $data, $format = 'html') {
 
         if ($format != 'html') {
             $format = 'html';
@@ -118,15 +119,14 @@ class TRACKBACK
         // We currently only have one kind of trackback template, so
         // we're ignoring $view here I'm afraid...
 
-        include INCLUDESPATH . "easyparliament/templates/$format/trackbacks" . ".php";
+        include INCLUDESPATH . "easyparliament/templates/{$format}/trackbacks.php";
 
     }
 
     /**
      *
      */
-    public function add($trackbackdata)
-    {
+    public function add($trackbackdata) {
         /*
         $data = array (
         'epobject_id'     => '34533',
@@ -182,7 +182,8 @@ class TRACKBACK
             // Return a success message.
             $this->_trackback_response(0);
 
-        } else {
+        }
+        else {
             die("Sorry, we could not save the trackback to the database. Please <a href=\"mailto:" . CONTACTEMAIL . "\">email us</a> to let us know. Thanks.");
         }
     }
@@ -190,8 +191,7 @@ class TRACKBACK
     /**
      *
      */
-    public function _get_trackbacks_by_epobject_id($args)
-    {
+    public function _get_trackbacks_by_epobject_id($args) {
 
         // Returns an array of the trackback data for this particular
         // gid.
@@ -243,8 +243,7 @@ class TRACKBACK
     /**
      *
      */
-    public function _get_trackbacks_by_recent($args)
-    {
+    public function _get_trackbacks_by_recent($args) {
 
         // Returns an array of the most recent trackback data for all objects.
 
@@ -295,8 +294,7 @@ class TRACKBACK
     /**
      *
      */
-    public function _trackback_response($error = 0, $error_message = '')
-    {
+    public function _trackback_response($error = 0, $error_message = '') {
         // What gets sent back to someone pinging a page here.
         // This is only called from add().
 
@@ -313,7 +311,8 @@ class TRACKBACK
                 echo "<error>1</error>\n";
                 echo "<message>$error_message</message>\n";
                 echo "</response>";
-            } else {
+            }
+            else {
                 echo '<?xml version="1.0" encoding="iso-8859-1"?' . ">\n";
                 echo "<response>\n";
                 echo "<error>0</error>\n";
@@ -321,12 +320,14 @@ class TRACKBACK
             }
             die();
 
-        } else {
+        }
+        else {
             // We're adding a trackback from a page that's probably expecting HTML.
 
             if ($error) {
                 $PAGE->error_message($error_message);
-            } else {
+            }
+            else {
                 print "<p>Trackback added successfully.</p>\n";
             }
         }

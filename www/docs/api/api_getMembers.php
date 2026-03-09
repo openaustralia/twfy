@@ -9,8 +9,7 @@ include_once 'api_getMP.php';
 /**
  * Shared API functions for get<Members>
  */
-function _api_getMembers_output($sql)
-{
+function _api_getMembers_output($sql) {
     $db = new ParlDB();
     $q = $db->query($sql);
     $output = [];
@@ -29,8 +28,7 @@ function _api_getMembers_output($sql)
 /**
  *
  */
-function api_getMembers_party($house, $s)
-{
+function api_getMembers_party($house, $s) {
     global $parties;
     $canon_to_short = array_flip($parties);
     if (isset($canon_to_short[ucwords($s)])) {
@@ -45,8 +43,7 @@ function api_getMembers_party($house, $s)
 /**
  *
  */
-function api_getMembers_state($house, $s)
-{
+function api_getMembers_state($house, $s) {
     global $parties;
     $canon_to_short = array_flip($parties);
     if (isset($canon_to_short[ucwords($s)])) {
@@ -61,8 +58,7 @@ function api_getMembers_state($house, $s)
 /**
  *
  */
-function api_getMembers_search($house, $s)
-{
+function api_getMembers_search($house, $s) {
     $sq = mysqli_real_escape_string($db, $s);
     _api_getMembers_output('select * from member
 		where house = ' . mysqli_real_escape_string($db, $house) . "
@@ -76,11 +72,11 @@ function api_getMembers_search($house, $s)
 /**
  *
  */
-function api_getMembers_date($house, $date)
-{
+function api_getMembers_date($house, $date) {
     if ($date = parse_date($date)) {
         api_getMembers($house, '"' . $date['iso'] . '"');
-    } else {
+    }
+    else {
         api_error('Invalid date format');
     }
 }
@@ -88,8 +84,7 @@ function api_getMembers_date($house, $date)
 /**
  *
  */
-function api_getMembers($house, $date = 'now()')
-{
+function api_getMembers($house, $date = 'now()') {
     _api_getMembers_output('select * from member where house=' . mysqli_real_escape_string($db, $house) .
         ' AND entered_house <= date(' . $date . ') and date(' . $date . ') <= left_house');
 }

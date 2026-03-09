@@ -9,8 +9,7 @@ include_once INCLUDESPATH . "easyparliament/member.php";
 /**
  *
  */
-function api_getHansard_front()
-{
+function api_getHansard_front() {
     ?>
     <p><big>Fetch all Hansard.</big></p>
 
@@ -35,8 +34,7 @@ function api_getHansard_front()
 /**
  *
  */
-function api_getHansard_search($s)
-{
+function api_getHansard_search($s) {
     _api_getHansard_search([
         's' => $s,
         'pid' => get_http_var('person')
@@ -46,8 +44,7 @@ function api_getHansard_search($s)
 /**
  *
  */
-function api_getHansard_person($pid)
-{
+function api_getHansard_person($pid) {
     _api_getHansard_search([
         'pid' => $pid
     ]);
@@ -56,8 +53,7 @@ function api_getHansard_person($pid)
 /**
  *
  */
-function _api_getHansard_date($type, $d)
-{
+function _api_getHansard_date($type, $d) {
     $args = ['date' => $d];
     $LIST = _api_getListObject($type);
     $LIST->display('date', $args, 'api');
@@ -66,8 +62,7 @@ function _api_getHansard_date($type, $d)
 /**
  *
  */
-function _api_getHansard_year($type, $y)
-{
+function _api_getHansard_year($type, $y) {
     $args = ['year' => $y];
     $LIST = _api_getListObject($type);
     $LIST->display('calendar', $args, 'api');
@@ -76,8 +71,7 @@ function _api_getHansard_year($type, $y)
 /**
  *
  */
-function _api_getHansard_search($array)
-{
+function _api_getHansard_search($array) {
     $search = isset($array['s']) ? trim($array['s']) : '';
     $pid = trim($array['pid']);
     $type = $array['type'] ?? '';
@@ -125,8 +119,7 @@ function _api_getHansard_search($array)
 /**
  *
  */
-function _api_getHansard_gid($type, $gid)
-{
+function _api_getHansard_gid($type, $gid) {
     $args = ['gid' => $gid];
     $LIST = _api_getListObject($type);
     return $LIST->display('gid', $args, 'api');
@@ -135,8 +128,7 @@ function _api_getHansard_gid($type, $gid)
 /**
  *
  */
-function _api_getHansard_department($type, $dept)
-{
+function _api_getHansard_department($type, $dept) {
     $args = ['department' => $dept];
     $LIST = _api_getListObject($type);
     $LIST->display('department', $args, 'api');
@@ -145,8 +137,7 @@ function _api_getHansard_department($type, $dept)
 /**
  *
  */
-function _api_getListObject($type)
-{
-    eval ('$list = new ' . strtoupper($type) . 'LIST;');
+function _api_getListObject($type) {
+    eval('$list = new ' . strtoupper($type) . 'LIST;');
     return $list;
 }

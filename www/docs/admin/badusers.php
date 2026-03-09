@@ -36,32 +36,32 @@ $USERURL = new URL('userview');
 
 for ($row = 0; $row < $q->rows(); $row++) {
 
-  $user_id = $q->field($row, 'user_id');
+    $user_id = $q->field($row, 'user_id');
 
-  // Get the total comments posted for this user.
-  $r = $db->query("SELECT COUNT(*) AS totalcount
+    // Get the total comments posted for this user.
+    $r = $db->query("SELECT COUNT(*) AS totalcount
 					FROM	comments
 					WHERE	user_id = '" . $user_id . "'");
 
-  $totalcomments = $r->field(0, 'totalcount');
+    $totalcomments = $r->field(0, 'totalcount');
 
-  $percentagedeleted = ($q->field($row, 'deletedcount') / $totalcomments) * 100;
+    $percentagedeleted = ($q->field($row, 'deletedcount') / $totalcomments) * 100;
 
 
-  // Get complaints made about this user's comments, but not upheld.
-  $r = $db->query("SELECT COUNT(*) AS count
+    // Get complaints made about this user's comments, but not upheld.
+    $r = $db->query("SELECT COUNT(*) AS count
 					FROM commentreports, comments
 					WHERE	commentreports.comment_id = comments.comment_id
 					AND		comments.user_id = '$user_id'
 					AND		commentreports.resolved IS NOT NULL
 					AND		commentreports.upheld = '0'");
 
-  $notupheldcount = $r->field(0, 'count');
+    $notupheldcount = $r->field(0, 'count');
 
 
-  $USERURL->insert(['u' => $user_id]);
+    $USERURL->insert(['u' => $user_id]);
 
-  $rows[] = [
+    $rows[] = [
         '<a href="' . $USERURL->generate() . '">' . $q->field($row, 'firstname') . ' ' . $q->field($row, 'lastname') . '</a>',
         $totalcomments,
         $q->field($row, 'deletedcount'),
@@ -101,17 +101,17 @@ $USERURL = new URL('userview');
 
 for ($row = 0; $row < $q->rows(); $row++) {
 
-  $user_id = $q->field($row, 'user_id');
+    $user_id = $q->field($row, 'user_id');
 
-  $USERURL->insert(['u' => $user_id]);
+    $USERURL->insert(['u' => $user_id]);
 
-  // Get how many valid complaints they've submitted.
-  $r = $db->query("SELECT COUNT(*) AS upheldcount
+    // Get how many valid complaints they've submitted.
+    $r = $db->query("SELECT COUNT(*) AS upheldcount
 					FROM commentreports
 					WHERE	user_id = '$user_id'
 					AND		upheld = '1'");
 
-  $rows[] = [
+    $rows[] = [
         '<a href="' . $USERURL->generate() . '">' . $q->field($row, 'firstname') . ' ' . $q->field($row, 'lastname') . '</a>',
         $q->field($row, 'rejectedcount'),
         $r->field(0, 'upheldcount')
