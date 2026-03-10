@@ -10,7 +10,8 @@
 /**
  *
  */
-function mlog($message) {
+function mlog($message)
+{
     print $message;
 }
 
@@ -126,12 +127,11 @@ foreach ($alertdata as $alertitem) {
         }
         $current_email = $email;
         $email_text = '';
-        $q = $db->query('SELECT user_id FROM users WHERE email = \'' . mysqli_real_escape_string($db, $email) . "'");
+        $q = $db->query('SELECT user_id FROM users WHERE email = \'' . $this->db->escape($email) . "'");
         if ($q->rows() > 0) {
             $user_id = $q->field(0, 'user_id');
             $registered++;
-        }
-        else {
+        } else {
             $user_id = 0;
             $unregistered++;
         }
@@ -145,17 +145,17 @@ foreach ($alertdata as $alertitem) {
         $SEARCHENGINE = new SEARCHENGINE($criteria_batch);
         // mlog("query_remade: " . $SEARCHENGINE->query_remade() . "\n");.
         $args = [
-        // Note: use raw here for URLs, whereas search engine has batch.
-        's' => $criteria_raw,
-        // Return everything added since last time this script was run.
-        'threshold' => $lastupdated,
-        'o' => 'c',
-        // This is limited to 1000 in hansardlist.php anyway.
-        'num' => 1000,
-        'pop' => 1,
-        // Don't escape ampersands.
-        'e' => 1
-     ];
+            // Note: use raw here for URLs, whereas search engine has batch.
+            's' => $criteria_raw,
+            // Return everything added since last time this script was run.
+            'threshold' => $lastupdated,
+            'o' => 'c',
+            // This is limited to 1000 in hansardlist.php anyway.
+            'num' => 1000,
+            'pop' => 1,
+            // Don't escape ampersands.
+            'e' => 1
+        ];
         $data = $DEBATELIST->_get_data_by_search($args);
         // Add to cache (but only for speaker queries, which are commonly repeated)
         if (preg_match('#^speaker:\d+$#', $criteria_raw, $m)) {
@@ -166,8 +166,7 @@ foreach ($alertdata as $alertitem) {
         $total_results = $data['info']['total_results'];
         $queries++;
         mlog(", hits " . $total_results . ", time " . (getmicrotime() - $start) . "\n");
-    }
-    else {
+    } else {
         mlog("  ACTION $active/$outof CACHE HIT : Using cached result for '$criteria_batch'\n");
         $data = $results[$criteria_batch];
     }
@@ -192,7 +191,7 @@ foreach ($alertdata as $alertitem) {
             if ($row['hdate'] < '2008-01-14') {
                 continue;
             }
-            $q = $db->query('SELECT gid_from FROM gidredirect WHERE gid_to=\'uk.org.publicwhip/' . $sects_short[$major] . '/' . mysqli_real_escape_string($db, $row['gid']) . "'");
+            $q = $db->query('SELECT gid_from FROM gidredirect WHERE gid_to=\'uk.org.publicwhip/' . $sects_short[$major] . '/' . $this->db->escape($row['gid']) . "'");
             if ($q->rows() > 0) {
                 continue;
             }
@@ -240,8 +239,7 @@ mlog("\n");
 $sss = "Active alerts: $active\nEmail lookups: $registered registered, $unregistered unregistered\nQuery lookups: $queries\nSent emails: $sentemails\n";
 if ($globalsuccess) {
     $sss .= 'Everything went swimmingly, in ';
-}
-else {
+} else {
     $sss .= 'Something went wrong! Total time: ';
 }
 $sss .= (getmicrotime() - $global_start) . "\n\n";
@@ -258,7 +256,8 @@ mlog(date('r') . "\n");
 /**
  *
  */
-function sort_by_stuff($a, $b) {
+function sort_by_stuff($a, $b)
+{
     if ($a['major'] > $b['major']) {
         return 1;
     }
@@ -282,14 +281,14 @@ function sort_by_stuff($a, $b) {
 /**
  *
  */
-function write_and_send_email($email, $user_id, $data) {
+function write_and_send_email($email, $user_id, $data)
+{
     global $globalsuccess, $sentemails, $nomail, $start_time;
 
     $data .= '====================' . "\n\n";
     if ($user_id) {
         $data .= "As a registered user, visit http://www.openaustralia.org/user/\nto unsubscribe from, or manage, your alerts.\n";
-    }
-    else {
+    } else {
         $data .= "If you register on the site, you will be able to manage your\nalerts there as well as post comments. :)\n";
     }
     $sentemails++;
@@ -306,8 +305,7 @@ function write_and_send_email($email, $user_id, $data) {
             mlog("pausing ... ");
             sleep(1);
         }
-    }
-    else {
+    } else {
         mlog($data);
         $success = 1;
     }

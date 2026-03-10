@@ -71,7 +71,7 @@ function wikipedize($source) {
     usort($phrases, "lensort");
     $db = new ParlDB();
     foreach ($phrases as $i => $phrase) {
-        $phrases[$i] = mysqli_real_escape_string($db->conn, str_replace(' ', '_', trim($phrase)));
+        $phrases[$i] = $db->escape(str_replace(' ', '_', trim($phrase)));
     }
 
     // Open up a db connection, and whittle our list down even further, against

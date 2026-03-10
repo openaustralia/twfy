@@ -26,8 +26,8 @@ function api_getMSP_front() {
 
     <h4>Example Response</h4>
     <pre>&lt;twfy&gt;
-      &lt;/twfy&gt;
-    </pre>
+              &lt;/twfy&gt;
+            </pre>
 
     <?php
 }
@@ -61,7 +61,7 @@ function _api_getMSP_row($row) {
 function api_getMSP_id($id) {
     $db = new ParlDB();
     $q = $db->query("select * from member
-		where house=4 and person_id = '" . mysqli_real_escape_string($db, $id) . "'
+		where house=4 and person_id = '" . $db->escape($id) . "'
 		order by left_house desc");
     if ($q->rows()) {
         _api_getMSP_output($q);
@@ -121,7 +121,7 @@ function _api_getMSP_constituency($constituencies) {
         if ($constituency == 'Orkney ') {
             $constituency = 'Orkney &amp; Shetland';
         }
-        $cons[] = mysqli_real_escape_string($db, $constituency);
+        $cons[] = $db->escape($constituency);
     }
 
     $q = $db->query("SELECT * FROM member

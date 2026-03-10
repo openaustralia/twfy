@@ -13,7 +13,7 @@ $pid = $_GET['pid'];
 
 $db = new ParlDB();
 $q = $db->query("select * from member
-	where house=1 and person_id = '" . mysqli_real_escape_string($db, $pid) . "'
+	where house=1 and person_id = '" . $db->escape($pid) . "'
 	order by left_house desc limit 1");
 if (!$q->rows()) {
     print '<error>Unknown ID</error>';
@@ -38,7 +38,7 @@ if ($image) {
 
 $q = $db->query("SELECT position,dept FROM moffice WHERE to_date='9999-12-31'
 	and source='chgpages/selctee' and person=" .
-    mysqli_real_escape_string($db, $pid) . ' ORDER BY from_date DESC');
+    $db->escape($pid) . ' ORDER BY from_date DESC');
 for ($i = 0; $i < $q->rows(); $i++) {
     $row['selctee'][] = prettify_office($q->field($i, 'position'), $q->field($i, 'dept'));
 }
@@ -56,7 +56,7 @@ $row['selctee'][] = $member . ', ' . $q->field($i, 'title');
  */
 
 $q = $db->query("select data_key, data_value from personinfo
-	where data_key like 'public\_whip%' and person_id = '" . mysqli_real_escape_string($db, $pid) . "'
+	where data_key like 'public\_whip%' and person_id = '" . $db->escape($pid) . "'
 // order so both_voted is always first...
 	order by data_key");
 $none = FALSE;

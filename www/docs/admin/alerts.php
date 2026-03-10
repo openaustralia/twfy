@@ -58,8 +58,8 @@ $PAGE->display_table($tabledata);
 $menu = $PAGE->admin_menu();
 $PAGE->stripe_end([
     [
-        'type'        => 'html',
-        'content'    => $menu
+        'type' => 'html',
+        'content' => $menu
     ]
 ]);
 
@@ -68,7 +68,8 @@ $PAGE->page_end();
 /**
  *
  */
-function generate_rows($q) {
+function generate_rows($q)
+{
     global $db;
     $rows = [];
     $USERURL = new URL('userview');
@@ -76,13 +77,12 @@ function generate_rows($q) {
         $email = $q->field($row, 'email');
         $criteria = $q->field($row, 'criteria');
         $SEARCHENGINE = new SEARCHENGINE($criteria);
-        $r = $db->query("SELECT user_id,firstname,lastname FROM users WHERE email = '" . mysqli_real_escape_string($db, $email) . "'");
+        $r = $db->query("SELECT user_id,firstname,lastname FROM users WHERE email = '" . $db->escape($email) . "'");
         if ($r->rows() > 0) {
             $user_id = $r->field(0, 'user_id');
             $USERURL->insert(['u' => $user_id]);
             $name = '<a href="' . $USERURL->generate() . '">' . $r->field(0, 'firstname') . ' ' . $r->field(0, 'lastname') . '</a>';
-        }
-        else {
+        } else {
             $name = $email;
         }
         $created = $q->field($row, 'created');

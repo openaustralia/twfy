@@ -168,20 +168,20 @@ class ALERT {
 						confirmed
 						FROM alerts
 						WHERE confirmed =" . $confirmed .
-          " AND deleted=" . $deleted .
-          ' ORDER BY email');
+            " AND deleted=" . $deleted .
+            ' ORDER BY email');
 
         $data = [];
 
         for ($row = 0; $row < $q->rows(); $row++) {
             $contents = [
-              'alert_id' => $q->field($row, 'alert_id'),
-              'email' => $q->field($row, 'email'),
-              'criteria' => $q->field($row, 'criteria'),
-              'registrationtoken' => $q->field($row, 'registrationtoken'),
-              'confirmed' => $q->field($row, 'confirmed'),
-              'deleted' => $q->field($row, 'deleted')
-          ];
+                'alert_id' => $q->field($row, 'alert_id'),
+                'email' => $q->field($row, 'email'),
+                'criteria' => $q->field($row, 'criteria'),
+                'registrationtoken' => $q->field($row, 'registrationtoken'),
+                'confirmed' => $q->field($row, 'confirmed'),
+                'deleted' => $q->field($row, 'deleted')
+            ];
             $data[] = $contents;
         }
         $info = "Alert";
@@ -232,7 +232,7 @@ class ALERT {
 
         $criteria = alert_details_to_criteria($details);
 
-        $q = $this->db->query("SELECT * FROM alerts WHERE email='" . mysqli_real_escape_string($this->db->conn, $details['email']) . "' AND criteria='" . mysqli_real_escape_string($this->db->conn, $criteria) . "' AND confirmed=1");
+        $q = $this->db->query("SELECT * FROM alerts WHERE email='" . $this->db->escape($details['email']) . "' AND criteria='" . $this->db->escape($criteria) . "' AND confirmed=1");
         if ($q->rows() > 0) {
             $deleted = $q->field(0, 'deleted');
             if ($deleted) {
@@ -285,8 +285,8 @@ class ALERT {
             // Add that to the database.
 
             $r = $this->db->query("UPDATE alerts
-						SET registrationtoken = '" . mysqli_real_escape_string($this->db->conn, $this->registrationtoken) . "'
-						WHERE alert_id = '" . mysqli_real_escape_string($this->db->conn, $this->alert_id) . "'
+                        SET registrationtoken = '" . $this->db->escape($this->registrationtoken) . "'
+                        WHERE alert_id = '" . $this->db->escape($this->alert_id) . "'
 						");
 
             if ($r->success()) {
@@ -309,7 +309,7 @@ class ALERT {
                     // No confirmation email needed.
                     $s = $this->db->query("UPDATE alerts
 						SET confirmed = '1'
-						WHERE alert_id = '" . mysqli_real_escape_string($this->db->conn, $this->alert_id) . "'
+                        WHERE alert_id = '" . $this->db->escape($this->alert_id) . "'
 						");
                     return 1;
                 }
@@ -337,9 +337,9 @@ class ALERT {
         // passed on to us here.
         // A brief check of the facts...
         if (
-          !is_numeric($this->alert_id) ||
-          !isset($details['email']) ||
-          $details['email'] == ''
+            !is_numeric($this->alert_id) ||
+            !isset($details['email']) ||
+            $details['email'] == ''
         ) {
             return FALSE;
         }
@@ -353,15 +353,15 @@ class ALERT {
 
         // Arrays we need to send a templated email.
         $data = [
-          'to' => $details['email'],
-          'template' => 'alert_confirmation'
+            'to' => $details['email'],
+            'template' => 'alert_confirmation'
         ];
 
         $merge = [
-          'FIRSTNAME' => 'THEY WORK FOR YOU',
-          'LASTNAME' => ' ALERT CONFIRMATION',
-          'CONFIRMURL' => $confirmurl,
-          'CRITERIA' => $this->criteria_pretty()
+            'FIRSTNAME' => 'THEY WORK FOR YOU',
+            'LASTNAME' => ' ALERT CONFIRMATION',
+            'CONFIRMURL' => $confirmurl,
+            'CRITERIA' => $this->criteria_pretty()
         ];
 
         $success = send_template_email($data, $merge);
@@ -380,7 +380,7 @@ class ALERT {
         // Returns true if there's a user with this email address.
 
         if ($email != "") {
-            $q = $this->db->query("SELECT alert_id FROM alerts WHERE email='" . mysqli_real_escape_string($this->db->conn, $email) . "'");
+            $q = $this->db->query("SELECT alert_id FROM alerts WHERE email='" . $this->db->escape($email) . "'");
             if ($q->rows() > 0) {
                 return TRUE;
             }
@@ -422,8 +422,8 @@ class ALERT {
 
         $q = $this->db->query("SELECT email, criteria
 						FROM alerts
-						WHERE alert_id = '" . mysqli_real_escape_string($this->db->conn, $alert_id) . "'
-						AND registrationtoken = '" . mysqli_real_escape_string($this->db->conn, $registrationtoken) . "'
+                        WHERE alert_id = '" . $this->db->escape($alert_id) . "'
+                        AND registrationtoken = '" . $this->db->escape($registrationtoken) . "'
 						");
 
         if ($q->rows() == 1) {
@@ -431,7 +431,7 @@ class ALERT {
             $this->email = $q->field(0, 'email');
             $r = $this->db->query("UPDATE alerts
 						SET confirmed = '1', deleted = '0'
-						WHERE	alert_id = '" . mysqli_real_escape_string($this->db->conn, $alert_id) . "'
+                        WHERE	alert_id = '" . $this->db->escape($alert_id) . "'
 						");
 
             if ($r->success()) {
@@ -476,8 +476,8 @@ class ALERT {
 
         $q = $this->db->query("SELECT email, criteria
 						FROM alerts
-						WHERE alert_id = '" . mysqli_real_escape_string($this->db->conn, $alert_id) . "'
-						AND registrationtoken = '" . mysqli_real_escape_string($this->db->conn, $registrationtoken) . "'
+                        WHERE alert_id = '" . $this->db->escape($alert_id) . "'
+                        AND registrationtoken = '" . $this->db->escape($registrationtoken) . "'
 						");
 
         if ($q->rows() == 1) {
@@ -485,7 +485,7 @@ class ALERT {
             // Set that they're confirmed in the DB.
             $r = $this->db->query("UPDATE alerts
 						SET deleted = '1'
-						WHERE	alert_id = '" . mysqli_real_escape_string($this->db->conn, $alert_id) . "'
+                        WHERE	alert_id = '" . $this->db->escape($alert_id) . "'
 						");
 
             if ($r->success()) {

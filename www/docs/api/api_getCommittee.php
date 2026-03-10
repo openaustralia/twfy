@@ -7,7 +7,8 @@
 /**
  *
  */
-function api_getCommittee_front() {
+function api_getCommittee_front()
+{
     ?>
     <p><big>Fetch the members of a Select Committee.</big></p>
 
@@ -23,38 +24,39 @@ function api_getCommittee_front() {
     <h4>Example responses</h4>
 
     <pre>{ "committees" : [
-                    { "name" : "Scottish Affairs Committee" },
-                    { "name" : "Northern Ireland Affairs Committee" },
-                    { "name" : "Home Affairs Committee" },
-                    { "name" : "Constitutional Affairs Committee" },
-                    { "name" : "Environment, Food and Rural Affairs Committee" },
-                    { "name" : "Foreign Affairs Committee" },
-                    { "name" : "Welsh Affairs Committee" }
-                ] }</pre>
+                        { "name" : "Scottish Affairs Committee" },
+                        { "name" : "Northern Ireland Affairs Committee" },
+                        { "name" : "Home Affairs Committee" },
+                        { "name" : "Constitutional Affairs Committee" },
+                        { "name" : "Environment, Food and Rural Affairs Committee" },
+                        { "name" : "Foreign Affairs Committee" },
+                        { "name" : "Welsh Affairs Committee" }
+                    ] }</pre>
 
     <pre>{
-                    "committee" : "Health Committee",
-                    "members" : [
-                    { "person_id" : "10009", "name" : "David Amess" },
-                    { "person_id" : "10018", "name" : "Charlotte Atkins" },
-                    { "person_id" : "10176", "name" : "Jim Dowd" },
-                    { "person_id" : "11603", "name" : "Anne Milton" },
-                    { "person_id" : "10455", "name" : "Doug Naysmith" },
-                    { "person_id" : "11626", "name" : "Michael Penning" },
-                    { "person_id" : "10571", "name" : "Howard Stoate" },
-                    { "person_id" : "11275", "name" : "Richard Taylor" },
-                    { "person_id" : "10027", "name" : "Kevin Barron", "position" : "Chairman" },
-                    { "person_id" : "10089", "name" : "Ronnie Campbell" },
-                    { "person_id" : "10677", "name" : "Sandra Gidley" }
-                  ]
-                }
-                  <?php
+                        "committee" : "Health Committee",
+                        "members" : [
+                        { "person_id" : "10009", "name" : "David Amess" },
+                        { "person_id" : "10018", "name" : "Charlotte Atkins" },
+                        { "person_id" : "10176", "name" : "Jim Dowd" },
+                        { "person_id" : "11603", "name" : "Anne Milton" },
+                        { "person_id" : "10455", "name" : "Doug Naysmith" },
+                        { "person_id" : "11626", "name" : "Michael Penning" },
+                        { "person_id" : "10571", "name" : "Howard Stoate" },
+                        { "person_id" : "11275", "name" : "Richard Taylor" },
+                        { "person_id" : "10027", "name" : "Kevin Barron", "position" : "Chairman" },
+                        { "person_id" : "10089", "name" : "Ronnie Campbell" },
+                        { "person_id" : "10677", "name" : "Sandra Gidley" }
+                      ]
+                    }
+                      <?php
 }
 
 /**
  *
  */
-function api_getCommittee_name($name) {
+function api_getCommittee_name($name)
+{
     $db = new ParlDB();
 
     // Names in the database have & as &amp;...
@@ -64,12 +66,11 @@ function api_getCommittee_name($name) {
     $date = parse_date(get_http_var('date'));
     if ($date) {
         $date = '"' . $date['iso'] . '"';
-    }
-    else {
+    } else {
         $date = 'date(now())';
     }
     $q = $db->query("select distinct(dept) from moffice
-		where dept like '%" . mysqli_real_escape_string($db, $name) . "%Committee'
+		where dept like '%" . $db->escape($name) . "%Committee'
 		and from_date <= " . $date . ' and '
         . $date . ' <= to_date');
     if ($q->rows() > 1) {
@@ -80,12 +81,11 @@ function api_getCommittee_name($name) {
             ];
         }
         api_output($output);
-    }
-    elseif ($q->rows()) {
+    } elseif ($q->rows()) {
         // One committee.
         $q = $db->query("select * from moffice,member
 			where moffice.person = member.person_id
-			and dept like '%" . mysqli_real_escape_string($db, $name) . "%Committee'
+			and dept like '%" . $db->escape($name) . "%Committee'
 			and from_date <= " . $date . ' and ' . $date . " <= to_date
 			and entered_house <= " . $date . ' and ' . $date . ' <= left_house');
         if ($q->rows()) {
@@ -93,8 +93,8 @@ function api_getCommittee_name($name) {
             $output['committee'] = html_entity_decode($q->field(0, 'dept'));
             for ($i = 0; $i < $q->rows(); $i++) {
                 $member = [
-                'person_id' => $q->field($i, 'person'),
-                'name' => $q->field($i, 'first_name') . ' ' . $q->field($i, 'last_name'),
+                    'person_id' => $q->field($i, 'person'),
+                    'name' => $q->field($i, 'first_name') . ' ' . $q->field($i, 'last_name'),
                 ];
                 if ($q->field($i, 'position') == 'Chairman') {
                     $member['position'] = $q->field($i, 'position');
@@ -102,12 +102,10 @@ function api_getCommittee_name($name) {
                 $output['members'][] = $member;
             }
             api_output($output);
-        }
-        else {
+        } else {
             api_error('That committee has no members...?');
         }
-    }
-    else {
+    } else {
         api_error('That name was not recognised');
     }
 }
@@ -115,6 +113,7 @@ function api_getCommittee_name($name) {
 /**
  *
  */
-function api_getCommittee_date($date) {
+function api_getCommittee_date($date)
+{
     api_error('You need to give a name!');
 }

@@ -128,7 +128,7 @@ class MEMBER {
 			first_name, last_name, constituency, party,
 			entered_house, left_house, entered_reason, left_reason, person_id
 			FROM member
-			WHERE person_id = '" . mysqli_real_escape_string($this->db->conn, $person_id) . "'
+			WHERE person_id = '" . $this->db->escape($person_id) . "'
                         ORDER BY left_house DESC, house");
 
         if (!$q->rows() > 0) {
@@ -227,7 +227,7 @@ class MEMBER {
     public function member_id_to_person_id($member_id) {
         global $PAGE;
         $q = $this->db->query("SELECT person_id FROM member
-					WHERE member_id = '" . mysqli_real_escape_string($this->db->conn, $member_id) . "'");
+					WHERE member_id = '" . $this->db->escape($member_id) . "'");
         if ($q->rows > 0) {
             return $q->field(0, 'person_id');
         }
@@ -266,14 +266,14 @@ class MEMBER {
         }
 
         $q = $this->db->query("SELECT person_id FROM member
-					WHERE constituency = '" . mysqli_real_escape_string($this->db->conn, $constituency) . "'
+					WHERE constituency = '" . $this->db->escape($constituency) . "'
 					AND left_reason = 'still_in_office'");
 
         if ($q->rows > 0) {
             return $q->field(0, 'person_id');
         }
         else {
-            $q = $this->db->query("SELECT person_id FROM member WHERE constituency = '" . mysqli_real_escape_string($this->db->conn, $constituency) . "' ORDER BY left_house DESC LIMIT 1");
+            $q = $this->db->query("SELECT person_id FROM member WHERE constituency = '" . $this->db->escape($constituency) . "' ORDER BY left_house DESC LIMIT 1");
             if ($q->rows > 0) {
                 return $q->field(0, 'person_id');
             }
@@ -321,9 +321,9 @@ class MEMBER {
                 $PAGE->error_message('Sorry, that name was not recognised.');
                 return FALSE;
             }
-            $first_name = mysqli_real_escape_string($this->db->conn, $m[1]);
-            $middle_name = mysqli_real_escape_string($this->db->conn, $m[2]);
-            $last_name = mysqli_real_escape_string($this->db->conn, $m[3]);
+            $first_name = $this->db->escape($m[1]);
+            $middle_name = $this->db->escape($m[2]);
+            $last_name = $this->db->escape($m[3]);
             $q .= "house = 4 AND (";
             $q .= "(first_name='$first_name $middle_name' AND last_name='$last_name')";
             $q .= " or (first_name='$first_name' AND last_name='$middle_name $last_name') )";
@@ -337,9 +337,9 @@ class MEMBER {
                 $PAGE->error_message('Sorry, that name was not recognised.');
                 return FALSE;
             }
-            $first_name = mysqli_real_escape_string($this->db->conn, $m[1]);
-            $middle_name = mysqli_real_escape_string($this->db->conn, $m[2]);
-            $last_name = mysqli_real_escape_string($this->db->conn, $m[3]);
+            $first_name = $this->db->escape($m[1]);
+            $middle_name = $this->db->escape($m[2]);
+            $last_name = $this->db->escape($m[3]);
             $q .= "house = 3 AND (";
             $q .= "(first_name='$first_name $middle_name' AND last_name='$last_name')";
             $q .= " or (first_name='$first_name' AND last_name='$middle_name $last_name') )";
@@ -362,9 +362,9 @@ class MEMBER {
             else {
                 $house = 2;
             }
-            // If ($title) $q .= 'title = \'' . mysqli_real_escape_string($this->db->conn ,$title) . '\' AND ';.
-            $q .= "house = " . $house . " AND ((first_name='" . mysqli_real_escape_string($this->db->conn, $first_name . " " . $middle_name) . "' AND last_name='" . mysqli_real_escape_string($this->db->conn, $last_name) . "') OR " .
-                "(first_name='" . mysqli_real_escape_string($this->db->conn, $first_name) . "' AND last_name='" . mysqli_real_escape_string($this->db->conn, $middle_name . " " . $last_name) . "'))";
+            // If ($title) $q .= 'title = \'' . $this->db->escape($title) . '\' AND ';.
+            $q .= "house = " . $house . " AND ((first_name='" . $this->db->escape($first_name . " " . $middle_name) . "' AND last_name='" . $this->db->escape($last_name) . "') OR " .
+                "(first_name='" . $this->db->escape($first_name) . "' AND last_name='" . $this->db->escape($middle_name . " " . $last_name) . "'))";
             if ($const) {
                 $normalised = normalise_constituency_name($const);
                 if ($normalised && strtolower($normalised) != strtolower($const)) {
@@ -378,7 +378,7 @@ class MEMBER {
         }
 
         if ($const) {
-            $q .= ' AND constituency=\'' . mysqli_real_escape_string($this->db->conn, $const) . "'";
+            $q .= ' AND constituency=\'' . $this->db->escape($const) . "'";
         }
         $q .= ' ORDER BY left_house DESC';
         $q = $this->db->query($q);
@@ -435,7 +435,7 @@ class MEMBER {
     public function load_extra_info() {
 
         $q = $this->db->query('SELECT * FROM moffice WHERE person=' .
-            mysqli_real_escape_string($this->db->conn, $this->person_id) . ' ORDER BY from_date DESC');
+            $this->db->escape($this->person_id) . ' ORDER BY from_date DESC');
         for ($row = 0; $row < $q->rows(); $row++) {
             $this->extra_info['office'][] = $q->row($row);
         }
@@ -449,7 +449,7 @@ class MEMBER {
         // ");.
         $q = $this->db->query("SELECT data_key, data_value
                         FROM 	memberinfo
-                        WHERE	member_id = '" . mysqli_real_escape_string($this->db->conn, $this->member_id) . "'
+                        WHERE	member_id = '" . $this->db->escape($this->member_id) . "'
                         ");
         for ($row = 0; $row < $q->rows(); $row++) {
             $this->extra_info[$q->field($row, 'data_key')] = $q->field($row, 'data_value');
@@ -465,7 +465,7 @@ class MEMBER {
         // ");.
         $q = $this->db->query("SELECT data_key, data_value
                         FROM 	personinfo
-                        WHERE	person_id = '" . mysqli_real_escape_string($this->db->conn, $this->person_id) . "'
+                        WHERE	person_id = '" . $this->db->escape($this->person_id) . "'
                         ");
         for ($row = 0; $row < $q->rows(); $row++) {
             $this->extra_info[$q->field($row, 'data_key')] = $q->field($row, 'data_value');
@@ -477,7 +477,7 @@ class MEMBER {
         $q = $this->db->query("SELECT	data_key,
                                 data_value
                         FROM 	consinfo
-                        WHERE	constituency = '" . mysqli_real_escape_string($this->db->conn, $this->constituency) . "'
+                        WHERE	constituency = '" . $this->db->escape($this->constituency) . "'
                         ");
         for ($row = 0; $row < $q->rows(); $row++) {
             $this->extra_info[$q->field($row, 'data_key')] = $q->field($row, 'data_value');
@@ -785,7 +785,7 @@ class MEMBER {
         $current = [];
         foreach (array_keys($this->houses_pretty) as $h) {
             $lh = $this->left_house($h);
-            $current[$h] = ($lh['date'] == '9999-12-31');
+            $current[$h] = ($lh && $lh['date'] == '9999-12-31');
         }
         if ($house) {
             return $current[$house];

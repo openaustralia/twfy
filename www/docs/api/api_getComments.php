@@ -28,7 +28,6 @@ function api_getComments_front() {
         <dt>num (optional)</dt>
         <dd>Number of results to return.</dd>
     </dl>
-
     <?php
 }
 

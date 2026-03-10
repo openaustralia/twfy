@@ -49,7 +49,7 @@ function get_person_id($c) {
         $c = $n;
     }
     $q = $db->query("SELECT person_id FROM member
-		WHERE constituency = '" . mysqli_real_escape_string($db, $c) . "'
+		WHERE constituency = '" . $db->escape($c) . "'
 		AND left_reason = 'still_in_office' AND house=1");
     if ($q->rows > 0) {
         return $q->field(0, 'person_id');

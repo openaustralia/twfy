@@ -7,7 +7,8 @@
 /**
  *
  */
-function api_getLord_front() {
+function api_getLord_front()
+{
     ?>
     <p><big>Fetch a particular Senator.</big></p>
 
@@ -23,7 +24,8 @@ function api_getLord_front() {
 /**
  *
  */
-function _api_getLord_row($row) {
+function _api_getLord_row($row)
+{
     global $parties;
     $row['full_name'] = member_full_name(
         $row['house'],
@@ -42,10 +44,11 @@ function _api_getLord_row($row) {
 /**
  *
  */
-function api_getLord_id($id) {
+function api_getLord_id($id)
+{
     $db = new ParlDB();
     $q = $db->query("select * from member
-		where house=2 and person_id = '" . mysqli_real_escape_string($db, $id) . "'
+		where house=2 and person_id = '" . $db->escape($id) . "'
 		order by left_house desc");
     if ($q->rows()) {
         $output = [];
@@ -59,8 +62,7 @@ function api_getLord_id($id) {
             }
         }
         api_output($output, $last_mod);
-    }
-    else {
+    } else {
         api_error('Unknown person ID');
     }
 }

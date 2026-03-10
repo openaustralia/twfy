@@ -9,7 +9,8 @@ include_once INCLUDESPATH . 'easyparliament/member.php';
 /**
  *
  */
-function api_getMP_front() {
+function api_getMP_front()
+{
     ?>
     <p><big>Fetch a particular member of the House of Representatives.</big></p>
 
@@ -18,7 +19,8 @@ function api_getMP_front() {
         <dt>id (optional)</dt>
         <dd>If you know the person ID for the member you want (returned from getRepresentatives or elsewhere), this will
             return data for that person.
-            <!-- <em>Also returns select committee membership and ministerial positions, past and present.</em> --></dd>
+            <!-- <em>Also returns select committee membership and ministerial positions, past and present.</em> -->
+        </dd>
         <dt>division (optional)</dt>
         <dd>The name of an electoral division; we will try and work it out from whatever you give us. :)</dd>
         <dt>always_return (optional)</dt>
@@ -32,33 +34,33 @@ function api_getMP_front() {
 
     <h4>Example Response</h4>
     <pre>
-    [{
-      "member_id" : "1",
-      "house" : "1",
-      "first_name" : "Tony",
-      "last_name" : "Abbott",
-      "constituency" : "Warringah",
-      "party" : "Liberal Party",
-      "entered_house" : "1994-03-26",
-      "left_house" : "9999-12-31",
-      "entered_reason" : "by_election",
-      "left_reason" : "still_in_office",
-      "person_id" : "10001",
-      "title" : "",
-      "lastupdate" : "2008-07-20 22:54:54",
-      "full_name" : "Tony Abbott",
-      "image" : "/images/mpsL/10001.jpg",
-      "office" : [{
-      "moffice_id" : "23013",
-      "dept" : "",
-      "position" : "Leader of the Opposition",
-      "from_date" : "2009-12-08",
-      "to_date" : "9999-12-31",
-      "person" : "10001",
-      "source" : ""
-    }]
-    }]
-    </pre>
+        [{
+            "member_id" : "1",
+            "house" : "1",
+            "first_name" : "Tony",
+            "last_name" : "Abbott",
+            "constituency" : "Warringah",
+            "party" : "Liberal Party",
+            "entered_house" : "1994-03-26",
+            "left_house" : "9999-12-31",
+            "entered_reason" : "by_election",
+            "left_reason" : "still_in_office",
+            "person_id" : "10001",
+            "title" : "",
+            "lastupdate" : "2008-07-20 22:54:54",
+            "full_name" : "Tony Abbott",
+            "image" : "/images/mpsL/10001.jpg",
+            "office" : [{
+            "moffice_id" : "23013",
+            "dept" : "",
+            "position" : "Leader of the Opposition",
+            "from_date" : "2009-12-08",
+            "to_date" : "9999-12-31",
+            "person" : "10001",
+            "source" : ""
+        }]
+        }]
+        </pre>
 
     <?php
 }
@@ -66,7 +68,8 @@ function api_getMP_front() {
 /**
  *
  */
-function _api_getMP_row($row) {
+function _api_getMP_row($row)
+{
     global $parties;
     $row['full_name'] = member_full_name(
         $row['house'],
@@ -103,10 +106,11 @@ function _api_getMP_row($row) {
 /**
  *
  */
-function api_getMP_id($id) {
+function api_getMP_id($id)
+{
     $db = new ParlDB();
     $q = $db->query("select * from member
-		where house=1 and person_id = '" . mysqli_real_escape_string($db, $id) . "'
+		where house=1 and person_id = '" . $db->escape($id) . "'
 		order by left_house desc");
     if ($q->rows()) {
         $output = [];
@@ -128,8 +132,7 @@ function api_getMP_id($id) {
             }
         }
         api_output($output, $last_mod);
-    }
-    else {
+    } else {
         api_error('Unknown person ID');
     }
 }
@@ -137,23 +140,21 @@ function api_getMP_id($id) {
 /**
  *
  */
-function api_getMP_postcode($pc) {
+function api_getMP_postcode($pc)
+{
     $pc = preg_replace('#[^0-9]#i', '', $pc);
     if (is_postcode($pc)) {
         $constituency = postcode_to_constituency($pc);
         if ($constituency == 'CONNECTION_TIMED_OUT') {
             api_error('Connection timed out');
-        }
-        elseif ($constituency) {
+        } elseif ($constituency) {
             $person = _api_getMP_constituency($constituency);
             $output = $person;
             api_output($output, strtotime($output['lastupdate']));
-        }
-        else {
+        } else {
             api_error('Unknown postcode');
         }
-    }
-    else {
+    } else {
         api_error('Invalid postcode');
     }
 }
@@ -161,13 +162,13 @@ function api_getMP_postcode($pc) {
 /**
  *
  */
-function api_getMP_constituency($constituency) {
+function api_getMP_constituency($constituency)
+{
     $person = _api_getMP_constituency($constituency);
     if ($person) {
         $output = $person;
         api_output($output, strtotime($output['lastupdate']));
-    }
-    else {
+    } else {
         api_error('Unknown constituency, or no MP for that constituency');
     }
 }
@@ -176,7 +177,8 @@ function api_getMP_constituency($constituency) {
  * Very similary to MEMBER's constituency_to_person_id
  * Should all be abstracted properly :-/.
  */
-function _api_getMP_constituency($constituency) {
+function _api_getMP_constituency($constituency)
+{
     $db = new ParlDB();
 
     if ($constituency == '') {
@@ -193,7 +195,7 @@ function _api_getMP_constituency($constituency) {
     }
 
     $q = $db->query("SELECT * FROM member
-		WHERE constituency = '" . mysqli_real_escape_string($db, $constituency) . "'
+		WHERE constituency = '" . $db->escape($constituency) . "'
 		AND left_reason = 'still_in_office' AND house=1");
     if ($q->rows > 0) {
         return _api_getMP_row($q->row(0));
@@ -201,7 +203,7 @@ function _api_getMP_constituency($constituency) {
 
     if (get_http_var('always_return')) {
         $q = $db->query("SELECT * FROM member
-			WHERE house=1 AND constituency = '" . mysqli_real_escape_string($db, $constituency) . "'
+			WHERE house=1 AND constituency = '" . $db->escape($constituency) . "'
 			ORDER BY left_house DESC LIMIT 1");
         if ($q->rows > 0) {
             return _api_getMP_row($q->row(0));

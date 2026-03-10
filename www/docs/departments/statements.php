@@ -12,13 +12,12 @@ $PAGE->stripe_start();
 $db = new ParlDB();
 
 if (!$dept) {
-}
-else {
+} else {
     $dept = strtolower(str_replace('_', ' ', $dept));
     $q = $db->query('select epobject.epobject_id from hansard,epobject
 		where hansard.epobject_id=epobject.epobject_id and major=4 and section_id=0
 		and hdate>(select max(hdate) from hansard where major=4) - interval 7 day
-		and lower(body) = "' . mysqli_real_escape_string($db, $dept) . '"');
+		and lower(body) = "' . $db->escape($dept) . '"');
     $ids = [];
     for ($i = 0; $i < $q->rows(); $i++) {
         $ids[] = $q->field($i, 'epobject_id');

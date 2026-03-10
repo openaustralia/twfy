@@ -34,9 +34,9 @@ function postcode_to_constituency($postcode) {
 
     if ($last_postcode == $postcode) {
         twfy_debug("TIME", "Postcode "
-          . print_r($postcode, TRUE)
-          . " looked up last time, is "
-          . print_r($last_postcode_value, TRUE));
+            . print_r($postcode, TRUE)
+            . " looked up last time, is "
+            . print_r($last_postcode_value, TRUE));
         return $last_postcode_value;
     }
 
@@ -80,7 +80,7 @@ function postcode_to_constituency_internal($postcode) {
 
     $db = new ParlDB();
 
-    $q = $db->query('select name from postcode_lookup where postcode = "' . mysqli_real_escape_string($db, $postcode) . '"');
+    $q = $db->query('select name from postcode_lookup where postcode = "' . $db->escape($postcode) . '"');
     if ($q->rows == 1) {
         $name = $q->field(0, 'name');
         return $name;
