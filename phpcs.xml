@@ -21,6 +21,7 @@
     <exclude name="Drupal.NamingConventions.ValidGlobal"/>
     <exclude name="Drupal.NamingConventions.ValidFunctionName"/>
     <exclude name="Drupal.NamingConventions.ValidVariableName"/>
+    <exclude name="Drupal.WhiteSpace.ScopeIndent" />
   </rule>
 
   <!-- Override some settings -->

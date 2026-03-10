@@ -1920,7 +1920,7 @@ $displayed_stuff = 0;
         <p><em>Please note that numbers do not measure quality.
                 Also, <?php if ($member['house_disp'] == 1) {
                   echo "Representatives";
-}
+               }
                       else {
                         echo "Senators";
                       } ?> may do other things
