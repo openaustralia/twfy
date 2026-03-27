@@ -31,8 +31,6 @@ lint-ci: lint
 phpcs:
 	./vendor/bin/phpcs --standard=phpcs.xml --tab-width=4 --report=summary www scripts
 
-phpcs-verbose:
+phpcs-ci phpcs-verbose:
 	./vendor/bin/phpcs --standard=phpcs.xml --tab-width=4 www scripts
 
-phpcs-ci:
-	./vendor/bin/phpcs --standard=phpcs.xml --tab-width=4 www scripts --report=json --report-file=phpcs-report.json
