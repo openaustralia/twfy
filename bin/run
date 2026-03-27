@@ -1,0 +1,17 @@
+#!/bin/bash
+
+cd "$(dirname "$0")/.." || exit 1
+
+case "${1:-}" in
+  *.pl)
+    exec perl "$@"
+    ;;
+  *.php)
+    export PATH="/usr/local/bin:/usr/bin:/software/bin:/opt/bin:/opt/php/bin:$PATH"
+    exec php "$@"
+    ;;
+  *)
+    echo "Usage: $0 <script.rb|script.pl|script.php> [args...]" >&2
+    exit 1
+    ;;
+esac
