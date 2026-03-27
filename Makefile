@@ -35,4 +35,4 @@ phpcs-verbose:
 	./vendor/bin/phpcs --standard=phpcs.xml --tab-width=4 www scripts
 
 phpcs-ci:
-	./vendor/bin/phpcs --standard=phpcs.xml --tab-width=4 www scripts --report=json --report-file=phpcs-report.json
+	./vendor/bin/phpcs --standard=phpcs.xml --tab-width=4 www scripts --report=full --report=json --report-file=phpcs-report.json
