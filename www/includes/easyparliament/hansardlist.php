@@ -3182,10 +3182,10 @@ class StandingCommittee extends DEBATELIST {
     public function _get_committee($bill_id) {
         include_once INCLUDESPATH . "easyparliament/member.php";
         $q = $this->db->query('select count(*) as c from hansard where major=6 and minor=' .
-            mysqli_real_escape_string($this->db->conn, $bill_id) . ' and htype=10');
+            $this->db->escape($bill_id) . ' and htype=10');
         $sittings = $q->field(0, 'c');
         $q = $this->db->query('select member_id,sum(attending) as attending, sum(chairman) as chairman
-			from pbc_members where bill_id=' . mysqli_real_escape_string($this->db->conn, $bill_id)
+			from pbc_members where bill_id=' . $this->db->escape($bill_id)
             . ' group by member_id');
         $comm = ['sittings' => $sittings];
         for ($i = 0; $i < $q->rows(); $i++) {
@@ -3262,7 +3262,7 @@ class StandingCommittee extends DEBATELIST {
     public function _get_data_by_session($args) {
         global $DATA, $this_page;
         $session = $args['session'];
-        $e_session = mysqli_real_escape_string($this->db->conn, $session);
+        $e_session = $this->db->escape($session);
         $q = $this->db->query('select id, title from bills where session="' . $e_session . '" order by title');
         $bills = [];
         for ($i = 0; $i < $q->rows(); $i++) {
