@@ -40,7 +40,7 @@ if (isset($data['years'])) {
 
 
             // Create array containing abbreviations of days of week.
-            $daysOfWeek = array('Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun');
+            $daysOfWeek = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
             // What is the first day of the month in question?
             $firstDayOfMonth = mktime(0, 0, 0, $month, 1, $year);
@@ -135,7 +135,7 @@ if (isset($data['years'])) {
                             }
 
                             if ($data['info']['major'] == 5) # NI
-                                $recess = array('');
+                                $recess = [''];
                             else
                                 $recess = recess_prettify(
                                     $currentDay,
@@ -150,12 +150,12 @@ if (isset($data['years'])) {
                             // sittings - e.g. WH is only Tuesday-Thursday
                             if ($currentDay == $toDay) {
                                 print '<td class="on"';
-                                if (count($recess) > 0 && $recess[0] && $recess[0] != 1)
+                                if ($recess[0] && $recess[0] != 1)
                                     print ' title="' . $recess[0] . '"';
                                 print '>';
-                            } elseif (count($recess) > 0 && $recess[0]) {
+                            } elseif ($recess[0]) {
                                 print '<td class="no"';
-                                if (count($recess) > 0 && $recess[0] != 1)
+                                if ($recess[0] != 1)
                                     print ' title="' . $recess[0] . '"';
                                 print '>';
                             } else {
@@ -171,7 +171,7 @@ if (isset($data['years'])) {
                                 if ($currentDay == $toDay) {
                                     print $currentDay . '</td>';
                                 } else {
-                                    $DAYURL->insert(array('d' => $date));
+                                    $DAYURL->insert(['d' => $date]);
                                     print "<a href=\"" . $DAYURL->generate() . "\">$currentDay</a></td>";
                                 }
 
@@ -210,7 +210,7 @@ if (isset($data['years'])) {
                 $years = array_keys($data['years']);
                 $year = $years[0];
                 $URL = new URL($hansardmajors[$data['info']['major']]['page_year']);
-                $URL->insert(array('y' => $year));
+                $URL->insert(['y' => $year]);
                 ?>
                 <p><a href="<?php echo $URL->generate(); ?>">See all of <?php echo $year; ?></a></p>
                 <?php
