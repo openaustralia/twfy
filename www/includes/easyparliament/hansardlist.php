@@ -2210,7 +2210,10 @@ class HANSARDLIST {
 									u.firstname,
 									u.lastname
 							FROM	comments c, users u
-            WHERE	c.epobject_id = '" . $this->db->escape($item_data['epobject_id']) . "'
+                            WHERE	c.epobject_id = '" . $this->db->escape($item_data['epobject_id']) . "'
+                            AND		c.user_id = u.user_id
+							AND		c.visible = 1
+							ORDER BY c.posted ASC
 							LIMIT	1
 							");
 
