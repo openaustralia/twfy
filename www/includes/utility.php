@@ -896,7 +896,7 @@ function get_http_var($name, $default = '') {
  *
  */
 function clean_var($a) {
-    return (ini_get("magic_quotes_gpc") == 1) ? recursive_strip($a) : $a;
+    return $a;
 }
 
 /**
