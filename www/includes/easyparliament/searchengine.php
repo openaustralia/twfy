@@ -66,7 +66,7 @@ class SEARCHENGINE {
      */
     public function __construct($query) {
         if (!defined('XAPIANDB') || !XAPIANDB) {
-            return NULL;
+            return;
         }
 
         $this->query = $query;
