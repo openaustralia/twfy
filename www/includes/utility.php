@@ -123,7 +123,15 @@ function error_handler(string $errno, string $errmsg, string $filename, int $lin
     if (count($_POST)) {
         $err .= "_POST:";
         foreach ($_POST as $k => $v) {
-            $err .= "\t\t$k => $v\n";
+            if (is_scalar($v) || $v === NULL) {
+                $value = (string) $v;
+            } else {
+                $value = json_encode($v);
+                if ($value === FALSE) {
+                    $value = print_r($v, TRUE);
+                }
+            }
+            $err .= "\t\t$k => $value\n";
         }
     }
 
