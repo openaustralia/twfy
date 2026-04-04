@@ -168,19 +168,18 @@ function error_handler(string $errno, string $errmsg, string $filename, int $lin
 
     if (DEVSITE) {
         // On a devsite we just display the problem.
-        // $message = array(
-        //     'title' => "Error",
-        //     'text' => "$err\n"
-        // );
-        // if (is_object($PAGE)) {
-        //     $PAGE->error_message($message, $fatal);
-        //     vardump(adodb_backtrace());
-        // } else {
-        //     vardump($message);
-        //     vardump(adodb_backtrace());
-        // }
-    }
-    else {
+        $message = [
+            'title' => "Error",
+            'text' => "$err\n"
+        ];
+        if (is_object($PAGE)) {
+            $PAGE->error_message($message, $fatal);
+            vardump(adodb_backtrace());
+        } else {
+            vardump($message);
+            vardump(adodb_backtrace());
+        }
+    } else {
         print ("<pre>" . htmlentities_notags($err) . "</pre>");
         // On live sites we display a nice message and email the problem.
         error_log($err);
