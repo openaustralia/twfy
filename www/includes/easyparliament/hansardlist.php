@@ -2104,9 +2104,16 @@ class HANSARDLIST {
 								FROM 	member
 						WHERE	member_id = '" . $this->db->escape($speaker_id) . "'");
                 if ($q->rows() > 0) {
+                    // *SHOULD* only get one row back here...
                     $house = $q->field(0, 'house');
-                    if ($house == 2) {
+                    if ($house == 1) {
                         $URL = new URL('mp');
+                    }
+                    elseif ($house == 2) {
+                        $URL = new URL('peer');
+                    }
+                    elseif ($house == 3) {
+                        $URL = new URL('mla');
                     }
                     elseif ($house == 3) {
                         $URL = new URL('mla');
