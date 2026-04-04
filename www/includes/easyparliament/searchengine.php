@@ -120,7 +120,7 @@ class SEARCHENGINE {
             }
 
             if (strpos($word, ':') !== FALSE) {
-                $items = split(":", strtolower($word));
+                $items = explode(":", strtolower($word));
                 $type = $items[0];
                 $value = join(":", array_slice($items, 1));
                 if ($type == "section") {
