@@ -1842,17 +1842,18 @@ class HANSARDLIST {
                 ) {
                     if ($item['htype'] == '10') {
                         $where = "hansard.section_id = '" . $this->db->escape($item['epobject_id']) . "'
-									AND hansard.subsection_id = '" . $this->db->escape($item['epobject_id']) . "'";
+                                    AND hansard.subsection_id = '" . $this->db->escape($item['epobject_id']) . "'";
                     }
                     elseif ($item['htype'] == '11') {
                         $where = "hansard.subsection_id = '" . $this->db->escape($item['epobject_id']) . "'";
+                    }
                     $r = $this->db->query("SELECT epobject.body
-									FROM 	hansard,
-											epobject
-									WHERE	$where
-									AND		hansard.epobject_id = epobject.epobject_id
-									ORDER BY hansard.hpos ASC
-									LIMIT	1");
+                                    FROM 	hansard,
+                                            epobject
+                                    WHERE	$where
+                                    AND		hansard.epobject_id = epobject.epobject_id
+                                    ORDER BY hansard.hpos ASC
+                                    LIMIT	1");
 
                     if ($r->rows() > 0) {
                         $item['excerpt'] = $r->field(0, 'body');
@@ -2101,7 +2102,11 @@ class HANSARDLIST {
 										party,
                                         person_id
 								FROM 	member
-						WHERE	member_id = '" . $this->db->escape($speaker_id) . "'
+						WHERE	member_id = '" . $this->db->escape($speaker_id) . "'");
+                if ($q->rows() > 0) {
+                    $house = $q->field(0, 'house');
+                    if ($house == 2) {
+                        $URL = new URL('mp');
                     }
                     elseif ($house == 3) {
                         $URL = new URL('mla');
@@ -2928,7 +2933,12 @@ class DEBATELIST extends HANSARDLIST {
 
                 $r = $this->db->query("SELECT body
 								FROM	epobject
-						WHERE	epobject_id = '" . $this->db->escape($item_data['section_id']) . "'
+						WHERE	epobject_id = '" . $this->db->escape($item_data['section_id']) . "'");
+                if ($r->rows() > 0) {
+                    $debate['body'] = $r->field(0, 'body') . ' | ' . $debate['body'];
+                }
+            }
+
             $data[] = $debate;
         }
 
@@ -3090,8 +3100,9 @@ class WRANSLIST extends HANSARDLIST {
 						AND		$datewhere
 						AND		h.epobject_id = e.epobject_id
 						ORDER BY RAND()
-                        LIMIT 	" . $this->db->escape($args['num']) . "
-        for ($row = 0; $row < $q->rows; $row++) {
+                        LIMIT 	" . $this->db->escape($args['num']) . "");
+
+        for ($row = 0; $row < $q->rows(); $row++) {
             // This array just used for getting further data about this debate.
             $item_data = [
                 'major' => $this->major,
@@ -3182,10 +3193,10 @@ class StandingCommittee extends DEBATELIST {
     public function _get_committee($bill_id) {
         include_once INCLUDESPATH . "easyparliament/member.php";
         $q = $this->db->query('select count(*) as c from hansard where major=6 and minor=' .
-            mysqli_real_escape_string($this->db->conn, $bill_id) . ' and htype=10');
+            $this->db->escape($bill_id) . ' and htype=10');
         $sittings = $q->field(0, 'c');
         $q = $this->db->query('select member_id,sum(attending) as attending, sum(chairman) as chairman
-			from pbc_members where bill_id=' . mysqli_real_escape_string($this->db->conn, $bill_id)
+			from pbc_members where bill_id=' . $this->db->escape($bill_id)
             . ' group by member_id');
         $comm = ['sittings' => $sittings];
         for ($i = 0; $i < $q->rows(); $i++) {
@@ -3262,7 +3273,7 @@ class StandingCommittee extends DEBATELIST {
     public function _get_data_by_session($args) {
         global $DATA, $this_page;
         $session = $args['session'];
-        $e_session = mysqli_real_escape_string($this->db->conn, $session);
+        $e_session = $this->db->escape($session);
         $q = $this->db->query('select id, title from bills where session="' . $e_session . '" order by title');
         $bills = [];
         for ($i = 0; $i < $q->rows(); $i++) {
