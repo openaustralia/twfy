@@ -904,7 +904,7 @@ function clean_var($a) {
  */
 function recursive_strip($a) {
     if (is_array($a)) {
-        while ([$key, $val] = each($a)) {
+        foreach ($a as $key => $val) {
             $a[$key] = recursive_strip($val);
         }
     }
