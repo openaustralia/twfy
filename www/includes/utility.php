@@ -941,18 +941,6 @@ function hidden_form_vars($omit = []) {
     }
 }
 
-/**
- * Deprecated. Use hidden_form_vars, above, instead.
- */
-function hidden_vars($omit = []) {
-    global $DATA;
-
-    foreach ($args as $key => $val) {
-        if (!in_array($key, $omit)) {
-            print "<input type=\"hidden\" name=\"$key\" value=\"" . htmlspecialchars($val) . "\">\n";
-        }
-    }
-}
 
 /**
  *
