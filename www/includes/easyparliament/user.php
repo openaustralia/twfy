@@ -926,8 +926,7 @@ class USER {
           . $confirmedsql
           . $statussql . "
 								optin 		= '" . $optin . "'
-						WHERE 	user_id 	= '" . $this->db->escape($details["user_id"]) . "'"
-						");
+						WHERE 	user_id 	= '" . $this->db->escape($details["user_id"]) . "'");
 
         // If we're returning to
         // $this->update_self() then $THEUSER will have its variables
