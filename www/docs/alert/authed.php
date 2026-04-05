@@ -23,7 +23,8 @@ $sign = get_http_var('sign');
 $pid = get_http_var('pid');
 if (!$pid || !ctype_digit($pid)) {
     print 'not valid';
-} else {
+}
+else {
     $authed = auth_verify_with_shared_secret($email, OPTION_AUTH_SHARED_SECRET, $sign);
     if ($authed) {
         $db = new ParlDB();
@@ -32,10 +33,12 @@ if (!$pid || !ctype_digit($pid)) {
         $already_signed = $q->rows();
         if ($already_signed) {
             print "already signed";
-        } else {
+        }
+        else {
             print "not signed";
         }
-    } else {
+    }
+    else {
         print "not authed";
     }
 }
