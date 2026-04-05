@@ -121,6 +121,7 @@ function add_alert($details) {
     // Instantiate an instance of ALERT.
     $ALERT = new ALERT();
 
+    // auth_verify_with_shared_secret is in phplib/auth.php. It checks the signature of the request using a shared secret, and returns true if the signature is correct.
     $external_auth = auth_verify_with_shared_secret($details['email'], OPTION_AUTH_SHARED_SECRET, get_http_var('sign'));
     if ($external_auth) {
         $site = get_http_var('site');
