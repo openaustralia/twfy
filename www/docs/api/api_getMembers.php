@@ -31,7 +31,7 @@ function _api_getMembers_output($sql)
  */
 function api_getMembers_party($house, $s)
 {
-    $db = new ParlDB();
+    $db = new ParlDB(); // needed to call db->escape()
     global $parties;
     $canon_to_short = array_flip($parties);
     if (isset($canon_to_short[ucwords($s)])) {
@@ -48,7 +48,7 @@ function api_getMembers_party($house, $s)
  */
 function api_getMembers_state($house, $s)
 {
-    $db = new ParlDB();
+    $db = new ParlDB(); // needed to call db->escape()
     global $parties;
     $canon_to_short = array_flip($parties);
     if (isset($canon_to_short[ucwords($s)])) {
@@ -65,7 +65,7 @@ function api_getMembers_state($house, $s)
  */
 function api_getMembers_search($house, $s)
 {
-    $db = new ParlDB();
+    $db = new ParlDB(); // needed to call db->escape()
     $sq = $db->escape($s);
     _api_getMembers_output('select * from member
 		where house = ' . $db->escape($house) . "
@@ -93,7 +93,7 @@ function api_getMembers_date($house, $date)
  */
 function api_getMembers($house, $date = 'now()')
 {
-    $db = new ParlDB();
+    $db = new ParlDB(); // needed to call db->escape()
     _api_getMembers_output('select * from member where house=' . $db->escape($house) .
         ' AND entered_house <= date(' . $date . ') and date(' . $date . ') <= left_house');
 }
