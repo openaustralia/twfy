@@ -2808,18 +2808,9 @@ class DEBATELIST extends HANSARDLIST {
                 // If ($this->major == 1) {
                 // Debate.
                 $parent = $this->_get_subsection($speeches[$n]);
-
-                // } else if ($this->major == 3) {
-                // Wrans.
-                //    $parent = $this->_get_section ($speeches[$n]);
-                // }
-                // Add the parent's body on...
-                // if (isset($parent['body'])) {
+{
                 $speeches[$n]['parent']['body'] = $parent['body'];
-                // } else {
-                //    $parent = $this->_get_section ($speeches[$n]);
-                //    $speeches[$n]['parent']['body'] = $parent['body'];
-                // }
+
 
             }
 
@@ -3301,7 +3292,7 @@ class StandingCommittee extends DEBATELIST {
         }
         /*
         $q = $this->db->query('select minor,epobject_id from hansard where major=6 and htype=10
-        and minor in (' . join(',', array_keys($bills)) . ')');
+        and minor in (' . implode(',', array_keys($bills)) . ')');
         for ($i=0; $i<$q->rows(); $i++) {
         $comments[$q->field($i, 'minor')] += $this->_get_comment_count_for_epobject(array(
         'epobject_id' => $q->field($i, 'epobject_id'),
