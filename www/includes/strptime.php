@@ -11,9 +11,12 @@ if (!function_exists('strptime')) {
      * Modified from http://au.php.net/manual/en/function.strptime.php#82004
      *
      * @param string $date
+     *   Date string to parse.
      * @param string $format
+     *   Date format mask.
      *
-     * @return array
+     * @return array|false
+     *   Parsed date parts on success, FALSE on failure.
      */
     function strptime($date, $format) {
         if (!($date = strToDate($date, $format))) {
@@ -26,33 +29,33 @@ if (!function_exists('strptime')) {
                 case 'j':
                     $dateTime['tm_mday'] = intval($val);
 
-                  break;
+                    break;
 
                 case 'D':
                     $dateTime['tm_mday'] = intval(date('j', $val));
 
-                  break;
+                    break;
 
                 case 'm':
                 case 'n':
                     $dateTime['tm_mon'] = intval($val);
 
-                  break;
+                    break;
 
                 case 'M':
                     $dateTime['tm_mon'] = intval(date('n', $val));
 
-                  break;
+                    break;
 
                 case 'Y':
                     $dateTime['tm_year'] = intval($val);
 
-                  break;
+                    break;
 
                 case 'y':
                     $dateTime['tm_year'] = intval($val) + 2000;
 
-                  break;
+                    break;
 
                 case 'G':
                 case 'g':
@@ -60,17 +63,17 @@ if (!function_exists('strptime')) {
                 case 'h':
                     $dateTime['tm_hour'] = intval($val);
 
-                  break;
+                    break;
 
                 case 'i':
                     $dateTime['tm_min'] = intval($val);
 
-                  break;
+                    break;
 
                 case 's':
                     $dateTime['tm_sec'] = intval($val);
 
-                  break;
+                    break;
             }
         }
         $dateTime['timestamp'] = mktime($dateTime['hour'], $dateTime['min'], $dateTime['sec'], $dateTime['mon'], $dateTime['day'], $dateTime['year']);
@@ -87,50 +90,53 @@ if (!function_exists('strptime')) {
      * Modified from http://au.php.net/manual/en/function.strptime.php#81611
      *
      * @param string $date
+     *   Date string to parse.
      * @param string $format
+     *   Date format mask.
      *
-     * @return array
+     * @return array|false
+     *   Parsed date parts on success, FALSE on failure.
      */
     function strToDate($date, $format) {
         // Day.
         $search = [
-          '%d',
-          '%D',
-          '%j',
-          // Month.
-          '%m',
-          '%M',
-          '%n',
-          // Year.
-          '%Y',
-          '%y',
-          // Hour.
-          '%G',
-          '%g',
-          '%H',
-          '%h',
-          '%i',
-          '%s'
-        ];
-        // Day.
-        $replace = [
-          '(\d{2})',
-          '(\w{3})',
-          '(\d{1,2})',
-          // Month.
-          '(\d{2})',
-          '(\w{3})',
-          '(\d{1,2})',
-          // Year.
-          '(\d{4})',
-          '(\d{2})',
-          // Hour.
-          '(\d{1,2})',
-          '(\d{1,2})',
-          '\d{2}',
-          '\d{2}',
-          '(\d{2})',
-          '(\d{2})'
+            '%d',
+            '%D',
+            '%j',
+            // Month.
+            '%m',
+            '%M',
+            '%n',
+            // Year.
+            '%Y',
+            '%y',
+            // Hour.
+            '%G',
+            '%g',
+            '%H',
+            '%h',
+            '%i',
+            '%s'
+            ];
+            // Day.
+            $replace = [
+            '(\d{2})',
+            '(\w{3})',
+            '(\d{1,2})',
+            // Month.
+            '(\d{2})',
+            '(\w{3})',
+            '(\d{1,2})',
+            // Year.
+            '(\d{4})',
+            '(\d{2})',
+            // Hour.
+            '(\d{1,2})',
+            '(\d{1,2})',
+            '\d{2}',
+            '\d{2}',
+            '(\d{2})',
+            '(\d{2})'
         ];
 
         $pattern = str_replace($search, $replace, $format);
