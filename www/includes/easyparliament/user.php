@@ -112,10 +112,10 @@ class USER {
     public $status = "Viewer";
 
     // If you add more user variables above you should also:
-    //         Add the approrprate code to $this->add()
-    //        Add the appropriate code to $this->_update()
-    //         Add accessor functions way down below...
-    //        Alter THEUSER->update_self() to update with the new vars, if appropriate.
+    // * Add the appropriate code to $this->add()
+    // * Add the appropriate code to $this->_update()
+    // * Add accessor functions way down below...
+    // * Alter THEUSER->update_self() to update with the new vars, if appropriate.
 
     /**
      * Change things in the add/edit/view user page.
@@ -198,9 +198,9 @@ class USER {
 
         // $details is an associative array of all the user's details, of the form:
         // array (
-        //        "firstname" => "Fred",
-        //        "lastname"    => "Bloggs",
-        //        etc... using the same keys as the object variable names.
+        // "firstname" => "Fred",
+        // "lastname"    => "Bloggs",
+        // etc... using the same keys as the object variable names.
         // )
         // The BOOL variables (eg, optin) will be true or false and will need to be
         // converted to 1/0 for MySQL.
@@ -560,9 +560,9 @@ class USER {
         // Call this function to find out if a user is allowed to do something.
         // It uses the user's status to return true or false.
         // Possible actions:
-        //    "addcomment"
-        //     "reportcomment"
-        //    "edituser".
+        // "addcomment"
+        // "reportcomment"
+        // "edituser".
         global $PAGE;
 
         $status = $this->status();
@@ -577,128 +577,132 @@ class USER {
 
                 switch ($status) {
                     case "User":
-                      return TRUE;
+                        return TRUE;
 
                     case "Moderator":
-                      return TRUE;
+                        return TRUE;
 
                     case "Administrator":
-                      return TRUE;
+                        return TRUE;
 
                     case "Superuser":
-                      return TRUE;
+                        return TRUE;
 
-                    default: /* Viewer */
-                      return FALSE;
-                }
+                    case "Viewer":
+                        return FALSE;
+            }
+            return FALSE;
 
                 // Add Glossary terms.
             case "addterm":
-
                 switch ($status) {
                     case "User":
-                      return TRUE;
+                        return TRUE;
 
                     case "Moderator":
-                      return TRUE;
+                        return TRUE;
 
                     case "Administrator":
-                      return TRUE;
+                        return TRUE;
 
                     case "Superuser":
-                      return TRUE;
+                        return TRUE;
 
-                    default: /* Viewer */
-                      return FALSE;
-                }
+                    case "Viewer":
+                        return FALSE;
+                    }
+            return FALSE;
 
                 // Delete comments.
             case "deletecomment":
 
                 switch ($status) {
                     case "User":
-                      return FALSE;
+                        return FALSE;
 
                     case "Moderator":
-                      return TRUE;
+                        return TRUE;
 
                     case "Administrator":
-                      return TRUE;
+                        return TRUE;
 
                     case "Superuser":
-                      return TRUE;
+                        return TRUE;
 
-                    default: /* Viewer */
-                      return FALSE;
+                    case "Viewer":
+                        return FALSE;
                 }
+            return FALSE;
 
             case "edituser":
 
                 switch ($status) {
                     case "User":
-                      return FALSE;
+                        return FALSE;
 
                     case "Moderator":
-                      return FALSE;
+                        return FALSE;
 
                     case "Administrator":
-                      return FALSE;
+                        return FALSE;
 
                     case "Superuser":
-                      return TRUE;
+                        return TRUE;
 
-                    default: /* Viewer */
-                      return FALSE;
+                    case "Viewer":
+                        return FALSE;
                 }
+            return FALSE;
 
                 // Report a comment for moderation.
             case "reportcomment":
-
                 switch ($status) {
                     case "User":
-                      return TRUE;
+                        return TRUE;
 
                     case "Moderator":
-                      return TRUE;
+                        return TRUE;
 
                     case "Administrator":
-                      return TRUE;
+                        return TRUE;
 
                     case "Superuser":
-                      return TRUE;
+                        return TRUE;
 
-                    default: /* Viewer */
-                      return TRUE;
+                    case "Viewer":
+                        return TRUE;
                 }
+            return TRUE;
 
                 // Access pages in the Admin section.
             case "viewadminsection":
 
                 switch ($status) {
                     case "User":
-                      return FALSE;
+                        return FALSE;
 
                     case "Moderator":
-                      return FALSE;
+                        return FALSE;
 
                     case "Administrator":
-                      return TRUE;
+                        return TRUE;
 
                     case "Superuser":
-                      return TRUE;
+                        return TRUE;
 
-                    default: /* Viewer */
-                      return FALSE;
+                    case "Viewer":
+                        return FALSE;
                 }
+            return FALSE;
 
                 // Rate hansard things interesting/not.
             case "voteonhansard":
                 /* Everyone */
-              return TRUE;
+                return TRUE;
 
             default:
                 $PAGE->error_message("You need to set permissions for '$action'!");
-              return FALSE;
+                return FALSE;
 
         }
 
