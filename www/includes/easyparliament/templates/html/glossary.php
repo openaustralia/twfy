@@ -124,7 +124,6 @@ if (isset($data['comments'][0]['preview']) && $data['comments'][0]['preview'] ==
         }
 
 
-
     } else {
 
         ?>
