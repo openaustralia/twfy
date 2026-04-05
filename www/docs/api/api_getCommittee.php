@@ -110,6 +110,7 @@ function api_getCommittee_name($name) {
     else {
         api_error('That name was not recognised');
     }
+}
 
 /**
  *
