@@ -80,7 +80,6 @@ elseif (get_http_var('id') != "") {
     }
 
 
-
     // We show trackbacks on this page.
 
     $args = [
@@ -90,7 +89,6 @@ elseif (get_http_var('id') != "") {
     // $TRACKBACK = new TRACKBACK;
 
     // $TRACKBACK->display('epobject_id', $args);
-
 
 
 }
@@ -160,7 +158,7 @@ else {
             'type' => 'html',
             'content' => '<div class="block">
 <h4>RSS feed</h4>
-<p><a href="' . WEBPATH . $rssurl . '"><img align="middle" src="' . IMAGEPATH . 'rss.gif' . '" border="0" alt="RSS feed"></a>
+    <p><a href="' . WEBPATH . $rssurl . '"><img align="middle" src="' . IMAGEPATH . 'rss.gif" border="0" alt="RSS feed"></a>
 <a href="' . WEBPATH . $rssurl . '">RSS feed of most recent debates</a></p>
 </div>'
         ]
