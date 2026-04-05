@@ -164,7 +164,6 @@ if (isset($data['rows'])) {
             ));
 
 
-
         } elseif ($row['htype'] == '12') {
             // A STANDARD SPEECH OR WRANS TEXT.
 
@@ -398,7 +397,6 @@ if (isset($data['rows'])) {
 }
 
 
-
 if ($this_page == 'debates' || $this_page == 'whall' || $this_page == 'lordsdebates' || $this_page == 'nidebates') {
     // Previous / Index / Next links, if any.
 
@@ -431,7 +429,6 @@ function context_link(&$row)
         <?php
     }
 }
-
 
 
 //$totalcomments, $comment, $commenturl
