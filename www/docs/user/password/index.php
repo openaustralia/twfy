@@ -48,7 +48,7 @@ if (get_http_var("submitted")) {
 
     }
 
-    if (sizeof($errors) > 0) {
+    if (count($errors) > 0) {
         // Validation errors. Print form again.
         display_page($errors);
 
@@ -58,7 +58,6 @@ if (get_http_var("submitted")) {
         // Change the user's password!
 
         $password = $USER->change_password($email);
-
 
 
         if ($password) {
