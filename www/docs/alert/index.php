@@ -98,7 +98,7 @@ function check_input($details) {
     }
     /*
      * if (!$details['keyword']) {
-     *     $errors['keyword'] = 'Please enter a search term';
+     * $errors['keyword'] = 'Please enter a search term';
      * }
      */
 
@@ -202,7 +202,7 @@ function add_alert($details) {
 }
 
 /*  This function creates the form for displaying an alert, prompts the user for input and creates
- *  the alert when submitted.
+ * the alert when submitted.
  */
 
 /**
@@ -216,7 +216,7 @@ function display_form($details = [], $errors = []) {
 
     <p>This page allows you to request an email alert from OpenAustralia.org.</p>
 
-    <? if (!get_http_var('only')) { ?>
+    <?php if (!get_http_var('only')) { ?>
         <ul>
             <li>To receive an alert <strong>every time a particular person appears</strong>,
                 select their name from the drop-down list and
@@ -236,7 +236,9 @@ function display_form($details = [], $errors = []) {
 
         <p>Please note that you should only enter one topic per alert - if you wish to receive alerts on more than one topic, or
             for more than one person, simply fill in this form as many times as you need.</p>
-    <? } ?>
+    <?php
+    }
+    ?>
 
     <form method="post" action="<?php echo $ACTIONURL->generate(); ?>">
 
