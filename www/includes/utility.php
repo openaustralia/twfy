@@ -125,7 +125,8 @@ function error_handler(string $errno, string $errmsg, string $filename, int $lin
         foreach ($_POST as $k => $v) {
             if (is_scalar($v) || $v === NULL) {
                 $value = (string) $v;
-            } else {
+            }
+            else {
                 $value = json_encode($v);
                 if ($value === FALSE) {
                     $value = print_r($v, TRUE);
@@ -134,15 +135,6 @@ function error_handler(string $errno, string $errmsg, string $filename, int $lin
             $err .= "\t\t$k => $value\n";
         }
     }
-
-    // I'm not sure this bit is actually any use!
-
-    // Set of errors for which a var trace will be saved.
-    //    $user_errors = array(E_USER_ERROR, E_USER_WARNING, E_USER_NOTICE);
-    //    if (in_array($errno, $user_errors)) {
-    //        $err .= "Variables:\t" . serialize($vars) . "\n";
-    //    }.
-
     // Add the problematic line if possible.
     if (is_readable($filename)) {
         $source = file($filename);
@@ -175,11 +167,13 @@ function error_handler(string $errno, string $errmsg, string $filename, int $lin
         if (is_object($PAGE)) {
             $PAGE->error_message($message, $fatal);
             vardump(adodb_backtrace());
-        } else {
+        }
+        else {
             vardump($message);
             vardump(adodb_backtrace());
         }
-    } else {
+    }
+    else {
         print ("<pre>" . htmlentities_notags($err) . "</pre>");
         // On live sites we display a nice message and email the problem.
         error_log($err);
@@ -195,13 +189,7 @@ function error_handler(string $errno, string $errmsg, string $filename, int $lin
         else {
             print "<p>Oops, sorry, an error has occurred!</p>\n";
         }
-
         // TODO add honey badger.
-
-        // mail(BUGSLIST, "[TWFYBUG]: $errmsg", $err,
-        //     "From: Bug <beta@openaustralia.org>\n".
-        //     "X-Mailer: PHP/" . phpversion()
-        // );
     }
 
     // Do we need to exit?
@@ -232,7 +220,7 @@ function adodb_backtrace($print = TRUE) {
 
         $traceArr = debug_backtrace();
         array_shift($traceArr);
-        $tabs = sizeof($traceArr) - 1;
+        $tabs = count($traceArr) - 1;
         foreach ($traceArr as $arr) {
             for ($i = 0; $i < $tabs; $i++) {
                 $s .= ' &nbsp; ';
@@ -249,7 +237,7 @@ function adodb_backtrace($print = TRUE) {
                         $args[] = 'null';
                     }
                     elseif (is_array($v)) {
-                        $args[] = 'Array[' . sizeof($v) . ']';
+                        $args[] = 'Array[' . count($v) . ']';
                     }
                     elseif (is_object($v)) {
                         $args[] = 'Object:' . get_class($v);
@@ -269,9 +257,6 @@ function adodb_backtrace($print = TRUE) {
             }
 
             $s .= $arr['function'] . '(' . implode(', ', $args) . ')';
-            // $s .= sprintf("</font><font color=#808080 size=-1> # line %4d,".
-            //            " file: <a href=\"file:/%s\">%s</a></font>",
-            //        $arr['line'],$arr['file'],$arr['file']);
             $s .= "\n";
         }
         if ($print) {
@@ -619,8 +604,8 @@ function filter_user_input($text, $filter_type) {
     // Uses iamcal.com's lib_filter class.
 
     // $filter_type is the level of filtering we want:
-    //     'comment' allows <b> and <i> tags.
-    //    'strict' strips all tags.
+    // 'comment' allows <b> and <i> tags.
+    // 'strict' strips all tags.
 
     global $filter;
 
@@ -759,16 +744,16 @@ function send_template_email($data, $merge, $bulk = FALSE) {
 
     // $data is like:
     // array (
-    //    'template'     => 'send_confirmation',
-    //    'to'        => 'phil@gyford.com',
-    //    'subject'    => 'Your confirmation email'
+    // 'template'     => 'send_confirmation',
+    // 'to'        => 'phil@gyford.com',
+    // 'subject'    => 'Your confirmation email'
     // );
 
     // $merge is like:
     // array (
-    //    'FIRSTNAME' => 'Phil',
-    //    'LATNAME'    => 'Gyford'
-    //     etc...
+    // 'FIRSTNAME' => 'Phil',
+    // 'LATNAME'    => 'Gyford'
+    // etc...
     // );
 
     // In $data, 'template' and 'to' are mandatory. 'template' is the
@@ -941,7 +926,6 @@ function hidden_form_vars($omit = []) {
     }
 }
 
-
 /**
  *
  */
@@ -1016,12 +1000,6 @@ function member_full_name($house, $title, $first_name, $last_name, $constituency
         if ($title) {
             $s = $title . ' ' . $s;
         }
-        // } elseif ($house == 2) {
-        //        $s = '';
-        //        if (!$last_name) $s = 'the ';
-        //        $s .= $title;
-        //        if ($last_name) $s .= ' ' . $last_name;
-        //        if ($constituency) $s .= ' of ' . $constituency;
     }
     // Queen.
     elseif ($house == 0) {
@@ -1112,7 +1090,7 @@ function major_summary($data, $limit = "") {
 				FROM hansard,epobject
 				WHERE hansard.epobject_id = epobject.epobject_id AND section_id=0
 				AND hdate="' . $date . '"
-				AND major IN (' . join(',', $printed_majors) . ')
+				AND major IN (' . implode(',', $printed_majors) . ')
 				ORDER BY major desc, hpos' . $limitsql);
         $current_major = 0;
         for ($i = 0; $i < $q->rows(); $i++) {
