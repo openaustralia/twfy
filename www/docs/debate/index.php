@@ -61,7 +61,6 @@ if (get_http_var('id') != '') {
     }
 
 
-
 }
 else {
     $PAGE->error_message("We need a gid");
