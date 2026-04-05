@@ -117,7 +117,7 @@ function alert_details_to_criteria($details) {
     if ($details['pid']) {
         $criteria[] = 'speaker:' . $details['pid'];
     }
-    $criteria = join(' ', $criteria);
+    $criteria = implode(' ', $criteria);
     return $criteria;
 }
 
@@ -546,7 +546,7 @@ class ALERT {
         }
         $criteria = '';
         if (count($words)) {
-            $criteria .= ($html ? '<li>' : '* ') . 'Containing the ' . make_plural('word', count($words)) . ': ' . join(' ', $words) . ($html ? '</li>' : '') . "\n";
+            $criteria .= ($html ? '<li>' : '* ') . 'Containing the ' . make_plural('word', count($words)) . ': ' . implode(' ', $words) . ($html ? '</li>' : '') . "\n";
         }
         if ($spokenby) {
             $criteria .= ($html ? '<li>' : '* ') . "Spoken by $spokenby" . ($html ? '</li>' : '') . "\n";
@@ -571,4 +571,5 @@ class ALERT {
     // PRIVATE FUNCTIONS BELOW... ////////////////.
 
 
-} // End USER class
+// End USER class.
+}

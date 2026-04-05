@@ -157,7 +157,6 @@ if (isset($data['rows'])) {
             */
 
 
-
         } elseif ($row['htype'] == '12') {
             // A STANDARD SPEECH OR WRANS TEXT.
 
