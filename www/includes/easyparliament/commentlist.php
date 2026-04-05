@@ -56,17 +56,17 @@ class COMMENTLIST {
      */
     public function display($view, $args = [], $format = 'html') {
         // $view is what we're viewing by:
-        //    'ep' is all the comments attached to an epobject.
-        //    'user' is all the comments written by a user.
-        //    'recent' is the most recent comments.
+        // 'ep' is all the comments attached to an epobject.
+        // 'user' is all the comments written by a user.
+        // 'recent' is the most recent comments.
 
         // $args is an associative array of stuff like
-        //    'epobject_id' => '37'
+        // 'epobject_id' => '37'
         // Where 'epobject_id' is an epobject_id.
         // Or 'gid' is a hansard item gid.
 
         // Replace a hansard object gid with an epobject_id.
-        //        $args = $this->_fix_gid($args);
+        // $args = $this->_fix_gid($args);
 
         // $format is the format the data should be rendered in.
 
@@ -187,7 +187,7 @@ class COMMENTLIST {
         // We're getting the most recent comments posted to epobjects.
         // We're grouping them by epobject so we can just link to each hansard thing once.
         // When there are numerous comments on an epobject we're getting the most recent
-        //         comment_id and posted date.
+        // comment_id and posted date.
         // We're getting the body and speaker details for the epobject.
         // We're NOT getting the comment bodies. Why? Because adding them to this query
         // would fetch the text for the oldest comment on an epobject group, rather
@@ -488,10 +488,10 @@ class COMMENTLIST {
 
         // $input is an array of things needed for the SQL query:
         // 'amount' has one or more of :
-        //        'user'=>true - Users' names.
-        //      'hansard'=>true - Body text from the hansard items.
+        // 'user'=>true - Users' names.
+        // 'hansard'=>true - Body text from the hansard items.
         // 'where' is an associative array of stuff for the WHERE clause, eg:
-        //         array ('id=' => '37', 'posted>' => '2003-12-31 00:00:00');
+        // array ('id=' => '37', 'posted>' => '2003-12-31 00:00:00');
         // 'order' is a string for the $order clause, eg 'hpos DESC'.
         // 'limit' as a string for the $limit clause, eg '21,20'.
 
