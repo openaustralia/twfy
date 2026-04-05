@@ -97,11 +97,11 @@ function api_getConstituencies($date = 'now()') {
     api_output($output);
 }
 
-/* R_e
+/* R_E
  * Radius of the earth, in km. This is something like 6372.8 km:
- *  http://en.wikipedia.org/wiki/Earth_radius
+ * http://en.wikipedia.org/wiki/Earth_radius
  */
-define('R_e', 6372.8);
+define('RADIUS_OF_EARTH', 6372.8);
 
 /**
  *
@@ -127,18 +127,18 @@ function _api_getConstituencies_latitude($lat, $lon, $d) {
         if (!isset($data['centre_lat']) || !isset($data['centre_lon'])) {
             continue;
         }
-        $distance = R_e * acos(
+        $distance = RADIUS_OF_EARTH * acos(
             sin(deg2rad($lat)) * sin(deg2rad($data['centre_lat']))
             + cos(deg2rad($lat)) * cos(deg2rad($data['centre_lat']))
             * cos(deg2rad($lon - $data['centre_lon']))
         );
         if (
-            deg2rad($data['centre_lat']) > deg2rad($lat) - ($d / R_e)
-            && deg2rad($data['centre_lat']) < deg2rad($lat) + ($d / R_e)
+            deg2rad($data['centre_lat']) > deg2rad($lat) - ($d / RADIUS_OF_EARTH)
+            && deg2rad($data['centre_lat']) < deg2rad($lat) + ($d / RADIUS_OF_EARTH)
             // Case where search pt is near pole.
-            && (abs(deg2rad($lat)) + ($d / R_e) > M_PI_2
+            && (abs(deg2rad($lat)) + ($d / RADIUS_OF_EARTH) > M_PI_2
                 || _api_angle_between(deg2rad($data['centre_lon']), deg2rad($lon))
-                < $d / (R_e * cos(deg2rad($lat + $d / R_e))))
+                < $d / (RADIUS_OF_EARTH * cos(deg2rad($lat + $d / RADIUS_OF_EARTH))))
             && $distance < $d
         ) {
             $out[] = array_merge(
