@@ -9,8 +9,7 @@ include_once 'api_getMP.php';
 /**
  * Shared API functions for get<Members>
  */
-function _api_getMembers_output($sql)
-{
+function _api_getMembers_output($sql) {
     $db = new ParlDB();
     $q = $db->query($sql);
     $output = [];
@@ -29,9 +28,9 @@ function _api_getMembers_output($sql)
 /**
  *
  */
-function api_getMembers_party($house, $s)
-{
-    $db = new ParlDB(); // needed to call db->escape()
+function api_getMembers_party($house, $s) {
+    // Needed to call db->escape()
+    $db = new ParlDB();
     global $parties;
     $canon_to_short = array_flip($parties);
     if (isset($canon_to_short[ucwords($s)])) {
@@ -46,9 +45,9 @@ function api_getMembers_party($house, $s)
 /**
  *
  */
-function api_getMembers_state($house, $s)
-{
-    $db = new ParlDB(); // needed to call db->escape()
+function api_getMembers_state($house, $s) {
+    // Needed to call db->escape()
+    $db = new ParlDB();
     global $parties;
     $canon_to_short = array_flip($parties);
     if (isset($canon_to_short[ucwords($s)])) {
@@ -63,9 +62,9 @@ function api_getMembers_state($house, $s)
 /**
  *
  */
-function api_getMembers_search($house, $s)
-{
-    $db = new ParlDB(); // needed to call db->escape()
+function api_getMembers_search($house, $s) {
+    // Needed to call db->escape()
+    $db = new ParlDB();
     $sq = $db->escape($s);
     _api_getMembers_output('select * from member
 		where house = ' . $db->escape($house) . "
@@ -79,11 +78,11 @@ function api_getMembers_search($house, $s)
 /**
  *
  */
-function api_getMembers_date($house, $date)
-{
+function api_getMembers_date($house, $date) {
     if ($date = parse_date($date)) {
         api_getMembers($house, '"' . $date['iso'] . '"');
-    } else {
+    }
+    else {
         api_error('Invalid date format');
     }
 }
@@ -91,9 +90,9 @@ function api_getMembers_date($house, $date)
 /**
  *
  */
-function api_getMembers($house, $date = 'now()')
-{
-    $db = new ParlDB(); // needed to call db->escape()
+function api_getMembers($house, $date = 'now()') {
+    // Needed to call db->escape()
+    $db = new ParlDB();
     _api_getMembers_output('select * from member where house=' . $db->escape($house) .
         ' AND entered_house <= date(' . $date . ') and date(' . $date . ') <= left_house');
 }
