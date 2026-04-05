@@ -284,6 +284,7 @@ function api_output_php($arr) {
  */
 function api_output_rabx($arr) {
     $out = '';
+    // rabx_wire_wr is in phplib/rabx.php. It converts a PHP array into a binary format that can be read by rabx_read in the same library.
     rabx_wire_wr($arr, $out);
     if (get_http_var('verbose')) {
         $out = str_replace(',', ",\n", $out);
