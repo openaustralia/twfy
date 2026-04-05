@@ -20,7 +20,7 @@ if ($message != '') {
 }
 
 //
-//  SEARCH AND RECENT HANSARD.
+// SEARCH AND RECENT HANSARD.
 
 $HANSARDURL = new URL('hansard');
 $MPURL = new URL('yourmp');
