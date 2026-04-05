@@ -10,8 +10,7 @@
 /**
  *
  */
-function mlog($message)
-{
+function mlog($message) {
     print $message;
 }
 
@@ -131,7 +130,8 @@ foreach ($alertdata as $alertitem) {
         if ($q->rows() > 0) {
             $user_id = $q->field(0, 'user_id');
             $registered++;
-        } else {
+        }
+        else {
             $user_id = 0;
             $unregistered++;
         }
@@ -166,7 +166,8 @@ foreach ($alertdata as $alertitem) {
         $total_results = $data['info']['total_results'];
         $queries++;
         mlog(", hits " . $total_results . ", time " . (getmicrotime() - $start) . "\n");
-    } else {
+    }
+    else {
         mlog("  ACTION $active/$outof CACHE HIT : Using cached result for '$criteria_batch'\n");
         $data = $results[$criteria_batch];
     }
@@ -239,7 +240,8 @@ mlog("\n");
 $sss = "Active alerts: $active\nEmail lookups: $registered registered, $unregistered unregistered\nQuery lookups: $queries\nSent emails: $sentemails\n";
 if ($globalsuccess) {
     $sss .= 'Everything went swimmingly, in ';
-} else {
+}
+else {
     $sss .= 'Something went wrong! Total time: ';
 }
 $sss .= (getmicrotime() - $global_start) . "\n\n";
@@ -256,8 +258,7 @@ mlog(date('r') . "\n");
 /**
  *
  */
-function sort_by_stuff($a, $b)
-{
+function sort_by_stuff($a, $b) {
     if ($a['major'] > $b['major']) {
         return 1;
     }
@@ -281,14 +282,14 @@ function sort_by_stuff($a, $b)
 /**
  *
  */
-function write_and_send_email($email, $user_id, $data)
-{
+function write_and_send_email($email, $user_id, $data) {
     global $globalsuccess, $sentemails, $nomail, $start_time;
 
     $data .= '====================' . "\n\n";
     if ($user_id) {
         $data .= "As a registered user, visit http://www.openaustralia.org/user/\nto unsubscribe from, or manage, your alerts.\n";
-    } else {
+    }
+    else {
         $data .= "If you register on the site, you will be able to manage your\nalerts there as well as post comments. :)\n";
     }
     $sentemails++;
@@ -305,7 +306,8 @@ function write_and_send_email($email, $user_id, $data)
             mlog("pausing ... ");
             sleep(1);
         }
-    } else {
+    }
+    else {
         mlog($data);
         $success = 1;
     }

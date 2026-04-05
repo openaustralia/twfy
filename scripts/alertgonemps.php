@@ -66,7 +66,8 @@ foreach ($alertdata as $alertitem) {
         if ($q->rows() > 0) {
             $user_id = $q->field(0, 'user_id');
             $registered++;
-        } else {
+        }
+        else {
             $user_id = 0;
             $unregistered++;
         }
@@ -85,13 +86,13 @@ print "Email lookups: $registered registered, $unregistered unregistered\n";
 /**
  *
  */
-function write_and_send_email($email, $user_id, $data)
-{
+function write_and_send_email($email, $user_id, $data) {
     global $globalsuccess, $out, $sentemails, $nomail;
 
     if ($user_id) {
         $data = "As a registered user, visit http://www.openaustralia.org/user/\nto unsubscribe from, or manage, your alerts.\n\n" . $data;
-    } else {
+    }
+    else {
         $data = "If you register on the site, you will be able to manage your\nalerts there as well as post comments. :)\n\n" . $data;
     }
     $out .= "SEND: Sending email to $email\n";
@@ -102,7 +103,8 @@ function write_and_send_email($email, $user_id, $data)
     if (!$nomail) {
         $success = send_template_email($d, $m);
         usleep(500000);
-    } else {
+    }
+    else {
         $success = 1;
         $out .= $data . "\n\n";
         // Print $data . "\n\n";.
