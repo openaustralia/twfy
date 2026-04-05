@@ -68,8 +68,7 @@ $PAGE->page_end();
 /**
  *
  */
-function generate_rows($q)
-{
+function generate_rows($q) {
     global $db;
     $rows = [];
     $USERURL = new URL('userview');
@@ -82,7 +81,8 @@ function generate_rows($q)
             $user_id = $r->field(0, 'user_id');
             $USERURL->insert(['u' => $user_id]);
             $name = '<a href="' . $USERURL->generate() . '">' . $r->field(0, 'firstname') . ' ' . $r->field(0, 'lastname') . '</a>';
-        } else {
+        }
+        else {
             $name = $email;
         }
         $created = $q->field($row, 'created');
