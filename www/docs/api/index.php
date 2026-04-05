@@ -102,17 +102,21 @@ function api_documentation_front($method, $explorer) {
             }
             ?>
             Output:
-            <input id="output_js" type="radio" name="output" value="js" <?php if (get_http_var('output') == 'js' || !get_http_var('output'))
-                print ' checked'; ?>>
+            <input id="output_js" type="radio" name="output" value="js" <?php if (get_http_var('output') == 'js' || !get_http_var('output')) {
+                print ' checked';
+            } ?>>
                 <label for="output_js">JS</label>
-                <input id="output_xml" type="radio" name="output" value="xml" <?php if (get_http_var('output') == 'xml')
-                print ' checked' ?>>
+                <input id="output_xml" type="radio" name="output" value="xml" <?php if (get_http_var('output') == 'xml') {
+                print ' checked';
+                } ?>>
                 <label for="output_xml">XML</label>
-                <input id="output_php" type="radio" name="output" value="php" <?php if (get_http_var('output') == 'php')
-                print ' checked' ?>>
+                <input id="output_php" type="radio" name="output" value="php" <?php if (get_http_var('output') == 'php') {
+                print ' checked';
+                } ?>>
                 <label for="output_php">Serialised PHP</label>
-                <input id="output_rabx" type="radio" name="output" value="rabx" <?php if (get_http_var('output') == 'rabx')
-                print ' checked' ?>>
+                <input id="output_rabx" type="radio" name="output" value="rabx" <?php if (get_http_var('output') == 'rabx') {
+                print ' checked';
+                } ?>>
                 <label for="output_rabx">RABX</label>
 
                 <input type="submit" value="Go">
