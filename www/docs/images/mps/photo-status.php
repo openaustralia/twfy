@@ -24,16 +24,18 @@ for ($i = 0; $i < $q->rows(); $i++) {
     $full_name = "$first_name $last_name";
 
     [$dummy, $sz] = find_rep_image($p_id);
-    if ($sz == 'L') {
-        $out['both'] .= "$full_name, ";
-    }
-    elseif ($sz == 'S') {
-        $out['small'] .= "$full_name, ";
-    }
-    else {
-        $party = $q->field($i, 'party');
-        $constituency = $q->field($i, 'constituency');
-        $out['none'] .= "<li>$full_name ($party), $constituency</li>";
+    switch ($sz) {
+        case 'L':
+            $out['both'] .= "$full_name, ";
+            break;
+        case 'S':
+            $out['small'] .= "$full_name, ";
+            break;
+        default:
+            $party = $q->field($i, 'party');
+            $constituency = $q->field($i, 'constituency');
+            $out['none'] .= "<li>$full_name ($party), $constituency</li>";
+            break;
     }
 }
 print '<h3>Missing completely</h3> <ul>';
