@@ -189,8 +189,8 @@ class MySQLQuery {
                     $result[] = $row;
                 }
 
-                if (sizeof($result) > 0) {
-                    $this->rows = sizeof($result);
+                if (count($result) > 0) {
+                    $this->rows = count($result);
                 }
                 else {
                     $this->rows = 0;
@@ -198,7 +198,7 @@ class MySQLQuery {
 
                 $this->fieldnames_byid = $fieldnames_byid;
                 $this->fieldnames_byname = $fieldnames_byname;
-                $this->fields = sizeof($fieldnames_byid);
+                $this->fields = count($fieldnames_byid);
                 $this->data = $result;
 
                 twfy_debug("SQLRESULT", $this->_display_result());
