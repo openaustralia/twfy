@@ -269,8 +269,6 @@ else {
 }
 
 
-
-
 //
 // DISPLAY A REPRESENTATIVE.
 
