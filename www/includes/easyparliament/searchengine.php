@@ -186,7 +186,7 @@ else {
      *
      */
     public function make_phrase($phrasearray) {
-        return '"' . join(' ', $phrasearray) . '"';
+        return '"' . implode(' ', $phrasearray) . '"';
     }
 
     /**
@@ -208,7 +208,7 @@ else {
             $description .= " the " . make_plural("word", count($this->words));
             $description .= " '";
             if (count($this->words) > 2) {
-                $description .= join("', '", array_slice($this->words, 0, -2));
+                $description .= implode("', '", array_slice($this->words, 0, -2));
                 $description .= "', '";
                 $description .= $this->words[count($this->words) - 2] . "', and '" . $this->words[count($this->words) - 1];
             }
@@ -231,7 +231,7 @@ else {
                 $description .= " and";
             }
             $description .= " the " . make_plural("phrase", count($this->phrases)) . " ";
-            $description .= join(', ', array_map([$this, "make_phrase"], $this->phrases));
+            $description .= implode(', ', array_map([$this, "make_phrase"], $this->phrases));
         }
 
         if (count($this->excluded) > 0) {
@@ -242,7 +242,7 @@ else {
                 $description .= " excluding";
             }
             $description .= " the " . make_plural("word", count($this->excluded));
-            $description .= " '" . join(' ', $this->excluded) . "'";
+            $description .= " '" . implode(' ', $this->excluded) . "'";
         }
 
         /*        if (count($this->rough) > 0) {
@@ -251,7 +251,7 @@ else {
         $description .= " containing ";
         }
         }
-        $description .= " roughly words '" . join(' ', $this->rough) . "'";
+        $description .= " roughly words '" . implode(' ', $this->rough) . "'";
         } */
 
         $major = [];
@@ -299,11 +299,11 @@ else {
                 $PAGE->error_message("Unknown search prefix '$items[0]' ignored");
             }
         }
-        if (sizeof($speaker)) {
-            $description .= ' by ' . join(' or ', $speaker);
+        if (count($speaker)) {
+            $description .= ' by ' . implode(' or ', $speaker);
         }
-        if (sizeof($major)) {
-            $description .= ' in ' . join(' or ', $major);
+        if (count($major)) {
+            $description .= ' in ' . implode(' or ', $major);
         }
 
         return trim($description);
@@ -339,7 +339,7 @@ else {
     public function query_remade() {
         $remade = [];
         foreach ($this->phrases as $phrase) {
-            $remade[] = '"' . join(' ', $phrase) . '"';
+            $remade[] = '"' . implode(' ', $phrase) . '"';
         }
         if ($this->words) {
             $remade = array_merge($remade, $this->words);
@@ -356,15 +356,15 @@ else {
         }
         foreach ($prefixes as $prefix) {
             if (count($prefix)) {
-                $remade[] = '(' . join(' OR ', $prefix) . ')';
+                $remade[] = '(' . implode(' OR ', $prefix) . ')';
             }
         }
 
-        $query = trim(join(' AND ', $remade));
+        $query = trim(implode(' AND ', $remade));
         if ($this->excluded) {
-            $query .= ' NOT (' . join(' AND ', $this->excluded) . ')';
+            $query .= ' NOT (' . implode(' AND ', $this->excluded) . ')';
         }
-        // $remade .= ' ' . join(' ', array_map(array($this, "stem"), $this->rough));
+        // $remade .= ' ' . implode(' ', array_map(array($this, "stem"), $this->rough));
         return $query;
     }
 
@@ -467,6 +467,7 @@ else {
             case 'created':
                 $this->enquire->set_sort_by_value_then_relevance(6, TRUE);
                 break;
+
             default:
                 // Do nothing, default ordering is by relevance.
                 break;
@@ -535,7 +536,7 @@ else {
             // array_push($replacewords, "\\1<span class=\"hi\">\\2</span>\\3");.
         }
         foreach ($this->phrases as $phrase) {
-            $phrasematch = join($phrase, '[^' . $this->wordchars . ']+');
+            $phrasematch = implode($phrase, '[^' . $this->wordchars . ']+');
             array_push($findwords, "/\b($phrasematch)\b/i");
             $replacewords[] = "<span class=\"hi\">\\1</span>";
         }
@@ -562,7 +563,7 @@ else {
 
         // Look for phrases.
         foreach ($this->phrases as $phrase) {
-            $phrasematch = join($phrase, '[^' . $this->wordchars . ']+');
+            $phrasematch = implode($phrase, '[^' . $this->wordchars . ']+');
             if (preg_match('/([^' . $this->wordchars . ']' . $phrasematch . '[^' . $this->wordchars . '])/', $lcbody, $matches)) {
                 $wordpos = strpos($lcbody, $matches[0]);
                 if ($wordpos) {
@@ -674,7 +675,7 @@ function search_by_usage($search, $house = 0) {
 
     // Fetch all the speakers of the results, count them up and get min/max date usage.
     $speaker_count = [];
-    $gids = join('","', $gids);
+    $gids = implode('","', $gids);
     $db = new ParlDB();
     $q = $db->query('SELECT gid,speaker_id,hdate FROM hansard WHERE gid IN ("' . $gids . '")');
     for ($n = 0; $n < $q->rows(); $n++) {
@@ -698,7 +699,7 @@ function search_by_usage($search, $house = 0) {
 
     // Fetch details of all the speakers.
     if (count($speaker_count)) {
-        $speaker_ids = join(',', array_keys($speaker_count));
+        $speaker_ids = implode(',', array_keys($speaker_count));
         $q = $db->query('SELECT member_id, person_id, title,first_name,last_name,constituency,house,party,
                                 moffice_id, dept, position, from_date, to_date, left_house
                             FROM member LEFT JOIN moffice ON member.person_id = moffice.person
