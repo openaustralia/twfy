@@ -66,7 +66,7 @@ class SEARCHENGINE {
      */
     public function __construct($query) {
         if (!defined('XAPIANDB') || !XAPIANDB) {
-            return NULL;
+            return;
         }
 
         $this->query = $query;
@@ -462,13 +462,14 @@ else {
         switch ($sort_order) {
             case 'date':
                 $this->enquire->set_sort_by_value_then_relevance(0, TRUE);
-              break;
+                break;
 
             case 'created':
                 $this->enquire->set_sort_by_value_then_relevance(6, TRUE);
+                break;
             default:
                 // Do nothing, default ordering is by relevance.
-              break;
+                break;
         }
         $matches = $this->enquire->get_mset($first_result, $results_per_page);
         $this->gids = [];
