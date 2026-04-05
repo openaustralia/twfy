@@ -40,7 +40,7 @@ if (get_http_var("submitted") == "true") {
         $errors["password"] = "Please enter your password";
     }
 
-    if (sizeof($errors) > 0) {
+    if (count($errors) > 0) {
         // Validation errors. Print form again.
         display_page($errors);
 
