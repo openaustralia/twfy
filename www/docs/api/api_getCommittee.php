@@ -7,8 +7,7 @@
 /**
  *
  */
-function api_getCommittee_front()
-{
+function api_getCommittee_front() {
     ?>
     <p><big>Fetch the members of a Select Committee.</big></p>
 
@@ -55,8 +54,7 @@ function api_getCommittee_front()
 /**
  *
  */
-function api_getCommittee_name($name)
-{
+function api_getCommittee_name($name) {
     $db = new ParlDB();
 
     // Names in the database have & as &amp;...
@@ -66,7 +64,8 @@ function api_getCommittee_name($name)
     $date = parse_date(get_http_var('date'));
     if ($date) {
         $date = '"' . $date['iso'] . '"';
-    } else {
+    }
+    else {
         $date = 'date(now())';
     }
     $q = $db->query("select distinct(dept) from moffice
@@ -81,7 +80,8 @@ function api_getCommittee_name($name)
             ];
         }
         api_output($output);
-    } elseif ($q->rows()) {
+    }
+    elseif ($q->rows()) {
         // One committee.
         $q = $db->query("select * from moffice,member
 			where moffice.person = member.person_id
@@ -102,18 +102,18 @@ function api_getCommittee_name($name)
                 $output['members'][] = $member;
             }
             api_output($output);
-        } else {
+        }
+        else {
             api_error('That committee has no members...?');
         }
-    } else {
+    }
+    else {
         api_error('That name was not recognised');
     }
-}
 
 /**
  *
  */
-function api_getCommittee_date($date)
-{
+function api_getCommittee_date($date) {
     api_error('You need to give a name!');
 }
