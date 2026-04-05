@@ -122,7 +122,7 @@ class SEARCHENGINE {
             if (strpos($word, ':') !== FALSE) {
                 $items = explode(":", strtolower($word));
                 $type = $items[0];
-                $value = join(":", array_slice($items, 1));
+                $value = implode(":", array_slice($items, 1));
                 if ($type == "section") {
                     // Adding section:representatives but not removing debates & debate in case they are used anywhere.
                     if ($value == "debates" || $value == "debate" || $value == "representatives") {
