@@ -182,7 +182,7 @@ class URL {
 
         $page_url = WEBPATH . $DATA->page_metadata($this->destinationpage, "url");
 
-        if (sizeof($url_args) == 0) {
+        if (count($url_args) == 0) {
             return $page_url;
         }
         else {
