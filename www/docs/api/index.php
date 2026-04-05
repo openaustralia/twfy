@@ -63,7 +63,7 @@ if ($q_method = get_http_var('method')) {
         api_log_call($key);
         api_front_page('Unknown function "' . htmlspecialchars($q_method) .
             '". Possible functions are: ' .
-           implodeoin(', ', array_keys($methods)));
+           implode(', ', array_keys($methods)));
     }
     else {
         if (get_http_var('docs')) {
