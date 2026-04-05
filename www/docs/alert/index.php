@@ -241,19 +241,22 @@ function display_form($details = [], $errors = []) {
     ?>
 
     <form method="post" action="<?php echo $ACTIONURL->generate(); ?>">
-
-        <?php if (!$THEUSER->loggedin()) {
+        <?php
+        if (!$THEUSER->loggedin()) {
             if (isset($errors["email"]) && (get_http_var('submitted') || get_http_var('only'))) {
                 $PAGE->error_message($errors["email"]);
             }
             ?>
             <div class="row">
                 <span class="label"><label for="email">Your email address:</label></span>
-                <span class="formw"><input type="text" name="email" id="email" value="<?php if (isset($details["email"])) {
-                    echo htmlentities($details["email"]);
-                } ?>" maxlength="255" size="30" class="form"></span>
+                <span class="formw"><input type="text" name="email" id="email" value="<?php
+                    if (isset($details["email"])) {
+                            echo htmlentities($details["email"]);
+                    } ?>" maxlength="255" size="30" class="form"></span>
             </div>
-        <?php }
+        <?php
+        }
+
         if (!get_http_var('only') || !$details['keyword']) {
             if (isset($errors['pid'])) {
                 $PAGE->error_message($errors['pid']);
@@ -267,18 +270,20 @@ function display_form($details = [], $errors = []) {
                     print $MEMBER->full_name();
                     print '<input type="hidden" name="pid" value="' . htmlspecialchars($details['pid']) . '">';
                 }
-                else { ?><select name="pid">
-                            <option value="Any">Any Representative or Senator</option>
-                            <?php
-                            // Get a list of MPs/Lords for displaying in the form using the PEOPLE class.
-                            $LIST = new PEOPLE();
-                            $args['order'] = 'last_name';
-                            if ($details['pid'])
-                                $args['pid'] = $details['pid'];
-                            $LIST->listoptions($args);
-                            ?>
-                        </select>
-                    <?php } ?>
+                else { ?>
+                    <select name="pid">
+                        <option value="Any">Any Representative or Senator</option>
+                        <?php
+                        // Get a list of MPs/Lords for displaying in the form using the PEOPLE class.
+                        $LIST = new PEOPLE();
+                        $args['order'] = 'last_name';
+                        if ($details['pid']) {
+                            $args['pid'] = $details['pid'];
+                        }
+                        $LIST->listoptions($args);
+                        ?>
+                    </select>
+                <?php } ?>
                 </span>
             </div>
         <?php }
@@ -289,7 +294,8 @@ function display_form($details = [], $errors = []) {
             ?>
             <div class="row">
                 <span class="label"><label for="keyword">Word or phrase you wish to receive alerts for:</label></span>
-                <span class="formw"><input type="text" name="keyword" id="keyword" value="<?php if ($details['keyword']) {
+                <span class="formw"><input type="text" name="keyword" id="keyword" value="<?php
+                if ($details['keyword']) {
                     echo htmlentities($details['keyword']);
                 } ?>" maxlength="255" size="30" class="form"></span>
             </div>
@@ -308,12 +314,15 @@ function display_form($details = [], $errors = []) {
                 If you join or log in, you won't need to confirm your email address for every alert you set.
             </div>
         <?php }
-        if (get_http_var('sign'))
+        if (get_http_var('sign')) {
             echo '<input type="hidden" name="sign" value="' . htmlspecialchars(get_http_var('sign')) . '">';
-        if (get_http_var('site'))
+        }
+        if (get_http_var('site')) {
             echo '<input type="hidden" name="site" value="' . htmlspecialchars(get_http_var('site')) . '">';
+        }
         // MJ OA-437 Recommendations.
-        if (get_http_var('r'))
+        if (get_http_var('r')) {
             echo '<input type="hidden" name="r" value="' . htmlspecialchars(get_http_var('r')) . '">';
+        }
         echo '<input type="hidden" name="submitted" value="true"> </form>';
 }
