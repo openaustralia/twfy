@@ -966,7 +966,6 @@ class Metadata {
 ];
 
 
-
     // We just use the sections for creating page headings/titles.
     // The 'title' is always used for the <title> tag of the page.
     // The text displayed on the page itself will also be this,.

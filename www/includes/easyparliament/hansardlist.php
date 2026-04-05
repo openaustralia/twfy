@@ -197,8 +197,8 @@ class HANSARDLIST {
             return $data;
         }
 
-        $standard_template = INCLUDESPATH . "easyparliament/templates/$format/hansard_$view" . ".php";
-        $mobile_template = INCLUDESPATH . "easyparliament/templates/$format/hansard_" . $view . "_mobile" . ".php";
+        $standard_template = INCLUDESPATH . "easyparliament/templates/$format/hansard_$view.php";
+        $mobile_template = INCLUDESPATH . "easyparliament/templates/$format/hansard_{$view}_mobile.php";
 
         // Not every possible view here has a mobile version. So, only use the mobile version template if it exists.
         if ($mobile && file_exists($mobile_template)) {
@@ -3290,7 +3290,7 @@ class StandingCommittee extends DEBATELIST {
             $bills[$q->field($i, 'id')] = $q->field($i, 'title');
         }
         $q = $this->db->query('select minor,count(*) as c from hansard where major=6 and htype=12
-			and minor in (' . join(',', array_keys($bills)) . ')
+			and minor in (' . implode(',', array_keys($bills)) . ')
 			group by minor');
         $counts = [];
         // $comments = array();
