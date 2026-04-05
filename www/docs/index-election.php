@@ -14,7 +14,7 @@ $PAGE->page_start();
 $PAGE->stripe_start();
 
 //
-//  SEARCH AND RECENT HANSARD.
+// SEARCH AND RECENT HANSARD.
 
 
 // Get the dates, timestamps and links for the most recent debates and wrans.
@@ -173,13 +173,13 @@ $PAGE->block_start(['id' => 'intro', 'title' => 'Election special! Find out how 
 $PAGE->block_end();
 
 //
-//  RECENT COMMENTS.
+// RECENT COMMENTS.
 
 // Most recent comments.
 
 
 //
-//  MOST INTERESTING DEBATES.
+// MOST INTERESTING DEBATES.
 
 // $DEBATELIST = new DEBATELIST;
 
@@ -189,7 +189,7 @@ $PAGE->block_end();
 
 
 //
-//  MOST RECENT GLOSSARY ENTRY.
+// MOST RECENT GLOSSARY ENTRY.
 
 // Temporary HTML...
 $URL = new URL('glossary');
