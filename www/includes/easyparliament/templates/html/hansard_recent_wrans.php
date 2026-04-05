@@ -49,7 +49,7 @@ foreach ($data['data'] as $wran) {
         echo $wran['parent']['body'], ': ';
     echo $wran['body'], '</a></strong> <small>(', format_date($wran['hdate'], LONGDATEFORMAT),
         $totalcomments, ')</small></dt><dd>';
-    if (sizeof($speaker)) {
+    if (count($speaker)) {
         echo '<a href="', $speaker['url'], '">', member_full_name($speaker['house'], $speaker['title'], $speaker['first_name'], $speaker['last_name'], $speaker['constituency']), '</a>: ';
     }
     echo $wran['child']['body'];
