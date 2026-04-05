@@ -163,13 +163,13 @@ function api_getMP_postcode($pc) {
 /**
  *
  */
-function api_getMP_constituency($constituency)
-{
+function api_getMP_constituency($constituency) {
     $person = _api_getMP_constituency($constituency);
     if ($person) {
         $output = $person;
         api_output($output, strtotime($output['lastupdate']));
-    } else {
+    }
+    else {
         api_error('Unknown constituency, or no MP for that constituency');
     }
 }
@@ -178,8 +178,7 @@ function api_getMP_constituency($constituency)
  * Very similary to MEMBER's constituency_to_person_id
  * Should all be abstracted properly :-/.
  */
-function _api_getMP_constituency($constituency)
-{
+function _api_getMP_constituency($constituency) {
     $db = new ParlDB();
 
     if ($constituency == '') {
