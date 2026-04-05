@@ -42,7 +42,6 @@ if ($THEUSER->loggedin()) {
         else {
             echo 'Non-commercial key';
         }
-        // , ' ', $reason;
         echo ', created ', $created;
         echo '</span><br><em>Usage statistics</em>: ';
         $q = $db->query('SELECT count(*) as count FROM api_stats WHERE api_key="' . $key . '" AND query_time > NOW() - interval 1 day');
@@ -60,13 +59,13 @@ if ($THEUSER->loggedin()) {
         echo '</ul>';
     }
     api_key_form();
-    }
-    else {
-        echo ' The key is tied to your OpenAustralia account,
-                so if you don\'t yet have one, please <a href="/user/?pg=join">sign up</a>, then
-                return here to get a key.</p>';
-        echo '<p style="font-size:200%"><strong><a href="/user/login/?ret=/api/key">Log in</a></strong> (or <a href="/user/?pg=join">sign up</a>) to get an API key.</p>';
-    }
+}
+else {
+	echo ' The key is tied to your OpenAustralia account,
+so if you don\'t yet have one, please <a href="/user/?pg=join">sign up</a>, then
+return here to get a key.</p>';
+	echo '<p style="font-size:200%"><strong><a href="/user/login/?ret=/api/key">Log in</a></strong> (or <a href="/user/?pg=join">sign up</a>) to get an API key.</p>';
+}
 
 $sidebar = api_sidebar();
 $PAGE->stripe_end([$sidebar]);
