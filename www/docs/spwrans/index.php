@@ -86,19 +86,6 @@ elseif (get_http_var('id')) {
     $COMMENTLIST->display('ep', $args);
 
     $PAGE->stripe_end();
-
-
-
-
-
-
-
-    // $TRACKBACK = new TRACKBACK;
-
-    // $TRACKBACK->display('epobject_id', $commentdata);
-
-
-
 }
 elseif (get_http_var('y') != '') {
 
@@ -134,7 +121,6 @@ elseif (get_http_var('y') != '') {
             'content' => "spwrans"
         ]
     ]);
-
 
 
 }

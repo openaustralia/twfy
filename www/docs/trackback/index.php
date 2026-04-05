@@ -29,7 +29,6 @@ if ($title == '' && $url == '' && $blog_name == '') {
 }
 
 
-
 if ((strlen('' . $epobject_id)) && (empty($HTTP_GET_VARS['__mode'])) && (strlen('' . $url))) {
 
     header('Content-Type: text/xml');
