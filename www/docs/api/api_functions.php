@@ -125,8 +125,7 @@ $methods = [
 /**
  * Key-related functions.
  */
-function api_log_call($key)
-{
+function api_log_call($key) {
     if ($key == 'DOCS') {
         return;
     }
@@ -141,8 +140,7 @@ function api_log_call($key)
 /**
  *
  */
-function api_check_key($key)
-{
+function api_check_key($key) {
     $db = new ParlDB();
     $q = $db->query('SELECT user_id FROM api_key WHERE api_key="' . $db->escape($key) . '"');
     if (!$q->rows()) {
@@ -154,15 +152,13 @@ function api_check_key($key)
 /**
  *
  */
-function api_key_current_message()
-{
+function api_key_current_message() {
 }
 
 /**
  * Front-end sidebar of all methods.
  */
-function api_sidebar()
-{
+function api_sidebar() {
     global $methods;
     $sidebar = '<div class="block"><h4>API Functions</h4> <div class="blockbody"><ul>';
     foreach ($methods as $method => $data) {
@@ -177,7 +173,8 @@ function api_sidebar()
         $sidebar .= $method;
         if (!isset($data['working']) || $data['working']) {
             $sidebar .= '</a>';
-        } else {
+        }
+        else {
             $sidebar .= ' - <em>not written yet</em>';
         }
         // If ($data['required'])
@@ -203,8 +200,7 @@ function api_sidebar()
 /**
  * Output functions.
  */
-function api_output($arr, $last_mod = NULL)
-{
+function api_output($arr, $last_mod = NULL) {
     $output = get_http_var('output');
     if (!get_http_var('docs')) {
         $cond = api_header($output, $last_mod);
@@ -215,9 +211,11 @@ function api_output($arr, $last_mod = NULL)
     if ($output == 'xml') {
         $out = '<?xml version="1.0" encoding="iso-8859-1"?>' . "\n";
         $out .= '<result>' . api_output_xml($arr) . '</result>';
-    } elseif ($output == 'php') {
+    }
+    elseif ($output == 'php') {
         $out = api_output_php($arr);
-    } elseif ($output == 'rabx') {
+    }
+    elseif ($output == 'rabx') {
         $out = api_output_rabx($arr);
     }
     // JS.
@@ -234,8 +232,7 @@ function api_output($arr, $last_mod = NULL)
 /**
  *
  */
-function api_header($o, $last_mod = NULL)
-{
+function api_header($o, $last_mod = NULL) {
     if ($last_mod && array_key_exists('HTTP_IF_MODIFIED_SINCE', $_SERVER)) {
         $t = cond_parse_http_date($_SERVER['HTTP_IF_MODIFIED_SINCE']);
         if (isset($t) && $t >= $last_mod) {
@@ -246,11 +243,14 @@ function api_header($o, $last_mod = NULL)
     }
     if ($o == 'xml') {
         $type = 'text/xml';
-    } elseif ($o == 'php') {
+    }
+    elseif ($o == 'php') {
         $type = 'text/php';
-    } elseif ($o == 'rabx') {
+    }
+    elseif ($o == 'rabx') {
         $type = 'application/octet-stream';
-    } else {
+    }
+    else {
         $type = 'text/javascript';
     }
     // $type = 'text/plain';
@@ -264,16 +264,14 @@ function api_header($o, $last_mod = NULL)
 /**
  *
  */
-function api_error($e)
-{
+function api_error($e) {
     api_output(['error' => $e]);
 }
 
 /**
  *
  */
-function api_output_php($arr)
-{
+function api_output_php($arr) {
     $out = serialize($arr);
     if (get_http_var('verbose')) {
         $out = str_replace(';', ";\n", $out);
@@ -284,8 +282,7 @@ function api_output_php($arr)
 /**
  *
  */
-function api_output_rabx($arr)
-{
+function api_output_rabx($arr) {
     $out = '';
     rabx_wire_wr($arr, $out);
     if (get_http_var('verbose')) {
@@ -299,8 +296,7 @@ $api_xml_arr = 0;
 /**
  *
  */
-function api_output_xml($v, $k = NULL)
-{
+function api_output_xml($v, $k = NULL) {
     global $api_xml_arr;
     $verbose = get_http_var('verbose') ? "\n" : '';
     if (is_array($v)) {
@@ -319,7 +315,8 @@ function api_output_xml($v, $k = NULL)
             $out .= "</$k>$verbose";
         }
         return $out;
-    } else {
+    }
+    else {
         return htmlspecialchars($v);
     }
 }
@@ -327,13 +324,12 @@ function api_output_xml($v, $k = NULL)
 /**
  *
  */
-function api_output_js($v, $level = 0)
-{
+function api_output_js($v, $level = 0) {
     $verbose = get_http_var('verbose') ? "\n" : '';
     if (is_array($v)) {
         // PHP arrays are both JS arrays and objects.
         if (count($v) && array_keys($v) === range(0, count($v) - 1)) {
-            return '[' . join(",$verbose", array_map('api_output_js', $v)) . ']';
+            return '[' . implode(",$verbose", array_map('api_output_js', $v)) . ']';
         }
         $out = '{' . $verbose;
         $b = FALSE;
@@ -344,7 +340,8 @@ function api_output_js($v, $level = 0)
             if ($verbose) {
                 $out .= str_repeat(' ', ($level + 1) * 2);
                 $out .= '"' . $k . '" : ';
-            } else {
+            }
+            else {
                 $out .= '"' . $k . '":';
             }
             $out .= api_output_js($vv, $level + 1);
@@ -355,17 +352,21 @@ function api_output_js($v, $level = 0)
         }
         $out .= '}';
         return $out;
-    } elseif (is_null($v)) {
+    }
+    elseif (is_null($v)) {
         return "null";
-    } elseif (is_string($v)) {
+    }
+    elseif (is_string($v)) {
         return '"' . str_replace(
             ["\\", '"', "\n", "\t", "\r"],
-            ["\\\\", '\"', '\n', '\t', '\r'],
+            ["\\\\", '\\"', '\\n', '\\t', '\\r'],
             $v
         ) . '"';
-    } elseif (is_bool($v)) {
+    }
+    elseif (is_bool($v)) {
         return $v ? 'true' : 'false';
-    } elseif (is_int($v) || is_float($v)) {
+    }
+    elseif (is_int($v) || is_float($v)) {
         return $v;
     }
 }
@@ -373,13 +374,14 @@ function api_output_js($v, $level = 0)
 /**
  * Call an API function.
  */
-function api_call_user_func_or_error($function, $params, $error, $type)
-{
+function api_call_user_func_or_error($function, $params, $error, $type) {
     if (function_exists($function)) {
         call_user_func_array($function, $params);
-    } elseif ($type == 'api') {
+    }
+    elseif ($type == 'api') {
         api_error($error);
-    } else {
+    }
+    else {
         print "<p style='color:#cc0000'>$error</p>";
     }
 }
@@ -413,8 +415,7 @@ $cond_time_re = '([01][0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9]|6[012])';
 /**
  *
  */
-function cond_parse_http_date($date)
-{
+function cond_parse_http_date($date) {
     $H = $M = $S = 0;
     $Y = $m = $d = 0;
 
@@ -429,7 +430,8 @@ function cond_parse_http_date($date)
         $H = $ma[5];
         $M = $ma[6];
         $S = $ma[7];
-    } elseif (preg_match("/^$cond_weekday_re, $cond_date2_re $cond_time_re GMT\$/", $date, $ma)) {
+    }
+    elseif (preg_match("/^$cond_weekday_re, $cond_date2_re $cond_time_re GMT\$/", $date, $ma)) {
         /* RFC 850 */
         $d = $ma[2];
         $m = $cond_month_map[$ma[3]];
@@ -437,7 +439,8 @@ function cond_parse_http_date($date)
         $H = $ma[5];
         $M = $ma[6];
         $S = $ma[7];
-    } elseif (preg_match("/^$cond_wkday_re $cond_date3_re $cond_time_re (\\d{4})\$/", $date, $ma)) {
+    }
+    elseif (preg_match("/^$cond_wkday_re $cond_date3_re $cond_time_re (\\d{4})\$/", $date, $ma)) {
         /* asctime(3) */
         $d = preg_replace('/ /', '', $ma[3]);
         $m = $cond_month_map[$ma[2]];
@@ -445,7 +448,8 @@ function cond_parse_http_date($date)
         $H = $ma[4];
         $M = $ma[5];
         $S = $ma[6];
-    } else {
+    }
+    else {
         return NULL;
     }
 
