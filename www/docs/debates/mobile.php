@@ -85,7 +85,6 @@ elseif (get_http_var('id') != "") {
     }
 
 
-
     // We show trackbacks on this page.
 
     $args = [
@@ -95,7 +94,6 @@ elseif (get_http_var('id') != "") {
     // $TRACKBACK = new TRACKBACK;
 
     // $TRACKBACK->display('epobject_id', $args);
-
 
 
 }
