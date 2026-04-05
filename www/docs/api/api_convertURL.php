@@ -7,8 +7,7 @@
 /**
  *
  */
-function api_convertURL_front()
-{
+function api_convertURL_front() {
     ?>
     <p><big>Converts an aph.gov.au Hansard URL into an OpenAustralia one, if possible.</big></p>
 
@@ -46,8 +45,7 @@ function api_convertURL_front()
 /**
  * Very similar to function in hansardlist.php, but separated .
  */
-function get_listurl($q)
-{
+function get_listurl($q) {
     global $hansardmajors;
     $id_data = [
         'gid' => fix_gid_from_db($q->field(0, 'gid')),
@@ -60,7 +58,8 @@ function get_listurl($q)
     $fragment = '';
     if ($id_data['htype'] == '11' || $id_data['htype'] == '10') {
         $LISTURL->insert(['id' => $id_data['gid']]);
-    } else {
+    }
+    else {
         $parent_epobject_id = $id_data['subsection_id'];
         $parent_gid = '';
         $r = $db->query("SELECT gid
@@ -81,8 +80,7 @@ function get_listurl($q)
 /**
  *
  */
-function api_converturl_url_output($q)
-{
+function api_converturl_url_output($q) {
     $gid = $q->field(0, 'gid');
     $url = get_listurl($q);
     $output = [
@@ -95,8 +93,7 @@ function api_converturl_url_output($q)
 /**
  *
  */
-function api_converturl_url($url)
-{
+function api_converturl_url($url) {
     $db = new ParlDB();
     $url_nohash = preg_replace('/#.*/', '', $url);
     $q = $db->query('select gid,major,htype,subsection_id from hansard where source_url = "' . $db->escape($url) . '" order by gid limit 1');
