@@ -81,7 +81,6 @@ elseif (get_http_var('id') != "") {
     // $TRACKBACK->display('epobject_id', $args);
 
 
-
 }
 elseif (get_http_var('y') != '') {
 
