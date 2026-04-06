@@ -1395,8 +1395,8 @@ class HANSARDLIST {
         // 'major'    => 1
         // 'onpage' => '2004-02-01'
         // ),
-        //        'years' => array (
-        //        '2004' => array (
+        // 'years' => array (
+        // '2004' => array (
         //        '01' => array ('01', '02', '03' ... '31'),
         //        '02' => etc...
         //        )
@@ -2007,7 +2007,7 @@ class HANSARDLIST {
         // 'htype'         => 12,
         // 'gid'             => 2003-10-30.421.4h2,
         // 'section_id'    => 345,
-        //        'subsection_id'    => 346
+        // 'subsection_id'    => 346
         // );
 
         // $url_args is an array of other key/value pairs to be appended in the GET string.
