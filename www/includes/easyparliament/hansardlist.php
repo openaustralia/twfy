@@ -1397,10 +1397,10 @@ class HANSARDLIST {
         // ),
         // 'years' => array (
         // '2004' => array (
-        //        '01' => array ('01', '02', '03' ... '31'),
-        //        '02' => etc...
-        //        )
-        //        )
+        // '01' => array ('01', '02', '03' ... '31'),
+        // '02' => etc...
+        // )
+        // )
         // )
         // It will just have entries for days for which we have relevant
         // hansard data.
