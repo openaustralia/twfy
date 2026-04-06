@@ -2805,17 +2805,12 @@ class DEBATELIST extends HANSARDLIST {
             // Get the subsection texts.
 
             for ($n = 0; $n < count($speeches); $n++) {
-                // If ($this->major == 1) {
-                // Debate.
                 $parent = $this->_get_subsection($speeches[$n]);
-{
                 $speeches[$n]['parent']['body'] = $parent['body'];
-
 
             }
 
             $data['rows'] = $speeches;
-
         }
         else {
             $data['rows'] = [];
