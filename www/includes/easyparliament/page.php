@@ -747,7 +747,7 @@ class PAGE {
                 </div> <!-- end #menu -->
 
 <?php
-}
+  }
 
 /**
  *
@@ -999,8 +999,8 @@ public function user_bar($top_hilite = '', $bottom_hilite = '') {
 }
 
 /**
-   *
-*/
+ *
+ */
 public function content_start() {
     global $DATA, $this_page;
 
@@ -1040,49 +1040,49 @@ public function stripe_start($type = 'side', $id = '') {
 }
 
 /**
-   * $contents is an array containing 0 or more hashes.
-   * Each hash has two values, 'type' and 'content'.
-   * 'Type' could be one of these:
-   *  'include' - will include a sidebar named after the value of 'content'.php.
-   *  'nextprev' - $this->nextprevlinks() is called ('content' currently ignored).
-   *  'html' - The value of the 'content' is simply displayed.
-   *  'extrahtml' - The value of the 'content' is displayed after the sidebar has
-   *                  closed, but within this stripe.
-   *
-   * If $contents is empty then '&nbsp;' will be output.
-   *
-   * eg, take this hypothetical array:
-   *   $contents = [
-   *       [
-   *           'type'  => 'include',
-   *           'content'   => 'mp'
-   *       ],
-   *       [
-   *           'type'  => 'html',
-   *           'content'   => "<p>This is your MP</p>\n"
-   *       ],
-   *       [
-   *           'type'  => 'nextprev'
-   *       ],
-   *       [
-   *           'extrahtml' => '<a href="blah">Source</a>'
-   *       ]
-   *   ];
-   *
-   * The sidebar div would be opened.
-   * This would first include /includes/easyparliament/templates/sidebars/mp.php.
-   * Then display "<p>This is your MP</p>\n".
-   * Then call $this->nextprevlinks().
-   * The sidebar div would be closed.
-   * '<a href="blah">Source</a>' is displayed.
-   * The stripe div is closed.
-   *
-   * But in most cases we only have 0 or 1 hashes in $contents.
-   *
-   * $extra is html that will go after the sidebar has closed, but within
-   * this stripe.
-   * // eg, the 'Source' bit on Hansard pages.
-   */
+ * $contents is an array containing 0 or more hashes.
+ * Each hash has two values, 'type' and 'content'.
+ * 'Type' could be one of these:
+ *  'include' - will include a sidebar named after the value of 'content'.php.
+ *  'nextprev' - $this->nextprevlinks() is called ('content' currently ignored).
+ *  'html' - The value of the 'content' is simply displayed.
+ *  'extrahtml' - The value of the 'content' is displayed after the sidebar has
+ *                  closed, but within this stripe.
+ *
+ * If $contents is empty then '&nbsp;' will be output.
+ *
+ * eg, take this hypothetical array:
+ *   $contents = [
+ *       [
+ *           'type'  => 'include',
+ *           'content'   => 'mp'
+ *       ],
+ *       [
+ *           'type'  => 'html',
+ *           'content'   => "<p>This is your MP</p>\n"
+ *       ],
+ *       [
+ *           'type'  => 'nextprev'
+ *       ],
+ *       [
+ *           'extrahtml' => '<a href="blah">Source</a>'
+ *       ]
+ *   ];
+ *
+ * The sidebar div would be opened.
+ * This would first include /includes/easyparliament/templates/sidebars/mp.php.
+ * Then display "<p>This is your MP</p>\n".
+ * Then call $this->nextprevlinks().
+ * The sidebar div would be closed.
+ * '<a href="blah">Source</a>' is displayed.
+ * The stripe div is closed.
+ *
+ * But in most cases we only have 0 or 1 hashes in $contents.
+ *
+ * $extra is html that will go after the sidebar has closed, but within
+ * this stripe.
+ * // eg, the 'Source' bit on Hansard pages.
+ */
 public function stripe_end($contents = [], $extra = '') {
     global $DATA, $this_page;
 
@@ -1897,7 +1897,7 @@ $displayed_stuff = 0;
         <p><em>Please note that numbers do not measure quality.
                 Also, <?php if ($member['house_disp'] == 1) {
                 echo "Representatives";
-            }
+               }
                     else {
                         echo "Senators";
                     } ?> may do other things
@@ -2104,7 +2104,9 @@ $displayed_stuff = 0;
         }
 }
 
-
+/**
+ *
+ */
 public function expenses_printout($col, $extra_info, $style) {
     for ($ey = 2007; $ey >= 2002; --$ey) {
     $k = 'expenses' . $ey . '_' . $col;
@@ -2133,7 +2135,9 @@ public function expenses_printout($col, $extra_info, $style) {
     }
 }
 
-
+/**
+ *
+ */
 public function generate_member_links($member, $links) {
     // Receives its data from $MEMBER->display_links;
     // This returns HTML, rather than outputting it.
@@ -2250,7 +2254,9 @@ public function generate_member_links($member, $links) {
     return $html;
 }
 
-
+/**
+ *
+ */
 public function error_message($message, $fatal = FALSE) {
     // If $fatal is true, we exit the page right here.
     // $message is like the array used in $this->message()
@@ -2278,7 +2284,9 @@ public function error_message($message, $fatal = FALSE) {
 
 }
 
-
+/**
+ *
+ */
 public function error_message_mobile($message, $fatal = FALSE) {
     // If $fatal is true, we exit the page right here.
     // $message is like the array used in $this->message()
@@ -2307,24 +2315,24 @@ public function error_message_mobile($message, $fatal = FALSE) {
 }
 
 /**
-* Generates a very simple but common page content.
-*
-* Used for when a user logs out, or votes, or any simple thing
-* where there's a little message and probably a link elsewhere.
-* $message is an array like:
-* 'title' => 'You are now logged out'.
-* 'text'  => 'Some more text here',
-* 'linkurl' => 'http://www.easyparliament.org/debates/',
-* 'linktext' => 'Back to previous page'
-* All fields optional.
-* 'linkurl' should already have htmlentities done on it.
-* $class is a class name that will be applied to the message's HTML elements.
-*
-* @param array $message
-*   A message array.
-* @param string $class
-*   A class name.
-*/
+ * Generates a very simple but common page content.
+ *
+ * Used for when a user logs out, or votes, or any simple thing
+ * where there's a little message and probably a link elsewhere.
+ * $message is an array like:
+ * 'title' => 'You are now logged out'.
+ * 'text'  => 'Some more text here',
+ * 'linkurl' => 'http://www.easyparliament.org/debates/',
+ * 'linktext' => 'Back to previous page'
+ * All fields optional.
+ * 'linkurl' should already have htmlentities done on it.
+ * $class is a class name that will be applied to the message's HTML elements.
+ *
+ * @param array $message
+ *   A message array.
+ * @param string $class
+ *   A class name.
+ */
 public function message($message, $class = '') {
 
     if ($class != '') {
@@ -2361,7 +2369,9 @@ public function message($message, $class = '') {
     }
 }
 
-
+/**
+ *
+ */
 public function set_hansard_headings($info) {
     // Called from HANSARDLIST->display().
     // $info is the $data['info'] array passed to the template.
@@ -2412,7 +2422,9 @@ public function set_hansard_headings($info) {
 
 }
 
-
+/**
+ *
+ */
 public function nextprevlinks() {
 
     // Generally called from $this->stripe_end();
@@ -2486,7 +2498,9 @@ public function nextprevlinks() {
 
 }
 
-
+/**
+ *
+ */
 public function recess_message() {
     // Returns a message if parliament is currently in recess.
     include_once INCLUDESPATH . "easyparliament/recess.php";
@@ -2510,7 +2524,9 @@ public function recess_message() {
     return $message;
 }
 
-
+/**
+ *
+ */
 public function trackback_rss($trackbackdata) {
     /*
     Outputs Trackback Auto Discovery RSS for something.
@@ -2538,7 +2554,9 @@ public function trackback_rss($trackbackdata) {
                 <?php
 }
 
-
+/**
+ *
+ */
 public function search_form($value = '') {
     global $SEARCHENGINE;
     // Search box on the search page.
@@ -2629,7 +2647,9 @@ public function search_form($value = '') {
     echo '</form> </div>';
 }
 
-
+/**
+ *
+ */
 public function login_form($errors = []) {
     // Used for /user/login/ and /user/prompt/
     // $errors is a hash of potential errors from a previous log in attempt.
@@ -2715,7 +2735,9 @@ public function login_form($errors = []) {
                     <?php
 }
 
-
+/**
+ *
+ */
 public function mp_search_form($person_id) {
     // Search box on the MP page.
 
@@ -2734,7 +2756,9 @@ public function mp_search_form($person_id) {
                     <?php
 }
 
-
+/**
+ *
+ */
 public function glossary_search_form($args) {
     // Search box on the glossary page.
     global $THEUSER;
@@ -2770,7 +2794,9 @@ public function glossary_search_form($args) {
                     <?php
 }
 
-
+/**
+ *
+ */
 public function glossary_add_definition_form($args) {
     // Add a definition for a new Glossary term.
     global $GLOSSARY;
@@ -2797,7 +2823,9 @@ public function glossary_add_definition_form($args) {
                     <?php
 }
 
-
+/**
+ *
+ */
 public function glossary_add_link_form($args) {
     // Add an external link to the glossary.
     global $GLOSSARY;
@@ -2826,7 +2854,9 @@ public function glossary_add_link_form($args) {
                     <?php
 }
 
-
+/**
+ *
+ */
 public function glossary_atoz(&$GLOSSARY) {
     // Print out a nice list of lettered links to glossary pages.
 
@@ -2880,7 +2910,9 @@ public function glossary_atoz(&$GLOSSARY) {
                     <?php
 }
 
-
+/**
+ *
+ */
 public function glossary_display_term(&$GLOSSARY) {
     // Display a single glossary term.
     global $this_page;
@@ -2925,7 +2957,9 @@ public function glossary_display_term(&$GLOSSARY) {
     }
 }
 
-
+/**
+ *
+ */
 public function glossary_display_match_list(&$GLOSSARY) {
     if ($GLOSSARY->num_search_matches > 1) {
     $plural = "them";
@@ -2955,7 +2989,9 @@ public function glossary_display_match_list(&$GLOSSARY) {
                     <?php
 }
 
-
+/**
+ *
+ */
 public function glossary_addterm_link() {
     // Print a link to the "add glossary term" page.
     $URL = new URL('glossary_addterm');
@@ -2964,7 +3000,9 @@ public function glossary_addterm_link() {
     print "<small><a href=\"" . $glossary_addterm_link . "\">Add a term to the glossary</a></small>";
 }
 
-
+/**
+ *
+ */
 public function glossary_addlink_link() {
     // Print a link to the "add external link" page.
     $URL = new URL('glossary_addlink');
@@ -2973,7 +3011,9 @@ public function glossary_addlink_link() {
     print "<small><a href=\"" . $glossary_addlink_link . "\">Add an external link</a></small>";
 }
 
-
+/**
+ *
+ */
 public function glossary_link() {
     // Link to the glossary with no epobject_id - i.e. show all entries.
     $URL = new URL('glossary');
@@ -2982,7 +3022,9 @@ public function glossary_link() {
     print "<small><a href=\"" . $glossary_link . "\">Browse the glossary</a></small>";
 }
 
-
+/**
+ *
+ */
 public function glossary_links() {
     print "<div>";
     $this->glossary_link();
@@ -2991,7 +3033,9 @@ public function glossary_links() {
     print "</div>";
 }
 
-
+/**
+ *
+ */
 public function page_links($pagedata) {
     // The next/prev and page links for the search page.
     global $this_page;
@@ -3083,7 +3127,9 @@ public function page_links($pagedata) {
 
 }
 
-
+/**
+ *
+ */
 public function display_commentreport($data) {
     // $data has key value pairs.
     // Called from $COMMENT->display_report().
@@ -3120,7 +3166,9 @@ public function display_commentreport($data) {
 
 }
 
-
+/**
+ *
+ */
 public function display_commentreportlist($data) {
     // For the admin section.
     // Gets an array of data from COMMENTLIST->render().
@@ -3180,7 +3228,9 @@ public function display_commentreportlist($data) {
 
 }
 
-
+/**
+ *
+ */
 public function display_calendar_month($month, $year, $dateArray, $page) {
     // From http://www.zend.com/zend/trick/tricks-Oct-2002.php
     // Adjusted for style, putting Monday first, and the URL of the page linked to.
@@ -3302,7 +3352,9 @@ public function display_calendar_month($month, $year, $dateArray, $page) {
 
 }
 
-
+/**
+ *
+ */
 public function display_table($data) {
     /* Pass it data to be displayed in a <table> and it renders it
     with stripes.
@@ -3365,7 +3417,9 @@ public function display_table($data) {
 
 }
 
-
+/**
+ *
+ */
 public function admin_menu() {
     // Returns HTML suitable for putting in the sidebar on Admin pages.
     global $this_page, $DATA;
@@ -3415,7 +3469,9 @@ public function admin_menu() {
 
 $PAGE = new PAGE();
 
-
+/**
+ *
+ */
 function display_stats_line($category, $blurb, $type, $inwhat, $afterstuff, $extra_info, $minister = FALSE, $Lminister = FALSE) {
     $return = FALSE;
     if (isset($extra_info[$category])) {
@@ -3427,7 +3483,9 @@ function display_stats_line($category, $blurb, $type, $inwhat, $afterstuff, $ext
     return $return;
 }
 
-
+/**
+ *
+ */
 function display_stats_line_house($house, $category, $blurb, $type, $inwhat, $extra_info, $minister, $afterstuff) {
     if (
             $category == 'wrans_asked_inlastyear' || $category == 'debate_sectionsspoken_inlastyear' || $category == 'comments_on_speeches' ||
@@ -3489,7 +3547,9 @@ function display_stats_line_house($house, $category, $blurb, $type, $inwhat, $ex
     return TRUE;
 }
 
-
+/**
+ *
+ */
 function display_writetothem_numbers($year, $extra_info) {
     if (isset($extra_info["writetothem_responsiveness_notes_$year"])) {
         ?>
