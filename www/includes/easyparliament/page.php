@@ -653,15 +653,10 @@ class PAGE {
     // we're within that section.
     $items = [
             'home' => [],
-            // 'sitenews'  => array(),
             'hansard' => [],
             'comments_recent' => [],
             'mps' => [],
             'peers' => [],
-            // 'mlas'          => array (),
-            // 'msps'          => array (),
-            // 'help_us_out'   => array (),
-            //'help_us_out'   => array ('glossary_addterm')
             'help' => []
         ];
 
