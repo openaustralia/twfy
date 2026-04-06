@@ -214,9 +214,9 @@ class ALERT {
         // Then calls another function to send them a confirmation email.
         // $details is an associative array of all the alert's details, of the form:
         // array (
-        //        "email" => "user@foo.com",
-        //        "criteria"    => "speaker:521",
-        //        etc... using the same keys as the object variable names.
+        // "email" => "user@foo.com",
+        // "criteria"    => "speaker:521",
+        // etc... using the same keys as the object variable names.
         // )
 
         // The BOOL variables confirmed and deleted will be true or false and will need to be

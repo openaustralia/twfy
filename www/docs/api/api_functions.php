@@ -129,7 +129,7 @@ function api_log_call($key) {
     if ($key == 'DOCS') {
         return;
     }
-    $ip = $_SERVER['REMOTE_ADDR'];
+    $ip = ip_address();
     $query = $_SERVER['REQUEST_URI'];
     $query = preg_replace('#key=[A-Za-z0-9]+&?#', '', $query);
     $db = new ParlDB();

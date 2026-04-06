@@ -877,9 +877,8 @@ function display_user($user_id = "") {
     // We're either going to be:
     // Displaying the details of a user who's just been edited
     // (their user_id will be in $user_id now).
-    // Viewing THEUSER's own data.
-    //  Viewing someone else's data (their id will be in the GET string
-    //      user_id variable).
+    // * Viewing THEUSER's own data.
+    // * Viewing someone else's data (their id will be in the GET string user_id variable).
 
     // We could do something cleverer so that if THEUSER has sufficient
     // privileges we display more data when they're viewing someone else's info

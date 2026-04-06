@@ -73,11 +73,11 @@ class EDITQUEUE {
 
         // For editqueue in this instance we need:
         // user_id INTEGER,
-        //        edit_type INTEGER,
-        //        (epobject_id_l),
-        //        title VARCHAR(255),
-        //        body TEXT,
-        //        submitted DATETIME,.
+        // edit_type INTEGER,
+        // (epobject_id_l),
+        // title VARCHAR(255),
+        // body TEXT,
+        // submitted DATETIME,.
 
         global $THEUSER;
 
@@ -126,13 +126,10 @@ class EDITQUEUE {
         foreach ($data['approvals'] as $approval_id) {
             // Create a new epobject
             // title VARCHAR(255),
-            //         body TEXT,
-            //         type INTEGER,
-            //         created DATETIME,
-            //         modified DATETIME,.
-            /*print "<pre>";
-            print_r($data);
-            print "</pre>";*/
+            // body TEXT,
+            // type INTEGER,
+            // created DATETIME,
+            // modified DATETIME,.
             // Check to see that we actually have something to approve.
             if (!isset($this->pending[$approval_id])) {
                 break;
@@ -368,10 +365,10 @@ class GLOSSEDITQUEUE extends EDITQUEUE {
         foreach ($data['approvals'] as $approval_id) {
             // Create a new epobject
             // title VARCHAR(255),
-            //         body TEXT,
-            //         type INTEGER,
-            //         created DATETIME,
-            //         modified DATETIME,.
+            // body TEXT,
+            // type INTEGER,
+            // created DATETIME,
+            // modified DATETIME,.
             /*print "<pre>";
             print_r($data);
             print "</pre>";*/
