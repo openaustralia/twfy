@@ -44,7 +44,7 @@ $PAGE->stripe_start();
         }
         $out[] = $o;
     }
-    print join(' | ', $out);
+    print implode(' | ', $out);
     ?>
 </p>
 <style type="text/css">

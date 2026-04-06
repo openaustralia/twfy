@@ -36,7 +36,6 @@ display_user()  Displays a user's details.
  */
 
 
-
 include_once "../../includes/easyparliament/init.php";
 include_once "../../includes/easyparliament/member.php";
 
@@ -45,9 +44,8 @@ switch (get_http_var("pg")) {
 
     // A new user signing up.
     case "join":
-
         $this_page = "userjoin";
-      break;
+        break;
 
     // Editing someone else's info.
     case "editother":
@@ -66,7 +64,7 @@ switch (get_http_var("pg")) {
 
         }
 
-      break;
+        break;
 
     // Edit this user's owninfo.
     case "edit":
@@ -81,7 +79,7 @@ switch (get_http_var("pg")) {
             $this_page = "userjoin";
 
         }
-      break;
+        break;
 
     default:
 
@@ -156,7 +154,7 @@ if (get_http_var("submitted") == "true") {
     // and the values will be text to display when we show the form again.
     $errors = check_input($details);
 
-    if (sizeof($errors) > 0) {
+    if (count($errors) > 0) {
         // Validation errors. Print form again.
 
         $PAGE->page_start();
@@ -179,7 +177,6 @@ if (get_http_var("submitted") == "true") {
         update_user($details);
 
     }
-
 
 
 }
@@ -572,9 +569,10 @@ function display_form($details = [], $errors = []) {
         ?>
         <div class="row">
             <span class="label"><label for="firstname">Your first name:</label></span>
-            <span class="formw"><input type="text" name="firstname" id="firstname" value="<?php if (isset($details["firstname"])) {
+            <span class="formw"><input type="text" name="firstname" id="firstname" value="<?php
+            if (isset($details["firstname"])) {
                 echo htmlentities($details["firstname"]);
-} ?>" maxlength="255" size="30" class="form"></span>
+            } ?>" maxlength="255" size="30" class="form"></span>
         </div>
 
         <?php
@@ -584,9 +582,10 @@ function display_form($details = [], $errors = []) {
         ?>
         <div class="row">
             <span class="label"><label for="lastname">Your last name:</label></span>
-            <span class="formw"><input type="text" name="lastname" id="lastname" value="<?php if (isset($details["lastname"])) {
+            <span class="formw"><input type="text" name="lastname" id="lastname" value="<?php
+            if (isset($details["lastname"])) {
                 echo htmlentities($details["lastname"]);
-} ?>" maxlength="255" size="30" class="form"></span>
+            } ?>" maxlength="255" size="30" class="form"></span>
         </div>
 
         <?php
@@ -596,9 +595,10 @@ function display_form($details = [], $errors = []) {
         ?>
         <div class="row">
             <span class="label"><label for="em">Email address:</label></span>
-            <span class="formw"><input type="text" name="em" id="em" value="<?php if (isset($details["email"])) {
+            <span class="formw"><input type="text" name="em" id="em" value="<?php
+            if (isset($details["email"])) {
                 echo htmlentities($details["email"]);
-} ?>" maxlength="255" size="30" class="form"></span>
+            } ?>" maxlength="255" size="30" class="form"></span>
         </div>
 
         <?php
@@ -637,9 +637,10 @@ function display_form($details = [], $errors = []) {
 
         <br style="clear: left;">&nbsp;<br>
 
-        <span class="formw"><input type="hidden" name="constituency" id="constituency" value="<?php if (isset($details["constituency"])) {
+        <span class="formw"><input type="hidden" name="constituency" id="constituency" value="<?php
+            if (isset($details["constituency"])) {
             echo htmlentities($details["constituency"]);
-} ?>" maxlength="20" size="20" class="form"></span>
+            } ?>" maxlength="20" size="20" class="form"></span>
         <?php
         if (isset($errors["url"])) {
             $PAGE->error_message($errors["url"]);
@@ -647,11 +648,11 @@ function display_form($details = [], $errors = []) {
         ?>
         <div class="row">
             <span class="label"><label for="url">Your website:</label></span>
-            <span class="formw"><input type="url" name="url" id="url" value="<?php if (isset($details['url'])) {
+            <span class="formw"><input type="url" name="url" id="url" value="<?php
+            if (isset($details['url'])) {
                 echo htmlentities($details['url']);
-} ?>" maxlength="255" size="20" class="form"> <small>Optional and public</small></span>
+            } ?>" maxlength="255" size="20" class="form"> <small>Optional and public</small></span>
         </div>
-
 
 
         <div class="row">
@@ -685,14 +686,14 @@ function display_form($details = [], $errors = []) {
         </div>
 
 
-
         <div class="row">
-            &nbsp;<br>Do <?php if ($this_page == "otheruseredit") {
+            &nbsp;<br>Do <?php
+            if ($this_page == "otheruseredit") {
                 echo "they";
-}
-                         else {
-                             echo "you";
-                         } ?> wish to receive
+            }
+            else {
+                echo "you";
+            } ?> wish to receive
             occasional update emails about OpenAustralia.org?
         </div>
 
@@ -720,14 +721,16 @@ function display_form($details = [], $errors = []) {
                 ?>> <label for="optinfalse">No</label></span>
         </div>
 
-        <?php if ($this_page == 'userjoin') { ?>
+        <?php
+        if ($this_page == 'userjoin') { ?>
             <div class="row">
-                &nbsp;<br>Would <?php if ($this_page == "otheruseredit") {
+                &nbsp;<br>Would <?php
+                if ($this_page == "otheruseredit") {
                     echo "they";
-}
-                                else {
-                                    echo "you";
-                                } ?> like to
+                }
+                else {
+                    echo "you";
+                } ?> like to
                 receive an email whenever your MP does something in Parliament?
                 <br /><small>&nbsp;&nbsp;(if you're already getting email alerts to your address, don't worry about
                     this)</small>
@@ -1144,10 +1147,10 @@ function display_user($user_id = "") {
                     if (strpos($search_url, 'pid=') !== FALSE) {
                         $search_url .= '&';
                     }
-                    $search_url .= "s=" . join("+", $search_keywords);
+                    $search_url .= "s=" . implode("+", $search_keywords);
                 }
 
-                $display_criteria = join(' ', $display_terms);
+                $display_criteria = implode(' ', $display_terms);
                 $token = $row['alert_id'] . '-' . $row['registrationtoken'];
                 if (!$row['confirmed']) {
                     $action = '<a href="' . WEBPATH . 'A/' . $token . '">Confirm</a>';

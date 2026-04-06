@@ -441,9 +441,9 @@ function clean_diff($old, $new) {
     if (!count($r) && !count($a)) {
         return '';
     }
-    $r = join("\n", $r);
+    $r = implode("\n", $r);
     $r = $r ? '<td class="r"><ul>' . $r . '</ul></td>' : '<td>&nbsp;</td>';
-    $a = join("\n", $a);
+    $a = implode("\n", $a);
     $a = $a ? '<td class="a"><ul>' . $a . '</ul></td>' : '<td>&nbsp;</td>';
     $diff = '<tr>' . $r . $a . '</tr>';
     $diff = preg_replace('#<item.*?>(.*?)</item>#', '<li>$1</li>', $diff);
