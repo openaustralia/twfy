@@ -27,15 +27,17 @@ for ($i = 0; $i < $q->rows(); $i++) {
     switch ($sz) {
         case 'L':
             $out['both'] .= "$full_name, ";
-            break;
+          break;
+
         case 'S':
             $out['small'] .= "$full_name, ";
-            break;
+          break;
+
         default:
             $party = $q->field($i, 'party');
             $constituency = $q->field($i, 'constituency');
             $out['none'] .= "<li>$full_name ($party), $constituency</li>";
-            break;
+          break;
     }
 }
 print '<h3>Missing completely</h3> <ul>';

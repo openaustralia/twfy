@@ -305,7 +305,7 @@ function api_output_xml($v, $k = NULL) {
             $elt = 'match';
             $api_xml_arr++;
             $out = "<$elt>";
-            $out .= join("</$elt>$verbose<$elt>", array_map('api_output_xml', $v));
+            $out .= implode("</$elt>$verbose<$elt>", array_map('api_output_xml', $v));
             $out .= "</$elt>$verbose";
             return $out;
         }

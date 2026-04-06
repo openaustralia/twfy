@@ -72,7 +72,7 @@ class EDITQUEUE {
          */
 
         // For editqueue in this instance we need:
-        //        user_id INTEGER,
+        // user_id INTEGER,
         //        edit_type INTEGER,
         //        (epobject_id_l),
         //        title VARCHAR(255),
@@ -125,7 +125,7 @@ class EDITQUEUE {
 
         foreach ($data['approvals'] as $approval_id) {
             // Create a new epobject
-            //         title VARCHAR(255),
+            // title VARCHAR(255),
             //         body TEXT,
             //         type INTEGER,
             //         created DATETIME,
@@ -367,7 +367,7 @@ class GLOSSEDITQUEUE extends EDITQUEUE {
 
         foreach ($data['approvals'] as $approval_id) {
             // Create a new epobject
-            //         title VARCHAR(255),
+            // title VARCHAR(255),
             //         body TEXT,
             //         type INTEGER,
             //         created DATETIME,

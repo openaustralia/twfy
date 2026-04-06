@@ -577,132 +577,132 @@ class USER {
 
                 switch ($status) {
                     case "User":
-                        return TRUE;
+                      return TRUE;
 
                     case "Moderator":
-                        return TRUE;
+                      return TRUE;
 
                     case "Administrator":
-                        return TRUE;
+                      return TRUE;
 
                     case "Superuser":
-                        return TRUE;
+                      return TRUE;
 
                     case "Viewer":
-                        return FALSE;
-            }
-            return FALSE;
+                      return FALSE;
+                }
+              return FALSE;
 
                 // Add Glossary terms.
             case "addterm":
                 switch ($status) {
                     case "User":
-                        return TRUE;
+                      return TRUE;
 
                     case "Moderator":
-                        return TRUE;
+                      return TRUE;
 
                     case "Administrator":
-                        return TRUE;
+                      return TRUE;
 
                     case "Superuser":
-                        return TRUE;
+                      return TRUE;
 
                     case "Viewer":
-                        return FALSE;
-                    }
-            return FALSE;
+                      return FALSE;
+                }
+              return FALSE;
 
                 // Delete comments.
             case "deletecomment":
 
                 switch ($status) {
                     case "User":
-                        return FALSE;
+                      return FALSE;
 
                     case "Moderator":
-                        return TRUE;
+                      return TRUE;
 
                     case "Administrator":
-                        return TRUE;
+                      return TRUE;
 
                     case "Superuser":
-                        return TRUE;
+                      return TRUE;
 
                     case "Viewer":
-                        return FALSE;
+                      return FALSE;
                 }
-            return FALSE;
+              return FALSE;
 
             case "edituser":
 
                 switch ($status) {
                     case "User":
-                        return FALSE;
+                      return FALSE;
 
                     case "Moderator":
-                        return FALSE;
+                      return FALSE;
 
                     case "Administrator":
-                        return FALSE;
+                      return FALSE;
 
                     case "Superuser":
-                        return TRUE;
+                      return TRUE;
 
                     case "Viewer":
-                        return FALSE;
+                      return FALSE;
                 }
-            return FALSE;
+              return FALSE;
 
                 // Report a comment for moderation.
             case "reportcomment":
                 switch ($status) {
                     case "User":
-                        return TRUE;
+                      return TRUE;
 
                     case "Moderator":
-                        return TRUE;
+                      return TRUE;
 
                     case "Administrator":
-                        return TRUE;
+                      return TRUE;
 
                     case "Superuser":
-                        return TRUE;
+                      return TRUE;
 
                     case "Viewer":
-                        return TRUE;
+                      return TRUE;
                 }
-            return TRUE;
+              return TRUE;
 
                 // Access pages in the Admin section.
             case "viewadminsection":
 
                 switch ($status) {
                     case "User":
-                        return FALSE;
+                      return FALSE;
 
                     case "Moderator":
-                        return FALSE;
+                      return FALSE;
 
                     case "Administrator":
-                        return TRUE;
+                      return TRUE;
 
                     case "Superuser":
-                        return TRUE;
+                      return TRUE;
 
                     case "Viewer":
-                        return FALSE;
+                      return FALSE;
                 }
-            return FALSE;
+              return FALSE;
 
                 // Rate hansard things interesting/not.
             case "voteonhansard":
                 /* Everyone */
-                return TRUE;
+              return TRUE;
 
             default:
                 $PAGE->error_message("You need to set permissions for '$action'!");
-                return FALSE;
+              return FALSE;
 
         }
 

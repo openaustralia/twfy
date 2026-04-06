@@ -45,7 +45,7 @@ switch (get_http_var("pg")) {
     // A new user signing up.
     case "join":
         $this_page = "userjoin";
-        break;
+      break;
 
     // Editing someone else's info.
     case "editother":
@@ -64,7 +64,7 @@ switch (get_http_var("pg")) {
 
         }
 
-        break;
+      break;
 
     // Edit this user's owninfo.
     case "edit":
@@ -79,7 +79,7 @@ switch (get_http_var("pg")) {
             $this_page = "userjoin";
 
         }
-        break;
+      break;
 
     default:
 
@@ -875,9 +875,9 @@ function display_user($user_id = "") {
     global $THEUSER, $PAGE, $DATA, $this_page, $who;
 
     // We're either going to be:
-    //  Displaying the details of a user who's just been edited
-    //      (their user_id will be in $user_id now).
-    //  Viewing THEUSER's own data.
+    // Displaying the details of a user who's just been edited
+    // (their user_id will be in $user_id now).
+    // Viewing THEUSER's own data.
     //  Viewing someone else's data (their id will be in the GET string
     //      user_id variable).
 

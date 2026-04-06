@@ -20,7 +20,7 @@ if (!function_exists('strptime')) {
      */
     function strptime($date, $format) {
         if (!($date = strToDate($date, $format))) {
-            return;
+            return FALSE;
         }
         $dateTime = ['sec' => 0, 'min' => 0, 'hour' => 0, 'day' => 0, 'mon' => 0, 'year' => 0, 'timestamp' => 0];
         foreach ($date as $key => $val) {
@@ -29,33 +29,33 @@ if (!function_exists('strptime')) {
                 case 'j':
                     $dateTime['tm_mday'] = intval($val);
 
-                    break;
+                  break;
 
                 case 'D':
                     $dateTime['tm_mday'] = intval(date('j', $val));
 
-                    break;
+                  break;
 
                 case 'm':
                 case 'n':
                     $dateTime['tm_mon'] = intval($val);
 
-                    break;
+                  break;
 
                 case 'M':
                     $dateTime['tm_mon'] = intval(date('n', $val));
 
-                    break;
+                  break;
 
                 case 'Y':
                     $dateTime['tm_year'] = intval($val);
 
-                    break;
+                  break;
 
                 case 'y':
                     $dateTime['tm_year'] = intval($val) + 2000;
 
-                    break;
+                  break;
 
                 case 'G':
                 case 'g':
@@ -63,17 +63,17 @@ if (!function_exists('strptime')) {
                 case 'h':
                     $dateTime['tm_hour'] = intval($val);
 
-                    break;
+                  break;
 
                 case 'i':
                     $dateTime['tm_min'] = intval($val);
 
-                    break;
+                  break;
 
                 case 's':
                     $dateTime['tm_sec'] = intval($val);
 
-                    break;
+                  break;
             }
         }
         $dateTime['timestamp'] = mktime($dateTime['hour'], $dateTime['min'], $dateTime['sec'], $dateTime['mon'], $dateTime['day'], $dateTime['year']);

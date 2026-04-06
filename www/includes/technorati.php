@@ -80,7 +80,6 @@ function doCosmos($urlstring) {
 
     $techRati = "http://api.technorati.com/cosmos?format=xml&url=$urlstring&key=7e64960cc7e9b1cb4315e56a6544fce7";
 
-
     $a = file($techRati);
     if (!$a) {
         return FALSE;
@@ -95,7 +94,6 @@ function doCosmos($urlstring) {
     xml_parse($xml_parser, $contents, TRUE);
 
     xml_parser_free($xml_parser);
-
 
 }
 

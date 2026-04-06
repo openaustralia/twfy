@@ -14,14 +14,14 @@
 
 // For example, in this metadata we might have:
 // 'search' => array (
-//         'url' => 'search/',
+// 'url' => 'search/',
 //        'sidebar' => 'search',
 //        'session_vars' => array ('s')
 // ),.
 
 // If we are at the URL www.domain.org/search/?s=blair&page=2
 // and we used the URL class to generate a link to the search page like this:
-//         $URL = new URL('search');
+// $URL = new URL('search');
 //        $newurl = $URL->generate();
 
 // Then $newurl would be: /search/?s=blair

@@ -203,10 +203,6 @@ class ALERT {
 
         // Get all the data that's to be returned.
         $tmpdata = $this->fetch($confirmed, $deleted);
-        // Foreach ($tmpdata as $n => $data)
-        //                {
-        //                    echo "Alert: " . $data['email'] . " and " . $data['criteria'];
-        //                }.
     }
 
     /**
