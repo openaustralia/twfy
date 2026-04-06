@@ -3290,7 +3290,7 @@ class StandingCommittee extends DEBATELIST {
             $bills[$q->field($i, 'id')] = $q->field($i, 'title');
         }
         $q = $this->db->query('select minor,count(*) as c from hansard where major=6 and htype=12
-			and minor in (' . join(',', array_keys($bills)) . ')
+			and minor in (' . implode(',', array_keys($bills)) . ')
 			group by minor');
         $counts = [];
         // $comments = array();
