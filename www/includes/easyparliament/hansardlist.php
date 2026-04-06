@@ -126,20 +126,20 @@ class HANSARDLIST {
      */
     public function display($view, $args = [], $format = 'html') {
         // $view is what we're viewing by:
-        //     'gid' is the gid of a hansard object,
-        //    'date' is all items on a date,
-        //    'person' is a person's recent debates/wrans,
-        //    'recent' is a number of recent dates with items in.
-        //  'recent_mostvotes' is the speeches with the most votes in the last x days.
-        //    'search' is all debates/wrans that match a search term.
-        //    'biggest_debates' is biggest recent debates (obviously only for DEBATESLIST).
-        //  'recent_wrans' is some recent written answers (obv only for WRANSLIST).
+        // 'gid' is the gid of a hansard object,
+        // 'date' is all items on a date,
+        // 'person' is a person's recent debates/wrans,
+        // 'recent' is a number of recent dates with items in.
+        // 'recent_mostvotes' is the speeches with the most votes in the last x days.
+        // 'search' is all debates/wrans that match a search term.
+        // 'biggest_debates' is biggest recent debates (obviously only for DEBATESLIST).
+        // 'recent_wrans' is some recent written answers (obv only for WRANSLIST).
 
         // $args is an associative array of stuff like
-        //    'gid' => '2003-10-30.422.4'  or
-        //    'd' => '2003-12-31' or
-        //    's' => 'my search term'
-        //    'o' => Sort order: 'r' for relevance, 'd' for date
+        // 'gid' => '2003-10-30.422.4'  or
+        // 'd' => '2003-12-31' or
+        // 's' => 'my search term'
+        // 'o' => Sort order: 'r' for relevance, 'd' for date
 
         // $format is the format the data should be rendered in,
         // using that set of templates (or 'none' for just returning
