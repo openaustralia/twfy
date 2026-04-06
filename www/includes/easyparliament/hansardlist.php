@@ -232,7 +232,7 @@ class HANSARDLIST {
 
         // Array (
         // 'hdate'        => 'YYYY-MM-DD',
-        //        'timestamp' => 124453679,
+        // 'timestamp' => 124453679,
         //        'listurl'    => '/foo/?id=bar'
         // )
 
@@ -1391,14 +1391,14 @@ class HANSARDLIST {
         // Returns a data structure of years, months and dates:
         // $data = array(
         // 'info' => array (
-        //         'page' => 'debates',
-        //            'major'    => 1
+        // 'page' => 'debates',
+        //         'major'    => 1
         //            'onpage' => '2004-02-01'
         //        ),
         //        'years' => array (
-        //         '2004' => array (
-        //            '01' => array ('01', '02', '03' ... '31'),
-        //                '02' => etc...
+        //        '2004' => array (
+        //         '01' => array ('01', '02', '03' ... '31'),
+        //            '02' => etc...
         //            )
         //        )
         // )
@@ -1707,11 +1707,11 @@ class HANSARDLIST {
         // Leaving a key/value pair out is the same as setting a key to false.
 
         // $input['amount'] can have any or all these keys:
-        // 'body'         - Get the body text from the epobject table.
-        //    'comment'     - Get the first comment (and totalcomments count) for this item.
-        //    'votes'        - Get the user votes for this item.
-        //    'speaker'    - Get the speaker for this item, where applicable.
-        //  'excerpt'     - For sub/sections get the body text for the first item within them.
+        // 'body'       - Get the body text from the epobject table.
+        // 'comment'    - Get the first comment (and totalcomments count) for this item.
+        // 'votes'      - Get the user votes for this item.
+        // 'speaker'    - Get the speaker for this item, where applicable.
+        // 'excerpt'    - For sub/sections get the body text for the first item within them.
 
         // $input['wherearr'] is an associative array of stuff for the WHERE clause, eg:
         // array ('id=' => '37', 'date>' => '2003-12-31');
@@ -2003,7 +2003,7 @@ class HANSARDLIST {
 
         // $id_data is like this:
         // $id_data = array (
-        //        'major'         => 1,
+        // 'major'         => 1,
         //        'htype'         => 12,
         //        'gid'             => 2003-10-30.421.4h2,
         //        'section_id'    => 345,
