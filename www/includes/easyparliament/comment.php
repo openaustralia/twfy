@@ -56,8 +56,7 @@ class COMMENT {
         // Set in init.php.
         if (ALLOWCOMMENTS == TRUE) {
             $this->comments_enabled = TRUE;
-        }
-        else {
+        } else {
             $this->comments_enabled = FALSE;
         }
 
@@ -89,8 +88,7 @@ class COMMENT {
                 $this->_set_username();
 
                 $this->exists = TRUE;
-            }
-            else {
+            } else {
                 $this->exists = FALSE;
             }
         }
@@ -280,8 +278,7 @@ class COMMENT {
 
             return $this->comment_id();
 
-        }
-        else {
+        } else {
             return FALSE;
         }
     }
@@ -329,8 +326,7 @@ class COMMENT {
             $date = NULL;
             $flag = 'NULL';
 
-        }
-        else {
+        } else {
             $PAGE->error_message("Why are you trying to switch this comment's modflag to '" . htmlentities($switch) . "'!");
         }
 
@@ -342,8 +338,7 @@ class COMMENT {
         if ($q->success()) {
             $this->modflagged = $date;
             return TRUE;
-        }
-        else {
+        } else {
             $message = [
                 'title' => 'Sorry',
                 'text' => "We couldn't update the comment's modflag."
@@ -367,8 +362,7 @@ class COMMENT {
 
             if ($q->success()) {
                 return TRUE;
-            }
-            else {
+            } else {
                 $message = [
                     'title' => 'Sorry',
                     'text' => "We were unable to delete the comment."
@@ -377,8 +371,7 @@ class COMMENT {
                 return FALSE;
             }
 
-        }
-        else {
+        } else {
             $message = [
                 'title' => 'Sorry',
                 'text' => "You are not authorised to delete comments."

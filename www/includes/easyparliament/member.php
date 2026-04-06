@@ -89,18 +89,14 @@ class MEMBER {
         $person_id = '';
         if (isset($args['member_id']) && is_numeric($args['member_id'])) {
             $person_id = $this->member_id_to_person_id($args['member_id']);
-        }
-        elseif (isset($args['name'])) {
+        } elseif (isset($args['name'])) {
             $con = $args['constituency'] ?? '';
             $person_id = $this->name_to_person_id($args['name'], $con);
-        }
-        elseif (isset($args['constituency'])) {
+        } elseif (isset($args['constituency'])) {
             $person_id = $this->constituency_to_person_id($args['constituency']);
-        }
-        elseif (isset($args['postcode'])) {
+        } elseif (isset($args['postcode'])) {
             $person_id = $this->postcode_to_person_id($args['postcode']);
-        }
-        elseif (isset($args['person_id']) && is_numeric($args['person_id'])) {
+        } elseif (isset($args['person_id']) && is_numeric($args['person_id'])) {
             $person_id = $args['person_id'];
         }
 
@@ -114,8 +110,7 @@ class MEMBER {
                 // Hohoho, how long will I get away with this for?
                 // Not very long, it made Lord Patel go wrong.
                 $person_id = $person_id[0];
-            }
-            else {
+            } else {
                 $this->valid = FALSE;
                 $this->person_id = $person_id;
                 return;
@@ -230,8 +225,7 @@ class MEMBER {
 					WHERE member_id = '" . $this->db->escape($member_id) . "'");
         if ($q->rows > 0) {
             return $q->field(0, 'person_id');
-        }
-        else {
+        } else {
             // $PAGE->error_message("Sorry, there is no member with a member ID of '" . htmlentities($member_id) . "'.");
             return FALSE;
         }
@@ -271,13 +265,11 @@ class MEMBER {
 
         if ($q->rows > 0) {
             return $q->field(0, 'person_id');
-        }
-        else {
+        } else {
             $q = $this->db->query("SELECT person_id FROM member WHERE constituency = '" . $this->db->escape($constituency) . "' ORDER BY left_house DESC LIMIT 1");
             if ($q->rows > 0) {
                 return $q->field(0, 'person_id');
-            }
-            else {
+            } else {
                 // $PAGE->error_message("Sorry, there is no current member for the '" . htmlentities(html_entity_decode($constituency)) . "' constituency.");
                 return FALSE;
             }
@@ -327,8 +319,7 @@ class MEMBER {
             $q .= "house = 4 AND (";
             $q .= "(first_name='$first_name $middle_name' AND last_name='$last_name')";
             $q .= " or (first_name='$first_name' AND last_name='$middle_name $last_name') )";
-        }
-        elseif ($this_page == 'mla') {
+        } elseif ($this_page == 'mla') {
             $success = preg_match('#^(.*?) (.*?) (.*?)$#', $name, $m);
             if (!$success) {
                 $success = preg_match('#^(.*?)() (.*)$#', $name, $m);
@@ -343,8 +334,7 @@ class MEMBER {
             $q .= "house = 3 AND (";
             $q .= "(first_name='$first_name $middle_name' AND last_name='$last_name')";
             $q .= " or (first_name='$first_name' AND last_name='$middle_name $last_name') )";
-        }
-        elseif (strstr($this_page, 'mp') || $this_page == 'peer') {
+        } elseif (strstr($this_page, 'mp') || $this_page == 'peer') {
             $success = preg_match('#^(.*?) (.*?) (.*?)$#', $name, $m);
             if (!$success) {
                 $success = preg_match('#^(.*?)() (.*)$#', $name, $m);
@@ -358,8 +348,7 @@ class MEMBER {
             $last_name = $m[3];
             if (strstr($this_page, 'mp')) {
                 $house = 1;
-            }
-            else {
+            } else {
                 $house = 2;
             }
             // If ($title) $q .= 'title = \'' . $this->db->escape($title) . '\' AND ';.
@@ -372,8 +361,7 @@ class MEMBER {
                     $const = $normalised;
                 }
             }
-        }
-        elseif ($this_page == 'royal') {
+        } elseif ($this_page == 'royal') {
             $q .= ' house = 0';
         }
 
@@ -400,15 +388,12 @@ class MEMBER {
             }
             $this->constituency = $consts;
             return $person_ids;
-        }
-        elseif ($q->rows > 0) {
+        } elseif ($q->rows > 0) {
             return $q->field(0, 'person_id');
-        }
-        elseif ($const && $this_page != 'peer') {
+        } elseif ($const && $this_page != 'peer') {
             $this->canonical = FALSE;
             return $this->name_to_person_id($name);
-        }
-        else {
+        } else {
             $PAGE->error_message("Sorry, there is no current member with that name.");
             return FALSE;
         }
@@ -659,8 +644,7 @@ class MEMBER {
         }
         if (isset($parties[$party])) {
             return $parties[$party];
-        }
-        else {
+        } else {
             return $party;
         }
     }
@@ -685,11 +669,9 @@ class MEMBER {
         [$year, $month, $day] = explode('-', $entered_house);
         if ($month == 1 && $day == 1 && $this->house(2)) {
             return $year;
-        }
-        elseif (checkdate($month, $day, $year) && $year != '9999') {
+        } elseif (checkdate($month, $day, $year) && $year != '9999') {
             return format_date($entered_house, LONGDATEFORMAT);
-        }
-        else {
+        } else {
             return "n/a";
         }
     }
@@ -714,8 +696,7 @@ class MEMBER {
         [$year, $month, $day] = explode('-', $left_house);
         if (checkdate($month, $day, $year) && $year != '9999') {
             return format_date($left_house, LONGDATEFORMAT);
-        }
-        else {
+        } else {
             return "n/a";
         }
     }
@@ -733,8 +714,7 @@ class MEMBER {
     public function entered_reason_text($entered_reason) {
         if (isset($this->reasons[$entered_reason])) {
             return $this->reasons[$entered_reason];
-        }
-        else {
+        } else {
             return $entered_reason;
         }
     }
@@ -757,16 +737,13 @@ class MEMBER {
                 $max = $q->field(0, 'max');
                 if ((!$mponly && $max == $this->left_house) || ($mponly && $max == $this->mp_left_house)) {
                     return $left_reason[0];
-                }
-                else {
+                } else {
                     return $left_reason[1];
                 }
-            }
-            else {
+            } else {
                 return $left_reason;
             }
-        }
-        else {
+        } else {
             return $left_reason;
         }
     }
@@ -807,24 +784,19 @@ class MEMBER {
         $house = $this->house_disp;
         if ($house == 1) {
             $URL = new URL('mp');
-        }
-        elseif ($house == 2) {
+        } elseif ($house == 2) {
             $URL = new URL('peer');
-        }
-        elseif ($house == 3) {
+        } elseif ($house == 3) {
             $URL = new URL('mla');
-        }
-        elseif ($house == 4) {
+        } elseif ($house == 4) {
             $URL = new URL('msp');
-        }
-        elseif ($house == 0) {
+        } elseif ($house == 0) {
             $URL = new URL('royal');
         }
         $member_url = make_member_url($this->full_name(TRUE), $this->constituency(), $house);
         if ($absolute) {
             return 'http://' . DOMAIN . $URL->generate('none') . $member_url;
-        }
-        else {
+        } else {
             return $URL->generate('none') . $member_url;
         }
     }
@@ -934,8 +906,7 @@ function party_to_colour($party) {
     global $party_colours;
     if (isset($party_colours[$party])) {
         return $party_colours[$party];
-    }
-    else {
+    } else {
         return "#eeeeee";
     }
 }
@@ -949,24 +920,19 @@ function find_rep_image($pid, $smallonly = FALSE) {
     if (!$smallonly && is_file(FILEIMAGEPATH . 'mpsL/' . $pid . '.jpg')) {
         $image = IMAGEPATH . 'mpsL/' . $pid . '.jpg';
         $sz = 'L';
-    }
-    elseif (!$smallonly && is_file(FILEIMAGEPATH . 'mpsL/' . $pid . '.jpeg')) {
+    } elseif (!$smallonly && is_file(FILEIMAGEPATH . 'mpsL/' . $pid . '.jpeg')) {
         $image = IMAGEPATH . 'mpsL/' . $pid . '.jpeg';
         $sz = 'L';
-    }
-    elseif (!$smallonly && is_file(FILEIMAGEPATH . 'mpsL/' . $pid . '.png')) {
+    } elseif (!$smallonly && is_file(FILEIMAGEPATH . 'mpsL/' . $pid . '.png')) {
         $image = IMAGEPATH . 'mpsL/' . $pid . '.png';
         $sz = 'L';
-    }
-    elseif (is_file(FILEIMAGEPATH . 'mps/' . $pid . '.jpg')) {
+    } elseif (is_file(FILEIMAGEPATH . 'mps/' . $pid . '.jpg')) {
         $image = IMAGEPATH . 'mps/' . $pid . '.jpg';
         $sz = 'S';
-    }
-    elseif (is_file(FILEIMAGEPATH . 'mps/' . $pid . '.jpeg')) {
+    } elseif (is_file(FILEIMAGEPATH . 'mps/' . $pid . '.jpeg')) {
         $image = IMAGEPATH . 'mps/' . $pid . '.jpeg';
         $sz = 'S';
-    }
-    elseif (is_file(FILEIMAGEPATH . 'mps/' . $pid . '.png')) {
+    } elseif (is_file(FILEIMAGEPATH . 'mps/' . $pid . '.png')) {
         $image = IMAGEPATH . 'mps/' . $pid . '.png';
         $sz = 'S';
     }

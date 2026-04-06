@@ -158,8 +158,7 @@ class GLOSSARY {
             }
 
             return ($this->num_terms);
-        }
-        else {
+        } else {
             return FALSE;
         }
     }
@@ -274,8 +273,7 @@ class GLOSSARY {
 
         if ($success) {
             return ($success);
-        }
-        else {
+        } else {
             return FALSE;
         }
     }
@@ -337,8 +335,7 @@ class GLOSSARY {
             // Catch glossary terms within their own definitions.
             if ($glossary_id == $this->glossary_id) {
                 $replacewords[] = "<strong>\\1</strong>";
-            }
-            else {
+            } else {
                 if ($this_page == "admin_glossary") {
                     $link_url = "#gl" . $glossary_id;
                 }
@@ -377,8 +374,7 @@ class GLOSSARY {
             foreach ($body as $i => $t) {
                 $body[$i] = antiTagInTag($t);
             }
-        }
-        else {
+        } else {
             $body = antiTagInTag($body);
         }
         return $body;

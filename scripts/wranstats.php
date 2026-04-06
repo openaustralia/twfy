@@ -45,8 +45,7 @@ for ($i = 0; $i < $q->rows(); $i++) {
 			 	and hansard.speaker_id=member.member_id
 				and person_id = ' . $p_id . ' and major=3 and minor=2 and left_house>curdate())');
         $wrans_with_votes = $qq->rows();
-    }
-    else {
+    } else {
         $wrans_with_votes = '';
     }
     print "$name\t$con\t$wrans\t$wrans_with_votes\t$yes\t$no\n";

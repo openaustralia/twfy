@@ -34,8 +34,7 @@ if (get_http_var('approve')) {
         'epobject_type' => 2
     ];
     $EDITQUEUE->approve($data);
-}
-elseif (get_http_var('decline')) {
+} elseif (get_http_var('decline')) {
     $decline = [get_http_var('decline')];
     // Dump all declined items.
     $data = [
@@ -43,8 +42,7 @@ elseif (get_http_var('decline')) {
         'epobject_type' => 2
     ];
     $EDITQUEUE->decline($data);
-}
-elseif (get_http_var('delete_confirm')) {
+} elseif (get_http_var('delete_confirm')) {
     $delete_id = get_http_var('delete_confirm');
     // Delete the existing glossary entry.
     $GLOSSARY->delete($delete_id);

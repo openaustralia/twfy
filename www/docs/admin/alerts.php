@@ -68,8 +68,7 @@ $PAGE->page_end();
 /**
  *
  */
-function generate_rows($q)
-{
+function generate_rows($q) {
     global $db;
     $rows = [];
     $USERURL = new URL('userview');

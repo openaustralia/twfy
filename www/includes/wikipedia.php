@@ -153,8 +153,7 @@ function antiTagInTag($content = '', $format = 'htmlhead') {
         $tagend = $walker;
         if ($tagend > strlen($content)) {
             $tagend = strlen($content);
-        }
-        else {
+        } else {
             $tagend--;
             $tagstart++;
         }

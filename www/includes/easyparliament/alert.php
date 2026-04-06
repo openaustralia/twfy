@@ -238,8 +238,7 @@ class ALERT {
             if ($deleted) {
                 $this->db->query("UPDATE alerts SET deleted=0 WHERE email='" . $this->db->escape($details['email']) . "' AND criteria='" . $this->db->escape($criteria) . "' AND confirmed=1");
                 return 1;
-            }
-            else {
+            } else {
                 return -2;
             }
         }
@@ -251,8 +250,7 @@ class ALERT {
         // MJ OA-437 add as recommendation.
         if ($details['recommended'] == 1) {
             $sql .= "'1',";
-        }
-        else {
+        } else {
             $sql .= "'0',";
         }
         $sql .= "NOW() )";
@@ -313,14 +311,12 @@ class ALERT {
 						");
                     return 1;
                 }
-            }
-            else {
+            } else {
                 // Couldn't add the registration token to the DB.
                 return -1;
             }
 
-        }
-        else {
+        } else {
             // Couldn't add the user's data to the DB.
             return -1;
         }
@@ -367,8 +363,7 @@ class ALERT {
         $success = send_template_email($data, $merge);
         if ($success) {
             return TRUE;
-        }
-        else {
+        } else {
             return FALSE;
         }
     }
@@ -383,12 +378,10 @@ class ALERT {
             $q = $this->db->query("SELECT alert_id FROM alerts WHERE email='" . $this->db->escape($email) . "'");
             if ($q->rows() > 0) {
                 return TRUE;
-            }
-            else {
+            } else {
                 return FALSE;
             }
-        }
-        else {
+        } else {
             return FALSE;
         }
 
@@ -406,8 +399,7 @@ class ALERT {
         // Split the token into its parts.
         if (strstr($token, '::')) {
             $arg = '::';
-        }
-        else {
+        } else {
             $arg = '-';
         }
         $token_parts = explode($arg, $token);
@@ -437,12 +429,10 @@ class ALERT {
             if ($r->success()) {
                 $this->confirmed = TRUE;
                 return TRUE;
-            }
-            else {
+            } else {
                 return FALSE;
             }
-        }
-        else {
+        } else {
             // Couldn't find this alert in the DB. Maybe the token was
             // wrong or incomplete?
             return FALSE;
@@ -460,8 +450,7 @@ class ALERT {
         // Split the token into its parts.
         if (strstr($token, '::')) {
             $arg = '::';
-        }
-        else {
+        } else {
             $arg = '-';
         }
         $bits = explode($arg, $token);
@@ -493,14 +482,12 @@ class ALERT {
                 $this->deleted = TRUE;
                 return TRUE;
 
-            }
-            else {
+            } else {
                 // Couldn't delete this alert in the DB.
                 return FALSE;
             }
 
-        }
-        else {
+        } else {
             // Couldn't find this alert in the DB. Maybe the token was
             // wrong or incomplete?
             return FALSE;
@@ -539,8 +526,7 @@ class ALERT {
             if (preg_match('#^speaker:(\d+)#', $c, $m)) {
                 $MEMBER = new MEMBER(['person_id' => $m[1]]);
                 $spokenby = $MEMBER->full_name();
-            }
-            else {
+            } else {
                 $words[] = $c;
             }
         }
@@ -571,4 +557,5 @@ class ALERT {
     // PRIVATE FUNCTIONS BELOW... ////////////////.
 
 
-} // End USER class
+// End USER class.
+}

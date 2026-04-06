@@ -56,13 +56,11 @@ if (sizeof($errors)) {
         </p>
     </form>
     <?php
-}
-else {
+} else {
     $rep_name = $MEMBER->full_name();
     if ($MEMBER->house_disp == 1) {
         $rep_name .= ' MP';
-    }
-    elseif ($MEMBER->house_disp == 3) {
+    } elseif ($MEMBER->house_disp == 3) {
         $rep_name .= ' MLA';
     }
     $data = [
@@ -81,8 +79,7 @@ else {
     $success = send_template_email($data, $merge);
     if ($success) {
         print "<p>Your email has been sent successfully. Thank you for using OpenAustralia.</p> <p><a href=\"$url\">Return to " . $MEMBER->full_name() . "'s page</a></p>";
-    }
-    else {
+    } else {
         print "<p>Sorry, something went wrong trying to send an email. Please wait a few minutes and try again.</p>";
     }
 }

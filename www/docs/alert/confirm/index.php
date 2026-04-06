@@ -44,8 +44,7 @@ $success = $ALERT->confirm(get_http_var('t'));
 
 if ($success) {
     confirm_success($ALERT);
-}
-else {
+} else {
     confirm_error();
 }
 

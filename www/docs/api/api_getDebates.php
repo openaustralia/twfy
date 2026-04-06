@@ -83,19 +83,16 @@ function api_getDebates_type($t) {
     if ($t == 'representatives') {
         $list = 'DEBATE';
         $type = 'debates';
-    }
-    elseif ($t == 'senate') {
+    } elseif ($t == 'senate') {
         $list = 'LORDSDEBATE';
         $type = 'lords';
-    }
-    else {
+    } else {
         api_error('Unknown type');
         return;
     }
     if ($d = get_http_var('date')) {
         _api_getHansard_date($list, $d);
-    }
-    elseif (get_http_var('search') || get_http_var('person')) {
+    } elseif (get_http_var('search') || get_http_var('person')) {
         $s = get_http_var('search');
         $pid = get_http_var('person');
         _api_getHansard_search([
@@ -103,8 +100,7 @@ function api_getDebates_type($t) {
             'pid' => $pid,
             'type' => $type,
         ]);
-    }
-    elseif ($gid = get_http_var('gid')) {
+    } elseif ($gid = get_http_var('gid')) {
         $redirect = _api_getHansard_gid($list, $gid);
         if (is_string($redirect)) {
             $URL = $_SERVER['REQUEST_URI'];
@@ -112,11 +108,9 @@ function api_getDebates_type($t) {
             // header('Location: http://' . DOMAIN . $URL);
             // exit;.
         }
-    }
-    elseif ($y = get_http_var('year')) {
+    } elseif ($y = get_http_var('year')) {
         _api_getHansard_year($list, $y);
-    }
-    else {
+    } else {
         api_error('That is not a valid search.');
     }
 }

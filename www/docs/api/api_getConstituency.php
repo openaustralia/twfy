@@ -34,16 +34,13 @@ function api_getconstituency_postcode($pc) {
         $constituency = postcode_to_constituency($pc);
         if ($constituency == 'CONNECTION_TIMED_OUT') {
             api_error('Connection timed out');
-        }
-        elseif ($constituency) {
+        } elseif ($constituency) {
             $output['name'] = html_entity_decode($constituency);
             api_output($output);
-        }
-        else {
+        } else {
             api_error('Unknown postcode');
         }
-    }
-    else {
+    } else {
         api_error('Invalid postcode');
     }
 }

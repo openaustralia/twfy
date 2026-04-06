@@ -30,8 +30,7 @@ $details = [];
 
 if ($THEUSER->loggedin()) {
     $details['email'] = $THEUSER->email();
-}
-else {
+} else {
     $details["email"] = trim(get_http_var("email"));
 }
 
@@ -55,8 +54,7 @@ if (
         || ($details['keyword'] && $details['pid']))
 ) {
     add_alert($details);
-}
-else {
+} else {
     $PAGE->page_start();
     $PAGE->stripe_start();
     $PAGE->block_start(['id' => 'alerts', 'title' => 'Request an OpenAustralia.org Email Alert']);
@@ -87,8 +85,7 @@ function check_input($details) {
     // Check email address is valid and unique.
     if ($details["email"] == "") {
         $errors["email"] = "Please enter your email address";
-    }
-    elseif (!validate_email($details["email"])) {
+    } elseif (!validate_email($details["email"])) {
         // validate_email() is in includes/utilities.php.
         $errors["email"] = "Please enter a valid email address";
     }
@@ -129,11 +126,9 @@ function add_alert($details) {
         }
         $extra = 'from_' . $site . '=1';
         $confirm = FALSE;
-    }
-    elseif ($THEUSER->loggedin()) {
+    } elseif ($THEUSER->loggedin()) {
         $confirm = FALSE;
-    }
-    else {
+    } else {
         $confirm = TRUE;
     }
 
@@ -155,12 +150,10 @@ function add_alert($details) {
             $criteria = $MEMBER->full_name();
             if ($details['keyword']) {
                 $criteria .= ' mentions \'' . $details['keyword'] . '\'';
-            }
-            else {
+            } else {
                 $criteria .= ' contributes';
             }
-        }
-        elseif ($details['keyword']) {
+        } elseif ($details['keyword']) {
             $criteria = '\'' . $details['keyword'] . '\' is mentioned';
         }
         $message = [
@@ -168,21 +161,18 @@ function add_alert($details) {
             'text' => 'You will now receive email alerts on any day when ' . $criteria . ' in parliament.'
         ];
         $advert = TRUE;
-    }
-    elseif ($success > 0) {
+    } elseif ($success > 0) {
         $message = [
             'title' => "We're nearly done...",
             'text' => "You should receive an email shortly which will contain a link. You will need to follow that link to confirm your email address to receive the alert. Thanks."
         ];
-    }
-    elseif ($success == -2) {
+    } elseif ($success == -2) {
         $message = [
             'title' => 'You already have this alert',
             'text' => 'You already appear to be subscribed to this email alert, so we have not signed you up to it again.'
         ];
         $advert = TRUE;
-    }
-    else {
+    } else {
         $message = [
             'title' => "This alert has not been accepted",
             'text' => "Sorry, we were unable to create this alert. Please <a href=\"mailto:" . CONTACTEMAIL . "\">let us know</a>. Thanks."
@@ -306,12 +296,15 @@ function display_form($details = [], $errors = []) {
                 If you join or log in, you won't need to confirm your email address for every alert you set.
             </div>
         <?php }
-        if (get_http_var('sign'))
+        if (get_http_var('sign')) {
             echo '<input type="hidden" name="sign" value="' . htmlspecialchars(get_http_var('sign')) . '">';
-        if (get_http_var('site'))
+        }
+        if (get_http_var('site')) {
             echo '<input type="hidden" name="site" value="' . htmlspecialchars(get_http_var('site')) . '">';
+        }
         // MJ OA-437 Recommendations.
-        if (get_http_var('r'))
+        if (get_http_var('r')) {
             echo '<input type="hidden" name="r" value="' . htmlspecialchars(get_http_var('r')) . '">';
+        }
         echo '<input type="hidden" name="submitted" value="true"> </form>';
 }

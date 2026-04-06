@@ -32,20 +32,18 @@ if (get_http_var("submitted") == "true") {
 
     if ($email == "") {
         $errors["email"] = "Please enter your email address";
-    }
-    elseif (!validate_email($email)) {
+    } elseif (!validate_email($email)) {
         $errors["email"] = "Please enter a valid email address";
     }
     if ($password == "") {
         $errors["password"] = "Please enter your password";
     }
 
-    if (sizeof($errors) > 0) {
+    if (count($errors) > 0) {
         // Validation errors. Print form again.
         display_page($errors);
 
-    }
-    else {
+    } else {
         // No errors so far, so try to log in.
 
         $valid = $THEUSER->isvalid($email, $password);
@@ -54,16 +52,14 @@ if (get_http_var("submitted") == "true") {
             // No validation errors.
             if ($remember == "true") {
                 $expire = "never";
-            }
-            else {
+            } else {
                 $expire = "session";
             }
 
             // $returnurl is the url of where we'll send the user after login.
             $THEUSER->login($returnurl, $expire);
 
-        }
-        else {
+        } else {
 
             // Merge the validation errors with any we already have.
             $errors = array_merge($errors, $valid);
@@ -73,8 +69,7 @@ if (get_http_var("submitted") == "true") {
 
     }
 
-}
-else {
+} else {
     // First time to the page...
     display_page();
 }

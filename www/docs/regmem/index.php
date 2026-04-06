@@ -76,14 +76,11 @@ if (!preg_match('#^\d\d\d\d-\d\d-\d\d$#', $d)) {
 $link = '<p align="center"><a href="./"><strong>List all MPs and Register editions</strong></a></p>';
 if ($f) {
     register_history($f);
-}
-elseif ($p) {
+} elseif ($p) {
     person_history($p);
-}
-elseif ($d) {
+} elseif ($d) {
     show_register($d);
-}
-else {
+} else {
     $this_page = 'regmem';
     $PAGE->stripe_start();
     front_page();
@@ -248,8 +245,7 @@ function by_name_ref($a, $b) {
     $b = preg_replace('/^.* /', '', $names[$b]);
     if ($a > $b) {
         return 1;
-    }
-    elseif ($a < $b) {
+    } elseif ($a < $b) {
         return -1;
     }
     return 0;
@@ -410,8 +406,7 @@ function by_name($a, $b) {
     $b = preg_replace('/^.* /', '', $b);
     if ($a > $b) {
         return 1;
-    }
-    elseif ($a < $b) {
+    } elseif ($a < $b) {
         return -1;
     }
     return 0;

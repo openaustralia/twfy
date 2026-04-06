@@ -92,8 +92,7 @@ class SKIN {
         if ($this_page == "skin" && get_http_var("newskin") != "") {
             // We only allow the reskinning on the "skin" page.
             $this->new_skin(get_http_var("newskin"));
-        }
-        else {
+        } else {
             $this->set_skin(get_cookie_var("skin"));
         }
 
@@ -126,8 +125,7 @@ class SKIN {
 
         if (isset($skin) && isset($this->skins[$skin])) {
             $this->skin = $skin;
-        }
-        else {
+        } else {
             $this->skin = "default";
         }
 

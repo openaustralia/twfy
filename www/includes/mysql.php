@@ -172,8 +172,7 @@ class MySQLQuery {
 
                 return;
 
-            }
-            else {
+            } else {
 
                 // A successful SELECT, SHOW, EXPLAIN or DESCRIBE query.
                 $this->success = TRUE;
@@ -207,8 +206,7 @@ class MySQLQuery {
 
                 return;
             }
-        }
-        else {
+        } else {
             // There was an SQL error.
             return;
         }
@@ -248,8 +246,7 @@ class MySQLQuery {
             // New faster version.
             $result = $this->data[$row_index][$this->fieldnames_byname[$column_name]];
             return $result;
-        }
-        else {
+        } else {
             return "";
         }
     }
@@ -268,8 +265,7 @@ class MySQLQuery {
         if ($this->success) {
             $result = $this->_row_array($row_index);
             return $result;
-        }
-        else {
+        } else {
             return [];
         }
     }

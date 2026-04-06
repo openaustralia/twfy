@@ -42,8 +42,7 @@ if (isset($data['comments']) && count($data['comments']) > 0) {
         // Get the name of the member whose epobject was commented upon (if any).
         if (isset($comment['speaker']) && $comment['speaker']['first_name'] != '') {
             $member_name = $comment['speaker']['first_name'] . ' ' . $comment['speaker']['last_name'] . ': ';
-        }
-        else {
+        } else {
             $member_name = '';
         }
 
@@ -64,8 +63,7 @@ if (isset($data['comments']) && count($data['comments']) > 0) {
     $PAGE->page_links($data);
     $PAGE->stripe_end();
 
-}
-else {
+} else {
 
     $PAGE->stripe_start();
     ?>

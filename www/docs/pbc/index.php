@@ -35,8 +35,7 @@ if ($bill_id && !$id) {
         'session' => $session,
     ];
     $committee->display('bill', $args);
-}
-elseif ($bill_id && $id) {
+} elseif ($bill_id && $id) {
     $this_page = 'pbc_clause';
     $args = [
         'gid' => $standingprefix . $id,
@@ -65,16 +64,14 @@ elseif ($bill_id && $id) {
         $COMMENTLIST->display('ep', $args);
         $PAGE->stripe_end();
     }
-}
-elseif ($session) {
+} elseif ($session) {
     $this_page = 'pbc_session';
     $DATA->set_page_metadata($this_page, 'title', "Session $session");
     $args = [
         'session' => $session,
     ];
     $committee->display('session', $args);
-}
-else {
+} else {
     $this_page = "pbc_front";
     $PAGE->page_start();
     $PAGE->stripe_start();

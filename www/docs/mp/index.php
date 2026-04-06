@@ -245,8 +245,6 @@ if (is_numeric(get_http_var('m'))) {
 }
 
 
-
-
 //
 // DISPLAY A REPRESENTATIVE.
 
@@ -462,8 +460,7 @@ $PAGE->page_end();
 /**
  *
  */
-function member_redirect(&$MEMBER)
-{
+function member_redirect(&$MEMBER) {
     global $this_page;
     // We come here after creating a MEMBER object by various methods.
     // Now we redirect to the canonical MP page, with a person_id.

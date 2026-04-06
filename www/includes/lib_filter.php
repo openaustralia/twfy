@@ -117,8 +117,7 @@ class lib_filter {
                         return '</' . $name . '>';
                     }
                 }
-            }
-            else {
+            } else {
                 return '';
             }
         }
@@ -161,8 +160,7 @@ class lib_filter {
                     $ending = ' /';
                 }
                 return '<' . $name . $params . $ending . '>';
-            }
-            else {
+            } else {
                 return '';
             }
         }

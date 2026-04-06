@@ -102,8 +102,7 @@ class SEARCHENGINE {
             ')/', $query, $all_words);
         if ($all_words) {
             $all_words = $all_words[0];
-        }
-        else {
+        } else {
             $all_words = [];
         }
         $in_quote = FALSE;
@@ -214,8 +213,7 @@ else {
             }
             elseif (count($this->words) == 2) {
                 $description .= $this->words[0] . "' and '" . $this->words[1];
-            }
-            else {
+            } else {
                 $description .= $this->words[0];
             }
             $description .= "'";
@@ -226,8 +224,7 @@ else {
                 if ($long) {
                     $description .= " containing";
                 }
-            }
-            else {
+            } else {
                 $description .= " and";
             }
             $description .= " the " . make_plural("phrase", count($this->phrases)) . " ";
@@ -237,8 +234,7 @@ else {
         if (count($this->excluded) > 0) {
             if (count($this->words) > 0 or count($this->phrases) > 0) {
                 $description .= " but not";
-            }
-            else {
+            } else {
                 $description .= " excluding";
             }
             $description .= " the " . make_plural("word", count($this->excluded));
@@ -294,8 +290,7 @@ else {
             elseif ($items[0] == 'batch') {
                 // Silently ignore, as description goes in email alerts
                 // $description .= ' in search batch ' . $items[1];.
-            }
-            else {
+            } else {
                 $PAGE->error_message("Unknown search prefix '$items[0]' ignored");
             }
         }

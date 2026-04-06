@@ -14,8 +14,7 @@ include_once 'api_functions.php';
 if ($q_method = get_http_var('method')) {
     if (get_http_var('docs')) {
         $key = 'DOCS';
-    }
-    else {
+    } else {
         if (!get_http_var('key')) {
             api_error('No API key provided. Please see http://www.openaustralia.org/api/key for more information.');
             exit;
@@ -49,8 +48,7 @@ if ($q_method = get_http_var('method')) {
                         htmlspecialchars($q_method) .
                         '". Possible choices are: ' .
                         implode(', ', $data['parameters']));
-                }
-                else {
+                } else {
                     include_once 'api_' . $method . '.php';
                     api_call_user_func_or_error('api_' . $method, [], 'API call not yet functional', 'api');
                     break;
@@ -64,15 +62,13 @@ if ($q_method = get_http_var('method')) {
         api_front_page('Unknown function "' . htmlspecialchars($q_method) .
             '". Possible functions are: ' .
            implode(', ', array_keys($methods)));
-    }
-    else {
+    } else {
         if (get_http_var('docs')) {
             $explorer = ob_get_clean();
             api_documentation_front($method, $explorer);
         }
     }
-}
-else {
+} else {
     api_front_page();
 }
 

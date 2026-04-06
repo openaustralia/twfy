@@ -10,8 +10,7 @@
 /**
  *
  */
-function mlog($message)
-{
+function mlog($message): void {
     print $message;
 }
 
@@ -256,8 +255,7 @@ mlog(date('r') . "\n");
 /**
  *
  */
-function sort_by_stuff($a, $b)
-{
+function sort_by_stuff($a, $b) {
     if ($a['major'] > $b['major']) {
         return 1;
     }
@@ -281,8 +279,7 @@ function sort_by_stuff($a, $b)
 /**
  *
  */
-function write_and_send_email($email, $user_id, $data)
-{
+function write_and_send_email($email, $user_id, $data) {
     global $globalsuccess, $sentemails, $nomail, $start_time;
 
     $data .= '====================' . "\n\n";

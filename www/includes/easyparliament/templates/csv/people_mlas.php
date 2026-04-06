@@ -35,8 +35,7 @@ function render_mlas_row($mla, $order) {
     print $mla['person_id'] . ',' . ucfirst($name) . ',';
     if (array_key_exists($mla['party'], $parties)) {
         print $parties[$mla['party']];
-    }
-    else {
+    } else {
         print $mla['party'];
     }
     print ',' . $con . ',http://www.openaustralia.org/mla/' .
