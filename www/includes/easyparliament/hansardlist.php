@@ -233,7 +233,7 @@ class HANSARDLIST {
         // Array (
         // 'hdate'        => 'YYYY-MM-DD',
         // 'timestamp' => 124453679,
-        //        'listurl'    => '/foo/?id=bar'
+        // 'listurl'    => '/foo/?id=bar'
         // )
 
         // When we do this function the first time we cache the
@@ -1392,14 +1392,14 @@ class HANSARDLIST {
         // $data = array(
         // 'info' => array (
         // 'page' => 'debates',
-        //         'major'    => 1
-        //            'onpage' => '2004-02-01'
-        //        ),
+        // 'major'    => 1
+        // 'onpage' => '2004-02-01'
+        // ),
         //        'years' => array (
         //        '2004' => array (
-        //         '01' => array ('01', '02', '03' ... '31'),
-        //            '02' => etc...
-        //            )
+        //        '01' => array ('01', '02', '03' ... '31'),
+        //        '02' => etc...
+        //        )
         //        )
         // )
         // It will just have entries for days for which we have relevant
@@ -2004,9 +2004,9 @@ class HANSARDLIST {
         // $id_data is like this:
         // $id_data = array (
         // 'major'         => 1,
-        //        'htype'         => 12,
-        //        'gid'             => 2003-10-30.421.4h2,
-        //        'section_id'    => 345,
+        // 'htype'         => 12,
+        // 'gid'             => 2003-10-30.421.4h2,
+        // 'section_id'    => 345,
         //        'subsection_id'    => 346
         // );
 
