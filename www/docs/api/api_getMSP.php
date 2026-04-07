@@ -125,7 +125,7 @@ function _api_getMSP_constituency($constituencies) {
     }
 
     $q = $db->query("SELECT * FROM member
-		WHERE constituency in ('" . join("','", $cons) . "')
+        WHERE constituency in ('" . implode("','", $cons) . "')
 		AND left_reason = 'still_in_office' AND house=4");
     if ($q->rows > 0) {
         _api_getMSP_output($q);

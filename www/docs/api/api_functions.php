@@ -308,7 +308,7 @@ function api_output_xml($v, $k = NULL)
             $elt = 'match';
             $api_xml_arr++;
             $out = "<$elt>";
-            $out .= join("</$elt>$verbose<$elt>", array_map('api_output_xml', $v));
+            $out .= implode("</$elt>$verbose<$elt>", array_map('api_output_xml', $v));
             $out .= "</$elt>$verbose";
             return $out;
         }
@@ -333,7 +333,7 @@ function api_output_js($v, $level = 0)
     if (is_array($v)) {
         // PHP arrays are both JS arrays and objects.
         if (count($v) && array_keys($v) === range(0, count($v) - 1)) {
-            return '[' . join(",$verbose", array_map('api_output_js', $v)) . ']';
+            return '[' . implode(",$verbose", array_map('api_output_js', $v)) . ']';
         }
         $out = '{' . $verbose;
         $b = FALSE;

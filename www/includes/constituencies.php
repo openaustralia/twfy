@@ -41,7 +41,7 @@ function normalise_constituency_names($names) {
     $q = $db->query('select constituency.name as name,c_main.name as canonical_name
 		from constituency, constituency as c_main
 		where constituency.cons_id = c_main.cons_id
-		and c_main.main_name and constituency.name in ("' . join('","', array_values($names)) .
+		and c_main.main_name and constituency.name in ("' . implode('","', array_values($names)) .
         '") and constituency.from_date <= date(now())
 		and date(now()) <= constituency.to_date');
     $lookup = [];

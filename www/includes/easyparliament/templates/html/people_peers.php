@@ -118,13 +118,14 @@ function render_peers_row($peer, &$style, $order, $URL)
         <td class="row-<?php echo $style; ?>"><?php echo $peer['constituency'] ?></td>
         <td class="row-<?php echo $style; ?>">
             <?php
-            if (is_array($peer['dept']))
-                print join('<br>', array_map('manymins', $peer['pos'], $peer['dept']));
-            elseif ($peer['dept'])
+            if (is_array($peer['dept'])) {
+                print implode('<br>', array_map('manymins', $peer['pos'], $peer['dept']));
+            } elseif ($peer['dept']) {
                 print prettify_office($peer['pos'], $peer['dept']);
-            else
-                print '&nbsp;'
-                    ?>
+            } else {
+                print '&nbsp;';
+            }
+            ?>
             </td>
 
         <?php if ($order == 'debates') { ?>
