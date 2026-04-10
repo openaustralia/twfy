@@ -187,7 +187,7 @@ function add_alert($details) {
     $PAGE->page_end($extra);
 }
 
-/*  This function creates the form for displaying an alert, prompts the user for input and creates
+/* This function creates the form for displaying an alert, prompts the user for input and creates
  * the alert when submitted.
  */
 
