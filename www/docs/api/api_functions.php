@@ -349,9 +349,9 @@ function api_output_js($v, $level = 0) {
         return "null";
     } elseif (is_string($v)) {
         return '"' . str_replace(
-            ["\\", '"', "\n", "\t", "\r"],
-            ["\\\\", '\"', '\n', '\t', '\r'],
-            $v
+            search: ["\\", '"', "\n", "\t", "\r"],
+            replace: ["\\\\", '\\"', '\\n', '\\t', '\\r'],
+            subject: $v
         ) . '"';
     } elseif (is_bool($v)) {
         return $v ? 'true' : 'false';
