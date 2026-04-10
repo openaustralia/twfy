@@ -29,8 +29,7 @@ if ($this_page == 'whallday') {
         ];
         $title = 'Recent Westminster Hall debates';
     }
-}
-else {
+} else {
     $args = [
         // How many recent months to show.
         'months' => 1

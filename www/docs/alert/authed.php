@@ -23,8 +23,7 @@ $sign = get_http_var('sign');
 $pid = get_http_var('pid');
 if (!$pid || !ctype_digit($pid)) {
     print 'not valid';
-}
-else {
+} else {
     $authed = auth_verify_with_shared_secret($email, OPTION_AUTH_SHARED_SECRET, $sign);
     if ($authed) {
         $db = new ParlDB();

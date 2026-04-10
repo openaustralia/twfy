@@ -137,8 +137,7 @@ elseif (get_http_var('gid') != '') {
         $TRACKBACK = new TRACKBACK();
         $TRACKBACK->display('epobject_id', $commendata);
     }
-}
-else {
+} else {
     // No date or debate id. Show recent years with debates on.
 
     $this_page = "whallfront";

@@ -67,8 +67,7 @@ if (count($debatesdata) > 0 && count($wransdata) > 0 && count($whalldata) > 0 &&
     // $hansardline = "Comment on $daytext <ul><li>$debatestext</li><li>$wranstext</li><li>$whalltext</li><li>$wmstext</li></ul>";
     $hansardline = "Comment on $daytext $debatestext, $wranstext, $whalltext, and $wmstext";
 
-}
-else {
+} else {
     // We didn't get some or all of the data, so just...
     $hansardline = "Comment on events in parliament";
 }

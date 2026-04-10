@@ -97,8 +97,7 @@ elseif (get_http_var('id') != '') {
     $PAGE->stripe_end();
     // $TRACKBACK = new TRACKBACK;
     // $TRACKBACK->display('epobject_id', $commendata);
-}
-else {
+} else {
     // No date or debate id. Show recent WMS.
 
     $this_page = "wmsfront";

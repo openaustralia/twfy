@@ -41,8 +41,7 @@ if (get_http_var('testing') == 'true') {
     // On with the voting...!
 
 
-}
-else {
+} else {
     // We need to check the user can accept cookies, so...
 
     // Set a cookie.
@@ -189,8 +188,7 @@ if (is_numeric(get_http_var('id')) && is_numeric(get_http_var('v'))) {
         }
     }
 
-}
-else {
+} else {
     voteerror("We weren't able to register your vote");
 }
 

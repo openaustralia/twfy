@@ -238,8 +238,7 @@ mlog("\n");
 $sss = "Active alerts: $active\nEmail lookups: $registered registered, $unregistered unregistered\nQuery lookups: $queries\nSent emails: $sentemails\n";
 if ($globalsuccess) {
     $sss .= 'Everything went swimmingly, in ';
-}
-else {
+} else {
     $sss .= 'Something went wrong! Total time: ';
 }
 $sss .= (getmicrotime() - $global_start) . "\n\n";

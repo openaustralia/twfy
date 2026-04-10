@@ -58,8 +58,7 @@ if ($THEUSER->loggedin()) {
         echo '</ul>';
     }
     api_key_form();
-}
-else {
+} else {
     echo ' The key is tied to your OpenAustralia account,
 so if you don\'t yet have one, please <a href="/user/?pg=join">sign up</a>, then
 return here to get a key.</p>';

@@ -168,8 +168,7 @@ class SEARCHENGINE {
             array_push($this->rough, str_replace("~", "", strtolower($word)));
             } */ elseif ($in_quote) {
                 array_push($this->phrases[count($this->phrases) - 1], strtolower($word));
-}
-else {
+} else {
     array_push($this->words, strtolower($word));
 }
         }

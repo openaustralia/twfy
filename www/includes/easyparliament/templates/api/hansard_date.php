@@ -53,7 +53,6 @@ if (isset($data['rows'])) {
 
     }
     api_output($out);
-}
-else {
+} else {
     api_error('No data to display');
 }

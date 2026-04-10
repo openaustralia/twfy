@@ -29,8 +29,7 @@ if ($this_page == 'debatesday') {
         ];
         $title = 'Recent debates';
     }
-}
-else {
+} else {
     $args = [
         // How many recent months to show.
         'months' => 1

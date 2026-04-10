@@ -128,8 +128,7 @@ elseif (get_http_var('pid')) {
     }
     $LIST = new WRANSLIST();
     $LIST->display('mp', $args);
-}
-else {
+} else {
 
     // No date or wrans id. Show recent days with wrans on.
 

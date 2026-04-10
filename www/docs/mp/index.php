@@ -126,8 +126,7 @@ elseif (get_http_var('mla')) {
 }
 elseif (get_http_var('msp')) {
     $this_page = 'msp';
-}
-else {
+} else {
     $this_page = 'mp';
 }
 
@@ -254,8 +253,7 @@ elseif ($cconstituency) {
     }
     $MEMBER = new MEMBER(['constituency' => $cconstituency]);
     member_redirect($MEMBER);
-}
-else {
+} else {
     // No postcode, member_id or person_id to use.
     twfy_debug('MP', "We don't have any way of telling what MP to display");
 }
@@ -296,14 +294,12 @@ elseif (isset($MEMBER) && $MEMBER->person_id()) {
 
     if ($MEMBER->current_member(2)) {
         $subtitle = "Senator " . $member_name . ', ' . $MEMBER->constituency();
-    }
-else {
+    } else {
         $subtitle = $member_name;
         if ($MEMBER->house(1)) {
             if (!$MEMBER->current_member(1)) {
                 $subtitle .= ', former Representative';
-            }
-else {
+            } else {
                 $subtitle .= ' MP';
 }
             $subtitle .= ', ' . $MEMBER->constituency();
@@ -452,8 +448,7 @@ keeping these sorts of records on you...</p></div></div>'
     ];
     $PAGE->stripe_end($sidebars);
 
-}
-else {
+} else {
     // Something went wrong.
 
     //
