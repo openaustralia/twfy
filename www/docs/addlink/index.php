@@ -79,9 +79,8 @@ if (get_http_var("submitterm") != '') {
     if ($GLOSSARY->num_search_matches >= 1) {
         // Offer a list of matching terms.
         $PAGE->glossary_display_match_list($GLOSSARY);
-    }
-    // Eek! no results at all? Excellent...
-    else {
+    } else {
+        // Eek! no results at all? Excellent...
         // Ok, so now we can see of the word(s) appear in Hansard at all.
         // The following query was modified from the hansardlist search.
         // However, no point checking, if the user can't add terms.

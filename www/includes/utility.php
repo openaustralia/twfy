@@ -999,9 +999,8 @@ function prettify_office($pos, $dept) {
         }
     } elseif ($pos) {
         $pretty = $pos;
-    }
-    // Member of Select Committee.
-    else {
+    } else {
+        // Member of Select Committee.
         $pretty = "Member, $dept";
     }
     return $pretty;
