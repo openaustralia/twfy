@@ -23,10 +23,10 @@ function api_convertURL_front() {
     </dl>
 
     <h4>Example Response</h4>
-    <pre>{
-                    gid : "uk.org.publicwhip/debate/2006-07-11a.1352.2",
-                    url : "http://www.openaustralia.org/debates/?id=2006-07-11a.1311.0#g1352.2"
-                }</pre>
+    <code>{
+        gid : "uk.org.publicwhip/debate/2006-07-11a.1352.2",
+        url : "http://www.openaustralia.org/debates/?id=2006-07-11a.1311.0#g1352.2"
+    }</code>
 
     <h4>Example Use</h4>
     <p>This probably counts as "AJAX", though it doesn't use XMLHTTP, asynchronicity, or XML, only cross-site JavaScript...
