@@ -19,7 +19,6 @@ include_once "../../../includes/easyparliament/init.php";
 include_once "../../../includes/easyparliament/member.php";
 
 
-
 if (get_http_var('welcome') == 't') {
     // The user has successfully clicked the link, been logged in, and
     // then been redirected here.

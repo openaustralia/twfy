@@ -158,8 +158,7 @@ class MySQLQuery {
 
                 return;
 
-            }
-            elseif (is_bool($q)) {
+            } elseif (is_bool($q)) {
                 // A successful query of a type *other* than
                 // SELECT, SHOW, EXPLAIN or DESCRIBE.
 
@@ -188,16 +187,15 @@ class MySQLQuery {
                     $result[] = $row;
                 }
 
-                if (sizeof($result) > 0) {
-                    $this->rows = sizeof($result);
-                }
-                else {
+                if (count($result) > 0) {
+                    $this->rows = count($result);
+                } else {
                     $this->rows = 0;
                 }
 
                 $this->fieldnames_byid = $fieldnames_byid;
                 $this->fieldnames_byname = $fieldnames_byname;
-                $this->fields = sizeof($fieldnames_byid);
+                $this->fields = count($fieldnames_byid);
                 $this->data = $result;
 
                 twfy_debug("SQLRESULT", $this->_display_result());
@@ -309,8 +307,7 @@ class MySQLQuery {
                     if ($this->fieldnames_byid[$n] == "email" || $this->fieldnames_byid[$n] == "password" || $this->fieldnames_byid[$n] == "postcode") {
                         // Don't want to risk this data being displayed on any page.
                         $html .= "<td>**MASKED**</td>";
-                    }
-                    else {
+                    } else {
                         $html .= "<td>" . htmlentities($field) . "</td>";
                     }
                 }

@@ -80,49 +80,20 @@ function doCosmos($urlstring) {
 
     $techRati = "http://api.technorati.com/cosmos?format=xml&url=$urlstring&key=7e64960cc7e9b1cb4315e56a6544fce7";
 
-    /* No caching for now */
-    // Generate cachefilename
-    //  preg_match ("/\d{7}/", $urlstring, $nums) ;.
-
-    // $cacheFilename= $nums[0];
-
-    // Cache for 30 mins only
-    //  if (!file_exists("cache/{$cacheFilename}.xml")||  (time() - filemtime("cache/{$cacheFilename}.xml") > 1800)||filesize ("cache/{$cacheFilename}.xml")==0 ){.
-
-    // Echo "cache miss!";.
-
     $a = file($techRati);
     if (!$a) {
         return FALSE;
     }
     set_time_limit(10);
     $contents = implode('', $a);
-    // $cachefp = fopen("cache/{$cacheFilename}.xml", "w");
-    //    fwrite($cachefp, $contents);
-    //    fclose($cachefp);
 
     $xml_parser = xml_parser_create();
     xml_set_element_handler($xml_parser, "start1Element", "end1Element");
     xml_set_character_data_handler($xml_parser, "character1Data");
-    // character1Data = fopen("cache/$cacheFilename.xml", "r")
-    // $fp = fopen($a, "r")
-    // or die("Error reading XML data.");
-    // while ($data = fread($fp, 16384)) {
     // Parse each 4KB chunk with the XML parser created above.
     xml_parse($xml_parser, $contents, TRUE);
 
-    // Echo "reading...";.
-
-    // }
-    // fclose($fp);
     xml_parser_free($xml_parser);
-
-    // Echo "parsing complete";
-    // global $arItems;
-    // global $itemCount;
-    // Write out the items.
-
-    // Echo count($arItems);
 
 }
 

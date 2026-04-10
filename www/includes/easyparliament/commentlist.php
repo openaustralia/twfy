@@ -56,17 +56,17 @@ class COMMENTLIST {
      */
     public function display($view, $args = [], $format = 'html') {
         // $view is what we're viewing by:
-        //    'ep' is all the comments attached to an epobject.
-        //    'user' is all the comments written by a user.
-        //    'recent' is the most recent comments.
+        // 'ep' is all the comments attached to an epobject.
+        // 'user' is all the comments written by a user.
+        // 'recent' is the most recent comments.
 
         // $args is an associative array of stuff like
-        //    'epobject_id' => '37'
+        // 'epobject_id' => '37'
         // Where 'epobject_id' is an epobject_id.
         // Or 'gid' is a hansard item gid.
 
         // Replace a hansard object gid with an epobject_id.
-        //        $args = $this->_fix_gid($args);
+        // $args = $this->_fix_gid($args);
 
         // $format is the format the data should be rendered in.
 
@@ -76,8 +76,7 @@ class COMMENTLIST {
             // Get all the dta that's to be rendered.
             $data = $this->$function($args);
 
-        }
-        else {
+        } else {
             // Don't have a valid $view;.
             $PAGE->error_message("You haven't specified a view type.");
             return FALSE;
@@ -85,14 +84,11 @@ class COMMENTLIST {
 
         if ($view == 'user') {
             $template = 'comments_user';
-        }
-        elseif ($view == 'recent') {
+        } elseif ($view == 'recent') {
             $template = 'comments_recent';
-        }
-        elseif ($view == 'search') {
+        } elseif ($view == 'search') {
             $template = 'comments_search';
-        }
-        else {
+        } else {
             $template = 'comments';
         }
 
@@ -170,15 +166,13 @@ class COMMENTLIST {
 
         if (isset($args['num']) && is_numeric($args['num'])) {
             $num = $args['num'];
-        }
-        else {
+        } else {
             $num = 10;
         }
 
         if (isset($args['page']) && is_numeric($args['page'])) {
             $page = $args['page'];
-        }
-        else {
+        } else {
             $page = 1;
         }
 
@@ -187,7 +181,7 @@ class COMMENTLIST {
         // We're getting the most recent comments posted to epobjects.
         // We're grouping them by epobject so we can just link to each hansard thing once.
         // When there are numerous comments on an epobject we're getting the most recent
-        //         comment_id and posted date.
+        // comment_id and posted date.
         // We're getting the body and speaker details for the epobject.
         // We're NOT getting the comment bodies. Why? Because adding them to this query
         // would fetch the text for the oldest comment on an epobject group, rather
@@ -300,15 +294,13 @@ class COMMENTLIST {
 
         if (isset($args['num']) && is_numeric($args['num'])) {
             $num = $args['num'];
-        }
-        else {
+        } else {
             $num = 25;
         }
 
         if (isset($args['page']) && is_numeric($args['page'])) {
             $page = $args['page'];
-        }
-        else {
+        } else {
             $page = 1;
         }
 
@@ -340,8 +332,7 @@ class COMMENTLIST {
             $q = $this->db->query($q);
             $data['full_name'] = member_full_name($q->field(0, 'house'), $q->field(0, 'title'), $q->field(0, 'first_name'), $q->field(0, 'last_name'), $q->field(0, 'constituency'));
             $q = 'SELECT COUNT(*) AS count FROM comments,hansard,member WHERE visible=1 AND comments.epobject_id = hansard.epobject_id and hansard.speaker_id = member.member_id and person_id = ' . $args['pid'];
-        }
-        else {
+        } else {
             $q = 'SELECT COUNT(*) AS count FROM comments WHERE visible=1';
         }
         $q = $this->db->query($q);
@@ -362,15 +353,13 @@ class COMMENTLIST {
 
         if (isset($args['num']) && is_numeric($args['num'])) {
             $num = $args['num'];
-        }
-        else {
+        } else {
             $num = 10;
         }
 
         if (isset($args['page']) && is_numeric($args['page'])) {
             $page = $args['page'];
-        }
-        else {
+        } else {
             $page = 1;
         }
 
@@ -381,8 +370,8 @@ class COMMENTLIST {
                 'user' => TRUE
             ],
             'where' => [
-                    'comments.body LIKE' => "%$args[s]%"
-                ],
+                'comments.body LIKE' => "%$args[s]%"
+            ],
             'order' => 'posted DESC',
             'limit' => $limit
         ];
@@ -488,10 +477,10 @@ class COMMENTLIST {
 
         // $input is an array of things needed for the SQL query:
         // 'amount' has one or more of :
-        //        'user'=>true - Users' names.
-        //      'hansard'=>true - Body text from the hansard items.
+        // 'user'=>true - Users' names.
+        // 'hansard'=>true - Body text from the hansard items.
         // 'where' is an associative array of stuff for the WHERE clause, eg:
-        //         array ('id=' => '37', 'posted>' => '2003-12-31 00:00:00');
+        // array ('id=' => '37', 'posted>' => '2003-12-31 00:00:00');
         // 'order' is a string for the $order clause, eg 'hpos DESC'.
         // 'limit' as a string for the $limit clause, eg '21,20'.
 

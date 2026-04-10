@@ -126,24 +126,18 @@ class SEARCHENGINE {
                     // Adding section:representatives but not removing debates & debate in case they are used anywhere.
                     if ($value == "debates" || $value == "debate" || $value == "representatives") {
                         $value = 1;
-                    }
-                    elseif ($value == 'whall' || $value == 'westminster' || $value == 'westminhall') {
+                    } elseif ($value == 'whall' || $value == 'westminster' || $value == 'westminhall') {
                         $value = 2;
-                    }
-                    elseif ($value == "wrans" || $value == "wran") {
+                    } elseif ($value == "wrans" || $value == "wran") {
                         $value = 3;
-                    }
-                    elseif ($value == 'wms' || $value == 'statements' || $value == 'statement') {
+                    } elseif ($value == 'wms' || $value == 'statements' || $value == 'statement') {
                         $value = 4;
-                    }
-                    // Adding section:senate but not removing lords & lordsdebates in case they are used anywhere.
-                    elseif ($value == 'lordsdebates' || $value == 'lords' || $value == 'senate') {
+                    } elseif ($value == 'lordsdebates' || $value == 'lords' || $value == 'senate') {
+                        // Adding section:senate but not removing lords & lordsdebates in case they are used anywhere.
                         $value = 101;
-                    }
-                    elseif ($value == 'ni') {
+                    } elseif ($value == 'ni') {
                         $value = 5;
-                    }
-                    elseif ($value == 'pbc' || $value == 'standing') {
+                    } elseif ($value == 'pbc' || $value == 'standing') {
                         $value = 6;
                     }
                     $type = "major";
@@ -160,18 +154,13 @@ class SEARCHENGINE {
                     }
                 }
                 array_push($this->prefixed, [$type, $value]);
-            }
-            elseif (strpos($word, '-') !== FALSE) {
+            } elseif (strpos($word, '-') !== FALSE) {
                 array_push($this->excluded, str_replace("-", "", strtolower($word)));
-            }
-            /*else if (strpos($word, '~') !== false) {
-            array_push($this->rough, str_replace("~", "", strtolower($word)));
-            } */ elseif ($in_quote) {
+            } elseif ($in_quote) {
                 array_push($this->phrases[count($this->phrases) - 1], strtolower($word));
-}
-else {
-    array_push($this->words, strtolower($word));
-}
+            } else {
+                array_push($this->words, strtolower($word));
+            }
         }
 
         twfy_debug("SEARCH", "words: " . var_export($this->words, TRUE));
@@ -210,8 +199,7 @@ else {
                 $description .= implode("', '", array_slice($this->words, 0, -2));
                 $description .= "', '";
                 $description .= $this->words[count($this->words) - 2] . "', and '" . $this->words[count($this->words) - 1];
-            }
-            elseif (count($this->words) == 2) {
+            } elseif (count($this->words) == 2) {
                 $description .= $this->words[0] . "' and '" . $this->words[1];
             } else {
                 $description .= $this->words[0];
@@ -248,37 +236,28 @@ else {
                 $member = new MEMBER(['person_id' => $items[1]]);
                 $name = $member->full_name();
                 $speaker[] = $name;
-            }
-            elseif ($items[0] == 'major') {
+            } elseif ($items[0] == 'major') {
                 if (isset($hansardmajors[$items[1]]['title'])) {
                     $major[] = $hansardmajors[$items[1]]['title'];
-                }
-                else {
+                } else {
                     $PAGE->error_message("Unknown major section '$items[1]' ignored");
                 }
-            }
-            elseif ($items[0] == 'groupby') {
+            } elseif ($items[0] == 'groupby') {
                 if ($items[1] == 'day') {
                     $description .= ' grouped by day';
-                }
-                elseif ($items[1] == 'debate') {
+                } elseif ($items[1] == 'debate') {
                     $description .= ' grouped by debate/department';
-                }
-                elseif ($items[1] == 'speech') {
+                } elseif ($items[1] == 'speech') {
                     $description .= ' showing all speeches';
-                }
-                else {
+                } else {
                     $PAGE->error_message("Unknown group by '$items[1]' ignored");
                 }
-            }
-            elseif ($items[0] == "bias") {
+            } elseif ($items[0] == "bias") {
                 [$weight, $halflife] = explode(":", $items[1]);
                 $description .= " bias by $weight halflife $halflife seconds";
-            }
-            elseif ($items[0] == 'date') {
+            } elseif ($items[0] == 'date') {
                 $description .= ' spoken on ' . $items[1];
-            }
-            elseif ($items[0] == 'batch') {
+            } elseif ($items[0] == 'batch') {
                 // Silently ignore, as description goes in email alerts
                 // $description .= ' in search batch ' . $items[1];.
             } else {
@@ -395,23 +374,18 @@ else {
                 $collapsed = TRUE;
                 if ($items[1] == 'day') {
                     $this->enquire->set_collapse_key(2);
-                }
-                elseif ($items[1] == 'debate') {
+                } elseif ($items[1] == 'debate') {
                     $this->enquire->set_collapse_key(3);
-                }
-                elseif ($items[1] == 'speech') {
+                } elseif ($items[1] == 'speech') {
 
                     // No collapse key.
-                }
-                else {
+                } else {
                     $PAGE->error_message("Unknown group by '$items[1]' ignored");
                 }
-            }
-            elseif ($items[0] == 'bias') {
+            } elseif ($items[0] == 'bias') {
                 [$weight, $halflife] = explode(":", $items[1]);
                 $this->enquire->set_bias($weight, intval($halflife));
-            }
-            elseif ($items[0] == 'speaker') {
+            } elseif ($items[0] == 'speaker') {
                 // Don't do any collapsing if we're searching for a person's speeches.
                 $collapsed = TRUE;
             }
@@ -428,8 +402,7 @@ else {
         // we are on.
         if ($matches->size() < 500) {
             $count = $matches->size();
-        }
-        else {
+        } else {
             $count = $matches->get_matches_estimated();
         }
         $duration = getmicrotime() - $start;
@@ -447,14 +420,15 @@ else {
         switch ($sort_order) {
             case 'date':
                 $this->enquire->set_sort_by_value_then_relevance(0, TRUE);
-                break;
+              break;
 
             case 'created':
                 $this->enquire->set_sort_by_value_then_relevance(6, TRUE);
-                break;
+              break;
+
             default:
                 // Do nothing, default ordering is by relevance.
-                break;
+              break;
         }
         $matches = $this->enquire->get_mset($first_result, $results_per_page);
         $this->gids = [];
@@ -511,8 +485,7 @@ else {
         foreach ($this->words as $word) {
             if (ctype_digit($word)) {
                 array_push($findwords, "/\b($word|" . number_format($word) . ")\b/");
-            }
-            else {
+            } else {
                 array_push($findwords, "/\b($word)\b/i");
             }
             array_push($replacewords, "<span class=\"hi\">\\1</span>");

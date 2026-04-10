@@ -112,10 +112,10 @@ class USER {
     public $status = "Viewer";
 
     // If you add more user variables above you should also:
-    //         Add the approrprate code to $this->add()
-    //        Add the appropriate code to $this->_update()
-    //         Add accessor functions way down below...
-    //        Alter THEUSER->update_self() to update with the new vars, if appropriate.
+    // * Add the appropriate code to $this->add()
+    // * Add the appropriate code to $this->_update()
+    // * Add accessor functions way down below...
+    // * Alter THEUSER->update_self() to update with the new vars, if appropriate.
 
     /**
      * Change things in the add/edit/view user page.
@@ -171,8 +171,7 @@ class USER {
 
             return TRUE;
 
-        }
-        elseif ($q->rows() > 1) {
+        } elseif ($q->rows() > 1) {
             // And, yes, if we've ended up with more than one row returned
             // we're going to show an error too, just in case.
             // *Should* never happen...
@@ -180,8 +179,7 @@ class USER {
             return FALSE;
             twfy_debug("USER", "There is more than one user with an id of '" . htmlentities($user_id) . "'");
 
-        }
-        else {
+        } else {
             return FALSE;
             twfy_debug("USER", "There is no user with an id of '" . htmlentities($user_id) . "'");
         }
@@ -196,12 +194,15 @@ class USER {
         // Then optionally (and usually) calls another function to
         // send them a confirmation email.
 
-        // $details is an associative array of all the user's details, of the form:
-        // array (
-        //        "firstname" => "Fred",
-        //        "lastname"    => "Bloggs",
-        //        etc... using the same keys as the object variable names.
-        // )
+        /*
+        $details is an associative array of all the user's details, of the form:
+        array (
+            "firstname" => "Fred",
+            "lastname"    => "Bloggs",
+            etc... using the same keys as the object variable names.
+        )
+        */
+
         // The BOOL variables (eg, optin) will be true or false and will need to be
         // converted to 1/0 for MySQL.
         global $REMOTE_ADDR;
@@ -283,8 +284,8 @@ class USER {
                     // No confirmation email, but don't automatically confirm.
                     $ALERT = new ALERT();
                     $ALERT->add([
-                    'email' => $details['email'],
-                    'pid' => $pid
+                        'email' => $details['email'],
+                        'pid' => $pid
                     ], FALSE, FALSE);
                 }
 
@@ -295,24 +296,20 @@ class USER {
                     if ($success) {
                         // All is good in the world!
                         return TRUE;
-                    }
-                    else {
+                    } else {
                         // Couldn't send the email.
                         return FALSE;
                     }
-                }
-                else {
+                } else {
                     // No confirmation email needed.
                     return TRUE;
                 }
-            }
-            else {
+            } else {
                 // Couldn't add the registration token to the DB.
                 return FALSE;
             }
 
-        }
-        else {
+        } else {
             // Couldn't add the user's data to the DB.
             return FALSE;
         }
@@ -330,9 +327,9 @@ class USER {
 
         // A brief check of the facts...
         if (
-          !is_numeric($this->user_id) ||
-          !isset($details['email']) ||
-          $details['email'] == ''
+            !is_numeric($this->user_id) ||
+            !isset($details['email']) ||
+            $details['email'] == ''
         ) {
             return FALSE;
         }
@@ -346,22 +343,21 @@ class USER {
 
         // Arrays we need to send a templated email.
         $data = [
-          'to' => $details['email'],
-          'template' => 'join_confirmation'
+            'to' => $details['email'],
+            'template' => 'join_confirmation'
         ];
 
         $merge = [
-          'FIRSTNAME' => $details['firstname'],
-          'LASTNAME' => $details['lastname'],
-          'CONFIRMURL' => $confirmurl
+            'FIRSTNAME' => $details['firstname'],
+            'LASTNAME' => $details['lastname'],
+            'CONFIRMURL' => $confirmurl
         ];
 
         $success = send_template_email($data, $merge);
 
         if ($success) {
             return TRUE;
-        }
-        else {
+        } else {
             return FALSE;
         }
     }
@@ -381,8 +377,7 @@ class USER {
         if (!isset($details["user_id"])) {
             return FALSE;
 
-        }
-        elseif ($THEUSER->is_able_to("edituser")) {
+        } elseif ($THEUSER->is_able_to("edituser")) {
 
             // If the user doing the updating has appropriate privileges...
 
@@ -392,13 +387,11 @@ class USER {
             // false otherwise.
             if ($newdetails) {
                 return TRUE;
-            }
-            else {
+            } else {
                 return FALSE;
             }
 
-        }
-        else {
+        } else {
 
             return FALSE;
 
@@ -453,8 +446,7 @@ class USER {
 
             // End password generating stuff.
 
-        }
-        else {
+        } else {
 
             // Email didn't exist.
 
@@ -470,8 +462,7 @@ class USER {
             $this->password = $pwd;
             return $pwd;
 
-        }
-        else {
+        } else {
 
             return FALSE;
         }
@@ -492,16 +483,16 @@ class USER {
         }
 
         $data = [
-          'to' => $this->email(),
-          'template' => 'new_password'
+            'to' => $this->email(),
+            'template' => 'new_password'
         ];
 
         $URL = new URL("userlogin");
 
         $merge = [
-          'EMAIL' => $this->email(),
-          'LOGINURL' => "http://" . DOMAIN . $URL->generate(),
-          'PASSWORD' => $this->password()
+            'EMAIL' => $this->email(),
+            'LOGINURL' => "http://" . DOMAIN . $URL->generate(),
+            'PASSWORD' => $this->password()
         ];
 
         // send_template_email in utility.php.
@@ -521,12 +512,10 @@ class USER {
             $q = $this->db->query("SELECT user_id FROM users WHERE user_id='" . $this->db->escape($user_id) . "'");
             if ($q->rows() > 0) {
                 return TRUE;
-            }
-            else {
+            } else {
                 return FALSE;
             }
-        }
-        else {
+        } else {
             return FALSE;
         }
 
@@ -542,12 +531,10 @@ class USER {
             $q = $this->db->query("SELECT user_id FROM users WHERE email='" . $this->db->escape($email) . "'");
             if ($q->rows() > 0) {
                 return TRUE;
-            }
-            else {
+            } else {
                 return FALSE;
             }
-        }
-        else {
+        } else {
             return FALSE;
         }
 
@@ -560,9 +547,9 @@ class USER {
         // Call this function to find out if a user is allowed to do something.
         // It uses the user's status to return true or false.
         // Possible actions:
-        //    "addcomment"
-        //     "reportcomment"
-        //    "edituser".
+        // "addcomment"
+        // "reportcomment"
+        // "edituser".
         global $PAGE;
 
         $status = $this->status();
@@ -588,13 +575,13 @@ class USER {
                     case "Superuser":
                       return TRUE;
 
-                    default: /* Viewer */
+                    case "Viewer":
                       return FALSE;
                 }
+              return FALSE;
 
-                // Add Glossary terms.
+            // Add Glossary terms.
             case "addterm":
-
                 switch ($status) {
                     case "User":
                       return TRUE;
@@ -608,11 +595,12 @@ class USER {
                     case "Superuser":
                       return TRUE;
 
-                    default: /* Viewer */
+                    case "Viewer":
                       return FALSE;
                 }
+              return FALSE;
 
-                // Delete comments.
+            // Delete comments.
             case "deletecomment":
 
                 switch ($status) {
@@ -628,9 +616,10 @@ class USER {
                     case "Superuser":
                       return TRUE;
 
-                    default: /* Viewer */
+                    case "Viewer":
                       return FALSE;
                 }
+              return FALSE;
 
             case "edituser":
 
@@ -647,13 +636,13 @@ class USER {
                     case "Superuser":
                       return TRUE;
 
-                    default: /* Viewer */
+                    case "Viewer":
                       return FALSE;
                 }
+              return FALSE;
 
-                // Report a comment for moderation.
+            // Report a comment for moderation.
             case "reportcomment":
-
                 switch ($status) {
                     case "User":
                       return TRUE;
@@ -667,11 +656,12 @@ class USER {
                     case "Superuser":
                       return TRUE;
 
-                    default: /* Viewer */
+                    case "Viewer":
                       return TRUE;
                 }
+              return TRUE;
 
-                // Access pages in the Admin section.
+            // Access pages in the Admin section.
             case "viewadminsection":
 
                 switch ($status) {
@@ -687,11 +677,12 @@ class USER {
                     case "Superuser":
                       return TRUE;
 
-                    default: /* Viewer */
+                    case "Viewer":
                       return FALSE;
                 }
+              return FALSE;
 
-                // Rate hansard things interesting/not.
+            // Rate hansard things interesting/not.
             case "voteonhansard":
                 /* Everyone */
               return TRUE;
@@ -835,8 +826,7 @@ class USER {
     public function constituency_is_set() {
         if ($this->constituency != '') {
             return TRUE;
-        }
-        else {
+        } else {
             return FALSE;
         }
     }
@@ -880,8 +870,7 @@ class USER {
             // their own info).
             if ($details['deleted'] == TRUE) {
                 $del = '1';
-            }
-            elseif ($details['deleted'] == FALSE) {
+            } elseif ($details['deleted'] == FALSE) {
                 $del = '0';
             }
             if (isset($del)) {
@@ -894,8 +883,7 @@ class USER {
             // their own info).
             if ($details['confirmed'] == TRUE) {
                 $con = '1';
-            }
-            elseif ($details['confirmed'] == FALSE) {
+            } elseif ($details['confirmed'] == FALSE) {
                 $con = '0';
             }
             if (isset($con)) {
@@ -921,10 +909,10 @@ class USER {
 								emailpublic	 = '" . $emailpublic . "',
 								constituency = '" . $this->db->escape($details["constituency"]) . "',
 								url			 = '" . $this->db->escape($details["url"]) . "',"
-          . $passwordsql
-          . $deletedsql
-          . $confirmedsql
-          . $statussql . "
+            . $passwordsql
+            . $deletedsql
+            . $confirmedsql
+            . $statussql . "
 								optin 		= '" . $optin . "'
 						WHERE 	user_id 	= '" . $this->db->escape($details["user_id"]) . "'");
 
@@ -935,8 +923,7 @@ class USER {
 
             return $details;
 
-        }
-        else {
+        } else {
             $PAGE->error_message("Sorry, we were unable to update user id '" . htmlentities($details["user_id"]) . "'");
             return FALSE;
         }
@@ -987,8 +974,7 @@ class THEUSER extends USER {
             twfy_debug("THEUSER init FAILED", "No cookie set");
             $this->loggedin = FALSE;
 
-        }
-        elseif (preg_match("/([[:alnum:]]*)\.([[:alnum:]]*)/", $cookie, $matches)) {
+        } elseif (preg_match("/([[:alnum:]]*)\.([[:alnum:]]*)/", $cookie, $matches)) {
 
             if (is_numeric($matches[1])) {
 
@@ -1011,30 +997,25 @@ class THEUSER extends USER {
                         twfy_debug("THEUSER init SUCCEEDED", "setting as logged in");
                         $this->loggedin = TRUE;
 
-                    }
-                    elseif (md5($this->password()) != $matches[2]) {
+                    } elseif (md5($this->password()) != $matches[2]) {
                         twfy_debug("THEUSER init FAILED", "Password doesn't match cookie");
                         $this->loggedin = FALSE;
-                    }
-                    else {
+                    } else {
                         twfy_debug("THEUSER init FAILED", "User is deleted");
                         $this->loggedin = FALSE;
                     }
 
-                }
-                else {
+                } else {
                     twfy_debug("THEUSER init FAILED", "didn't get 1 row from db");
                     $this->loggedin = FALSE;
                 }
 
-            }
-            else {
+            } else {
                 twfy_debug("THEUSER init FAILED", "cookie's user_id is not numeric");
                 $this->loggedin = FALSE;
             }
 
-        }
-        else {
+        } else {
             twfy_debug("THEUSER init FAILED", "cookie is not of the correct form");
             $this->loggedin = FALSE;
         }
@@ -1088,8 +1069,7 @@ class THEUSER extends USER {
         if ($this->loggedin()) {
             twfy_debug("THEUSER", "isloggedin: true");
             return TRUE;
-        }
-        else {
+        } else {
             twfy_debug("THEUSER", "isloggedin: false");
             return FALSE;
         }
@@ -1120,15 +1100,13 @@ class THEUSER extends USER {
                 $this->confirmed = $q->field(0, "confirmed") == 1 ? TRUE : FALSE;
                 return TRUE;
 
-            }
-            else {
+            } else {
                 // Failed.
                 return ["invalidpassword" => "This is not the correct password for " . htmlentities($email)];
 
             }
 
-        }
-        else {
+        } else {
             // Failed.
             return ["invalidemail" => "There is no user registered with an email of " . htmlentities($email) . '. If you are subscribed to email alerts, you are not necessarily registered on the website. If you register, you will be able to manage your email alerts, as well as leave comments.'];
         }
@@ -1162,12 +1140,10 @@ class THEUSER extends USER {
         if ($this->user_id() == "" || $this->password == "") {
             $PAGE->error_message("We don't have the user_id or password to make the cookie.", TRUE);
             return;
-        }
-        elseif ($this->deleted) {
+        } elseif ($this->deleted) {
             $PAGE->error_message("This user has been deleted.", TRUE);
             return;
-        }
-        elseif (!$this->confirmed) {
+        } elseif (!$this->confirmed) {
             $PAGE->error_message("this user has not been confirmed yet.", TRUE);
             return;
         }
@@ -1183,8 +1159,7 @@ class THEUSER extends USER {
         if ($expire == 'never') {
             header("Location: $returl");
             setcookie('epuser_id', $cookie, time() + 86400 * 365 * 20, '/', COOKIEDOMAIN);
-        }
-        else {
+        } else {
             header("Location: $returl");
             setcookie('epuser_id', $cookie, 0, '/', COOKIEDOMAIN);
         }
@@ -1258,8 +1233,8 @@ class THEUSER extends USER {
                 $pid = $MEMBER->person_id();
                 // This should probably be in the ALERT class.
                 $this->db->query('update alerts set confirmed=1 where email="' .
-                $this->db->escape($this->email) . '" and criteria="speaker:' .
-                $this->db->escape($pid) . '"');
+                    $this->db->escape($this->email) . '" and criteria="speaker:' .
+                    $this->db->escape($pid) . '"');
             }
 
             if ($r->success()) {
@@ -1274,14 +1249,12 @@ class THEUSER extends USER {
 
                 $this->login($redirecturl, 'session');
 
-            }
-            else {
+            } else {
                 // Couldn't set them as confirmed in the DB.
                 return FALSE;
             }
 
-        }
-        else {
+        } else {
             // Couldn't find this user in the DB. Maybe the token was
             // wrong or incomplete?
             return FALSE;
@@ -1346,13 +1319,11 @@ class THEUSER extends USER {
                 }
 
                 return TRUE;
-            }
-            else {
+            } else {
                 return FALSE;
             }
 
-        }
-        else {
+        } else {
             return FALSE;
         }
 

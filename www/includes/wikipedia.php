@@ -142,8 +142,7 @@ function antiTagInTag($content = '', $format = 'htmlhead') {
                 // Walker goes to the close+1, and open decrements.
                 $open--;
                 $walker = $nextclose + 1;
-            }
-            elseif ($nextopen < $nextclose) {
+            } elseif ($nextopen < $nextclose) {
                 // An open before the next close.
 
                 $open++;

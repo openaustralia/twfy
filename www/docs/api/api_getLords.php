@@ -28,24 +28,24 @@ function api_getLords_front() {
 
     <h4>Example Response</h4>
     <pre>
-    &lt;result&gt;
-        &lt;match&gt;
-            &lt;member_id&gt;100077&lt;/member_id&gt;
-            &lt;person_id&gt;10214&lt;/person_id&gt;
-            &lt;name&gt;John Faulkner&lt;/name&gt;
-            &lt;party&gt;Australian Labor Party&lt;/party&gt;
-            &lt;constituency&gt;NSW&lt;/constituency&gt;
-        &lt;/match&gt;
-        &lt;match&gt;
-            &lt;member_id&gt;100261&lt;/member_id&gt;
-            &lt;person_id&gt;10716&lt;/person_id&gt;
-            &lt;name&gt;John Williams&lt;/name&gt;
-            &lt;party&gt;National Party&lt;/party&gt;
-            &lt;constituency&gt;NSW&lt;/constituency&gt;
-        &lt;/match&gt;
-        ...
-    &lt;/result&gt;
-    </pre>
+        &lt;result&gt;
+            &lt;match&gt;
+                &lt;member_id&gt;100077&lt;/member_id&gt;
+                &lt;person_id&gt;10214&lt;/person_id&gt;
+                &lt;name&gt;John Faulkner&lt;/name&gt;
+                &lt;party&gt;Australian Labor Party&lt;/party&gt;
+                &lt;constituency&gt;NSW&lt;/constituency&gt;
+            &lt;/match&gt;
+            &lt;match&gt;
+                &lt;member_id&gt;100261&lt;/member_id&gt;
+                &lt;person_id&gt;10716&lt;/person_id&gt;
+                &lt;name&gt;John Williams&lt;/name&gt;
+                &lt;party&gt;National Party&lt;/party&gt;
+                &lt;constituency&gt;NSW&lt;/constituency&gt;
+            &lt;/match&gt;
+            ...
+        &lt;/result&gt;
+        </pre>
     <?php
 }
 

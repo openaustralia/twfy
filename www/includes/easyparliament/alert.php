@@ -61,7 +61,7 @@ function suggest_alerts($email, $criteria, $maxresults) {
         // If something was returned.
         if ($resultcount > 0) {
             print "<p>You may also be interested in being alerted when these people speak too.</p>";
-        } {
+        }
         if ($resultcount > $maxresults) {
             // Cap results.
             $resultcount = $maxresults;
@@ -77,7 +77,7 @@ function suggest_alerts($email, $criteria, $maxresults) {
                 print '<p><a href="' . WEBPATH . 'alert/?r=1&only=1&amp;pid=' . $member->person_id() . '"><strong>Email me whenever ' . $member->full_name() . ' speaks</strong></a></p>';
             }
         }
-        }
+
     }
 }
 
@@ -93,8 +93,7 @@ function alert_confirmation_advert($details) {
             keep you informed about your interests - find out what's happening straight from the horse's mouth.
             <a href="<?php echo WEBPATH ?>alert/"><strong>Sign up for an email alert</strong></a>
         </p>
-    <?php }
-    else {
+    <?php } else {
         $advert_shown = 'twfy-alert-person';
         ?>
         <p>Did you know that OpenAustralia can also email you when a certain representative contributes in parliament? Don't
@@ -210,15 +209,16 @@ class ALERT {
      */
     public function add($details, $confirmation_email = FALSE, $instantly_confirm = TRUE) {
 
-        // Adds a new alert's info into the database.
-        // Then calls another function to send them a confirmation email.
-        // $details is an associative array of all the alert's details, of the form:
-        // array (
-        //        "email" => "user@foo.com",
-        //        "criteria"    => "speaker:521",
-        //        etc... using the same keys as the object variable names.
-        // )
-
+        /*
+        Adds a new alert's info into the database.
+        Then calls another function to send them a confirmation email.
+        $details is an associative array of all the alert's details, of the form:
+        array (
+            "email" => "user@foo.com",
+            "criteria"    => "speaker:521",
+            etc... using the same keys as the object variable names.
+        )
+        */
         // The BOOL variables confirmed and deleted will be true or false and will need to be
         // converted to 1/0 for MySQL.
 
@@ -293,13 +293,11 @@ class ALERT {
                     if ($success) {
                         // Email sent OK.
                         return 1;
-                    }
-                    else {
+                    } else {
                         // Couldn't send the email.
                         return -1;
                     }
-                }
-                elseif ($instantly_confirm) {
+                } elseif ($instantly_confirm) {
                     // No confirmation email needed.
                     $s = $this->db->query("UPDATE alerts
 						SET confirmed = '1'
@@ -553,5 +551,5 @@ class ALERT {
     // PRIVATE FUNCTIONS BELOW... ////////////////.
 
 
-// End USER class.
+    // End USER class.
 }

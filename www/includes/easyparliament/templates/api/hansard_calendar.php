@@ -17,7 +17,6 @@ if (isset($data['years'])) {
         }
     }
     api_output($out);
-}
-else {
+} else {
     api_error('Please supply a year');
 }

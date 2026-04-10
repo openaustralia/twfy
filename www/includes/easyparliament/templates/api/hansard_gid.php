@@ -30,8 +30,7 @@ if (isset($data['rows'])) {
                 $speaker = $row['speaker'];
                 if (is_file(BASEDIR . IMAGEPATH . 'mps/' . $speaker['person_id'] . '.jpeg')) {
                     $row['speaker']['image'] = IMAGEPATH . 'mps/' . $speaker['person_id'] . '.jpeg';
-                }
-                elseif (is_file(BASEDIR . IMAGEPATH . 'mps/' . $speaker['person_id'] . '.jpg')) {
+                } elseif (is_file(BASEDIR . IMAGEPATH . 'mps/' . $speaker['person_id'] . '.jpg')) {
                     $row['speaker']['image'] = IMAGEPATH . 'mps/' . $speaker['person_id'] . '.jpg';
                 }
                 $desc = '';
@@ -59,8 +58,7 @@ if (isset($data['rows'])) {
         foreach ($data['subrows'] as $row) {
             if (isset($row['contentcount']) && $row['contentcount'] > 0) {
                 $has_content = TRUE;
-            }
-            elseif ($row['htype'] == '11' && $hansardmajors[$row['major']]['type'] == 'other') {
+            } elseif ($row['htype'] == '11' && $hansardmajors[$row['major']]['type'] == 'other') {
                 $has_content = TRUE;
             } else {
                 $has_content = FALSE;
@@ -80,7 +78,6 @@ if (isset($data['rows'])) {
         }
     }
     api_output($out);
-}
-else {
+} else {
     api_error('Nothing');
 }

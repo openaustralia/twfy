@@ -29,8 +29,7 @@ if ($this_page == 'wransday') {
         ];
         $title = 'Recent written answers';
     }
-}
-else {
+} else {
     $args = [
         // How many recent months to show.
         'months' => 1

@@ -105,15 +105,13 @@ class COMMENTREPORT {
                     $this->firstname = $q->field(0, 'firstname');
                     $this->lastname = $q->field(0, 'lastname');
                     $this->email = $q->field(0, 'email');
-                }
-                else {
+                } else {
                     // The report was made by a logged-in user.
                     $this->firstname = $q->field(0, 'u_firstname');
                     $this->lastname = $q->field(0, 'u_lastname');
                     $this->user_id = $q->field(0, 'user_id');
                 }
-            }
-            else {
+            } else {
                 $q = $this->db->query("SELECT commentreports.comment_id,
 									commentreports.user_id,
 									commentreports.body,
@@ -307,8 +305,7 @@ class COMMENTREPORT {
                                     '" . $this->db->escape($THEUSER->user_id()) . "'
 									)
 						";
-        }
-        else {
+        } else {
             $sql = "INSERT INTO commentreports
 									(comment_id, body, reported, firstname, lastname, email)
                             VALUES	('" . $this->db->escape($COMMENT->comment_id()) . "',
@@ -334,8 +331,7 @@ class COMMENTREPORT {
                 $this->user_id = $THEUSER->user_id();
                 $this->firstname = $THEUSER->firstname();
                 $this->lastname = $THEUSER->lastname();
-            }
-            else {
+            } else {
                 $this->email = $reportdata['email'];
                 $this->firstname = $reportdata['firstname'];
                 $this->lastname = $reportdata['lastname'];
@@ -363,8 +359,7 @@ class COMMENTREPORT {
 
             if ($THEUSER->isloggedin()) {
                 $email = $THEUSER->email();
-            }
-            else {
+            } else {
                 $email = $this->email();
             }
 
@@ -383,8 +378,7 @@ class COMMENTREPORT {
             send_template_email($data, $merge);
 
             return TRUE;
-        }
-        else {
+        } else {
             return FALSE;
         }
 
@@ -448,13 +442,11 @@ class COMMENTREPORT {
                 $this->locked = $time;
                 $this->lockedby = $THEUSER->user_id();
                 return TRUE;
-            }
-            else {
+            } else {
                 $PAGE->error_message("Sorry, we were unable to lock this report.");
                 return FALSE;
             }
-        }
-        else {
+        } else {
             $PAGE->error_message("You are not authorised to delete comments.");
             return FALSE;
         }
@@ -476,8 +468,7 @@ class COMMENTREPORT {
             $this->locked = NULL;
             $this->lockedby = NULL;
             return TRUE;
-        }
-        else {
+        } else {
             return FALSE;
         }
     }
@@ -511,8 +502,7 @@ class COMMENTREPORT {
 
                     $upheldsql = '1';
 
-                }
-                else {
+                } else {
                     $upheldsql = '0';
 
                     // Report has been removed, so un-modflag this comment.
@@ -537,19 +527,16 @@ class COMMENTREPORT {
                     $this->upheld = $upheld;
 
                     return TRUE;
-                }
-                else {
+                } else {
                     $PAGE->error_message("Sorry, we couldn't resolve this report.");
                     return FALSE;
                 }
-            }
-            else {
+            } else {
                 $PAGE->error_message("This report has already been resolved (on " . $this->resolved . ")");
                 return FALSE;
             }
 
-        }
-        else {
+        } else {
             $PAGE->error_message("You are not authorised to resolve reports.");
             return FALSE;
         }

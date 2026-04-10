@@ -9,8 +9,7 @@ include_once INCLUDESPATH . 'easyparliament/member.php';
 /**
  *
  */
-function api_getMP_front()
-{
+function api_getMP_front() {
     ?>
     <p><big>Fetch a particular member of the House of Representatives.</big></p>
 
@@ -60,7 +59,7 @@ function api_getMP_front()
             "source" : ""
         }]
         }]
-        </pre>
+    </pre>
 
     <?php
 }
@@ -68,8 +67,7 @@ function api_getMP_front()
 /**
  *
  */
-function _api_getMP_row($row)
-{
+function _api_getMP_row($row) {
     global $parties;
     $row['full_name'] = member_full_name(
         $row['house'],
@@ -106,8 +104,7 @@ function _api_getMP_row($row)
 /**
  *
  */
-function api_getMP_id($id)
-{
+function api_getMP_id($id) {
     $db = new ParlDB();
     $q = $db->query("select * from member
 		where house=1 and person_id = '" . $db->escape($id) . "'
@@ -140,9 +137,9 @@ function api_getMP_id($id)
 /**
  *
  */
-function api_getMP_postcode($pc)
-{
+function api_getMP_postcode($pc) {
     $pc = preg_replace('#[^0-9]#i', '', $pc);
+
     if (is_postcode($pc)) {
         $constituency = postcode_to_constituency($pc);
         if ($constituency == 'CONNECTION_TIMED_OUT') {
@@ -162,8 +159,7 @@ function api_getMP_postcode($pc)
 /**
  *
  */
-function api_getMP_constituency($constituency)
-{
+function api_getMP_constituency($constituency) {
     $person = _api_getMP_constituency($constituency);
     if ($person) {
         $output = $person;
@@ -177,8 +173,7 @@ function api_getMP_constituency($constituency)
  * Very similary to MEMBER's constituency_to_person_id
  * Should all be abstracted properly :-/.
  */
-function _api_getMP_constituency($constituency)
-{
+function _api_getMP_constituency($constituency) {
     $db = new ParlDB();
 
     if ($constituency == '') {

@@ -60,7 +60,6 @@ if ($subheading != '') {
 }
 
 
-
 if (isset($data['comments']) && count($data['comments']) > 0) {
 
     foreach ($data['comments'] as $n => $comment) {

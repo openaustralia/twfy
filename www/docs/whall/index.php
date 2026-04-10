@@ -25,8 +25,7 @@ if (get_http_var("d") != "") {
     $LIST->display('date', $args);
 
 
-}
-elseif (get_http_var('id') != "") {
+} elseif (get_http_var('id') != "") {
     // We have an id so show that item.
     // Could be a section id (so we get a list of all the subsections in it),
     // or a subsection id (so we'd get the whole debate),
@@ -51,8 +50,7 @@ elseif (get_http_var('id') != "") {
     // Glossary can be turned off in the url.
     if (get_http_var('ug') == 1) {
         $args['glossarise'] = 0;
-    }
-    else {
+    } else {
         $args['sort'] = "regexp_replace";
         $GLOSSARY = new GLOSSARY($args);
     }
@@ -81,9 +79,7 @@ elseif (get_http_var('id') != "") {
     // $TRACKBACK->display('epobject_id', $args);
 
 
-
-}
-elseif (get_http_var('y') != '') {
+} elseif (get_http_var('y') != '') {
 
     // Show a calendar for a particular year's WH debates.
 
@@ -116,8 +112,7 @@ elseif (get_http_var('y') != '') {
             'content' => "whalldebates"
         ]
     ]);
-}
-elseif (get_http_var('gid') != '') {
+} elseif (get_http_var('gid') != '') {
     $this_page = 'whall';
     $args = ['gid' => get_http_var('gid')];
     $WHALLLIST = new WHALLLIST();
@@ -139,8 +134,7 @@ elseif (get_http_var('gid') != '') {
         $TRACKBACK = new TRACKBACK();
         $TRACKBACK->display('epobject_id', $commendata);
     }
-}
-else {
+} else {
     // No date or debate id. Show recent years with debates on.
 
     $this_page = "whallfront";

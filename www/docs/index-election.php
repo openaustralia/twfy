@@ -14,7 +14,7 @@ $PAGE->page_start();
 $PAGE->stripe_start();
 
 //
-//  SEARCH AND RECENT HANSARD.
+// SEARCH AND RECENT HANSARD.
 
 
 // Get the dates, timestamps and links for the most recent debates and wrans.
@@ -48,20 +48,17 @@ if (count($debatesdata) > 0 && count($wransdata) > 0 && count($whalldata) > 0 &&
         if ($todaystime - $debatesdata['timestamp'] == 86400) {
             $daytext = "yesterday's";
 
-        }
-        elseif ($todaystime - $debatesdata['timestamp'] <= (6 * 86400)) {
+        } elseif ($todaystime - $debatesdata['timestamp'] <= (6 * 86400)) {
             // Less than a week ago, so like "last Tuesday's".
             $daytext = gmdate('l', $debatesdata['timestamp']) . "'s";
 
-        }
-        else {
+        } else {
 
             // Over a week ago.
             $daytext = "the most recent ";
         }
 
-    }
-    else {
+    } else {
         // Debates and Wrans are from different dates. We'll just do this for now:
         $daytext = "the most recent ";
     }
@@ -69,8 +66,7 @@ if (count($debatesdata) > 0 && count($wransdata) > 0 && count($whalldata) > 0 &&
     // $hansardline = "Comment on $daytext <ul><li>$debatestext</li><li>$wranstext</li><li>$whalltext</li><li>$wmstext</li></ul>";
     $hansardline = "Comment on $daytext $debatestext, $wranstext, $whalltext, and $wmstext";
 
-}
-else {
+} else {
     // We didn't get some or all of the data, so just...
     $hansardline = "Comment on events in parliament";
 }
@@ -92,8 +88,7 @@ $PAGE->block_start(['id' => 'intro', 'title' => 'Election special! Find out how 
 
             if ($THEUSER->isloggedin()) {
                 $CHANGEURL = new URL('useredit');
-            }
-            else {
+            } else {
                 $CHANGEURL = new URL('userchangepc');
             }
             $MEMBER = new MEMBER(['postcode' => $THEUSER->postcode()]);
@@ -105,8 +100,7 @@ $PAGE->block_start(['id' => 'intro', 'title' => 'Election special! Find out how 
                     href="<?php echo $CHANGEURL->generate(); ?>">Change your postcode</a>)</p>
             <?php
 
-        }
-        else {
+        } else {
             // User is not logged in and doesn't have a personal postcode set.
             ?>
             <form action="<?php echo $MPURL->generate(); ?>" method="get">
@@ -173,13 +167,13 @@ $PAGE->block_start(['id' => 'intro', 'title' => 'Election special! Find out how 
 $PAGE->block_end();
 
 //
-//  RECENT COMMENTS.
+// RECENT COMMENTS.
 
 // Most recent comments.
 
 
 //
-//  MOST INTERESTING DEBATES.
+// MOST INTERESTING DEBATES.
 
 // $DEBATELIST = new DEBATELIST;
 
@@ -189,7 +183,7 @@ $PAGE->block_end();
 
 
 //
-//  MOST RECENT GLOSSARY ENTRY.
+// MOST RECENT GLOSSARY ENTRY.
 
 // Temporary HTML...
 $URL = new URL('glossary');

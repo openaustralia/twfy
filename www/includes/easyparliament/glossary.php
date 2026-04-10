@@ -136,14 +136,12 @@ class GLOSSARY {
                     if ($next == 1) {
                         $this->next_term = $term;
                         break;
-                    }
-                    elseif ($term['glossary_id'] == $args['glossary_id']) {
+                    } elseif ($term['glossary_id'] == $args['glossary_id']) {
                         $this->glossary_id = $args['glossary_id'];
                         $this->current_term = $term;
                         $next = 1;
 
-                    }
-                    else {
+                    } else {
                         $this->previous_term = $term;
                     }
                 }
@@ -338,8 +336,7 @@ class GLOSSARY {
             } else {
                 if ($this_page == "admin_glossary") {
                     $link_url = "#gl" . $glossary_id;
-                }
-                else {
+                } else {
                     $link_url = $URL->generate('url');
                 }
                 $title = htmlentities(trim_characters($term_body, 0, 80));

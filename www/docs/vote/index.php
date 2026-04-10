@@ -34,16 +34,14 @@ if (get_http_var('testing') == 'true') {
 
     if ($testcookie != TRUE) {
         voteerror("Your browser must be able to accept cookies before you can register a vote.");
-    }
-    else {
+    } else {
         // Delete the test cookie.
         setcookie('testcookie', '');
     }
     // On with the voting...!
 
 
-}
-else {
+} else {
     // We need to check the user can accept cookies, so...
 
     // Set a cookie.
@@ -128,8 +126,7 @@ if (is_numeric(get_http_var('id')) && is_numeric(get_http_var('v'))) {
             // We're not checking the validity of the contents of $votecookie,
             // just doing it.
             $prev_epvotes = explode('+', $votecookie);
-        }
-        else {
+        } else {
             $prev_epvotes = [];
         }
 
@@ -143,16 +140,13 @@ if (is_numeric(get_http_var('id')) && is_numeric(get_http_var('v'))) {
         if ($q->rows() == 1) {
             if ($vote == 1) {
                 $q = $db->query("UPDATE anonvotes SET yes_votes = yes_votes + 1 WHERE epobject_id = '" . addslashes($epobject_id) . "'");
-            }
-            else {
+            } else {
                 $q = $db->query("UPDATE anonvotes SET no_votes = no_votes + 1 WHERE epobject_id = '" . addslashes($epobject_id) . "'");
             }
-        }
-        else {
+        } else {
             if ($vote == 1) {
                 $q = $db->query("INSERT INTO anonvotes (epobject_id, yes_votes) VALUES ('" . addslashes($epobject_id) . "', '1')");
-            }
-            else {
+            } else {
                 $q = $db->query("INSERT INTO anonvotes (epobject_id, no_votes) VALUES ('" . addslashes($epobject_id) . "', '1')");
             }
         }
@@ -172,8 +166,7 @@ if (is_numeric(get_http_var('id')) && is_numeric(get_http_var('v'))) {
         setcookie("epvotes", $new_cookie, time() + 60 * 60 * 24 * 365, "/", COOKIEDOMAIN);
 
 
-    }
-    else {
+    } else {
         // User is logged in.
 
         // See if the user's already voted for this.
@@ -184,8 +177,7 @@ if (is_numeric(get_http_var('id')) && is_numeric(get_http_var('v'))) {
 
         if ($q->rows() == 1) {
             voteerror("You have already rated this item. You can only rate something once.");
-        }
-        else {
+        } else {
             // Add the vote.
             $q = $db->query("INSERT INTO uservotes (user_id, epobject_id, vote) VALUES ('" . addslashes($THEUSER->user_id()) . "', '" . addslashes($epobject_id) . "', '" . addslashes($vote) . "')");
             if (!$q->success()) {
@@ -194,8 +186,7 @@ if (is_numeric(get_http_var('id')) && is_numeric(get_http_var('v'))) {
         }
     }
 
-}
-else {
+} else {
     voteerror("We weren't able to register your vote");
 }
 

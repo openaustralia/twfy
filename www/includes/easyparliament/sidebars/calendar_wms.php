@@ -29,8 +29,7 @@ if ($this_page == 'wmsday') {
         ];
         $title = 'Recent Written Ministerial Statements';
     }
-}
-else {
+} else {
     $args = [
         // How many recent months to show.
         'months' => 1

@@ -20,7 +20,7 @@ if ($message != '') {
 }
 
 //
-//  SEARCH AND RECENT HANSARD.
+// SEARCH AND RECENT HANSARD.
 
 $HANSARDURL = new URL('hansard');
 $MPURL = new URL('yourmp');
@@ -126,8 +126,7 @@ $PAGE->block_start(['id' => 'intro', 'title' => 'At OpenAustralia.org you can:']
                             be emailed when '<?php echo htmlspecialchars(get_http_var('keyword')) ?>' is mentioned in
                             Parliament</strong></a></p>
             </li>
-        <?php }
-        else { ?>
+        <?php } else { ?>
             <li>
                 <p><a href="<?php echo WEBPATH . "alert/" ?>"><strong>Sign up to be emailed when something relevant to you
                             happens in
@@ -180,8 +179,7 @@ $PAGE->block_start(['id' => 'intro', 'title' => 'At OpenAustralia.org you can:']
         // email_alert_bullet_point();
         your_mp_bullet_point();
         comment_on_recent_bullet_point();
-    }
-    else {
+    } else {
         your_mp_bullet_point();
         search_bullet_point();
         // email_alert_bullet_point();

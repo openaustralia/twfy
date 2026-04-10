@@ -151,8 +151,7 @@ class lib_filter {
                 if (!$ending) {
                     if (isset($this->tag_counts[$name])) {
                         $this->tag_counts[$name]++;
-                    }
-                    else {
+                    } else {
                         $this->tag_counts[$name] = 1;
                     }
                 }

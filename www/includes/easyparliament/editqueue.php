@@ -66,18 +66,14 @@ class EDITQUEUE {
         // (for now!)
 
         /*
-        print "<pre>";
-        print_r ($data);
-        print "</pre>";
-         */
-
-        // For editqueue in this instance we need:
-        //        user_id INTEGER,
-        //        edit_type INTEGER,
-        //        (epobject_id_l),
-        //        title VARCHAR(255),
-        //        body TEXT,
-        //        submitted DATETIME,.
+        For editqueue in this instance we need:
+            user_id INTEGER,
+            edit_type INTEGER,
+            (epobject_id_l),
+            title VARCHAR(255),
+            body TEXT,
+            submitted DATETIME,.
+        */
 
         global $THEUSER;
 
@@ -101,8 +97,7 @@ class EDITQUEUE {
 
             return $this->editqueue_id;
 
-        }
-        else {
+        } else {
             return FALSE;
         }
     }
@@ -125,14 +120,11 @@ class EDITQUEUE {
 
         foreach ($data['approvals'] as $approval_id) {
             // Create a new epobject
-            //         title VARCHAR(255),
-            //         body TEXT,
-            //         type INTEGER,
-            //         created DATETIME,
-            //         modified DATETIME,.
-            /*print "<pre>";
-            print_r($data);
-            print "</pre>";*/
+            // title VARCHAR(255),
+            // body TEXT,
+            // type INTEGER,
+            // created DATETIME,
+            // modified DATETIME,.
             // Check to see that we actually have something to approve.
             if (!isset($this->pending[$approval_id])) {
                 break;
@@ -188,8 +180,7 @@ class EDITQUEUE {
 							WHERE edit_id=" . $approval_id . ";");
             if (!$q->success()) {
                 break;
-            }
-            else {
+            } else {
                 // Now send them an email telling them they've been approved.
 
                 // Scrub that one from the list of pending items.
@@ -232,8 +223,7 @@ class EDITQUEUE {
 							WHERE edit_id=" . $decline_id . ";");
             if (!$q->success()) {
                 break;
-            }
-            else {
+            } else {
                 // Scrub that one from the list of pending items.
                 unset($this->pending[$decline_id]);
             }
@@ -277,8 +267,7 @@ class EDITQUEUE {
             $this->update_pending_count();
 
             return TRUE;
-        }
-        else {
+        } else {
             return FALSE;
         }
     }
@@ -297,21 +286,21 @@ class EDITQUEUE {
 
         ?>
         <form action="<?php echo $form_link ?>" method="post"><?php
-        foreach ($this->pending as $editqueue_id => $pender) {
+           foreach ($this->pending as $editqueue_id => $pender) {
 
-            $URL = new URL('admin_glossary_pending');
-            $URL->insert(['approve' => $editqueue_id]);
-            $approve_link = $URL->generate('url');
+               $URL = new URL('admin_glossary_pending');
+               $URL->insert(['approve' => $editqueue_id]);
+               $approve_link = $URL->generate('url');
 
-            $URL = new URL('admin_glossary_pending');
-            $URL->insert(['modify' => $editqueue_id]);
-            $modify_link = $URL->generate('url');
+               $URL = new URL('admin_glossary_pending');
+               $URL->insert(['modify' => $editqueue_id]);
+               $modify_link = $URL->generate('url');
 
-            $URL = new URL('admin_glossary_pending');
-            $URL->insert(['decline' => $editqueue_id]);
-            $decline_link = $URL->generate('url');
+               $URL = new URL('admin_glossary_pending');
+               $URL->insert(['decline' => $editqueue_id]);
+               $decline_link = $URL->generate('url');
 
-            ?>
+               ?>
                 <div class="pending-item"><label for="<?php echo $editqueue_id; ?>"><input type="checkbox" name="approve[]"
                             value="<?php echo $editqueue_id; ?>"
                             id="<?php echo $editqueue_id; ?>"><strong><?php echo $pender['title']; ?></strong></label>
@@ -327,8 +316,8 @@ class EDITQUEUE {
                     </p>
                 </div>
                 <?php
-        }
-        ?><input type="submit" value="Approve checked items">
+           }
+           ?><input type="submit" value="Approve checked items">
         </form>
         <?php
     }
@@ -367,11 +356,11 @@ class GLOSSEDITQUEUE extends EDITQUEUE {
 
         foreach ($data['approvals'] as $approval_id) {
             // Create a new epobject
-            //         title VARCHAR(255),
-            //         body TEXT,
-            //         type INTEGER,
-            //         created DATETIME,
-            //         modified DATETIME,.
+            // title VARCHAR(255),
+            // body TEXT,
+            // type INTEGER,
+            // created DATETIME,
+            // modified DATETIME,.
             /*print "<pre>";
             print_r($data);
             print "</pre>";*/
@@ -406,8 +395,7 @@ class GLOSSEDITQUEUE extends EDITQUEUE {
 							WHERE edit_id=" . $approval_id . ";");
             if (!$q->success()) {
                 break;
-            }
-            else {
+            } else {
                 // Scrub that one from the list of pending items.
                 unset($this->pending[$approval_id]);
             }

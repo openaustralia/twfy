@@ -182,14 +182,12 @@ class URL {
 
         $page_url = WEBPATH . $DATA->page_metadata($this->destinationpage, "url");
 
-        if (sizeof($url_args) == 0) {
+        if (count($url_args) == 0) {
             return $page_url;
-        }
-        else {
+        } else {
             if ($encode == "html") {
                 return $page_url . "?" . implode("&amp;", $url_args);
-            }
-            elseif ($encode == "none" || $encode == "url") {
+            } elseif ($encode == "none" || $encode == "url") {
                 return $page_url . "?" . implode("&", $url_args);
             }
         }
@@ -244,8 +242,7 @@ class URL {
 
         if ($html != "") {
             return $html . "\n";
-        }
-        else {
+        } else {
             return $html;
         }
 

@@ -16,8 +16,7 @@ header('Content-Disposition: attachment; filename=representatives.csv');
 print "Person ID,First name,Last name,Party,Division,URI";
 if ($order == 'expenses') {
     print ', 2004 Expenses Grand Total';
-}
-elseif ($order == 'debates') {
+} elseif ($order == 'debates') {
     print ',Debates spoken in the last year';
 }
 print "\n";

@@ -93,11 +93,6 @@ function check_input($details) {
     if (!ctype_digit($details['pid']) && $details['pid'] != '') {
         $errors['pid'] = 'Please choose a valid person';
     }
-    /*
-     * if (!$details['keyword']) {
-     *     $errors['keyword'] = 'Please enter a search term';
-     * }
-     */
 
     if ((get_http_var('submitted') || get_http_var('only')) && !$details['pid'] && !$details['keyword']) {
         $errors['keyword'] = 'Please choose a person and/or enter a keyword';
@@ -118,6 +113,7 @@ function add_alert($details) {
     // Instantiate an instance of ALERT.
     $ALERT = new ALERT();
 
+    // auth_verify_with_shared_secret is in phplib/auth.php. It checks the signature of the request using a shared secret, and returns true if the signature is correct.
     $external_auth = auth_verify_with_shared_secret($details['email'], OPTION_AUTH_SHARED_SECRET, get_http_var('sign'));
     if ($external_auth) {
         $site = get_http_var('site');
@@ -191,8 +187,8 @@ function add_alert($details) {
     $PAGE->page_end($extra);
 }
 
-/*  This function creates the form for displaying an alert, prompts the user for input and creates
- *  the alert when submitted.
+/* This function creates the form for displaying an alert, prompts the user for input and creates
+ * the alert when submitted.
  */
 
 /**
@@ -206,7 +202,7 @@ function display_form($details = [], $errors = []) {
 
     <p>This page allows you to request an email alert from OpenAustralia.org.</p>
 
-    <? if (!get_http_var('only')) { ?>
+    <?php if (!get_http_var('only')) { ?>
         <ul>
             <li>To receive an alert <strong>every time a particular person appears</strong>,
                 select their name from the drop-down list and
@@ -226,22 +222,27 @@ function display_form($details = [], $errors = []) {
 
         <p>Please note that you should only enter one topic per alert - if you wish to receive alerts on more than one topic, or
             for more than one person, simply fill in this form as many times as you need.</p>
-    <? } ?>
+    <?php
+    }
+    ?>
 
     <form method="post" action="<?php echo $ACTIONURL->generate(); ?>">
-
-        <?php if (!$THEUSER->loggedin()) {
+        <?php
+        if (!$THEUSER->loggedin()) {
             if (isset($errors["email"]) && (get_http_var('submitted') || get_http_var('only'))) {
                 $PAGE->error_message($errors["email"]);
             }
             ?>
             <div class="row">
                 <span class="label"><label for="email">Your email address:</label></span>
-                <span class="formw"><input type="text" name="email" id="email" value="<?php if (isset($details["email"])) {
-                    echo htmlentities($details["email"]);
-                } ?>" maxlength="255" size="30" class="form"></span>
+                <span class="formw"><input type="text" name="email" id="email" value="<?php
+                    if (isset($details["email"])) {
+                            echo htmlentities($details["email"]);
+                    } ?>" maxlength="255" size="30" class="form"></span>
             </div>
-        <?php }
+        <?php
+        }
+
         if (!get_http_var('only') || !$details['keyword']) {
             if (isset($errors['pid'])) {
                 $PAGE->error_message($errors['pid']);
@@ -254,19 +255,20 @@ function display_form($details = [], $errors = []) {
                     $MEMBER = new MEMBER(['person_id' => $details['pid']]);
                     print $MEMBER->full_name();
                     print '<input type="hidden" name="pid" value="' . htmlspecialchars($details['pid']) . '">';
-                }
-                else { ?><select name="pid">
-                            <option value="Any">Any Representative or Senator</option>
-                            <?php
-                            // Get a list of MPs/Lords for displaying in the form using the PEOPLE class.
-                            $LIST = new PEOPLE();
-                            $args['order'] = 'last_name';
-                            if ($details['pid'])
-                                $args['pid'] = $details['pid'];
-                            $LIST->listoptions($args);
-                            ?>
-                        </select>
-                    <?php } ?>
+                } else { ?>
+                    <select name="pid">
+                        <option value="Any">Any Representative or Senator</option>
+                        <?php
+                        // Get a list of MPs/Lords for displaying in the form using the PEOPLE class.
+                        $LIST = new PEOPLE();
+                        $args['order'] = 'last_name';
+                        if ($details['pid']) {
+                            $args['pid'] = $details['pid'];
+                        }
+                        $LIST->listoptions($args);
+                        ?>
+                    </select>
+                <?php } ?>
                 </span>
             </div>
         <?php }
@@ -277,7 +279,8 @@ function display_form($details = [], $errors = []) {
             ?>
             <div class="row">
                 <span class="label"><label for="keyword">Word or phrase you wish to receive alerts for:</label></span>
-                <span class="formw"><input type="text" name="keyword" id="keyword" value="<?php if ($details['keyword']) {
+                <span class="formw"><input type="text" name="keyword" id="keyword" value="<?php
+                if ($details['keyword']) {
                     echo htmlentities($details['keyword']);
                 } ?>" maxlength="255" size="30" class="form"></span>
             </div>

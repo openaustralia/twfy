@@ -130,15 +130,6 @@ function error_handler(string $errno, string $errmsg, string $filename, int $lin
             $err .= "\t\t$k => $value\n";
         }
     }
-
-    // I'm not sure this bit is actually any use!
-
-    // Set of errors for which a var trace will be saved.
-    //    $user_errors = array(E_USER_ERROR, E_USER_WARNING, E_USER_NOTICE);
-    //    if (in_array($errno, $user_errors)) {
-    //        $err .= "Variables:\t" . serialize($vars) . "\n";
-    //    }.
-
     // Add the problematic line if possible.
     if (is_readable($filename)) {
         $source = file($filename);
@@ -189,13 +180,7 @@ function error_handler(string $errno, string $errmsg, string $filename, int $lin
         } else {
             print "<p>Oops, sorry, an error has occurred!</p>\n";
         }
-
         // TODO add honey badger.
-
-        // mail(BUGSLIST, "[TWFYBUG]: $errmsg", $err,
-        //     "From: Bug <beta@openaustralia.org>\n".
-        //     "X-Mailer: PHP/" . phpversion()
-        // );
     }
 
     // Do we need to exit?
@@ -226,7 +211,7 @@ function adodb_backtrace($print = TRUE) {
 
         $traceArr = debug_backtrace();
         array_shift($traceArr);
-        $tabs = sizeof($traceArr) - 1;
+        $tabs = count($traceArr) - 1;
         foreach ($traceArr as $arr) {
             for ($i = 0; $i < $tabs; $i++) {
                 $s .= ' &nbsp; ';
@@ -241,17 +226,13 @@ function adodb_backtrace($print = TRUE) {
                 foreach ($arr['args'] as $v) {
                     if (is_null($v)) {
                         $args[] = 'null';
-                    }
-                    elseif (is_array($v)) {
-                        $args[] = 'Array[' . sizeof($v) . ']';
-                    }
-                    elseif (is_object($v)) {
+                    } elseif (is_array($v)) {
+                        $args[] = 'Array[' . count($v) . ']';
+                    } elseif (is_object($v)) {
                         $args[] = 'Object:' . get_class($v);
-                    }
-                    elseif (is_bool($v)) {
+                    } elseif (is_bool($v)) {
                         $args[] = $v ? 'true' : 'false';
-                    }
-                    else {
+                    } else {
                         $v = (string) @$v;
                         $str = htmlspecialchars(substr($v, 0, $MAXSTRLEN));
                         if (strlen($v) > $MAXSTRLEN) {
@@ -263,9 +244,6 @@ function adodb_backtrace($print = TRUE) {
             }
 
             $s .= $arr['function'] . '(' . implode(', ', $args) . ')';
-            // $s .= sprintf("</font><font color=#808080 size=-1> # line %4d,".
-            //            " file: <a href=\"file:/%s\">%s</a></font>",
-            //        $arr['line'],$arr['file'],$arr['file']);
             $s .= "\n";
         }
         if ($print) {
@@ -489,8 +467,7 @@ function parse_date($date) {
             $date = preg_replace('#next#i', 'this', $date);
             if ($dayofweek == 5) {
                 $now = strtotime('3 days', $now);
-            }
-            elseif ($dayofweek == 4) {
+            } elseif ($dayofweek == 4) {
                 $now = strtotime('4 days', $now);
             } else {
                 $now = strtotime('5 days', $now);
@@ -594,13 +571,15 @@ function trim_characters($text, $start, $length) {
  *
  */
 function filter_user_input($text, $filter_type) {
-    // We use this to filter any major user input, especially comments.
-    // Gets rid of bad HTML, basically.
-    // Uses iamcal.com's lib_filter class.
+    /*
+    We use this to filter any major user input, especially comments.
+    Gets rid of bad HTML, basically.
+    Uses iamcal.com's lib_filter class.
 
-    // $filter_type is the level of filtering we want:
-    //     'comment' allows <b> and <i> tags.
-    //    'strict' strips all tags.
+    $filter_type is the level of filtering we want:
+        -  'comment' allows <b> and <i> tags.
+        -  'strict' strips all tags.
+    */
 
     global $filter;
 
@@ -733,35 +712,36 @@ function gid_to_anchor($gid) {
  *
  */
 function send_template_email($data, $merge, $bulk = FALSE) {
-    // We should have some email templates in INCLUDESPATH/easyparliament/templates/emails/.
+    /*
+    We should have some email templates in INCLUDESPATH/easyparliament/templates/emails/.
 
-    // $data is like:
-    // array (
-    //    'template'     => 'send_confirmation',
-    //    'to'        => 'phil@gyford.com',
-    //    'subject'    => 'Your confirmation email'
-    // );
+    $data is like:
+    array (
+        'template'     => 'send_confirmation',
+        'to'        => 'phil@gyford.com',
+        'subject'    => 'Your confirmation email'
+    );
 
-    // $merge is like:
-    // array (
-    //    'FIRSTNAME' => 'Phil',
-    //    'LATNAME'    => 'Gyford'
-    //     etc...
-    // );
+    $merge is like:
+    array (
+        'FIRSTNAME' => 'Phil',
+        'LATNAME'    => 'Gyford'
+        etc...
+    );
 
-    // In $data, 'template' and 'to' are mandatory. 'template' is the
-    // name of the file (when it has '.txt' added to it).
+    In $data, 'template' and 'to' are mandatory. 'template' is the
+    name of the file (when it has '.txt' added to it).
 
-    // We'll get the text of the template and replace all the $merge
-    // keys with their tokens. eg, if '{FIRSTNAME}' in the template will
-    // be replaced with 'Phil'.
+    We'll get the text of the template and replace all the $merge
+    keys with their tokens. eg, if '{FIRSTNAME}' in the template will
+    be replaced with 'Phil'.
 
-    // Additionally, the first line of a template may start with
-    // 'Subject:'. Any text immediately following that, on the same line
-    // will be the subject of the email (it will also have its tokens merged).
-    // But this subject can be overridden by sending including a 'subject'
-    // pair in $data.
-
+    Additionally, the first line of a template may start with
+    'Subject:'. Any text immediately following that, on the same line
+    will be the subject of the email (it will also have its tokens merged).
+    But this subject can be overridden by sending including a 'subject'
+    pair in $data.
+    */
     global $PAGE;
 
     if (!isset($data['to']) || $data['to'] == '') {
@@ -915,7 +895,6 @@ function hidden_form_vars($omit = []) {
     }
 }
 
-
 /**
  *
  */
@@ -989,15 +968,8 @@ function member_full_name($house, $title, $first_name, $last_name, $constituency
         if ($title) {
             $s = $title . ' ' . $s;
         }
-        // } elseif ($house == 2) {
-        //        $s = '';
-        //        if (!$last_name) $s = 'the ';
-        //        $s .= $title;
-        //        if ($last_name) $s .= ' ' . $last_name;
-        //        if ($constituency) $s .= ' of ' . $constituency;
-    }
-    // Queen.
-    elseif ($house == 0) {
+    } elseif ($house == 0) {
+        // Queen.
         $s = "$first_name $last_name";
     }
     return $s;
@@ -1027,9 +999,8 @@ function prettify_office($pos, $dept) {
         }
     } elseif ($pos) {
         $pretty = $pos;
-    }
-    // Member of Select Committee.
-    else {
+    } else {
+        // Member of Select Committee.
         $pretty = "Member, $dept";
     }
     return $pretty;
@@ -1056,8 +1027,7 @@ function major_summary($data, $limit = "") {
         foreach ($data as $major => $array) {
             if ($todaystime - $array['timestamp'] == 86400) {
                 $daytext[$major] = "Yesterday's";
-            }
-            elseif ($todaystime - $array['timestamp'] <= (6 * 86400)) {
+            } elseif ($todaystime - $array['timestamp'] <= (6 * 86400)) {
                 $daytext[$major] = gmdate('l', $array['timestamp']) . "'s";
             } else {
                 $daytext[$major] = "The most recent ";

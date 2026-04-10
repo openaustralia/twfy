@@ -129,7 +129,7 @@ function api_log_call($key) {
     if ($key == 'DOCS') {
         return;
     }
-    $ip = $_SERVER['REMOTE_ADDR'];
+    $ip = ip_address();
     $query = $_SERVER['REQUEST_URI'];
     $query = preg_replace('#key=[A-Za-z0-9]+&?#', '', $query);
     $db = new ParlDB();
@@ -214,9 +214,8 @@ function api_output($arr, $last_mod = NULL) {
         $out = api_output_php($arr);
     } elseif ($output == 'rabx') {
         $out = api_output_rabx($arr);
-    }
-    // JS.
-    else {
+    } else {
+        // JS.
         $out = api_output_js($arr);
         $callback = get_http_var('callback');
         if (preg_match('#^[A-Za-z0-9._[\]]+$#', $callback)) {
@@ -349,9 +348,9 @@ function api_output_js($v, $level = 0) {
         return "null";
     } elseif (is_string($v)) {
         return '"' . str_replace(
-            ["\\", '"', "\n", "\t", "\r"],
-            ["\\\\", '\\"', '\\n', '\\t', '\\r'],
-            $v
+            search: ["\\", '"', "\n", "\t", "\r"],
+            replace: ["\\\\", '\\"', '\\n', '\\t', '\\r'],
+            subject: $v
         ) . '"';
     } elseif (is_bool($v)) {
         return $v ? 'true' : 'false';

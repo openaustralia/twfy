@@ -36,7 +36,6 @@ display_user()  Displays a user's details.
  */
 
 
-
 include_once "../../includes/easyparliament/init.php";
 include_once "../../includes/easyparliament/member.php";
 
@@ -45,7 +44,6 @@ switch (get_http_var("pg")) {
 
     // A new user signing up.
     case "join":
-
         $this_page = "userjoin";
       break;
 
@@ -59,8 +57,7 @@ switch (get_http_var("pg")) {
 
             $this_page = "otheruseredit";
 
-        }
-        else {
+        } else {
             // Revert to editing THEUSER's own info.
             $this_page = "useredit";
 
@@ -74,8 +71,7 @@ switch (get_http_var("pg")) {
         if ($THEUSER->isloggedin()) {
             $this_page = "useredit";
 
-        }
-        else {
+        } else {
             // Unlikely to get to this page without being logged in,
             // but just in case, show them the blank form.
             $this_page = "userjoin";
@@ -91,8 +87,7 @@ switch (get_http_var("pg")) {
         ) {
             // Logged in user viewing their own details.
             $this_page = 'userviewself';
-        }
-        else {
+        } else {
             // Viewing someone else's details.
             $this_page = "userview";
         }
@@ -154,7 +149,7 @@ if (get_http_var("submitted") == "true") {
     // and the values will be text to display when we show the form again.
     $errors = check_input($details);
 
-    if (sizeof($errors) > 0) {
+    if (count($errors) > 0) {
         // Validation errors. Print form again.
 
         $PAGE->page_start();
@@ -553,9 +548,10 @@ function display_form($details = [], $errors = []) {
         ?>
         <div class="row">
             <span class="label"><label for="firstname">Your first name:</label></span>
-            <span class="formw"><input type="text" name="firstname" id="firstname" value="<?php if (isset($details["firstname"])) {
+            <span class="formw"><input type="text" name="firstname" id="firstname" value="<?php
+            if (isset($details["firstname"])) {
                 echo htmlentities($details["firstname"]);
-} ?>" maxlength="255" size="30" class="form"></span>
+            } ?>" maxlength="255" size="30" class="form"></span>
         </div>
 
         <?php
@@ -565,9 +561,10 @@ function display_form($details = [], $errors = []) {
         ?>
         <div class="row">
             <span class="label"><label for="lastname">Your last name:</label></span>
-            <span class="formw"><input type="text" name="lastname" id="lastname" value="<?php if (isset($details["lastname"])) {
+            <span class="formw"><input type="text" name="lastname" id="lastname" value="<?php
+            if (isset($details["lastname"])) {
                 echo htmlentities($details["lastname"]);
-} ?>" maxlength="255" size="30" class="form"></span>
+            } ?>" maxlength="255" size="30" class="form"></span>
         </div>
 
         <?php
@@ -577,9 +574,10 @@ function display_form($details = [], $errors = []) {
         ?>
         <div class="row">
             <span class="label"><label for="em">Email address:</label></span>
-            <span class="formw"><input type="text" name="em" id="em" value="<?php if (isset($details["email"])) {
+            <span class="formw"><input type="text" name="em" id="em" value="<?php
+            if (isset($details["email"])) {
                 echo htmlentities($details["email"]);
-} ?>" maxlength="255" size="30" class="form"></span>
+            } ?>" maxlength="255" size="30" class="form"></span>
         </div>
 
         <?php
@@ -618,9 +616,10 @@ function display_form($details = [], $errors = []) {
 
         <br style="clear: left;">&nbsp;<br>
 
-        <span class="formw"><input type="hidden" name="constituency" id="constituency" value="<?php if (isset($details["constituency"])) {
+        <span class="formw"><input type="hidden" name="constituency" id="constituency" value="<?php
+            if (isset($details["constituency"])) {
             echo htmlentities($details["constituency"]);
-} ?>" maxlength="20" size="20" class="form"></span>
+            } ?>" maxlength="20" size="20" class="form"></span>
         <?php
         if (isset($errors["url"])) {
             $PAGE->error_message($errors["url"]);
@@ -628,11 +627,11 @@ function display_form($details = [], $errors = []) {
         ?>
         <div class="row">
             <span class="label"><label for="url">Your website:</label></span>
-            <span class="formw"><input type="url" name="url" id="url" value="<?php if (isset($details['url'])) {
+            <span class="formw"><input type="url" name="url" id="url" value="<?php
+            if (isset($details['url'])) {
                 echo htmlentities($details['url']);
-} ?>" maxlength="255" size="20" class="form"> <small>Optional and public</small></span>
+            } ?>" maxlength="255" size="20" class="form"> <small>Optional and public</small></span>
         </div>
-
 
 
         <div class="row">
@@ -700,14 +699,15 @@ function display_form($details = [], $errors = []) {
                 ?>> <label for="optinfalse">No</label></span>
         </div>
 
-        <?php if ($this_page == 'userjoin') { ?>
+        <?php
+        if ($this_page == 'userjoin') { ?>
             <div class="row">
-                &nbsp;<br>Would <?php if ($this_page == "otheruseredit") {
+                &nbsp;<br>Would <?php
+                if ($this_page == "otheruseredit") {
                     echo "they";
-}
-                                else {
-                                    echo "you";
-                                } ?> like to
+                } else {
+                    echo "you";
+                } ?> like to
                 receive an email whenever your MP does something in Parliament?
                 <br /><small>&nbsp;&nbsp;(if you're already getting email alerts to your address, don't worry about
                     this)</small>
@@ -850,11 +850,10 @@ function display_user($user_id = "") {
     global $THEUSER, $PAGE, $DATA, $this_page, $who;
 
     // We're either going to be:
-    //  Displaying the details of a user who's just been edited
-    //      (their user_id will be in $user_id now).
-    //  Viewing THEUSER's own data.
-    //  Viewing someone else's data (their id will be in the GET string
-    //      user_id variable).
+    // Displaying the details of a user who's just been edited
+    // (their user_id will be in $user_id now).
+    // * Viewing THEUSER's own data.
+    // * Viewing someone else's data (their id will be in the GET string user_id variable).
 
     // We could do something cleverer so that if THEUSER has sufficient
     // privileges we display more data when they're viewing someone else's info
@@ -1101,8 +1100,7 @@ function display_user($user_id = "") {
                         $MEMBER = new MEMBER(['person_id' => $m[1]]);
                         $display_terms[] = 'spoken by ' . $MEMBER->full_name();
                         $search_url .= 'pid=' . $MEMBER->person_id();
-                    }
-                    else {
+                    } else {
                         $display_terms[] = $criteria_term;
                         $search_keywords[] = $criteria_term;
                     }
@@ -1119,11 +1117,9 @@ function display_user($user_id = "") {
                 $token = $row['alert_id'] . '-' . $row['registrationtoken'];
                 if (!$row['confirmed']) {
                     $action = '<a href="' . WEBPATH . 'A/' . $token . '">Confirm</a>';
-                }
-                elseif ($row['deleted']) {
+                } elseif ($row['deleted']) {
                     $action = '<form action="' . WEBPATH . 'alert/undelete/" method="post"><input type="hidden" name="t" value="' . $token . '"><input type="submit" value="Resubscribe"></form>';
-                }
-                else {
+                } else {
                     $action = '<form action="' . WEBPATH . 'alert/delete/" method="post"><input type="hidden" name="t" value="' . $token . '"><input type="submit" value="Unsubscribe"></form>';
                 }
                 $out .= "<tr><td><a href='" . $search_url . "'>" . $display_criteria . "</a></td><td>" . $action . "</td></tr>";
@@ -1132,8 +1128,7 @@ function display_user($user_id = "") {
             if ($out) {
                 print '<p>Here are your email alerts:</p>';
                 print '<table cellpadding="3" cellspacing="0"><tr><th>Criteria</th><th>Action</th></tr>' . $out . '</table>';
-            }
-            else {
+            } else {
                 print '<p>You currently have no email alerts set up.</p>';
             }
             $PAGE->stripe_end();
@@ -1151,8 +1146,7 @@ function display_user($user_id = "") {
             $COMMENTLIST->display('user', $args);
         }
 
-    }
-    else {
+    } else {
 
         $message = [
             'title' => 'Sorry...',

@@ -40,7 +40,6 @@ if ($THEUSER->loggedin()) {
         } else {
             echo 'Non-commercial key';
         }
-        // , ' ', $reason;
         echo ', created ', $created;
         echo '</span><br><em>Usage statistics</em>: ';
         $q = $db->query('SELECT count(*) as count FROM api_stats WHERE api_key="' . $key . '" AND query_time > NOW() - interval 1 day');
