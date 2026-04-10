@@ -350,7 +350,7 @@ function api_output_js($v, $level = 0) {
     } elseif (is_string($v)) {
         return '"' . str_replace(
             ["\\", '"', "\n", "\t", "\r"],
-            ["\\\\", '\\"', '\\n', '\\t', '\\r'],
+            ["\\\\", '\"', '\n', '\t', '\r'],
             $v
         ) . '"';
     } elseif (is_bool($v)) {
