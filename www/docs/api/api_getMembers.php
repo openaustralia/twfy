@@ -81,8 +81,7 @@ function api_getMembers_search($house, $s) {
 function api_getMembers_date($house, $date) {
     if ($date = parse_date($date)) {
         api_getMembers($house, '"' . $date['iso'] . '"');
-    }
-    else {
+    } else {
         api_error('Invalid date format');
     }
 }

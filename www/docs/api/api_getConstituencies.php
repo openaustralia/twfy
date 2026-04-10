@@ -26,11 +26,11 @@ function api_getConstituencies_front() {
 
     <h4>Example Response</h4>
     <pre>[
-                { name : "Warringah" },
-                { name : "Lyons" },
-                { name : "Fairfax" },
-                ...
-            ]</pre>
+                    { name : "Warringah" },
+                    { name : "Lyons" },
+                    { name : "Fairfax" },
+                    ...
+                ]</pre>
 
     <?php
 }

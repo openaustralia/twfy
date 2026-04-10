@@ -26,8 +26,8 @@ function api_getMSP_front() {
 
     <h4>Example Response</h4>
     <pre>&lt;twfy&gt;
-              &lt;/twfy&gt;
-            </pre>
+                  &lt;/twfy&gt;
+                </pre>
 
     <?php
 }
@@ -65,8 +65,7 @@ function api_getMSP_id($id) {
 		order by left_house desc");
     if ($q->rows()) {
         _api_getMSP_output($q);
-    }
-    else {
+    } else {
         api_error('Unknown person ID');
     }
 }
@@ -80,18 +79,14 @@ function api_getMSP_postcode($pc) {
         $constituencies = postcode_to_constituencies($pc);
         if ($constituencies == 'CONNECTION_TIMED_OUT') {
             api_error('Connection timed out');
-        }
-        elseif (isset($constituencies['SPC'])) {
+        } elseif (isset($constituencies['SPC'])) {
             _api_getMSP_constituency($constituencies);
-        }
-        elseif (isset($constituencies['WMC'])) {
+        } elseif (isset($constituencies['WMC'])) {
             api_error('Non-Scottish postcode');
-        }
-        else {
+        } else {
             api_error('Unknown postcode');
         }
-    }
-    else {
+    } else {
         api_error('Invalid postcode');
     }
 }

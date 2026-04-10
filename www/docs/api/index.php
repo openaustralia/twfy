@@ -61,7 +61,7 @@ if ($q_method = get_http_var('method')) {
         api_log_call($key);
         api_front_page('Unknown function "' . htmlspecialchars($q_method) .
             '". Possible functions are: ' .
-           implode(', ', array_keys($methods)));
+            implode(', ', array_keys($methods)));
     } else {
         if (get_http_var('docs')) {
             $explorer = ob_get_clean();
@@ -101,23 +101,23 @@ function api_documentation_front($method, $explorer) {
             <input id="output_js" type="radio" name="output" value="js" <?php if (get_http_var('output') == 'js' || !get_http_var('output')) {
                 print ' checked';
            } ?>>
-                <label for="output_js">JS</label>
-                <input id="output_xml" type="radio" name="output" value="xml" <?php if (get_http_var('output') == 'xml') {
+            <label for="output_js">JS</label>
+            <input id="output_xml" type="radio" name="output" value="xml" <?php if (get_http_var('output') == 'xml') {
                 print ' checked';
-               } ?>>
-                <label for="output_xml">XML</label>
-                <input id="output_php" type="radio" name="output" value="php" <?php if (get_http_var('output') == 'php') {
+           } ?>>
+            <label for="output_xml">XML</label>
+            <input id="output_php" type="radio" name="output" value="php" <?php if (get_http_var('output') == 'php') {
                 print ' checked';
-               } ?>>
-                <label for="output_php">Serialised PHP</label>
-                <input id="output_rabx" type="radio" name="output" value="rabx" <?php if (get_http_var('output') == 'rabx') {
+           } ?>>
+            <label for="output_php">Serialised PHP</label>
+            <input id="output_rabx" type="radio" name="output" value="rabx" <?php if (get_http_var('output') == 'rabx') {
                 print ' checked';
-               } ?>>
-                <label for="output_rabx">RABX</label>
+           } ?>>
+            <label for="output_rabx">RABX</label>
 
-                <input type="submit" value="Go">
-            </p>
-        </form>
+            <input type="submit" value="Go">
+        </p>
+    </form>
     <?php
     if ($explorer) {
         $qs = [];
@@ -149,19 +149,18 @@ function api_front_page($error = '') {
     }
     ?>
 
-<p>Welcome to OpenAustralia's API section, where you can learn how to query our database for information.</p>
+    <p>Welcome to OpenAustralia's API section, where you can learn how to query our database for information.</p>
 
-<h3>Overview</h3>
+    <h3>Overview</h3>
 
-<ol style="font-size:130%">
+    <ol style="font-size:130%">
         <li>
-    <?php if ($THEUSER->loggedin()) { ?>
+            <?php if ($THEUSER->loggedin()) { ?>
                 <a href="key">Get an API key (or view stats of existing keys)</a>.
-    <?php }
-    else {
-        ?>
+            <?php } else {
+                ?>
                 <a href="key">Get an API key</a>.
-    <?php } ?>
+            <?php } ?>
         <li>All requests are made by GETting a particular URL with a number of parameters. <em>key</em> is required;
             <em>output</em> is optional, and defaults to <kbd>js</kbd>.
     </ol>

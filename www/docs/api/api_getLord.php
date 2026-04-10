@@ -59,8 +59,7 @@ function api_getLord_id($id) {
             }
         }
         api_output($output, $last_mod);
-    }
-    else {
+    } else {
         api_error('Unknown person ID');
     }
 }

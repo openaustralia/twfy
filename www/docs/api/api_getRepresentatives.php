@@ -24,23 +24,19 @@ function api_getDivisions_postcode($pc) {
         $constituency = postcode_to_constituency($pc);
         if ($constituency == 'CONNECTION_TIMED_OUT') {
             api_error('Connection timed out');
-        }
-        elseif ($constituency) {
+        } elseif ($constituency) {
             if (is_array($constituency)) {
                 $constituencies = $constituency;
-            }
-            else {
+            } else {
                 $constituencies = [$constituency];
             }
             foreach ($constituencies as $c) {
                 $output[] = ['name' => html_entity_decode($c)];
             }
-        }
-        else {
+        } else {
             api_error('Unknown postcode');
         }
-    }
-    else {
+    } else {
         api_error('Invalid postcode');
     }
     api_output($output);
@@ -55,12 +51,10 @@ function api_getRepresentatives_postcode($pc) {
         $constituency = postcode_to_constituency($pc);
         if ($constituency == 'CONNECTION_TIMED_OUT') {
             api_error('Connection timed out');
-        }
-        elseif ($constituency) {
+        } elseif ($constituency) {
             if (is_array($constituency)) {
                 $constituencies = $constituency;
-            }
-            else {
+            } else {
                 $constituencies = [$constituency];
             }
             $output = [];
@@ -68,12 +62,10 @@ function api_getRepresentatives_postcode($pc) {
                 $output[] = _api_getMP_constituency($c);
             }
             api_output($output);
-        }
-        else {
+        } else {
             api_error('Unknown postcode');
         }
-    }
-    else {
+    } else {
         api_error('Invalid postcode');
     }
 }
