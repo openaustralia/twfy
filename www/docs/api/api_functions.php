@@ -214,9 +214,8 @@ function api_output($arr, $last_mod = NULL) {
         $out = api_output_php($arr);
     } elseif ($output == 'rabx') {
         $out = api_output_rabx($arr);
-    }
-    // JS.
-    else {
+    } else {
+        // JS.
         $out = api_output_js($arr);
         $callback = get_http_var('callback');
         if (preg_match('#^[A-Za-z0-9._[\]]+$#', $callback)) {
