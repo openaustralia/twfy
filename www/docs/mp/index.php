@@ -111,20 +111,15 @@ if (get_http_var('recent')) {
 
 if (get_http_var('c4')) {
     $this_page = 'c4_mp';
-}
-elseif (get_http_var('c4x')) {
+} elseif (get_http_var('c4x')) {
     $this_page = 'c4x_mp';
-}
-elseif (get_http_var('peer')) {
+} elseif (get_http_var('peer')) {
     $this_page = 'peer';
-}
-elseif (get_http_var('royal')) {
+} elseif (get_http_var('royal')) {
     $this_page = 'royal';
-}
-elseif (get_http_var('mla')) {
+} elseif (get_http_var('mla')) {
     $this_page = 'mla';
-}
-elseif (get_http_var('msp')) {
+} elseif (get_http_var('msp')) {
     $this_page = 'msp';
 } else {
     $this_page = 'mp';
@@ -135,8 +130,7 @@ if (is_numeric(get_http_var('m'))) {
     $MEMBER = new MEMBER(['member_id' => get_http_var('m')]);
     member_redirect($MEMBER);
 
-}
-elseif (is_numeric($pid)) {
+} elseif (is_numeric($pid)) {
 
     // Normal, plain, displaying an MP by person ID.
     $MEMBER = new MEMBER(['person_id' => $pid]);
@@ -145,8 +139,7 @@ elseif (is_numeric($pid)) {
     //
     // CHECK SUBMITTED POSTCODE.
 
-}
-elseif (get_http_var('pc') != '') {
+} elseif (get_http_var('pc') != '') {
     // User has submitted a postcode, so we want to display that.
     $pc = get_http_var('pc');
     $pc = preg_replace('#[^a-z0-9 ]#i', '', $pc);
@@ -220,12 +213,10 @@ elseif (get_http_var('pc') != '') {
     // DOES THE USER HAVE A POSTCODE ALREADY SET?
     // (Either in their logged-in details or in a cookie from a previous search.)
 
-}
-elseif ($THEUSER->constituency_is_set() && $name == '' && $cconstituency == '') {
+} elseif ($THEUSER->constituency_is_set() && $name == '' && $cconstituency == '') {
     $MEMBER = new MEMBER(['constituency' => $THEUSER->constituency()]);
     member_redirect($MEMBER);
-}
-elseif ($name && $cconstituency) {
+} elseif ($name && $cconstituency) {
     $MEMBER = new MEMBER(['name' => $name, 'constituency' => $cconstituency]);
     if (!$MEMBER->canonical || $redirect) {
         member_redirect($MEMBER);
@@ -234,8 +225,7 @@ elseif ($name && $cconstituency) {
         $this_page = 'yourmp';
     }
     twfy_debug('MP', 'Displaying MP by name');
-}
-elseif ($name) {
+} elseif ($name) {
     $MEMBER = new MEMBER(['name' => $name]);
     if (
         ((($MEMBER->house_disp == 1)
@@ -244,8 +234,7 @@ elseif ($name) {
     ) {
         member_redirect($MEMBER);
     }
-}
-elseif ($cconstituency) {
+} elseif ($cconstituency) {
 
     if ($cconstituency == 'your &amp; my society') {
         header('Location: /mp/stom%20teinberg');
@@ -283,8 +272,7 @@ if (isset($MEMBER) && is_array($MEMBER->person_id())) {
 
     $PAGE->stripe_end([$sidebar]);
 
-}
-elseif (isset($MEMBER) && $MEMBER->person_id()) {
+} elseif (isset($MEMBER) && $MEMBER->person_id()) {
 
     twfy_debug_timestamp("before load_extra_info");
     $MEMBER->load_extra_info();

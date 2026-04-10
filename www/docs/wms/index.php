@@ -19,8 +19,7 @@ if (get_http_var("d") != "") {
     $LIST = new WMSLIST();
     $LIST->display('date', $args);
 
-}
-elseif (get_http_var('y') != '') {
+} elseif (get_http_var('y') != '') {
 
     // Show a calendar for a particular year's WMS.
 
@@ -53,8 +52,7 @@ elseif (get_http_var('y') != '') {
             'content' => "wms"
         ]
     ]);
-}
-elseif (get_http_var('id') != '') {
+} elseif (get_http_var('id') != '') {
     $this_page = 'wms';
     $args = [
         'gid' => get_http_var('id'),
