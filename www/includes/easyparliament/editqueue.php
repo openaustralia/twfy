@@ -65,7 +65,6 @@ class EDITQUEUE {
         // The upper object should make sure it's passsing good data.
         // (for now!)
 
-
         /*
         For editqueue in this instance we need:
             user_id INTEGER,
