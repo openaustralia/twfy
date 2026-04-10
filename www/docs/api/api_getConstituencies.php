@@ -96,7 +96,7 @@ function api_getConstituencies($date = 'now()') {
     api_output($output);
 }
 
-/* R_E
+/* RADIUS_OF_EARTH
  * Radius of the earth, in km. This is something like 6372.8 km:
  * http://en.wikipedia.org/wiki/Earth_radius
  */
