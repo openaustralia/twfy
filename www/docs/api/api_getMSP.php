@@ -25,9 +25,10 @@ function api_getMSP_front() {
     </dl>
 
     <h4>Example Response</h4>
-    <pre>&lt;twfy&gt;
-                  &lt;/twfy&gt;
-                </pre>
+    <pre>
+        &lt;twfy&gt;
+        &lt;/twfy&gt;
+    </pre>
 
     <?php
 }
