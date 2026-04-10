@@ -132,9 +132,8 @@ class SEARCHENGINE {
                         $value = 3;
                     } elseif ($value == 'wms' || $value == 'statements' || $value == 'statement') {
                         $value = 4;
-                    }
-                    // Adding section:senate but not removing lords & lordsdebates in case they are used anywhere.
-                    elseif ($value == 'lordsdebates' || $value == 'lords' || $value == 'senate') {
+                    } elseif ($value == 'lordsdebates' || $value == 'lords' || $value == 'senate') {
+                        // Adding section:senate but not removing lords & lordsdebates in case they are used anywhere.
                         $value = 101;
                     } elseif ($value == 'ni') {
                         $value = 5;
