@@ -1296,8 +1296,8 @@ class PAGE {
             $url = urlencode('http://' . DOMAIN . '/' . $this_page);
             ?>
                 <script type="text/javascript"><!--
-                                                            an=navigator.appName;sr='http://x3.extreme-dm.com/';srw="na";srb="na";d=document;r=41;function pr(n) {
-                                                            d.write("<div><img alt=\"\" src=\""+sr+"n\/?tag=fawkes&p=<?php echo $url; ?>& j=y & srw="+srw+" & srb="+srb+" & l="+escape(d.referrer)+" & rs="+r+"\" height=\"1\" width=\"1\"></" + "div>");}
+                                                                        an=navigator.appName;sr='http://x3.extreme-dm.com/';srw="na";srb="na";d=document;r=41;function pr(n) {
+                                                                        d.write("<div><img alt=\"\" src=\""+sr+"n\/?tag=fawkes&p=<?php echo $url; ?>& j=y & srw="+srw+" & srb="+srb+" & l="+escape(d.referrer)+" & rs="+r+"\" height=\"1\" width=\"1\"></" + "div>");}
                     s = screen; srw = s.width; an != "Netscape" ? srb = s.colorDepth : srb = s.pixelDepth
                     pr()//-->
                 </script><noscript>
@@ -2804,9 +2804,8 @@ and has had no written questions answered for which we know the department or su
                     $letter_link = $URL->generate('url');
 
                     $letters[] = "<li class=\"on\"><a href=\"" . $letter_link . "\">" . $letter . "</a></li>";
-                }
-                // Otherwise in list view show no link.
-                else {
+                } else {
+                    // Otherwise in list view show no link.
                     $letters[] = "<li class=\"on\">" . $letter . "</li>";
                 }
             } elseif (!empty($GLOSSARY->alphabet[$letter])) {
