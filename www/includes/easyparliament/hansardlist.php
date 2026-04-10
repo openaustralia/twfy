@@ -224,14 +224,16 @@ class HANSARDLIST {
      *
      */
     public function most_recent_day() {
-        // Very simple. Returns an array of stuff about the most recent data
-        // for this major:
+        /*
+        Very simple. Returns an array of stuff about the most recent data
+        for this major:
 
-        // Array (
-        // 'hdate'        => 'YYYY-MM-DD',
-        // 'timestamp' => 124453679,
-        // 'listurl'    => '/foo/?id=bar'
-        // )
+        Array (
+            'hdate'        => 'YYYY-MM-DD',
+            'timestamp' => 124453679,
+            'listurl'    => '/foo/?id=bar'
+        )
+        */
 
         // When we do this function the first time we cache the
         // results in this variable. As it's an expensive query.
