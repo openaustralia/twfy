@@ -128,8 +128,7 @@ if (is_numeric(get_http_var('id')) && is_numeric(get_http_var('v'))) {
             // We're not checking the validity of the contents of $votecookie,
             // just doing it.
             $prev_epvotes = explode('+', $votecookie);
-        }
-        else {
+        } else {
             $prev_epvotes = [];
         }
 
@@ -147,8 +146,7 @@ if (is_numeric(get_http_var('id')) && is_numeric(get_http_var('v'))) {
             else {
                 $q = $db->query("UPDATE anonvotes SET no_votes = no_votes + 1 WHERE epobject_id = '" . addslashes($epobject_id) . "'");
             }
-        }
-        else {
+        } else {
             if ($vote == 1) {
                 $q = $db->query("INSERT INTO anonvotes (epobject_id, yes_votes) VALUES ('" . addslashes($epobject_id) . "', '1')");
             }
@@ -184,8 +182,7 @@ if (is_numeric(get_http_var('id')) && is_numeric(get_http_var('v'))) {
 
         if ($q->rows() == 1) {
             voteerror("You have already rated this item. You can only rate something once.");
-        }
-        else {
+        } else {
             // Add the vote.
             $q = $db->query("INSERT INTO uservotes (user_id, epobject_id, vote) VALUES ('" . addslashes($THEUSER->user_id()) . "', '" . addslashes($epobject_id) . "', '" . addslashes($vote) . "')");
             if (!$q->success()) {

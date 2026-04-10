@@ -180,8 +180,7 @@ class USER {
             return FALSE;
             twfy_debug("USER", "There is more than one user with an id of '" . htmlentities($user_id) . "'");
 
-        }
-        else {
+        } else {
             return FALSE;
             twfy_debug("USER", "There is no user with an id of '" . htmlentities($user_id) . "'");
         }
@@ -311,8 +310,7 @@ class USER {
                 return FALSE;
             }
 
-        }
-        else {
+        } else {
             // Couldn't add the user's data to the DB.
             return FALSE;
         }
@@ -360,8 +358,7 @@ class USER {
 
         if ($success) {
             return TRUE;
-        }
-        else {
+        } else {
             return FALSE;
         }
     }
@@ -397,8 +394,7 @@ class USER {
                 return FALSE;
             }
 
-        }
-        else {
+        } else {
 
             return FALSE;
 
@@ -453,8 +449,7 @@ class USER {
 
             // End password generating stuff.
 
-        }
-        else {
+        } else {
 
             // Email didn't exist.
 
@@ -470,8 +465,7 @@ class USER {
             $this->password = $pwd;
             return $pwd;
 
-        }
-        else {
+        } else {
 
             return FALSE;
         }
@@ -525,8 +519,7 @@ class USER {
             else {
                 return FALSE;
             }
-        }
-        else {
+        } else {
             return FALSE;
         }
 
@@ -546,8 +539,7 @@ class USER {
             else {
                 return FALSE;
             }
-        }
-        else {
+        } else {
             return FALSE;
         }
 
@@ -839,8 +831,7 @@ class USER {
     public function constituency_is_set() {
         if ($this->constituency != '') {
             return TRUE;
-        }
-        else {
+        } else {
             return FALSE;
         }
     }
@@ -939,8 +930,7 @@ class USER {
 
             return $details;
 
-        }
-        else {
+        } else {
             $PAGE->error_message("Sorry, we were unable to update user id '" . htmlentities($details["user_id"]) . "'");
             return FALSE;
         }
@@ -1037,8 +1027,7 @@ class THEUSER extends USER {
                 $this->loggedin = FALSE;
             }
 
-        }
-        else {
+        } else {
             twfy_debug("THEUSER init FAILED", "cookie is not of the correct form");
             $this->loggedin = FALSE;
         }
@@ -1092,8 +1081,7 @@ class THEUSER extends USER {
         if ($this->loggedin()) {
             twfy_debug("THEUSER", "isloggedin: true");
             return TRUE;
-        }
-        else {
+        } else {
             twfy_debug("THEUSER", "isloggedin: false");
             return FALSE;
         }
@@ -1131,8 +1119,7 @@ class THEUSER extends USER {
 
             }
 
-        }
-        else {
+        } else {
             // Failed.
             return ["invalidemail" => "There is no user registered with an email of " . htmlentities($email) . '. If you are subscribed to email alerts, you are not necessarily registered on the website. If you register, you will be able to manage your email alerts, as well as leave comments.'];
         }
@@ -1187,8 +1174,7 @@ class THEUSER extends USER {
         if ($expire == 'never') {
             header("Location: $returl");
             setcookie('epuser_id', $cookie, time() + 86400 * 365 * 20, '/', COOKIEDOMAIN);
-        }
-        else {
+        } else {
             header("Location: $returl");
             setcookie('epuser_id', $cookie, 0, '/', COOKIEDOMAIN);
         }
@@ -1284,8 +1270,7 @@ class THEUSER extends USER {
                 return FALSE;
             }
 
-        }
-        else {
+        } else {
             // Couldn't find this user in the DB. Maybe the token was
             // wrong or incomplete?
             return FALSE;
@@ -1355,8 +1340,7 @@ class THEUSER extends USER {
                 return FALSE;
             }
 
-        }
-        else {
+        } else {
             return FALSE;
         }
 

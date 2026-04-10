@@ -184,8 +184,7 @@ class URL {
 
         if (count($url_args) == 0) {
             return $page_url;
-        }
-        else {
+        } else {
             if ($encode == "html") {
                 return $page_url . "?" . implode("&amp;", $url_args);
             }
@@ -244,8 +243,7 @@ class URL {
 
         if ($html != "") {
             return $html . "\n";
-        }
-        else {
+        } else {
             return $html;
         }
 

@@ -180,8 +180,7 @@ class TRACKBACK {
             // Return a success message.
             $this->_trackback_response(0);
 
-        }
-        else {
+        } else {
             die("Sorry, we could not save the trackback to the database. Please <a href=\"mailto:" . CONTACTEMAIL . "\">email us</a> to let us know. Thanks.");
         }
     }
@@ -318,8 +317,7 @@ class TRACKBACK {
             }
             die();
 
-        }
-        else {
+        } else {
             // We're adding a trackback from a page that's probably expecting HTML.
 
             if ($error) {

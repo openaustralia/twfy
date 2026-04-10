@@ -33,8 +33,7 @@ else {
         $already_signed = $q->rows();
         if ($already_signed) {
             print "already signed";
-        }
-        else {
+        } else {
             print "not signed";
         }
     }

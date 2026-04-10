@@ -38,8 +38,7 @@ $PAGE->stripe_start();
     foreach ($site as $k => $v) {
         if ($k == $ip) {
             $o = "<strong>$v</strong>";
-        }
-        else {
+        } else {
             $o = "<a href=\"./?ip=$k\">$v</a>";
         }
         $out[] = $o;

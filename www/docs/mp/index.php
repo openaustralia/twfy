@@ -156,8 +156,7 @@ elseif (get_http_var('pc') != '') {
         // Only do lookup of constituency via postcode if the constituency isn't set.
         if ($cconstituency == "") {
             $constituency = postcode_to_constituency($pc);
-        }
-        else {
+        } else {
             $constituency = $cconstituency;
         }
 
@@ -187,8 +186,7 @@ elseif (get_http_var('pc') != '') {
             ];
 
             $PAGE->stripe_end([$sidebar]);
-        }
-        else {
+        } else {
             // Redirect to the canonical MP page, with a person id.
             $MEMBER = new MEMBER(['constituency' => $constituency]);
             if ($MEMBER->person_id()) {

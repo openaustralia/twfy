@@ -1018,8 +1018,7 @@ class Metadata {
         if (isset($args["section"])) {
             $type = "section";
             $item = $args["section"];
-        }
-        else {
+        } else {
             $type = "page";
             $item = $args["page"];
         }
@@ -1040,8 +1039,7 @@ class Metadata {
         if (is_array($args)) {
             $item = $args[$type];
             $key = $args['key'];
-        }
-        else {
+        } else {
             $var = "this_" . $type;
             // $this_page or $this_section.
             $item = $$var;

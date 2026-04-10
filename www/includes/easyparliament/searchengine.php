@@ -428,8 +428,7 @@ else {
         // we are on.
         if ($matches->size() < 500) {
             $count = $matches->size();
-        }
-        else {
+        } else {
             $count = $matches->get_matches_estimated();
         }
         $duration = getmicrotime() - $start;

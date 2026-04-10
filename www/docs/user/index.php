@@ -57,8 +57,7 @@ switch (get_http_var("pg")) {
 
             $this_page = "otheruseredit";
 
-        }
-        else {
+        } else {
             // Revert to editing THEUSER's own info.
             $this_page = "useredit";
 
@@ -72,8 +71,7 @@ switch (get_http_var("pg")) {
         if ($THEUSER->isloggedin()) {
             $this_page = "useredit";
 
-        }
-        else {
+        } else {
             // Unlikely to get to this page without being logged in,
             // but just in case, show them the blank form.
             $this_page = "userjoin";
@@ -89,8 +87,7 @@ switch (get_http_var("pg")) {
         ) {
             // Logged in user viewing their own details.
             $this_page = 'userviewself';
-        }
-        else {
+        } else {
             // Viewing someone else's details.
             $this_page = "userview";
         }

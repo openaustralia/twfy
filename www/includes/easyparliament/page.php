@@ -86,8 +86,7 @@ class PAGE {
           $LOGINURL->insert(['ret' => $THISPAGE->generate('none')]);
 
           $text = "<a href=\"" . $LOGINURL->generate() . "\">You'd better log in!</a>";
-        }
-        else {
+        } else {
           $text = "That's all folks!";
         }
 
@@ -138,8 +137,7 @@ class PAGE {
           $LOGINURL->insert(['ret' => $THISPAGE->generate('none')]);
 
           $text = "<a href=\"" . $LOGINURL->generate() . "\">You'd better log in!</a>";
-        }
-        else {
+        } else {
           $text = "That's all folks!";
         }
 
@@ -691,8 +689,7 @@ class PAGE {
             // So hilite it and its parent.
             $top_hilite = $this_parent;
             $bottom_hilite = $this_page;
-        }
-        else {
+        } else {
             // This page is not in either menu. So hilite its parent
             // (in the bottom menu) and its grandparent (in the top).
             $top_hilite = $parents_parent;
@@ -803,8 +800,7 @@ public function menu_mobile() {
             // So hilite it and its parent.
             $top_hilite = $this_parent;
             $bottom_hilite = $this_page;
-        }
-        else {
+        } else {
             // This page is not in either menu. So hilite its parent
             // (in the bottom menu) and its grandparent (in the top).
             $top_hilite = $parents_parent;
@@ -909,8 +905,7 @@ public function user_bar($top_hilite = '', $bottom_hilite = '') {
                 $class = $bottompage == $bottom_hilite ? ' class="on"' : '';
                 $bottom_links[] = '<a href="' . $URL->generate() . '" title="' . $title . '"' . $class . '>' . $text . '</a>';
             }
-        }
-        else {
+        } else {
             $editclass = '';
         }
 
@@ -923,8 +918,7 @@ public function user_bar($top_hilite = '', $bottom_hilite = '') {
         if ($this_page != 'userlogout') {
             $LOGOUTURL->insert(["ret" => $returl]);
             $logoutclass = '';
-        }
-        else {
+        } else {
             $logoutclass = ' class="on"';
         }
 
@@ -957,8 +951,7 @@ public function user_bar($top_hilite = '', $bottom_hilite = '') {
             $JOINURL->insert(["ret" => $returl]);
             }
             $joinclass = '';
-        }
-        else {
+        } else {
             $joinclass = ' class="on"';
         }
 
@@ -982,8 +975,7 @@ public function user_bar($top_hilite = '', $bottom_hilite = '') {
             $LOGINURL->insert(["ret" => $returl]);
             }
             $loginclass = '';
-        }
-        else {
+        } else {
             $loginclass = ' class="on"';
         }
 
@@ -3076,8 +3068,7 @@ public function page_links($pagedata) {
 
         if ($n > 1) {
         $URL->insert(['p' => $n]);
-        }
-        else {
+        } else {
         // No page number for the first page.
         $URL->remove(['p']);
         }
@@ -3087,8 +3078,7 @@ public function page_links($pagedata) {
 
         if ($n != $page) {
         $pagelinks[] = '<a href="' . $URL->generate() . '">' . $n . '</a>';
-        }
-        else {
+        } else {
         $pagelinks[] = "<strong>$n</strong>";
         }
     }
@@ -3317,8 +3307,7 @@ public function display_calendar_month($month, $year, $dateArray, $page) {
         // If so, higlight it.
         if ($currentDay == $toDay) {
             $calendar .= '<td class="on">';
-        }
-        else {
+        } else {
             $calendar .= '<td>';
         }
 
@@ -3328,8 +3317,7 @@ public function display_calendar_month($month, $year, $dateArray, $page) {
             $date = sprintf("%04d-%02d-%02d", $year, $month, $currentDay);
             $DAYURL->insert(['d' => $date]);
             $calendar .= "<a href=\"" . $DAYURL->generate() . "\">$currentDay</a></td>";
-        }
-        else {
+        } else {
             $calendar .= "$currentDay</td>";
         }
 
@@ -3528,8 +3516,7 @@ function display_stats_line_house($house, $category, $blurb, $type, $inwhat, $ex
         }
         elseif ($q == 4) {
             print 'well below average';
-        }
-        else {
+        } else {
             print '[Impossible quintile!]';
         }
             print ' amongst ';

@@ -76,8 +76,7 @@ class COMMENTLIST {
             // Get all the dta that's to be rendered.
             $data = $this->$function($args);
 
-        }
-        else {
+        } else {
             // Don't have a valid $view;.
             $PAGE->error_message("You haven't specified a view type.");
             return FALSE;
@@ -91,8 +90,7 @@ class COMMENTLIST {
         }
         elseif ($view == 'search') {
             $template = 'comments_search';
-        }
-        else {
+        } else {
             $template = 'comments';
         }
 
@@ -170,15 +168,13 @@ class COMMENTLIST {
 
         if (isset($args['num']) && is_numeric($args['num'])) {
             $num = $args['num'];
-        }
-        else {
+        } else {
             $num = 10;
         }
 
         if (isset($args['page']) && is_numeric($args['page'])) {
             $page = $args['page'];
-        }
-        else {
+        } else {
             $page = 1;
         }
 
@@ -300,15 +296,13 @@ class COMMENTLIST {
 
         if (isset($args['num']) && is_numeric($args['num'])) {
             $num = $args['num'];
-        }
-        else {
+        } else {
             $num = 25;
         }
 
         if (isset($args['page']) && is_numeric($args['page'])) {
             $page = $args['page'];
-        }
-        else {
+        } else {
             $page = 1;
         }
 
@@ -340,8 +334,7 @@ class COMMENTLIST {
             $q = $this->db->query($q);
             $data['full_name'] = member_full_name($q->field(0, 'house'), $q->field(0, 'title'), $q->field(0, 'first_name'), $q->field(0, 'last_name'), $q->field(0, 'constituency'));
             $q = 'SELECT COUNT(*) AS count FROM comments,hansard,member WHERE visible=1 AND comments.epobject_id = hansard.epobject_id and hansard.speaker_id = member.member_id and person_id = ' . $args['pid'];
-        }
-        else {
+        } else {
             $q = 'SELECT COUNT(*) AS count FROM comments WHERE visible=1';
         }
         $q = $this->db->query($q);
@@ -362,15 +355,13 @@ class COMMENTLIST {
 
         if (isset($args['num']) && is_numeric($args['num'])) {
             $num = $args['num'];
-        }
-        else {
+        } else {
             $num = 10;
         }
 
         if (isset($args['page']) && is_numeric($args['page'])) {
             $page = $args['page'];
-        }
-        else {
+        } else {
             $page = 1;
         }
 

@@ -53,8 +53,7 @@ if (count($debatesdata) > 0 && count($wransdata) > 0 && count($whalldata) > 0 &&
             // Less than a week ago, so like "last Tuesday's".
             $daytext = gmdate('l', $debatesdata['timestamp']) . "'s";
 
-        }
-        else {
+        } else {
 
             // Over a week ago.
             $daytext = "the most recent ";
@@ -105,8 +104,7 @@ $PAGE->block_start(['id' => 'intro', 'title' => 'Election special! Find out how 
                     href="<?php echo $CHANGEURL->generate(); ?>">Change your postcode</a>)</p>
             <?php
 
-        }
-        else {
+        } else {
             // User is not logged in and doesn't have a personal postcode set.
             ?>
             <form action="<?php echo $MPURL->generate(); ?>" method="get">

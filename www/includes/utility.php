@@ -162,8 +162,7 @@ function error_handler(string $errno, string $errmsg, string $filename, int $lin
         if (is_object($PAGE)) {
             $PAGE->error_message($message, $fatal);
             vardump(adodb_backtrace());
-        }
-        else {
+        } else {
             vardump($message);
             vardump(adodb_backtrace());
         }

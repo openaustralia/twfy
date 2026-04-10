@@ -307,8 +307,7 @@ class COMMENTREPORT {
                                     '" . $this->db->escape($THEUSER->user_id()) . "'
 									)
 						";
-        }
-        else {
+        } else {
             $sql = "INSERT INTO commentreports
 									(comment_id, body, reported, firstname, lastname, email)
                             VALUES	('" . $this->db->escape($COMMENT->comment_id()) . "',
@@ -383,8 +382,7 @@ class COMMENTREPORT {
             send_template_email($data, $merge);
 
             return TRUE;
-        }
-        else {
+        } else {
             return FALSE;
         }
 
@@ -453,8 +451,7 @@ class COMMENTREPORT {
                 $PAGE->error_message("Sorry, we were unable to lock this report.");
                 return FALSE;
             }
-        }
-        else {
+        } else {
             $PAGE->error_message("You are not authorised to delete comments.");
             return FALSE;
         }
@@ -476,8 +473,7 @@ class COMMENTREPORT {
             $this->locked = NULL;
             $this->lockedby = NULL;
             return TRUE;
-        }
-        else {
+        } else {
             return FALSE;
         }
     }
@@ -548,8 +544,7 @@ class COMMENTREPORT {
                 return FALSE;
             }
 
-        }
-        else {
+        } else {
             $PAGE->error_message("You are not authorised to resolve reports.");
             return FALSE;
         }

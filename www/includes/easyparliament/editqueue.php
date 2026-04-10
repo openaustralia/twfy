@@ -101,8 +101,7 @@ class EDITQUEUE {
 
             return $this->editqueue_id;
 
-        }
-        else {
+        } else {
             return FALSE;
         }
     }
@@ -274,8 +273,7 @@ class EDITQUEUE {
             $this->update_pending_count();
 
             return TRUE;
-        }
-        else {
+        } else {
             return FALSE;
         }
     }

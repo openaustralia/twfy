@@ -38,8 +38,7 @@ if ($THEUSER->loggedin()) {
         }
         elseif ($commercial == -1) {
             echo 'Key';
-        }
-        else {
+        } else {
             echo 'Non-commercial key';
         }
         echo ', created ', $created;
