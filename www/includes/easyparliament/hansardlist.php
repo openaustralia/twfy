@@ -1348,43 +1348,45 @@ class HANSARDLIST {
      *
      */
     public function _get_data_by_calendar($args) {
-        // We should have come here via _get_data_by_calendar() in
-        // DEBATELIST or WRANLIST, so $this->major should now be set.
+        /*
+        We should have come here via _get_data_by_calendar() in
+        DEBATELIST or WRANLIST, so $this->major should now be set.
 
-        // You can ask for:
-        // * The most recent n months - $args['months'] => n
-        // * All months from one year - $args['year'] => 2004
-        // * One month - $args['year'] => 2004, $args['month'] => 8
-        // * The months from this year so far (no $args variables needed).
+        You can ask for:
+            * The most recent n months - $args['months'] => n
+            * All months from one year - $args['year'] => 2004
+            * One month - $args['year'] => 2004, $args['month'] => 8
+            * The months from this year so far (no $args variables needed).
 
-        // $args['onday'] may be like '2004-04-20' - if it appears in the
-        // calendar, this date will be highlighted and will have no link.
+        $args['onday'] may be like '2004-04-20' - if it appears in the
+        calendar, this date will be highlighted and will have no link.
 
-        // Returns a data structure of years, months and dates:
-        // $data = array(
-        // 'info' => array (
-        // 'page' => 'debates',
-        // 'major'    => 1
-        // 'onpage' => '2004-02-01'
-        // ),
-        // 'years' => array (
-        // '2004' => array (
-        // '01' => array ('01', '02', '03' ... '31'),
-        // '02' => etc...
-        // )
-        // )
-        // )
-        // It will just have entries for days for which we have relevant
-        // hansard data.
-        // But months that have no data will still have a month array (empty).
+        Returns a data structure of years, months and dates:
+        $data = array(
+            'info' => array (
+                'page' => 'debates',
+                'major'    => 1
+                'onpage' => '2004-02-01'
+            ),
+            'years' => array (
+                '2004' => array (
+                    '01' => array ('01', '02', '03' ... '31'),
+                    '02' => etc...
+                )
+            )
+        );
+        It will just have entries for days for which we have relevant
+        hansard data.
+        But months that have no data will still have a month array (empty).
 
-        // $data['info'] may have 'year' => 2004 if we're just viewing a single year.
-        // $data['info'] may have 'prevlink' => '/debates/?y=2003' or something
-        // if we're viewing recent months.
+        $data['info'] may have 'year' => 2004 if we're just viewing a single year.
+        $data['info'] may have 'prevlink' => '/debates/?y=2003' or something
+        if we're viewing recent months.
+        */
 
         global $DATA, $this_page, $PAGE, $hansardmajors;
 
-        // What we return.
+        //  What we return.
         $data = [
             'info' => [
                 'page' => $this->listpage,
