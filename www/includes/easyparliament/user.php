@@ -194,12 +194,15 @@ class USER {
         // Then optionally (and usually) calls another function to
         // send them a confirmation email.
 
-        // $details is an associative array of all the user's details, of the form:
-        // array (
-        // "firstname" => "Fred",
-        // "lastname"    => "Bloggs",
-        // etc... using the same keys as the object variable names.
-        // )
+        /*
+        $details is an associative array of all the user's details, of the form:
+        array (
+            "firstname" => "Fred",
+            "lastname"    => "Bloggs",
+            etc... using the same keys as the object variable names.
+        )
+        */
+
         // The BOOL variables (eg, optin) will be true or false and will need to be
         // converted to 1/0 for MySQL.
         global $REMOTE_ADDR;
