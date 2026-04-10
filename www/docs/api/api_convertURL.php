@@ -58,8 +58,7 @@ function get_listurl($q) {
     $fragment = '';
     if ($id_data['htype'] == '11' || $id_data['htype'] == '10') {
         $LISTURL->insert(['id' => $id_data['gid']]);
-    }
-    else {
+    } else {
         $parent_epobject_id = $id_data['subsection_id'];
         $parent_gid = '';
         $r = $db->query("SELECT gid
