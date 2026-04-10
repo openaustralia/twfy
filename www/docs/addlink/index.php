@@ -19,8 +19,7 @@ if ((get_http_var('g') != '') && (get_http_var('previewterm') == '')) {
     // We're searching for something.
     $args['s'] = filter_user_input(get_http_var('g'), 'strict');
     $GLOSSARY = new GLOSSARY($args);
-}
-else {
+} else {
     $args['sort'] = "regexp_replace";
     $GLOSSARY = new GLOSSARY($args);
     $args['s'] = filter_user_input(get_http_var('g'), 'strict');
@@ -47,12 +46,10 @@ if (get_http_var("submitterm") != '') {
         // $success will be the editqueue_id().
         print "<h4>All good so far...</h4><p>Your definition for <strong>&quot;" . $data['title'] . "&quot;</strong> now awaits moderator approval or somesuch thing...</p>";
         $PAGE->glossary_links();
-    }
-    else {
+    } else {
         $PAGE->error_message("Sorry, there was an error and we were unable to add your Glossary item.");
     }
-}
-elseif (get_http_var("previewterm") != '') {
+} elseif (get_http_var("previewterm") != '') {
     // We're previewing a Glossary definition.
 
     if (get_http_var('definition') != '') {
@@ -76,8 +73,7 @@ elseif (get_http_var("previewterm") != '') {
         // Then, in case they aren't happy with it, show them the form again.
         $PAGE->glossary_add_definition_form($args);
     }
-}
-elseif ($GLOSSARY->query != '') {
+} elseif ($GLOSSARY->query != '') {
     // Deal with all the various searching possiblities...
 
     if ($GLOSSARY->num_search_matches >= 1) {
@@ -95,19 +91,16 @@ elseif ($GLOSSARY->query != '') {
             if ($args['count']) {
                 // Display the Add definition form.
                 $PAGE->glossary_add_link_form($args);
-            }
-            else {
+            } else {
                 print "<h4>No dice!</h4><p>Much as we'd love you to add a definition for <strong></strong>, it doesn't seem to appear in hansard at all...</p>";
                 $PAGE->glossary_links();
             }
-        }
-        else {
+        } else {
             print "<h4>Humdinger!</h4><p>it would appear that you aren't allowed to add glossary terms. How odd...</p>";
             $PAGE->glossary_links();
         }
     }
-}
-else {
+} else {
 
     $PAGE->stripe_start();
 

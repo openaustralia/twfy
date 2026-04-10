@@ -34,8 +34,7 @@ $success = $ALERT->confirm(get_http_var('t'));
 
 if ($success) {
     undelete_success();
-}
-else {
+} else {
     undelete_error();
 }
 

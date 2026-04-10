@@ -11,8 +11,7 @@ $PAGE->page_start();
 $PAGE->stripe_start();
 $db = new ParlDB();
 
-if (!$dept) {
-} else {
+if ($dept) {
     $dept = strtolower(str_replace('_', ' ', $dept));
     $q = $db->query('select epobject.epobject_id from hansard,epobject
 		where hansard.epobject_id=epobject.epobject_id and major=3 and section_id=0

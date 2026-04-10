@@ -45,8 +45,7 @@ $notloaded = '';
                 if ($date > '2001-05-11') {
                     $out[$date] = "<li>$date : $part version $version, size $stat[7] bytes, last modified " . date('Y-m-d H:i:s', $stat[9]) . "</li>\n";
                 }
-            }
-            else {
+            } else {
                 if (!array_key_exists($date, $hdates) || !array_key_exists($majors[$k], $hdates[$date])) {
                     $notloaded .= "<li>$date : $part version $version</li>\n";
                 }

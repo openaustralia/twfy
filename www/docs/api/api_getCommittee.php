@@ -7,8 +7,7 @@
 /**
  *
  */
-function api_getCommittee_front()
-{
+function api_getCommittee_front() {
     ?>
     <p><big>Fetch the members of a Select Committee.</big></p>
 
@@ -55,8 +54,7 @@ function api_getCommittee_front()
 /**
  *
  */
-function api_getCommittee_name($name)
-{
+function api_getCommittee_name($name) {
     $db = new ParlDB();
 
     // Names in the database have & as &amp;...
@@ -113,7 +111,6 @@ function api_getCommittee_name($name)
 /**
  *
  */
-function api_getCommittee_date($date)
-{
+function api_getCommittee_date($date) {
     api_error('You need to give a name!');
 }

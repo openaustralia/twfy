@@ -56,8 +56,7 @@ function api_getGeometry_name($name) {
     $out = _api_getGeometry_name($name);
     if ($out) {
         api_output($out);
-    }
-    else {
+    } else {
         api_error('Name not recognised');
     }
 }

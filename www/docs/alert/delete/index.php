@@ -42,8 +42,7 @@ $success = $ALERT->delete(get_http_var('t'));
 
 if ($success) {
     delete_success();
-}
-else {
+} else {
     delete_error();
 }
 

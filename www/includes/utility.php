@@ -40,8 +40,7 @@ function twfy_debug($header, $text = "") {
 
         if ($debug_level > count($levels)) {
             $max_level_to_show = count($levels);
-        }
-        else {
+        } else {
             $max_level_to_show = $debug_level;
         }
 
@@ -99,20 +98,17 @@ function error_handler(string $errno, string $errmsg, string $filename, int $lin
     $err = '';
     if (isset($_SERVER['REQUEST_URI'])) {
         $err .= "URL:\t\thttp://" . DOMAIN . $_SERVER['REQUEST_URI'] . "\n";
-    }
-    else {
+    } else {
         $err .= "URL:\t\tNone - running from command line?\n";
     }
     if (isset($_SERVER['HTTP_REFERER'])) {
         $err .= "Referer:\t" . $_SERVER['HTTP_REFERER'] . "\n";
-    }
-    else {
+    } else {
         $err .= "Referer:\tNone\n";
     }
     if (isset($_SERVER['HTTP_USER_AGENT'])) {
         $err .= "User-Agent:\t" . $_SERVER['HTTP_USER_AGENT'] . "\n";
-    }
-    else {
+    } else {
         $err .= "User-Agent:\tNone\n";
     }
     $err .= "Number:\t\t$errno\n";
@@ -159,8 +155,7 @@ function error_handler(string $errno, string $errmsg, string $filename, int $lin
     $fatal_errors = [E_ERROR, E_USER_ERROR];
     if (in_array($errno, $fatal_errors)) {
         $fatal = TRUE;
-    }
-    else {
+    } else {
         $fatal = FALSE;
     }
 
@@ -191,8 +186,7 @@ function error_handler(string $errno, string $errmsg, string $filename, int $lin
 
         if (is_object($PAGE)) {
             $PAGE->error_message($message, $fatal);
-        }
-        else {
+        } else {
             print "<p>Oops, sorry, an error has occurred!</p>\n";
         }
 
@@ -292,8 +286,7 @@ function validate_email($string) {
             '[-!#$%&\'*+\\.\\0-9=?A-Z^_`a-z{|}~]+$/', $string)
     ) {
         return FALSE;
-    }
-    else {
+    } else {
         return TRUE;
     }
 }
@@ -307,8 +300,7 @@ function validate_postcode($postcode) {
     $num = '0123456789';
     if (preg_match("/^[$num][$num][$num][$num]/", $postcode)) {
         return TRUE;
-    }
-    else {
+    } else {
         return FALSE;
     }
 }
@@ -357,8 +349,7 @@ function format_timestamp($timestamp, $format) {
         [$string, $year, $month, $day, $hour, $min, $sec] = $matches;
 
         return gmdate($format, gmmktime($hour, $min, $sec, $month, $day, $year));
-    }
-    else {
+    } else {
         return "";
     }
 
@@ -376,8 +367,7 @@ function format_date($date, $format) {
         [$string, $year, $month, $day] = $matches;
 
         return gmdate($format, gmmktime(0, 0, 0, $month, $day, $year));
-    }
-    else {
+    } else {
         return "";
     }
 
@@ -395,8 +385,7 @@ function format_time($time, $format) {
         [$string, $hour, $min, $sec] = $matches;
 
         return gmdate($format, gmmktime($hour, $min, $sec));
-    }
-    else {
+    } else {
         return "";
     }
 }
@@ -435,29 +424,24 @@ function relative_time($datetime) {
         $date = substr($datetime, 0, 10);
         return format_date($date, LONGDATEFORMAT);
 
-    }
-    else {
+    } else {
         $relative_date = '';
         if ($weeks > 0) {
             // Weeks and days.
             $relative_date .= ($relative_date ? ', ' : '') . $weeks . ' week' . ($weeks > 1 ? 's' : '');
             $relative_date .= $days > 0 ? ($relative_date ? ', ' : '') . $days . ' day' . ($days > 1 ? 's' : '') : '';
-        }
-        elseif ($days > 0) {
+        } elseif ($days > 0) {
             // Days and hours.
             $relative_date .= ($relative_date ? ', ' : '') . $days . ' day' . ($days > 1 ? 's' : '');
             $relative_date .= $hours > 0 ? ($relative_date ? ', ' : '') . $hours . ' hour' . ($hours > 1 ? 's' : '') : '';
-        }
-        elseif ($hours > 0) {
+        } elseif ($hours > 0) {
             // Hours and minutes.
             $relative_date .= ($relative_date ? ', ' : '') . $hours . ' hour' . ($hours > 1 ? 's' : '');
             $relative_date .= $minutes > 0 ? ($relative_date ? ', ' : '') . $minutes . ' minute' . ($minutes > 1 ? 's' : '') : '';
-        }
-        elseif ($minutes > 0) {
+        } elseif ($minutes > 0) {
             // Minutes only.
             $relative_date .= ($relative_date ? ', ' : '') . $minutes . ' minute' . ($minutes > 1 ? 's' : '');
-        }
-        else {
+        } else {
             // Seconds only.
             $relative_date .= ($relative_date ? ', ' : '') . $seconds . ' second' . ($seconds > 1 ? 's' : '');
         }
@@ -490,18 +474,15 @@ function parse_date($date) {
         if ($year < 100) {
             $year += 2000;
         }
-    }
-    elseif (preg_match('#(\d+)/(\d+)#', $date, $m)) {
+    } elseif (preg_match('#(\d+)/(\d+)#', $date, $m)) {
         $day = $m[1];
         $month = $m[2];
         $year = date('Y');
-    }
-    elseif (preg_match('#^([0123][0-9])([01][0-9])([0-9][0-9])$#', $date, $m)) {
+    } elseif (preg_match('#^([0123][0-9])([01][0-9])([0-9][0-9])$#', $date, $m)) {
         $day = $m[1];
         $month = $m[2];
         $year = $m[3];
-    }
-    else {
+    } else {
         // 0 Sunday, 6 Saturday
         $dayofweek = date('w');
         if (preg_match('#next\s+(sun|sunday|mon|monday|tue|tues|tuesday|wed|wednes|wednesday|thu|thur|thurs|thursday|fri|friday|sat|saturday)\b#i', $date, $m)) {
@@ -511,8 +492,7 @@ function parse_date($date) {
             }
             elseif ($dayofweek == 4) {
                 $now = strtotime('4 days', $now);
-            }
-            else {
+            } else {
                 $now = strtotime('5 days', $now);
             }
         }
@@ -633,8 +613,7 @@ function filter_user_input($text, $filter_type) {
         // No tags allowed at all!
         $filter->allowed = [];
 
-    }
-    else {
+    } else {
         // Comment.
         // Only allowing <b> and <i> tags.
         $filter->allowed = [
@@ -729,8 +708,7 @@ function fix_gid_from_db($gid, $keepmajor = FALSE) {
     if ($keepmajor) {
         $newgid = substr($gid, strpos($gid, '/') + 1);
         $newgid = str_replace('/', '_', $newgid);
-    }
-    else {
+    } else {
         $newgid = substr($gid, strrpos($gid, '/') + 1);
     }
 
@@ -810,19 +788,16 @@ function send_template_email($data, $merge, $bulk = FALSE) {
     if (preg_match("/Subject:/", $firstline)) {
         if (isset($data['subject'])) {
             $subject = trim($data['subject']);
-        }
-        else {
+        } else {
             $subject = trim(substr($firstline, 8));
         }
 
         // Either way, remove this subject line from the template.
         $emailtext = substr($emailtext, strpos($emailtext, "\n"));
 
-    }
-    elseif (isset($data['subject'])) {
+    } elseif (isset($data['subject'])) {
         $subject = $data['subject'];
-    }
-    else {
+    } else {
         $PAGE->error_message("We don't have a subject line for the email, so it wasn't sent.");
         return FALSE;
     }
@@ -907,8 +882,7 @@ function recursive_strip($a) {
         foreach ($a as $key => $val) {
             $a[$key] = recursive_strip($val);
         }
-    }
-    else {
+    } else {
         $a = stripslashes($a);
     }
     return $a;
@@ -999,8 +973,7 @@ function make_member_url($name, $const = '', $house = 1) {
     $out = urlencode(str_replace($s, $r, $name));
     if ($const && ($house == 1 || $house == 2)) {
         $out .= '/' . urlencode(str_replace($s, $r, strtolower($const)));
-    }
-    elseif ($house == 0) {
+    } elseif ($house == 0) {
         $out = 'elizabeth_the_second';
     }
     return $out;
@@ -1052,8 +1025,7 @@ function prettify_office($pos, $dept) {
         if (array_key_exists($pretty, $lookup)) {
             $pretty = $lookup[$pretty];
         }
-    }
-    elseif ($pos) {
+    } elseif ($pos) {
         $pretty = $pos;
     }
     // Member of Select Committee.
@@ -1087,8 +1059,7 @@ function major_summary($data, $limit = "") {
             }
             elseif ($todaystime - $array['timestamp'] <= (6 * 86400)) {
                 $daytext[$major] = gmdate('l', $array['timestamp']) . "'s";
-            }
-            else {
+            } else {
                 $daytext[$major] = "The most recent ";
             }
         }
@@ -1104,8 +1075,7 @@ function major_summary($data, $limit = "") {
 
         if ($one_date) {
             $date = $data['date'];
-        }
-        else {
+        } else {
             $date = $data[$printed_majors[0]]['hdate'];
         }
         $q = $db->query('SELECT major, body, gid
@@ -1143,8 +1113,7 @@ function major_summary($data, $limit = "") {
     if (array_key_exists(4, $data)) {
         if ($one_date) {
             $date = $data['date'];
-        }
-        else {
+        } else {
             $date = $data[4]['hdate'];
         }
         $q = $db->query('SELECT section_id, body, gid FROM hansard,epobject
@@ -1164,8 +1133,7 @@ function major_summary($data, $limit = "") {
                     }
                     print '<li>' . $body . '<ul>';
 
-                }
-                else {
+                } else {
                     $LISTURL->insert(['id' => $gid]);
                     print '<li><a href="' . $LISTURL->generate() . '">';
                     print $body . '</a>';
@@ -1189,8 +1157,7 @@ function _major_summary_title($major, $data, $LISTURL, $daytext) {
     print '<a href="';
     if (isset($data[$major]['listurl'])) {
         print $data[$major]['listurl'];
-    }
-    else {
+    } else {
         print $LISTURL->generate();
     }
     print '">' . $hansardmajors[$major]['title'] . '</a>';

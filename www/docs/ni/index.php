@@ -17,8 +17,7 @@ if (get_http_var("d") != "") {
     $LIST = new NILIST();
     $LIST->display('date', $args);
 
-}
-elseif (get_http_var('id') != "") {
+} elseif (get_http_var('id') != "") {
     $this_page = "nidebates";
     $args = [
         'gid' => get_http_var('id'),
@@ -37,8 +36,7 @@ elseif (get_http_var('id') != "") {
     // Glossary can be turned off in the url.
     if (get_http_var('ug') == 1) {
         $args['glossarise'] = 0;
-    }
-    else {
+    } else {
         $args['sort'] = "regexp_replace";
         $GLOSSARY = new GLOSSARY($args);
     }
@@ -54,8 +52,7 @@ elseif (get_http_var('id') != "") {
         exit;
     }
 
-}
-elseif (get_http_var('y') != '') {
+} elseif (get_http_var('y') != '') {
 
     $this_page = 'nidebatesyear';
 
@@ -86,8 +83,7 @@ elseif (get_http_var('y') != '') {
         ]
     ]);
 
-}
-elseif (get_http_var('gid') != '') {
+} elseif (get_http_var('gid') != '') {
     $this_page = 'nidebate';
     $args = ['gid' => get_http_var('gid')];
     $NILIST = new NILIST();
@@ -107,8 +103,7 @@ elseif (get_http_var('gid') != '') {
         $COMMENTLIST->display('ep', $args);
         $PAGE->stripe_end();
     }
-}
-else {
+} else {
     $this_page = "nidebatesfront";
     $PAGE->page_start();
     $PAGE->stripe_start();
