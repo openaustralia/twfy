@@ -968,9 +968,8 @@ function member_full_name($house, $title, $first_name, $last_name, $constituency
         if ($title) {
             $s = $title . ' ' . $s;
         }
-    }
-    // Queen.
-    elseif ($house == 0) {
+    } elseif ($house == 0) {
+        // Queen.
         $s = "$first_name $last_name";
     }
     return $s;
