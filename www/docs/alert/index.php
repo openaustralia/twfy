@@ -93,11 +93,6 @@ function check_input($details) {
     if (!ctype_digit($details['pid']) && $details['pid'] != '') {
         $errors['pid'] = 'Please choose a valid person';
     }
-    /*
-     * if (!$details['keyword']) {
-     * $errors['keyword'] = 'Please enter a search term';
-     * }
-     */
 
     if ((get_http_var('submitted') || get_http_var('only')) && !$details['pid'] && !$details['keyword']) {
         $errors['keyword'] = 'Please choose a person and/or enter a keyword';
