@@ -62,8 +62,7 @@ if (isset($data['rows'])) {
             }
             elseif ($row['htype'] == '11' && $hansardmajors[$row['major']]['type'] == 'other') {
                 $has_content = TRUE;
-            }
-            else {
+            } else {
                 $has_content = FALSE;
             }
             $entry = $row;
@@ -71,8 +70,7 @@ if (isset($data['rows'])) {
                 $entry['excerpt'] = trim_characters($entry['excerpt'], 0, 200);
             }
             if ($has_content) {
-            }
-            else {
+            } else {
                 unset($entry['listurl']);
                 unset($entry['commentsurl']);
                 unset($entry['comment']);

@@ -74,8 +74,7 @@ for ($row = 0; $row < $q->rows(); $row++) {
         $confirmed = 'Yes';
         $name = '<a href="' . $USERURL->generate() . '">' . htmlspecialchars($q->field($row, 'firstname'))
         . ' ' . htmlspecialchars($q->field($row, 'lastname')) . '</a>';
-    }
-    else {
+    } else {
         $confirmed = 'No';
         $name = htmlspecialchars($q->field($row, 'firstname') . ' ' . $q->field($row, 'lastname'));
     }

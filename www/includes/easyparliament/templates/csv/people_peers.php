@@ -32,8 +32,7 @@ function render_peers_row($peer, $order) {
     print $peer['person_id'] . ',' . ucfirst($name) . ',';
     if (array_key_exists($peer['party'], $parties)) {
         print $parties[$peer['party']];
-    }
-    else {
+    } else {
         print $peer['party'];
     }
     print ',http://' . DOMAIN . WEBPATH . 'senator/' . make_member_url($name, $peer['constituency']);

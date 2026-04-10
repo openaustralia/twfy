@@ -35,8 +35,7 @@ class PEOPLE {
             // Get all the data that's to be rendered.
             $data = $this->$function($args);
 
-        }
-        else {
+        } else {
             $PAGE->error_message("You haven't specified a view type.");
             return FALSE;
         }
@@ -160,8 +159,7 @@ class PEOPLE {
             if (isset($data[$p_id])) {
                 $data[$p_id]['dept'] = array_merge((array) $data[$p_id]['dept'], (array) $dept);
                 $data[$p_id]['pos'] = array_merge((array) $data[$p_id]['pos'], (array) $pos);
-            }
-            else {
+            } else {
                 $narray = [
                     'person_id' => $p_id,
                     'title' => $q->field($row, 'title'),

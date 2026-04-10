@@ -84,14 +84,12 @@ function postcode_to_constituency_internal($postcode) {
     if ($q->rows == 1) {
         $name = $q->field(0, 'name');
         return $name;
-    }
-    elseif ($q->rows > 1) {
+    } elseif ($q->rows > 1) {
         for ($i = 0; $i < $q->rows; $i++) {
             $name[] = $q->field($i, 'name');
         }
         return $name;
-    }
-    else {
+    } else {
         return '';
     }
 }

@@ -23,8 +23,7 @@ if ($this_page == 'whallday') {
             'onday' => $date
         ];
         $title = 'Westminster Hall debates this month';
-    }
-    else {
+    } else {
         $args = [
             'months' => 1
         ];

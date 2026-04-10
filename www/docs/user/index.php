@@ -133,15 +133,13 @@ if (get_http_var("submitted") == "true") {
         if (get_http_var("deleted") != "") {
             $deleted = get_http_var("deleted");
             $details["deleted"] = $deleted[0] == "true" ? TRUE : FALSE;
-        }
-        else {
+        } else {
             $details['deleted'] = FALSE;
         }
         if (get_http_var("confirmed") != "") {
             $confirmed = get_http_var("confirmed");
             $details["confirmed"] = $confirmed[0] == "true" ? TRUE : FALSE;
-        }
-        else {
+        } else {
             $details['confirmed'] = FALSE;
         }
     }
@@ -163,14 +161,12 @@ if (get_http_var("submitted") == "true") {
 
         $PAGE->page_end();
 
-    }
-    elseif ($this_page == "userjoin") {
+    } elseif ($this_page == "userjoin") {
         // No errors so far, so try to sign up and log in.
 
         add_user($details);
 
-    }
-    else {
+    } else {
         // No errors so far, editing an existing user,
         // $this_page == "useredit" or "otheruseredit".
 
@@ -179,8 +175,7 @@ if (get_http_var("submitted") == "true") {
     }
 
 
-}
-else {
+} else {
     // THEUSER has just arrived at this page, no form submitted.
 
 
@@ -188,8 +183,7 @@ else {
 
         display_user();
 
-    }
-    else {
+    } else {
 
 
         $PAGE->page_start();
@@ -212,8 +206,7 @@ else {
             // Display the form with this user's info.
             display_form($details);
 
-        }
-        elseif ($this_page == "otheruseredit") {
+        } elseif ($this_page == "otheruseredit") {
 
             // We're editing the info of a different user.
             // So set up a new user object with the id supplied
@@ -240,8 +233,7 @@ else {
             // Display the form with the other user's info.
             display_form($details);
 
-        }
-        else {
+        } else {
 
             // $this_page == "userjoin".
             // Display a blank form.
@@ -283,13 +275,11 @@ function check_input($details) {
     if ($details["email"] == "") {
         $errors["email"] = "Please enter $who email address";
 
-    }
-    elseif (!validate_email($details["email"])) {
+    } elseif (!validate_email($details["email"])) {
         // validate_email() is in includes/utilities.php.
         $errors["email"] = "Please enter a valid email address";
 
-    }
-    else {
+    } else {
 
         $USER = new USER();
         $id_of_user_with_this_addresss = $USER->email_exists($details["email"]);
@@ -309,8 +299,7 @@ function check_input($details) {
                 $errors["email"] = "Someone else has already joined with this email address";
             }
 
-        }
-        else {
+        } else {
             // User is joining. Check no one is already here with this email.
             if ($this_page == "userjoin" && $id_of_user_with_this_addresss) {
                 $errors["email"] = "There is already a user with this email address";
@@ -325,8 +314,7 @@ function check_input($details) {
         if ($details["password"] == "") {
             $errors["password"] = "Please enter $who password";
 
-        }
-        elseif (strlen($details["password"]) < 6) {
+        } elseif (strlen($details["password"]) < 6) {
             $errors["password"] = "Please enter at least six characters";
         }
 
@@ -338,8 +326,7 @@ function check_input($details) {
             $errors["password"] = ucfirst($who) . " passwords did not match. Please try again.";
         }
 
-    }
-    else {
+    } else {
 
         // Update details pages.
 
@@ -441,8 +428,7 @@ function add_user($details) {
 
          */
 
-    }
-    else {
+    } else {
 
         // Something went wrong, so display the form (with error messages).
 
@@ -477,8 +463,7 @@ function update_user($details) {
         // For displaying the altered info.
         $user_id = $details["user_id"];
 
-    }
-    else {
+    } else {
         // $this_page == "useredit"
 
         $success = $THEUSER->update_self($details);
@@ -492,15 +477,13 @@ function update_user($details) {
 
         if ($this_page == 'otheruseredit') {
             $this_page = "userview";
-        }
-        else {
+        } else {
             $this_page = "userviewself";
         }
 
         display_user($user_id);
 
-    }
-    else {
+    } else {
         // Something went wrong.
 
         $PAGE->page_start();
@@ -526,8 +509,7 @@ function display_form($details = [], $errors = []) {
 
         $PAGE->error_message($errors["db"]);
 
-    }
-    else {
+    } else {
 
         $URL = new URL("userlogin");
 
@@ -690,8 +672,7 @@ function display_form($details = [], $errors = []) {
             &nbsp;<br>Do <?php
             if ($this_page == "otheruseredit") {
                 echo "they";
-            }
-            else {
+            } else {
                 echo "you";
             } ?> wish to receive
             occasional update emails about OpenAustralia.org?
@@ -803,8 +784,7 @@ function display_form($details = [], $errors = []) {
 
         if ($this_page == "useredit" || $this_page == "otheruseredit") {
             $submittext = "Update details";
-        }
-        else {
+        } else {
             $submittext = "Join OpenAustralia.org";
         }
 
@@ -860,8 +840,7 @@ function display_form($details = [], $errors = []) {
             ]
         ]);
 
-    }
-    else {
+    } else {
         $PAGE->stripe_end();
     }
 
@@ -896,26 +875,22 @@ function display_user($user_id = "") {
         $display = "this user";
         $edited = TRUE;
 
-    }
-    elseif (is_numeric($user_id)) {
+    } elseif (is_numeric($user_id)) {
         // Display someone else's just edited info.
         $display = "another user";
         $edited = TRUE;
 
-    }
-    elseif (is_numeric(get_http_var("u"))) {
+    } elseif (is_numeric(get_http_var("u"))) {
         // Display someone else's info.
         $user_id = get_http_var("u");
         $display = "another user";
 
-    }
-    elseif ($THEUSER->isloggedin()) {
+    } elseif ($THEUSER->isloggedin()) {
         // Display this user's info.
         $display = "this user";
         $user_id = $THEUSER->user_id();
 
-    }
-    else {
+    } else {
         // Nothing to show!
         $URL = new URL('userlogin');
         $URL->insert(['ret' => '/user/']);
@@ -950,14 +925,12 @@ function display_user($user_id = "") {
             // Change the page title to reflect whose info we're viewing.
             $DATA->set_page_metadata($this_page, "title", "$name");
 
-        }
-        else {
+        } else {
             // This user_id doesn't exist.
             $display = "none";
         }
 
-    }
-    elseif ($display == "this user") {
+    } elseif ($display == "this user") {
 
         // Display THEUSER's info.
         $name = $THEUSER->firstname() . " " . $THEUSER->lastname();
@@ -968,8 +941,7 @@ function display_user($user_id = "") {
             $emailpublic = $THEUSER->emailpublic() == TRUE ? "Yes" : "No";
             $optin = $THEUSER->optin() == TRUE ? "Yes" : "No";
             $constituency = $THEUSER->constituency();
-        }
-        else {
+        } else {
             // We're showing them how they're seen to other people.
             if ($THEUSER->emailpublic()) {
                 $email = $THEUSER->email();
@@ -983,8 +955,7 @@ function display_user($user_id = "") {
         // info that shouldn't be public.
         $DATA->set_page_metadata($this_page, "title", "Your details");
 
-    }
-    else {
+    } else {
 
         // There's nothing to display!
 
@@ -1036,8 +1007,7 @@ function display_user($user_id = "") {
             if (isset($email)) {
                 $escaped_email = str_replace('@', '&#64;', htmlentities($email));
                 ?><a href="mailto:<?php echo $escaped_email . "\">" . $escaped_email; ?></a><?php
-            }
-            else {
+            } else {
                 ?>Not public<?php
             }
             ?></span>
@@ -1061,8 +1031,7 @@ function display_user($user_id = "") {
         if (isset($url)) {
             if ($url == '') {
                 $url = 'none';
-            }
-            else {
+            } else {
                 $url = '<a href="' . htmlentities($url) . '">' . htmlentities($url) . '</a>';
             }
             ?>

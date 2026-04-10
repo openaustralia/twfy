@@ -74,8 +74,7 @@ function _api_getConstituencies_search($s) {
 function api_getConstituencies_date($date) {
     if ($date = parse_date($date)) {
         api_getConstituencies('"' . $date['iso'] . '"');
-    }
-    else {
+    } else {
         api_error('Invalid date format');
     }
 }

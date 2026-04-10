@@ -20,8 +20,7 @@ if (get_http_var("d") != "") {
         ];
         $LIST = new DEBATELIST();
         $LIST->display('column', $args);
-    }
-    else {
+    } else {
         // We have a date. so show all debates on this day.
 
         $this_page = "debatesday";
@@ -35,8 +34,7 @@ if (get_http_var("d") != "") {
         $LIST->display('date', $args);
     }
 
-}
-elseif (get_http_var('id') != "") {
+} elseif (get_http_var('id') != "") {
     // We have an id so show that item.
     // Could be a section id (so we get a list of all the subsections in it),
     // or a subsection id (so we'd get the whole debate),
@@ -61,8 +59,7 @@ elseif (get_http_var('id') != "") {
     // Glossary can be turned off in the url.
     if (get_http_var('ug') == 1) {
         $args['glossarise'] = 0;
-    }
-    else {
+    } else {
         $args['sort'] = "regexp_replace";
         $GLOSSARY = new GLOSSARY($args);
     }
@@ -91,8 +88,7 @@ elseif (get_http_var('id') != "") {
     // $TRACKBACK->display('epobject_id', $args);
 
 
-}
-elseif (get_http_var('y') != '') {
+} elseif (get_http_var('y') != '') {
 
     // Show a calendar for a particular year's debates.
 
@@ -125,8 +121,7 @@ elseif (get_http_var('y') != '') {
         ]
     ]);
 
-}
-else {
+} else {
     // No date or debate id. Show recent years with debates on.
 
     $this_page = "debatesfront";

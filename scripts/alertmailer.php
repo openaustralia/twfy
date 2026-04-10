@@ -10,7 +10,7 @@
 /**
  *
  */
-function mlog($message) {
+function mlog($message): void {
     print $message;
 }
 

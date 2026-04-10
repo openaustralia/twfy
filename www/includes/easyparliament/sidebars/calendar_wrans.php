@@ -23,8 +23,7 @@ if ($this_page == 'wransday') {
             'onday' => $date
         ];
         $title = 'Answers this month';
-    }
-    else {
+    } else {
         $args = [
             'months' => 1
         ];

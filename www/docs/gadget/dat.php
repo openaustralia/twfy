@@ -104,8 +104,7 @@ function display_dream_comparison($id, $text, $inverse = FALSE) {
     $score = $output[$id];
     if ($score == -1) {
         $pw .= '<li>Has never voted on';
-    }
-    else {
+    } else {
         if ($inverse) {
             $score = 1 - $score;
         }
@@ -135,23 +134,17 @@ function score_to_strongly($dmpscore) {
     $dmpdesc = "unknown about";
     if ($dmpscore > 0.95 && $dmpscore <= 1.0) {
         $dmpdesc = "consistently against";
-    }
-    elseif ($dmpscore > 0.85) {
+    } elseif ($dmpscore > 0.85) {
         $dmpdesc = "almost always against";
-    }
-    elseif ($dmpscore > 0.6) {
+    } elseif ($dmpscore > 0.6) {
         $dmpdesc = "generally against";
-    }
-    elseif ($dmpscore > 0.4) {
+    } elseif ($dmpscore > 0.4) {
         $dmpdesc = "a mixture of for and against";
-    }
-    elseif ($dmpscore > 0.15) {
+    } elseif ($dmpscore > 0.15) {
         $dmpdesc = "generally for";
-    }
-    elseif ($dmpscore > 0.05) {
+    } elseif ($dmpscore > 0.05) {
         $dmpdesc = "almost always for";
-    }
-    elseif ($dmpscore >= 0.0) {
+    } elseif ($dmpscore >= 0.0) {
         $dmpdesc = "consistently for";
     }
     return $dmpdesc;

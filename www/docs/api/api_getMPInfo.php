@@ -75,8 +75,7 @@ function api_getMPinfo_id($id) {
         }
         ksort($output);
         api_output($output, $last_mod);
-    }
-    else {
+    } else {
         api_error('Unknown person ID');
     }
 }

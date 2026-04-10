@@ -131,16 +131,13 @@ function character1Data($parser, $data) {
         $arItems[$itemCount] = new xItem();
         // Set new item object's properties.
         $arItems[$itemCount]->xTitle = $data;
-    }
-    elseif ($curTag == $permalinkKey) {
+    } elseif ($curTag == $permalinkKey) {
         $arItems[$itemCount]->xPermalink = $data;
         // $itemCount++;
-    }
-    elseif ($curTag == $linkKey) {
+    } elseif ($curTag == $linkKey) {
         $arItems[$itemCount]->xLink = $data;
         // $itemCount++;
-    }
-    elseif ($curTag == $createdKey) {
+    } elseif ($curTag == $createdKey) {
         $arItems[$itemCount]->xCreated = $data;
         $itemCount++;
     }

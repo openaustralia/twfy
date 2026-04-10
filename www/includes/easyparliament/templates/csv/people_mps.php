@@ -54,16 +54,14 @@ function render_mps_row($mp, $order) {
         html_entity_decode($mp['last_name']) . ',';
     if (array_key_exists($mp['party'], $parties)) {
         print $parties[$mp['party']];
-    }
-    else {
+    } else {
         print $mp['party'];
     }
     print ',' . $con . ',http://' . DOMAIN . WEBPATH . 'mp/' .
         make_member_url($mp['first_name'] . ' ' . $mp['last_name'], $mp['constituency']);
     if ($order == 'expenses') {
         print ', �' . $mp['data_value'];
-    }
-    elseif ($order == 'debates') {
+    } elseif ($order == 'debates') {
         print ', ' . $mp['data_value'];
     }
     print "\n";

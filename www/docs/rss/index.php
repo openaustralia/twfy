@@ -18,12 +18,10 @@ if (validate_postcode($pc)) {
     $constituency = strtolower(postcode_to_constituency($pc));
     if ($constituency == "CONNECTION_TIMED_OUT") {
         $errors['pc'] = "Sorry, we couldn't check your postcode right now. Please use the 'All Mps' link above to browse MPs";
-    }
-    elseif ($constituency == "") {
+    } elseif ($constituency == "") {
         $errors['pc'] = "Sorry, " . htmlentities($pc) . " isn't a known postcode";
         twfy_debug('MP', "Can't display an MP, as submitted postcode didn't match a constituency");
-    }
-    else {
+    } else {
         $MEMBER = new MEMBER(['constituency' => $constituency]);
         if ($MEMBER->person_id()) {
             // This will cookie the postcode.
@@ -35,8 +33,7 @@ if (validate_postcode($pc)) {
             header('Location: http://' . DOMAIN . '/rss/mp/' . $MEMBER->person_id() . '.rdf');
         }
     }
-}
-else {
+} else {
     $errors['pc'] = "Sorry, " . htmlentities($pc) . " isn't a valid postcode";
     twfy_debug('MP', "Can't display an MP because the submitted postcode wasn't of a valid form.");
 }
