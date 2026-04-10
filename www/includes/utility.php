@@ -710,35 +710,36 @@ function gid_to_anchor($gid) {
  *
  */
 function send_template_email($data, $merge, $bulk = FALSE) {
-    // We should have some email templates in INCLUDESPATH/easyparliament/templates/emails/.
+    /*
+    We should have some email templates in INCLUDESPATH/easyparliament/templates/emails/.
 
-    // $data is like:
-    // array (
-    // 'template'     => 'send_confirmation',
-    // 'to'        => 'phil@gyford.com',
-    // 'subject'    => 'Your confirmation email'
-    // );
+    $data is like:
+    array (
+        'template'     => 'send_confirmation',
+        'to'        => 'phil@gyford.com',
+        'subject'    => 'Your confirmation email'
+    );
 
-    // $merge is like:
-    // array (
-    // 'FIRSTNAME' => 'Phil',
-    // 'LATNAME'    => 'Gyford'
-    // etc...
-    // );
+    $merge is like:
+    array (
+        'FIRSTNAME' => 'Phil',
+        'LATNAME'    => 'Gyford'
+        etc...
+    );
 
-    // In $data, 'template' and 'to' are mandatory. 'template' is the
-    // name of the file (when it has '.txt' added to it).
+    In $data, 'template' and 'to' are mandatory. 'template' is the
+    name of the file (when it has '.txt' added to it).
 
-    // We'll get the text of the template and replace all the $merge
-    // keys with their tokens. eg, if '{FIRSTNAME}' in the template will
-    // be replaced with 'Phil'.
+    We'll get the text of the template and replace all the $merge
+    keys with their tokens. eg, if '{FIRSTNAME}' in the template will
+    be replaced with 'Phil'.
 
-    // Additionally, the first line of a template may start with
-    // 'Subject:'. Any text immediately following that, on the same line
-    // will be the subject of the email (it will also have its tokens merged).
-    // But this subject can be overridden by sending including a 'subject'
-    // pair in $data.
-
+    Additionally, the first line of a template may start with
+    'Subject:'. Any text immediately following that, on the same line
+    will be the subject of the email (it will also have its tokens merged).
+    But this subject can be overridden by sending including a 'subject'
+    pair in $data.
+    */
     global $PAGE;
 
     if (!isset($data['to']) || $data['to'] == '') {
