@@ -297,8 +297,7 @@ class ALERT {
                         // Couldn't send the email.
                         return -1;
                     }
-                }
-                elseif ($instantly_confirm) {
+                } elseif ($instantly_confirm) {
                     // No confirmation email needed.
                     $s = $this->db->query("UPDATE alerts
 						SET confirmed = '1'

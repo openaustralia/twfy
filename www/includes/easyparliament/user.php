@@ -298,8 +298,7 @@ class USER {
                         // Couldn't send the email.
                         return FALSE;
                     }
-                }
-                else {
+                } else {
                     // No confirmation email needed.
                     return TRUE;
                 }
@@ -1006,8 +1005,7 @@ class THEUSER extends USER {
                         $this->loggedin = FALSE;
                     }
 
-                }
-                else {
+                } else {
                     twfy_debug("THEUSER init FAILED", "didn't get 1 row from db");
                     $this->loggedin = FALSE;
                 }

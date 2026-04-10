@@ -189,8 +189,7 @@ class MySQLQuery {
 
                 if (count($result) > 0) {
                     $this->rows = count($result);
-                }
-                else {
+                } else {
                     $this->rows = 0;
                 }
 

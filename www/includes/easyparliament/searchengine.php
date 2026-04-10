@@ -248,21 +248,17 @@ class SEARCHENGINE {
             } elseif ($items[0] == 'major') {
                 if (isset($hansardmajors[$items[1]]['title'])) {
                     $major[] = $hansardmajors[$items[1]]['title'];
-                }
-                else {
+                } else {
                     $PAGE->error_message("Unknown major section '$items[1]' ignored");
                 }
             } elseif ($items[0] == 'groupby') {
                 if ($items[1] == 'day') {
                     $description .= ' grouped by day';
-                }
-                elseif ($items[1] == 'debate') {
+                } elseif ($items[1] == 'debate') {
                     $description .= ' grouped by debate/department';
-                }
-                elseif ($items[1] == 'speech') {
+                } elseif ($items[1] == 'speech') {
                     $description .= ' showing all speeches';
-                }
-                else {
+                } else {
                     $PAGE->error_message("Unknown group by '$items[1]' ignored");
                 }
             } elseif ($items[0] == "bias") {
@@ -387,15 +383,12 @@ class SEARCHENGINE {
                 $collapsed = TRUE;
                 if ($items[1] == 'day') {
                     $this->enquire->set_collapse_key(2);
-                }
-                elseif ($items[1] == 'debate') {
+                } elseif ($items[1] == 'debate') {
                     $this->enquire->set_collapse_key(3);
-                }
-                elseif ($items[1] == 'speech') {
+                } elseif ($items[1] == 'speech') {
 
                     // No collapse key.
-                }
-                else {
+                } else {
                     $PAGE->error_message("Unknown group by '$items[1]' ignored");
                 }
             } elseif ($items[0] == 'bias') {

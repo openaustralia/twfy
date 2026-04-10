@@ -105,8 +105,7 @@ class COMMENTREPORT {
                     $this->firstname = $q->field(0, 'firstname');
                     $this->lastname = $q->field(0, 'lastname');
                     $this->email = $q->field(0, 'email');
-                }
-                else {
+                } else {
                     // The report was made by a logged-in user.
                     $this->firstname = $q->field(0, 'u_firstname');
                     $this->lastname = $q->field(0, 'u_lastname');
@@ -503,8 +502,7 @@ class COMMENTREPORT {
 
                     $upheldsql = '1';
 
-                }
-                else {
+                } else {
                     $upheldsql = '0';
 
                     // Report has been removed, so un-modflag this comment.
@@ -529,8 +527,7 @@ class COMMENTREPORT {
                     $this->upheld = $upheld;
 
                     return TRUE;
-                }
-                else {
+                } else {
                     $PAGE->error_message("Sorry, we couldn't resolve this report.");
                     return FALSE;
                 }

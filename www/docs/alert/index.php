@@ -255,8 +255,7 @@ function display_form($details = [], $errors = []) {
                     $MEMBER = new MEMBER(['person_id' => $details['pid']]);
                     print $MEMBER->full_name();
                     print '<input type="hidden" name="pid" value="' . htmlspecialchars($details['pid']) . '">';
-                }
-                else { ?>
+                } else { ?>
                     <select name="pid">
                         <option value="Any">Any Representative or Senator</option>
                         <?php

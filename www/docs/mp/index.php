@@ -194,8 +194,7 @@ if (is_numeric(get_http_var('m'))) {
                     ];
                     $success = $THEUSER->update_self($details);
                     // TODO: Check success of database update.
-                }
-                else {
+                } else {
                     // This will cookie the postcode.
                     $THEUSER->set_constituency_cookie($constituency);
                 }

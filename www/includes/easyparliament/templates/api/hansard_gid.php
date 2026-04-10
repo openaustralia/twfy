@@ -30,8 +30,7 @@ if (isset($data['rows'])) {
                 $speaker = $row['speaker'];
                 if (is_file(BASEDIR . IMAGEPATH . 'mps/' . $speaker['person_id'] . '.jpeg')) {
                     $row['speaker']['image'] = IMAGEPATH . 'mps/' . $speaker['person_id'] . '.jpeg';
-                }
-                elseif (is_file(BASEDIR . IMAGEPATH . 'mps/' . $speaker['person_id'] . '.jpg')) {
+                } elseif (is_file(BASEDIR . IMAGEPATH . 'mps/' . $speaker['person_id'] . '.jpg')) {
                     $row['speaker']['image'] = IMAGEPATH . 'mps/' . $speaker['person_id'] . '.jpg';
                 }
                 $desc = '';

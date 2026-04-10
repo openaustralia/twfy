@@ -705,8 +705,7 @@ function display_form($details = [], $errors = []) {
                 &nbsp;<br>Would <?php
                 if ($this_page == "otheruseredit") {
                     echo "they";
-                }
-                else {
+                } else {
                     echo "you";
                 } ?> like to
                 receive an email whenever your MP does something in Parliament?
@@ -1119,11 +1118,9 @@ function display_user($user_id = "") {
                 $token = $row['alert_id'] . '-' . $row['registrationtoken'];
                 if (!$row['confirmed']) {
                     $action = '<a href="' . WEBPATH . 'A/' . $token . '">Confirm</a>';
-                }
-                elseif ($row['deleted']) {
+                } elseif ($row['deleted']) {
                     $action = '<form action="' . WEBPATH . 'alert/undelete/" method="post"><input type="hidden" name="t" value="' . $token . '"><input type="submit" value="Resubscribe"></form>';
-                }
-                else {
+                } else {
                     $action = '<form action="' . WEBPATH . 'alert/delete/" method="post"><input type="hidden" name="t" value="' . $token . '"><input type="submit" value="Unsubscribe"></form>';
                 }
                 $out .= "<tr><td><a href='" . $search_url . "'>" . $display_criteria . "</a></td><td>" . $action . "</td></tr>";

@@ -338,8 +338,7 @@ class GLOSSARY {
             } else {
                 if ($this_page == "admin_glossary") {
                     $link_url = "#gl" . $glossary_id;
-                }
-                else {
+                } else {
                     $link_url = $URL->generate('url');
                 }
                 $title = htmlentities(trim_characters($term_body, 0, 80));
