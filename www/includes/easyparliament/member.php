@@ -490,17 +490,13 @@ class MEMBER {
             $rebel_desc = "<unknown>";
             if ($rebellions == 0) {
                 $rebel_desc = "never";
-            }
-            elseif ($rebellions <= 1) {
+            } elseif ($rebellions <= 1) {
                 $rebel_desc = "hardly ever";
-            }
-            elseif ($rebellions <= 3) {
+            } elseif ($rebellions <= 3) {
                 $rebel_desc = "occasionally";
-            }
-            elseif ($rebellions <= 5) {
+            } elseif ($rebellions <= 5) {
                 $rebel_desc = "sometimes";
-            }
-            elseif ($rebellions > 5) {
+            } elseif ($rebellions > 5) {
                 $rebel_desc = "quite often";
             }
             $this->extra_info['public_whip_rebel_description'] = $rebel_desc;

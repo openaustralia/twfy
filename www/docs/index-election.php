@@ -88,8 +88,7 @@ $PAGE->block_start(['id' => 'intro', 'title' => 'Election special! Find out how 
 
             if ($THEUSER->isloggedin()) {
                 $CHANGEURL = new URL('useredit');
-            }
-            else {
+            } else {
                 $CHANGEURL = new URL('userchangepc');
             }
             $MEMBER = new MEMBER(['postcode' => $THEUSER->postcode()]);

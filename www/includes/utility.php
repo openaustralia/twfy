@@ -121,8 +121,7 @@ function error_handler(string $errno, string $errmsg, string $filename, int $lin
         foreach ($_POST as $k => $v) {
             if (is_scalar($v) || $v === NULL) {
                 $value = (string) $v;
-            }
-            else {
+            } else {
                 $value = json_encode($v);
                 if ($value === FALSE) {
                     $value = print_r($v, TRUE);
@@ -472,8 +471,7 @@ function parse_date($date) {
             $date = preg_replace('#next#i', 'this', $date);
             if ($dayofweek == 5) {
                 $now = strtotime('3 days', $now);
-            }
-            elseif ($dayofweek == 4) {
+            } elseif ($dayofweek == 4) {
                 $now = strtotime('4 days', $now);
             } else {
                 $now = strtotime('5 days', $now);
@@ -1032,8 +1030,7 @@ function major_summary($data, $limit = "") {
         foreach ($data as $major => $array) {
             if ($todaystime - $array['timestamp'] == 86400) {
                 $daytext[$major] = "Yesterday's";
-            }
-            elseif ($todaystime - $array['timestamp'] <= (6 * 86400)) {
+            } elseif ($todaystime - $array['timestamp'] <= (6 * 86400)) {
                 $daytext[$major] = gmdate('l', $array['timestamp']) . "'s";
             } else {
                 $daytext[$major] = "The most recent ";

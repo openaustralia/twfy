@@ -160,8 +160,7 @@ class SEARCHENGINE {
                     }
                 }
                 array_push($this->prefixed, [$type, $value]);
-            }
-            elseif (strpos($word, '-') !== FALSE) {
+            } elseif (strpos($word, '-') !== FALSE) {
                 array_push($this->excluded, str_replace("-", "", strtolower($word)));
             }
             /*else if (strpos($word, '~') !== false) {
@@ -209,8 +208,7 @@ class SEARCHENGINE {
                 $description .= implode("', '", array_slice($this->words, 0, -2));
                 $description .= "', '";
                 $description .= $this->words[count($this->words) - 2] . "', and '" . $this->words[count($this->words) - 1];
-            }
-            elseif (count($this->words) == 2) {
+            } elseif (count($this->words) == 2) {
                 $description .= $this->words[0] . "' and '" . $this->words[1];
             } else {
                 $description .= $this->words[0];
@@ -247,16 +245,14 @@ class SEARCHENGINE {
                 $member = new MEMBER(['person_id' => $items[1]]);
                 $name = $member->full_name();
                 $speaker[] = $name;
-            }
-            elseif ($items[0] == 'major') {
+            } elseif ($items[0] == 'major') {
                 if (isset($hansardmajors[$items[1]]['title'])) {
                     $major[] = $hansardmajors[$items[1]]['title'];
                 }
                 else {
                     $PAGE->error_message("Unknown major section '$items[1]' ignored");
                 }
-            }
-            elseif ($items[0] == 'groupby') {
+            } elseif ($items[0] == 'groupby') {
                 if ($items[1] == 'day') {
                     $description .= ' grouped by day';
                 }
@@ -269,15 +265,12 @@ class SEARCHENGINE {
                 else {
                     $PAGE->error_message("Unknown group by '$items[1]' ignored");
                 }
-            }
-            elseif ($items[0] == "bias") {
+            } elseif ($items[0] == "bias") {
                 [$weight, $halflife] = explode(":", $items[1]);
                 $description .= " bias by $weight halflife $halflife seconds";
-            }
-            elseif ($items[0] == 'date') {
+            } elseif ($items[0] == 'date') {
                 $description .= ' spoken on ' . $items[1];
-            }
-            elseif ($items[0] == 'batch') {
+            } elseif ($items[0] == 'batch') {
                 // Silently ignore, as description goes in email alerts
                 // $description .= ' in search batch ' . $items[1];.
             } else {
@@ -405,12 +398,10 @@ class SEARCHENGINE {
                 else {
                     $PAGE->error_message("Unknown group by '$items[1]' ignored");
                 }
-            }
-            elseif ($items[0] == 'bias') {
+            } elseif ($items[0] == 'bias') {
                 [$weight, $halflife] = explode(":", $items[1]);
                 $this->enquire->set_bias($weight, intval($halflife));
-            }
-            elseif ($items[0] == 'speaker') {
+            } elseif ($items[0] == 'speaker') {
                 // Don't do any collapsing if we're searching for a person's speeches.
                 $collapsed = TRUE;
             }
@@ -510,8 +501,7 @@ class SEARCHENGINE {
         foreach ($this->words as $word) {
             if (ctype_digit($word)) {
                 array_push($findwords, "/\b($word|" . number_format($word) . ")\b/");
-            }
-            else {
+            } else {
                 array_push($findwords, "/\b($word)\b/i");
             }
             array_push($replacewords, "<span class=\"hi\">\\1</span>");

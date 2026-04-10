@@ -303,8 +303,7 @@ class USER {
                     // No confirmation email needed.
                     return TRUE;
                 }
-            }
-            else {
+            } else {
                 // Couldn't add the registration token to the DB.
                 return FALSE;
             }
@@ -387,8 +386,7 @@ class USER {
             // false otherwise.
             if ($newdetails) {
                 return TRUE;
-            }
-            else {
+            } else {
                 return FALSE;
             }
 
@@ -513,8 +511,7 @@ class USER {
             $q = $this->db->query("SELECT user_id FROM users WHERE user_id='" . $this->db->escape($user_id) . "'");
             if ($q->rows() > 0) {
                 return TRUE;
-            }
-            else {
+            } else {
                 return FALSE;
             }
         } else {
@@ -533,8 +530,7 @@ class USER {
             $q = $this->db->query("SELECT user_id FROM users WHERE email='" . $this->db->escape($email) . "'");
             if ($q->rows() > 0) {
                 return TRUE;
-            }
-            else {
+            } else {
                 return FALSE;
             }
         } else {
@@ -873,8 +869,7 @@ class USER {
             // their own info).
             if ($details['deleted'] == TRUE) {
                 $del = '1';
-            }
-            elseif ($details['deleted'] == FALSE) {
+            } elseif ($details['deleted'] == FALSE) {
                 $del = '0';
             }
             if (isset($del)) {
@@ -887,8 +882,7 @@ class USER {
             // their own info).
             if ($details['confirmed'] == TRUE) {
                 $con = '1';
-            }
-            elseif ($details['confirmed'] == FALSE) {
+            } elseif ($details['confirmed'] == FALSE) {
                 $con = '0';
             }
             if (isset($con)) {
@@ -1018,8 +1012,7 @@ class THEUSER extends USER {
                     $this->loggedin = FALSE;
                 }
 
-            }
-            else {
+            } else {
                 twfy_debug("THEUSER init FAILED", "cookie's user_id is not numeric");
                 $this->loggedin = FALSE;
             }
@@ -1109,8 +1102,7 @@ class THEUSER extends USER {
                 $this->confirmed = $q->field(0, "confirmed") == 1 ? TRUE : FALSE;
                 return TRUE;
 
-            }
-            else {
+            } else {
                 // Failed.
                 return ["invalidpassword" => "This is not the correct password for " . htmlentities($email)];
 
@@ -1259,8 +1251,7 @@ class THEUSER extends USER {
 
                 $this->login($redirecturl, 'session');
 
-            }
-            else {
+            } else {
                 // Couldn't set them as confirmed in the DB.
                 return FALSE;
             }
@@ -1330,8 +1321,7 @@ class THEUSER extends USER {
                 }
 
                 return TRUE;
-            }
-            else {
+            } else {
                 return FALSE;
             }
 

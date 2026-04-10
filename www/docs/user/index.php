@@ -1132,8 +1132,7 @@ function display_user($user_id = "") {
             if ($out) {
                 print '<p>Here are your email alerts:</p>';
                 print '<table cellpadding="3" cellspacing="0"><tr><th>Criteria</th><th>Action</th></tr>' . $out . '</table>';
-            }
-            else {
+            } else {
                 print '<p>You currently have no email alerts set up.</p>';
             }
             $PAGE->stripe_end();

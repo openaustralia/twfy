@@ -140,15 +140,13 @@ if (is_numeric(get_http_var('id')) && is_numeric(get_http_var('v'))) {
         if ($q->rows() == 1) {
             if ($vote == 1) {
                 $q = $db->query("UPDATE anonvotes SET yes_votes = yes_votes + 1 WHERE epobject_id = '" . addslashes($epobject_id) . "'");
-            }
-            else {
+            } else {
                 $q = $db->query("UPDATE anonvotes SET no_votes = no_votes + 1 WHERE epobject_id = '" . addslashes($epobject_id) . "'");
             }
         } else {
             if ($vote == 1) {
                 $q = $db->query("INSERT INTO anonvotes (epobject_id, yes_votes) VALUES ('" . addslashes($epobject_id) . "', '1')");
-            }
-            else {
+            } else {
                 $q = $db->query("INSERT INTO anonvotes (epobject_id, no_votes) VALUES ('" . addslashes($epobject_id) . "', '1')");
             }
         }

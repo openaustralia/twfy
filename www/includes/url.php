@@ -187,8 +187,7 @@ class URL {
         } else {
             if ($encode == "html") {
                 return $page_url . "?" . implode("&amp;", $url_args);
-            }
-            elseif ($encode == "none" || $encode == "url") {
+            } elseif ($encode == "none" || $encode == "url") {
                 return $page_url . "?" . implode("&", $url_args);
             }
         }

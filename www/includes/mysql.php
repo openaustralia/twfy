@@ -158,8 +158,7 @@ class MySQLQuery {
 
                 return;
 
-            }
-            elseif (is_bool($q)) {
+            } elseif (is_bool($q)) {
                 // A successful query of a type *other* than
                 // SELECT, SHOW, EXPLAIN or DESCRIBE.
 
