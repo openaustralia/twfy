@@ -65,19 +65,16 @@ class EDITQUEUE {
         // The upper object should make sure it's passsing good data.
         // (for now!)
 
-        /*
-        print "<pre>";
-        print_r ($data);
-        print "</pre>";
-         */
 
-        // For editqueue in this instance we need:
-        // user_id INTEGER,
-        // edit_type INTEGER,
-        // (epobject_id_l),
-        // title VARCHAR(255),
-        // body TEXT,
-        // submitted DATETIME,.
+        /*
+        For editqueue in this instance we need:
+            user_id INTEGER,
+            edit_type INTEGER,
+            (epobject_id_l),
+            title VARCHAR(255),
+            body TEXT,
+            submitted DATETIME,.
+        */
 
         global $THEUSER;
 
