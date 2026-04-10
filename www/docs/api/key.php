@@ -35,8 +35,7 @@ if ($THEUSER->loggedin()) {
         echo '<li><span style="font-size:200%">' . $key . '</span><br><span style="color: #666666;">';
         if ($commercial == 1) {
             echo 'Commercial key';
-        }
-        elseif ($commercial == -1) {
+        } elseif ($commercial == -1) {
             echo 'Key';
         } else {
             echo 'Non-commercial key';

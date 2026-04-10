@@ -171,8 +171,7 @@ class USER {
 
             return TRUE;
 
-        }
-        elseif ($q->rows() > 1) {
+        } elseif ($q->rows() > 1) {
             // And, yes, if we've ended up with more than one row returned
             // we're going to show an error too, just in case.
             // *Should* never happen...
@@ -378,8 +377,7 @@ class USER {
         if (!isset($details["user_id"])) {
             return FALSE;
 
-        }
-        elseif ($THEUSER->is_able_to("edituser")) {
+        } elseif ($THEUSER->is_able_to("edituser")) {
 
             // If the user doing the updating has appropriate privileges...
 
@@ -981,8 +979,7 @@ class THEUSER extends USER {
             twfy_debug("THEUSER init FAILED", "No cookie set");
             $this->loggedin = FALSE;
 
-        }
-        elseif (preg_match("/([[:alnum:]]*)\.([[:alnum:]]*)/", $cookie, $matches)) {
+        } elseif (preg_match("/([[:alnum:]]*)\.([[:alnum:]]*)/", $cookie, $matches)) {
 
             if (is_numeric($matches[1])) {
 
@@ -1153,12 +1150,10 @@ class THEUSER extends USER {
         if ($this->user_id() == "" || $this->password == "") {
             $PAGE->error_message("We don't have the user_id or password to make the cookie.", TRUE);
             return;
-        }
-        elseif ($this->deleted) {
+        } elseif ($this->deleted) {
             $PAGE->error_message("This user has been deleted.", TRUE);
             return;
-        }
-        elseif (!$this->confirmed) {
+        } elseif (!$this->confirmed) {
             $PAGE->error_message("this user has not been confirmed yet.", TRUE);
             return;
         }

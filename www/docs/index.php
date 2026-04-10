@@ -126,8 +126,7 @@ $PAGE->block_start(['id' => 'intro', 'title' => 'At OpenAustralia.org you can:']
                             up to be emailed when '<?php echo htmlspecialchars(get_http_var('keyword')) ?>' is mentioned in
                             Parliament</strong></a></p>
             </li>
-        <?php }
-        else { ?>
+        <?php } else { ?>
             <li>
                 <p><a href="<?php echo WEBPATH . "alert/" ?>"><strong>Sign up to be emailed when something relevant to you
                             happens in Parliament</strong></a></p>

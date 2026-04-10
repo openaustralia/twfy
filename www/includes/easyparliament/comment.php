@@ -321,8 +321,7 @@ class COMMENT {
             $date = gmdate("Y-m-d H:i:s");
             $flag = "'$date'";
 
-        }
-        elseif ($switch == 'off') {
+        } elseif ($switch == 'off') {
             $date = NULL;
             $flag = 'NULL';
 

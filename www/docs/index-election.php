@@ -48,8 +48,7 @@ if (count($debatesdata) > 0 && count($wransdata) > 0 && count($whalldata) > 0 &&
         if ($todaystime - $debatesdata['timestamp'] == 86400) {
             $daytext = "yesterday's";
 
-        }
-        elseif ($todaystime - $debatesdata['timestamp'] <= (6 * 86400)) {
+        } elseif ($todaystime - $debatesdata['timestamp'] <= (6 * 86400)) {
             // Less than a week ago, so like "last Tuesday's".
             $daytext = gmdate('l', $debatesdata['timestamp']) . "'s";
 

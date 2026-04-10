@@ -84,11 +84,9 @@ class COMMENTLIST {
 
         if ($view == 'user') {
             $template = 'comments_user';
-        }
-        elseif ($view == 'recent') {
+        } elseif ($view == 'recent') {
             $template = 'comments_recent';
-        }
-        elseif ($view == 'search') {
+        } elseif ($view == 'search') {
             $template = 'comments_search';
         } else {
             $template = 'comments';

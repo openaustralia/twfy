@@ -23,11 +23,9 @@ if (isset($data['rows'])) {
             // We fake it here. We hope this section only has a single line like
             // "The Secretary of State was asked-" and we don't want to make it a link.
             $has_content = FALSE;
-        }
-        elseif (isset($row['contentcount']) && $row['contentcount'] > 0) {
+        } elseif (isset($row['contentcount']) && $row['contentcount'] > 0) {
             $has_content = TRUE;
-        }
-        elseif ($row['htype'] == '11' && $hansardmajors[$row['major']]['type'] == 'other') {
+        } elseif ($row['htype'] == '11' && $hansardmajors[$row['major']]['type'] == 'other') {
             $has_content = TRUE;
         } else {
             $has_content = FALSE;

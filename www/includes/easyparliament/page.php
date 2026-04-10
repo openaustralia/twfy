@@ -3455,25 +3455,20 @@ function display_stats_line_house($house, $category, $blurb, $type, $inwhat, $ex
         $q = $extra_info[$category . '_quintile'];
         if ($q == 0) {
             print 'well above average';
-        }
-        elseif ($q == 1) {
+        } elseif ($q == 1) {
             print 'above average';
-        }
-        elseif ($q == 2) {
+        } elseif ($q == 2) {
             print 'average';
-        }
-        elseif ($q == 3) {
+        } elseif ($q == 3) {
             print 'below average';
-        }
-        elseif ($q == 4) {
+        } elseif ($q == 4) {
             print 'well below average';
         } else {
             print '[Impossible quintile!]';
         }
             print ' amongst ';
             print $type . 's';
-        }
-        elseif (!get_http_var('rem') && isset($extra_info[$category . '_rank'])) {
+        } elseif (!get_http_var('rem') && isset($extra_info[$category . '_rank'])) {
             print ' &#8212; ';
             // If (isset($extra_info[$category . '_rank_joint']))
             // print 'joint ';.

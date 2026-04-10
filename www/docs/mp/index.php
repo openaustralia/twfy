@@ -154,12 +154,10 @@ if (is_numeric(get_http_var('m'))) {
 
         if ($constituency == "connection_timed_out") {
             $errors['pc'] = "Sorry, we couldn't check your postcode right now, as our postcode lookup server is under quite a lot of load. Please use the 'All MPs' link above to browse all the MPs.";
-        }
-        elseif ($constituency == "") {
+        } elseif ($constituency == "") {
             $errors['pc'] = "Sorry, " . htmlentities($pc) . " isn't a known postcode";
             twfy_debug('MP', "Can't display an MP, as submitted postcode didn't match a constituency");
-        }
-        elseif (is_array($constituency)) {
+        } elseif (is_array($constituency)) {
             $PAGE->page_start();
             $PAGE->stripe_start();
             print '<p>There are several electoral divisions within your postcode. Please select from the following:</p><ul>';

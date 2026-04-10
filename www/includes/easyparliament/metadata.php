@@ -1051,8 +1051,7 @@ class Metadata {
         // If the item requested exists, return it.
         if (isset($this->$type[$item][$key])) {
             return $this->$type[$item][$key];
-        }
-        elseif (isset($this->$type['default'][$key])) {
+        } elseif (isset($this->$type['default'][$key])) {
             return $this->$type['default'][$key];
         }
 
