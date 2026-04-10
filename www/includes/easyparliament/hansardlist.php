@@ -65,24 +65,20 @@ class HANSARDLIST {
      */
     public $speakers = [];
     /*
+    example:
     $this->speakers[ $speaker_id ] = array (
-    "first_name"    => $first_name,
-    "last_name"        => $last_name,
-    "constituency"    => $constituency,
-    "party"            => $party,
-    "person_id"        => $person_id,
-    "url"            => "/member/?id=$speaker_id"
+        "first_name"    => $first_name,
+        "last_name"        => $last_name,
+        "constituency"    => $constituency,
+        "party"            => $party,
+        "person_id"        => $person_id,
+        "url"            => "/member/?id=$speaker_id"
     );
      */
 
     // This will be used to cache mappings from epobject_id to gid,.
-    /**
-     * So we don't have to continually fetch the same data in get_hansard_data().
-     */
+    // So we don't have to continually fetch the same data in get_hansard_data().
     public $epobjectid_to_gid = [];
-    /*
-    $this->epobjectid_to_gid[ $epobject_id ] => $gid;
-     */
 
 
     // This is so we can tell what type of thing we're displaying from outside
@@ -1386,7 +1382,7 @@ class HANSARDLIST {
 
         global $DATA, $this_page, $PAGE, $hansardmajors;
 
-        //  What we return.
+        // What we return.
         $data = [
             'info' => [
                 'page' => $this->listpage,
@@ -1648,42 +1644,42 @@ class HANSARDLIST {
 
         /*
        Generic function for getting hansard data from the DB.
-		It returns an empty array if no data was found.
-		It returns an array of items if 1 or more were found.
-		Each item is an array of key/value pairs.
-		eg:
+        It returns an empty array if no data was found.
+        It returns an array of items if 1 or more were found.
+        Each item is an array of key/value pairs.
+        eg:
 
-			array (
-				0	=> array (
-					'epobject_id'	=> '2',
-					'htype'			=> '10',
-					'section_id'		=> '0',
-					etc...
-				),
-				1	=> array (
-					'epobject_id'	=> '3',
-					etc...
-				)
-			);
+            array (
+                0   => array (
+                    'epobject_id'   => '2',
+                    'htype'         => '10',
+                    'section_id'        => '0',
+                    etc...
+                ),
+                1   => array (
+                    'epobject_id'   => '3',
+                    etc...
+                )
+            );
 
 
-		$input['amount'] is an associative array indicating what data should be fetched.
-		It has the structure
-			'key' => true
-		Where 'true' indicates the data of type 'key' should be fetched.
-		Leaving a key/value pair out is the same as setting a key to false.
+        $input['amount'] is an associative array indicating what data should be fetched.
+        It has the structure
+            'key' => true
+        Where 'true' indicates the data of type 'key' should be fetched.
+        Leaving a key/value pair out is the same as setting a key to false.
 
-		$input['amount'] can have any or all these keys:
-            'body' 		- Get the body text from the epobject table.
-            'comment' 	- Get the first comment (and totalcomments count) for this item.
-            'votes'		- Get the user votes for this item.
-            'speaker'	- Get the speaker for this item, where applicable.
-            'excerpt' 	- For sub/sections get the body text for the first item within them.
+        $input['amount'] can have any or all these keys:
+            'body'      - Get the body text from the epobject table.
+            'comment'   - Get the first comment (and totalcomments count) for this item.
+            'votes'     - Get the user votes for this item.
+            'speaker'   - Get the speaker for this item, where applicable.
+            'excerpt'   - For sub/sections get the body text for the first item within them.
 
-		$input['wherearr'] is an associative array of stuff for the WHERE clause, eg:
-			array ('id=' => '37', 'date>' => '2003-12-31');
-		$input['order'] is a string for the $order clause, eg 'hpos DESC'.
-		$input['limit'] as a string for the $limit clause, eg '21,20'.
+        $input['wherearr'] is an associative array of stuff for the WHERE clause, eg:
+            array ('id=' => '37', 'date>' => '2003-12-31');
+        $input['order'] is a string for the $order clause, eg 'hpos DESC'.
+        $input['limit'] as a string for the $limit clause, eg '21,20'.
         */
 
         $amount = $input['amount'] ?? [];
