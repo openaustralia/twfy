@@ -136,14 +136,12 @@ class GLOSSARY {
                     if ($next == 1) {
                         $this->next_term = $term;
                         break;
-                    }
-                    elseif ($term['glossary_id'] == $args['glossary_id']) {
+                    } elseif ($term['glossary_id'] == $args['glossary_id']) {
                         $this->glossary_id = $args['glossary_id'];
                         $this->current_term = $term;
                         $next = 1;
 
-                    }
-                    else {
+                    } else {
                         $this->previous_term = $term;
                     }
                 }

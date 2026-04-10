@@ -293,8 +293,7 @@ class USER {
                     if ($success) {
                         // All is good in the world!
                         return TRUE;
-                    }
-                    else {
+                    } else {
                         // Couldn't send the email.
                         return FALSE;
                     }
@@ -995,12 +994,10 @@ class THEUSER extends USER {
                         twfy_debug("THEUSER init SUCCEEDED", "setting as logged in");
                         $this->loggedin = TRUE;
 
-                    }
-                    elseif (md5($this->password()) != $matches[2]) {
+                    } elseif (md5($this->password()) != $matches[2]) {
                         twfy_debug("THEUSER init FAILED", "Password doesn't match cookie");
                         $this->loggedin = FALSE;
-                    }
-                    else {
+                    } else {
                         twfy_debug("THEUSER init FAILED", "User is deleted");
                         $this->loggedin = FALSE;
                     }

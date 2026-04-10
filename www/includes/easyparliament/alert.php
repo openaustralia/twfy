@@ -292,8 +292,7 @@ class ALERT {
                     if ($success) {
                         // Email sent OK.
                         return 1;
-                    }
-                    else {
+                    } else {
                         // Couldn't send the email.
                         return -1;
                     }

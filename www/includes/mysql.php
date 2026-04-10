@@ -307,8 +307,7 @@ class MySQLQuery {
                     if ($this->fieldnames_byid[$n] == "email" || $this->fieldnames_byid[$n] == "password" || $this->fieldnames_byid[$n] == "postcode") {
                         // Don't want to risk this data being displayed on any page.
                         $html .= "<td>**MASKED**</td>";
-                    }
-                    else {
+                    } else {
                         $html .= "<td>" . htmlentities($field) . "</td>";
                     }
                 }

@@ -1864,8 +1864,7 @@ $displayed_stuff = 0;
         <p><em>Please note that numbers do not measure quality.
                 Also, <?php if ($member['house_disp'] == 1) {
                 echo "Representatives";
-               }
-                    else {
+               } else {
                         echo "Senators";
                     } ?> may do other things
                 not currently covered
@@ -1928,17 +1927,13 @@ $displayed_stuff = 0;
                     <?php echo ($extra_info['number_of_alerts'] == 1 ? 'person is' : 'people are') ?> tracking whenever <?php
                     if ($member['house_disp'] == 1) {
                     print 'this Representative';
-                    }
-                    elseif ($member['house_disp'] == 2) {
+                    } elseif ($member['house_disp'] == 2) {
                     print 'this Senator';
-                    }
-                    elseif ($member['house_disp'] == 3) {
+                    } elseif ($member['house_disp'] == 3) {
                     print 'this MLA';
-                    }
-                    elseif ($member['house_disp'] == 4) {
+                    } elseif ($member['house_disp'] == 4) {
                     print 'this MSP';
-                    }
-                    elseif ($member['house_disp'] == 0) {
+                    } elseif ($member['house_disp'] == 0) {
                     print $member['full_name'];
                     } ?> speaks
                     <?php
@@ -3100,8 +3095,7 @@ public function display_commentreport($data) {
                     ?>
                         <p>&nbsp;<br><em>This report has not been resolved.</em></p>
                         <?php
-                    }
-                    else {
+                    } else {
                     ?>
                         <p><em>This report was resolved on <?php echo $data['resolved']; ?></em></p>
                         <?php

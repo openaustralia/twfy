@@ -226,17 +226,13 @@ function adodb_backtrace($print = TRUE) {
                 foreach ($arr['args'] as $v) {
                     if (is_null($v)) {
                         $args[] = 'null';
-                    }
-                    elseif (is_array($v)) {
+                    } elseif (is_array($v)) {
                         $args[] = 'Array[' . count($v) . ']';
-                    }
-                    elseif (is_object($v)) {
+                    } elseif (is_object($v)) {
                         $args[] = 'Object:' . get_class($v);
-                    }
-                    elseif (is_bool($v)) {
+                    } elseif (is_bool($v)) {
                         $args[] = $v ? 'true' : 'false';
-                    }
-                    else {
+                    } else {
                         $v = (string) @$v;
                         $str = htmlspecialchars(substr($v, 0, $MAXSTRLEN));
                         if (strlen($v) > $MAXSTRLEN) {

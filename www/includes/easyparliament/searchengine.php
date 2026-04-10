@@ -126,24 +126,19 @@ class SEARCHENGINE {
                     // Adding section:representatives but not removing debates & debate in case they are used anywhere.
                     if ($value == "debates" || $value == "debate" || $value == "representatives") {
                         $value = 1;
-                    }
-                    elseif ($value == 'whall' || $value == 'westminster' || $value == 'westminhall') {
+                    } elseif ($value == 'whall' || $value == 'westminster' || $value == 'westminhall') {
                         $value = 2;
-                    }
-                    elseif ($value == "wrans" || $value == "wran") {
+                    } elseif ($value == "wrans" || $value == "wran") {
                         $value = 3;
-                    }
-                    elseif ($value == 'wms' || $value == 'statements' || $value == 'statement') {
+                    } elseif ($value == 'wms' || $value == 'statements' || $value == 'statement') {
                         $value = 4;
                     }
                     // Adding section:senate but not removing lords & lordsdebates in case they are used anywhere.
                     elseif ($value == 'lordsdebates' || $value == 'lords' || $value == 'senate') {
                         $value = 101;
-                    }
-                    elseif ($value == 'ni') {
+                    } elseif ($value == 'ni') {
                         $value = 5;
-                    }
-                    elseif ($value == 'pbc' || $value == 'standing') {
+                    } elseif ($value == 'pbc' || $value == 'standing') {
                         $value = 6;
                     }
                     $type = "major";

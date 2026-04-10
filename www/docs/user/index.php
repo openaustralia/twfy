@@ -1100,8 +1100,7 @@ function display_user($user_id = "") {
                         $MEMBER = new MEMBER(['person_id' => $m[1]]);
                         $display_terms[] = 'spoken by ' . $MEMBER->full_name();
                         $search_url .= 'pid=' . $MEMBER->person_id();
-                    }
-                    else {
+                    } else {
                         $display_terms[] = $criteria_term;
                         $search_keywords[] = $criteria_term;
                     }
