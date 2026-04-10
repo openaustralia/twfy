@@ -571,13 +571,15 @@ function trim_characters($text, $start, $length) {
  *
  */
 function filter_user_input($text, $filter_type) {
-    // We use this to filter any major user input, especially comments.
-    // Gets rid of bad HTML, basically.
-    // Uses iamcal.com's lib_filter class.
+    /*
+    We use this to filter any major user input, especially comments.
+    Gets rid of bad HTML, basically.
+    Uses iamcal.com's lib_filter class.
 
-    // $filter_type is the level of filtering we want:
-    // 'comment' allows <b> and <i> tags.
-    // 'strict' strips all tags.
+    $filter_type is the level of filtering we want:
+        -  'comment' allows <b> and <i> tags.
+        -  'strict' strips all tags.
+    */
 
     global $filter;
 
