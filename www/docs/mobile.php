@@ -180,8 +180,7 @@ $PAGE->block_start(['id' => 'intro', 'title' => 'At OpenAustralia.org you can:']
         // email_alert_bullet_point();
         your_mp_bullet_point();
         comment_on_recent_bullet_point();
-    }
-    else {
+    } else {
         your_mp_bullet_point();
         search_bullet_point();
         // email_alert_bullet_point();

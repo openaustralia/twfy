@@ -1151,8 +1151,7 @@ function display_user($user_id = "") {
             $COMMENTLIST->display('user', $args);
         }
 
-    }
-    else {
+    } else {
 
         $message = [
             'title' => 'Sorry...',

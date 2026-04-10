@@ -199,8 +199,7 @@ class PAGE {
   public function within_stripe() {
     if ($this->within_stripe_main == TRUE || $this->within_stripe_sidebar == TRUE) {
       return TRUE;
-    }
-    else {
+    } else {
       return FALSE;
     }
   }
@@ -211,8 +210,7 @@ class PAGE {
   public function within_stripe_sidebar() {
     if ($this->within_stripe_sidebar == TRUE) {
       return TRUE;
-    }
-    else {
+    } else {
       return FALSE;
     }
   }
@@ -232,8 +230,7 @@ class PAGE {
     if ($this_page == 'home') {
       $title = $sitetitle . ': ' . $DATA->page_metadata($this_page, "title");
 
-    }
-    else {
+    } else {
 
       if ($page_subtitle = $DATA->page_metadata($this_page, "subtitle")) {
         $title = $page_subtitle;
@@ -305,8 +302,7 @@ class PAGE {
 
     if (!$keywords = $DATA->page_metadata($this_page, "keywords")) {
       $keywords = "";
-    }
-    else {
+    } else {
       $keywords = "," . $DATA->page_metadata($this_page, "keywords");
     }
 
@@ -372,8 +368,7 @@ class PAGE {
     if ($this_page == 'home') {
       $title = $sitetitle . ': ' . $DATA->page_metadata($this_page, "title");
 
-    }
-    else {
+    } else {
 
       if ($page_subtitle = $DATA->page_metadata($this_page, "subtitle")) {
         $title = $page_subtitle;
@@ -446,8 +441,7 @@ class PAGE {
 
     if (!$keywords = $DATA->page_metadata($this_page, "keywords")) {
       $keywords = "";
-    }
-    else {
+    } else {
       $keywords = "," . $DATA->page_metadata($this_page, "keywords");
     }
 
@@ -678,8 +672,7 @@ class PAGE {
         $top_hilite = $this_page;
         $bottom_hilite = '';
 
-    }
-    else {
+    } else {
         // Does this page's parent have a parent?
         $parents_parent = $DATA->page_metadata($this_parent, 'parent');
 
@@ -789,8 +782,7 @@ public function menu_mobile() {
         $top_hilite = $this_page;
         $bottom_hilite = '';
 
-    }
-    else {
+    } else {
         // Does this page's parent have a parent?
         $parents_parent = $DATA->page_metadata($this_parent, 'parent');
 
@@ -883,8 +875,7 @@ public function user_bar($top_hilite = '', $bottom_hilite = '') {
     if ($this_page != 'getinvolved') {
 
         $getinvolvedclass = '';
-    }
-    else {
+    } else {
         $getinvolvedclass = ' class="on"';
     }
     if ($THEUSER->isloggedin()) {
@@ -933,8 +924,7 @@ public function user_bar($top_hilite = '', $bottom_hilite = '') {
         </ul>
         <?php
 
-    }
-    else {
+    } else {
       // User logged out.
 
         // The 'Join' link.
@@ -1160,8 +1150,7 @@ public function block_start($data = []) {
 
     if (isset($data['id']) && $data['id'] != '') {
         $id = ' id="' . $data['id'] . '"';
-    }
-    else {
+    } else {
         $id = '';
     }
 
@@ -1217,8 +1206,7 @@ public function heading() {
     // This is the page title of the parent.
     $section_text = $DATA->page_metadata($parent_page, 'title');
 
-    }
-    else {
+    } else {
     // Top level page - no parent, hence no parental title.
     $section_text = '';
     }
@@ -1281,8 +1269,7 @@ public function content_end() {
 
     if ($page == $this_page) {
         $links[] = $title;
-    }
-    else {
+    } else {
         $links[] = '<a href="' . $URL->generate() . '">' . $title . '</a>';
     }
     }
@@ -1489,8 +1476,7 @@ public function display_member($member, $extra_info) {
         echo ' height="118"';
     }
     echo '>';
-    }
-    else {
+    } else {
     // Prompt for photo.
     echo '<div class="textportrait"><br>We\'re missing a photo!<br><br><a href="mailto:contact@openaustralia.org">Email us one</a> <small>(that you have copyright of)</small><br><br></div>';
     }
@@ -1555,8 +1541,7 @@ public function display_member($member, $extra_info) {
     print '<li><strong>Entered the Senate ';
     if (strlen($member['entered_house'][2]['date_pretty']) == 4) {
         print 'in ';
-    }
-    else {
+    } else {
         print 'on ';
     }
     print $member['entered_house'][2]['date_pretty'] . '</strong>';
@@ -1579,8 +1564,7 @@ public function display_member($member, $extra_info) {
     print '<li><strong>Became a Senator ';
     if (strlen($member['entered_house'][2]['date_pretty']) == 4) {
         print 'in ';
-    }
-    else {
+    } else {
         print 'on ';
     }
     print $member['entered_house'][2]['date_pretty'] . '</strong>';
@@ -2109,8 +2093,7 @@ public function expenses_printout($col, $extra_info, $style) {
     }
     elseif ($col == 'col7a') {
         print 'N/A';
-    }
-    else {
+    } else {
         print '&nbsp;';
     }
     if (isset($extra_info[$kr]) && isset($extra_info[$k]) && $extra_info[$k] > 0) {
@@ -2442,8 +2425,7 @@ public function nextprevlinks() {
     if (isset($prev['url'])) {
         $prevlink = '<a href="' . $prev['url'] . '" title="' . $prev['title'] . '">&laquo; ' . $prev['body'] . '</a>';
 
-    }
-    else {
+    } else {
         $prevlink = '&laquo; ' . $prev['body'];
     }
     }
@@ -2466,8 +2448,7 @@ public function nextprevlinks() {
 
     if (isset($next['url'])) {
         $nextlink = '<a href="' . $next['url'] . '" title="' . $next['title'] . '">' . $next['body'] . ' &raquo;</a>';
-    }
-    else {
+    } else {
         $nextlink = $next['body'] . ' &raquo;';
     }
     }
@@ -2507,8 +2488,7 @@ public function recess_message() {
         $from = substr($from, 0, strlen($from) - 4);
         }
         $message .= "from $from until $to.";
-    }
-    else {
+    } else {
         $message .= 'at this time.';
     }
     }
@@ -2580,8 +2560,7 @@ public function search_form($value = '') {
         print '<input type="hidden" name="wtt" value="1">';
     }
 
-    }
-    else { ?>
+    } else { ?>
                     <form action="http://www.writetothem.com/lords" method="get">
                         <input type="hidden" name="pid" value="<?php echo htmlentities(get_http_var('pid')) ?>">
                         <input type="submit" style="font-size: 150%" value=" I want to write to this Lord "><br>
@@ -2598,24 +2577,21 @@ public function search_form($value = '') {
 
     if ($ordering == 'r') {
         print '<strong>Most relevant results are first</strong>';
-    }
-    else {
+    } else {
         printf("<a href='%s'>Show most relevant results first</a>", $orderUrl->generate('html', ['o' => 'r']));
     }
 
     print "&nbsp;|&nbsp;";
     if ($ordering == 'd') {
         print '<strong>Most recent results are first</strong>';
-    }
-    else {
+    } else {
         printf("<a href='%s'>Show most recent results first</a>", $orderUrl->generate('html', ['o' => 'd']));
     }
 
     print "&nbsp;|&nbsp;";
     if ($ordering == 'p') {
         print '<strong>Use by person</strong>';
-    }
-    else {
+    } else {
         printf('<a href="%s">Show use by person</a>', $orderUrl->generate('html', ['o' => 'p']));
     }
     echo '</div>';
@@ -2759,16 +2735,14 @@ public function glossary_search_form($args) {
 
     if (isset($args['blankform']) && $args['blankform'] == 1) {
     $formcontent = "";
-    }
-    else {
+    } else {
     $formcontent = htmlentities(get_http_var('g'));
     }
 
     if ($THEUSER->isloggedin()) {
     $URL = new URL($args['action']);
     $URL->remove(['g']);
-    }
-    else {
+    } else {
     $URL = new URL('userprompt');
     $URL->remove(['g']);
     $type = "<input type=\"hidden\" name=\"type\" value=\"2\">";
@@ -2876,8 +2850,7 @@ public function glossary_atoz(&$GLOSSARY) {
         $letter_link = $URL->generate('url');
 
         $letters[] = "<li><a href=\"" . $letter_link . "\">" . $letter . "</a></li>";
-    }
-    else {
+    } else {
         $letters[] = '<li>' . $letter . '</li>';
     }
     }
@@ -2921,8 +2894,7 @@ public function glossary_display_term(&$GLOSSARY) {
     $URL->insert(["delete_confirm" => $term['glossary_id']]);
     $delete_url = $URL->generate();
     $admin_links = "<br><small><a href=\"" . $delete_url . "\">delete</a></small>";
-    }
-    else {
+    } else {
     $admin_links = "";
     }
 
@@ -2932,8 +2904,7 @@ public function glossary_display_term(&$GLOSSARY) {
     $user_link = $URL->generate('url');
 
     $user_details = "\t\t\t\t<p><small>contributed by user <a href=\"" . $user_link . "\">" . $term['firstname'] . " " . $term['lastname'] . "</a></small>" . $admin_links . "</p>\n";
-    }
-    else {
+    } else {
     $user_details = "";
     }
 
@@ -2956,8 +2927,7 @@ public function glossary_display_match_list(&$GLOSSARY) {
     if ($GLOSSARY->num_search_matches > 1) {
     $plural = "them";
     $definition = "some definitions";
-    }
-    else {
+    } else {
     $plural = "it";
     $definition = "a definition";
     }
@@ -3048,8 +3018,7 @@ public function page_links($pagedata) {
     if ($page < 10) {
         $firstpage = 1;
         $lastpage = 10;
-    }
-    else {
+    } else {
         $firstpage = $page - 10;
         $lastpage = $page + 9;
     }
@@ -3128,8 +3097,7 @@ public function display_commentreport($data) {
     $USERURL = new URL('userview');
     $USERURL->insert(['id' => $data['user_id']]);
     $username = '<a href="' . $USERURL->generate() . '">' . htmlentities($data['user_name']) . '</a>';
-    }
-    else {
+    } else {
     $username = htmlentities($data['user_name']);
     }
     ?>
@@ -3210,8 +3178,7 @@ public function display_commentreportlist($data) {
 
                         $this->display_table($tabledata);
 
-    }
-    else {
+    } else {
 
     print "<p>There are no outstanding comment reports.</p>\n";
     }
@@ -3252,8 +3219,7 @@ public function display_calendar_month($month, $year, $dateArray, $page) {
     $nowDateComponents = getdate();
     if ($nowDateComponents['mon'] == $month && $nowDateComponents['year'] == $year) {
         $toDay = $nowDateComponents['mday'];
-    }
-    else {
+    } else {
         $toDay = '';
     }
 
@@ -3435,8 +3401,7 @@ public function admin_menu() {
     if ($page != $this_page) {
         $URL = new URL($page);
         $title = '<a href="' . $URL->generate() . '">' . $title . '</a>';
-    }
-    else {
+    } else {
         $title = '<strong>' . $title . '</strong>';
     }
 
@@ -3496,8 +3461,7 @@ function display_stats_line_house($house, $category, $blurb, $type, $inwhat, $ex
     print $inwhat;
     if ($minister) {
         print ' &#8212; Ministers do not ask written questions';
-    }
-    else {
+    } else {
         $type = ($house == 1 ? 'Representative' : ($house == 2 ? 'Senator' : 'MLA'));
         if (!get_http_var('rem') && isset($extra_info[$category . '_quintile'])) {
         print ' &#8212; ';

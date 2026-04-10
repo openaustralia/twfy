@@ -59,8 +59,7 @@ if (count($debatesdata) > 0 && count($wransdata) > 0 && count($whalldata) > 0 &&
             $daytext = "the most recent ";
         }
 
-    }
-    else {
+    } else {
         // Debates and Wrans are from different dates. We'll just do this for now:
         $daytext = "the most recent ";
     }

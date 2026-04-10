@@ -34,8 +34,7 @@ if (get_http_var('testing') == 'true') {
 
     if ($testcookie != TRUE) {
         voteerror("Your browser must be able to accept cookies before you can register a vote.");
-    }
-    else {
+    } else {
         // Delete the test cookie.
         setcookie('testcookie', '');
     }
@@ -170,8 +169,7 @@ if (is_numeric(get_http_var('id')) && is_numeric(get_http_var('v'))) {
         setcookie("epvotes", $new_cookie, time() + 60 * 60 * 24 * 365, "/", COOKIEDOMAIN);
 
 
-    }
-    else {
+    } else {
         // User is logged in.
 
         // See if the user's already voted for this.

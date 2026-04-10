@@ -212,8 +212,7 @@ elseif (get_http_var('pc') != '') {
             }
             member_redirect($MEMBER);
         }
-    }
-    else {
+    } else {
         $errors['pc'] = "Sorry, " . htmlentities($pc) . " isn't a valid postcode";
         twfy_debug('MP', "Can't display an MP because the submitted postcode wasn't of a valid form.");
     }

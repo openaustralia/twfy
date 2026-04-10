@@ -166,8 +166,7 @@ function error_handler(string $errno, string $errmsg, string $filename, int $lin
             vardump($message);
             vardump(adodb_backtrace());
         }
-    }
-    else {
+    } else {
         print ("<pre>" . htmlentities_notags($err) . "</pre>");
         // On live sites we display a nice message and email the problem.
         error_log($err);

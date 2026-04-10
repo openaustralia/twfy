@@ -165,8 +165,7 @@ foreach ($alertdata as $alertitem) {
         $total_results = $data['info']['total_results'];
         $queries++;
         mlog(", hits " . $total_results . ", time " . (getmicrotime() - $start) . "\n");
-    }
-    else {
+    } else {
         mlog("  ACTION $active/$outof CACHE HIT : Using cached result for '$criteria_batch'\n");
         $data = $results[$criteria_batch];
     }
@@ -287,8 +286,7 @@ function write_and_send_email($email, $user_id, $data) {
     $data .= '====================' . "\n\n";
     if ($user_id) {
         $data .= "As a registered user, visit http://www.openaustralia.org/user/\nto unsubscribe from, or manage, your alerts.\n";
-    }
-    else {
+    } else {
         $data .= "If you register on the site, you will be able to manage your\nalerts there as well as post comments. :)\n";
     }
     $sentemails++;
@@ -305,8 +303,7 @@ function write_and_send_email($email, $user_id, $data) {
             mlog("pausing ... ");
             sleep(1);
         }
-    }
-    else {
+    } else {
         mlog($data);
         $success = 1;
     }

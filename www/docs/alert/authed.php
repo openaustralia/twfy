@@ -36,8 +36,7 @@ else {
         } else {
             print "not signed";
         }
-    }
-    else {
+    } else {
         print "not authed";
     }
 }
