@@ -93,8 +93,7 @@ function alert_confirmation_advert($details) {
             keep you informed about your interests - find out what's happening straight from the horse's mouth.
             <a href="<?php echo WEBPATH ?>alert/"><strong>Sign up for an email alert</strong></a>
         </p>
-    <?php }
-    else {
+    <?php } else {
         $advert_shown = 'twfy-alert-person';
         ?>
         <p>Did you know that OpenAustralia can also email you when a certain representative contributes in parliament? Don't

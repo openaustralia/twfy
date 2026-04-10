@@ -556,8 +556,7 @@ class PAGE {
     // isn't this very hacky? shouldn't we be cobranding cleverly using METADATA? ( I've repeated this below however -stef".
     if (get_http_var('c4')) {
       $img = '<img src="/images/c4banner.gif" alt="OpenAustralia.org with Channel 4">';
-    }
-    elseif (get_http_var('c4x')) {
+    } elseif (get_http_var('c4x')) {
       $img = '<img src="/images/c4Xbanner.gif" alt="OpenAustralia.org with Channel 4">';
     }
 
@@ -614,8 +613,7 @@ class PAGE {
     // isn't this very hacky? shouldn't we be cobranding cleverly using METADATA? ( I've repeated this below however -stef".
     if (get_http_var('c4')) {
       $img = '<img src="/images/c4banner.gif" alt="OpenAustralia.org with Channel 4">';
-    }
-    elseif (get_http_var('c4x')) {
+    } elseif (get_http_var('c4x')) {
       $img = '<img src="/images/c4Xbanner.gif" alt="OpenAustralia.org with Channel 4">';
     }
 
@@ -1219,8 +1217,7 @@ public function heading() {
 
     if ($page_text == '' && !is_bool($page_text)) {
     // If the metadata 'heading' is set, but empty, we display nothing.
-    }
-    elseif ($page_text == FALSE) {
+    } elseif ($page_text == FALSE) {
     // But if it just hasn't been set, we use the 'title'.
     $page_text = $DATA->page_metadata($this_page, "title");
     }
@@ -1228,8 +1225,7 @@ public function heading() {
     if ($page_text == $section_text) {
     // We don't want to print both.
     $page_text = '&nbsp;';
-    }
-    elseif ($page_text && !$section_text) {
+    } elseif ($page_text && !$section_text) {
     // Bodge for if we have a page_text but no section_text.
     $section_text = $page_text;
     $page_text = '&nbsp;';
@@ -1559,8 +1555,7 @@ public function display_member($member, $extra_info) {
         }
         print '</li>';
     }
-    }
-    elseif (isset($member['entered_house'][2]['date'])) {
+    } elseif (isset($member['entered_house'][2]['date'])) {
     print '<li><strong>Became a Senator ';
     if (strlen($member['entered_house'][2]['date_pretty']) == 4) {
         print 'in ';
@@ -1572,8 +1567,7 @@ public function display_member($member, $extra_info) {
         print ' &mdash; ' . $member['entered_house'][2]['reason'];
     }
     print '</li>';
-    }
-    elseif (in_array(1, $member['houses']) && !$member['current_member'][1]) {
+    } elseif (in_array(1, $member['houses']) && !$member['current_member'][1]) {
     print '<li><strong>Left House of Representatives on ' . $member['left_house'][1]['date_pretty'] . '</strong>';
     if ($member['left_house'][1]['reason']) {
         print ' &mdash; ' . $member['left_house'][1]['reason'];
@@ -1670,17 +1664,14 @@ public function display_member($member, $extra_info) {
     if ($member['the_users_mp'] == TRUE) {
     ?>
         <?php
-    }
-    elseif ($member['current_member'][1]) {
+    } elseif ($member['current_member'][1]) {
     ?>
         <?php
-    }
-    elseif ($member['current_member'][3]) {
+    } elseif ($member['current_member'][3]) {
     ?>
             <li><a href="http://www.writetothem.com/"><strong>Send a message to your MLA</strong></a> <small>(via
                     WriteToThem.com)</small></li>
-    <?php }
-    elseif ($member['current_member'][2]) {
+    <?php } elseif ($member['current_member'][2]) {
     ?>
         <?php
 
@@ -2090,8 +2081,7 @@ public function expenses_printout($col, $extra_info, $style) {
     print '<td class="row-' . $style . '">';
     if (isset($extra_info[$k])) {
         print '&pound;' . number_format(str_replace(',', '', $extra_info[$k]));
-    }
-    elseif ($col == 'col7a') {
+    } elseif ($col == 'col7a') {
         print 'N/A';
     } else {
         print '&nbsp;';
@@ -2135,8 +2125,7 @@ public function generate_member_links($member, $links) {
     // BIOGRAPHY.
     if (isset($links['mp_email'])) {
     $html .= '	<li><a href="mailto:' . $links['mp_email'] . '">Email ' . $member->full_name() . '</a></li>';
-    }
-    elseif (isset($links['mp_contact_form'])) {
+    } elseif (isset($links['mp_contact_form'])) {
     $html .= '	<li><a href="' . $links['mp_contact_form'] . '">Contact form</a> <small>(On the Australian Parliament website)</small></li>';
     }
 
@@ -2367,8 +2356,7 @@ public function set_hansard_headings($info) {
         // trim_words() is in utility.php. Trim to 40 chars.
         $page_title = trim_characters($info['text'], 0, 40);
 
-    }
-    elseif (isset($info['year'])) {
+    } elseif (isset($info['year'])) {
         // Debatesyear and wransyear pages.
         $page_title = $DATA->page_metadata($this_page, 'title');
 
@@ -2843,8 +2831,7 @@ public function glossary_atoz(&$GLOSSARY) {
         else {
         $letters[] = "<li class=\"on\">" . $letter . "</li>";
         }
-    }
-    elseif (!empty($GLOSSARY->alphabet[$letter])) {
+    } elseif (!empty($GLOSSARY->alphabet[$letter])) {
         $URL = new URL('glossary');
         $URL->insert(['az' => $letter]);
         $letter_link = $URL->generate('url');
@@ -3511,8 +3498,7 @@ function display_writetothem_numbers($year, $extra_info) {
         </li>
         <?php
         return TRUE;
-    }
-    elseif (isset($extra_info["writetothem_responsiveness_mean_$year"])) {
+    } elseif (isset($extra_info["writetothem_responsiveness_mean_$year"])) {
         $mean = $extra_info["writetothem_responsiveness_mean_$year"];
 
         $a = $extra_info["writetothem_responsiveness_fuzzy_response_description_$year"];
