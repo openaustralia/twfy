@@ -158,8 +158,7 @@ class HANSARDLIST {
                 return $data['info']['redirected_gid'];
             }
 
-        }
-        else {
+        } else {
             // Don't have a valid $view.
             $PAGE->error_message("You haven't specified a view type.");
             return FALSE;
@@ -177,8 +176,7 @@ class HANSARDLIST {
 
         if (isset($args['mobile'])) {
             $return = $this->render($view, $data, $format, $args['mobile']);
-        }
-        else {
+        } else {
             $return = $this->render($view, $data, $format);
         }
 
@@ -373,8 +371,7 @@ class HANSARDLIST {
                 $subsectiondata = $subsectiondata[0];
             }
 
-        }
-        elseif ($itemdata['htype'] == '11') {
+        } elseif ($itemdata['htype'] == '11') {
             // It's a subsection, so use the item itself.
             $subsectiondata = $itemdata;
         }
@@ -403,12 +400,10 @@ class HANSARDLIST {
             // Debate subsection or section - get the next one.
             if ($hansardmajors[$itemdata['major']]['type'] == 'other') {
                 $where = 'htype = 11';
-            }
-            else {
+            } else {
                 $where = "(htype = 10 OR htype = 11)";
             }
-        }
-        else {
+        } else {
             // Anything else in debates - get the next element that isn't
             // a subsection or section, and is within THIS subsection.
             $where = "subsection_id = '" . $itemdata['subsection_id'] . "' AND (htype != 10 AND htype != 11)";
@@ -479,14 +474,12 @@ class HANSARDLIST {
                         'url' => $prevdata[0]['listurl'],
                         'title' => $prevdata[0]['body']
                     ];
-                }
-                else {
+                } else {
                     // Linking to the prev speaker.
 
                     if (isset($prevdata[0]['speaker']) && count($prevdata[0]['speaker']) > 0) {
                         $title = $prevdata[0]['speaker']['first_name'] . ' ' . $prevdata[0]['speaker']['last_name'];
-                    }
-                    else {
+                    } else {
                         $title = '';
                     }
                     $nextprevdata['prev'] = [
@@ -524,14 +517,12 @@ class HANSARDLIST {
                         'url' => $nextdata[0]['listurl'],
                         'title' => $nextdata[0]['body']
                     ];
-                }
-                else {
+                } else {
                     // Linking to the next speaker.
 
                     if (isset($nextdata[0]['speaker']) && count($nextdata[0]['speaker']) > 0) {
                         $title = $nextdata[0]['speaker']['first_name'] . ' ' . $nextdata[0]['speaker']['last_name'];
-                    }
-                    else {
+                    } else {
                         $title = '';
                     }
                     $nextprevdata['next'] = [
@@ -552,8 +543,7 @@ class HANSARDLIST {
                 'title' => '',
                 'url' => $URL->generate() . $this->url,
             ];
-        }
-        elseif ($itemdata['htype'] == '10' || $itemdata['htype'] == '11') {
+        } elseif ($itemdata['htype'] == '10' || $itemdata['htype'] == '11') {
             // Create URL for this (sub)section's date.
             $URL->insert(['d' => $itemdata['hdate']]);
             $URL->remove(['id']);
@@ -616,8 +606,7 @@ class HANSARDLIST {
 
                 if ($nextorprev == 'next') {
                     $body = 'Next day';
-                }
-                else {
+                } else {
                     $body = 'Previous day';
                 }
 
@@ -1164,11 +1153,9 @@ class HANSARDLIST {
         if (isset($args['o'])) {
             if ($args['o'] == 'd') {
                 $sort_order = 'date';
-            }
-            elseif ($args['o'] == 'c') {
+            } elseif ($args['o'] == 'c') {
                 $sort_order = 'created';
-            }
-            elseif ($args['o'] == 'r') {
+            } elseif ($args['o'] == 'r') {
                 $sort_order = 'relevance';
             }
         }
@@ -1317,8 +1304,7 @@ class HANSARDLIST {
                         $itemdata['parent']['body'] = 'NIA: ' . $itemdata['parent']['body'];
                     }
 
-                }
-                else {
+                } else {
                     // It's a section, so it will be its own title.
                     $itemdata['parent']['body'] = $itemdata['body'];
                     $itemdata['body'] = '';
@@ -1337,8 +1323,7 @@ class HANSARDLIST {
                 }
                 if (isset($subsection['listurl'])) {
                     $listurl = $subsection['listurl'];
-                }
-                else {
+                } else {
                     $listurl = '';
                 }
                 $itemdata['parent'] = [
@@ -1417,8 +1402,7 @@ class HANSARDLIST {
                 return $data;
             }
 
-        }
-        elseif (isset($args['year']) && is_numeric($args['year'])) {
+        } elseif (isset($args['year']) && is_numeric($args['year'])) {
 
             if (isset($args['month']) && is_numeric($args['month'])) {
                 // A particular month.
@@ -1571,8 +1555,7 @@ class HANSARDLIST {
 
                 if (!isset($years[$y])) {
                     $years[$y] = [1 => [], 2 => [], 3 => [], 4 => [], 5 => [], 6 => [], 7 => [], 8 => [], 9 => [], 10 => [], 11 => [], 12 => []];
-                }
-                else {
+                } else {
 
                     // This year is set. Check it has all the months...
 
@@ -1788,8 +1771,7 @@ class HANSARDLIST {
                         $where = "section_id = '" . $item['epobject_id'] . "'
 							AND subsection_id = '" . $item['epobject_id'] . "'";
 
-                    }
-                    else {
+                    } else {
                         // Subsection - get a count of items within this subsection.
                         $where = "subsection_id = '" . $item['epobject_id'] . "'";
                     }
@@ -1802,8 +1784,7 @@ class HANSARDLIST {
 
                     if ($r->rows() > 0) {
                         $item['contentcount'] = $r->field(0, 'count');
-                    }
-                    else {
+                    } else {
                         $item['contentcount'] = '0';
                     }
                 }
@@ -1820,8 +1801,7 @@ class HANSARDLIST {
                     if ($item['htype'] == '10') {
                         $where = "hansard.section_id = '" . $this->db->escape($item['epobject_id']) . "'
                                     AND hansard.subsection_id = '" . $this->db->escape($item['epobject_id']) . "'";
-                    }
-                    elseif ($item['htype'] == '11') {
+                    } elseif ($item['htype'] == '11') {
                         $where = "hansard.subsection_id = '" . $this->db->escape($item['epobject_id']) . "'";
                     }
                     $r = $this->db->query("SELECT epobject.body
@@ -1862,8 +1842,7 @@ class HANSARDLIST {
                         $id = preg_replace('#^.*?_.*?_#', '', $item['gid']);
                         $fragment = $this->url . '/' . $id;
                         $item['commentsurl'] = $COMMENTSURL->generate() . $fragment;
-                    }
-                    else {
+                    } else {
                         if ($getvar == 'gid') {
                             $COMMENTSURL->remove(['id']);
                         }
@@ -2078,20 +2057,15 @@ class HANSARDLIST {
                     $house = $q->field(0, 'house');
                     if ($house == 1) {
                         $URL = new URL('mp');
-                    }
-                    elseif ($house == 2) {
+                    } elseif ($house == 2) {
                         $URL = new URL('peer');
-                    }
-                    elseif ($house == 3) {
+                    } elseif ($house == 3) {
                         $URL = new URL('mla');
-                    }
-                    elseif ($house == 3) {
+                    } elseif ($house == 3) {
                         $URL = new URL('mla');
-                    }
-                    elseif ($house == 4) {
+                    } elseif ($house == 4) {
                         $URL = new URL('msp');
-                    }
-                    elseif ($house == 0) {
+                    } elseif ($house == 0) {
                         $URL = new URL('royal');
                     }
                     $URL->insert(['m' => $speaker_id]);
@@ -2131,8 +2105,7 @@ class HANSARDLIST {
                     $this->speakers[$speaker_id] = $speaker;
 
                     return $speaker;
-                }
-                else {
+                } else {
                     return [];
                 }
             } else {
@@ -2402,8 +2375,7 @@ class HANSARDLIST {
             if ($itemdata['htype'] == '10') {
                 $nextprev = $this->_get_nextprev_items($sectionrow);
 
-            }
-            elseif ($itemdata['htype'] == '11') {
+            } elseif ($itemdata['htype'] == '11') {
                 $nextprev = $this->_get_nextprev_items($subsectionrow);
 
             } else {
@@ -2413,8 +2385,7 @@ class HANSARDLIST {
                 if (isset($subsectionrow['gid'])) {
                     $nextprev['up']['url'] = $subsectionrow['listurl'];
                     $nextprev['up']['title'] = $subsectionrow['body'];
-                }
-                else {
+                } else {
                     $nextprev['up']['url'] = $sectionrow['listurl'];
                     $nextprev['up']['title'] = $sectionrow['body'];
                 }
@@ -2470,8 +2441,7 @@ class HANSARDLIST {
                         return ['info' => ['redirected_gid' => $data['subrows'][0]['gid']]];
                     }
                 }
-            }
-            elseif ($itemdata['htype'] == '11') {
+            } elseif ($itemdata['htype'] == '11') {
                 // This item is a subsection, so we're displaying everything within it.
 
                 // $subsectionrow['trackback'] = $this->_get_trackback_data($subsectionrow);
@@ -2486,8 +2456,7 @@ class HANSARDLIST {
 
                 $data['rows'] = $this->_get_hansard_data($input);
 
-            }
-            elseif ($itemdata['htype'] == '12' || $itemdata['htype'] == '13') {
+            } elseif ($itemdata['htype'] == '12' || $itemdata['htype'] == '13') {
                 // Debate speech or procedural, so we're just displaying this one item.
 
                 // $itemdata['trackback'] = $this->_get_trackback_data($itemdata);
@@ -3104,9 +3073,9 @@ class WRANSLIST extends HANSARDLIST {
                 'list_url' => $list_url,
                 'totalcomments' => $totalcomments,
                 'child' => [
-                        'body' => $childbody,
-                        'speaker' => $speaker
-                    ],
+                    'body' => $childbody,
+                    'speaker' => $speaker
+                ],
                 'parent' => [
                     'body' => $parentbody
                 ]
