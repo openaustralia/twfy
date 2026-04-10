@@ -36,7 +36,7 @@ function lensort($a, $b) {
 function wikipedize($source) {
     $was_array = FALSE;
     if (is_array($source)) {
-        $source = join('|||', $source);
+        $source = implode('|||', $source);
         $was_array = TRUE;
     }
 
@@ -79,7 +79,7 @@ function wikipedize($source) {
     $matched = [];
     $db = new ParlDB();
     $source = explode('|||', $source);
-    $q = $db->query("SELECT title FROM titles WHERE title IN ('" . join("','", $phrases) . "')");
+    $q = $db->query("SELECT title FROM titles WHERE title IN ('" . implode("','", $phrases) . "')");
     for ($i = 0; $i < $q->rows(); $i++) {
         $wikistring = $q->field($i, 'title');
         $phrase = str_replace('_', ' ', $wikistring);
@@ -99,7 +99,7 @@ function wikipedize($source) {
     }
 
     if (!$was_array) {
-        $source = join('|||', $source);
+        $source = implode('|||', $source);
     }
 
     return $source;

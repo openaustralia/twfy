@@ -38,9 +38,9 @@ if (!$sender_name) {
     $errors[] = "If you don't give us your name, we can't tell the recipient who sent them the link. We won't store it or use for any other purpose than sending this email.";
 }
 
-if (sizeof($errors)) {
+if (count($errors)) {
     print '<p>Please correct the following errors:</p>';
-    print '<ul><li>' . join('</li> <li>', $errors) . '</li></ul><br>';
+    print '<ul><li>' . implode('</li> <li>', $errors) . '</li></ul><br>';
     ?>
     <form action="./" method="post">
         <p>

@@ -36,7 +36,7 @@ function api_getMPsInfo_id($ids) {
             $safe_ids[] = $id;
         }
     }
-    $ids = join(',', $safe_ids);
+    $ids = implode(',', $safe_ids);
 
     $db = new ParlDB();
     $last_mod = 0;

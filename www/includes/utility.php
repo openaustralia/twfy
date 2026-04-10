@@ -1082,7 +1082,7 @@ function major_summary($data, $limit = "") {
 				FROM hansard,epobject
 				WHERE hansard.epobject_id = epobject.epobject_id AND section_id=0
 				AND hdate="' . $date . '"
-				AND major IN (' . join(',', $printed_majors) . ')
+				AND major IN (' . implode(',', $printed_majors) . ')
 				ORDER BY major desc, hpos' . $limitsql);
         $current_major = 0;
         for ($i = 0; $i < $q->rows(); $i++) {
