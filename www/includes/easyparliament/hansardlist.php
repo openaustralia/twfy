@@ -1595,9 +1595,8 @@ class HANSARDLIST {
                     'url' => $YEARURL->generate()
                 ];
 
-            }
-            // Action is 'year'.
-            else {
+            } else {
+                // Action is 'year'.
 
                 $nextprev['prev'] = ['body' => 'Previous year'];
                 $nextprev['next'] = ['body' => 'Next year'];
