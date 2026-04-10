@@ -286,13 +286,13 @@ if (isset($MEMBER) && is_array($MEMBER->person_id())) {
                 $subtitle .= ', former Representative';
             } else {
                 $subtitle .= ' MP';
-}
+            }
             $subtitle .= ', ' . $MEMBER->constituency();
         }
         if ($MEMBER->house(2)) {
             $subtitle .= ', former Senator, ' . $MEMBER->constituency();
         }
-}
+    }
 
     $DATA->set_page_metadata($this_page, 'subtitle', $subtitle);
     $DATA->set_page_metadata($this_page, 'heading', '');
