@@ -1866,7 +1866,7 @@ $displayed_stuff = 0;
                 echo "Representatives";
                } else {
                         echo "Senators";
-                    } ?> may do other things
+               } ?> may do other things
                 not currently covered
                 by this site.</em> (<a href="<?php echo WEBPATH ?>help/#numbers">More about this</a>)</p>
         <ul>
@@ -2673,8 +2673,7 @@ public function login_form($errors = []) {
                         // The return url for after the user has logged in.
                         if (get_http_var("ret") != "") {
                             $returl = get_http_var("ret");
-                        }
-                        else {
+                        } else {
                             $returl = $glossary_returl;
                         }
                         ?>
@@ -3141,8 +3140,7 @@ public function display_commentreportlist($data) {
                                 'cid' => $report['comment_id'],
                             ]);
                             $editlink = '<a href="' . $EDITURL->generate() . '">View</a>';
-                        }
-                        else {
+                        } else {
                             $editlink = 'Locked';
                         }
 
