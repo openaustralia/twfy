@@ -290,21 +290,21 @@ class EDITQUEUE {
 
         ?>
         <form action="<?php echo $form_link ?>" method="post"><?php
-        foreach ($this->pending as $editqueue_id => $pender) {
+           foreach ($this->pending as $editqueue_id => $pender) {
 
-            $URL = new URL('admin_glossary_pending');
-            $URL->insert(['approve' => $editqueue_id]);
-            $approve_link = $URL->generate('url');
+               $URL = new URL('admin_glossary_pending');
+               $URL->insert(['approve' => $editqueue_id]);
+               $approve_link = $URL->generate('url');
 
-            $URL = new URL('admin_glossary_pending');
-            $URL->insert(['modify' => $editqueue_id]);
-            $modify_link = $URL->generate('url');
+               $URL = new URL('admin_glossary_pending');
+               $URL->insert(['modify' => $editqueue_id]);
+               $modify_link = $URL->generate('url');
 
-            $URL = new URL('admin_glossary_pending');
-            $URL->insert(['decline' => $editqueue_id]);
-            $decline_link = $URL->generate('url');
+               $URL = new URL('admin_glossary_pending');
+               $URL->insert(['decline' => $editqueue_id]);
+               $decline_link = $URL->generate('url');
 
-            ?>
+               ?>
                 <div class="pending-item"><label for="<?php echo $editqueue_id; ?>"><input type="checkbox" name="approve[]"
                             value="<?php echo $editqueue_id; ?>"
                             id="<?php echo $editqueue_id; ?>"><strong><?php echo $pender['title']; ?></strong></label>
@@ -320,8 +320,8 @@ class EDITQUEUE {
                     </p>
                 </div>
                 <?php
-        }
-        ?><input type="submit" value="Approve checked items">
+           }
+           ?><input type="submit" value="Approve checked items">
         </form>
         <?php
     }
