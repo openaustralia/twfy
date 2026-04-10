@@ -20,8 +20,7 @@ if ((get_http_var('g') != '') && (get_http_var('previewterm') == '')) {
     // We're searching for something.
     $args['s'] = filter_user_input(get_http_var('g'), 'strict');
     $GLOSSARY = new GLOSSARY($args);
-}
-else {
+} else {
     $args['sort'] = "regexp_replace";
     $GLOSSARY = new GLOSSARY($args);
     $args['s'] = filter_user_input(get_http_var('g'), 'strict');
@@ -71,12 +70,10 @@ if (get_http_var("submitterm") != '') {
         print "<h4>Thank you for your help</h4><p>Your definition for <strong>&quot;" . $data['title'] . "&quot;</strong> has been submitted and awaits moderator approval. If every thing is well and good, it should appear on the site within the next day or so.</p>";
         print "<p>You can browse the exising glossary below:</p>";
         $PAGE->glossary_atoz($GLOSSARY);
-    }
-    else {
+    } else {
         $PAGE->error_message("Sorry, there was an error and we were unable to add your Glossary item.");
     }
-}
-elseif (get_http_var("previewterm") != '') {
+} elseif (get_http_var("previewterm") != '') {
     // We're previewing a Glossary definition.
 
     if (get_http_var('definition') != '') {
@@ -104,8 +101,7 @@ elseif (get_http_var("previewterm") != '') {
     $PAGE->stripe_end();
 
 
-}
-elseif ($GLOSSARY->query != '') {
+} elseif ($GLOSSARY->query != '') {
     // Deal with all the various searching possiblities...
 
     if ($GLOSSARY->num_search_matches >= 1) {
@@ -150,8 +146,7 @@ elseif ($GLOSSARY->query != '') {
             print "<p><a href=\"#definition\">Back to form</a></p>";
         }
     }
-}
-else {
+} else {
     // We just arrived here empty handed...
 
     if (isset($error_message)) {

@@ -6,8 +6,7 @@
 
 if ($term) {
     $this_page = 'glossary_item';
-}
-else {
+} else {
     $this_page = "glossary";
 }
 
@@ -46,20 +45,17 @@ if ((get_http_var('az') != '') && is_string(get_http_var('az'))) {
 if (isset($az) && array_key_exists($az, $GLOSSARY->alphabet)) {
     $GLOSSARY->current_letter = $az;
     // Otherwise make it the first letter of the current term.
-}
-elseif (isset($term)) {
+} elseif (isset($term)) {
     $GLOSSARY->current_letter = strtoupper($term['title'][0]);
     // Otherwise make it "A" by default.
-}
-else {
+} else {
     $GLOSSARY->current_letter = "A";
 }
 
 if ($term) {
     $DATA->set_page_metadata($this_page, 'title', $term['title'] . ': Glossary item');
     $DATA->set_page_metadata($this_page, 'heading', $term['title']);
-}
-else {
+} else {
     $DATA->set_page_metadata($this_page, 'title', $GLOSSARY->current_letter . ': Glossary index');
     $DATA->set_page_metadata($this_page, 'heading', 'Glossary index');
 }
@@ -109,8 +105,7 @@ if ($GLOSSARY->glossary_id != '') {
 
     $PAGE->glossary_display_term($GLOSSARY);
 
-}
-else {
+} else {
 
 
     // Display the results.

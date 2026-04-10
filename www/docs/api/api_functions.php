@@ -125,8 +125,7 @@ $methods = [
 /**
  * Key-related functions.
  */
-function api_log_call($key)
-{
+function api_log_call($key) {
     if ($key == 'DOCS') {
         return;
     }
@@ -141,8 +140,7 @@ function api_log_call($key)
 /**
  *
  */
-function api_check_key($key)
-{
+function api_check_key($key) {
     $db = new ParlDB();
     $q = $db->query('SELECT user_id FROM api_key WHERE api_key="' . $db->escape($key) . '"');
     if (!$q->rows()) {
@@ -154,15 +152,13 @@ function api_check_key($key)
 /**
  *
  */
-function api_key_current_message()
-{
+function api_key_current_message() {
 }
 
 /**
  * Front-end sidebar of all methods.
  */
-function api_sidebar()
-{
+function api_sidebar() {
     global $methods;
     $sidebar = '<div class="block"><h4>API Functions</h4> <div class="blockbody"><ul>';
     foreach ($methods as $method => $data) {
@@ -203,8 +199,7 @@ function api_sidebar()
 /**
  * Output functions.
  */
-function api_output($arr, $last_mod = NULL)
-{
+function api_output($arr, $last_mod = NULL) {
     $output = get_http_var('output');
     if (!get_http_var('docs')) {
         $cond = api_header($output, $last_mod);
@@ -234,8 +229,7 @@ function api_output($arr, $last_mod = NULL)
 /**
  *
  */
-function api_header($o, $last_mod = NULL)
-{
+function api_header($o, $last_mod = NULL) {
     if ($last_mod && array_key_exists('HTTP_IF_MODIFIED_SINCE', $_SERVER)) {
         $t = cond_parse_http_date($_SERVER['HTTP_IF_MODIFIED_SINCE']);
         if (isset($t) && $t >= $last_mod) {
@@ -264,16 +258,14 @@ function api_header($o, $last_mod = NULL)
 /**
  *
  */
-function api_error($e)
-{
+function api_error($e) {
     api_output(['error' => $e]);
 }
 
 /**
  *
  */
-function api_output_php($arr)
-{
+function api_output_php($arr) {
     $out = serialize($arr);
     if (get_http_var('verbose')) {
         $out = str_replace(';', ";\n", $out);
@@ -284,9 +276,9 @@ function api_output_php($arr)
 /**
  *
  */
-function api_output_rabx($arr)
-{
+function api_output_rabx($arr) {
     $out = '';
+    // rabx_wire_wr is in phplib/rabx.php. It converts a PHP array into a binary format that can be read by rabx_read in the same library.
     rabx_wire_wr($arr, $out);
     if (get_http_var('verbose')) {
         $out = str_replace(',', ",\n", $out);
@@ -299,8 +291,7 @@ $api_xml_arr = 0;
 /**
  *
  */
-function api_output_xml($v, $k = NULL)
-{
+function api_output_xml($v, $k = NULL) {
     global $api_xml_arr;
     $verbose = get_http_var('verbose') ? "\n" : '';
     if (is_array($v)) {
@@ -308,7 +299,7 @@ function api_output_xml($v, $k = NULL)
             $elt = 'match';
             $api_xml_arr++;
             $out = "<$elt>";
-            $out .= join("</$elt>$verbose<$elt>", array_map('api_output_xml', $v));
+            $out .= implode("</$elt>$verbose<$elt>", array_map('api_output_xml', $v));
             $out .= "</$elt>$verbose";
             return $out;
         }
@@ -327,13 +318,12 @@ function api_output_xml($v, $k = NULL)
 /**
  *
  */
-function api_output_js($v, $level = 0)
-{
+function api_output_js($v, $level = 0) {
     $verbose = get_http_var('verbose') ? "\n" : '';
     if (is_array($v)) {
         // PHP arrays are both JS arrays and objects.
         if (count($v) && array_keys($v) === range(0, count($v) - 1)) {
-            return '[' . join(",$verbose", array_map('api_output_js', $v)) . ']';
+            return '[' . implode(",$verbose", array_map('api_output_js', $v)) . ']';
         }
         $out = '{' . $verbose;
         $b = FALSE;
@@ -360,7 +350,7 @@ function api_output_js($v, $level = 0)
     } elseif (is_string($v)) {
         return '"' . str_replace(
             ["\\", '"', "\n", "\t", "\r"],
-            ["\\\\", '\"', '\n', '\t', '\r'],
+            ["\\\\", '\\"', '\\n', '\\t', '\\r'],
             $v
         ) . '"';
     } elseif (is_bool($v)) {
@@ -373,8 +363,7 @@ function api_output_js($v, $level = 0)
 /**
  * Call an API function.
  */
-function api_call_user_func_or_error($function, $params, $error, $type)
-{
+function api_call_user_func_or_error($function, $params, $error, $type) {
     if (function_exists($function)) {
         call_user_func_array($function, $params);
     } elseif ($type == 'api') {
@@ -413,8 +402,7 @@ $cond_time_re = '([01][0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9]|6[012])';
 /**
  *
  */
-function cond_parse_http_date($date)
-{
+function cond_parse_http_date($date) {
     $H = $M = $S = 0;
     $Y = $m = $d = 0;
 

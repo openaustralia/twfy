@@ -62,8 +62,7 @@ for ($personrow = 0; $personrow < $q->rows(); $personrow++) {
             $hdate = format_date($row['hdate'], 'Y-m-d');
             if ($row['htime'] != NULL) {
                 $htime = format_time($row['htime'], 'H:i:s');
-            }
-            else {
+            } else {
                 $htime = '00:00:00';
             }
 

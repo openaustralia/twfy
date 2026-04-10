@@ -72,8 +72,7 @@ $PAGE->page_end();
 /**
  * ---
  */
-function create_key($commercial, $reason)
-{
+function create_key($commercial, $reason) {
     global $THEUSER;
     $key = auth_ab64_encode(urandom_bytes(16));
     $db = new ParlDB();
@@ -86,8 +85,7 @@ function create_key($commercial, $reason)
 /**
  *
  */
-function api_key_form()
-{
+function api_key_form() {
     ?>
     <br>
     <h3>Apply for a new key</h3>

@@ -46,8 +46,7 @@ class TRACKBACK {
         // Set in init.php.
         if (ALLOWTRACKBACKS == TRUE) {
             $this->trackbacks_enabled = TRUE;
-        }
-        else {
+        } else {
             $this->trackbacks_enabled = FALSE;
         }
     }
@@ -88,8 +87,7 @@ class TRACKBACK {
             // Get all the data that's to be rendered.
             $trackbackdata = $this->$function($args);
 
-        }
-        else {
+        } else {
             $PAGE->error_message("You haven't specified a valid view type.");
             return FALSE;
         }

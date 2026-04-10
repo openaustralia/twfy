@@ -11,8 +11,7 @@ $PAGE->page_start();
 $PAGE->stripe_start();
 $db = new ParlDB();
 
-if (!$dept) {
-} else {
+if ($dept) {
     $dept = strtolower(str_replace('_', ' ', $dept));
     $q = $db->query('select epobject.epobject_id from hansard,epobject
 		where hansard.epobject_id=epobject.epobject_id and major=4 and section_id=0
@@ -27,7 +26,7 @@ if (!$dept) {
     print '<h3>Written Ministerial Statements from the past week</h3>';
     $q = $db->query('select gid,body from hansard,epobject
 		where hansard.epobject_id=epobject.epobject_id and major=4 and subsection_id=0
-		and section_id in (' . join(',', $ids) . ')
+    and section_id in (' . implode(',', $ids) . ')
 		order by body');
     print '<ul>';
     for ($i = 0; $i < $q->rows(); $i++) {

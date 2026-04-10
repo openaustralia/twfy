@@ -74,8 +74,7 @@ function _api_getConstituencies_search($s) {
 function api_getConstituencies_date($date) {
     if ($date = parse_date($date)) {
         api_getConstituencies('"' . $date['iso'] . '"');
-    }
-    else {
+    } else {
         api_error('Invalid date format');
     }
 }
@@ -147,10 +146,9 @@ function _api_getConstituencies_latitude($lat, $lon, $d) {
             );
         }
     }
-    usort($out, create_function('$a,$b', "
-		if (\$a['distance'] > \$b['distance']) return 1;
-		if (\$a['distance'] < \$b['distance']) return -1;
-		return 0;"));
+    usort($out, function ($a, $b) {
+        return $a['distance'] <=> $b['distance'];
+    });
     return $out;
 }
 

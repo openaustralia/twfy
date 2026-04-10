@@ -85,8 +85,7 @@ print "Email lookups: $registered registered, $unregistered unregistered\n";
 /**
  *
  */
-function write_and_send_email($email, $user_id, $data)
-{
+function write_and_send_email($email, $user_id, $data) {
     global $globalsuccess, $out, $sentemails, $nomail;
 
     if ($user_id) {

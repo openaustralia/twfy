@@ -43,16 +43,13 @@ if (isset($data['comments'][0]['preview']) && $data['comments'][0]['preview'] ==
     // If we're just previewing a comment, we passed in 'preview' => true.
     $subheading = 'Your comment would look like this:';
 
-}
-elseif ($this_page == 'addcomment') {
+} elseif ($this_page == 'addcomment') {
     $subheading = 'Previous comments';
 
-}
-elseif ($this_page == 'commentreport' || $this_page == 'admin_commentreport') {
+} elseif ($this_page == 'commentreport' || $this_page == 'admin_commentreport') {
     $subheading = "";
 
-}
-else {
+} else {
     $subheading = 'Comments';
 }
 
@@ -77,8 +74,7 @@ if (isset($data['comments']) && count($data['comments']) > 0) {
 
         if (isset($comment['comment_id'])) {
             $id = 'c' . $comment['comment_id'];
-        }
-        else {
+        } else {
             $id = '';
         }
 
@@ -108,8 +104,7 @@ if (isset($data['comments']) && count($data['comments']) > 0) {
                 if (isset($comment['url'])) {
                     print ' <a href="' . $comment['url'] . '" title="Link to this comment">' . $time . '</a>';
 
-                }
-                else {
+                } else {
                     // There won't be a URL when we're just previewing a comment.
                     print ' ' . $time;
                 }
@@ -133,8 +128,7 @@ if (isset($data['comments']) && count($data['comments']) > 0) {
     }
 
 
-}
-else {
+} else {
 
     ?>
     <div class="comment">

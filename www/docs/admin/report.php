@@ -65,8 +65,7 @@ if ($REPORT->locked() && $REPORT->lockedby() != $THEUSER->user_id()) {
     $PAGE->page_end();
     exit;
 
-}
-elseif ($THEUSER->is_able_to('deletecomment')) {
+} elseif ($THEUSER->is_able_to('deletecomment')) {
 
     // Prevent anyone else from editing this report.
     $REPORT->lock();
@@ -85,8 +84,7 @@ if (get_http_var('resolve') != '') {
     resolve($REPORT, $COMMENT);
 
 
-}
-elseif (get_http_var('takingaction') == 'true') {
+} elseif (get_http_var('takingaction') == 'true') {
 
     // The user has chosen to delete or not delete the comment.
     // So we need to let them prepare the appropriate emails.
@@ -99,14 +97,12 @@ elseif (get_http_var('takingaction') == 'true') {
     if (get_http_var('yes') != '') {
         prepare_emails_for_deleting($REPORT, $COMMENT, $FORMURL);
 
-    }
-    else {
+    } else {
         prepare_emails_for_not_deleting($REPORT, $COMMENT, $FORMURL);
     }
 
 
-}
-else {
+} else {
 
 
     // The user is viewing a comment and its report.
@@ -255,8 +251,7 @@ function resolve($REPORT, $COMMENT) {
 
     if (get_http_var('deletecomment') == 'true') {
         $upheld = TRUE;
-    }
-    else {
+    } else {
         $upheld = FALSE;
     }
 
@@ -279,8 +274,7 @@ function resolve($REPORT, $COMMENT) {
                 $USER = new USER();
                 $USER->init($REPORT->user_id());
                 $email = $USER->email();
-            }
-            else {
+            } else {
                 // Non-logged-in user; they should have left their address.
                 $email = $REPORT->email();
             }
@@ -299,8 +293,7 @@ function resolve($REPORT, $COMMENT) {
             if ($upheld == TRUE) {
                 $data['template'] = 'report_upheld';
 
-            }
-            else {
+            } else {
                 $data['template'] = 'report_declined';
                 $merge['COMMENTURL'] = 'http://' . DOMAIN . $COMMENT->url();
                 $merge['REASON'] = get_http_var('declinedreason');
@@ -310,8 +303,7 @@ function resolve($REPORT, $COMMENT) {
 
             if ($success) {
                 print "<p>An email has been sent to the person who made the report.</p>\n";
-            }
-            else {
+            } else {
                 $PAGE->error_message("Failed when sending an email to the person who made the report.");
             }
 
@@ -345,8 +337,7 @@ function resolve($REPORT, $COMMENT) {
 
             if ($success) {
                 print "<p>An email has been sent to the person who posted the comment.</p>\n";
-            }
-            else {
+            } else {
                 $PAGE->error_message("Failed when sending an email to the person who posted the comment.");
             }
         }

@@ -23,8 +23,7 @@ if ($this_page == 'debatesday') {
             'onday' => $date
         ];
         $title = 'Debates this month';
-    }
-    else {
+    } else {
         $args = [
             'months' => 1
         ];
