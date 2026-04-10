@@ -209,15 +209,16 @@ class ALERT {
      */
     public function add($details, $confirmation_email = FALSE, $instantly_confirm = TRUE) {
 
-        // Adds a new alert's info into the database.
-        // Then calls another function to send them a confirmation email.
-        // $details is an associative array of all the alert's details, of the form:
-        // array (
-        // "email" => "user@foo.com",
-        // "criteria"    => "speaker:521",
-        // etc... using the same keys as the object variable names.
-        // )
-
+        /*
+        Adds a new alert's info into the database.
+        Then calls another function to send them a confirmation email.
+        $details is an associative array of all the alert's details, of the form:
+        array (
+            "email" => "user@foo.com",
+            "criteria"    => "speaker:521",
+            etc... using the same keys as the object variable names.
+        )
+        */
         // The BOOL variables confirmed and deleted will be true or false and will need to be
         // converted to 1/0 for MySQL.
 
