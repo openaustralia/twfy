@@ -61,7 +61,7 @@ function suggest_alerts($email, $criteria, $maxresults) {
         // If something was returned.
         if ($resultcount > 0) {
             print "<p>You may also be interested in being alerted when these people speak too.</p>";
-        } {
+        }
         if ($resultcount > $maxresults) {
             // Cap results.
             $resultcount = $maxresults;
@@ -77,7 +77,7 @@ function suggest_alerts($email, $criteria, $maxresults) {
                 print '<p><a href="' . WEBPATH . 'alert/?r=1&only=1&amp;pid=' . $member->person_id() . '"><strong>Email me whenever ' . $member->full_name() . ' speaks</strong></a></p>';
             }
         }
-        }
+
     }
 }
 
@@ -550,5 +550,5 @@ class ALERT {
     // PRIVATE FUNCTIONS BELOW... ////////////////.
 
 
-// End USER class.
+    // End USER class.
 }

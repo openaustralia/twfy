@@ -370,8 +370,8 @@ class COMMENTLIST {
                 'user' => TRUE
             ],
             'where' => [
-                    'comments.body LIKE' => "%$args[s]%"
-                ],
+                'comments.body LIKE' => "%$args[s]%"
+            ],
             'order' => 'posted DESC',
             'limit' => $limit
         ];

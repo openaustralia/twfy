@@ -157,14 +157,11 @@ class SEARCHENGINE {
                 array_push($this->prefixed, [$type, $value]);
             } elseif (strpos($word, '-') !== FALSE) {
                 array_push($this->excluded, str_replace("-", "", strtolower($word)));
-            }
-            /*else if (strpos($word, '~') !== false) {
-            array_push($this->rough, str_replace("~", "", strtolower($word)));
-            } */ elseif ($in_quote) {
+            } elseif ($in_quote) {
                 array_push($this->phrases[count($this->phrases) - 1], strtolower($word));
-} else {
-    array_push($this->words, strtolower($word));
-}
+            } else {
+                array_push($this->words, strtolower($word));
+            }
         }
 
         twfy_debug("SEARCH", "words: " . var_export($this->words, TRUE));

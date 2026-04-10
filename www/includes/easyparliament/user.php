@@ -281,8 +281,8 @@ class USER {
                     // No confirmation email, but don't automatically confirm.
                     $ALERT = new ALERT();
                     $ALERT->add([
-                    'email' => $details['email'],
-                    'pid' => $pid
+                        'email' => $details['email'],
+                        'pid' => $pid
                     ], FALSE, FALSE);
                 }
 
@@ -324,9 +324,9 @@ class USER {
 
         // A brief check of the facts...
         if (
-          !is_numeric($this->user_id) ||
-          !isset($details['email']) ||
-          $details['email'] == ''
+            !is_numeric($this->user_id) ||
+            !isset($details['email']) ||
+            $details['email'] == ''
         ) {
             return FALSE;
         }
@@ -340,14 +340,14 @@ class USER {
 
         // Arrays we need to send a templated email.
         $data = [
-          'to' => $details['email'],
-          'template' => 'join_confirmation'
+            'to' => $details['email'],
+            'template' => 'join_confirmation'
         ];
 
         $merge = [
-          'FIRSTNAME' => $details['firstname'],
-          'LASTNAME' => $details['lastname'],
-          'CONFIRMURL' => $confirmurl
+            'FIRSTNAME' => $details['firstname'],
+            'LASTNAME' => $details['lastname'],
+            'CONFIRMURL' => $confirmurl
         ];
 
         $success = send_template_email($data, $merge);
@@ -480,16 +480,16 @@ class USER {
         }
 
         $data = [
-          'to' => $this->email(),
-          'template' => 'new_password'
+            'to' => $this->email(),
+            'template' => 'new_password'
         ];
 
         $URL = new URL("userlogin");
 
         $merge = [
-          'EMAIL' => $this->email(),
-          'LOGINURL' => "http://" . DOMAIN . $URL->generate(),
-          'PASSWORD' => $this->password()
+            'EMAIL' => $this->email(),
+            'LOGINURL' => "http://" . DOMAIN . $URL->generate(),
+            'PASSWORD' => $this->password()
         ];
 
         // send_template_email in utility.php.
@@ -577,7 +577,7 @@ class USER {
                 }
               return FALSE;
 
-                // Add Glossary terms.
+            // Add Glossary terms.
             case "addterm":
                 switch ($status) {
                     case "User":
@@ -597,7 +597,7 @@ class USER {
                 }
               return FALSE;
 
-                // Delete comments.
+            // Delete comments.
             case "deletecomment":
 
                 switch ($status) {
@@ -638,7 +638,7 @@ class USER {
                 }
               return FALSE;
 
-                // Report a comment for moderation.
+            // Report a comment for moderation.
             case "reportcomment":
                 switch ($status) {
                     case "User":
@@ -658,7 +658,7 @@ class USER {
                 }
               return TRUE;
 
-                // Access pages in the Admin section.
+            // Access pages in the Admin section.
             case "viewadminsection":
 
                 switch ($status) {
@@ -679,7 +679,7 @@ class USER {
                 }
               return FALSE;
 
-                // Rate hansard things interesting/not.
+            // Rate hansard things interesting/not.
             case "voteonhansard":
                 /* Everyone */
               return TRUE;
@@ -906,10 +906,10 @@ class USER {
 								emailpublic	 = '" . $emailpublic . "',
 								constituency = '" . $this->db->escape($details["constituency"]) . "',
 								url			 = '" . $this->db->escape($details["url"]) . "',"
-          . $passwordsql
-          . $deletedsql
-          . $confirmedsql
-          . $statussql . "
+            . $passwordsql
+            . $deletedsql
+            . $confirmedsql
+            . $statussql . "
 								optin 		= '" . $optin . "'
 						WHERE 	user_id 	= '" . $this->db->escape($details["user_id"]) . "'");
 
@@ -1230,8 +1230,8 @@ class THEUSER extends USER {
                 $pid = $MEMBER->person_id();
                 // This should probably be in the ALERT class.
                 $this->db->query('update alerts set confirmed=1 where email="' .
-                $this->db->escape($this->email) . '" and criteria="speaker:' .
-                $this->db->escape($pid) . '"');
+                    $this->db->escape($this->email) . '" and criteria="speaker:' .
+                    $this->db->escape($pid) . '"');
             }
 
             if ($r->success()) {
