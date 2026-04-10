@@ -1645,43 +1645,46 @@ class HANSARDLIST {
      */
     public function _get_hansard_data($input) {
         global $hansardmajors;
-        // Generic function for getting hansard data from the DB.
-        // It returns an empty array if no data was found.
-        // It returns an array of items if 1 or more were found.
-        // Each item is an array of key/value pairs.
-        // eg:
+
         /*
-        array (
-        0    => array (
-        'epobject_id'    => '2',
-        'htype'            => '10',
-        'section_id'        => '0',
-        etc...
-        ),
-        1    => array (
-        'epobject_id'    => '3',
-        etc...
-        )
-        );
-         */
+       Generic function for getting hansard data from the DB.
+		It returns an empty array if no data was found.
+		It returns an array of items if 1 or more were found.
+		Each item is an array of key/value pairs.
+		eg:
 
-        // $input['amount'] is an associative array indicating what data should be fetched.
-        // It has the structure
-        // 'key' => true
-        // Where 'true' indicates the data of type 'key' should be fetched.
-        // Leaving a key/value pair out is the same as setting a key to false.
+			array (
+				0	=> array (
+					'epobject_id'	=> '2',
+					'htype'			=> '10',
+					'section_id'		=> '0',
+					etc...
+				),
+				1	=> array (
+					'epobject_id'	=> '3',
+					etc...
+				)
+			);
 
-        // $input['amount'] can have any or all these keys:
-        // 'body'       - Get the body text from the epobject table.
-        // 'comment'    - Get the first comment (and totalcomments count) for this item.
-        // 'votes'      - Get the user votes for this item.
-        // 'speaker'    - Get the speaker for this item, where applicable.
-        // 'excerpt'    - For sub/sections get the body text for the first item within them.
 
-        // $input['wherearr'] is an associative array of stuff for the WHERE clause, eg:
-        // array ('id=' => '37', 'date>' => '2003-12-31');
-        // $input['order'] is a string for the $order clause, eg 'hpos DESC'.
-        // $input['limit'] as a string for the $limit clause, eg '21,20'.
+		$input['amount'] is an associative array indicating what data should be fetched.
+		It has the structure
+			'key' => true
+		Where 'true' indicates the data of type 'key' should be fetched.
+		Leaving a key/value pair out is the same as setting a key to false.
+
+		$input['amount'] can have any or all these keys:
+            'body' 		- Get the body text from the epobject table.
+            'comment' 	- Get the first comment (and totalcomments count) for this item.
+            'votes'		- Get the user votes for this item.
+            'speaker'	- Get the speaker for this item, where applicable.
+            'excerpt' 	- For sub/sections get the body text for the first item within them.
+
+		$input['wherearr'] is an associative array of stuff for the WHERE clause, eg:
+			array ('id=' => '37', 'date>' => '2003-12-31');
+		$input['order'] is a string for the $order clause, eg 'hpos DESC'.
+		$input['limit'] as a string for the $limit clause, eg '21,20'.
+        */
 
         $amount = $input['amount'] ?? [];
         $wherearr = $input['where'] ?? [];
