@@ -413,45 +413,16 @@ class USER {
         if ($this->email_exists($email)) {
 
             $this->email = $email;
-            for (;;) {
-
-                $pwd = NULL;
-                $o = NULL;
-
-                // Generates the password ....
-                for ($x = 0; $x < 6;) {
-                    $y = rand(1, 1000);
-                    if ($y > 350 && $y < 601) {
-                        $d = chr(rand(48, 57));
-                    }
-                    if ($y < 351) {
-                        $d = chr(rand(65, 90));
-                    }
-                    if ($y > 600) {
-                        $d = chr(rand(97, 122));
-                    }
-                    if ($d != $o && !preg_match('#[O01lI]#', $d)) {
-                        $o = $d;
-                        $pwd .= $d;
-                        $x++;
-                    }
-                }
-
-                // If the PW fits your purpose (e.g. this regexpression) return it, else make a new one
-                // (You can change this regular-expression how you want ....)
-                if (preg_match("/^[a-zA-Z]{1}([a-zA-Z]+[0-9][a-zA-Z]+)+/", $pwd)) {
-                    break;
-                }
-
+            // Generates an unambiguous 14-character cryptographically secure random password (up from 6 uppercase).
+            // FIXME: Replace with a token based password replacement with expiry.
+            $unambiguous_alphabet = 'abcdefghjkmnpqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ23456789';
+            $last_index = strlen($unambiguous_alphabet) - 1;
+            $pwd = '';
+            for ($i = 0; $i < 14; $i++) {
+                $pwd .= $unambiguous_alphabet[random_int(0, $last_index)];
             }
-            $pwd = strtoupper($pwd);
-
-            // End password generating stuff.
-
         } else {
-
             // Email didn't exist.
-
             return FALSE;
 
         }
@@ -1100,6 +1071,13 @@ class THEUSER extends USER {
                 // Legacy md5-crypt hash from PHP 5.x era
                 // FIXME: remove once count is zero: `select count(*) from users where password like '$1$%';`.
                 $valid_password = crypt($userenteredpassword, $dbpassword) === $dbpassword;
+
+                if ($valid_password) {
+                    // Upgrade to the more secure Bcrypt hash.
+                    $newHash = password_hash($userenteredpassword, PASSWORD_DEFAULT);
+                    $q_update = $this->db->query("UPDATE users SET password = '" . $this->db->escape($newHash) . "' WHERE email='" . $this->db->escape($email) . "'");
+                    $dbpassword = $newHash;
+                }
             } else {
                 // Modern bcrypt hash from move to php 8.0 in 2026.
                 $valid_password = password_verify($userenteredpassword, $dbpassword);
