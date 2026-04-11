@@ -16,3 +16,43 @@ and displayed on openaustralia.org.au.
 Data is also provided for public use at http://data.openaustralia.org.au/
 
 TheyVoteForYou.org.au is one of the users of this data. 
+
+## Development
+
+
+### Installing php
+
+Use `mise install` to install php. 
+
+You may need to:
+```bash
+sudo apt update
+sudo apt install plocate
+# If you have many millions of files, the indexer may take a while.
+# You can either wait or kill the indexer holding up apt install (which will complete the install),
+# add exclusions to /etc/updatedb.conf and rerun.
+sudo apt install re2c bison autoconf build-essential libxml2-dev libssl-dev libcurl4-openssl-dev libpng-dev libjpeg-dev libonig-dev libzip-dev
+sudo apt-get install libgd-dev
+```
+
+### Installing composer managed dependencies
+
+```bash
+composer install
+```
+
+### Running the checks git does
+
+```bash
+make lint-ci | grep -v "No syntax errors detected in" # ignore all the "its ok" messages
+make phpcs-ci 
+composer validate
+```
+
+### Updating formatting
+
+Use `phpcbf` to fix formatting that GitHub Actions complains about, eg:
+
+```bash
+./vendor/bin/phpcbf www/includes/easyparliament/alert.php www/includes/easyparliament/user.php
+```
