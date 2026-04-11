@@ -260,21 +260,17 @@ class ALERT {
             $this->alert_id = $q->insert_id();
             $this->criteria = $criteria;
 
-            // We have to set the alert's registration token.
+            // We have to generate an alert's unique registration token.
             // This will be sent to them via email, so we can confirm they exist.
-            // The token will be the first 16 characters of a crypt.
+            // The token will be 22 characters of a random base63 string.
 
-            // This gives a code for their email address which is then joined
-            // to the timestamp so as to provide a unique ID for each alert.
+            // We upgraded from 16 to 22 chars in the 2026 move to php 8.0 (still fits in varchar(34) DB field)
+            // Uses cryptographically secure random bytes;
+            // both +/ are changed to '_' as we use '-' elsewhere as a separator so it's technically base63.
+            $token = rtrim(strtr(base64_encode(random_bytes(16)), '+/', '__'), '=');
 
-            $token = substr(crypt($details["email"] . microtime()), 12, 16);
-
-            // Full stops don't work well at the end of URLs in emails,
-            // so replace them. We won't be doing anything clever with the crypt
-            // stuff, just need to match this token.
-            // Also, replace '/' with 'X' since two '//' in the url will get passed
-            // to /alert/confirm with a single '/' for some reason.
-            $this->registrationtoken = strtr($token, './', 'XX');
+            // We won't be doing anything clever with the crypt stuff, just need to match this token.
+            $this->registrationtoken = $token;
 
             // Add that to the database.
 

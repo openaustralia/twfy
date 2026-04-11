@@ -209,8 +209,9 @@ class USER {
 
         $registrationtime = gmdate("YmdHis");
 
-        // We crypt all passwords going into DB.
-        $passwordforDB = crypt($details["password"]);
+        // Hash password for storage using bcrypt (PASSWORD_DEFAULT).
+        // This is different to legacy md5-crypt hashes from the PHP 5.x era which has `$1$` prefix.
+        $passwordforDB = password_hash($details["password"], PASSWORD_DEFAULT);
 
         if (!isset($details["status"])) {
             $details["status"] = "User";
@@ -256,18 +257,19 @@ class USER {
             $this->user_id = $q->insert_id();
             $this->password = $passwordforDB;
 
-            // We have to set the user's registration token.
+            // We have to generate the user's unique registration token.
             // This will be sent to them via email, so we can confirm they exist.
-            // The token will be the first 16 characters of a crypt.
+            // The token will be 22 characters of a random base63 string.
 
-            $token = substr(crypt($details["email"] . microtime()), 12, 16);
+            // This gives a code for their email address to provide a unique ID for each email confirmation.
 
-            // Full stops don't work well at the end of URLs in emails,
-            // so replace them. We won't be doing anything clever with the crypt
-            // stuff, just need to match this token.
-            // Also, replace '/' with 'X' since two '//' in the url will get passed
-            // to /alert/confirm with a single '/' for some reason.
-            $this->registrationtoken = strtr($token, './', 'XX');
+            // We upgraded from 16 to 22 chars in the 2026 move to php 8.0 (still fits in varchar(34) DB field)
+            // and use cryptographically secure random bytes;
+            // both +/ are changed to '_' as we use '-' elsewhere as a separator so it's technically base63.
+            $token = rtrim(strtr(base64_encode(random_bytes(16)), '+/', '__'), '=');
+
+            // We won't be doing anything clever with the crypt stuff, just need to match this token.
+            $this->registrationtoken = $token;
 
             // Add that to the DB.
             $r = $this->db->query("UPDATE users
@@ -454,7 +456,7 @@ class USER {
 
         }
 
-        $passwordforDB = crypt($pwd);
+        $passwordforDB = password_hash($pwd, PASSWORD_DEFAULT);
 
         $q = $this->db->query("UPDATE users SET password = '" . $this->db->escape($passwordforDB) . "' WHERE email='" . $this->db->escape($email) . "'");
 
@@ -859,8 +861,9 @@ class USER {
             // If not, the password fields on the form will be left blank
             // so we don't want to overwrite the user's pw in the DB!
 
-            // We crypt all passwords going into DB.
-            $passwordforDB = crypt($details["password"]);
+            // Hash password for storage using bcrypt (PASSWORD_DEFAULT).
+            // Different to legacy md5-crypt hashes from the PHP 5.x era which has `$1$` prefix.
+            $passwordforDB = password_hash($details["password"], PASSWORD_DEFAULT);
 
             $passwordsql = "password	= '" . $this->db->escape($passwordforDB) . "', ";
         }
@@ -1092,7 +1095,15 @@ class THEUSER extends USER {
             // OK.
             // The password in the DB is crypted.
             $dbpassword = $q->field(0, "password");
-            if (crypt($userenteredpassword, $dbpassword) == $dbpassword) {
+            if (str_starts_with($dbpassword, '$1$')) {
+                // Legacy md5-crypt hash from PHP 5.x era
+                // FIXME: remove once count is zero: `select count(*) from users where password like '$1$%';`.
+                $valid_password = crypt($userenteredpassword, $dbpassword) === $dbpassword;
+            } else {
+                // Modern bcrypt hash from move to php 8.0 in 2026.
+                $valid_password = password_verify($userenteredpassword, $dbpassword);
+            }
+            if ($valid_password) {
                 $this->user_id = $q->field(0, "user_id");
                 $this->password = $dbpassword;
                 // We'll need these when we're going to log in.
