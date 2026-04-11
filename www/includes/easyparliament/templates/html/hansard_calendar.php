@@ -134,29 +134,28 @@ if (isset($data['years'])) {
                                 <tr><?php
                             }
 
-                            if ($data['info']['major'] == 5) # NI
-                                $recess = [''];
-                            else
-                                $recess = recess_prettify(
-                                    $currentDay,
-                                    $month,
-                                    $year,
-                                    ($hansardmajors[$data['info']['major']]['location'] == 'Scotland') ? 4 : 1
-                                );
 
+                            $recess = recess_prettify(
+                                day: $currentDay,
+                                month: $month,
+                                year: $year,
+                                body: 1
+                            );
                             // Is this day actually Today in the real world?
-                            // If so, higlight it.
+                            // If so, highlight it.
                             // Also highlight days where there are no
                             // sittings - e.g. WH is only Tuesday-Thursday
                             if ($currentDay == $toDay) {
                                 print '<td class="on"';
-                                if ($recess[0] && $recess[0] != 1)
-                                    print ' title="' . $recess[0] . '"';
+                                if (count($recess) > 0 && $recess[0] && $recess[0] != 1) {
+                                    print ' title="' . htmlspecialchars($recess[0], ENT_QUOTES, 'UTF-8') . '"';
+                                }
                                 print '>';
-                            } elseif ($recess[0]) {
+                            } elseif (count($recess) > 0 && $recess[0]) {
                                 print '<td class="no"';
-                                if ($recess[0] != 1)
-                                    print ' title="' . $recess[0] . '"';
+                                if ($recess[0] != 1) {
+                                    print ' title="' . htmlspecialchars($recess[0], ENT_QUOTES, 'UTF-8') . '"';
+                                }
                                 print '>';
                             } else {
                                 print '<td>';
