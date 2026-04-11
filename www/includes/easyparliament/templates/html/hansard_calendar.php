@@ -142,7 +142,7 @@ if (isset($data['years'])) {
                                 body: 1
                             );
                             // Is this day actually Today in the real world?
-                            // If so, higlight it.
+                            // If so, highlight it.
                             // Also highlight days where there are no
                             // sittings - e.g. WH is only Tuesday-Thursday
                             if ($currentDay == $toDay) {
