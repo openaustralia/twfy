@@ -64,7 +64,7 @@
  */
 class USER {
 
-    private $db = NULL;
+    protected $db = NULL;
 
     /**
      * So we have an ID for non-logged in users reporting comments etc.
@@ -944,8 +944,6 @@ class USER {
  */
 class THEUSER extends USER {
 
-    private $db = NULL;
-
     /**
      * This will become true if all goes well...
      */
@@ -958,7 +956,8 @@ class THEUSER extends USER {
         // This function is run automatically when a THEUSER
         // object is instantiated.
 
-        $this->db = new ParlDB();
+        // Set up $this->db.
+        parent::__construct();
 
         // We look at the user's cookie and see if it's valid.
         // If so, we're going to log them in.

@@ -2551,7 +2551,8 @@ class WHALLLIST extends DEBATELIST {
      *
      */
     public function __construct() {
-        $this->db = new ParlDB();
+        // Sets $db.
+        parent::__construct();
         $this->gidprefix .= 'westminhall/';
     }
 
@@ -2569,7 +2570,8 @@ class NILIST extends DEBATELIST {
      *
      */
     public function __construct() {
-        $this->db = new ParlDB();
+        // Sets $db.
+        parent::__construct();
         $this->gidprefix .= 'ni/';
     }
 
@@ -2587,7 +2589,8 @@ class SPLIST extends DEBATELIST {
      *
      */
     public function __construct() {
-        $this->db = new ParlDB();
+        // Sets $db.
+        parent::__construct();
         $this->gidprefix .= 'spor/';
     }
 
@@ -2605,7 +2608,8 @@ class SPWRANSLIST extends WRANSLIST {
      *
      */
     public function __construct() {
-        $this->db = new ParlDB();
+        // Sets $db.
+        parent::__construct();
         $this->gidprefix .= 'spwa/';
     }
 
@@ -2635,7 +2639,8 @@ class LORDSDEBATELIST extends DEBATELIST {
      *
      */
     public function __construct() {
-        $this->db = new ParlDB();
+        // Sets $db.
+        parent::__construct();
         $this->gidprefix .= 'lords/';
     }
 
@@ -2658,7 +2663,8 @@ class DEBATELIST extends HANSARDLIST {
      *
      */
     public function __construct() {
-        $this->db = new ParlDB();
+        // Sets $db.
+        parent::__construct();
         $this->gidprefix .= 'debate/';
     }
 
@@ -2903,7 +2909,8 @@ class WRANSLIST extends HANSARDLIST {
      *
      */
     public function __construct() {
-        $this->db = new ParlDB();
+        // Sets $db.
+        parent::__construct();
         $this->gidprefix .= 'wrans/';
     }
 
@@ -3108,7 +3115,8 @@ class StandingCommittee extends DEBATELIST {
      *
      */
     public function __construct($session = '', $title = '') {
-        $this->db = new ParlDB();
+        // Sets $db.
+        parent::__construct();
         $this->gidprefix .= 'standing/';
         $this->bill_title = $title;
         $this->url = urlencode($session) . '/' . urlencode($title);
