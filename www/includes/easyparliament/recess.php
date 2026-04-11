@@ -289,7 +289,7 @@ $GLOBALS['recessdates'][1] = [
  * return false;
  * }
  */
-function recess_prettify($day, $month, $year, $body) {
+function recess_prettify($day, $month, $year, $body): array {
     global $recessdates;
     $dates = $recessdates[$body];
     foreach ($dates as $range) {
@@ -302,4 +302,5 @@ function recess_prettify($day, $month, $year, $body) {
             return ['recess', $range[0], $range[1]];
         }
     }
+    return [];
 }
