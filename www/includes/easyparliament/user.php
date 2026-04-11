@@ -915,8 +915,6 @@ class USER {
  */
 class THEUSER extends USER {
 
-    // private $db = NULL;
-
     /**
      * This will become true if all goes well...
      */
