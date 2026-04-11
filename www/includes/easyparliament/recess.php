@@ -268,26 +268,7 @@ $GLOBALS['recessdates'][1] = [
 ];
 
 /**
- * Function currently_in_recess() {
- * Main file which recesswatcher.py overwrites each day.
- * $h = fopen(RECESSFILE, "r");
- * $today = date("Y-m-d");
- * while ($line = fgets($h)){
- * list($name, $from, $to) = split(",", $line);
- * if ($from <= $today and $today <= $to) {
- * return [$name, trim($from), trim($to)];
- * }
- * }
- * Second manual override file.
- * $h = fopen(RECESSFILE.".extra", "r");
- * while ($line = fgets($h)){
- * list($name, $from, $to) = split(",", $line);
- * if ($from <= $today and $today <= $to) {
- * return [$name, trim($from), trim($to)];
- * }
- * }
- * return false;
- * }
+ *
  */
 function recess_prettify($day, $month, $year, $body): array {
     global $recessdates;
