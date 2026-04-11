@@ -147,13 +147,15 @@ if (isset($data['years'])) {
                             // sittings - e.g. WH is only Tuesday-Thursday
                             if ($currentDay == $toDay) {
                                 print '<td class="on"';
-                                if ($recess[0] && $recess[0] != 1)
-                                    print ' title="' . $recess[0] . '"';
+                                if (count($recess) > 0 && $recess[0] && $recess[0] != 1) {
+                                    print ' title="' . htmlspecialchars($recess[0], ENT_QUOTES, 'UTF-8') . '"';
+                                }
                                 print '>';
-                            } elseif ($recess[0]) {
+                            } elseif (count($recess) > 0 && $recess[0]) {
                                 print '<td class="no"';
-                                if ($recess[0] != 1)
-                                    print ' title="' . $recess[0] . '"';
+                                if ($recess[0] != 1) {
+                                    print ' title="' . htmlspecialchars($recess[0], ENT_QUOTES, 'UTF-8') . '"';
+                                }
                                 print '>';
                             } else {
                                 print '<td>';
