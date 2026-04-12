@@ -2,13 +2,16 @@
 
 use PHPUnit\Framework\TestCase;
 
+/**
+ *
+ */
 class MemberPartyTest extends TestCase {
 
     /**
      * Test party to colour mapping
      */
     public function test_party_to_colour_major_parties() {
-        // Setup global party_colours for testing
+        // Setup global party_colours for testing.
         global $party_colours;
         $party_colours = [
             'Australian Labor Party' => '#FF0000',
@@ -21,17 +24,23 @@ class MemberPartyTest extends TestCase {
         $this->assertEquals('#00A000', party_to_colour('Australian Greens'));
     }
 
+    /**
+     *
+     */
     public function test_party_to_colour_unknown_party() {
         global $party_colours;
         $party_colours = [
             'Liberal Party' => '#0000FF',
         ];
 
-        // Unknown party should return default grey
+        // Unknown party should return default grey.
         $result = party_to_colour('Unknown Party');
         $this->assertEquals('#eeeeee', $result);
     }
 
+    /**
+     *
+     */
     public function test_party_to_colour_empty_string() {
         global $party_colours;
         $party_colours = [
@@ -42,17 +51,23 @@ class MemberPartyTest extends TestCase {
         $this->assertEquals('#eeeeee', $result);
     }
 
+    /**
+     *
+     */
     public function test_party_to_colour_case_sensitive() {
         global $party_colours;
         $party_colours = [
             'Liberal Party' => '#0000FF',
         ];
 
-        // Case mismatch should return default
+        // Case mismatch should return default.
         $result = party_to_colour('liberal party');
         $this->assertEquals('#eeeeee', $result);
     }
 
+    /**
+     *
+     */
     public function test_party_to_colour_returns_hex_format() {
         global $party_colours;
         $party_colours = [
@@ -61,9 +76,13 @@ class MemberPartyTest extends TestCase {
 
         $result = party_to_colour('Labor');
         $this->assertStringStartsWith('#', $result);
-        $this->assertEquals(7, strlen($result)); // #RRGGBB format
+        // #RRGGBB format
+        $this->assertEquals(7, strlen($result));
     }
 
+    /**
+     *
+     */
     public function test_party_to_colour_default_is_light_grey() {
         global $party_colours;
         $party_colours = [];
@@ -76,7 +95,7 @@ class MemberPartyTest extends TestCase {
      * Test image path construction and file existence checks
      */
     public function test_find_rep_image_no_files() {
-        // When no files exist
+        // When no files exist.
         $result = find_rep_image('99999999');
         $this->assertIsArray($result);
         $this->assertEquals(2, count($result));
@@ -84,46 +103,61 @@ class MemberPartyTest extends TestCase {
         $this->assertNull($result[1]);
     }
 
+    /**
+     *
+     */
     public function test_find_rep_image_result_structure() {
         $result = find_rep_image('12345');
         $this->assertIsArray($result);
         $this->assertEquals(2, count($result));
         // First element is path (or null), second is size (or null)
-        $this->assertTrue($result[0] === null || is_string($result[0]));
-        $this->assertTrue($result[1] === null || is_string($result[1]));
+        $this->assertTrue($result[0] === NULL || is_string($result[0]));
+        $this->assertTrue($result[1] === NULL || is_string($result[1]));
     }
 
+    /**
+     *
+     */
     public function test_find_rep_image_size_indicators() {
-        // When testing with mock data, sizes should be 'L' or 'S' or null
+        // When testing with mock data, sizes should be 'L' or 'S' or null.
         $result = find_rep_image('12345');
-        if ($result[1] !== null) {
+        if ($result[1] !== NULL) {
             $this->assertContains($result[1], ['L', 'S']);
         } else {
             $this->assertNull($result[1]);
         }
     }
 
+    /**
+     *
+     */
     public function test_find_rep_image_extension_support() {
-        // Test that jpg, jpeg, and png are checked
+        // Test that jpg, jpeg, and png are checked.
         $pid = '12345';
         $result = find_rep_image($pid);
-        // Result structure validates that multiple extensions are checked
+        // Result structure validates that multiple extensions are checked.
         $this->assertIsArray($result);
     }
 
+    /**
+     *
+     */
     public function test_find_rep_image_smallonly_flag() {
-        // With smallonly = true, should skip large images
-        $result = find_rep_image('12345', true);
+        // With smallonly = true, should skip large images.
+        $result = find_rep_image('12345', TRUE);
         $this->assertIsArray($result);
         // If a file is found, size should be 'S' (small)
-        if ($result[1] !== null) {
+        if ($result[1] !== NULL) {
             $this->assertEquals('S', $result[1]);
         }
     }
 
+    /**
+     *
+     */
     public function test_find_rep_image_without_smallonly() {
-        // Default = false, should check large images first
-        $result = find_rep_image('12345', false);
+        // Default = false, should check large images first.
+        $result = find_rep_image('12345', FALSE);
         $this->assertIsArray($result);
     }
 
@@ -158,4 +192,5 @@ class MemberPartyTest extends TestCase {
             $this->assertStringStartsWith('#', $result);
         }
     }
+
 }

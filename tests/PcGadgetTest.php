@@ -46,7 +46,7 @@ class PcGadgetTest extends TestCase {
      * Test postcode validation format.
      */
     public function test_postcode_validation_check(): void {
-        // Test validation logic - Australian postcode should be 4 digits
+        // Test validation logic - Australian postcode should be 4 digits.
         $pc = '2000';
         $isValid = preg_match('/^[0-9]{4}$/', $pc);
         $this->assertSame(1, $isValid);

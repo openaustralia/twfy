@@ -47,7 +47,7 @@ class AlertGoneMPsTest extends TestCase {
      * Test detecting if member has left house.
      */
     public function test_member_has_left_detection(): void {
-        // Members with left_house != '9999-12-31' have left
+        // Members with left_house != '9999-12-31' have left.
         $leftHouse = '2020-06-30';
         $isActive = ($leftHouse === '9999-12-31');
         $this->assertFalse($isActive);
@@ -57,7 +57,7 @@ class AlertGoneMPsTest extends TestCase {
      * Test detecting if member is still active.
      */
     public function test_member_is_active_detection(): void {
-        // Members with left_house == '9999-12-31' are still active
+        // Members with left_house == '9999-12-31' are still active.
         $leftHouse = '9999-12-31';
         $isActive = ($leftHouse === '9999-12-31');
         $this->assertTrue($isActive);

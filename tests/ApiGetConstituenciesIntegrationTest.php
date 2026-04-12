@@ -2,10 +2,16 @@
 
 use PHPUnit\Framework\TestCase;
 
+/**
+ *
+ */
 class ApiGetConstituenciesIntegrationTest extends TestCase {
 
     private static $connection = NULL;
 
+    /**
+     *
+     */
     public static function setUpBeforeClass(): void {
         self::$connection = getSharedTestConnection();
         if (!self::$connection) {
@@ -26,13 +32,19 @@ class ApiGetConstituenciesIntegrationTest extends TestCase {
         }
     }
 
+    /**
+     *
+     */
     public function test_search_constituencies_exact_match() {
         $this->assertNotNull(self::$connection);
         $result = _api_getConstituencies_search('Warringah');
         $this->assertIsArray($result);
-        // Result is valid array regardless of whether data exists
+        // Result is valid array regardless of whether data exists.
     }
 
+    /**
+     *
+     */
     public function test_search_constituencies_partial_match() {
         $this->assertNotNull(self::$connection);
         $result = _api_getConstituencies_search('North');
@@ -44,15 +56,21 @@ class ApiGetConstituenciesIntegrationTest extends TestCase {
         }
     }
 
+    /**
+     *
+     */
     public function test_search_constituencies_no_duplicates() {
         $this->assertNotNull(self::$connection);
         $result = _api_getConstituencies_search('Sydney');
         $names = array_column($result, 'name');
         $unique_names = array_unique($names);
-        // Should not have duplicates
+        // Should not have duplicates.
         $this->assertEquals(count($names), count($unique_names));
     }
 
+    /**
+     *
+     */
     public function test_search_constituencies_empty_result() {
         $this->assertNotNull(self::$connection);
         $result = _api_getConstituencies_search('ZZZNONEXISTENT');
@@ -93,7 +111,7 @@ class ApiGetConstituenciesIntegrationTest extends TestCase {
         $result = _api_getConstituencies_search('');
         foreach ($result as $constituency) {
             $name = $constituency['name'];
-            // Should not contain HTML entities like &amp;
+            // Should not contain HTML entities like &amp;.
             $this->assertStringNotContainsString('&amp;', $name);
         }
     }
@@ -127,4 +145,5 @@ class ApiGetConstituenciesIntegrationTest extends TestCase {
         // Query should work (may return 0 rows if no test data for that date)
         $this->assertGreaterThanOrEqual(0, $q->rows());
     }
+
 }

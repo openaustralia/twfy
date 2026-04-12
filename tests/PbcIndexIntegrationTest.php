@@ -16,6 +16,9 @@ class PbcIndexIntegrationTest extends TestCase {
 
     protected $db;
 
+    /**
+     *
+     */
     public static function setUpBeforeClass(): void {
         $conn = getSharedTestConnection();
         if (!$conn) {
@@ -23,10 +26,13 @@ class PbcIndexIntegrationTest extends TestCase {
         }
     }
 
+    /**
+     *
+     */
     protected function setUp(): void {
         $this->db = new ParlDB();
 
-        // Verify connection exists
+        // Verify connection exists.
         $conn = getSharedTestConnection();
         if (!$conn) {
             $this->markTestSkipped('Database connection not available');
@@ -38,7 +44,7 @@ class PbcIndexIntegrationTest extends TestCase {
      */
     public function test_query_bills_by_title_and_session(): void {
         $q = $this->db->query('SELECT id, standingprefix FROM bills WHERE title = ? AND session = ?', 'Test Bill', '2006-07');
-        // Query should succeed even if no results
+        // Query should succeed even if no results.
         $this->assertIsObject($q);
     }
 
@@ -64,7 +70,7 @@ class PbcIndexIntegrationTest extends TestCase {
      */
     public function test_bills_query_has_rows_method(): void {
         $q = $this->db->query('SELECT id FROM bills LIMIT 1');
-        // Query object should have rows() method
+        // Query object should have rows() method.
         $this->assertTrue(method_exists($q, 'rows'));
     }
 
@@ -74,11 +80,11 @@ class PbcIndexIntegrationTest extends TestCase {
     public function test_bills_field_extraction(): void {
         $q = $this->db->query('SELECT id, standingprefix FROM bills LIMIT 1');
         if ($q->rows() > 0) {
-            // Method should exist to extract fields
+            // Method should exist to extract fields.
             $this->assertTrue(method_exists($q, 'field'));
         } else {
-            // Skip if no test data
-            $this->assertTrue(true);
+            // Skip if no test data.
+            $this->assertTrue(TRUE);
         }
     }
 

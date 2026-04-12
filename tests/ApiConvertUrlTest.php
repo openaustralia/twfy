@@ -133,8 +133,9 @@ class ApiConvertUrlTest extends TestCase {
      * Test gid ordering in result set.
      */
     public function test_gid_ordering(): void {
-        // Results should be ordered by gid to get consistent results
-        $this->assertTrue(true); // ORDER BY gid ensures reproducibility
+        // Results should be ordered by gid to get consistent results.
+// ORDER BY gid ensures reproducibility.
+        $this->assertTrue(TRUE);
     }
 
     /**

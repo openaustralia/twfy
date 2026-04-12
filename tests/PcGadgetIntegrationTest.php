@@ -17,6 +17,9 @@ class PcGadgetIntegrationTest extends TestCase {
 
     protected $db;
 
+    /**
+     *
+     */
     public static function setUpBeforeClass(): void {
         $conn = getSharedTestConnection();
         if (!$conn) {
@@ -24,10 +27,13 @@ class PcGadgetIntegrationTest extends TestCase {
         }
     }
 
+    /**
+     *
+     */
     protected function setUp(): void {
         $this->db = new ParlDB();
 
-        // Verify connection exists
+        // Verify connection exists.
         $conn = getSharedTestConnection();
         if (!$conn) {
             $this->markTestSkipped('Database connection not available');
@@ -54,9 +60,9 @@ class PcGadgetIntegrationTest extends TestCase {
      * Test get_person_id query structure.
      */
     public function test_get_person_id_query(): void {
-        // Test that a query against member table structure works
+        // Test that a query against member table structure works.
         $q = $this->db->query('SELECT person_id FROM member WHERE left_reason = ? AND house = ? LIMIT 1', 'still_in_office', 1);
-        // Query should succeed
+        // Query should succeed.
         $this->assertIsObject($q);
     }
 

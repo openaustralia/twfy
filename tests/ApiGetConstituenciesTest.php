@@ -2,6 +2,9 @@
 
 use PHPUnit\Framework\TestCase;
 
+/**
+ *
+ */
 class ApiGetConstituenciesTest extends TestCase {
 
     /**
@@ -12,19 +15,29 @@ class ApiGetConstituenciesTest extends TestCase {
         $this->assertEquals(0, $result);
     }
 
+    /**
+     *
+     */
     public function test_angle_between_small_angle() {
         $result = _api_angle_between(0.1, 0.3);
         $this->assertEqualsWithDelta(0.2, $result, 0.001);
     }
 
+    /**
+     *
+     */
     public function test_angle_between_wraps_around_pi() {
-        // Angles on opposite sides of the circle should wrap
-        $result = _api_angle_between(0.1, 6.0); // ~2π - 0.283
+        // Angles on opposite sides of the circle should wrap.
+// ~2π - 0.283.
+        $result = _api_angle_between(0.1, 6.0);
         $this->assertLessThan(M_PI / 2, $result);
     }
 
+    /**
+     *
+     */
     public function test_angle_between_pi() {
-        // Opposite sides of circle
+        // Opposite sides of circle.
         $result = _api_angle_between(0, M_PI);
         $this->assertEquals(M_PI, $result);
     }
@@ -46,6 +59,9 @@ class ApiGetConstituenciesTest extends TestCase {
         $this->assertLessThanOrEqual(90, $lat);
     }
 
+    /**
+     *
+     */
     public function test_longitude_range() {
         $lon = 151.2093;
         $this->assertGreaterThanOrEqual(-180, $lon);
@@ -60,10 +76,10 @@ class ApiGetConstituenciesTest extends TestCase {
         $lon = 151.2093;
         $distance_km = 50;
 
-        // Verify distance is positive
+        // Verify distance is positive.
         $this->assertGreaterThan(0, $distance_km);
 
-        // Verify angle range for nearby coordinates
+        // Verify angle range for nearby coordinates.
         $lat_offset = $distance_km / RADIUS_OF_EARTH;
         $this->assertLessThan(M_PI / 2, $lat_offset);
     }
@@ -94,11 +110,11 @@ class ApiGetConstituenciesTest extends TestCase {
         $search_lat_rad = deg2rad($search_lat);
         $radius_radians = $distance / RADIUS_OF_EARTH;
 
-        // North bound
+        // North bound.
         $north_bound = deg2rad($search_lat) + $radius_radians;
         $this->assertGreaterThan($search_lat_rad, $north_bound);
 
-        // South bound
+        // South bound.
         $south_bound = deg2rad($search_lat) - $radius_radians;
         $this->assertLessThan($search_lat_rad, $south_bound);
     }
@@ -107,7 +123,7 @@ class ApiGetConstituenciesTest extends TestCase {
      * Test empty geometry data handling
      */
     public function test_missing_centre_coordinates() {
-        // Geometry with missing centre_lat/lon
+        // Geometry with missing centre_lat/lon.
         $data = ['name' => 'Test', 'boundary' => []];
         $this->assertFalse(isset($data['centre_lat']));
         $this->assertFalse(isset($data['centre_lon']));
@@ -161,4 +177,5 @@ class ApiGetConstituenciesTest extends TestCase {
         $decoded = html_entity_decode($encoded);
         $this->assertStringContainsString('&', $decoded);
     }
+
 }

@@ -16,6 +16,9 @@ class ApiGetMembersIntegrationTest extends TestCase {
 
     protected $db;
 
+    /**
+     *
+     */
     public static function setUpBeforeClass(): void {
         $conn = getSharedTestConnection();
         if (!$conn) {
@@ -23,10 +26,13 @@ class ApiGetMembersIntegrationTest extends TestCase {
         }
     }
 
+    /**
+     *
+     */
     protected function setUp(): void {
         $this->db = new ParlDB();
 
-        // Verify connection exists
+        // Verify connection exists.
         $conn = getSharedTestConnection();
         if (!$conn) {
             $this->markTestSkipped('Database connection not available');
@@ -167,7 +173,7 @@ class ApiGetMembersIntegrationTest extends TestCase {
             $results[$state] = $q->rows();
         }
 
-        // All queries should succeed
+        // All queries should succeed.
         $this->assertCount(3, $results);
     }
 
@@ -206,7 +212,7 @@ class ApiGetMembersIntegrationTest extends TestCase {
      */
     public function test_search_house_no_constituency(): void {
         $house = 1;
-        // House query should have 3 LIKE conditions, not including constituency
+        // House query should have 3 LIKE conditions, not including constituency.
         $q = $this->db->query('SELECT * FROM member WHERE house = ? AND (first_name LIKE ? OR last_name LIKE ? OR CONCAT(first_name, \' \', last_name) LIKE ?)', $house, '%test%', '%test%', '%test%');
         $this->assertIsObject($q);
     }
@@ -246,7 +252,7 @@ class ApiGetMembersIntegrationTest extends TestCase {
      */
     public function test_search_senate_with_constituency(): void {
         $house = 2;
-        // Senate query should have 4 LIKE conditions including constituency
+        // Senate query should have 4 LIKE conditions including constituency.
         $q = $this->db->query('SELECT * FROM member WHERE house = ? AND (first_name LIKE ? OR last_name LIKE ? OR CONCAT(first_name, \' \', last_name) LIKE ? OR constituency LIKE ?)', $house, '%test%', '%test%', '%test%', '%test%');
         $this->assertIsObject($q);
     }

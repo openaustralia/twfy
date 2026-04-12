@@ -2,6 +2,9 @@
 
 use PHPUnit\Framework\TestCase;
 
+/**
+ *
+ */
 class AlertTest extends TestCase {
 
     /**
@@ -74,7 +77,7 @@ class AlertTest extends TestCase {
             'pid' => '',
         ];
         $criteria = alert_details_to_criteria($details);
-        // Should preserve whitespace from keyword
+        // Should preserve whitespace from keyword.
         $this->assertStringContainsString('budget', $criteria);
     }
 
@@ -110,7 +113,7 @@ class AlertTest extends TestCase {
         $details = ['pid' => '12345'];
         $advert = alert_confirmation_advert($details);
         $this->assertIsString($advert);
-        // Returns identifier like 'twfy-alert-word' or 'twfy-alert-person'
+        // Returns identifier like 'twfy-alert-word' or 'twfy-alert-person'.
         $this->assertStringContainsString('twfy-alert', $advert);
     }
 
@@ -121,7 +124,7 @@ class AlertTest extends TestCase {
         $details = ['pid' => ''];
         $advert = alert_confirmation_advert($details);
         $this->assertIsString($advert);
-        // Should return twfy-alert-word for non-speaker alert
+        // Should return twfy-alert-word for non-speaker alert.
         $this->assertStringContainsString('twfy-alert-person', $advert);
     }
 
@@ -131,7 +134,7 @@ class AlertTest extends TestCase {
     public function test_alert_confirmation_advert_has_link() {
         $details = ['pid' => ''];
         $advert = alert_confirmation_advert($details);
-        // Returns identifier string, not HTML
+        // Returns identifier string, not HTML.
         $this->assertIsString($advert);
         $this->assertNotEmpty($advert);
     }
@@ -142,7 +145,7 @@ class AlertTest extends TestCase {
     public function test_alert_confirmation_advert_html_structure() {
         $details = ['pid' => '54321'];
         $advert = alert_confirmation_advert($details);
-        // Function generates output but returns identifier
+        // Function generates output but returns identifier.
         $this->assertIsString($advert);
     }
 
@@ -153,7 +156,7 @@ class AlertTest extends TestCase {
         $details = ['pid' => '12345'];
         $advert = alert_confirmation_advert($details);
         $this->assertIsString($advert);
-        // Return value is an identifier like 'twfy-alert-word'
+        // Return value is an identifier like 'twfy-alert-word'.
         $this->assertGreaterThan(0, strlen($advert));
         $this->assertTrue(in_array($advert, ['twfy-alert-word', 'twfy-alert-person']));
     }
@@ -163,7 +166,7 @@ class AlertTest extends TestCase {
      */
     public function test_alert_details_to_criteria_missing_keys() {
         $details = [];
-        // Should handle missing keys gracefully
+        // Should handle missing keys gracefully.
         $criteria = @alert_details_to_criteria($details);
         $this->assertIsString($criteria);
     }
@@ -217,4 +220,5 @@ class AlertTest extends TestCase {
         $this->assertObjectHasProperty('deleted', $alert);
         $this->assertObjectHasProperty('confirmed', $alert);
     }
+
 }
