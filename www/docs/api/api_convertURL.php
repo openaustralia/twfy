@@ -95,19 +95,19 @@ function api_converturl_url_output($q) {
 function api_converturl_url($url) {
     $db = new ParlDB();
     $url_nohash = preg_replace('/#.*/', '', $url);
-    $q = $db->query('select gid,major,htype,subsection_id from hansard where source_url = "' . $db->escape($url) . '" order by gid limit 1');
+    $q = $db->query('select gid,major,htype,subsection_id from hansard where source_url = ? order by gid limit 1', $url);
     if ($q->rows()) {
         return api_converturl_url_output($q);
     }
 
-    $q = $db->query('select gid,major,htype,subsection_id from hansard where source_url like "' . $db->escape($url_nohash) . '%" order by gid limit 1');
+    $q = $db->query('select gid,major,htype,subsection_id from hansard where source_url like ? order by gid limit 1', "%$url_nohash%");
     if ($q->rows()) {
         return api_converturl_url_output($q);
     }
 
     $url_bound = str_replace('cmhansrd/cm', 'cmhansrd/vo', $url_nohash);
     if ($url_bound != $url_nohash) {
-        $q = $db->query('select gid,major,htype,subsection_id from hansard where source_url like "' . $db->escape($url_bound) . '%" order by gid limit 1');
+        $q = $db->query('select gid,major,htype,subsection_id from hansard where source_url like ? order by gid limit 1', "%$url_bound%");
         if ($q->rows()) {
             return api_converturl_url_output($q);
         }
