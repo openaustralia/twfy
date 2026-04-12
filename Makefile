@@ -6,6 +6,8 @@ all:
 	@echo "  docker-build   Build the Docker image for the application"
 	@echo "  docker-run     Run the Docker container for the application"
 	@echo "  lint           Run linting on the www directory"
+	@echo "  install        Install Composer dependencies"
+	@echo "  test           Run PHPUnit tests"
 
 docker-build:
 	docker buildx build \
@@ -33,4 +35,10 @@ phpcs:
 
 phpcs-ci phpcs-verbose:
 	./vendor/bin/phpcs --standard=phpcs.xml --tab-width=4 www scripts
+
+install:
+	composer install --no-interaction --prefer-dist
+
+test: vendor/autoload.php
+	./vendor/bin/phpunit
 
