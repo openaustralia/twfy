@@ -69,7 +69,7 @@ jobs:
       - name: Run tests with coverage
         run: make test-coverage
         env:
-          DB_HOST: 127.0.0.1
-          DB_USER: root
-          DB_PASSWORD: root
-          DB_NAME: test_twfy
+          TEST_DB_HOST: 127.0.0.1
+          TEST_DB_USER: root
+          TEST_DB_PASSWORD: root
+          TEST_DB_NAME: test_twfy
