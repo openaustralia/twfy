@@ -1,6 +1,11 @@
 # PLATFORM=linux/arm64,linux/amd64
 PLATFORM=linux/amd64
 
+TEST_DB_HOST ?= 127.0.0.1
+TEST_DB_USER ?= twfyuser
+TEST_DB_PASSWORD ?= twfypass
+TEST_DB_NAME ?= twfy
+
 all:
 	@echo "Available targets:"
 	@echo "  docker-build   Build the Docker image for the application"
@@ -8,6 +13,7 @@ all:
 	@echo "  lint           Run linting on the www directory"
 	@echo "  install        Install Composer dependencies"
 	@echo "  test           Run PHPUnit tests"
+	@echo "  test-all       Run all PHPUnit tests including DB integration"
 
 docker-build:
 	docker buildx build \
@@ -41,4 +47,7 @@ install:
 
 test: vendor/autoload.php
 	./vendor/bin/phpunit
+
+test-all: vendor/autoload.php
+	DB_HOST=$(TEST_DB_HOST) DB_USER=$(TEST_DB_USER) DB_PASSWORD=$(TEST_DB_PASSWORD) DB_NAME=$(TEST_DB_NAME) ./vendor/bin/phpunit
 
