@@ -29,6 +29,7 @@
     "require-dev": {
         "drupal/coder": "^8.3",
         "phpunit/phpunit": "^11",
-        "squizlabs/php_codesniffer": "^3.13"
+        "squizlabs/php_codesniffer": "^3.13",
+        "vimeo/psalm": "^6.16"
     }
 }
