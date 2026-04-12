@@ -41,5 +41,4 @@ install:
 
 test: vendor/autoload.php
 	./vendor/bin/phpunit
-    DB_HOST=localhost DB_USER=root DB_PASSWORD='' DB_NAME=test_twfy ./vendor/bin/phpunit
 
