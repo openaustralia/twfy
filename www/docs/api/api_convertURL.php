@@ -104,7 +104,7 @@ function api_converturl_url($url) {
 
     $url_bound = str_replace('cmhansrd/cm', 'cmhansrd/vo', $url_nohash);
     if ($url_bound != $url_nohash) {
-        $q = $db->query('select gid,major,htype,subsection_id from hansard where source_url like ? order by gid limit 1', "%$url_bound%");
+        $q = $db->query('select gid,major,htype,subsection_id from hansard where source_url like ? order by gid limit 1', $url_bound . '%');
         if ($q->rows()) {
             return api_converturl_url_output($q);
         }
