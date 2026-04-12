@@ -26,5 +26,7 @@ services:
       MYSQL_USER: twfyuser
       MYSQL_PASSWORD: twfypass
     volumes:
+      # Will be owned by dnsmasq (uid 999)
       - ./_mysqldata:/var/lib/mysql
+      # Will be owned by root (uid 0)
       - ./data:/app/data
