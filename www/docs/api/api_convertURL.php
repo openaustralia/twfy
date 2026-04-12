@@ -61,10 +61,7 @@ function get_listurl($q) {
     } else {
         $parent_epobject_id = $id_data['subsection_id'];
         $parent_gid = '';
-        $r = $db->query("SELECT gid
-				FROM 	hansard
-				WHERE	epobject_id = '" . $db->escape($parent_epobject_id) . "'
-				");
+        $r = $db->query("SELECT gid FROM hansard WHERE	epobject_id = ?", $parent_epobject_id);
         if ($r->rows() > 0) {
             $parent_gid = fix_gid_from_db($r->field(0, 'gid'));
         }
