@@ -375,11 +375,33 @@ class MySQL {
     }
 
     /**
+     * Substitutes ? placeholders in $sql with safely escaped values from $params.
+     * Integers and floats are inlined as unquoted literals; all other values are
+     * cast to string, escaped via escape(), and wrapped in single quotes.
+     */
+    protected function build_parameterized_sql(string $sql, array $params): string {
+        $i = 0;
+        return preg_replace_callback('/\?/', function ($match) use (&$i, $params) {
+            $value = $params[$i++];
+            if (is_int($value) || is_float($value)) {
+                return (string) $value;
+            }
+            return "'" . $this->escape((string) $value) . "'";
+        }, $sql);
+    }
+
+    /**
      *
      */
-    public function query($sql) {
+    public function query($sql, ...$params) {
         // Pass it an SQL query and if the query was successful
         // it returns a MySQLQuery object which you can get results from.
+        // Optionally pass parameters after the SQL to replace ? placeholders;
+        // each value is safely escaped before substitution.
+
+        if (!empty($params)) {
+            $sql = $this->build_parameterized_sql($sql, $params);
+        }
 
         $start = getmicrotime();
         $q = new MySQLQuery($this->conn);
