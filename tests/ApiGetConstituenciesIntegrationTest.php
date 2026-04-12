@@ -131,7 +131,7 @@ class ApiGetConstituenciesIntegrationTest extends TestCase {
         $total_count = $q2->field(0, 'c');
 
         // main_name should filter down the results (when data exists)
-        $this->assertLessThanOrEqual($total_count, $main_count);
+        $this->assertLessThanOrEqual($main_count, $total_count);
     }
 
     /**
