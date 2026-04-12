@@ -4,7 +4,7 @@ PLATFORM=linux/amd64
 TWFY_HTTP_PORT ?= 80
 TWFY_MYSQL_PORT ?= 3306
 
-TEST_DB_HOST ?= 127.0.0.1:$(MYSQL_HOST_PORT)
+TEST_DB_HOST ?= 127.0.0.1:$(TWFY_MYSQL_PORT)
 TEST_DB_USER ?= twfyuser
 TEST_DB_PASSWORD ?= twfypass
 TEST_DB_NAME ?= twfy
@@ -98,3 +98,12 @@ test-docker:
 	docker compose up -d mysql
 	docker compose run --rm -e DB_HOST=mysql -e DB_USER=$(TEST_DB_USER) -e DB_PASSWORD=$(TEST_DB_PASSWORD) -e DB_NAME=$(TEST_DB_NAME) -v $(CURDIR):/app -w /app webhost bash -lc "composer install --no-interaction --prefer-dist && ./vendor/bin/phpunit"
 
+not_on_server:
+	@if echo "$(shell pwd)" | grep -qE '/(current|releases)' ; then \
+			echo "ERROR: This should not be run on a production/staging server!"; \
+			exit 1; \
+	fi
+
+setup_db: not_on_server
+	mysql -h 127.0.0.1 -P $(TWFY_MYSQL_PORT) -u $(TEST_DB_USER) -p$(TEST_DB_PASSWORD) -e "CREATE DATABASE IF NOT EXISTS $(TEST_DB_NAME)"
+	mysql -h 127.0.0.1 -P $(TWFY_MYSQL_PORT) -u $(TEST_DB_USER) -p$(TEST_DB_PASSWORD) $(TEST_DB_NAME) < db/schema.sql
