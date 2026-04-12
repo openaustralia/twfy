@@ -139,3 +139,21 @@ To stop the Docker containers:
 ```bash
 docker compose down
 ```
+
+### PhpStorm
+
+Under PhpStorm: Settings → PHP → Test Frameworks → PHPUnit → Test Runner,
+set "Default configuration file" to the full path to phpunit.xml (use file picker).
+
+### ENV overrides
+
+I use direnv's `.envrc` file to set environment variables to override defaults for `make` commands to avoid
+conflicts with other apps, and to keep test passwords grouped by the app. In my case:
+
+```bash
+# TWFY = 899 on a phone keypad
+export TWFY_HTTP_PORT=8899
+export TWFY_MYSQL_PORT=3389
+```
+
+For PhpStorm add DB_HOST=127.0.0.1:3389 to the test runner → Environment variables
