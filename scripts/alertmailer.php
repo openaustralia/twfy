@@ -190,7 +190,7 @@ foreach ($alertdata as $alertitem) {
             if ($row['hdate'] < '2008-01-14') {
                 continue;
             }
-            $gid_to = 'uk.org.publicwhip/' . $sects_short[$major] . '/' . $row['gid'];
+            $gid_to = "uk.org.publicwhip/{$sects_short[$major]}/{$row['gid']}";
             $q = $db->query('SELECT gid_from FROM gidredirect WHERE gid_to = ?', $gid_to);
             if ($q->rows() > 0) {
                 continue;
