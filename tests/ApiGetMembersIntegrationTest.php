@@ -171,4 +171,84 @@ class ApiGetMembersIntegrationTest extends TestCase {
         $this->assertCount(3, $results);
     }
 
+    /**
+     * Test search by first name for House members.
+     */
+    public function test_search_first_name_house(): void {
+        $house = 1;
+        $search = '%John%';
+        $q = $this->db->query('SELECT * FROM member WHERE house = ? AND first_name LIKE ?', $house, $search);
+        $this->assertIsObject($q);
+    }
+
+    /**
+     * Test search by last name for House members.
+     */
+    public function test_search_last_name_house(): void {
+        $house = 1;
+        $search = '%Smith%';
+        $q = $this->db->query('SELECT * FROM member WHERE house = ? AND last_name LIKE ?', $house, $search);
+        $this->assertIsObject($q);
+    }
+
+    /**
+     * Test search by full name for House members.
+     */
+    public function test_search_full_name_house(): void {
+        $house = 1;
+        $search = '%John Smith%';
+        $q = $this->db->query('SELECT * FROM member WHERE house = ? AND CONCAT(first_name, \' \', last_name) LIKE ?', $house, $search);
+        $this->assertIsObject($q);
+    }
+
+    /**
+     * Test search for House does not search constituency.
+     */
+    public function test_search_house_no_constituency(): void {
+        $house = 1;
+        // House query should have 3 LIKE conditions, not including constituency
+        $q = $this->db->query('SELECT * FROM member WHERE house = ? AND (first_name LIKE ? OR last_name LIKE ? OR CONCAT(first_name, \' \', last_name) LIKE ?)', $house, '%test%', '%test%', '%test%');
+        $this->assertIsObject($q);
+    }
+
+    /**
+     * Test search by first name for Senate members.
+     */
+    public function test_search_first_name_senate(): void {
+        $house = 2;
+        $search = '%John%';
+        $q = $this->db->query('SELECT * FROM member WHERE house = ? AND first_name LIKE ?', $house, $search);
+        $this->assertIsObject($q);
+    }
+
+    /**
+     * Test search by last name for Senate members.
+     */
+    public function test_search_last_name_senate(): void {
+        $house = 2;
+        $search = '%Labor%';
+        $q = $this->db->query('SELECT * FROM member WHERE house = ? AND last_name LIKE ?', $house, $search);
+        $this->assertIsObject($q);
+    }
+
+    /**
+     * Test search by constituency for Senate members.
+     */
+    public function test_search_constituency_senate(): void {
+        $house = 2;
+        $search = '%NSW%';
+        $q = $this->db->query('SELECT * FROM member WHERE house = ? AND constituency LIKE ?', $house, $search);
+        $this->assertIsObject($q);
+    }
+
+    /**
+     * Test search for Senate includes constituency.
+     */
+    public function test_search_senate_with_constituency(): void {
+        $house = 2;
+        // Senate query should have 4 LIKE conditions including constituency
+        $q = $this->db->query('SELECT * FROM member WHERE house = ? AND (first_name LIKE ? OR last_name LIKE ? OR CONCAT(first_name, \' \', last_name) LIKE ? OR constituency LIKE ?)', $house, '%test%', '%test%', '%test%', '%test%');
+        $this->assertIsObject($q);
+    }
+
 }

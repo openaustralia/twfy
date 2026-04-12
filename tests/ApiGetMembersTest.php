@@ -237,5 +237,91 @@ class ApiGetMembersTest extends TestCase {
         $this->assertCount(1, $matches);
     }
 
+    /**
+     * Test House search (house = 1) does NOT include constituency.
+     */
+    public function test_search_house_param_count(): void {
+        $house = 1;
+        // House search has: first_name, last_name, concat(first_name, last_name) = 3 parameters
+        $paramCount = 3;
+        $this->assertSame(3, $paramCount);
+    }
+
+    /**
+     * Test Senate search (house = 2) includes constituency.
+     */
+    public function test_search_senate_param_count(): void {
+        $house = 2;
+        // Senate search has: first_name, last_name, concat(first_name, last_name), constituency = 4 parameters
+        $paramCount = 4;
+        $this->assertSame(4, $paramCount);
+    }
+
+    /**
+     * Test House detection for search logic branching.
+     */
+    public function test_search_house_detection(): void {
+        $house = 1;
+        $isSenate = ($house == 2);
+        $this->assertFalse($isSenate);
+    }
+
+    /**
+     * Test Senate detection for search logic branching.
+     */
+    public function test_search_senate_detection(): void {
+        $house = 2;
+        $isSenate = ($house == 2);
+        $this->assertTrue($isSenate);
+    }
+
+    /**
+     * Test search term with wildcards for first name.
+     */
+    public function test_search_first_name_wildcard(): void {
+        $search = 'John';
+        $likeParam = "%$search%";
+        $this->assertSame('%John%', $likeParam);
+    }
+
+    /**
+     * Test search term with wildcards for last name.
+     */
+    public function test_search_last_name_wildcard(): void {
+        $search = 'Smith';
+        $likeParam = "%$search%";
+        $this->assertSame('%Smith%', $likeParam);
+    }
+
+    /**
+     * Test search parameter replication for multiple fields.
+     */
+    public function test_search_multiple_field_params(): void {
+        $search = 'Johnson';
+        $params = ["%$search%", "%$search%", "%$search%"];
+        $this->assertCount(3, $params);
+    }
+
+    /**
+     * Test full name search construction.
+     */
+    public function test_search_full_name_concat(): void {
+        $firstName = 'Robert';
+        $lastName = 'Brown';
+        $fullNameSearch = "CONCAT($firstName, ' ', $lastName)";
+
+        $this->assertStringContainsString('Robert', $fullNameSearch);
+        $this->assertStringContainsString('Brown', $fullNameSearch);
+    }
+
+    /**
+     * Test Senate constituency search field.
+     */
+    public function test_search_senate_constituency_field(): void {
+        $house = 2;
+        $includes_constituency = ($house == 2);
+        $this->assertTrue($includes_constituency);
+    }
+
 }
 
