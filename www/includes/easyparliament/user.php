@@ -1073,7 +1073,7 @@ class THEUSER extends USER {
                 if ($valid_password) {
                     // Upgrade to the more secure Bcrypt hash.
                     $newHash = password_hash($userenteredpassword, PASSWORD_DEFAULT);
-                    $q_update = $this->db->query("UPDATE users SET password = '" . $this->db->escape($newHash) . "' WHERE email='" . $this->db->escape($email) . "'");
+                    $q_update = $this->db->query("UPDATE users SET password = ? WHERE email=?", $newHash, $email);
                     $dbpassword = $newHash;
                 }
             } else {

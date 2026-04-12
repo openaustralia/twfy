@@ -377,9 +377,22 @@ class MySQL {
     /**
      *
      */
-    public function query($sql) {
+    public function query($sql, ...$params) {
         // Pass it an SQL query and if the query was successful
         // it returns a MySQLQuery object which you can get results from.
+        // Optionally pass parameters after the SQL to replace ? placeholders;
+        // each value is safely escaped before substitution.
+
+        if (!empty($params)) {
+            $i = 0;
+            $sql = preg_replace_callback('/\?/', function ($match) use (&$i, $params) {
+                $value = $params[$i++];
+                if (is_int($value) || is_float($value)) {
+                    return (string) $value;
+                }
+                return "'" . $this->escape((string) $value) . "'";
+            }, $sql);
+        }
 
         $start = getmicrotime();
         $q = new MySQLQuery($this->conn);
