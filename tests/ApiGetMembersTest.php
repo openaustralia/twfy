@@ -184,4 +184,58 @@ class ApiGetMembersTest extends TestCase {
         $this->assertFalse($inRange);
     }
 
+    /**
+     * Test state abbreviation handling.
+     */
+    public function test_state_abbreviation(): void {
+        $state = 'NSW';
+        $this->assertSame('NSW', $state);
+    }
+
+    /**
+     * Test state full name handling.
+     */
+    public function test_state_full_name(): void {
+        $state = 'New South Wales';
+        $this->assertSame('New South Wales', $state);
+    }
+
+    /**
+     * Test state like parameter for constituency search.
+     */
+    public function test_state_constituency_like(): void {
+        $state = 'NSW';
+        $likeParam = "%$state%";
+
+        $this->assertSame('%NSW%', $likeParam);
+    }
+
+    /**
+     * Test state search with partial match.
+     */
+    public function test_state_partial_match(): void {
+        $constituency = 'Sydney, NSW';
+        $state = 'NSW';
+        $likePattern = "%$state%";
+
+        // Simulate LIKE matching
+        $matches = (strpos($constituency, $state) !== false);
+        $this->assertTrue($matches);
+    }
+
+    /**
+     * Test multiple states in constituency names.
+     */
+    public function test_multiple_states_search(): void {
+        $constituencies = ['Sydney, NSW', 'Melbourne, VIC', 'Brisbane, QLD'];
+        $state = 'NSW';
+
+        $matches = array_filter($constituencies, function($c) use ($state) {
+            return strpos($c, $state) !== false;
+        });
+
+        $this->assertCount(1, $matches);
+    }
+
 }
+

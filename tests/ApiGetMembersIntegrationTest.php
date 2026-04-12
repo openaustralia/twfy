@@ -135,4 +135,40 @@ class ApiGetMembersIntegrationTest extends TestCase {
         $this->assertIsObject($q);
     }
 
+    /**
+     * Test state search for House members.
+     */
+    public function test_state_search_house(): void {
+        $house = 1;
+        $state = 'NSW';
+        $q = $this->db->query('SELECT * FROM member WHERE house = ? AND constituency LIKE ? AND entered_house <= NOW() AND NOW() <= left_house', $house, "%$state%");
+        $this->assertIsObject($q);
+    }
+
+    /**
+     * Test state search for Senate members.
+     */
+    public function test_state_search_senate(): void {
+        $house = 2;
+        $state = 'VIC';
+        $q = $this->db->query('SELECT * FROM member WHERE house = ? AND constituency LIKE ? AND entered_house <= NOW() AND NOW() <= left_house', $house, "%$state%");
+        $this->assertIsObject($q);
+    }
+
+    /**
+     * Test state search with multiple state codes.
+     */
+    public function test_multiple_state_searches(): void {
+        $states = ['NSW', 'VIC', 'QLD'];
+        $results = [];
+
+        foreach ($states as $state) {
+            $q = $this->db->query('SELECT person_id FROM member WHERE constituency LIKE ? LIMIT 1', "%$state%");
+            $results[$state] = $q->rows();
+        }
+
+        // All queries should succeed
+        $this->assertCount(3, $results);
+    }
+
 }

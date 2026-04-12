@@ -62,13 +62,13 @@ function api_getMembers_state($house, $s) {
  */
 function api_getMembers_search($house, $s) {
     if ($house == 2) {
-        _api_getMembers_output('select * from member
+        _api_getMembers_output("select * from member
 			where house = ?
 			and (first_name like ?
 			or last_name like ?
-			or concat(first_name,\' \',last_name) like ?
+			or concat(first_name, ' ', last_name) like ?
 			or constituency like ?)
-			and entered_house <= date(now()) and date(now()) <= left_house',
+			and entered_house <= date(now()) and date(now()) <= left_house",
         $house, "%$s%", "%$s%", "%$s%", "%$s%");
     } else {
         _api_getMembers_output("select * from member
