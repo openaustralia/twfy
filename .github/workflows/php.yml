@@ -70,6 +70,9 @@ jobs:
           fail-fast: true
       - name: Install dependencies
         run: composer install --no-interaction --prefer-dist
+      - name: Load database schema
+        run: |
+          mysql -h 127.0.0.1 -u root -proot test_twfy < db/schema.sql
       - name: Run tests with coverage
         run: |
           set -o pipefail

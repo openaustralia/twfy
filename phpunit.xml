@@ -3,12 +3,6 @@
          xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
          bootstrap="tests/bootstrap.php"
          colors="true">
-    <php>
-        <env name="TEST_DB_HOST" value="127.0.0.1"/>
-        <env name="TEST_DB_USER" value="twfyuser"/>
-        <env name="TEST_DB_PASSWORD" value="twfypass"/>
-        <env name="TEST_DB_NAME" value="twfy"/>
-    </php>
     <testsuites>
         <testsuite name="Unit">
             <directory>tests</directory>
