@@ -1,6 +1,5 @@
 <?php
 
-use ParlDB;
 use PHPUnit\Framework\TestCase;
 
 /**
