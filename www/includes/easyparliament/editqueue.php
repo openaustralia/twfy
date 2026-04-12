@@ -46,7 +46,7 @@
  */
 class EDITQUEUE {
 
-    private $db = NULL;
+    protected $db = NULL;
 
     public $pending_count = '';
 
