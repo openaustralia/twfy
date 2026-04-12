@@ -1216,16 +1216,16 @@ class THEUSER extends USER {
             // Set that they're confirmed in the DB.
             $r = $this->db->query("UPDATE users
 							SET		confirmed = '1'
-							WHERE	user_id = '" . $this->db->escape($user_id) . "'
-							");
+							WHERE	user_id = ?", $user_id);
 
             if ($q->field(0, 'constituency')) {
                 $MEMBER = new MEMBER(['constituency' => $q->field(0, 'constituency')]);
                 $pid = $MEMBER->person_id();
                 // This should probably be in the ALERT class.
-                $this->db->query('update alerts set confirmed=1 where email="' .
-                    $this->db->escape($this->email) . '" and criteria="speaker:' .
-                    $this->db->escape($pid) . '"');
+                $this->db->query('update alerts set confirmed=1 where email=? and criteria=?',
+                    $this->email,
+                    "speaker:" . $pid
+                );
             }
 
             if ($r->success()) {

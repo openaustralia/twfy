@@ -79,7 +79,7 @@ function wikipedize($source) {
     $matched = [];
     $db = new ParlDB();
     $source = explode('|||', $source);
-    $q = $db->query("SELECT title FROM titles WHERE title IN ('" . implode("','", $phrases) . "')");
+    $q = $db->query("SELECT title FROM titles WHERE title IN (?)", $phrases);
     for ($i = 0; $i < $q->rows(); $i++) {
         $wikistring = $q->field($i, 'title');
         $phrase = str_replace('_', ' ', $wikistring);

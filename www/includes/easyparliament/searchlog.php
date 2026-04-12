@@ -104,7 +104,7 @@ class SEARCHLOG {
     public function admin_recent_searches($count) {
 
         $q = $this->db->query("SELECT query_string, page_number, count_hits, ip_address, query_time
-                FROM search_query_log ORDER BY query_time desc LIMIT $count");
+                FROM search_query_log ORDER BY query_time desc LIMIT ?", $count);
         $searches_array = [];
         for ($row = 0; $row < $q->rows(); $row++) {
             array_push($searches_array, $this->_db_row_to_array($q, $row));

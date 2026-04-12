@@ -60,8 +60,8 @@ function postcode_to_constituency($postcode) {
 function fake_postcode($postcode) {
     $db = new ParlDB();
     $fake_cons_id = abs(crc32($postcode) % 630);
-    $query = "select name from constituency where main_name and cons_id = '" . $fake_cons_id . "'";
-    $q2 = $db->query($query);
+    $query = "select name from constituency where main_name and cons_id = ?";
+    $q2 = $db->query($query, $fake_cons_id);
     if ($q2->rows <= 0) {
         return FALSE;
     }

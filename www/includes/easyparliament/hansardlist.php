@@ -211,7 +211,7 @@ class HANSARDLIST {
         // Returns number of items in debates or wrans, depending on which class this is,
         // DEBATELIST or WRANSLIST.
 
-        $q = $this->db->query("SELECT COUNT(*) AS count FROM hansard WHERE major='" . $this->major . "'");
+        $q = $this->db->query("SELECT COUNT(*) AS count FROM hansard WHERE major=?", $this->major);
 
         return $q->field(0, 'count');
     }
@@ -2918,7 +2918,7 @@ class WRANSLIST extends HANSARDLIST {
      *
      */
     public function total_questions() {
-        $q = $this->db->query("SELECT COUNT(*) AS count FROM hansard WHERE major='" . $this->major . "' AND minor = 1");
+        $q = $this->db->query("SELECT COUNT(*) AS count FROM hansard WHERE major=? AND minor = 1", $this->major);
         return $q->field(0, 'count');
     }
 
@@ -3208,14 +3208,14 @@ class StandingCommittee extends DEBATELIST {
         global $DATA, $this_page;
         $session = $args['session'];
         $e_session = $this->db->escape($session);
-        $q = $this->db->query('select id, title from bills where session="' . $e_session . '" order by title');
+        $q = $this->db->query('select id, title from bills where session=? order by title', $e_session);
         $bills = [];
         for ($i = 0; $i < $q->rows(); $i++) {
             $bills[$q->field($i, 'id')] = $q->field($i, 'title');
         }
         $q = $this->db->query('select minor,count(*) as c from hansard where major=6 and htype=12
-			and minor in (' . implode(',', array_keys($bills)) . ')
-			group by minor');
+			and minor in (?)
+			group by minor', array_keys($bills));
         $counts = [];
         // $comments = array();
         for ($i = 0; $i < $q->rows(); $i++) {
@@ -3247,9 +3247,10 @@ class StandingCommittee extends DEBATELIST {
         $nextprev = [];
         $nextprev['prev'] = ['body' => 'Previous session', 'title' => ''];
         $nextprev['next'] = ['body' => 'Next session', 'title' => ''];
-        $q = $this->db->query("SELECT session FROM bills WHERE session < '" . $e_session . "' ORDER BY session DESC LIMIT 1");
+        $q = $this->db->query("SELECT session FROM bills WHERE session < ? ORDER BY session DESC LIMIT 1",  $e_session);
         $prevyear = $q->field(0, 'session');
-        $q = $this->db->query("SELECT session FROM bills WHERE session > '" . $e_session . "' ORDER BY session ASC LIMIT 1");
+        // TODO: Check if session = $e_session should be included in one of these queries.
+        $q = $this->db->query("SELECT session FROM bills WHERE session > ? ORDER BY session ASC LIMIT 1",  $e_session);
         $nextyear = $q->field(0, 'session');
         if ($prevyear) {
             $nextprev['prev']['url'] = $YEARURL->generate() . $prevyear . '/';

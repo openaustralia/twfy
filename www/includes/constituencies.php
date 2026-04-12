@@ -24,8 +24,8 @@ function normalise_constituency_name($name) {
         return FALSE;
     }
 
-    $query = "select name from constituency where main_name and cons_id = '" . $q1->field(0, 'cons_id') . "'";
-    $q2 = $db->query($query);
+    $query = "select name from constituency where main_name and cons_id = ?";
+    $q2 = $db->query($query, $q1->field(0, 'cons_id'));
     if ($q2->rows <= 0) {
         return FALSE;
     }

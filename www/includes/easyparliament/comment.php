@@ -252,20 +252,19 @@ class COMMENT {
 
         $posted = date('Y-m-d H:i:s', time());
 
-        $q_gid = $this->db->query("select gid from hansard where epobject_id = '" . addslashes($data['epobject_id']) . "'");
+        $q_gid = $this->db->query("select gid from hansard where epobject_id = ?", $data['epobject_id']);
         $data['gid'] = $q_gid->field(0, 'gid');
 
         $q = $this->db->query("INSERT INTO comments
 						(user_id, epobject_id, body, posted, visible, original_gid)
 						VALUES
-						(
-						'" . addslashes($THEUSER->user_id()) . "',
-						'" . addslashes($data['epobject_id']) . "',
-						'" . addslashes($body) . "',
-						'" . $posted . "',
+						(?, ?, ?, ?, ?, ?)",
+						$THEUSER->user_id(),
+						$data['epobject_id'],
+						$body,
+						$posted,
 						1,
-						'" . addslashes($data['gid']) . "'
-						)");
+						$data['gid']);
 
         if ($q->success()) {
             // Set the object varibales up.
@@ -357,7 +356,7 @@ class COMMENT {
         global $THEUSER, $PAGE;
 
         if ($THEUSER->is_able_to('deletecomment')) {
-            $q = $this->db->query("UPDATE comments SET visible = '0' WHERE comment_id = '" . $this->comment_id . "'");
+            $q = $this->db->query("UPDATE comments SET visible = '0' WHERE comment_id = ?", $this->comment_id);
 
             if ($q->success()) {
                 return TRUE;
