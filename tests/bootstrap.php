@@ -25,40 +25,77 @@ if (!defined('COOKIEDOMAIN')) {
 require_once __DIR__ . '/../www/includes/mysql.php';
 
 /**
+ * @return array{host:string,user:string,pass:string,name:string}|null
+ */
+function getTestDbConfig(): ?array {
+    $host = getenv('DB_HOST');
+    $user = getenv('DB_USER');
+    $pass = getenv('DB_PASSWORD');
+    $name = getenv('DB_NAME');
+
+    if (!$host || $user === false || $name === false) {
+        return null;
+    }
+
+    return [
+        'host' => $host,
+        'user' => $user,
+        'pass' => $pass === false ? '' : $pass,
+        'name' => $name,
+    ];
+}
+
+/**
+ * Returns a shared mysqli connection for tests or null when unavailable.
+ */
+function getSharedTestConnection(): ?mysqli {
+    global $global_connection;
+
+    if ($global_connection instanceof mysqli) {
+        return $global_connection;
+    }
+
+    $config = getTestDbConfig();
+    if ($config === null) {
+        return null;
+    }
+
+    try {
+        $conn = @mysqli_connect($config['host'], $config['user'], $config['pass'], $config['name']);
+    } catch (mysqli_sql_exception $e) {
+        return null;
+    }
+
+    if (!$conn) {
+        return null;
+    }
+
+    $global_connection = $conn;
+    return $conn;
+}
+
+function setMySqlConnection(MySQL $db, mysqli $conn): bool {
+    try {
+        $prop = new ReflectionProperty(MySQL::class, 'conn');
+        $prop->setAccessible(true);
+        $prop->setValue($db, $conn);
+        return true;
+    } catch (ReflectionException $e) {
+        return false;
+    }
+}
+
+/**
  * Test-safe DB wrapper used by USER/THEUSER classes.
  */
 class ParlDB extends MySQL {
     public function __construct() {
-        $host = getenv('DB_HOST');
-        $user = getenv('DB_USER');
-        $pass = getenv('DB_PASSWORD');
-        $name = getenv('DB_NAME');
-
-        if (!$host || $user === false || $name === false) {
+        $conn = getSharedTestConnection();
+        if (!$conn) {
             return;
         }
 
-        global $global_connection;
-
-        if (!$global_connection) {
-            try {
-                $conn = @mysqli_connect($host, $user, $pass ?: '', $name);
-            } catch (mysqli_sql_exception $e) {
-                $conn = false;
-            }
-
-            if (!$conn) {
-                return;
-            }
-
-            $global_connection = $conn;
-        }
-
-        try {
-            $prop = new ReflectionProperty(MySQL::class, 'conn');
-            $prop->setAccessible(true);
-            $prop->setValue($this, $global_connection);
-        } catch (ReflectionException $e) {
+        if (!setMySqlConnection($this, $conn)) {
             return;
         }
     }
@@ -71,46 +108,19 @@ require_once __DIR__ . '/../www/includes/easyparliament/user.php';
  * Returns a MySQL instance if successful, null otherwise.
  */
 function getTestDatabase(): ?MySQL {
-    $host = getenv('DB_HOST');
-    $user = getenv('DB_USER');
-    $pass = getenv('DB_PASSWORD');
-    $name = getenv('DB_NAME');
-
-    if (!$host || $user === false || $name === false) {
+    $conn = getSharedTestConnection();
+    if (!$conn) {
         return null;
-    }
-
-    global $global_connection;
-
-    if (!$global_connection) {
-        // Use mysqli directly to avoid exit() on error
-        try {
-            $conn = @mysqli_connect($host, $user, $pass ?: '', $name);
-        } catch (mysqli_sql_exception $e) {
-            $conn = false;
-        }
-
-        if (!$conn) {
-            return null;
-        }
-
-        $global_connection = $conn;
-    } else {
-        $conn = $global_connection;
     }
 
     // Create a MySQL instance that uses this connection
     $db = new MySQL();
 
-    // Use reflection to set the private $conn property
-    try {
-        $prop = new ReflectionProperty($db, 'conn');
-        $prop->setAccessible(true);
-        $prop->setValue($db, $conn);
-        return $db;
-    } catch (ReflectionException $e) {
+    if (!setMySqlConnection($db, $conn)) {
         return null;
     }
+
+    return $db;
 }
 
 /**

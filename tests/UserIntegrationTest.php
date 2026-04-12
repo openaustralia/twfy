@@ -1,37 +1,17 @@
 <?php
 
-use PHPUnit\Framework\TestCase;
+require_once __DIR__ . '/DatabaseIntegrationTestCase.php';
 
 /**
  * Integration tests for the USER class methods.
  * These tests require DB_HOST, DB_USER, DB_PASSWORD, DB_NAME environment variables.
  */
-class UserIntegrationTest extends TestCase
+class UserIntegrationTest extends DatabaseIntegrationTestCase
 {
-    private ?MySQL $db = null;
-    private bool $has_database = false;
-
-    protected function setUp(): void
-    {
-        $this->db = TestDatabase::tryConnect();
-        if (!$this->db) {
-            $this->markTestSkipped('No database configured or connection failed; set DB_HOST, DB_USER, DB_PASSWORD, DB_NAME');
-        }
-        $this->has_database = true;
-        $this->createUsersTable();
-    }
-
-    protected function tearDown(): void
-    {
-        if ($this->has_database && $this->db) {
-            $this->dropUsersTable();
-        }
-    }
-
     /**
      * Create a temporary users table matching the schema used by the USER class.
      */
-    private function createUsersTable(): void
+    protected function createTemporaryTables(): void
     {
         $sql = "CREATE TEMPORARY TABLE users (
             user_id INT AUTO_INCREMENT PRIMARY KEY,
@@ -54,7 +34,7 @@ class UserIntegrationTest extends TestCase
         $this->db->query($sql);
     }
 
-    private function dropUsersTable(): void
+    protected function dropTemporaryTables(): void
     {
         $this->db->query("DROP TEMPORARY TABLE IF EXISTS users");
     }

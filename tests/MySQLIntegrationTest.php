@@ -1,6 +1,6 @@
 <?php
 
-use PHPUnit\Framework\TestCase;
+require_once __DIR__ . '/DatabaseIntegrationTestCase.php';
 
 /**
  * Integration tests for MySQL::query() with a real database connection.
@@ -8,29 +8,9 @@ use PHPUnit\Framework\TestCase;
  *
  * A test table is created before each test and dropped after, ensuring isolation.
  */
-class MySQLIntegrationTest extends TestCase
+class MySQLIntegrationTest extends DatabaseIntegrationTestCase
 {
-    private ?MySQL $db = null;
-    private bool $has_database = false;
-
-    protected function setUp(): void
-    {
-        $this->db = TestDatabase::tryConnect();
-        if (!$this->db) {
-            $this->markTestSkipped('No database configured or connection failed; set DB_HOST, DB_USER, DB_PASSWORD, DB_NAME');
-        }
-        $this->has_database = true;
-        $this->createTestTable();
-    }
-
-    protected function tearDown(): void
-    {
-        if ($this->has_database && $this->db) {
-            $this->dropTestTable();
-        }
-    }
-
-    private function createTestTable(): void
+    protected function createTemporaryTables(): void
     {
         $sql = "CREATE TEMPORARY TABLE test_users (
             id INT AUTO_INCREMENT PRIMARY KEY,
@@ -41,7 +21,7 @@ class MySQLIntegrationTest extends TestCase
         $this->db->query($sql);
     }
 
-    private function dropTestTable(): void
+    protected function dropTemporaryTables(): void
     {
         $this->db->query("DROP TEMPORARY TABLE IF EXISTS test_users");
     }
