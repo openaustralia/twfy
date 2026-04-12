@@ -50,9 +50,8 @@ function _api_getConstituencies_search($s) {
     $db = new ParlDB();
     $q = $db->query('select c_main.name from constituency, constituency as c_main
 		where constituency.cons_id = c_main.cons_id
-		and c_main.main_name and constituency.name like "%' . $db->escape($s) .
-        '%" and constituency.from_date <= date(now())
-		and date(now()) <= constituency.to_date');
+		and c_main.main_name and constituency.name like ? and constituency.from_date <= date(now())
+		and date(now()) <= constituency.to_date', "%$s%");
     $output = [];
     $done = [];
     for ($i = 0; $i < $q->rows(); $i++) {
