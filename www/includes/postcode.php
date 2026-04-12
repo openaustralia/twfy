@@ -80,7 +80,7 @@ function postcode_to_constituency_internal($postcode) {
 
     $db = new ParlDB();
 
-    $q = $db->query('select name from postcode_lookup where postcode = "' . $db->escape($postcode) . '"');
+    $q = $db->query('select name from postcode_lookup where postcode = ?', $postcode);
     if ($q->rows == 1) {
         $name = $q->field(0, 'name');
         return $name;
