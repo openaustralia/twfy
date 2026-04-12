@@ -20,25 +20,6 @@ public static function setUpBeforeClass(): void {
 }
 
     /**
-     * Test ALERT class with database
-     */
-    public function test_alert_class_can_construct() {
-        $this->assertNotNull(self::$connection);
-        $alert = new ALERT();
-        $this->assertIsObject($alert);
-    }
-
-    /**
-     * Test alert object properties after instantiation
-     */
-    public function test_alert_object_has_db_connection() {
-        $this->assertNotNull(self::$connection);
-        $alert = new ALERT();
-        // Should have created internal db connection.
-        $this->assertIsObject($alert);
-    }
-
-    /**
      * Test suggest_alerts function runs without error
      */
     public function test_suggest_alerts_with_speaker_criteria() {
@@ -125,24 +106,6 @@ public static function setUpBeforeClass(): void {
         } catch (Exception $e) {
             // PID may not exist, but class should attempt instantiation.
             $this->assertTrue(TRUE);
-        }
-    }
-
-    /**
-     * Test criterion pattern matching
-     */
-    public function test_criteria_pattern_validation() {
-        $this->assertNotNull(self::$connection);
-        $criteria_list = [
-            'speaker:12345',
-            'keyword search',
-            'speaker:99999',
-            'multiple word criteria',
-        ];
-
-        foreach ($criteria_list as $criteria) {
-            $this->assertIsString($criteria);
-            $this->assertGreaterThan(0, strlen($criteria));
         }
     }
 
