@@ -77,7 +77,7 @@ make docker-run
 This starts both the webserver and MySQL container. Wait a few seconds for MySQL to be ready, then run:
 
 ```bash
-make setup_db  # only need to run once, or if you want to revert to an empty DB
+make setup-db  # only need to run once, or if you want to revert to an empty DB
 make test-all
 ```
 

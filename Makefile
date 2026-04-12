@@ -15,6 +15,7 @@ all:
 	@echo "  docker-run                          Run the Docker container for the application"
 	@echo "  lint                                Run linting on the www directory"
 	@echo "  install                             Install Composer dependencies"
+	@echo "  setup-db                            Setup DB by dropping and recreating tables (creates DB if missing)"
 	@echo "  test [TEST_ARGS=...]                Run PHPUnit tests"
 	@echo "  test-all [TEST_ARGS=...]            Run all PHPUnit tests including DB integration"
 	@echo "  test-docker [TEST_ARGS=...]         Run all tests in Docker with DB (simplest method)"
@@ -98,12 +99,12 @@ test-docker:
 	docker compose up -d mysql
 	docker compose run --rm -e DB_HOST=mysql -e DB_USER=$(TEST_DB_USER) -e DB_PASSWORD=$(TEST_DB_PASSWORD) -e DB_NAME=$(TEST_DB_NAME) -v $(CURDIR):/app -w /app webhost bash -lc "composer install --no-interaction --prefer-dist && ./vendor/bin/phpunit"
 
-not_on_server:
+not-on-server:
 	@if echo "$(shell pwd)" | grep -qE '/(current|releases)' ; then \
 			echo "ERROR: This should not be run on a production/staging server!"; \
 			exit 1; \
 	fi
 
-setup_db: not_on_server
+setup-db: not-on-server
 	mysql -h 127.0.0.1 -P $(TWFY_MYSQL_PORT) -u $(TEST_DB_USER) -p$(TEST_DB_PASSWORD) -e "CREATE DATABASE IF NOT EXISTS $(TEST_DB_NAME)"
 	mysql -h 127.0.0.1 -P $(TWFY_MYSQL_PORT) -u $(TEST_DB_USER) -p$(TEST_DB_PASSWORD) $(TEST_DB_NAME) < db/schema.sql
