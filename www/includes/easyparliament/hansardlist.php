@@ -698,13 +698,13 @@ class HANSARDLIST {
 
         twfy_debug(get_class($this), "looking for redirected gid");
         $gid = $this->gidprefix . $args['gid'];
-        $q = $this->db->query("SELECT gid_to FROM gidredirect WHERE gid_from = '" . $this->db->escape($gid) . "'");
+        $q = $this->db->query("SELECT gid_to FROM gidredirect WHERE gid_from = ?", $gid);
         if ($q->rows() == 0) {
             $itemdata = $this->_get_hansard_data($input);
         } else {
             do {
                 $gid = $q->field(0, 'gid_to');
-                $q = $this->db->query("SELECT gid_to FROM gidredirect WHERE gid_from = '" . $this->db->escape($gid) . "'");
+                $q = $this->db->query("SELECT gid_to FROM gidredirect WHERE gid_from = ?", $gid);
             } while ($q->rows() > 0);
             $redirected_gid = $gid;
             twfy_debug(get_class($this), "found redirected gid $redirected_gid");

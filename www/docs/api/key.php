@@ -22,7 +22,7 @@ if ($THEUSER->loggedin()) {
         create_key(get_http_var('commercial'), get_http_var('reason'));
     }
     $db = new ParlDB();
-    $q = $db->query('SELECT api_key, commercial, created, reason FROM api_key WHERE user_id=' . $THEUSER->user_id());
+    $q = $db->query('SELECT api_key, commercial, created, reason FROM api_key WHERE user_id = ?', $THEUSER->user_id());
     $keys = [];
     for ($i = 0; $i < $q->rows(); $i++) {
         $keys[] = [$q->field($i, 'api_key'), $q->field($i, 'commercial'), $q->field($i, 'created'), $q->field($i, 'reason')];
