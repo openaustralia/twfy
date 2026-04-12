@@ -1,6 +1,8 @@
 <?php
 
+use MySQL;
 use PHPUnit\Framework\TestCase;
+use TestDatabase;
 
 /**
  * Tests for MySQL::build_parameterized_sql().

@@ -5,22 +5,25 @@
  * Integration tests for pc.php gadget script requiring database access.
  */
 
-require_once __DIR__ . '/bootstrap.php';
-require_once __DIR__ . '/../www/includes/easyparliament/member.php';
+require_once __DIR__ . '/../bootstrap.php';
+require_once __DIR__ . '/../../www/includes/easyparliament/member.php';
 
+use ParlDB;
 use PHPUnit\Framework\TestCase;
 
 /**
  * Integration tests for pc.php gadget requiring database.
  */
-class PcGadgetIntegrationTest extends TestCase {
+class PcGadgetIntegrationTest extends TestCase
+{
 
     protected $db;
 
     /**
      *
      */
-    public static function setUpBeforeClass(): void {
+    public static function setUpBeforeClass(): void
+    {
         $conn = getSharedTestConnection();
         if (!$conn) {
             self::markTestSkipped('Database connection not available');
@@ -30,7 +33,8 @@ class PcGadgetIntegrationTest extends TestCase {
     /**
      *
      */
-    protected function setUp(): void {
+    protected function setUp(): void
+    {
         $this->db = new ParlDB();
 
         // Verify connection exists.
@@ -43,7 +47,8 @@ class PcGadgetIntegrationTest extends TestCase {
     /**
      * Test get_person_id with empty constituency returns FALSE.
      */
-    public function test_get_person_id_empty(): void {
+    public function test_get_person_id_empty(): void
+    {
         $result = $this->get_person_id('');
         $this->assertFalse($result);
     }
@@ -51,7 +56,8 @@ class PcGadgetIntegrationTest extends TestCase {
     /**
      * Test get_person_id with invalid constituency returns FALSE.
      */
-    public function test_get_person_id_invalid(): void {
+    public function test_get_person_id_invalid(): void
+    {
         $result = $this->get_person_id('Invalid Constituency XYZ');
         $this->assertFalse($result);
     }
@@ -59,7 +65,8 @@ class PcGadgetIntegrationTest extends TestCase {
     /**
      * Test get_person_id query structure.
      */
-    public function test_get_person_id_query(): void {
+    public function test_get_person_id_query(): void
+    {
         // Test that a query against member table structure works.
         $q = $this->db->query('SELECT person_id FROM member WHERE left_reason = ? AND house = ? LIMIT 1', 'still_in_office', 1);
         // Query should succeed.
@@ -69,7 +76,8 @@ class PcGadgetIntegrationTest extends TestCase {
     /**
      * Helper function to replicate get_person_id logic.
      */
-    private function get_person_id($c) {
+    private function get_person_id($c)
+    {
         if ($c == '') {
             return FALSE;
         }

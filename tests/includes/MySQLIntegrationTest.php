@@ -1,6 +1,8 @@
 <?php
 
-require_once __DIR__ . '/DatabaseIntegrationTestCase.php';
+use support\DatabaseIntegrationTestCase;
+
+require_once __DIR__ . '/../support/DatabaseIntegrationTestCase.php';
 
 /**
  * Integration tests for MySQL::query() with a real database connection.

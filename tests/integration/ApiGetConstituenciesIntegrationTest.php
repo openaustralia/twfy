@@ -1,18 +1,21 @@
 <?php
 
+use ParlDB;
 use PHPUnit\Framework\TestCase;
 
 /**
  *
  */
-class ApiGetConstituenciesIntegrationTest extends TestCase {
+class ApiGetConstituenciesIntegrationTest extends TestCase
+{
 
     private static $connection = NULL;
 
     /**
      *
      */
-    public static function setUpBeforeClass(): void {
+    public static function setUpBeforeClass(): void
+    {
         self::$connection = getSharedTestConnection();
         if (!self::$connection) {
             self::markTestSkipped('Database connection not available');
@@ -22,7 +25,8 @@ class ApiGetConstituenciesIntegrationTest extends TestCase {
     /**
      * Test search for constituencies by name
      */
-    public function test_search_constituencies_by_name() {
+    public function test_search_constituencies_by_name()
+    {
         $this->assertNotNull(self::$connection);
         $result = _api_getConstituencies_search('Sydney');
         $this->assertIsArray($result);
@@ -35,7 +39,8 @@ class ApiGetConstituenciesIntegrationTest extends TestCase {
     /**
      *
      */
-    public function test_search_constituencies_exact_match() {
+    public function test_search_constituencies_exact_match()
+    {
         $this->assertNotNull(self::$connection);
         $result = _api_getConstituencies_search('Warringah');
         $this->assertIsArray($result);
@@ -45,7 +50,8 @@ class ApiGetConstituenciesIntegrationTest extends TestCase {
     /**
      *
      */
-    public function test_search_constituencies_partial_match() {
+    public function test_search_constituencies_partial_match()
+    {
         $this->assertNotNull(self::$connection);
         $result = _api_getConstituencies_search('North');
         $this->assertIsArray($result);
@@ -59,7 +65,8 @@ class ApiGetConstituenciesIntegrationTest extends TestCase {
     /**
      *
      */
-    public function test_search_constituencies_no_duplicates() {
+    public function test_search_constituencies_no_duplicates()
+    {
         $this->assertNotNull(self::$connection);
         $result = _api_getConstituencies_search('Sydney');
         $names = array_column($result, 'name');
@@ -71,7 +78,8 @@ class ApiGetConstituenciesIntegrationTest extends TestCase {
     /**
      *
      */
-    public function test_search_constituencies_empty_result() {
+    public function test_search_constituencies_empty_result()
+    {
         $this->assertNotNull(self::$connection);
         $result = _api_getConstituencies_search('ZZZNONEXISTENT');
         $this->assertIsArray($result);
@@ -80,7 +88,8 @@ class ApiGetConstituenciesIntegrationTest extends TestCase {
     /**
      * Test getting all current constituencies
      */
-    public function test_get_all_constituencies_current() {
+    public function test_get_all_constituencies_current()
+    {
         $this->assertNotNull(self::$connection);
         $db = new ParlDB();
         $q = $db->query('select cons_id, name from constituency
@@ -92,7 +101,8 @@ class ApiGetConstituenciesIntegrationTest extends TestCase {
     /**
      * Test constituency data structure
      */
-    public function test_constituency_result_structure() {
+    public function test_constituency_result_structure()
+    {
         $this->assertNotNull(self::$connection);
         $result = _api_getConstituencies_search('Sydney');
         if (count($result) > 0) {
@@ -106,7 +116,8 @@ class ApiGetConstituenciesIntegrationTest extends TestCase {
     /**
      * Test HTML entity handling in constituency names
      */
-    public function test_constituency_html_entities_decoded() {
+    public function test_constituency_html_entities_decoded()
+    {
         $this->assertNotNull(self::$connection);
         $result = _api_getConstituencies_search('');
         foreach ($result as $constituency) {
@@ -119,7 +130,8 @@ class ApiGetConstituenciesIntegrationTest extends TestCase {
     /**
      * Test constituency name main_name flag honored
      */
-    public function test_constituencies_main_name_only() {
+    public function test_constituencies_main_name_only()
+    {
         $this->assertNotNull(self::$connection);
         $db = new ParlDB();
         $q = $db->query('select count(*) as c from constituency
@@ -137,7 +149,8 @@ class ApiGetConstituenciesIntegrationTest extends TestCase {
     /**
      * Test date-based constituency queries
      */
-    public function test_get_constituencies_by_date() {
+    public function test_get_constituencies_by_date()
+    {
         $this->assertNotNull(self::$connection);
         $db = new ParlDB();
         $q = $db->query('select cons_id, name from constituency

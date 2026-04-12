@@ -1,5 +1,8 @@
 <?php
 
+namespace includes;
+
+use MySQLQuery;
 use PHPUnit\Framework\TestCase;
 
 /**

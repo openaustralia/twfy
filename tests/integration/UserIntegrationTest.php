@@ -1,6 +1,10 @@
 <?php
 
-require_once __DIR__ . '/DatabaseIntegrationTestCase.php';
+use support\DatabaseIntegrationTestCase;
+use THEUSER;
+use USER;
+
+require_once __DIR__ . '/../support/DatabaseIntegrationTestCase.php';
 
 /**
  * Integration tests for the USER class methods.

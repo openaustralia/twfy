@@ -1,16 +1,19 @@
 <?php
 
+use ALERT;
 use PHPUnit\Framework\TestCase;
 
 /**
  *
  */
-class AlertTest extends TestCase {
+class AlertTest extends TestCase
+{
 
     /**
      * Test criteria construction from keyword alone
      */
-    public function test_alert_details_to_criteria_keyword_only() {
+    public function test_alert_details_to_criteria_keyword_only()
+    {
         $details = [
             'keyword' => 'climate change',
             'pid' => '',
@@ -22,7 +25,8 @@ class AlertTest extends TestCase {
     /**
      * Test criteria construction from speaker PID alone
      */
-    public function test_alert_details_to_criteria_speaker_only() {
+    public function test_alert_details_to_criteria_speaker_only()
+    {
         $details = [
             'keyword' => '',
             'pid' => '12345',
@@ -34,7 +38,8 @@ class AlertTest extends TestCase {
     /**
      * Test criteria construction with both keyword and speaker
      */
-    public function test_alert_details_to_criteria_both() {
+    public function test_alert_details_to_criteria_both()
+    {
         $details = [
             'keyword' => 'budget',
             'pid' => '54321',
@@ -47,7 +52,8 @@ class AlertTest extends TestCase {
     /**
      * Test criteria with special characters in keyword
      */
-    public function test_alert_details_to_criteria_special_chars() {
+    public function test_alert_details_to_criteria_special_chars()
+    {
         $details = [
             'keyword' => "children's education",
             'pid' => '',
@@ -59,7 +65,8 @@ class AlertTest extends TestCase {
     /**
      * Test criteria with empty/missing fields
      */
-    public function test_alert_details_to_criteria_empty() {
+    public function test_alert_details_to_criteria_empty()
+    {
         $details = [
             'keyword' => '',
             'pid' => '',
@@ -71,7 +78,8 @@ class AlertTest extends TestCase {
     /**
      * Test criteria with whitespace
      */
-    public function test_alert_details_to_criteria_whitespace() {
+    public function test_alert_details_to_criteria_whitespace()
+    {
         $details = [
             'keyword' => '  budget  ',
             'pid' => '',
@@ -84,7 +92,8 @@ class AlertTest extends TestCase {
     /**
      * Test speaker criteria format validation
      */
-    public function test_alert_details_to_criteria_speaker_format() {
+    public function test_alert_details_to_criteria_speaker_format()
+    {
         $details = [
             'keyword' => '',
             'pid' => '12345',
@@ -97,7 +106,8 @@ class AlertTest extends TestCase {
     /**
      * Test speaker PID is exactly 5 digits after "speaker:"
      */
-    public function test_alert_details_to_criteria_speaker_length() {
+    public function test_alert_details_to_criteria_speaker_length()
+    {
         $details = [
             'keyword' => '',
             'pid' => '99999',
@@ -109,7 +119,8 @@ class AlertTest extends TestCase {
     /**
      * Test alert confirmation advert for speaker alert
      */
-    public function test_alert_confirmation_advert_speaker() {
+    public function test_alert_confirmation_advert_speaker()
+    {
         $details = ['pid' => '12345'];
         $advert = alert_confirmation_advert($details);
         $this->assertIsString($advert);
@@ -120,7 +131,8 @@ class AlertTest extends TestCase {
     /**
      * Test alert confirmation advert for keyword alert
      */
-    public function test_alert_confirmation_advert_keyword() {
+    public function test_alert_confirmation_advert_keyword()
+    {
         $details = ['pid' => ''];
         $advert = alert_confirmation_advert($details);
         $this->assertIsString($advert);
@@ -131,7 +143,8 @@ class AlertTest extends TestCase {
     /**
      * Test advert contains webpath link
      */
-    public function test_alert_confirmation_advert_has_link() {
+    public function test_alert_confirmation_advert_has_link()
+    {
         $details = ['pid' => ''];
         $advert = alert_confirmation_advert($details);
         // Returns identifier string, not HTML.
@@ -142,7 +155,8 @@ class AlertTest extends TestCase {
     /**
      * Test advert HTML structure
      */
-    public function test_alert_confirmation_advert_html_structure() {
+    public function test_alert_confirmation_advert_html_structure()
+    {
         $details = ['pid' => '54321'];
         $advert = alert_confirmation_advert($details);
         // Function generates output but returns identifier.
@@ -152,7 +166,8 @@ class AlertTest extends TestCase {
     /**
      * Test advert return value is identifier string
      */
-    public function test_alert_confirmation_advert_return_value() {
+    public function test_alert_confirmation_advert_return_value()
+    {
         $details = ['pid' => '12345'];
         $advert = alert_confirmation_advert($details);
         $this->assertIsString($advert);
@@ -164,7 +179,8 @@ class AlertTest extends TestCase {
     /**
      * Test empty details array
      */
-    public function test_alert_details_to_criteria_missing_keys() {
+    public function test_alert_details_to_criteria_missing_keys()
+    {
         $details = [];
         // Should handle missing keys gracefully.
         $criteria = @alert_details_to_criteria($details);
@@ -174,7 +190,8 @@ class AlertTest extends TestCase {
     /**
      * Test criteria combines multiple parts correctly
      */
-    public function test_alert_details_to_criteria_combination() {
+    public function test_alert_details_to_criteria_combination()
+    {
         $details = [
             'keyword' => 'renewable energy',
             'pid' => '11111',
@@ -189,7 +206,8 @@ class AlertTest extends TestCase {
     /**
      * Test criteria with numeric keyword
      */
-    public function test_alert_details_to_criteria_numeric_keyword() {
+    public function test_alert_details_to_criteria_numeric_keyword()
+    {
         $details = [
             'keyword' => '2024',
             'pid' => '',
@@ -201,7 +219,8 @@ class AlertTest extends TestCase {
     /**
      * Test ALERT class instantiation
      */
-    public function test_alert_class_instantiation() {
+    public function test_alert_class_instantiation()
+    {
         $alert = new ALERT();
         $this->assertIsObject($alert);
         $this->assertEquals('', $alert->alert_id);
@@ -212,7 +231,8 @@ class AlertTest extends TestCase {
     /**
      * Test ALERT class initial properties
      */
-    public function test_alert_class_properties() {
+    public function test_alert_class_properties()
+    {
         $alert = new ALERT();
         $this->assertObjectHasProperty('alert_id', $alert);
         $this->assertObjectHasProperty('email', $alert);

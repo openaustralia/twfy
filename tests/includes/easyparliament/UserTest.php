@@ -3,10 +3,11 @@
 /**
  * @file
  * Unit tests for user.php classes (USER and THEUSER).
+ * @noinspection PhpIllegalPsrClassPathInspection
  */
 
-require_once __DIR__ . '/bootstrap.php';
-require_once __DIR__ . '/../www/includes/easyparliament/user.php';
+require_once __DIR__ . '/../../bootstrap.php';
+require_once __DIR__ . '/../../../www/includes/easyparliament/user.php';
 
 use PHPUnit\Framework\TestCase;
 
@@ -44,12 +45,12 @@ protected function setUp(): void {
     /**
      *
      */
-protected function tearDown(): void {
+    protected function tearDown(): void {
         // Clean up test user.
         if ($this->testUserId) {
             $this->db->query('DELETE FROM users WHERE user_id = ?', $this->testUserId);
         }
-}
+    }
 
     /**
      * Test id_exists returns true for valid user_id.

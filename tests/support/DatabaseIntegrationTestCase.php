@@ -1,6 +1,10 @@
 <?php
 
+namespace support;
+
+use MySQL;
 use PHPUnit\Framework\TestCase;
+use TestDatabase;
 
 abstract class DatabaseIntegrationTestCase extends TestCase
 {
