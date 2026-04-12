@@ -22,16 +22,29 @@ if (!defined('COOKIEDOMAIN')) {
     define('COOKIEDOMAIN', '');
 }
 
+// Define file paths for include_once statements
+if (!defined('BASEDIR')) {
+    define('BASEDIR', __DIR__ . '/../www');
+}
+
+if (!defined('INCLUDESPATH')) {
+    define('INCLUDESPATH', __DIR__ . '/../www/includes/');
+}
+
+if (!defined('EASYPARLIAMENTPATH')) {
+    define('EASYPARLIAMENTPATH', __DIR__ . '/../www/includes/easyparliament/');
+}
+
 require_once __DIR__ . '/../www/includes/mysql.php';
 
 /**
  * @return array{host:string,user:string,pass:string,name:string}|null
  */
 function getTestDbConfig(): ?array {
-    $host = getenv('DB_HOST');
-    $user = getenv('DB_USER');
-    $pass = getenv('DB_PASSWORD');
-    $name = getenv('DB_NAME');
+    $host = getenv('TEST_DB_HOST');
+    $user = getenv('TEST_DB_USER');
+    $pass = getenv('TEST_DB_PASSWORD');
+    $name = getenv('TEST_DB_NAME');
 
     if (!$host || $user === false || $name === false) {
         return null;
