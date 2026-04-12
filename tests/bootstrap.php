@@ -35,7 +35,22 @@ if (!defined('EASYPARLIAMENTPATH')) {
     define('EASYPARLIAMENTPATH', __DIR__ . '/../www/includes/easyparliament/');
 }
 
+if (!defined('FILEIMAGEPATH')) {
+    define('FILEIMAGEPATH', __DIR__ . '/../www/docs/images/');
+}
+
+if (!defined('IMAGEPATH')) {
+    define('IMAGEPATH', '/images/');
+}
+
+if (!defined('WEBPATH')) {
+    define('WEBPATH', '/');
+}
+
 require_once __DIR__ . '/../www/includes/mysql.php';
+require_once __DIR__ . '/../www/includes/easyparliament/member.php';
+require_once __DIR__ . '/../www/includes/easyparliament/alert.php';
+require_once __DIR__ . '/../www/docs/api/api_getConstituencies.php';
 
 /**
  * @return array{host:string,user:string,pass:string,name:string}|null
