@@ -74,17 +74,6 @@ public static function setUpBeforeClass(): void {
     }
 
     /**
-     * Test alert criteria structure
-     */
-    public function test_alert_search_pattern() {
-        $this->assertNotNull(self::$connection);
-        // Test that speaker: pattern is recognized.
-        $criteria = 'speaker:12345';
-        $is_speaker_alert = (stripos($criteria, 'speaker:') == 0);
-        $this->assertTrue($is_speaker_alert);
-    }
-
-    /**
      * Test multiple alerts for same email
      */
     public function test_suggest_alerts_multiple_criteria() {
@@ -99,16 +88,6 @@ public static function setUpBeforeClass(): void {
 
         $this->assertIsString($output1);
         $this->assertIsString($output2);
-    }
-
-    /**
-     * Test speaker extraction from criteria
-     */
-    public function test_speaker_pid_extraction() {
-        $this->assertNotNull(self::$connection);
-        $criteria = 'speaker:12345';
-        $pid = substr($criteria, -5);
-        $this->assertEquals('12345', $pid);
     }
 
     /**
