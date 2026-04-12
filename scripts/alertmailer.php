@@ -126,7 +126,7 @@ foreach ($alertdata as $alertitem) {
         }
         $current_email = $email;
         $email_text = '';
-        $q = $db->query('SELECT user_id FROM users WHERE email = \'' . $this->db->escape($email) . "'");
+        $q = $db->query('SELECT user_id FROM users WHERE email = ?', $email);
         if ($q->rows() > 0) {
             $user_id = $q->field(0, 'user_id');
             $registered++;
@@ -190,7 +190,8 @@ foreach ($alertdata as $alertitem) {
             if ($row['hdate'] < '2008-01-14') {
                 continue;
             }
-            $q = $db->query('SELECT gid_from FROM gidredirect WHERE gid_to=\'uk.org.publicwhip/' . $sects_short[$major] . '/' . $this->db->escape($row['gid']) . "'");
+            $gid_to = 'uk.org.publicwhip/' . $sects_short[$major] . '/' . $row['gid'];
+            $q = $db->query('SELECT gid_from FROM gidredirect WHERE gid_to = ?', $gid_to);
             if ($q->rows() > 0) {
                 continue;
             }
