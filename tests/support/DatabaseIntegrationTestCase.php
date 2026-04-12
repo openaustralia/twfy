@@ -79,6 +79,7 @@ abstract class DatabaseIntegrationTestCase extends TestCase {
      * Create and Load fixtures from the fixtures directory as temporary tables.
      */
     protected function loadFixtures(string ...$tableNames): void {
+        $conn = getSharedTestConnection();
         foreach ($tableNames as $tableName) {
             $file = __DIR__ . '/../fixtures/' . $tableName . '.sql';
             if (!file_exists($file)) {
@@ -86,9 +87,11 @@ abstract class DatabaseIntegrationTestCase extends TestCase {
             }
             $sql = file_get_contents($file);
             $sql = str_replace('CREATE TABLE', 'CREATE TEMPORARY TABLE', $sql);
-            foreach (array_filter(array_map('trim', explode(';', $sql))) as $statement) {
-                $this->db->query($statement);
+            if (!mysqli_multi_query($conn, $sql)) {
+                throw new \RuntimeException("Fixture '$tableName.sql' failed: " . mysqli_error($conn));
             }
+            // Flush remaining results so connection is ready for next query.
+            while (mysqli_more_results($conn) && mysqli_next_result($conn));
         }
     }
 

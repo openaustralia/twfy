@@ -59,6 +59,7 @@ if (!defined('WEBPATH')) {
 }
 
 require_once __DIR__ . '/../www/includes/mysql.php';
+require_once __DIR__ . '/support/DatabaseIntegrationTestCase.php';
 require_once __DIR__ . '/../www/includes/easyparliament/member.php';
 require_once __DIR__ . '/../www/includes/easyparliament/alert.php';
 require_once __DIR__ . '/../www/docs/api/api_getConstituencies.php';
