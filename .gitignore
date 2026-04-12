@@ -15,3 +15,4 @@ conf/general
 /vendor/
 _mysqldata/*
 phpcs-report.json
+.phpunit.result.cache
