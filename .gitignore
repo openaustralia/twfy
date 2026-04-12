@@ -16,3 +16,4 @@ conf/general
 _mysqldata/*
 phpcs-report.json
 .phpunit.result.cache
+coverage/*
