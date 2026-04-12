@@ -41,11 +41,10 @@ require_once __DIR__ . '/../www/includes/mysql.php';
  * @return array{host:string,user:string,pass:string,name:string}|null
  */
 function getTestDbConfig(): ?array {
-    // Check TEST_DB_* first (used by GitHub Actions), then DB_* (used by Makefile)
-    $host = getenv('TEST_DB_HOST') ?: getenv('DB_HOST');
-    $user = getenv('TEST_DB_USER') ?: getenv('DB_USER');
-    $pass = getenv('TEST_DB_PASSWORD') ?: getenv('DB_PASSWORD');
-    $name = getenv('TEST_DB_NAME') ?: getenv('DB_NAME');
+    $host = getenv('DB_HOST');
+    $user = getenv('DB_USER');
+    $pass = getenv('DB_PASSWORD');
+    $name = getenv('DB_NAME');
 
     if (!$host || $user === false || $name === false) {
         return null;
