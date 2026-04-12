@@ -15,11 +15,10 @@ class MySQLIntegrationTest extends TestCase
 
     protected function setUp(): void
     {
-        global $TEST_DB;
-        if (!$TEST_DB) {
-            $this->markTestSkipped('No database configured; set DB_HOST, DB_USER, DB_PASSWORD, DB_NAME');
+        $this->db = TestDatabase::tryConnect();
+        if (!$this->db) {
+            $this->markTestSkipped('No database configured or connection failed; set DB_HOST, DB_USER, DB_PASSWORD, DB_NAME');
         }
-        $this->db = $TEST_DB;
         $this->has_database = true;
         $this->createTestTable();
     }

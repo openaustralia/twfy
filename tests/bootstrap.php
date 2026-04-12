@@ -13,29 +13,48 @@ function getmicrotime(): float {
 require_once __DIR__ . '/../www/includes/mysql.php';
 
 /**
- * Test database class that can be instantiated with credentials.
+ * Wrapper that creates a database connection for tests without calling exit().
+ * Returns a MySQL instance if successful, null otherwise.
  */
-class TestDB extends MySQL
-{
-    public function __construct(string $host, string $user, string $pass, string $name) {
-        parent::__construct();
-        $this->init($host, $user, $pass, $name);
+function getTestDatabase(): ?MySQL {
+    $host = getenv('DB_HOST');
+    $user = getenv('DB_USER');
+    $pass = getenv('DB_PASSWORD');
+    $name = getenv('DB_NAME');
+
+    if (!$host || $user === false || $name === false) {
+        return null;
+    }
+
+    // Use mysqli directly to avoid exit() on error
+    $conn = @mysqli_connect($host, $user, $pass ?: '', $name);
+    if (!$conn) {
+        return null;
+    }
+
+    // Create a MySQL instance that uses this connection
+    $db = new MySQL();
+
+    // Use reflection to set the private $conn property
+    try {
+        $prop = new ReflectionProperty($db, 'conn');
+        $prop->setAccessible(true);
+        $prop->setValue($db, $conn);
+        return $db;
+    } catch (ReflectionException $e) {
+        return null;
     }
 }
 
 /**
- * Global test database connection, available if DB_HOST etc. are set.
- * Used by integration tests; unit tests don't need this.
+ * Static helper for integration tests to get a connection.
  */
-global $TEST_DB;
-$TEST_DB = null;
-
-$db_host = getenv('DB_HOST');
-$db_user = getenv('DB_USER');
-$db_pass = getenv('DB_PASSWORD');
-$db_name = getenv('DB_NAME');
-
-if ($db_host && $db_user && $db_name) {
-    $TEST_DB = new TestDB($db_host, $db_user, $db_pass ?: '', $db_name);
+class TestDatabase {
+    public static function tryConnect(): ?MySQL {
+        return getTestDatabase();
+    }
 }
+
+
+
 
