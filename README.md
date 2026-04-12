@@ -80,6 +80,21 @@ This starts both the webserver and MySQL container. Wait a few seconds for MySQL
 make test-all
 ```
 
+### Running tests in Docker (simplest method)
+
+To run all tests inside Docker with automatic database setup:
+
+```bash
+make test-docker
+```
+
+This will:
+- Start the MySQL container
+- Load the database schema
+- Run all tests with database integration
+
+No need to manually start containers or set environment variables.
+
 ### Running tests with coverage
 
 To generate code coverage reports (requires Xdebug or PCOV):
