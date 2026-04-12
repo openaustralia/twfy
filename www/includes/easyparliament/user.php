@@ -235,7 +235,7 @@ class USER {
 				registrationip,
 				deleted
 			) VALUES (
-				?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, '0)
+				?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, '0')
 		",
             $details["firstname"],
             $details["lastname"],
