@@ -4,7 +4,7 @@
  * @file
  */
 
-include_once '../../../../phplib/mapit.php';
+include_once __DIR__ . '/../../../../phplib/mapit.php';
 
 /**
  *
