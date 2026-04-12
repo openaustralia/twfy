@@ -25,6 +25,7 @@
 class SEARCHLOG {
 
     private $db = NULL;
+    private $SEARCHURL = NULL;
 
     /**
      *
