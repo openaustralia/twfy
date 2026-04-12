@@ -13,10 +13,11 @@ RUN apt-get update && \
     apt-get install -y apache2 libapache2-mod-php
 
 # Install necessary php extensions
-RUN apt-get install -y libpq-dev php8.3-mysql php8.3-pgsql php8.3-xml php8.3-curl php8.3-mbstring php8.3-zip
+RUN apt-get install -y libpq-dev php8.3-mysql php8.3-pgsql php8.3-xml php8.3-curl php8.3-mbstring php8.3-zip php8.3-xdebug
 
 # Enable php extensions.
 RUN phpenmod pdo_mysql
+RUN phpenmod xdebug
 
 # Enable apache modules.
 RUN a2enmod rewrite
