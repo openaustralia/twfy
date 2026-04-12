@@ -16,22 +16,28 @@ class ApiConvertUrlIntegrationTest extends TestCase {
 
     protected $db;
 
-    public static function setUpBeforeClass(): void {
+    /**
+     *
+     */
+public static function setUpBeforeClass(): void {
         $conn = getSharedTestConnection();
         if (!$conn) {
             self::markTestSkipped('Database connection not available');
         }
-    }
+}
 
-    protected function setUp(): void {
+    /**
+     *
+     */
+protected function setUp(): void {
         $this->db = new ParlDB();
 
-        // Verify connection exists
+        // Verify connection exists.
         $conn = getSharedTestConnection();
         if (!$conn) {
             $this->markTestSkipped('Database connection not available');
         }
-    }
+}
 
     /**
      * Test hansard table query by exact source_url.
@@ -89,7 +95,7 @@ class ApiConvertUrlIntegrationTest extends TestCase {
         $q = $this->db->query('SELECT gid FROM hansard WHERE source_url LIKE ?', "%$url_nohash%");
 
         $hasResults = ($q->rows() > 0);
-        // Just verify the query method works
+        // Just verify the query method works.
         $this->assertIsBool($hasResults);
     }
 
@@ -100,10 +106,11 @@ class ApiConvertUrlIntegrationTest extends TestCase {
         $q = $this->db->query('SELECT gid, major, htype, subsection_id FROM hansard LIMIT 1');
 
         if ($q->rows() > 0) {
-            // Verify field extraction methods work
+            // Verify field extraction methods work.
             $this->assertTrue(method_exists($q, 'field'));
         } else {
-            $this->assertTrue(true); // No test data is OK
+// No test data is OK.
+            $this->assertTrue(TRUE);
         }
     }
 

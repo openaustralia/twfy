@@ -24,7 +24,7 @@ class ApiGetMembersTest extends TestCase {
             'Australian Greens' => 'AG',
         ];
         $canon_to_short = array_flip($parties);
-        // array_flip reverses it: { 'ALP' => 'Australian Labor Party', ... }
+        // array_flip reverses it: { 'ALP' => 'Australian Labor Party', ... }.
 
         $this->assertTrue(isset($canon_to_short['ALP']));
         $this->assertSame('Australian Labor Party', $canon_to_short['ALP']);
@@ -39,12 +39,13 @@ class ApiGetMembersTest extends TestCase {
             'Liberal Party of Australia' => 'LP',
         ];
         $canon_to_short = array_flip($parties);
-        // array_flip creates { 'ALP' => 'Australian Labor Party', 'LP' => 'Liberal Party of Australia' }
+        // array_flip creates { 'ALP' => 'Australian Labor Party', 'LP' => 'Liberal Party of Australia' }.
 
         $s = 'australian labor party';
-        $s_uc = ucwords($s); // 'Australian Labor Party'
+// 'Australian Labor Party'
+        $s_uc = ucwords($s);
 
-        // This is what the code does - check if the ucwords version is in the flipped array
+        // This is what the code does - check if the ucwords version is in the flipped array.
         if (isset($canon_to_short[$s_uc])) {
             $s = $canon_to_short[$s_uc];
         }
@@ -163,7 +164,7 @@ class ApiGetMembersTest extends TestCase {
      * Test date range check - entered and left.
      */
     public function test_date_range_check(): void {
-        // Check that entered_house <= date <= left_house logic is valid
+        // Check that entered_house <= date <= left_house logic is valid.
         $enteredDate = '2010-01-15';
         $leftDate = '2020-12-31';
         $currentDate = '2015-06-01';
@@ -218,8 +219,8 @@ class ApiGetMembersTest extends TestCase {
         $state = 'NSW';
         $likePattern = "%$state%";
 
-        // Simulate LIKE matching
-        $matches = (strpos($constituency, $state) !== false);
+        // Simulate LIKE matching.
+        $matches = (strpos($constituency, $state) !== FALSE);
         $this->assertTrue($matches);
     }
 
@@ -230,8 +231,8 @@ class ApiGetMembersTest extends TestCase {
         $constituencies = ['Sydney, NSW', 'Melbourne, VIC', 'Brisbane, QLD'];
         $state = 'NSW';
 
-        $matches = array_filter($constituencies, function($c) use ($state) {
-            return strpos($c, $state) !== false;
+        $matches = array_filter($constituencies, function ($c) use ($state) {
+            return strpos($c, $state) !== FALSE;
         });
 
         $this->assertCount(1, $matches);
@@ -242,7 +243,7 @@ class ApiGetMembersTest extends TestCase {
      */
     public function test_search_house_param_count(): void {
         $house = 1;
-        // House search has: first_name, last_name, concat(first_name, last_name) = 3 parameters
+        // House search has: first_name, last_name, concat(first_name, last_name) = 3 parameters.
         $paramCount = 3;
         $this->assertSame(3, $paramCount);
     }
@@ -252,7 +253,7 @@ class ApiGetMembersTest extends TestCase {
      */
     public function test_search_senate_param_count(): void {
         $house = 2;
-        // Senate search has: first_name, last_name, concat(first_name, last_name), constituency = 4 parameters
+        // Senate search has: first_name, last_name, concat(first_name, last_name), constituency = 4 parameters.
         $paramCount = 4;
         $this->assertSame(4, $paramCount);
     }
@@ -324,4 +325,3 @@ class ApiGetMembersTest extends TestCase {
     }
 
 }
-

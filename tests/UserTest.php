@@ -18,29 +18,38 @@ class UserTest extends TestCase {
     protected $db;
     protected $testUserId;
 
-    public static function setUpBeforeClass(): void {
+    /**
+     *
+     */
+public static function setUpBeforeClass(): void {
         $conn = getSharedTestConnection();
         if (!$conn) {
             self::markTestSkipped('Database connection not available');
         }
-    }
+}
 
-    protected function setUp(): void {
+    /**
+     *
+     */
+protected function setUp(): void {
         $this->db = new ParlDB();
 
-        // Verify connection exists
+        // Verify connection exists.
         $conn = getSharedTestConnection();
         if (!$conn) {
             $this->markTestSkipped('Database connection not available');
         }
-    }
+}
 
-    protected function tearDown(): void {
-        // Clean up test user
+    /**
+     *
+     */
+protected function tearDown(): void {
+        // Clean up test user.
         if ($this->testUserId) {
             $this->db->query('DELETE FROM users WHERE user_id = ?', $this->testUserId);
         }
-    }
+}
 
     /**
      * Test id_exists returns true for valid user_id.
@@ -49,7 +58,7 @@ class UserTest extends TestCase {
         $user = new USER();
         // Use a known system user ID (often 0 or 1)
         $result = $user->id_exists(0);
-        // Just check the method doesn't error - result depends on DB state
+        // Just check the method doesn't error - result depends on DB state.
         $this->assertIsBool($result);
     }
 
