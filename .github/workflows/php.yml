@@ -60,14 +60,14 @@ jobs:
         with:
           php-version: '8.3'
           extensions: mbstring, mysqli
-          coverage: none
+          coverage: xdebug
           tools: composer
         env:
           fail-fast: true
       - name: Install dependencies
         run: composer install --no-interaction --prefer-dist
-      - name: Run tests
-        run: make test
+      - name: Run tests with coverage
+        run: make test-coverage
         env:
           DB_HOST: 127.0.0.1
           DB_USER: root

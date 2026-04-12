@@ -8,4 +8,9 @@
             <directory>tests</directory>
         </testsuite>
     </testsuites>
+    <source>
+        <include>
+            <directory suffix=".php">www/includes</directory>
+        </include>
+    </source>
 </phpunit>
