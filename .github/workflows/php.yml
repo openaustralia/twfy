@@ -5,6 +5,10 @@ on:
     branches:
       - main
 
+permissions:
+  contents: read
+  pull-requests: write
+
 jobs:
   lint:
     runs-on: ubuntu-latest
@@ -36,3 +40,63 @@ jobs:
         run: make phpcs-ci
         env:
           fail-fast: true
+
+  test:
+    runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: test_twfy
+        options: >-
+          --health-cmd="mysqladmin ping"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=3
+        ports:
+          - 3306:3306
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Setup PHP 8.3
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: mbstring, mysqli
+          coverage: xdebug
+          tools: composer
+        env:
+          fail-fast: true
+      - name: Install dependencies
+        run: composer install --no-interaction --prefer-dist
+      - name: Run tests with coverage
+        run: |
+          set -o pipefail
+          make test-coverage | tee phpunit-coverage.out
+        env:
+          TEST_DB_HOST: 127.0.0.1
+          TEST_DB_USER: root
+          TEST_DB_PASSWORD: root
+          TEST_DB_NAME: test_twfy
+      - name: Build coverage summary
+        run: |
+          {
+            echo "## Code Coverage"
+            echo
+            echo '```text'
+            if grep -q '^Code Coverage Report:' phpunit-coverage.out; then
+              sed -n '/^Code Coverage Report:/,$p' phpunit-coverage.out
+            else
+              echo "Coverage summary not found in phpunit output."
+            fi
+            echo '```'
+          } > code-coverage-results.md
+      - name: Add coverage to job summary
+        run: cat code-coverage-results.md >> "$GITHUB_STEP_SUMMARY"
+      - name: Post coverage comment on PR
+        if: github.event_name == 'pull_request'
+        uses: marocchino/sticky-pull-request-comment@v2
+        with:
+          recreate: true
+          path: code-coverage-results.md
