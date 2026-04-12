@@ -2,16 +2,22 @@
 
 use PHPUnit\Framework\TestCase;
 
+/**
+ *
+ */
 class AlertIntegrationTest extends TestCase {
 
     private static $connection = NULL;
 
-    public static function setUpBeforeClass(): void {
+    /**
+     *
+     */
+public static function setUpBeforeClass(): void {
         self::$connection = getSharedTestConnection();
         if (!self::$connection) {
             self::markTestSkipped('Database connection not available');
         }
-    }
+}
 
     /**
      * Test ALERT class with database
@@ -28,7 +34,7 @@ class AlertIntegrationTest extends TestCase {
     public function test_alert_object_has_db_connection() {
         $this->assertNotNull(self::$connection);
         $alert = new ALERT();
-        // Should have created internal db connection
+        // Should have created internal db connection.
         $this->assertIsObject($alert);
     }
 
@@ -40,7 +46,7 @@ class AlertIntegrationTest extends TestCase {
         ob_start();
         suggest_alerts('test@example.com', 'speaker:12345', 5);
         $output = ob_get_clean();
-        // Function may output HTML or nothing depending on data
+        // Function may output HTML or nothing depending on data.
         $this->assertIsString($output);
     }
 
@@ -63,7 +69,7 @@ class AlertIntegrationTest extends TestCase {
         ob_start();
         suggest_alerts('user@test.com', 'budget', 5);
         $output = ob_get_clean();
-        // Non-speaker criteria should not trigger special logic
+        // Non-speaker criteria should not trigger special logic.
         $this->assertIsString($output);
     }
 
@@ -72,7 +78,7 @@ class AlertIntegrationTest extends TestCase {
      */
     public function test_alert_search_pattern() {
         $this->assertNotNull(self::$connection);
-        // Test that speaker: pattern is recognized
+        // Test that speaker: pattern is recognized.
         $criteria = 'speaker:12345';
         $is_speaker_alert = (stripos($criteria, 'speaker:') == 0);
         $this->assertTrue($is_speaker_alert);
@@ -86,7 +92,7 @@ class AlertIntegrationTest extends TestCase {
         ob_start();
         suggest_alerts('shared@test.com', 'speaker:10001', 3);
         $output1 = ob_get_clean();
-        
+
         ob_start();
         suggest_alerts('shared@test.com', 'speaker:10002', 3);
         $output2 = ob_get_clean();
@@ -132,13 +138,14 @@ class AlertIntegrationTest extends TestCase {
      */
     public function test_member_lookup_from_alert_pid() {
         $this->assertNotNull(self::$connection);
-        $pid = '10001'; // Assuming this PID exists
+// Assuming this PID exists.
+        $pid = '10001';
         try {
             $member = new MEMBER(['person_id' => $pid]);
             $this->assertIsObject($member);
         } catch (Exception $e) {
-            // PID may not exist, but class should attempt instantiation
-            $this->assertTrue(true);
+            // PID may not exist, but class should attempt instantiation.
+            $this->assertTrue(TRUE);
         }
     }
 
@@ -168,7 +175,7 @@ class AlertIntegrationTest extends TestCase {
         ob_start();
         suggest_alerts('test@example.com', 'speaker:10001', 2);
         $output = ob_get_clean();
-        
+
         ob_start();
         suggest_alerts('test@example.com', 'speaker:10001', 10);
         $output2 = ob_get_clean();
@@ -176,4 +183,5 @@ class AlertIntegrationTest extends TestCase {
         $this->assertIsString($output);
         $this->assertIsString($output2);
     }
+
 }
