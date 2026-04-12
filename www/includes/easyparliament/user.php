@@ -237,18 +237,18 @@ class USER {
 			) VALUES (
 				?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, '0)
 		",
-			$details["firstname"],
-			$details["lastname"],
-			$details["email"],
-			$emailpublic,
-			$details["constituency"],
-			$details["url"],
-			$passwordforDB,
-			$optin,
-			$details["status"],
-			$registrationtime,
-			$REMOTE_ADDR
-		);
+            $details["firstname"],
+            $details["lastname"],
+            $details["email"],
+            $emailpublic,
+            $details["constituency"],
+            $details["url"],
+            $passwordforDB,
+            $optin,
+            $details["status"],
+            $registrationtime,
+            $REMOTE_ADDR
+        );
 
         if ($q->success()) {
             // Set these so we can log in.
@@ -276,9 +276,9 @@ class USER {
 							SET	registrationtoken = ?
 							WHERE	user_id = ?
 							",
-							$this->registrationtoken,
-							$this->user_id
-							);
+                            $this->registrationtoken,
+                            $this->user_id
+                            );
 
             if ($r->success()) {
                 // Updated DB OK.
