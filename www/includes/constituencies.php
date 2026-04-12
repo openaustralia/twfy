@@ -18,8 +18,8 @@ function normalise_constituency_name($name) {
     $name = str_replace("&amp;", "&", $name);
     $name = str_replace("&", "&amp;", $name);
 
-    $query = "select cons_id from constituency where name like '" . $db->escape($name) . "' and from_date <= date(now()) and date(now()) <= to_date";
-    $q1 = $db->query($query);
+    $query = "select cons_id from constituency where name like ? and from_date <= date(now()) and date(now()) <= to_date";
+    $q1 = $db->query($query, "%$name%");
     if ($q1->rows <= 0) {
         return FALSE;
     }
