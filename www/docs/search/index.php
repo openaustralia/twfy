@@ -124,15 +124,15 @@ if (get_http_var('s') != '' || get_http_var('pid') != '') {
                         print '">';
                     }
                 }
-                print $speaker['name'];
+                print htmlentities($speaker['name']);
                 if ($pid) {
                     print '</a>';
                 }
                 if ($speaker['party']) {
-                    print ' (' . $speaker['party'] . ')';
+                    print ' (' . htmlentities($speaker['party']) . ')';
                 }
                 if (isset($speaker['office'])) {
-                    print ' - ' . join('; ', $speaker['office']);
+                    print ' - ' . htmlentities(join('; ', $speaker['office']));
                 }
                 print '</td> <td>';
                 $pmindate = $speaker['pmindate'];
@@ -351,7 +351,7 @@ function find_members($args){
 
         $URL1 = new URL('mp');
         $URL2 = new URL('peer');
-        $members = array();
+        $members = [];
 
         $last_pid = -1;
         for ($n = 0; $n < $q->rows(); $n++) {
@@ -383,13 +383,13 @@ function find_members($args){
             }
         }
         ?>
-            <div id="people_results">
-                <h3>Representatives matching '<?php echo htmlentities($searchstring); ?>'</h3>
-                <ul>
-                    <li><?php print implode("</li>\n\t<li>", $members); ?></li>
-                </ul>
-            </div>
-            <?php
+        <div id="people_results">
+            <h3>Representatives matching '<?php echo htmlentities($searchstring); ?>'</h3>
+            <ul>
+                <li><?php print implode("</li>\n\t<li>", array_map('htmlentities', $members))   ; ?></li>
+            </ul>
+        </div>
+        <?php
     }
 
     // We don't display anything if there were no matches.
