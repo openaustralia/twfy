@@ -102,7 +102,7 @@ class GLOSSARY {
     /**
      *
      */
-    public function get_glossary_item($args = []):int {
+    private function get_glossary_item($args = []):int {
         // Search for and fetch glossary item with title or glossary_id
         // We could also search glossary text that contains the title text, for cross references.
 
@@ -154,7 +154,7 @@ class GLOSSARY {
 
             return ($this->num_terms);
         }
-        
+
         return 0;
     }
 
