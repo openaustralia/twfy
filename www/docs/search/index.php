@@ -37,11 +37,11 @@ if (get_http_var('s') != '' || get_http_var('pid') != '') {
         $searchmajor = trim(get_http_var('maj'));
     }
     if ($searchmajor) {
-        $searchstring .= " section:" . $searchmajor;
+        $searchstring .= " section:$searchmajor";
     }
     $searchgroupby = trim(get_http_var('groupby'));
     if ($searchgroupby) {
-        $searchstring .= " groupby:" . $searchgroupby;
+        $searchstring .= " groupby:$searchgroupby";
     }
 
     // We have only one of these, rather than one in HANSARDLIST also
@@ -49,24 +49,20 @@ if (get_http_var('s') != '' || get_http_var('pid') != '') {
 
     if (get_http_var('o') == 'p') {
         $q_house = '';
-        if (ctype_digit(get_http_var('house')))
+        if (ctype_digit(get_http_var('house'))) {
             $q_house = get_http_var('house');
+        }
 
         # Fetch the results
         $data = search_by_usage($searchstring, $q_house);
 
-        $wtt = get_http_var('wtt');
-        if ($wtt) {
-            $pagetitle = 'League table of Lords who say ' . $data['pagetitle'];
-        } else {
-            $pagetitle = 'Who says ' . $data['pagetitle'] . ' the most?';
-        }
+        $pagetitle = 'Who says ' . htmlentities($data['pagetitle']) . ' the most?';
         $DATA->set_page_metadata($this_page, 'title', $pagetitle);
         $PAGE->page_start();
         $PAGE->stripe_start();
         $PAGE->search_form();
         if (isset($data['error'])) {
-            print '<p>' . $data['error'] . '</p>';
+            print '<p>' . htmlentities($data['error']) . '</p>';
             $PAGE->page_end();
             return;
         }
@@ -79,13 +75,6 @@ if (get_http_var('s') != '' || get_http_var('pid') != '') {
             print "$party:$count<br>";
         }
         print " -->\n\n";
-        if ($wtt) { ?>
-            <p><strong><big>Now, try reading what a couple of these Lords are saying,
-                        to help you find someone appropriate. When you've found someone,
-                        hit the "I want to write to this Lord" button on their results page
-                        to go back to WriteToThem.
-                    </big></strong></p>
-        <? }
         ?>
         <p>Please note that this search is only for the exact word/phrase entered.
             For example, putting in 'autism' won't return results for 'autistic spectrum disorder',
@@ -94,26 +83,25 @@ if (get_http_var('s') != '' || get_http_var('pid') != '') {
             <tr>
                 <th>Number of occurences</th>
                 <th>
-                    <?
+                    <?php
 
-                    if ($wtt)
-                        print 'Speaker';
-                    else {
-
-                        $URL = new URL($this_page);
-                        $url_l = $URL->generate('html', array('house' => 2));
-                        $url_c = $URL->generate('html', array('house' => 1));
-                        $URL->remove(array('house'));
-                        $url_b = $URL->generate();
-                        if ($q_house == 1) {
-                            print 'Representatives | <a href="' . $url_l . '">Senators</a> | <a href="' . $url_b . '">Both</a>';
-                        } elseif ($q_house == 2) {
-                            print '<a href="' . $url_c . '">Representatives</a> | Senators | <a href="' . $url_b . '">Both</a>';
-                        } else {
-                            print '<a href="' . $url_c . '">Representatives</a> | <a href="' . $url_l . '">Senators</a> | Both';
-                        }
-
-                    } ?>
+                    $URL = new URL($this_page);
+                    $url_l = $URL->generate('html', ['house' => 2]);
+                    $url_c = $URL->generate('html', ['house' => 1]);
+                    $URL->remove(['house']);
+                    $url_b = $URL->generate();
+                    switch ($q_house) {
+                        case 1:
+                            print "Representatives | <a href=\"$url_l\">Senators</a> | <a href=\"$url_b\">Both</a>";
+                            break;
+                        case 2:
+                            print "<a href=\"$url_c\">Representatives</a> | Senators | <a href=\"$url_b\">Both</a>";
+                            break;
+                        default:
+                            print "<a href=\"$url_c\">Representatives</a> | <a href=\"$url_l\">Senators</a> | Both";
+                            break;
+                    }
+                    ?>
                 </th>
                 <th>Date range</th>
             </tr>
@@ -129,11 +117,9 @@ if (get_http_var('s') != '' || get_http_var('pid') != '') {
                     } elseif ($house == 2) {
                         print '<span style="color:#990000">&bull;</span> ';
                     }
-                    if (!$wtt || $left == '9999-12-31')
+                    if ($left == '9999-12-31')
                         print '<a href="' . WEBPATH . 'search/?s=' . urlencode($searchstring) . '&amp;pid=' . $pid;
-                    if ($wtt && $left == '9999-12-31')
-                        print '&amp;wtt=2';
-                    if (!$wtt || $left == '9999-12-31')
+                    if ($left == '9999-12-31')
                         print '">';
                 }
                 print $speaker['name'];
@@ -182,7 +168,6 @@ if (get_http_var('s') != '' || get_http_var('pid') != '') {
         $LIST = new HANSARDLIST();
 
         if ($args['s']) {
-            $db = $LIST->db;
             find_members($args);
         }
 
@@ -190,7 +175,6 @@ if (get_http_var('s') != '' || get_http_var('pid') != '') {
 
         if ($args['s']) {
             find_constituency($args);
-            #        find_users($args);
             find_glossary_items($args);
             find_comments($args);
         }

@@ -1889,10 +1889,6 @@ and has had no written questions answered for which we know the department or su
                 print '.</li>';
             }
 
-            // $wtt_displayed = display_writetothem_numbers(2006, $extra_info);
-            // $displayed_stuff |= $wtt_displayed;
-            // if (!$wtt_displayed)
-            // $displayed_stuff |= display_writetothem_numbers(2005, $extra_info);
 
             $after_stuff = ' <small>(From Public Whip)</small>';
             if ($member['party'] == 'Scottish National Party') {
@@ -2502,8 +2498,6 @@ and has had no written questions answered for which we know the department or su
         // If $value is set then it will be displayed in the form.
         // Otherwise the value of 's' in the URL will be displayed.
 
-        $wtt = get_http_var('wtt');
-
         $URL = new URL('search');
         // No need to pass any query params as a form action. They are not used.
         $URL->reset();
@@ -2513,69 +2507,56 @@ and has had no written questions answered for which we know the department or su
         }
 
         echo '<div class="mainsearchbox">';
-        if ($wtt < 2) {
-            echo '<form action="', $URL->generate(), '" method="get">';
-            if (get_http_var('o')) {
-                echo '<input type="hidden" name="o" value="', htmlentities(get_http_var('o')), '">';
-            }
-            if (get_http_var('house')) {
-                echo '<input type="hidden" name="house" value="', htmlentities(get_http_var('house')), '">';
-            }
-            echo '<input type="text" name="s" value="', htmlentities($value), '" size="20"> ';
-            echo '<input type="submit" value=" ', ($wtt ? 'Modify search' : 'Search'), ' "><br>';
-            if ($wtt) {
-                print '<input type="hidden" name="wtt" value="1">';
-            }
+        echo '<form action="', $URL->generate(), '" method="get">';
+        if (get_http_var('o')) {
+            echo '<input type="hidden" name="o" value="', htmlentities(get_http_var('o')), '">';
+        }
+        if (get_http_var('house')) {
+            echo '<input type="hidden" name="house" value="', htmlentities(get_http_var('house')), '">';
+        }
+        echo '<input type="text" name="s" value="', htmlentities($value), '" size="20"> ';
+        echo '<input type="submit" value=" Search "><br>';
 
-        } else { ?>
-                    <form action="http://www.writetothem.com/lords" method="get">
-                        <input type="hidden" name="pid" value="<?php echo htmlentities(get_http_var('pid')) ?>">
-                        <input type="submit" style="font-size: 150%" value=" I want to write to this Lord "><br>
-                        <?php
+        echo '<div style="margin-top: 5px">';
+        $orderUrl = new URL('search');
+        $ordering = get_http_var('o');
+        if ($ordering != 'r' && $ordering != 'd' && $ordering != 'p') {
+            $ordering = 'd';
         }
 
-        if (!$wtt) {
-            echo '<div style="margin-top: 5px">';
-            $orderUrl = new URL('search');
-            $ordering = get_http_var('o');
-            if ($ordering != 'r' && $ordering != 'd' && $ordering != 'p') {
-                $ordering = 'd';
-            }
+        if ($ordering == 'r') {
+            print '<strong>Most relevant results are first</strong>';
+        } else {
+            printf("<a href='%s'>Show most relevant results first</a>", $orderUrl->generate('html', ['o' => 'r']));
+        }
 
-            if ($ordering == 'r') {
-                print '<strong>Most relevant results are first</strong>';
-            } else {
-                printf("<a href='%s'>Show most relevant results first</a>", $orderUrl->generate('html', ['o' => 'r']));
-            }
+        print "&nbsp;|&nbsp;";
+        if ($ordering == 'd') {
+            print '<strong>Most recent results are first</strong>';
+        } else {
+            printf("<a href='%s'>Show most recent results first</a>", $orderUrl->generate('html', ['o' => 'd']));
+        }
 
-            print "&nbsp;|&nbsp;";
-            if ($ordering == 'd') {
-                print '<strong>Most recent results are first</strong>';
-            } else {
-                printf("<a href='%s'>Show most recent results first</a>", $orderUrl->generate('html', ['o' => 'd']));
-            }
+        print "&nbsp;|&nbsp;";
+        if ($ordering == 'p') {
+            print '<strong>Use by person</strong>';
+        } else {
+            printf('<a href="%s">Show use by person</a>', $orderUrl->generate('html', ['o' => 'p']));
+        }
+        echo '</div>';
 
-            print "&nbsp;|&nbsp;";
-            if ($ordering == 'p') {
-                print '<strong>Use by person</strong>';
-            } else {
-                printf('<a href="%s">Show use by person</a>', $orderUrl->generate('html', ['o' => 'p']));
-            }
-            echo '</div>';
-
-            $person_id = get_http_var('pid');
-            if ($person_id != "") {
-                $member = new MEMBER(['person_id' => $person_id]);
-                if ($member->valid) {
-                    $name = $member->full_name();
-                    ?>
-                                <p>
-                                    <input type="radio" name="pid" value="<?php echo htmlentities($person_id) ?>" checked>Search only
-                                    <?php echo htmlentities($name) ?>
-                                    <input type="radio" name="pid" value="">Search all speeches
-                                </p>
-                                <?php
-                }
+        $person_id = get_http_var('pid');
+        if ($person_id != "") {
+            $member = new MEMBER(['person_id' => $person_id]);
+            if ($member->valid) {
+                $name = $member->full_name();
+                ?>
+                            <p>
+                                <input type="radio" name="pid" value="<?php echo htmlentities($person_id) ?>" checked>Search only
+                                <?php echo htmlentities($name) ?>
+                                <input type="radio" name="pid" value="">Search all speeches
+                            </p>
+                            <?php
             }
         }
 
