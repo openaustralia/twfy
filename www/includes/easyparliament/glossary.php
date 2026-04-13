@@ -31,6 +31,8 @@ include_once INCLUDESPATH . "wikipedia.php";
 class GLOSSARY {
 
     private $db = NULL;
+    private $stopwords = [];
+    private $alphabet = [];
 
     /**
      * How many glossary entries do we have.
@@ -52,7 +54,14 @@ class GLOSSARY {
     public $current_term;        /**
                                   * Will only be set if we have a valid epobject_id.
                                   */
+    public $terms = [];
+    public $previous_term;
+    public $next_term;
+
     public $current_letter;
+    public $search_matches = [];
+    public $num_search_matches = 0;
+    private $replace_order = [];
 
     /**
      * Constructor...
