@@ -71,13 +71,24 @@ test: vendor/autoload.php
 test-all: vendor/autoload.php
 	DB_HOST=$(TEST_DB_HOST) DB_USER=$(TEST_DB_USER) DB_PASSWORD=$(TEST_DB_PASSWORD) DB_NAME=$(TEST_DB_NAME) ./vendor/bin/phpunit $(TEST_ARGS)
 
+install-xdebug:
+	@if mise exec -- php -m | grep -Eq 'xdebug|pcov'; then \
+		echo "xdebug or pcov already installed"; \
+	else \
+		mise exec -- pecl install xdebug && \
+		SCAN_DIR=$$(mise exec -- php --ini | grep "Scan for additional" | awk -F': ' '{print $$2}') && \
+		echo "zend_extension=xdebug.so" > "$$SCAN_DIR/xdebug.ini" && \
+		echo "Done. Verify: mise exec -- php -m | grep xdebug"; \
+	fi
+
 test-coverage: vendor/autoload.php
 	@if ! php -m | grep -Eq 'xdebug|pcov'; then \
-		echo "Coverage requires Xdebug or PCOV to be enabled in PHP."; \
+		echo "Coverage requires Xdebug or PCOV to be enabled in PHP (use make install-xdisplay)."; \
 		echo "For GitHub Actions, set setup-php coverage to 'xdebug'."; \
 		exit 1; \
 	fi
-	DB_HOST=$(TEST_DB_HOST) DB_USER=$(TEST_DB_USER) DB_PASSWORD=$(TEST_DB_PASSWORD) DB_NAME=$(TEST_DB_NAME) XDEBUG_MODE=coverage ./vendor/bin/phpunit --coverage-text --coverage-clover=coverage/clover.xml --coverage-html=coverage/html $(TEST_ARGS)
+	DB_HOST=$(TEST_DB_HOST) DB_USER=$(TEST_DB_USER) DB_PASSWORD=$(TEST_DB_PASSWORD) DB_NAME=$(TEST_DB_NAME) XDEBUG_MODE=coverage ./vendor/bin/phpunit --coverage-text --coverage-clover=coverage/clover.xml --coverage-html=coverage/html && \
+	echo && echo "Open coverage/html/index.html to see the detailed coverage report"
 
 test-coverage-docker:
 	docker compose up -d
