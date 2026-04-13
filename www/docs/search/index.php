@@ -188,26 +188,24 @@ if (get_http_var('s') != '' || get_http_var('pid') != '') {
 }
 
 $PAGE->stripe_end(array(
-    array(
+    [
         'type' => 'include',
         'content' => 'search_links'
-    ),
-    array(
+    ],
+    [
         'type' => 'include',
         'content' => 'search'
-    )
+    ]
 ));
 $PAGE->page_end();
 
-function find_comments($args)
-{
+function find_comments($args){
     global $PAGE, $db;
     $commentlist = new COMMENTLIST;
     $commentlist->display('search', $args);
 }
 
-function find_constituency($args)
-{
+function find_constituency($args){
     // We see if the user is searching for a postcode or constituency.
     global $PAGE, $db;
 
@@ -291,8 +289,7 @@ function find_constituency($args)
     }
 }
 
-function find_users($args)
-{
+function find_users($args){
     // Maybe there'll be a better place to put this at some point...
     global $PAGE, $db;
 
@@ -344,8 +341,7 @@ function find_users($args)
 
 }
 
-function find_members($args)
-{
+function find_members($args){
     // Maybe there'll be a better place to put this at some point...
     global $PAGE, $db, $parties;
 
@@ -436,8 +432,7 @@ function find_members($args)
 
 // Checks to see if the search term provided has any similar matching entries in the glossary.
 // If it does, show links off to them.
-function find_glossary_items($args)
-{
+function find_glossary_items($args){
 
     $searchterm = $args['s'];
     $GLOSSARY = new GLOSSARY($args);
@@ -446,24 +441,23 @@ function find_glossary_items($args)
 
         // Got a match(es), display....
         $URL = new URL('glossary');
-        $URL->insert(array('gl' => ""));
-
+        $URL->insert(['gl' => ""]);
         ?>
-            <h3>Matching glossary terms:</h3>
-            <p>
+        <h3>Matching glossary terms:</h3>
+        <p>
+            <?php
+            $n = 1;
+            foreach ($GLOSSARY->search_matches as $glossary_id => $term) {
+                $URL->update(['gl' => $glossary_id]);
+                ?><a href="<?php echo $URL->generate(); ?>"><strong><?php echo htmlentities($term['title']); ?></strong></a>
                 <?
-                $n = 1;
-                foreach ($GLOSSARY->search_matches as $glossary_id => $term) {
-                    $URL->update(array("gl" => $glossary_id));
-                    ?><a href="<?php echo $URL->generate(); ?>"><strong><?php echo htmlentities($term['title']); ?></strong></a>
-                    <?
-                    if ($n < $GLOSSARY->num_search_matches) {
-                        print ", ";
-                    }
-                    $n++;
+                if ($n < $GLOSSARY->num_search_matches) {
+                    print ", ";
                 }
-                ?>
-            </p>
-            <?
+                $n++;
+            }
+            ?>
+        </p>
+        <?php
     }
 }
