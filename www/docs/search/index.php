@@ -289,58 +289,6 @@ function find_constituency($args){
     }
 }
 
-function find_users($args){
-    // Maybe there'll be a better place to put this at some point...
-    global $PAGE, $db;
-
-    if ($args['s'] != '') {
-        // $args['s'] should have been tidied up by the time we get here.
-        // eg, by doing filter_user_input($s, 'strict');
-        $searchstring = $args['s'];
-    } else {
-        $PAGE->error_message("No search string");
-        return false;
-    }
-
-    $searchwords = explode(' ', $searchstring);
-
-    if (count($searchwords) == 1) {
-        $where = "(firstname LIKE '%" . addslashes($searchwords[0]) . "%' OR lastname LIKE '%" . addslashes($searchwords[0]) . "%')";
-    } else {
-        // We don't do anything special if there are more than two search words.
-        // And here we're assuming the user's put the names in the right order.
-        $where = "(firstname LIKE '%" . addslashes($searchwords[0]) . "%' AND lastname LIKE '%" . addslashes($searchwords[1]) . "%')";
-    }
-
-    $q = $db->query("SELECT user_id,
-							firstname,
-							lastname
-					FROM 	users
-					WHERE	$where AND confirmed=1
-					ORDER BY lastname, firstname, user_id
-					");
-
-    if ($q->rows() > 0) {
-
-        $URL = new URL('userview');
-        $users = array();
-
-        for ($n = 0; $n < $q->rows(); $n++) {
-            $URL->insert(array('u' => $q->field($n, 'user_id')));
-            $members[] = '<a href="' . $URL->generate() . '">' . $q->field($n, 'firstname') . ' ' . $q->field($n, 'lastname') . '</a>';
-        }
-        ?>
-            <h3>Users matching '<?php echo htmlentities($searchstring); ?>'</h3>
-            <ul>
-                <li><?php print implode("</li>\n\t<li>", $members); ?></li>
-            </ul>
-            <?php
-    }
-
-    // We don't display anything if there were no matches.
-
-}
-
 function find_members($args){
     // Maybe there'll be a better place to put this at some point...
     global $PAGE, $db, $parties;
