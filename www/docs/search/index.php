@@ -117,18 +117,23 @@ if (get_http_var('s') != '' || get_http_var('pid') != '') {
                     } elseif ($house == 2) {
                         print '<span style="color:#990000">&bull;</span> ';
                     }
-                    if ($left == '9999-12-31')
+                    if ($left == '9999-12-31') {
                         print '<a href="' . WEBPATH . 'search/?s=' . urlencode($searchstring) . '&amp;pid=' . $pid;
-                    if ($left == '9999-12-31')
+                    }
+                    if ($left == '9999-12-31') {
                         print '">';
+                    }
                 }
                 print $speaker['name'];
-                if ($pid)
+                if ($pid) {
                     print '</a>';
-                if ($speaker['party'])
+                }
+                if ($speaker['party']) {
                     print ' (' . $speaker['party'] . ')';
-                if (isset($speaker['office']))
+                }
+                if (isset($speaker['office'])) {
                     print ' - ' . join('; ', $speaker['office']);
+                }
                 print '</td> <td>';
                 $pmindate = $speaker['pmindate'];
                 $pmaxdate = $speaker['pmaxdate'];
@@ -157,13 +162,13 @@ if (get_http_var('s') != '' || get_http_var('pid') != '') {
         $PAGE->search_form();
 
         $o = get_http_var('o');
-        $args = array(
+        $args = [
             's' => $searchstring,
             'p' => $pagenum,
             'num' => get_http_var('num'),
             'pop' => get_http_var('pop'),
             'o' => ($o == 'd' || $o == 'r') ? $o : 'd',
-        );
+        ];
 
         $LIST = new HANSARDLIST();
 
@@ -264,12 +269,11 @@ function find_constituency($args){
                 // Display the postcode the user searched for.
                 print ' (' . htmlentities(strtoupper($args['s'])) . ')';
             }
-            ?>
-                </h3>
-                <p><a
-                        href="<?php echo $URL->generate(); ?>"><strong><?php echo htmlentities($MEMBER->first_name()) . ' ' . htmlentities($MEMBER->last_name()); ?></strong></a>
-                    (<?php echo $MEMBER->party(); ?>)</p>
-                <?php
+            ?></h3>
+            <p><a
+                    href="<?php echo $URL->generate(); ?>"><strong><?php echo htmlentities($MEMBER->first_name()) . ' ' . htmlentities($MEMBER->last_name()); ?></strong></a>
+                (<?php echo $MEMBER->party(); ?>)</p>
+            <?php
         }
 
     } elseif (count($constituencies)) {
