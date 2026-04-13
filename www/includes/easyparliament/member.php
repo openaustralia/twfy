@@ -123,8 +123,8 @@ class MEMBER {
 			first_name, last_name, constituency, party,
 			entered_house, left_house, entered_reason, left_reason, person_id
 			FROM member
-			WHERE person_id = '" . $this->db->escape($person_id) . "'
-                        ORDER BY left_house DESC, house");
+			WHERE person_id = ?
+                        ORDER BY left_house DESC, house", $person_id);
 
         if (!$q->rows() > 0) {
             $this->valid = FALSE;
@@ -222,7 +222,7 @@ class MEMBER {
     public function member_id_to_person_id($member_id) {
         global $PAGE;
         $q = $this->db->query("SELECT person_id FROM member
-					WHERE member_id = '" . $this->db->escape($member_id) . "'");
+					WHERE member_id = ?", $member_id);
         if ($q->rows > 0) {
             return $q->field(0, 'person_id');
         } else {
@@ -260,13 +260,13 @@ class MEMBER {
         }
 
         $q = $this->db->query("SELECT person_id FROM member
-					WHERE constituency = '" . $this->db->escape($constituency) . "'
-					AND left_reason = 'still_in_office'");
+					WHERE constituency = ?
+					AND left_reason = 'still_in_office'", $constituency);
 
         if ($q->rows > 0) {
             return $q->field(0, 'person_id');
         } else {
-            $q = $this->db->query("SELECT person_id FROM member WHERE constituency = '" . $this->db->escape($constituency) . "' ORDER BY left_house DESC LIMIT 1");
+            $q = $this->db->query("SELECT person_id FROM member WHERE constituency = ? ORDER BY left_house DESC LIMIT 1", $constituency);
             if ($q->rows > 0) {
                 return $q->field(0, 'person_id');
             } else {

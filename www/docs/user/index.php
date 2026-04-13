@@ -1087,7 +1087,7 @@ function display_user($user_id = "") {
             $PAGE->stripe_start();
             print '<h3>Your email alerts</h3>';
             $db = new ParlDB();
-            $q = $db->query('SELECT * FROM alerts WHERE email = "' . $db->escape($THEUSER->email()) . '" ORDER BY confirmed,deleted,alert_id');
+            $q = $db->query('SELECT * FROM alerts WHERE email = ? ORDER BY confirmed,deleted,alert_id', $THEUSER->email());
             $out = '';
             for ($i = 0; $i < $q->rows(); ++$i) {
                 $row = $q->row($i);

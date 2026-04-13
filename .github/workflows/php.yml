@@ -59,6 +59,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Needed for SonarCloud analysis
       - name: Setup PHP 8.3
         uses: shivammathur/setup-php@v2
         with:
@@ -70,15 +72,22 @@ jobs:
           fail-fast: true
       - name: Install dependencies
         run: composer install --no-interaction --prefer-dist
+      - name: Load database schema
+        run: |
+          mysql -h 127.0.0.1 -u root -proot test_twfy < db/schema.sql
       - name: Run tests with coverage
         run: |
           set -o pipefail
-          make test-coverage | tee phpunit-coverage.out
+          XDEBUG_MODE=coverage ./vendor/bin/phpunit \
+            --coverage-text \
+            --coverage-clover=coverage/clover.xml \
+            --coverage-html=coverage/html \
+            --log-junit=coverage/junit.xml | tee phpunit-coverage.out
         env:
-          TEST_DB_HOST: 127.0.0.1
-          TEST_DB_USER: root
-          TEST_DB_PASSWORD: root
-          TEST_DB_NAME: test_twfy
+          DB_HOST: 127.0.0.1
+          DB_USER: root
+          DB_PASSWORD: root
+          DB_NAME: test_twfy
       - name: Build coverage summary
         run: |
           {
@@ -100,3 +109,8 @@ jobs:
         with:
           recreate: true
           path: code-coverage-results.md
+    #   - name: SonarCloud Scan
+    #     uses: SonarSource/sonarcloud-github-action@master
+    #     env:
+    #       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    #       SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}

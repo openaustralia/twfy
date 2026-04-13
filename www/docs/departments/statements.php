@@ -16,7 +16,7 @@ if ($dept) {
     $q = $db->query('select epobject.epobject_id from hansard,epobject
 		where hansard.epobject_id=epobject.epobject_id and major=4 and section_id=0
 		and hdate>(select max(hdate) from hansard where major=4) - interval 7 day
-		and lower(body) = "' . $db->escape($dept) . '"');
+		and lower(body) = ?', $dept);
     $ids = [];
     for ($i = 0; $i < $q->rows(); $i++) {
         $ids[] = $q->field($i, 'epobject_id');

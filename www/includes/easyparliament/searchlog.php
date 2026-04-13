@@ -42,9 +42,12 @@ class SEARCHLOG {
 
         $this->db->query("INSERT INTO search_query_log
             (query_string, page_number, count_hits, ip_address, query_time)
-            VALUES ('" . $this->db->escape($searchlogdata['query']) . "',
-            '" . $searchlogdata['page'] . "', '" . $searchlogdata['hits'] . "',
-            '" . getenv('REMOTE_ADDR') . "', NOW())");
+            VALUES (?, ?, ?, ?, NOW())",
+            $searchlogdata['query'],
+            $searchlogdata['page'],
+            $searchlogdata['hits'],
+            getenv('REMOTE_ADDR')
+        );
 
     }
 
@@ -78,7 +81,7 @@ class SEARCHLOG {
         $url = $this->SEARCHURL->generate();
         $htmlescape = 1;
         if ($pos = strpos($query, ':')) {
-            $qq = $this->db->query('SELECT first_name, last_name FROM member WHERE person_id="' . $this->db->escape(substr($query, $pos + 1)) . '" LIMIT 1');
+            $qq = $this->db->query('SELECT first_name, last_name FROM member WHERE person_id = ? LIMIT 1', substr($query, $pos + 1));
             if ($qq->rows()) {
                 $query = $qq->field(0, 'first_name') . ' ' . $qq->field(0, 'last_name');
                 $htmlescape = 0;
