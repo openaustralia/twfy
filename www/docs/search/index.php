@@ -416,7 +416,7 @@ function find_glossary_items($args){
             foreach ($GLOSSARY->search_matches as $glossary_id => $term) {
                 $URL->update(['gl' => $glossary_id]);
                 ?><a href="<?php echo $URL->generate(); ?>"><strong><?php echo htmlentities($term['title']); ?></strong></a>
-                <?
+                <?php
                 if ($n < $GLOSSARY->num_search_matches) {
                     print ", ";
                 }
