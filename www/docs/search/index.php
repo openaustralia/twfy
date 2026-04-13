@@ -9,11 +9,6 @@ include_once INCLUDESPATH . "postcode.inc";
 
 if (get_http_var('s') != '' || get_http_var('pid') != '') {
 
-    if (get_http_var('pid') == 16407) {
-        header('Location: /search/?pid=10133');
-        exit;
-    }
-
     // We're searching for something.
 
     $this_page = 'search';
