@@ -15,14 +15,24 @@ if (!defined('XAPIANDB')) {
     define('XAPIANDB', '/tmp/fake_xapian_db_for_tests');
 }
 
-// Stub XapianStem if Xapian bindings aren't installed
+// Require real Xapian PHP bindings
 if (!class_exists('XapianStem')) {
-    class XapianStem {
-        public function __construct($language) {}
-        public function stem_word($word) { return $word; }
+    $xapian_paths = [
+        '/usr/local/share/php5/xapian.php',
+        '/usr/local/share/xapian-bindings/php5/xapian.php',
+        '/usr/share/php5/xapian.php',
+        '/usr/share/php/xapian.php',
+    ];
+    foreach ($xapian_paths as $path) {
+        if (file_exists($path)) {
+            require_once $path;
+            break;
+        }
+    }
+    if (!class_exists('XapianStem')) {
+        throw new RuntimeException('Xapian PHP bindings are required but not installed');
     }
 }
-
 
 // Include dbtypes for $hansardmajors
 require_once __DIR__ . '/../www/includes/dbtypes.php';
