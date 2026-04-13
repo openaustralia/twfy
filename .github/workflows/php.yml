@@ -70,24 +70,6 @@ jobs:
           tools: composer
         env:
           fail-fast: true
-      - name: Install Xapian PHP bindings
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y libxapian-dev zlib1g-dev
-          sudo pecl install xapian || true
-          # If pecl doesn't have it, build from source
-          if ! php -m | grep -q xapian; then
-            XAPIAN_VERSION=$(dpkg -s libxapian-dev | grep '^Version:' | awk '{print $2}' | cut -d- -f1)
-            wget "https://oligarchy.co.uk/xapian/${XAPIAN_VERSION}/xapian-bindings-${XAPIAN_VERSION}.tar.xz"
-            tar xf "xapian-bindings-${XAPIAN_VERSION}.tar.xz"
-            cd "xapian-bindings-${XAPIAN_VERSION}"
-            ./configure --with-php
-            make
-            sudo make install
-            echo "extension=xapian.so" | sudo tee "$(php -r 'echo ini_get("extension_dir");')/../conf.d/20-xapian.ini"
-            cd ..
-          fi
-          php -r "new XapianStem('english'); echo \"Xapian OK\n\";"
       - name: Install dependencies
         run: composer install --no-interaction --prefer-dist
       - name: Load database schema
