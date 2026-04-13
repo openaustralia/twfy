@@ -9,9 +9,9 @@ include_once 'api_getMP.php';
 /**
  * Shared API functions for get<Members>
  */
-function _api_getMembers_output($sql) {
+function _api_getMembers_output($sql, ...$params) {
     $db = new ParlDB();
-    $q = $db->query($sql);
+    $q = $db->query($sql, ...$params);
     $output = [];
     $last_mod = 0;
     for ($i = 0; $i < $q->rows(); $i++) {
@@ -30,16 +30,15 @@ function _api_getMembers_output($sql) {
  */
 function api_getMembers_party($house, $s) {
     // Needed to call db->escape()
-    $db = new ParlDB();
     global $parties;
     $canon_to_short = array_flip($parties);
     if (isset($canon_to_short[ucwords($s)])) {
         $s = $canon_to_short[ucwords($s)];
     }
     _api_getMembers_output('select * from member
-		where house = ' . $db->escape($house) . '
-		and party like "%' . $db->escape($s) .
-        '%" and entered_house <= date(now()) and date(now()) <= left_house');
+		where house = ?
+		and party like ? and entered_house <= date(now()) and date(now()) <= left_house',
+        $house, "%$s%");
 }
 
 /**
@@ -47,32 +46,42 @@ function api_getMembers_party($house, $s) {
  */
 function api_getMembers_state($house, $s) {
     // Needed to call db->escape()
-    $db = new ParlDB();
     global $parties;
     $canon_to_short = array_flip($parties);
     if (isset($canon_to_short[ucwords($s)])) {
         $s = $canon_to_short[ucwords($s)];
     }
     _api_getMembers_output('select * from member
-                where house = ' . $db->escape($house) . '
-                and constituency like "%' . $db->escape($s) .
-        '%" and entered_house <= date(now()) and date(now()) <= left_house');
+                where house = ?
+                and constituency like ? and entered_house <= date(now()) and date(now()) <= left_house',
+        $house, "%$s%");
 }
 
 /**
  *
  */
 function api_getMembers_search($house, $s) {
-    // Needed to call db->escape()
-    $db = new ParlDB();
-    $sq = $db->escape($s);
-    _api_getMembers_output('select * from member
-		where house = ' . $db->escape($house) . "
-		and (first_name like '%$sq%'
-		or last_name like '%$sq%'
-		or concat(first_name,' ',last_name) like '%$sq%'"
-        . ($house == 2 ? " or constituency like '%$sq%'" : '')
-        . ") and entered_house <= date(now()) and date(now()) <= left_house");
+    if ($house == 2) {
+        _api_getMembers_output("select * from member
+			where house = ?
+			and (first_name like ?
+			or last_name like ?
+			or concat(first_name, ' ', last_name) like ?
+			or constituency like ?)
+			and entered_house <= date(now()) and date(now()) <= left_house",
+        $house, "%$s%", "%$s%", "%$s%", "%$s%");
+    } else {
+        _api_getMembers_output("select * from member
+			where house = ?
+			and (
+                first_name like ?
+                or last_name like ?
+                or concat(first_name, ' ', last_name) like ?
+            )
+			and entered_house <= date(now())
+            and date(now()) <= left_house",
+        $house, "%$s%", "%$s%", "%$s%");
+    }
 }
 
 /**

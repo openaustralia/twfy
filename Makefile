@@ -14,6 +14,7 @@ all:
 	@echo "  install        Install Composer dependencies"
 	@echo "  test           Run PHPUnit tests"
 	@echo "  test-all       Run all PHPUnit tests including DB integration"
+	@echo "  test-docker    Run all tests in Docker with DB (simplest method)"
 	@echo "  test-coverage  Run all tests with code coverage reports"
 	@echo "  test-coverage-docker  Run coverage inside Docker (no host PHP extensions needed)"
 
@@ -75,4 +76,8 @@ test-coverage: vendor/autoload.php
 test-coverage-docker:
 	docker compose up -d mysql
 	docker compose run --rm -e DB_HOST=mysql -e DB_USER=$(TEST_DB_USER) -e DB_PASSWORD=$(TEST_DB_PASSWORD) -e DB_NAME=$(TEST_DB_NAME) -e XDEBUG_MODE=coverage -v $(CURDIR):/app -w /app webhost bash -lc "php -m | grep -qi xdebug || { echo 'xdebug is missing in twfy-app. Run make docker-build first.'; exit 1; }; ./vendor/bin/phpunit --coverage-text --coverage-clover=coverage/clover.xml --coverage-html=coverage/html"
+
+test-docker:
+	docker compose up -d mysql
+	docker compose run --rm -e DB_HOST=mysql -e DB_USER=$(TEST_DB_USER) -e DB_PASSWORD=$(TEST_DB_PASSWORD) -e DB_NAME=$(TEST_DB_NAME) -v $(CURDIR):/app -w /app webhost bash -lc "composer install --no-interaction --prefer-dist && ./vendor/bin/phpunit"
 

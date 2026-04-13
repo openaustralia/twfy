@@ -228,11 +228,11 @@ class ALERT {
 
         $criteria = alert_details_to_criteria($details);
 
-        $q = $this->db->query("SELECT * FROM alerts WHERE email='" . $this->db->escape($details['email']) . "' AND criteria='" . $this->db->escape($criteria) . "' AND confirmed=1");
+        $q = $this->db->query("SELECT * FROM alerts WHERE email = ? AND criteria = ? AND confirmed = 1", $details['email'], $criteria);
         if ($q->rows() > 0) {
             $deleted = $q->field(0, 'deleted');
             if ($deleted) {
-                $this->db->query("UPDATE alerts SET deleted=0 WHERE email='" . $this->db->escape($details['email']) . "' AND criteria='" . $this->db->escape($criteria) . "' AND confirmed=1");
+                $this->db->query("UPDATE alerts SET deleted = 0 WHERE email = ? AND criteria = ? AND confirmed = 1", $details['email'], $criteria);
                 return 1;
             } else {
                 return -2;
@@ -365,7 +365,7 @@ class ALERT {
         // Returns true if there's a user with this email address.
 
         if ($email != "") {
-            $q = $this->db->query("SELECT alert_id FROM alerts WHERE email='" . $this->db->escape($email) . "'");
+            $q = $this->db->query("SELECT alert_id FROM alerts WHERE email = ?", $email);
             if ($q->rows() > 0) {
                 return TRUE;
             } else {

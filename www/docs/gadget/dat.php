@@ -13,8 +13,8 @@ $pid = $_GET['pid'];
 
 $db = new ParlDB();
 $q = $db->query("select * from member
-	where house=1 and person_id = '" . $db->escape($pid) . "'
-	order by left_house desc limit 1");
+	where house=1 and person_id = ?
+	order by left_house desc limit 1", $pid);
 if (!$q->rows()) {
     print '<error>Unknown ID</error>';
     exit;
@@ -37,8 +37,8 @@ if ($image) {
 }
 
 $q = $db->query("SELECT position,dept FROM moffice WHERE to_date='9999-12-31'
-	and source='chgpages/selctee' and person=" .
-    $db->escape($pid) . ' ORDER BY from_date DESC');
+	and source='chgpages/selctee' and person=?
+	ORDER BY from_date DESC", $pid);
 for ($i = 0; $i < $q->rows(); $i++) {
     $row['selctee'][] = prettify_office($q->field($i, 'position'), $q->field($i, 'dept'));
 }
@@ -56,9 +56,9 @@ $row['selctee'][] = $member . ', ' . $q->field($i, 'title');
  */
 
 $q = $db->query("select data_key, data_value from personinfo
-	where data_key like 'public\_whip%' and person_id = '" . $db->escape($pid) . "'
+	where data_key like 'public\_whip%' and person_id = ?
 // order so both_voted is always first...
-	order by data_key");
+	order by data_key", $pid);
 $none = FALSE;
 $output = [];
 for ($i = 0; $i < $q->rows(); $i++) {
@@ -118,8 +118,8 @@ $pw .= '</ul>';
 $output = $row;
 $output['pw_data'] = $pw;
 
-$q = $db->query("select * from memberinfo where member_id = " . $row['member_id']
-    . " and data_key in ('swing_to_lose_seat_today', 'majority_in_seat')");
+$q = $db->query("select * from memberinfo where member_id = ?
+    and data_key in ('swing_to_lose_seat_today', 'majority_in_seat')", $row['member_id']);
 for ($i = 0; $i < $q->rows(); $i++) {
     $key = $q->field($i, 'data_key');
     $output[$key] = number_format($q->field($i, 'data_value'));

@@ -148,7 +148,7 @@ class USER {
 								deleted,
 								confirmed
 						FROM 	users
-						WHERE 	user_id='" . $this->db->escape($user_id) . "'");
+						WHERE 	user_id = ?", $user_id);
 
         if ($q->rows() == 1) {
             // We've got a user, so set them up.
@@ -235,20 +235,20 @@ class USER {
 				registrationip,
 				deleted
 			) VALUES (
-				'" . $this->db->escape($details["firstname"]) . "',
-				'" . $this->db->escape($details["lastname"]) . "',
-				'" . $this->db->escape($details["email"]) . "',
-				'" . $this->db->escape($emailpublic) . "',
-				'" . $this->db->escape($details["constituency"]) . "',
-				'" . $this->db->escape($details["url"]) . "',
-				'" . $this->db->escape($passwordforDB) . "',
-				'" . $this->db->escape($optin) . "',
-				'" . $this->db->escape($details["status"]) . "',
-				'" . $this->db->escape($registrationtime) . "',
-				'" . $this->db->escape($REMOTE_ADDR) . "',
-				'0'
-			)
-		");
+				?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, '0')
+		",
+            $details["firstname"],
+            $details["lastname"],
+            $details["email"],
+            $emailpublic,
+            $details["constituency"],
+            $details["url"],
+            $passwordforDB,
+            $optin,
+            $details["status"],
+            $registrationtime,
+            $REMOTE_ADDR
+        );
 
         if ($q->success()) {
             // Set these so we can log in.
@@ -273,9 +273,12 @@ class USER {
 
             // Add that to the DB.
             $r = $this->db->query("UPDATE users
-							SET	registrationtoken = '" . $this->db->escape($this->registrationtoken) . "'
-							WHERE	user_id = '" . $this->db->escape($this->user_id) . "'
-							");
+							SET	registrationtoken = ?
+							WHERE	user_id = ?
+							",
+                            $this->registrationtoken,
+                            $this->user_id
+                            );
 
             if ($r->success()) {
                 // Updated DB OK.
@@ -429,7 +432,7 @@ class USER {
 
         $passwordforDB = password_hash($pwd, PASSWORD_DEFAULT);
 
-        $q = $this->db->query("UPDATE users SET password = '" . $this->db->escape($passwordforDB) . "' WHERE email='" . $this->db->escape($email) . "'");
+        $q = $this->db->query("UPDATE users SET password = ? WHERE email = ?", $passwordforDB, $email);
 
         if ($q->success()) {
             $this->password = $pwd;
@@ -482,7 +485,7 @@ class USER {
         // Returns true if there's a user with this user_id.
 
         if (is_numeric($user_id)) {
-            $q = $this->db->query("SELECT user_id FROM users WHERE user_id='" . $this->db->escape($user_id) . "'");
+            $q = $this->db->query("SELECT user_id FROM users WHERE user_id = ?", $user_id);
             if ($q->rows() > 0) {
                 return TRUE;
             } else {
@@ -501,7 +504,7 @@ class USER {
         // Returns true if there's a user with this email address.
 
         if ($email != "") {
-            $q = $this->db->query("SELECT user_id FROM users WHERE email='" . $this->db->escape($email) . "'");
+            $q = $this->db->query("SELECT user_id FROM users WHERE email = ?", $email);
             if ($q->rows() > 0) {
                 return TRUE;
             } else {
@@ -817,7 +820,7 @@ class USER {
 
         // Update email alerts if email address changed.
         if ($this->email != $details['email']) {
-            $this->db->query('UPDATE alerts SET email = "' . $this->db->escape($details['email']) . '" WHERE email = "' . $this->db->escape($this->email) . '"');
+            $this->db->query('UPDATE alerts SET email = ? WHERE email = ?', $details['email'], $this->email);
         }
 
         // These are used to put optional fragments of SQL in, depending
@@ -1059,7 +1062,7 @@ class THEUSER extends USER {
         // are correct. We can then continue with logging the user in (taking into
         // account their cookie remembering settings etc) with $this->login().
 
-        $q = $this->db->query("SELECT user_id, password, deleted, confirmed FROM users WHERE email='" . $this->db->escape($email) . "'");
+        $q = $this->db->query("SELECT user_id, password, deleted, confirmed FROM users WHERE email = ?", $email);
 
         if ($q->rows() == 1) {
             // OK.
