@@ -241,7 +241,8 @@ function find_constituency($args){
                     (SELECT name FROM constituency WHERE cons_id = o.cons_id AND main_name) AS name
                 FROM constituency AS o WHERE name LIKE ?
                 AND from_date <= DATE(NOW()) AND DATE(NOW()) <= to_date",
-                "%$try%");
+                "%$try%"
+            );
             for ($n = 0; $n < $q->rows(); $n++) {
                 $constituencies[] = $q->field($n, 'name');
             }
@@ -264,11 +265,12 @@ function find_constituency($args){
                 // Display the postcode the user searched for.
                 print ' (' . htmlentities(strtoupper($args['s'])) . ')';
             }
-            ?></h3>
-            <p><a
-                    href="<?php echo $URL->generate(); ?>"><strong><?php echo htmlentities($MEMBER->first_name()) . ' ' . htmlentities($MEMBER->last_name()); ?></strong></a>
-                (<?php echo $MEMBER->party(); ?>)</p>
-            <?php
+            ?>
+                </h3>
+                <p><a
+                        href="<?php echo $URL->generate(); ?>"><strong><?php echo htmlentities($MEMBER->first_name()) . ' ' . htmlentities($MEMBER->last_name()); ?></strong></a>
+                    (<?php echo $MEMBER->party(); ?>)</p>
+                <?php
         }
 
     } elseif (count($constituencies)) {
@@ -279,9 +281,8 @@ function find_constituency($args){
             if ($MEMBER->valid) {
                 $URL->insert(['m' => $MEMBER->member_id()]);
             }
-            print '<li><a href="' . $URL->generate() . '"><strong>' . htmlentities($MEMBER->first_name()) . ' ' .
-                htmlentities($MEMBER->last_name()) . '</strong></a> (' . preg_replace("#$searchterm#i", '<span class="hi">$0</span>', $constituency) .
-                ', ' . $MEMBER->party() . ')</li>';
+            print '<li><a href="' . $URL->generate() . '"><strong>' . htmlentities($MEMBER->first_name()) . ' ' . htmlentities($MEMBER->last_name()) . '</strong></a>';
+            print '(' . preg_replace("#$searchterm#i", '<span class="hi">$0</span>', $constituency) . ', ' . htmlentities($MEMBER->party()) . ')</li>';
         }
         print '</ul>';
     }
@@ -378,13 +379,13 @@ function find_members($args){
             }
         }
         ?>
-        <div id="people_results">
-            <h3>Representatives matching '<?php echo htmlentities($searchstring); ?>'</h3>
-            <ul>
-                <li><?php print implode("</li>\n\t<li>", array_map('htmlentities', $members))   ; ?></li>
-            </ul>
-        </div>
-        <?php
+            <div id="people_results">
+                <h3>Representatives matching '<?php echo htmlentities($searchstring); ?>'</h3>
+                <ul>
+                    <li><?php print implode("</li>\n\t<li>", array_map('htmlentities', $members)); ?></li>
+                </ul>
+            </div>
+            <?php
     }
 
     // We don't display anything if there were no matches.
@@ -404,21 +405,22 @@ function find_glossary_items($args){
         $URL = new URL('glossary');
         $URL->insert(['gl' => ""]);
         ?>
-        <h3>Matching glossary terms:</h3>
-        <p>
-            <?php
-            $n = 1;
-            foreach ($GLOSSARY->search_matches as $glossary_id => $term) {
-                $URL->update(['gl' => $glossary_id]);
-                ?><a href="<?php echo $URL->generate(); ?>"><strong><?php echo htmlentities($term['title']); ?></strong></a>
+            <h3>Matching glossary terms:</h3>
+            <p>
                 <?php
-                if ($n < $GLOSSARY->num_search_matches) {
-                    print ", ";
+                $n = 1;
+                foreach ($GLOSSARY->search_matches as $glossary_id => $term) {
+                    $URL->update(['gl' => $glossary_id]);
+                    ?><a
+                        href="<?php echo $URL->generate(); ?>"><strong><?php echo htmlentities($term['title']); ?></strong></a>
+                    <?php
+                    if ($n < $GLOSSARY->num_search_matches) {
+                        print ", ";
+                    }
+                    $n++;
                 }
-                $n++;
-            }
-            ?>
-        </p>
-        <?php
+                ?>
+            </p>
+            <?php
     }
 }
