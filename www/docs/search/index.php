@@ -228,8 +228,9 @@ function find_constituency($args){
         } else {
             $validpostcode = true;
         }
-        if (!is_array($constituencies))
+        if (!is_array($constituencies)) {
             $constituencies = [$constituencies];
+        }
     }
 
     if ($constituencies == [] && $searchterm) {
