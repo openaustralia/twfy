@@ -223,10 +223,11 @@ function find_constituency($args){
     if (validate_postcode($searchterm)) {
         // Looks like a postcode - can we find the constituency?
         $constituencies = postcode_to_constituency($searchterm);
-        if ($constituencies == '')
+        if ($constituencies == '') {
             $constituencies = [];
-        else
+        } else {
             $validpostcode = true;
+        }
         if (!is_array($constituencies))
             $constituencies = [$constituencies];
     }
