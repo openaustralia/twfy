@@ -82,7 +82,7 @@ class GLOSSARY {
             $this->search_glossary($args);
         }
         $got = $this->get_glossary_item($args);
-        if ($got && isset($args['sort']) && ($args['sort'] == 'regexp_replace')) {
+        if ($got > 0 && isset($args['sort']) && ($args['sort'] == 'regexp_replace')) {
             // We need to sort the terms in the array by "number of words in term".
             // This way, "prime minister" gets dealt with before "minister" when generating glossary links.
 
@@ -102,7 +102,7 @@ class GLOSSARY {
     /**
      *
      */
-    public function get_glossary_item($args = []) {
+    public function get_glossary_item($args = []):int {
         // Search for and fetch glossary item with title or glossary_id
         // We could also search glossary text that contains the title text, for cross references.
 
@@ -153,9 +153,9 @@ class GLOSSARY {
             }
 
             return ($this->num_terms);
-        } else {
-            return FALSE;
         }
+        
+        return 0;
     }
 
     /**
