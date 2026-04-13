@@ -216,7 +216,7 @@ function find_constituency($args){
         return false;
     }
 
-    $constituencies = array();
+    $constituencies = [];
     $constituency = '';
     $validpostcode = false;
 
@@ -224,14 +224,14 @@ function find_constituency($args){
         // Looks like a postcode - can we find the constituency?
         $constituencies = postcode_to_constituency($searchterm);
         if ($constituencies == '')
-            $constituencies = array();
+            $constituencies = [];
         else
             $validpostcode = true;
         if (!is_array($constituencies))
-            $constituencies = array($constituencies);
+            $constituencies = [$constituencies];
     }
 
-    if ($constituencies == array() && $searchterm) {
+    if ($constituencies == [] && $searchterm) {
         // No luck so far - let's see if they're searching for a constituency.
         $try = strtolower($searchterm);
         if (normalise_constituency_name($try)) {
@@ -241,7 +241,7 @@ function find_constituency($args){
                     (SELECT name FROM constituency WHERE cons_id = o.cons_id AND main_name) AS name
                 FROM constituency AS o WHERE name LIKE ?
                 AND from_date <= DATE(NOW()) AND DATE(NOW()) <= to_date",
-                '%' . $try . '%');
+                "%$try%");
             for ($n = 0; $n < $q->rows(); $n++) {
                 $constituencies[] = $q->field($n, 'name');
             }
@@ -258,7 +258,7 @@ function find_constituency($args){
         $MEMBER = new MEMBER(array('constituency' => $constituency));
         $URL = new URL('mp');
         if ($MEMBER->valid) {
-            $URL->insert(array('m' => $MEMBER->member_id()));
+            $URL->insert(['m' => $MEMBER->member_id()]);
             print '<h3>MP for ' . preg_replace("#$searchterm#i", '<span class="hi">$0</span>', $constituency);
             if ($validpostcode) {
                 // Display the postcode the user searched for.
@@ -266,7 +266,6 @@ function find_constituency($args){
             }
             ?>
                 </h3>
-
                 <p><a
                         href="<?php echo $URL->generate(); ?>"><strong><?php echo htmlentities($MEMBER->first_name()) . ' ' . htmlentities($MEMBER->last_name()); ?></strong></a>
                     (<?php echo $MEMBER->party(); ?>)</p>
@@ -276,10 +275,10 @@ function find_constituency($args){
     } elseif (count($constituencies)) {
         print "<h3>MPs in constituencies matching '" . htmlentities($searchterm) . "'</h3><ul>";
         foreach ($constituencies as $constituency) {
-            $MEMBER = new MEMBER(array('constituency' => $constituency));
+            $MEMBER = new MEMBER(['constituency' => $constituency]);
             $URL = new URL('mp');
             if ($MEMBER->valid) {
-                $URL->insert(array('m' => $MEMBER->member_id()));
+                $URL->insert(['m' => $MEMBER->member_id()]);
             }
             print '<li><a href="' . $URL->generate() . '"><strong>' . htmlentities($MEMBER->first_name()) . ' ' .
                 htmlentities($MEMBER->last_name()) . '</strong></a> (' . preg_replace("#$searchterm#i", '<span class="hi">$0</span>', $constituency) .
