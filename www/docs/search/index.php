@@ -154,53 +154,6 @@ if (get_http_var('s') != '' || get_http_var('pid') != '') {
                 print '</td></tr>';
             }
             print '</table>';
-        /*    } elseif (get_http_var('o') == 't') {
-                $SEARCHENGINE = new SEARCHENGINE($searchstring);
-                $pagetitle = $SEARCHENGINE->query_description_short();
-                $pagetitle = 'When is ' . $pagetitle . ' said most in debates?';
-                $DATA->set_page_metadata($this_page, 'title', $pagetitle);
-                $PAGE->page_start();
-                $PAGE->stripe_start();
-                $PAGE->search_form();
-                $SEARCHENGINE = new SEARCHENGINE($searchstring . ' groupby:speech section:debates section:whall');
-                $count = $SEARCHENGINE->run_count();
-                if ($count <= 0) {
-                    print '<p>There were no results.</p>';
-                    $PAGE->page_end();
-                    return;
-                }
-                $sort_order = 'date';
-                $SEARCHENGINE->run_search(0, 10000, 'date');
-                $gids = $SEARCHENGINE->get_gids();
-                if (count($gids) <= 0) {
-                    print '<p>There were no results.</p>';
-                    $PAGE->page_end();
-                    return;
-                }
-
-                $hdates = array();
-                $big_list = join('","', $gids);
-                $db = new ParlDB;
-                $q = $db->query('SELECT hdate FROM hansard WHERE gid IN ("' . $big_list . '")');
-                print '<!-- Counts: ' . count($gids) . ' vs ' . $q->rows() . ' -->';
-                for ($n=0; $n<$q->rows(); $n++) {
-                    $hdate = $q->field($n, 'hdate');
-                    if (!isset($hdates[$hdate]))
-                        $hdates[$hdate] = 0;
-                    $hdates[$hdate]++;
-                }
-                arsort($hdates);
-                print '<table><tr><th>No.</th><th>Date</th></tr>';
-                foreach ($hdates as $hdate => $count) {
-                    print '<tr><td>';
-                    print $count . '</td><td>';
-                    print '<a href="' . WEBPATH . 'hansard/?d=' . $hdate . '">';
-                    print $hdate;
-                    print '</a>';
-                    print '</td></tr>';
-                }
-                print '</table>';
-        */
     } else {
 
 
