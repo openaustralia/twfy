@@ -1889,7 +1889,6 @@ and has had no written questions answered for which we know the department or su
                 print '.</li>';
             }
 
-
             $after_stuff = ' <small>(From Public Whip)</small>';
             if ($member['party'] == 'Scottish National Party') {
                 $after_stuff .= '<br><em>Note SNP MPs do not vote on legislation not affecting Scotland.</em>';
