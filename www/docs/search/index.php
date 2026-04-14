@@ -258,7 +258,7 @@ function find_constituency($args){
     if ($constituency != '') {
         // Got a match, display....
 
-        $MEMBER = new MEMBER(array('constituency' => $constituency));
+        $MEMBER = new MEMBER(['constituency' => $constituency]);
         $URL = new URL('mp');
         if ($MEMBER->valid) {
             $URL->insert(['m' => $MEMBER->member_id()]);
@@ -267,12 +267,9 @@ function find_constituency($args){
                 // Display the postcode the user searched for.
                 print ' (' . htmlentities(strtoupper($args['s'])) . ')';
             }
-            ?>
-                </h3>
-                <p><a
-                        href="<?php echo $URL->generate(); ?>"><strong><?php echo htmlentities($MEMBER->first_name()) . ' ' . htmlentities($MEMBER->last_name()); ?></strong></a>
-                    (<?php echo $MEMBER->party(); ?>)</p>
-                <?php
+            print "</h2>";
+            print "<p><a href=\"" . $URL->generate() . "\"><strong>" . htmlentities($MEMBER->first_name()) . ' ' . htmlentities($MEMBER->last_name()) . "</strong></a>
+                    (" . htmlentities($MEMBER->party()) . ")</p>";
         }
 
     } elseif (count($constituencies)) {
