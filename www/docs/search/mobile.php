@@ -119,12 +119,15 @@ if (get_http_var('s') != '' || get_http_var('pid') != '') {
                     }
                 }
                 print $speaker['name'];
-                if ($pid)
+                if ($pid) {
                     print '</a>';
-                if ($speaker['party'])
+                }
+                if ($speaker['party']) {
                     print ' (' . $speaker['party'] . ')';
-                if (isset($speaker['office']))
+                }
+                if (isset($speaker['office'])) {
                     print ' - ' . join('; ', $speaker['office']);
+                }
                 print '</td> <td>';
                 $pmindate = $speaker['pmindate'];
                 $pmaxdate = $speaker['pmaxdate'];
@@ -138,8 +141,6 @@ if (get_http_var('s') != '' || get_http_var('pid') != '') {
             print '</table>';
 
     } else {
-
-
         $SEARCHENGINE = new SEARCHENGINE($searchstring);
         $pagetitle = "Search: " . $SEARCHENGINE->query_description_short();
         $pagenum = get_http_var('p');
@@ -154,18 +155,17 @@ if (get_http_var('s') != '' || get_http_var('pid') != '') {
         $PAGE->search_form();
 
         $o = get_http_var('o');
-        $args = array(
+        $args = [
             's' => $searchstring,
             'p' => $pagenum,
             'num' => get_http_var('num'),
             'pop' => get_http_var('pop'),
             'o' => ($o == 'd' || $o == 'r') ? $o : 'd',
-        );
+        ];
 
         $LIST = new HANSARDLIST();
 
         if ($args['s']) {
-            // $db = $LIST->db;
             find_members($args);
         }
 
