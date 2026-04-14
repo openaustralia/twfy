@@ -118,15 +118,15 @@ if (get_http_var('s') != '' || get_http_var('pid') != '') {
                         print '<a href="' . WEBPATH . 'search/?s=' . urlencode($searchstring) . '&amp;pid=' . $pid . '">';
                     }
                 }
-                print $speaker['name'];
+                print htmlentities($speaker['name']);
                 if ($pid) {
                     print '</a>';
                 }
                 if ($speaker['party']) {
-                    print ' (' . $speaker['party'] . ')';
+                    print ' (' . htmlentities($speaker['party']) . ')';
                 }
                 if (isset($speaker['office'])) {
-                    print ' - ' . join('; ', $speaker['office']);
+                    print ' - ' . htmlentities(join('; ', $speaker['office']));
                 }
                 print '</td> <td>';
                 $pmindate = $speaker['pmindate'];
@@ -246,19 +246,16 @@ function find_constituency($args){
         $MEMBER = new MEMBER(array('constituency' => $constituency));
         $URL = new URL('mp');
         if ($MEMBER->valid) {
-            $URL->insert(array('m' => $MEMBER->member_id()));
-            print '<h3>MP for ' . preg_replace("#$searchterm#i", '<span class="hi">$0</span>', $constituency);
+            $URL->insert(['m' => $MEMBER->member_id()]);
+            print '<h3>MP for ' . htmlentities(preg_replace("#$searchterm#i", '<span class="hi">$0</span>', $constituency));
             if ($validpostcode) {
                 // Display the postcode the user searched for.
                 print ' (' . htmlentities(strtoupper($args['s'])) . ')';
             }
-            ?>
-                </h3>
 
-                <p><a
-                        href="<?php echo $URL->generate(); ?>"><strong><?php echo htmlentities($MEMBER->first_name()) . ' ' . htmlentities($MEMBER->last_name()); ?></strong></a>
-                    (<?php echo $MEMBER->party(); ?>)</p>
-                <?php
+            print "</h3>";
+            print "<p><a href=\"" . $URL->generate() . "\"><strong>" . htmlentities($MEMBER->first_name()) . ' ' . htmlentities($MEMBER->last_name()) . "</strong></a>";
+            print " (" . htmlentities($MEMBER->party()) . ")</p>";
         }
 
     } elseif (count($constituencies)) {
@@ -376,7 +373,7 @@ function find_members($args){
         }
         ?>
             <div id="people_results">
-                <h3>Representatives matching '<?php echo htmlentities($searchstring); ?>'</h3>
+                <h3>Representatives matching '<?php print htmlentities($searchstring); ?>'</h3>
                 <ul>
                     <li><?php print implode("</li>\n\t<li>", $members); ?></li>
                 </ul>
@@ -408,7 +405,7 @@ function find_glossary_items($args){
                 $n = 1;
                 foreach ($GLOSSARY->search_matches as $glossary_id => $term) {
                     $URL->update(['gl' => $glossary_id]);
-                    ?><a href="<?php echo $URL->generate(); ?>"><strong><?php echo htmlentities($term['title']); ?></strong></a>
+                    ?><a href="<?php print $URL->generate(); ?>"><strong><?php print htmlentities($term['title']); ?></strong></a>
                     <?php
                     if ($n < $GLOSSARY->num_search_matches) {
                         print ", ";
