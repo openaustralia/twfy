@@ -277,57 +277,6 @@ function find_constituency($args){
     }
 }
 
-function find_users($args){
-    // Maybe there'll be a better place to put this at some point...
-    global $PAGE, $db;
-
-    if ($args['s'] != '') {
-        // $args['s'] should have been tidied up by the time we get here.
-        // eg, by doing filter_user_input($s, 'strict');
-        $searchstring = $args['s'];
-    } else {
-        $PAGE->error_message("No search string");
-        return false;
-    }
-
-    $searchwords = explode(' ', $searchstring);
-
-    if (count($searchwords) == 1) {
-        $where = "(firstname LIKE '%" . addslashes($searchwords[0]) . "%' OR lastname LIKE '%" . addslashes($searchwords[0]) . "%')";
-    } else {
-        // We don't do anything special if there are more than two search words.
-        // And here we're assuming the user's put the names in the right order.
-        $where = "(firstname LIKE '%" . addslashes($searchwords[0]) . "%' AND lastname LIKE '%" . addslashes($searchwords[1]) . "%')";
-    }
-
-    $q = $db->query("SELECT user_id,
-                            firstname,
-                            lastname
-                    FROM     users
-                    WHERE    $where AND confirmed=1
-                    ORDER BY lastname, firstname, user_id
-                    ");
-
-    if ($q->rows() > 0) {
-
-        $URL = new URL('userview');
-
-        for ($n = 0; $n < $q->rows(); $n++) {
-            $URL->insert(array('u' => $q->field($n, 'user_id')));
-            $members[] = '<a href="' . $URL->generate() . '">' . $q->field($n, 'firstname') . ' ' . $q->field($n, 'lastname') . '</a>';
-        }
-        ?>
-            <h3>Users matching '<?php echo htmlentities($searchstring); ?>'</h3>
-            <ul>
-                <li><?php print implode("</li>\n\t<li>", $members); ?></li>
-            </ul>
-            <?php
-    }
-
-    // We don't display anything if there were no matches.
-
-}
-
 function find_members($args){
     // Maybe there'll be a better place to put this at some point...
     global $PAGE, $db, $parties;
@@ -342,22 +291,42 @@ function find_members($args){
     }
 
     $searchwords = explode(' ', preg_replace('#[^a-z ]#i', '', $searchstring));
-    foreach ($searchwords as $i => $searchword) {
-        $searchwords[$i] = mysql_real_escape_string(htmlentities($searchword));
+    $params = [];
+
+    // Clean up searchwords and handle special cases
+    $cleaned_words = [];
+    foreach ($searchwords as $searchword) {
+        $word = htmlentities($searchword);
         if (!strcasecmp($searchword, 'Opik')) {
-            $searchwords[$i] = '&Ouml;pik';
+            $word = '&Ouml;pik';
+        }
+        if (!empty($word)) {
+            $cleaned_words[] = $word;
         }
     }
+    $searchwords = $cleaned_words;
+
     if (count($searchwords) == 1) {
-        $where = "first_name LIKE '%" . $searchwords[0] . "%' OR last_name LIKE '%" . $searchwords[0] . "%'";
+        $where = "first_name LIKE ? OR last_name LIKE ?";
+        $params = ['%' . $searchwords[0] . '%', '%' . $searchwords[0] . '%'];
     } elseif (count($searchwords) == 2) {
         // We don't do anything special if there are more than two search words.
         // And here we're assuming the user's put the names in the right order.
-        $where = "(first_name LIKE '%" . $searchwords[0] . "%' AND last_name LIKE '%" . $searchwords[1] . "%')";
-        $where .= " OR (first_name LIKE '%" . $searchwords[1] . "%' AND last_name LIKE '%" . $searchwords[0] . "%')";
+        $where = "(first_name LIKE ? AND last_name LIKE ?) OR (first_name LIKE ? AND last_name LIKE ?)";
+        $params = [
+            "%$searchwords[0]%",
+            "%$searchwords[1]%",
+            "%$searchwords[1]%",
+            "%$searchwords[0]%"
+        ];
     } else {
-        $where = "(first_name LIKE '%" . $searchwords[0] . ' ' . $searchwords[1] . "%' AND last_name LIKE '%" . $searchwords[2] . "%')";
-        $where .= " OR (first_name LIKE '%" . $searchwords[0] . "%' AND last_name LIKE '%" . $searchwords[1] . ' ' . $searchwords[2] . "%')";
+        $where = "(first_name LIKE ? AND last_name LIKE ?) OR (first_name LIKE ? AND last_name LIKE ?)";
+        $params = [
+            "%$searchwords[0] $searchwords[1]%",
+            "%$searchwords[2]%",
+            "%$searchwords[0]%",
+            "%$searchwords[1] $searchwords[2]%"
+        ];
     }
 
     $q = $db->query("SELECT person_id,
@@ -367,7 +336,7 @@ function find_members($args){
                     FROM     member
                     WHERE    ($where)
                     ORDER BY last_name, first_name, person_id, entered_house desc
-                    ");
+                    ", ...$params);
 
     if ($q->rows() > 0) {
 
