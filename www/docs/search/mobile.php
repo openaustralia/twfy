@@ -186,8 +186,7 @@ if (get_http_var('s') != '' || get_http_var('pid') != '') {
 
 
 $PAGE->page_end_mobile();
-function find_comments($args)
-{
+function find_comments($args){
     global $PAGE, $db;
     $commentlist = new COMMENTLIST;
     $commentlist->display('search', $args);
@@ -278,8 +277,7 @@ function find_constituency($args){
     }
 }
 
-function find_users($args)
-{
+function find_users($args){
     // Maybe there'll be a better place to put this at some point...
     global $PAGE, $db;
 
@@ -313,7 +311,6 @@ function find_users($args)
     if ($q->rows() > 0) {
 
         $URL = new URL('userview');
-        $users = [];
 
         for ($n = 0; $n < $q->rows(); $n++) {
             $URL->insert(array('u' => $q->field($n, 'user_id')));
@@ -331,8 +328,7 @@ function find_users($args)
 
 }
 
-function find_members($args)
-{
+function find_members($args){
     // Maybe there'll be a better place to put this at some point...
     global $PAGE, $db, $parties;
 
