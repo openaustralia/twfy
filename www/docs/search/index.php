@@ -335,12 +335,12 @@ function find_members($args){
 
     $q = $db->query("SELECT person_id,
                             title, first_name, last_name,
-							constituency, party,
+                            constituency, party,
                             left_house, house
-					FROM 	member
-					WHERE	($where)
-					ORDER BY last_name, first_name, person_id, entered_house desc
-					", ...$params);
+                    FROM 	member
+                    WHERE	($where)
+                    ORDER BY last_name, first_name, person_id, entered_house desc
+                    ", ...$params);
 
     if ($q->rows() > 0) {
 
