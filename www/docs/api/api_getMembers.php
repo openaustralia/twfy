@@ -41,21 +41,6 @@ function api_getMembers_party($house, $s) {
         $house, "%$s%");
 }
 
-/**
- *
- */
-function api_getMembers_state($house, $s) {
-    // Needed to call db->escape()
-    global $parties;
-    $canon_to_short = array_flip($parties);
-    if (isset($canon_to_short[ucwords($s)])) {
-        $s = $canon_to_short[ucwords($s)];
-    }
-    _api_getMembers_output('select * from member
-                where house = ?
-                and constituency like ? and entered_house <= date(now()) and date(now()) <= left_house',
-        $house, "%$s%");
-}
 
 /**
  *

@@ -82,18 +82,6 @@ class GLOSSARY {
                 $this->replace_order[$glossary_id] = count(explode(" ", $term['title']));
             }
             arsort($this->replace_order);
-
-            // Secondary sort for number of letters?
-            // pending functionality...
-
-            // We can either turn off the "current term" completely -
-            // so that it never links to its own page,
-            // Or we can handle it in $this->glossarise below.
-            /*
-            if (isset($this->epobject_id)) {
-            unset ($this->replace_order[$this->epobject_id]);
-            }
-             */
         }
 
         // These stop stupid submissions.

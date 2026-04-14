@@ -6,49 +6,6 @@
 
 include_once INCLUDESPATH . "easyparliament/member.php";
 
-/**
- *
- */
-function api_getHansard_front() {
-    ?>
-    <p><big>Fetch all Hansard.</big></p>
-
-    <h4>Arguments</h4>
-    <p>Note you can only supply <strong>one</strong> of the following at present.</p>
-    <dl>
-        <dt>search</dt>
-        <dd>Fetch the data that contain this term.</dd>
-        <dt>person</dt>
-        <dd>Fetch the data by a particular person ID.</dd>
-        <dt>order (optional, when using search or person, defaults to date)</dt>
-        <dd><kbd>d</kbd> for date ordering, <kbd>r</kbd> for relevance ordering, <kbd>p</kbd> for use by person.</dd>
-        <dt>page (optional, when using search or person)</dt>
-        <dd>Page of results to return.</dd>
-        <dt>num (optional, when using search or person)</dt>
-        <dd>Number of results to return.</dd>
-    </dl>
-
-    <?php
-}
-
-/**
- *
- */
-function api_getHansard_search($s) {
-    _api_getHansard_search([
-        's' => $s,
-        'pid' => get_http_var('person')
-    ]);
-}
-
-/**
- *
- */
-function api_getHansard_person($pid) {
-    _api_getHansard_search([
-        'pid' => $pid
-    ]);
-}
 
 /**
  *

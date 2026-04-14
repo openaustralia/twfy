@@ -134,27 +134,6 @@ function api_getMP_id($id) {
     }
 }
 
-/**
- *
- */
-function api_getMP_postcode($pc) {
-    $pc = preg_replace('#[^0-9]#i', '', $pc);
-
-    if (is_postcode($pc)) {
-        $constituency = postcode_to_constituency($pc);
-        if ($constituency == 'CONNECTION_TIMED_OUT') {
-            api_error('Connection timed out');
-        } elseif ($constituency) {
-            $person = _api_getMP_constituency($constituency);
-            $output = $person;
-            api_output($output, strtotime($output['lastupdate']));
-        } else {
-            api_error('Unknown postcode');
-        }
-    } else {
-        api_error('Invalid postcode');
-    }
-}
 
 /**
  *

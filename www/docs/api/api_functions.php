@@ -9,14 +9,7 @@ include_once '../../../../phplib/rabx.php';
 // The METHODS.
 
 $methods = [
-    /*    'convertURL' => array(
-            'parameters' => array('url'),
-            'required' => true,
-            'help' => 'Converts a parliament.uk Hansard URL into a TheyWorkForYou one, if possible',
-        ),
-     */
     'getDivisions' => [
-        // 'parameters' => array('date', 'search', 'latitude', 'longitude', 'distance'),
         'parameters' => ['postcode', 'date', 'search'],
         'required' => FALSE,
         'help' => 'Returns list of electoral divisions',
@@ -26,17 +19,6 @@ $methods = [
         'required' => TRUE,
         'help' => 'Returns main details for a member of the House of Representatives'
     ],
-    /*    'getMPInfo' => array(
-        'parameters' => array('id', 'fields'),
-        'required' => true,
-        'help' => 'Returns extra information for a person'
-    ),
-    'getMPsInfo' => array(
-        'parameters' => array('id', 'fields'),
-        'required' => true,
-        'help' => 'Returns extra information for one or more people'
-    ),
-     */
     'getRepresentatives' => [
         'parameters' => ['postcode', 'party', 'date', 'search'],
         'required' => FALSE,
@@ -52,57 +34,12 @@ $methods = [
         'required' => FALSE,
         'help' => 'Returns list of Senators',
     ],
-    /*    'getMLAs' => array(
-        'parameters' => array('date', 'party', 'search'),
-        'required' => false,
-        'help' => 'Returns list of MLAs',
-    ),
-    'getMSP' => array(
-        'parameters' => array('id', 'constituency', 'postcode'),
-        'required' => true,
-        'help' => 'Returns details for an MSP'
-    ),
-    'getMSPs' => array(
-        'parameters' => array('date', 'party', 'search'),
-        'required' => false,
-        'help' => 'Returns list of MSPs',
-    ),
-    'getGeometry' => array(
-        'new' => true,
-        'parameters' => array('name'),
-        'required' => false,
-        'help' => 'Returns centre, bounding box of constituencies'
-    ),
-     */
-    /*    'getBoundary' => array(
-        'parameters' => array('name'),
-        'required' => true,
-        'help' => 'Returns boundary polygon of constituency'
-    ),
-     */
-    /*    'getCommittee' => array(
-        'new' => true,
-        'parameters' => array('name', 'date'),
-        'required' => true,
-        'help' => 'Returns members of Select Committee',
-    ),
-     */
+
     'getDebates' => [
         'parameters' => ['type', 'date', 'search', 'person', 'gid', 'year', 'order', 'page', 'num'],
         'required' => TRUE,
         'help' => 'Returns Debates (either House of Representatives or Senate)',
     ],
-    /*    'getWrans' => array(
-        'parameters' => array('date', 'search', 'person', 'gid', 'year', 'order', 'page', 'num'),
-        'required' => true,
-        'help' => 'Returns Written Answers',
-    ),
-    'getWMS' => array(
-        'parameters' => array('date', 'search', 'person', 'gid', 'year', 'order', 'page', 'num'),
-        'required' => true,
-        'help' => 'Returns Written Ministerial Statements',
-    ),
-     */
     'getHansard' => [
         'parameters' => ['search', 'person', 'order', 'page', 'num'],
         'required' => TRUE,
@@ -113,13 +50,6 @@ $methods = [
         'required' => FALSE,
         'help' => 'Returns comments'
     ],
-    /*    'postComment' => array(
-        'parameters' => array('user_id', 'gid?'),
-        'working' => false,
-        'required' => true,
-        'help' => 'Posts a comment - needs authentication!'
-    ),
-     */
 ];
 
 /**
