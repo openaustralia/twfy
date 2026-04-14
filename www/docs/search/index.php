@@ -187,7 +187,7 @@ if (get_http_var('s') != '' || get_http_var('pid') != '') {
     include INCLUDESPATH . 'easyparliament/staticpages/search_help.php';
 }
 
-$PAGE->stripe_end(array(
+$PAGE->stripe_end([
     [
         'type' => 'include',
         'content' => 'search_links'
@@ -196,11 +196,10 @@ $PAGE->stripe_end(array(
         'type' => 'include',
         'content' => 'search'
     ]
-));
+]);
 $PAGE->page_end();
 
 function find_comments($args){
-    global $PAGE, $db;
     $commentlist = new COMMENTLIST;
     $commentlist->display('search', $args);
 }
