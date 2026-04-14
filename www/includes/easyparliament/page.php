@@ -1288,37 +1288,6 @@ class PAGE {
     public function page_footer($extra = NULL) {
         global $DATA, $this_page;
 
-        // This makes the tracker appear on all sections, but only actually on openaustralia.org
-        // if ($DATA->page_metadata($this_page, 'track') ) {.
-        if (substr(DOMAIN, -18) == "openaustralia.org" && substr(DOMAIN, 0, 7) != "staging") {
-            // We want to track this page.
-            // Kind of fake URLs needed for the tracker.
-            $url = urlencode('http://' . DOMAIN . '/' . $this_page);
-            ?>
-                <script type="text/javascript"><!--
-                                                                        an=navigator.appName;sr='http://x3.extreme-dm.com/';srw="na";srb="na";d=document;r=41;function pr(n) {
-                                                                        d.write("<div><img alt=\"\" src=\""+sr+"n\/?tag=fawkes&p=<?php echo $url; ?>& j=y & srw="+srw+" & srb="+srb+" & l="+escape(d.referrer)+" & rs="+r+"\" height=\"1\" width=\"1\"></" + "div>");}
-                    s = screen; srw = s.width; an != "Netscape" ? srb = s.colorDepth : srb = s.pixelDepth
-                    pr()//-->
-                </script><noscript>
-                    <div><img alt="" src="http://x3.extreme-dm.com/z/?tag=fawkes&amp;p=<?php echo $url; ?>&amp;j=n" height="1"
-                            width="1"></div>
-                </noscript>
-                <?php
-                if (get_http_var('c4') || get_http_var('c4x')) { ?>
-                    <script type="text/javascript" src="http://www.channel4.com/media/scripts/statstag.js"></script>
-                    <!--//end WEB STATS --> <noscript>
-                        <div style="display:none"><img width="1" height="1"
-                                src="http://stats.channel4.com/njs.gif?dcsuri=/nojavascript&amp;WT.js=No" alt=""></div>
-                    </noscript>
-                <?php }
-
-                // mySociety tracking, not on staging.
-                if (defined('OPTION_TRACKING') && OPTION_TRACKING) {
-                    track_event($extra);
-                }
-        }
-
         // DAMN, this really shouldn't be in PAGE.
         $db = new ParlDB();
         $db->display_total_duration();
@@ -3045,25 +3014,25 @@ and has had no written questions answered for which we know the department or su
             $username = htmlentities($data['user_name']);
         }
         ?>
-                    <div class="comment">
-                        <p class="credit"><strong>Comment report</strong><br>
-                            <small>Reported by <?php echo $username; ?> on <?php echo $data['reported']; ?></small>
-                        </p>
+                <div class="comment">
+                    <p class="credit"><strong>Comment report</strong><br>
+                        <small>Reported by <?php echo $username; ?> on <?php echo $data['reported']; ?></small>
+                    </p>
 
-                        <p><?php echo htmlentities($data['body']); ?></p>
-                    </div>
+                    <p><?php echo htmlentities($data['body']); ?></p>
+                </div>
+                <?php
+                if ($data['resolved'] != 'NULL') {
+                    ?>
+                    <p>&nbsp;<br><em>This report has not been resolved.</em></p>
                     <?php
-                    if ($data['resolved'] != 'NULL') {
-                        ?>
-                        <p>&nbsp;<br><em>This report has not been resolved.</em></p>
-                        <?php
-                    } else {
-                        ?>
-                        <p><em>This report was resolved on <?php echo $data['resolved']; ?></em></p>
-                        <?php
-                        // We could link to the person who resolved it with $data['resolvedby'],
-                        // a user_id. But we don't have their name at the moment.
-                    }
+                } else {
+                    ?>
+                    <p><em>This report was resolved on <?php echo $data['resolved']; ?></em></p>
+                    <?php
+                    // We could link to the person who resolved it with $data['resolvedby'],
+                    // a user_id. But we don't have their name at the moment.
+                }
 
     }
 
@@ -3272,44 +3241,44 @@ and has had no written questions answered for which we know the department or su
         */
 
         ?>
-                    <table border="1" cellpadding="3" cellspacing="0" width="90%">
-                        <?php
-                        if (isset($data['header']) && count($data['header'])) {
+                <table border="1" cellpadding="3" cellspacing="0" width="90%">
+                    <?php
+                    if (isset($data['header']) && count($data['header'])) {
+                        ?>
+                        <thead>
+                            <tr><?php
+                            foreach ($data['header'] as $text) {
+                                ?>
+                                    <th><?php echo $text; ?></th><?php
+                            }
                             ?>
-                            <thead>
+                            </tr>
+                        </thead>
+                        <?php
+                    }
+
+                    if (isset($data['rows']) && count($data['rows'])) {
+                        ?>
+                        <tbody>
+                            <?php
+                            foreach ($data['rows'] as $row) {
+                                ?>
                                 <tr><?php
-                                foreach ($data['header'] as $text) {
+                                foreach ($row as $text) {
                                     ?>
-                                        <th><?php echo $text; ?></th><?php
+                                        <td><?php echo $text; ?></td><?php
                                 }
                                 ?>
                                 </tr>
-                            </thead>
-                            <?php
-                        }
-
-                        if (isset($data['rows']) && count($data['rows'])) {
-                            ?>
-                            <tbody>
                                 <?php
-                                foreach ($data['rows'] as $row) {
-                                    ?>
-                                    <tr><?php
-                                    foreach ($row as $text) {
-                                        ?>
-                                            <td><?php echo $text; ?></td><?php
-                                    }
-                                    ?>
-                                    </tr>
-                                    <?php
-                                }
-                                ?>
-                            </tbody>
-                            <?php
-                        }
-                        ?>
-                    </table>
-                    <?php
+                            }
+                            ?>
+                        </tbody>
+                        <?php
+                    }
+                    ?>
+                </table>
+                <?php
 
     }
 
@@ -3441,13 +3410,13 @@ function display_stats_line_house($house, $category, $blurb, $type, $inwhat, $ex
 function display_writetothem_numbers($year, $extra_info) {
     if (isset($extra_info["writetothem_responsiveness_notes_$year"])) {
         ?>
-                    <li>Responsiveness to messages sent via <a
-                            href="http://www.writetothem.com/stats/<?php echo $year ?>/mps">WriteToThem.com</a> in
-                        <?php echo $year ?>:
-                        <?php echo $extra_info["writetothem_responsiveness_notes_$year"] ?>.
-                    </li>
-                    <?php
-                    return TRUE;
+                <li>Responsiveness to messages sent via <a
+                        href="http://www.writetothem.com/stats/<?php echo $year ?>/mps">WriteToThem.com</a> in
+                    <?php echo $year ?>:
+                    <?php echo $extra_info["writetothem_responsiveness_notes_$year"] ?>.
+                </li>
+                <?php
+                return TRUE;
     } elseif (isset($extra_info["writetothem_responsiveness_mean_$year"])) {
         $mean = $extra_info["writetothem_responsiveness_mean_$year"];
 
