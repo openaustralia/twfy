@@ -1582,28 +1582,11 @@ class PAGE {
                 <?php echo number_format($extra_info['majority_in_seat']); ?> votes. <?php
 
                     if (isset($extra_info['swing_to_lose_seat_today'])) {
-                        /*
-                        if (isset($extra_info['swing_to_lose_seat_today_quintile'])) {
-                        $q = $extra_info['swing_to_lose_seat_today_quintile'];
-                        if ($q == 0) {
-                        print 'Very safe seat';
-                        } elseif ($q == 1) {
-                        print 'Safe seat';
-                        } elseif ($q == 2) {
-                        print '';
-                        } elseif ($q == 3) {
-                        print 'Unsafe seat';
-                        } elseif ($q == 4) {
-                        print 'Very unsafe seat';
-                        } else {
-                        print '[Impossible quintile!]';
-                        }
-                        }
-                        */
                         print ' &mdash; ' . make_ranking($extra_info['swing_to_lose_seat_today_rank']); ?> out of
-                    <?php echo $extra_info['swing_to_lose_seat_today_rank_outof']; ?> MPs.
-                    <?php
-                    } ?>
+                        <?php echo $extra_info['swing_to_lose_seat_today_rank_outof']; ?> MPs.
+                        <?php
+                    }
+                    ?>
             </li>
             <?php
         }
@@ -1751,7 +1734,7 @@ class PAGE {
 
             if ($topics_block_empty) {
                 print "<p><em>This MP is not currently on any select <!-- or public bill --> committee
-and has had no written questions answered for which we know the department or subject.</em></p>";
+                    and has had no written questions answered for which we know the department or subject.</em></p>";
             }
             $this->block_end();
 
