@@ -636,13 +636,6 @@ class PAGE {
             'help' => []
         ];
 
-        // If the user's postcode is set, then we allow them to view the bottom menu link to this page.
-        /*
-         * if ($THEUSER->constituency_is_set()) {
-         * $items['yourmp'] = array ('yourmp_recent');
-         * }
-         */
-
         $top_links = [];
         $bottom_links = [];
 
@@ -745,13 +738,6 @@ class PAGE {
             // 'help_us_out'   => array ('glossary_addterm'),
             'help' => []
         ];
-
-        // If the user's postcode is set, then we allow them to view the bottom menu link to this page.
-        /*
-         * if ($THEUSER->constituency_is_set()) {
-         * $items['yourmp'] = array ('yourmp_recent');
-         * }
-         */
 
         $top_links = [];
         $bottom_links = [];

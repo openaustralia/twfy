@@ -11,26 +11,6 @@
 function normalise_constituency_name($name) {
     // HACK.
     return $name;
-
-    $db = new ParlDB();
-
-    // Use &amp; everywhere, as in DB.
-    $name = str_replace("&amp;", "&", $name);
-    $name = str_replace("&", "&amp;", $name);
-
-    $query = "select cons_id from constituency where name like ? and from_date <= date(now()) and date(now()) <= to_date";
-    $q1 = $db->query($query, "%$name%");
-    if ($q1->rows <= 0) {
-        return FALSE;
-    }
-
-    $query = "select name from constituency where main_name and cons_id = '" . $q1->field(0, 'cons_id') . "'";
-    $q2 = $db->query($query);
-    if ($q2->rows <= 0) {
-        return FALSE;
-    }
-
-    return $q2->field(0, "name");
 }
 
 /**
