@@ -55,6 +55,7 @@ class SEARCHENGINE {
     public $query = NULL;
     public $stemerr = NULL;
     public $enquire = NULL;
+    public $stemmer = NULL;
     public $wordchars = '';
     public $words = [];
     public $phrases = [];
@@ -493,7 +494,7 @@ class SEARCHENGINE {
             // array_push($replacewords, "\\1<span class=\"hi\">\\2</span>\\3");.
         }
         foreach ($this->phrases as $phrase) {
-            $phrasematch = implode($phrase, '[^' . $this->wordchars . ']+');
+            $phrasematch = implode('[^' . $this->wordchars . ']+', $phrase);
             array_push($findwords, "/\b($phrasematch)\b/i");
             $replacewords[] = "<span class=\"hi\">\\1</span>";
         }
@@ -520,7 +521,7 @@ class SEARCHENGINE {
 
         // Look for phrases.
         foreach ($this->phrases as $phrase) {
-            $phrasematch = implode($phrase, '[^' . $this->wordchars . ']+');
+            $phrasematch = implode('[^' . $this->wordchars . ']+', $phrase);
             if (preg_match('/([^' . $this->wordchars . ']' . $phrasematch . '[^' . $this->wordchars . '])/', $lcbody, $matches)) {
                 $wordpos = strpos($lcbody, $matches[0]);
                 if ($wordpos) {

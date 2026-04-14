@@ -31,6 +31,8 @@ include_once INCLUDESPATH . "wikipedia.php";
 class GLOSSARY {
 
     private $db = NULL;
+    private $stopwords = [];
+    private $alphabet = [];
 
     /**
      * How many glossary entries do we have.
@@ -52,7 +54,14 @@ class GLOSSARY {
     public $current_term;        /**
                                   * Will only be set if we have a valid epobject_id.
                                   */
+    public $terms = [];
+    public $previous_term;
+    public $next_term;
+
     public $current_letter;
+    public $search_matches = [];
+    public $num_search_matches = 0;
+    private $replace_order = [];
 
     /**
      * Constructor...
@@ -73,7 +82,7 @@ class GLOSSARY {
             $this->search_glossary($args);
         }
         $got = $this->get_glossary_item($args);
-        if ($got && isset($args['sort']) && ($args['sort'] == 'regexp_replace')) {
+        if ($got > 0 && isset($args['sort']) && ($args['sort'] == 'regexp_replace')) {
             // We need to sort the terms in the array by "number of words in term".
             // This way, "prime minister" gets dealt with before "minister" when generating glossary links.
 
@@ -82,18 +91,6 @@ class GLOSSARY {
                 $this->replace_order[$glossary_id] = count(explode(" ", $term['title']));
             }
             arsort($this->replace_order);
-
-            // Secondary sort for number of letters?
-            // pending functionality...
-
-            // We can either turn off the "current term" completely -
-            // so that it never links to its own page,
-            // Or we can handle it in $this->glossarise below.
-            /*
-            if (isset($this->epobject_id)) {
-            unset ($this->replace_order[$this->epobject_id]);
-            }
-             */
         }
 
         // These stop stupid submissions.
@@ -105,7 +102,7 @@ class GLOSSARY {
     /**
      *
      */
-    public function get_glossary_item($args = []) {
+    private function get_glossary_item($args = []):int {
         // Search for and fetch glossary item with title or glossary_id
         // We could also search glossary text that contains the title text, for cross references.
 
@@ -156,9 +153,9 @@ class GLOSSARY {
             }
 
             return ($this->num_terms);
-        } else {
-            return FALSE;
         }
+
+        return 0;
     }
 
     /**

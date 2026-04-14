@@ -14,6 +14,7 @@ class MEMBER {
 
     private $db = NULL;
 
+    public $valid = FALSE;
     public $member_id;
     public $person_id;
     public $first_name;
@@ -285,25 +286,8 @@ class MEMBER {
             $PAGE->error_message('Sorry, no name was found.');
             return FALSE;
         }
-        // Matthew made this change, but I don't know why.  It broke
-        // Iain Duncan Smith, so I've put it back.  FAI 2005-03-14.
-        // $success = preg_match('#^(.*? .*?) (.*?)$#', $name, $m);.
+
         $q = "SELECT DISTINCT person_id,constituency,left_house FROM member WHERE ";
-        // If ($this_page=='peer') {
-        // $success = preg_match('#^(.*?) (.*?) of (.*?)$#', $name, $m);
-        // if (!$success)
-        // $success = preg_match('#^(.*?)() of (.*?)$#', $name, $m);
-        // if (!$success)
-        // $success = preg_match('#^(.*?) (.*?)()$#', $name, $m);
-        // if (!$success) {
-        // $PAGE->error_message('Sorry, that name was not recognised.');
-        // return false;
-        // }
-        // $title = mysqli_real_escape_string($this->db->conn ,$m[1]);
-        // $last_name = mysqli_real_escape_string($this->db->conn ,$m[2]);
-        // $const = $m[3];
-        // $q .= "house = 2 AND title = '$title' AND last_name='$last_name'";
-        // }.
         if ($this_page == 'msp') {
             $success = preg_match('#^(.*?) (.*?) (.*?)$#', $name, $m);
             if (!$success) {
@@ -346,11 +330,7 @@ class MEMBER {
             $first_name = $m[1];
             $middle_name = $m[2];
             $last_name = $m[3];
-            if (strstr($this_page, 'mp')) {
-                $house = 1;
-            } else {
-                $house = 2;
-            }
+            $house = (strstr($this_page, 'mp')) ? 1 : 2;
             // If ($title) $q .= 'title = \'' . $this->db->escape($title) . '\' AND ';.
             $q .= "house = " . $house . " AND ((first_name='" . $this->db->escape($first_name . " " . $middle_name) . "' AND last_name='" . $this->db->escape($last_name) . "') OR " .
                 "(first_name='" . $this->db->escape($first_name) . "' AND last_name='" . $this->db->escape($middle_name . " " . $last_name) . "'))";
@@ -419,51 +399,30 @@ class MEMBER {
      */
     public function load_extra_info() {
 
-        $q = $this->db->query('SELECT * FROM moffice WHERE person=' .
-            $this->db->escape($this->person_id) . ' ORDER BY from_date DESC');
+        $q = $this->db->query('SELECT * FROM moffice WHERE person=? ORDER BY from_date DESC', $this->person_id);
         for ($row = 0; $row < $q->rows(); $row++) {
             $this->extra_info['office'][] = $q->row($row);
         }
 
-        // Info specific to member id (e.g. attendance during that period of office)
-        // $q = $this->db->query("SELECT data_key, data_value,.
-        // (SELECT count(member_id) FROM memberinfo AS m2
-        // WHERE m2.data_key=memberinfo.data_key AND m2.data_value=memberinfo.data_value) AS joint
-        // FROM     memberinfo
-        // WHERE    member_id = '" . mysqli_real_escape_string($this->db->conn ,$this->member_id) . "'
-        // ");.
         $q = $this->db->query("SELECT data_key, data_value
                         FROM 	memberinfo
-                        WHERE	member_id = '" . $this->db->escape($this->member_id) . "'
-                        ");
+                        WHERE	member_id = ?", $this->member_id);
         for ($row = 0; $row < $q->rows(); $row++) {
             $this->extra_info[$q->field($row, 'data_key')] = $q->field($row, 'data_value');
-            // If ($q->field($row, 'joint') > 1)
-            // $this->extra_info[$q->field($row, 'data_key').'_joint'] = true;.
         }
 
-        // Info specific to person id (e.g. their permanent page on the Guardian website)
-        // $q = $this->db->query("SELECT data_key, data_value, (SELECT person_id FROM personinfo AS p2.
-        // WHERE p2.person_id <> personinfo.person_id AND p2.data_key=personinfo.data_key AND p2.data_value=personinfo.data_value LIMIT 1) AS count
-        // FROM     personinfo
-        // WHERE    person_id = '" . mysqli_real_escape_string($this->db->conn ,$this->person_id) . "'
-        // ");.
         $q = $this->db->query("SELECT data_key, data_value
                         FROM 	personinfo
-                        WHERE	person_id = '" . $this->db->escape($this->person_id) . "'
-                        ");
+                        WHERE	person_id = ?", $this->person_id);
         for ($row = 0; $row < $q->rows(); $row++) {
             $this->extra_info[$q->field($row, 'data_key')] = $q->field($row, 'data_value');
-            // If ($q->field($row, 'count') > 1)
-            // $this->extra_info[$q->field($row, 'data_key').'_joint'] = true;.
         }
 
         // Info specific to constituency (e.g. election results page on Guardian website)
         $q = $this->db->query("SELECT	data_key,
                                 data_value
                         FROM 	consinfo
-                        WHERE	constituency = '" . $this->db->escape($this->constituency) . "'
-                        ");
+                        WHERE	constituency = ?", $this->constituency);
         for ($row = 0; $row < $q->rows(); $row++) {
             $this->extra_info[$q->field($row, 'data_key')] = $q->field($row, 'data_value');
         }
@@ -476,7 +435,6 @@ class MEMBER {
                 str_replace("/person/", "/person/parliament/", $guardian_url);
             $this->extra_info['guardian_biography'] =
                 $guardian_url;
-            // str_replace("/person/", "/person/biography/", $guardian_url);.
             $this->extra_info['guardian_candidacies'] =
                 str_replace("/person/", "/person/candidacies/", $guardian_url);
             $this->extra_info['guardian_howtheyvoted'] =
@@ -535,8 +493,7 @@ class MEMBER {
         // Public Bill Committees.
         $q = $this->db->query('select bill_id,session,title,sum(attending) as a,sum(chairman) as c
 		from pbc_members, bills
-		where bill_id = bills.id and member_id = ' . $this->member_id()
-            . ' group by bill_id');
+		where bill_id = bills.id and member_id = ? group by bill_id', $this->member_id());
         $this->extra_info['pbc'] = [];
         for ($i = 0; $i < $q->rows(); $i++) {
             $bill_id = $q->field($i, 'bill_id');
@@ -607,13 +564,6 @@ class MEMBER {
      */
     public function house($house) {
         return in_array($house, $this->houses) ? TRUE : FALSE;
-    }
-
-    /**
-     *
-     */
-    public function house_text($house) {
-        return $this->houses_pretty[$house];
     }
 
     /**

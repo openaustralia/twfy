@@ -1288,37 +1288,6 @@ class PAGE {
     public function page_footer($extra = NULL) {
         global $DATA, $this_page;
 
-        // This makes the tracker appear on all sections, but only actually on openaustralia.org
-        // if ($DATA->page_metadata($this_page, 'track') ) {.
-        if (substr(DOMAIN, -18) == "openaustralia.org" && substr(DOMAIN, 0, 7) != "staging") {
-            // We want to track this page.
-            // Kind of fake URLs needed for the tracker.
-            $url = urlencode('http://' . DOMAIN . '/' . $this_page);
-            ?>
-                <script type="text/javascript"><!--
-                                                                        an=navigator.appName;sr='http://x3.extreme-dm.com/';srw="na";srb="na";d=document;r=41;function pr(n) {
-                                                                        d.write("<div><img alt=\"\" src=\""+sr+"n\/?tag=fawkes&p=<?php echo $url; ?>& j=y & srw="+srw+" & srb="+srb+" & l="+escape(d.referrer)+" & rs="+r+"\" height=\"1\" width=\"1\"></" + "div>");}
-                    s = screen; srw = s.width; an != "Netscape" ? srb = s.colorDepth : srb = s.pixelDepth
-                    pr()//-->
-                </script><noscript>
-                    <div><img alt="" src="http://x3.extreme-dm.com/z/?tag=fawkes&amp;p=<?php echo $url; ?>&amp;j=n" height="1"
-                            width="1"></div>
-                </noscript>
-                <?php
-                if (get_http_var('c4') || get_http_var('c4x')) { ?>
-                    <script type="text/javascript" src="http://www.channel4.com/media/scripts/statstag.js"></script>
-                    <!--//end WEB STATS --> <noscript>
-                        <div style="display:none"><img width="1" height="1"
-                                src="http://stats.channel4.com/njs.gif?dcsuri=/nojavascript&amp;WT.js=No" alt=""></div>
-                    </noscript>
-                <?php }
-
-                // mySociety tracking, not on staging.
-                if (defined('OPTION_TRACKING') && OPTION_TRACKING) {
-                    track_event($extra);
-                }
-        }
-
         // DAMN, this really shouldn't be in PAGE.
         $db = new ParlDB();
         $db->display_total_duration();
@@ -1613,28 +1582,11 @@ class PAGE {
                 <?php echo number_format($extra_info['majority_in_seat']); ?> votes. <?php
 
                     if (isset($extra_info['swing_to_lose_seat_today'])) {
-                        /*
-                        if (isset($extra_info['swing_to_lose_seat_today_quintile'])) {
-                        $q = $extra_info['swing_to_lose_seat_today_quintile'];
-                        if ($q == 0) {
-                        print 'Very safe seat';
-                        } elseif ($q == 1) {
-                        print 'Safe seat';
-                        } elseif ($q == 2) {
-                        print '';
-                        } elseif ($q == 3) {
-                        print 'Unsafe seat';
-                        } elseif ($q == 4) {
-                        print 'Very unsafe seat';
-                        } else {
-                        print '[Impossible quintile!]';
-                        }
-                        }
-                        */
                         print ' &mdash; ' . make_ranking($extra_info['swing_to_lose_seat_today_rank']); ?> out of
-                    <?php echo $extra_info['swing_to_lose_seat_today_rank_outof']; ?> MPs.
-                    <?php
-                    } ?>
+                        <?php echo $extra_info['swing_to_lose_seat_today_rank_outof']; ?> MPs.
+                        <?php
+                    }
+                    ?>
             </li>
             <?php
         }
@@ -1782,7 +1734,7 @@ class PAGE {
 
             if ($topics_block_empty) {
                 print "<p><em>This MP is not currently on any select <!-- or public bill --> committee
-and has had no written questions answered for which we know the department or subject.</em></p>";
+                    and has had no written questions answered for which we know the department or subject.</em></p>";
             }
             $this->block_end();
 
@@ -1799,9 +1751,9 @@ and has had no written questions answered for which we know the department or su
 
             $this->block_start(['id' => 'hansard', 'title' => $title]);
             // This is really far from ideal - I don't really want $PAGE to know
-// anything about HANSARDLIST / DEBATELIST / WRANSLIST.
-// But doing this any other way is going to be a lot more work for little
-// benefit unfortunately.
+            // anything about HANSARDLIST / DEBATELIST / WRANSLIST.
+            // But doing this any other way is going to be a lot more work for little
+            // benefit unfortunately.
 
             twfy_debug_timestamp();
             $HANSARDLIST = new HANSARDLIST();
@@ -1888,11 +1840,6 @@ and has had no written questions answered for which we know the department or su
                 }
                 print '.</li>';
             }
-
-            // $wtt_displayed = display_writetothem_numbers(2006, $extra_info);
-            // $displayed_stuff |= $wtt_displayed;
-            // if (!$wtt_displayed)
-            // $displayed_stuff |= display_writetothem_numbers(2005, $extra_info);
 
             $after_stuff = ' <small>(From Public Whip)</small>';
             if ($member['party'] == 'Scottish National Party') {
@@ -2502,8 +2449,6 @@ and has had no written questions answered for which we know the department or su
         // If $value is set then it will be displayed in the form.
         // Otherwise the value of 's' in the URL will be displayed.
 
-        $wtt = get_http_var('wtt');
-
         $URL = new URL('search');
         // No need to pass any query params as a form action. They are not used.
         $URL->reset();
@@ -2513,69 +2458,56 @@ and has had no written questions answered for which we know the department or su
         }
 
         echo '<div class="mainsearchbox">';
-        if ($wtt < 2) {
-            echo '<form action="', $URL->generate(), '" method="get">';
-            if (get_http_var('o')) {
-                echo '<input type="hidden" name="o" value="', htmlentities(get_http_var('o')), '">';
-            }
-            if (get_http_var('house')) {
-                echo '<input type="hidden" name="house" value="', htmlentities(get_http_var('house')), '">';
-            }
-            echo '<input type="text" name="s" value="', htmlentities($value), '" size="20"> ';
-            echo '<input type="submit" value=" ', ($wtt ? 'Modify search' : 'Search'), ' "><br>';
-            if ($wtt) {
-                print '<input type="hidden" name="wtt" value="1">';
-            }
+        echo '<form action="', $URL->generate(), '" method="get">';
+        if (get_http_var('o')) {
+            echo '<input type="hidden" name="o" value="', htmlentities(get_http_var('o')), '">';
+        }
+        if (get_http_var('house')) {
+            echo '<input type="hidden" name="house" value="', htmlentities(get_http_var('house')), '">';
+        }
+        echo '<input type="text" name="s" value="', htmlentities($value), '" size="20"> ';
+        echo '<input type="submit" value=" Search "><br>';
 
-        } else { ?>
-                    <form action="http://www.writetothem.com/lords" method="get">
-                        <input type="hidden" name="pid" value="<?php echo htmlentities(get_http_var('pid')) ?>">
-                        <input type="submit" style="font-size: 150%" value=" I want to write to this Lord "><br>
-                        <?php
+        echo '<div style="margin-top: 5px">';
+        $orderUrl = new URL('search');
+        $ordering = get_http_var('o');
+        if ($ordering != 'r' && $ordering != 'd' && $ordering != 'p') {
+            $ordering = 'd';
         }
 
-        if (!$wtt) {
-            echo '<div style="margin-top: 5px">';
-            $orderUrl = new URL('search');
-            $ordering = get_http_var('o');
-            if ($ordering != 'r' && $ordering != 'd' && $ordering != 'p') {
-                $ordering = 'd';
-            }
+        if ($ordering == 'r') {
+            print '<strong>Most relevant results are first</strong>';
+        } else {
+            printf("<a href='%s'>Show most relevant results first</a>", $orderUrl->generate('html', ['o' => 'r']));
+        }
 
-            if ($ordering == 'r') {
-                print '<strong>Most relevant results are first</strong>';
-            } else {
-                printf("<a href='%s'>Show most relevant results first</a>", $orderUrl->generate('html', ['o' => 'r']));
-            }
+        print "&nbsp;|&nbsp;";
+        if ($ordering == 'd') {
+            print '<strong>Most recent results are first</strong>';
+        } else {
+            printf("<a href='%s'>Show most recent results first</a>", $orderUrl->generate('html', ['o' => 'd']));
+        }
 
-            print "&nbsp;|&nbsp;";
-            if ($ordering == 'd') {
-                print '<strong>Most recent results are first</strong>';
-            } else {
-                printf("<a href='%s'>Show most recent results first</a>", $orderUrl->generate('html', ['o' => 'd']));
-            }
+        print "&nbsp;|&nbsp;";
+        if ($ordering == 'p') {
+            print '<strong>Use by person</strong>';
+        } else {
+            printf('<a href="%s">Show use by person</a>', $orderUrl->generate('html', ['o' => 'p']));
+        }
+        echo '</div>';
 
-            print "&nbsp;|&nbsp;";
-            if ($ordering == 'p') {
-                print '<strong>Use by person</strong>';
-            } else {
-                printf('<a href="%s">Show use by person</a>', $orderUrl->generate('html', ['o' => 'p']));
-            }
-            echo '</div>';
-
-            $person_id = get_http_var('pid');
-            if ($person_id != "") {
-                $member = new MEMBER(['person_id' => $person_id]);
-                if ($member->valid) {
-                    $name = $member->full_name();
-                    ?>
-                                <p>
-                                    <input type="radio" name="pid" value="<?php echo htmlentities($person_id) ?>" checked>Search only
-                                    <?php echo htmlentities($name) ?>
-                                    <input type="radio" name="pid" value="">Search all speeches
-                                </p>
-                                <?php
-                }
+        $person_id = get_http_var('pid');
+        if ($person_id != "") {
+            $member = new MEMBER(['person_id' => $person_id]);
+            if ($member->valid) {
+                $name = $member->full_name();
+                ?>
+                            <p>
+                                <input type="radio" name="pid" value="<?php echo htmlentities($person_id) ?>" checked>Search only
+                                <?php echo htmlentities($name) ?>
+                                <input type="radio" name="pid" value="">Search all speeches
+                            </p>
+                            <?php
             }
         }
 
@@ -3065,25 +2997,25 @@ and has had no written questions answered for which we know the department or su
             $username = htmlentities($data['user_name']);
         }
         ?>
-                    <div class="comment">
-                        <p class="credit"><strong>Comment report</strong><br>
-                            <small>Reported by <?php echo $username; ?> on <?php echo $data['reported']; ?></small>
-                        </p>
+                <div class="comment">
+                    <p class="credit"><strong>Comment report</strong><br>
+                        <small>Reported by <?php echo $username; ?> on <?php echo $data['reported']; ?></small>
+                    </p>
 
-                        <p><?php echo htmlentities($data['body']); ?></p>
-                    </div>
+                    <p><?php echo htmlentities($data['body']); ?></p>
+                </div>
+                <?php
+                if ($data['resolved'] != 'NULL') {
+                    ?>
+                    <p>&nbsp;<br><em>This report has not been resolved.</em></p>
                     <?php
-                    if ($data['resolved'] != 'NULL') {
-                        ?>
-                        <p>&nbsp;<br><em>This report has not been resolved.</em></p>
-                        <?php
-                    } else {
-                        ?>
-                        <p><em>This report was resolved on <?php echo $data['resolved']; ?></em></p>
-                        <?php
-                        // We could link to the person who resolved it with $data['resolvedby'],
-                        // a user_id. But we don't have their name at the moment.
-                    }
+                } else {
+                    ?>
+                    <p><em>This report was resolved on <?php echo $data['resolved']; ?></em></p>
+                    <?php
+                    // We could link to the person who resolved it with $data['resolvedby'],
+                    // a user_id. But we don't have their name at the moment.
+                }
 
     }
 
@@ -3292,44 +3224,44 @@ and has had no written questions answered for which we know the department or su
         */
 
         ?>
-                    <table border="1" cellpadding="3" cellspacing="0" width="90%">
-                        <?php
-                        if (isset($data['header']) && count($data['header'])) {
+                <table border="1" cellpadding="3" cellspacing="0" width="90%">
+                    <?php
+                    if (isset($data['header']) && count($data['header'])) {
+                        ?>
+                        <thead>
+                            <tr><?php
+                            foreach ($data['header'] as $text) {
+                                ?>
+                                    <th><?php echo $text; ?></th><?php
+                            }
                             ?>
-                            <thead>
+                            </tr>
+                        </thead>
+                        <?php
+                    }
+
+                    if (isset($data['rows']) && count($data['rows'])) {
+                        ?>
+                        <tbody>
+                            <?php
+                            foreach ($data['rows'] as $row) {
+                                ?>
                                 <tr><?php
-                                foreach ($data['header'] as $text) {
+                                foreach ($row as $text) {
                                     ?>
-                                        <th><?php echo $text; ?></th><?php
+                                        <td><?php echo $text; ?></td><?php
                                 }
                                 ?>
                                 </tr>
-                            </thead>
-                            <?php
-                        }
-
-                        if (isset($data['rows']) && count($data['rows'])) {
-                            ?>
-                            <tbody>
                                 <?php
-                                foreach ($data['rows'] as $row) {
-                                    ?>
-                                    <tr><?php
-                                    foreach ($row as $text) {
-                                        ?>
-                                            <td><?php echo $text; ?></td><?php
-                                    }
-                                    ?>
-                                    </tr>
-                                    <?php
-                                }
-                                ?>
-                            </tbody>
-                            <?php
-                        }
-                        ?>
-                    </table>
-                    <?php
+                            }
+                            ?>
+                        </tbody>
+                        <?php
+                    }
+                    ?>
+                </table>
+                <?php
 
     }
 
@@ -3461,13 +3393,13 @@ function display_stats_line_house($house, $category, $blurb, $type, $inwhat, $ex
 function display_writetothem_numbers($year, $extra_info) {
     if (isset($extra_info["writetothem_responsiveness_notes_$year"])) {
         ?>
-                    <li>Responsiveness to messages sent via <a
-                            href="http://www.writetothem.com/stats/<?php echo $year ?>/mps">WriteToThem.com</a> in
-                        <?php echo $year ?>:
-                        <?php echo $extra_info["writetothem_responsiveness_notes_$year"] ?>.
-                    </li>
-                    <?php
-                    return TRUE;
+                <li>Responsiveness to messages sent via <a
+                        href="http://www.writetothem.com/stats/<?php echo $year ?>/mps">WriteToThem.com</a> in
+                    <?php echo $year ?>:
+                    <?php echo $extra_info["writetothem_responsiveness_notes_$year"] ?>.
+                </li>
+                <?php
+                return TRUE;
     } elseif (isset($extra_info["writetothem_responsiveness_mean_$year"])) {
         $mean = $extra_info["writetothem_responsiveness_mean_$year"];
 
