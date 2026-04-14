@@ -14,6 +14,7 @@ class MEMBER {
 
     private $db = NULL;
 
+    public $valid = FALSE;
     public $member_id;
     public $person_id;
     public $first_name;
@@ -285,25 +286,8 @@ class MEMBER {
             $PAGE->error_message('Sorry, no name was found.');
             return FALSE;
         }
-        // Matthew made this change, but I don't know why.  It broke
-        // Iain Duncan Smith, so I've put it back.  FAI 2005-03-14.
-        // $success = preg_match('#^(.*? .*?) (.*?)$#', $name, $m);.
+
         $q = "SELECT DISTINCT person_id,constituency,left_house FROM member WHERE ";
-        // If ($this_page=='peer') {
-        // $success = preg_match('#^(.*?) (.*?) of (.*?)$#', $name, $m);
-        // if (!$success)
-        // $success = preg_match('#^(.*?)() of (.*?)$#', $name, $m);
-        // if (!$success)
-        // $success = preg_match('#^(.*?) (.*?)()$#', $name, $m);
-        // if (!$success) {
-        // $PAGE->error_message('Sorry, that name was not recognised.');
-        // return false;
-        // }
-        // $title = mysqli_real_escape_string($this->db->conn ,$m[1]);
-        // $last_name = mysqli_real_escape_string($this->db->conn ,$m[2]);
-        // $const = $m[3];
-        // $q .= "house = 2 AND title = '$title' AND last_name='$last_name'";
-        // }.
         if ($this_page == 'msp') {
             $success = preg_match('#^(.*?) (.*?) (.*?)$#', $name, $m);
             if (!$success) {
