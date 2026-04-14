@@ -101,7 +101,6 @@ class COMMENT {
         return $this->comment_id;
     }
 
-
     /**
      *
      */
@@ -115,7 +114,6 @@ class COMMENT {
     public function comments_enabled() {
         return $this->comments_enabled;
     }
-
 
     /**
      *

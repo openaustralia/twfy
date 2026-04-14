@@ -41,7 +41,6 @@ function api_getMembers_party($house, $s) {
         $house, "%$s%");
 }
 
-
 /**
  *
  */

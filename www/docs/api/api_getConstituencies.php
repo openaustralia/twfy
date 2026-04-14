@@ -66,7 +66,6 @@ function _api_getConstituencies_latitude($lat, $lon, $d) {
     return $out;
 }
 
-
 /**
  * _api_angle_between A1 A2
  * Given two angles A1 and A2 on a circle expressed in radians, return the

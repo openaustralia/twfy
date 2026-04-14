@@ -6,7 +6,6 @@
 
 include_once '../../../../phplib/mapit.php';
 
-
 /**
  *
  */

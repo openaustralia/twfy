@@ -6,7 +6,6 @@
 
 include_once INCLUDESPATH . "easyparliament/member.php";
 
-
 /**
  *
  */
