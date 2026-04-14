@@ -1768,9 +1768,9 @@ and has had no written questions answered for which we know the department or su
 
             $this->block_start(['id' => 'hansard', 'title' => $title]);
             // This is really far from ideal - I don't really want $PAGE to know
-// anything about HANSARDLIST / DEBATELIST / WRANSLIST.
-// But doing this any other way is going to be a lot more work for little
-// benefit unfortunately.
+            // anything about HANSARDLIST / DEBATELIST / WRANSLIST.
+            // But doing this any other way is going to be a lot more work for little
+            // benefit unfortunately.
 
             twfy_debug_timestamp();
             $HANSARDLIST = new HANSARDLIST();
