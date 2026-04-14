@@ -106,16 +106,7 @@ function api_sidebar() {
         } else {
             $sidebar .= ' - <em>not written yet</em>';
         }
-        // If ($data['required'])
-        // $sidebar .= ' (parameter required)';
-        // else
-        // $sidebar .= ' (parameter optional)';.
         $sidebar .= '<br>' . $data['help'];
-        // $sidebar .= '<ul>';
-        // foreach ($data['parameters'] as $parameter) {
-        // $sidebar .= '<li>' . $parameter . '</li>';
-        // }
-        // $sidebar .= '</ul>';
         $sidebar .= '</li>';
     }
     $sidebar .= '</ul></div></div>';
