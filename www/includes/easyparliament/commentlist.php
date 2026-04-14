@@ -274,7 +274,7 @@ class COMMENTLIST {
         $data['comments'] = $comments;
         $data['results_per_page'] = $num;
         $data['page'] = $page;
-        $q = $this->db->query('SELECT COUNT(DISTINCT(epobject_id)) AS count FROM comments WHERE visible=1 AND user_id=' . $args['user_id']);
+        $q = $this->db->query('SELECT COUNT(DISTINCT(epobject_id)) AS count FROM comments WHERE visible=1 AND user_id=?', $args['user_id']);
         $data['total_results'] = $q->field(0, 'count');
         return $data;
 

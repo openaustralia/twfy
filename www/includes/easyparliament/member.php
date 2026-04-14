@@ -419,8 +419,7 @@ class MEMBER {
      */
     public function load_extra_info() {
 
-        $q = $this->db->query('SELECT * FROM moffice WHERE person=' .
-            $this->db->escape($this->person_id) . ' ORDER BY from_date DESC');
+        $q = $this->db->query('SELECT * FROM moffice WHERE person=? ORDER BY from_date DESC', $this->person_id);
         for ($row = 0; $row < $q->rows(); $row++) {
             $this->extra_info['office'][] = $q->row($row);
         }
@@ -434,8 +433,7 @@ class MEMBER {
         // ");.
         $q = $this->db->query("SELECT data_key, data_value
                         FROM 	memberinfo
-                        WHERE	member_id = '" . $this->db->escape($this->member_id) . "'
-                        ");
+                        WHERE	member_id = ?", $this->member_id);
         for ($row = 0; $row < $q->rows(); $row++) {
             $this->extra_info[$q->field($row, 'data_key')] = $q->field($row, 'data_value');
             // If ($q->field($row, 'joint') > 1)
@@ -450,8 +448,7 @@ class MEMBER {
         // ");.
         $q = $this->db->query("SELECT data_key, data_value
                         FROM 	personinfo
-                        WHERE	person_id = '" . $this->db->escape($this->person_id) . "'
-                        ");
+                        WHERE	person_id = ?", $this->person_id);
         for ($row = 0; $row < $q->rows(); $row++) {
             $this->extra_info[$q->field($row, 'data_key')] = $q->field($row, 'data_value');
             // If ($q->field($row, 'count') > 1)
@@ -540,7 +537,7 @@ class MEMBER {
         $this->extra_info['pbc'] = [];
         for ($i = 0; $i < $q->rows(); $i++) {
             $bill_id = $q->field($i, 'bill_id');
-            $c = $this->db->query('select count(*) as c from hansard where major=6 and minor=' . $bill_id . ' and htype=10');
+            $c = $this->db->query('select count(*) as c from hansard where major=6 and minor=? and htype=10',  $bill_id);
             $c = $c->field(0, 'c');
             $title = $q->field($i, 'title');
             $attending = $q->field($i, 'a');
@@ -854,7 +851,13 @@ class MEMBER {
         if (is_null($entered_house)) {
             return '';
         }
-        $q = $this->db->query('SELECT DISTINCT(person_id), first_name, last_name FROM member WHERE house=1 AND constituency = "' . $this->constituency() . '" AND person_id != ' . $this->person_id() . ' AND entered_house > "' . $entered_house['date'] . '"');
+        $q = $this->db->query('SELECT DISTINCT(person_id), first_name, last_name
+                                   FROM member
+                                   WHERE house=1 AND constituency = ? AND person_id != ? AND entered_house > ?',
+            $this->constituency(),
+            $this->person_id(),
+            $entered_house['date']
+        );
         if ($this->person_id() == 10218) {
             return;
         }

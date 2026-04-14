@@ -1,16 +1,20 @@
 <?php
 
+namespace includes\easyparliament;
+
 use PHPUnit\Framework\TestCase;
 
 /**
  *
  */
-class MemberPartyTest extends TestCase {
+class MemberPartyTest extends TestCase
+{
 
     /**
      * Test party to colour mapping
      */
-    public function test_party_to_colour_major_parties() {
+    public function test_party_to_colour_major_parties()
+    {
         // Setup global party_colours for testing.
         global $party_colours;
         $party_colours = [
@@ -27,7 +31,8 @@ class MemberPartyTest extends TestCase {
     /**
      *
      */
-    public function test_party_to_colour_unknown_party() {
+    public function test_party_to_colour_unknown_party()
+    {
         global $party_colours;
         $party_colours = [
             'Liberal Party' => '#0000FF',
@@ -41,7 +46,8 @@ class MemberPartyTest extends TestCase {
     /**
      *
      */
-    public function test_party_to_colour_empty_string() {
+    public function test_party_to_colour_empty_string()
+    {
         global $party_colours;
         $party_colours = [
             'Liberal Party' => '#0000FF',
@@ -54,7 +60,8 @@ class MemberPartyTest extends TestCase {
     /**
      *
      */
-    public function test_party_to_colour_case_sensitive() {
+    public function test_party_to_colour_case_sensitive()
+    {
         global $party_colours;
         $party_colours = [
             'Liberal Party' => '#0000FF',
@@ -68,7 +75,8 @@ class MemberPartyTest extends TestCase {
     /**
      *
      */
-    public function test_party_to_colour_returns_hex_format() {
+    public function test_party_to_colour_returns_hex_format()
+    {
         global $party_colours;
         $party_colours = [
             'Labor' => '#FF0000',
@@ -83,7 +91,8 @@ class MemberPartyTest extends TestCase {
     /**
      *
      */
-    public function test_party_to_colour_default_is_light_grey() {
+    public function test_party_to_colour_default_is_light_grey()
+    {
         global $party_colours;
         $party_colours = [];
 
@@ -94,7 +103,8 @@ class MemberPartyTest extends TestCase {
     /**
      * Test image path construction and file existence checks
      */
-    public function test_find_rep_image_no_files() {
+    public function test_find_rep_image_no_files()
+    {
         // When no files exist.
         $result = find_rep_image('99999999');
         $this->assertIsArray($result);
@@ -106,7 +116,8 @@ class MemberPartyTest extends TestCase {
     /**
      *
      */
-    public function test_find_rep_image_result_structure() {
+    public function test_find_rep_image_result_structure()
+    {
         $result = find_rep_image('12345');
         $this->assertIsArray($result);
         $this->assertEquals(2, count($result));
@@ -118,7 +129,8 @@ class MemberPartyTest extends TestCase {
     /**
      *
      */
-    public function test_find_rep_image_size_indicators() {
+    public function test_find_rep_image_size_indicators()
+    {
         // When testing with mock data, sizes should be 'L' or 'S' or null.
         $result = find_rep_image('12345');
         if ($result[1] !== NULL) {
@@ -131,7 +143,8 @@ class MemberPartyTest extends TestCase {
     /**
      *
      */
-    public function test_find_rep_image_extension_support() {
+    public function test_find_rep_image_extension_support()
+    {
         // Test that jpg, jpeg, and png are checked.
         $pid = '12345';
         $result = find_rep_image($pid);
@@ -142,7 +155,8 @@ class MemberPartyTest extends TestCase {
     /**
      *
      */
-    public function test_find_rep_image_smallonly_flag() {
+    public function test_find_rep_image_smallonly_flag()
+    {
         // With smallonly = true, should skip large images.
         $result = find_rep_image('12345', TRUE);
         $this->assertIsArray($result);
@@ -155,7 +169,8 @@ class MemberPartyTest extends TestCase {
     /**
      *
      */
-    public function test_find_rep_image_without_smallonly() {
+    public function test_find_rep_image_without_smallonly()
+    {
         // Default = false, should check large images first.
         $result = find_rep_image('12345', FALSE);
         $this->assertIsArray($result);
@@ -164,7 +179,8 @@ class MemberPartyTest extends TestCase {
     /**
      * Test party colour global variable setup
      */
-    public function test_party_colours_global_exists() {
+    public function test_party_colours_global_exists()
+    {
         global $party_colours;
         if (isset($party_colours)) {
             $this->assertIsArray($party_colours);
@@ -174,7 +190,8 @@ class MemberPartyTest extends TestCase {
     /**
      * Test typical Australian party codes
      */
-    public function test_common_party_names() {
+    public function test_common_party_names()
+    {
         global $party_colours;
         $party_colours = [];
 

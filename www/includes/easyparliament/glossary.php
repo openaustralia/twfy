@@ -175,9 +175,9 @@ class GLOSSARY {
         $query = "SELECT g.glossary_id, g.title, g.body, u.user_id, u.firstname, u.lastname
 			FROM editqueue AS eq, glossary AS g, users AS u
 			WHERE g.glossary_id=eq.glossary_id AND u.user_id=eq.user_id AND g.visible=1
-				AND g.title LIKE '%" . $this->query . "%'
+				AND g.title LIKE ?
 			ORDER by g.title";
-        $q = $this->db->query($query);
+        $q = $this->db->query($query, "%" . $this->query . "%");
         if ($q->success() && $q->rows()) {
             for ($i = 0; $i < $q->rows(); $i++) {
                 $this->search_matches[$q->field($i, "glossary_id")] = $q->row($i);

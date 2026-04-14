@@ -42,13 +42,13 @@ if ($THEUSER->loggedin()) {
         }
         echo ', created ', $created;
         echo '</span><br><em>Usage statistics</em>: ';
-        $q = $db->query('SELECT count(*) as count FROM api_stats WHERE api_key="' . $key . '" AND query_time > NOW() - interval 1 day');
+        $q = $db->query('SELECT count(*) as count FROM api_stats WHERE api_key=? AND query_time > NOW() - interval 1 day', $key);
         $c = $q->field(0, 'count');
         echo "last 24 hours: $c, ";
-        $q = $db->query('SELECT count(*) as count FROM api_stats WHERE api_key="' . $key . '" AND query_time > NOW() - interval 1 week');
+        $q = $db->query('SELECT count(*) as count FROM api_stats WHERE api_key=? AND query_time > NOW() - interval 1 week', $key);
         $c = $q->field(0, 'count');
         echo "last week: $c, ";
-        $q = $db->query('SELECT count(*) as count FROM api_stats WHERE api_key="' . $key . '" AND query_time > NOW() - interval 1 month');
+        $q = $db->query('SELECT count(*) as count FROM api_stats WHERE api_key=? AND query_time > NOW() - interval 1 month', $key);
         $c = $q->field(0, 'count');
         echo "last month: $c";
         echo '</p>';

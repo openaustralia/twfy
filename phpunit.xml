@@ -17,6 +17,7 @@
     <source>
         <include>
             <directory suffix=".php">www/includes</directory>
+            <directory suffix=".php">www/docs</directory>
         </include>
     </source>
 </phpunit>

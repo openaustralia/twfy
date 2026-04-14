@@ -161,7 +161,7 @@ class EDITQUEUE {
                     // so remove the previous entry.
                     if (!$q->success()) {
                         print "glossary trouble!";
-                        $q = $this->db->query("delete from epobject where epobject_id=" . $previous_insert_id . "");
+                        $q = $this->db->query("delete from epobject where epobject_id=?", $previous_insert_id);
                         return FALSE;
                     }
                   break;
@@ -173,11 +173,17 @@ class EDITQUEUE {
             // the new epobject id and approval details.
             $q = $this->db->query("UPDATE editqueue
 							SET
-							epobject_id_l='" . $this->current_epobject_id . "',
-							editor_id='" . addslashes($THEUSER->user_id()) . "',
+							epobject_id_l=?,
+							editor_id=?,
 							approved='1',
-							decided='" . $timestamp . "'
-							WHERE edit_id=" . $approval_id . ";");
+							decided=?
+							WHERE edit_id=?;",
+                $this->current_epobject_id,
+                $THEUSER->user_id(),
+                $timestamp,
+                $approval_id
+            );
+
             if (!$q->success()) {
                 break;
             } else {

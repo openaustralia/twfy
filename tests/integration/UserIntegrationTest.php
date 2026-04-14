@@ -1,6 +1,10 @@
 <?php
 
-require_once __DIR__ . '/DatabaseIntegrationTestCase.php';
+use support\DatabaseIntegrationTestCase;
+use THEUSER;
+use USER;
+
+require_once __DIR__ . '/../support/DatabaseIntegrationTestCase.php';
 
 /**
  * Integration tests for the USER class methods.
@@ -13,30 +17,12 @@ class UserIntegrationTest extends DatabaseIntegrationTestCase
      */
     protected function createTemporaryTables(): void
     {
-        $sql = "CREATE TEMPORARY TABLE users (
-            user_id INT AUTO_INCREMENT PRIMARY KEY,
-            firstname VARCHAR(100),
-            lastname VARCHAR(100),
-            email VARCHAR(100) UNIQUE,
-            password VARCHAR(255),
-            emailpublic TINYINT DEFAULT 0,
-            constituency VARCHAR(100),
-            url VARCHAR(255),
-            lastvisit DATETIME,
-            registrationtime VARCHAR(14),
-            registrationip VARCHAR(15),
-            optin TINYINT DEFAULT 0,
-            status VARCHAR(50) DEFAULT 'User',
-            deleted TINYINT DEFAULT 0,
-            confirmed TINYINT DEFAULT 0,
-            registrationtoken VARCHAR(34)
-        )";
-        $this->db->query($sql);
+        $this->createTemporaryTablesFromSchema('users');
     }
 
     protected function dropTemporaryTables(): void
     {
-        $this->db->query("DROP TEMPORARY TABLE IF EXISTS users");
+        $this->dropTemporaryTablesIfExists('users');
     }
 
     /**

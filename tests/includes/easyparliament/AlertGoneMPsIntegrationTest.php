@@ -5,9 +5,9 @@
  * Integration tests for alertgonemps.php script requiring database access.
  */
 
-require_once __DIR__ . '/bootstrap.php';
-require_once __DIR__ . '/../www/includes/easyparliament/alert.php';
-require_once __DIR__ . '/../www/includes/easyparliament/member.php';
+require_once __DIR__ . '/../../bootstrap.php';
+require_once __DIR__ . '/../../../www/includes/easyparliament/alert.php';
+require_once __DIR__ . '/../../../www/includes/easyparliament/member.php';
 
 use PHPUnit\Framework\TestCase;
 

@@ -4,7 +4,8 @@
  * @file
  */
 
-include_once INCLUDESPATH . 'easyparliament/member.php';
+include_once __DIR__ . '/../../includes/easyparliament/member.php';
+include_once __DIR__ . '/api_functions.php';
 
 /**
  *
@@ -88,7 +89,7 @@ function _api_getMP_row($row) {
 
     // Ministerialships and Select Committees.
     $db = new ParlDB();
-    $q = $db->query('SELECT * FROM moffice WHERE to_date="9999-12-31" and person=' . $row['person_id'] . ' ORDER BY from_date DESC');
+    $q = $db->query('SELECT * FROM moffice WHERE to_date="9999-12-31" and person = ? ORDER BY from_date DESC', $row['person_id']);
     for ($i = 0; $i < $q->rows(); $i++) {
         $row['office'][] = $q->row($i);
     }
@@ -107,8 +108,8 @@ function _api_getMP_row($row) {
 function api_getMP_id($id) {
     $db = new ParlDB();
     $q = $db->query("select * from member
-		where house=1 and person_id = '" . $db->escape($id) . "'
-		order by left_house desc");
+		where house=1 and person_id = ?
+		order by left_house desc", $id);
     if ($q->rows()) {
         $output = [];
         $last_mod = 0;

@@ -18,7 +18,7 @@
  * Then, when you need to do queries, you do:
  *
  * $db = new ParlDB;
- * $q = $db->query("SELECT haddock FROM fish");
+ * $q = $db->query("SELECT haddock FROM fish where size > ?", 42);
  *
  * $q is then a MySQLQuery object.
  *
@@ -375,18 +375,30 @@ class MySQL {
     }
 
     /**
-     * Substitutes ? placeholders in $sql with safely escaped values from $params.
+     * Escapes a single scalar value for use in SQL.
      * Integers and floats are inlined as unquoted literals; all other values are
      * cast to string, escaped via escape(), and wrapped in single quotes.
+     */
+    protected function escape_value($value): string {
+        if (is_int($value) || is_float($value)) {
+            return (string) $value;
+        }
+        return "'" . $this->escape((string) $value) . "'";
+    }
+
+    /**
+     * Substitutes ? placeholders in $sql with safely escaped values from $params.
+     * Arrays are expanded to a comma-separated list of escaped values, eg for use with IN (?),
+     * and scalar values are escaped as is using escape_value.
      */
     protected function build_parameterized_sql(string $sql, array $params): string {
         $i = 0;
         return preg_replace_callback('/\?/', function ($match) use (&$i, $params) {
             $value = $params[$i++];
-            if (is_int($value) || is_float($value)) {
-                return (string) $value;
+            if (is_array($value)) {
+                return implode(', ', array_map(fn($v) => $this->escape_value($v), $value));
             }
-            return "'" . $this->escape((string) $value) . "'";
+            return $this->escape_value($value);
         }, $sql);
     }
 

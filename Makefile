@@ -4,7 +4,7 @@ PLATFORM=linux/amd64
 TWFY_HTTP_PORT ?= 80
 TWFY_MYSQL_PORT ?= 3306
 
-TEST_DB_HOST ?= 127.0.0.1:$(MYSQL_HOST_PORT)
+TEST_DB_HOST ?= 127.0.0.1:$(TWFY_MYSQL_PORT)
 TEST_DB_USER ?= twfyuser
 TEST_DB_PASSWORD ?= twfypass
 TEST_DB_NAME ?= twfy
@@ -15,6 +15,7 @@ all:
 	@echo "  docker-run                          Run the Docker container for the application"
 	@echo "  lint                                Run linting on the www directory"
 	@echo "  install                             Install Composer dependencies"
+	@echo "  setup-db                            Setup DB by dropping and recreating tables (creates DB if missing)"
 	@echo "  test [TEST_ARGS=...]                Run PHPUnit tests"
 	@echo "  test-all [TEST_ARGS=...]            Run all PHPUnit tests including DB integration"
 	@echo "  test-docker [TEST_ARGS=...]         Run all tests in Docker with DB (simplest method)"
@@ -87,10 +88,23 @@ test-coverage: vendor/autoload.php
 		echo "For GitHub Actions, set setup-php coverage to 'xdebug'."; \
 		exit 1; \
 	fi
-	DB_HOST=$(TEST_DB_HOST) DB_USER=$(TEST_DB_USER) DB_PASSWORD=$(TEST_DB_PASSWORD) DB_NAME=$(TEST_DB_NAME) XDEBUG_MODE=coverage ./vendor/bin/phpunit --coverage-text --coverage-clover=coverage/clover.xml --coverage-html=coverage/html && \
+	DB_HOST=$(TEST_DB_HOST) DB_USER=$(TEST_DB_USER) DB_PASSWORD=$(TEST_DB_PASSWORD) DB_NAME=$(TEST_DB_NAME) XDEBUG_MODE=coverage ./vendor/bin/phpunit --coverage-text --coverage-clover=coverage/clover.xml --coverage-html=coverage/html $(TEST_ARGS) && \
 	echo && echo "Open coverage/html/index.html to see the detailed coverage report"
 
 test-coverage-docker:
 	docker compose up -d
 	docker compose run --rm -e DB_HOST=mysql -e DB_USER=$(TEST_DB_USER) -e DB_PASSWORD=$(TEST_DB_PASSWORD) -e DB_NAME=$(TEST_DB_NAME) -e XDEBUG_MODE=coverage -v $(CURDIR):/app -w /app webhost bash -lc "php -m | grep -qi xdebug || { echo 'xdebug is missing in twfy-app. Run make docker-build first.'; exit 1; }; ./vendor/bin/phpunit --coverage-text --coverage-clover=coverage/clover.xml --coverage-html=coverage/html $(TEST_ARGS)"
 
+test-docker:
+	docker compose up -d mysql
+	docker compose run --rm -e DB_HOST=mysql -e DB_USER=$(TEST_DB_USER) -e DB_PASSWORD=$(TEST_DB_PASSWORD) -e DB_NAME=$(TEST_DB_NAME) -v $(CURDIR):/app -w /app webhost bash -lc "composer install --no-interaction --prefer-dist && ./vendor/bin/phpunit"
+
+not-on-server:
+	@if echo "$(shell pwd)" | grep -qE '/(current|releases)' ; then \
+			echo "ERROR: This should not be run on a production/staging server!"; \
+			exit 1; \
+	fi
+
+setup-db: not-on-server
+	mysql -h 127.0.0.1 -P $(TWFY_MYSQL_PORT) -u $(TEST_DB_USER) -p$(TEST_DB_PASSWORD) -e "CREATE DATABASE IF NOT EXISTS $(TEST_DB_NAME)"
+	mysql -h 127.0.0.1 -P $(TWFY_MYSQL_PORT) -u $(TEST_DB_USER) -p$(TEST_DB_PASSWORD) $(TEST_DB_NAME) < db/schema.sql
