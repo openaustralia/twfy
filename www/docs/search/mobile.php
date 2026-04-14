@@ -51,12 +51,8 @@ if (get_http_var('s') != '' || get_http_var('pid') != '') {
         # Fetch the results
         $data = search_by_usage($searchstring, $q_house);
 
-        $wtt = get_http_var('wtt');
-        if ($wtt) {
-            $pagetitle = 'League table of Lords who say ' . $data['pagetitle'];
-        } else {
-            $pagetitle = 'Who says ' . $data['pagetitle'] . ' the most?';
-        }
+
+        $pagetitle = 'Who says ' . $data['pagetitle'] . ' the most?';
         $DATA->set_page_metadata($this_page, 'title', $pagetitle);
         $PAGE->page_start_mobile();
         $PAGE->stripe_start();
@@ -75,13 +71,6 @@ if (get_http_var('s') != '' || get_http_var('pid') != '') {
             print "$party:$count<br>";
         }
         print " -->\n\n";
-        if ($wtt) { ?>
-            <p><strong>Now, try reading what a couple of these Lords are saying,
-                        to help you find someone appropriate. When you've found someone,
-                        hit the "I want to write to this Lord" button on their results page
-                        to go back to WriteToThem.
-                    </strong></p>
-        <?php }
         ?>
         <p>Please note that this search is only for the exact word/phrase entered.
             For example, putting in 'autism' won't return results for 'autistic spectrum disorder',
