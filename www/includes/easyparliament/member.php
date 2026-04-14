@@ -414,7 +414,6 @@ class MEMBER {
             $this->extra_info[$q->field($row, 'data_key')] = $q->field($row, 'data_value');
         }
 
-.
         $q = $this->db->query("SELECT data_key, data_value
                         FROM 	personinfo
                         WHERE	person_id = '" . $this->db->escape($this->person_id) . "'
