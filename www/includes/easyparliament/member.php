@@ -404,7 +404,6 @@ class MEMBER {
             $this->extra_info['office'][] = $q->row($row);
         }
 
-
         $q = $this->db->query("SELECT data_key, data_value
                         FROM 	memberinfo
                         WHERE	member_id = ?", $this->member_id);
