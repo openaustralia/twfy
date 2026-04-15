@@ -288,7 +288,9 @@ function find_constituency($args){
 
 function find_members($args){
     // Maybe there'll be a better place to put this at some point...
-    global $PAGE, $db, $parties;
+    global $PAGE, $parties;
+
+
 
     if ($args['s'] != '') {
         // $args['s'] should have been tidied up by the time we get here.
@@ -331,7 +333,7 @@ function find_members($args){
             "%$searchwords[1] $searchwords[2]%",
         ];
     }
-
+    $db = new ParlDB();
     $q = $db->query("SELECT person_id,
                             title, first_name, last_name,
                             constituency, party,
