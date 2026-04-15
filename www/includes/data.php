@@ -89,6 +89,16 @@ class DATA {
     // PUBLIC METADATA ACCESS FUNCTIONS //
     // .
 
+    /**
+     * Special function for setting $this_section depending on the value of $this_page.
+     */
+    public function set_section() {
+        // This should be called at the start of a page.
+        global $this_section, $this_page;
+
+        $this_section = $this->page_metadata($this_page, "section");
+    }
+
     // Getting page and section metadata
     // $page/$section is a page name.
 
@@ -99,6 +109,13 @@ class DATA {
         return $this->metadata->get_metadata(["page" => $page, "key" => $key], "page");
     }
 
+    /**
+     *
+     */
+    public function section_metadata($section, $key) {
+        return $this->metadata->get_metadata(["section" => $section, "key" => $key], "section");
+    }
+
     // Setting page and section.
 
     /**
@@ -106,6 +123,22 @@ class DATA {
      */
     public function set_page_metadata($page, $key, $value) {
         $this->metadata->set_metadata(["page" => $page, "key" => $key, "value" => $value]);
+    }
+
+    /**
+     *
+     */
+    public function set_section_metadata($section, $key, $value) {
+        $this->metadata->set_metadata(["section" => $section, "key" => $key, "value" => $value]);
+    }
+
+    // DEPRECATED.
+
+    /**
+     * Directly access an item.
+     */
+    public function metadata($type, $item, $key) {
+        return "ACCESS DEBIED FOR type[$item][$key] USE THE PUBLIC METHODS";
     }
 
 }

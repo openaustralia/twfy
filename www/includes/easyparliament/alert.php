@@ -190,6 +190,21 @@ class ALERT {
     }
 
     /**
+     * FUNCTION: listalserts.
+     */
+    public function listalerts() {
+
+        // Lists all live alerts.
+
+        $tmpdata = [];
+        $confirmed = '1';
+        $deleted = '0';
+
+        // Get all the data that's to be returned.
+        $tmpdata = $this->fetch($confirmed, $deleted);
+    }
+
+    /**
      * FUNCTION: add.
      */
     public function add($details, $confirmation_email = FALSE, $instantly_confirm = TRUE) {
@@ -344,6 +359,25 @@ class ALERT {
     }
 
     /**
+     * FUNCTION: email_exists.
+     */
+    public function email_exists($email) {
+        // Returns true if there's a user with this email address.
+
+        if ($email != "") {
+            $q = $this->db->query("SELECT alert_id FROM alerts WHERE email = ?", $email);
+            if ($q->rows() > 0) {
+                return TRUE;
+            } else {
+                return FALSE;
+            }
+        } else {
+            return FALSE;
+        }
+
+    }
+
+    /**
      * FUNCTION: confirm.
      */
     public function confirm($token) {
@@ -451,6 +485,27 @@ class ALERT {
     }
 
     /**
+     * Functions for accessing the user's variables.
+     */
+    public function alert_id() {
+        return $this->alert_id;
+    }
+
+    /**
+     *
+     */
+    public function email() {
+        return $this->email;
+    }
+
+    /**
+     *
+     */
+    public function criteria() {
+        return $this->criteria;
+    }
+
+    /**
      *
      */
     public function criteria_pretty($html = FALSE) {
@@ -473,6 +528,20 @@ class ALERT {
             $criteria .= ($html ? '<li>' : '* ') . "Spoken by $spokenby" . ($html ? '</li>' : '') . "\n";
         }
         return $criteria;
+    }
+
+    /**
+     *
+     */
+    public function deleted() {
+        return $this->deleted;
+    }
+
+    /**
+     *
+     */
+    public function confirmed() {
+        return $this->confirmed;
     }
 
     // PRIVATE FUNCTIONS BELOW... ////////////////.

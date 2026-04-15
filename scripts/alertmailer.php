@@ -256,6 +256,30 @@ mlog(date('r') . "\n");
 /**
  *
  */
+function sort_by_stuff($a, $b) {
+    if ($a['major'] > $b['major']) {
+        return 1;
+    }
+    if ($a['major'] < $b['major']) {
+        return -1;
+    }
+
+    if ($a['hdate'] < $b['hdate']) {
+        return 1;
+    }
+    if ($a['hdate'] > $b['hdate']) {
+        return -1;
+    }
+
+    if ($a['hpos'] == $b['hpos']) {
+        return 0;
+    }
+    return ($a['hpos'] > $b['hpos']) ? 1 : -1;
+}
+
+/**
+ *
+ */
 function write_and_send_email($email, $user_id, $data) {
     global $globalsuccess, $sentemails, $nomail, $start_time;
 

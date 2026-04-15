@@ -576,6 +576,13 @@ class MEMBER {
     /**
      *
      */
+    public function party() {
+        return $this->party;
+    }
+
+    /**
+     *
+     */
     public function party_text($party = NULL) {
         global $parties;
         if (!$party) {
@@ -643,12 +650,26 @@ class MEMBER {
     /**
      *
      */
+    public function entered_reason() {
+        return $this->entered_reason;
+    }
+
+    /**
+     *
+     */
     public function entered_reason_text($entered_reason) {
         if (isset($this->reasons[$entered_reason])) {
             return $this->reasons[$entered_reason];
         } else {
             return $entered_reason;
         }
+    }
+
+    /**
+     *
+     */
+    public function left_reason() {
+        return $this->left_reason;
     }
 
     /**

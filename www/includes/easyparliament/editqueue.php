@@ -238,6 +238,21 @@ class EDITQUEUE {
     /**
      *
      */
+    public function modify($args) {
+        // Moderate a post,
+        // log it in editqueue,
+        // update glossary_id.
+
+        // 1. Add the new item into the queue
+        $q = $this->db->query();
+
+        // 2. if successful, set the previous editqueue item to approved=0;
+
+    }
+
+    /**
+     *
+     */
     public function get_pending() {
         // Fetch all pending editqueue items.
         // Sets $this->pending and returns a body count.
@@ -340,6 +355,15 @@ class GLOSSEDITQUEUE extends EDITQUEUE {
         $timestamp = date('Y-m-d H:i:s', time());
 
         foreach ($data['approvals'] as $approval_id) {
+            // Create a new epobject
+            // title VARCHAR(255),
+            // body TEXT,
+            // type INTEGER,
+            // created DATETIME,
+            // modified DATETIME,.
+            /*print "<pre>";
+            print_r($data);
+            print "</pre>";*/
             // Check to see that we actually have something to approve.
             if (!isset($this->pending[$approval_id])) {
                 break;

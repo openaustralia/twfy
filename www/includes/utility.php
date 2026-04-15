@@ -56,6 +56,135 @@ function twfy_debug($header, $text = "") {
 }
 
 /**
+ *
+ */
+function error_handler(string $errno, string $errmsg, string $filename, int $linenum, ?array $vars = []) {
+    // Custom error-handling function.
+    // Sends an email to BUGSLIST.
+    global $PAGE;
+
+    // Define an assoc array of error string
+    // in reality the only entries we should
+    // consider are E_WARNING, E_NOTICE, E_USER_ERROR,
+    // E_USER_WARNING and E_USER_NOTICE.
+    $errortype = [
+        E_ERROR => "Error",
+        E_WARNING => "Warning",
+        E_PARSE => "Parsing Error",
+        E_NOTICE => "Notice",
+        E_CORE_ERROR => "Core Error",
+        E_CORE_WARNING => "Core Warning",
+        E_COMPILE_ERROR => "Compile Error",
+        E_COMPILE_WARNING => "Compile Warning",
+        E_USER_ERROR => "User Error",
+        E_USER_WARNING => "User Warning",
+        E_USER_NOTICE => "User Notice",
+        // PHP 5 only, 2048 = E_STRICT.
+        2048 => "Runtime Notice"
+    ];
+
+    // Completely ignore E_DEPRECATED messages on production server.
+    if ($errno == 8192 && !DEVSITE) {
+        return;
+    }
+
+    $err = '';
+    if (isset($_SERVER['REQUEST_URI'])) {
+        $err .= "URL:\t\thttp://" . DOMAIN . $_SERVER['REQUEST_URI'] . "\n";
+    } else {
+        $err .= "URL:\t\tNone - running from command line?\n";
+    }
+    if (isset($_SERVER['HTTP_REFERER'])) {
+        $err .= "Referer:\t" . $_SERVER['HTTP_REFERER'] . "\n";
+    } else {
+        $err .= "Referer:\tNone\n";
+    }
+    if (isset($_SERVER['HTTP_USER_AGENT'])) {
+        $err .= "User-Agent:\t" . $_SERVER['HTTP_USER_AGENT'] . "\n";
+    } else {
+        $err .= "User-Agent:\tNone\n";
+    }
+    $err .= "Number:\t\t$errno\n";
+    // $err .= "Type:\t\t" . $errortype[$errno] . "\n";
+    $err .= "Message:\t$errmsg\n";
+    $err .= "File:\t\t$filename\n";
+    $err .= "Line:\t\t$linenum\n";
+    if (count($_POST)) {
+        $err .= "_POST:";
+        foreach ($_POST as $k => $v) {
+            if (is_scalar($v) || $v === NULL) {
+                $value = (string) $v;
+            } else {
+                $value = json_encode($v);
+                if ($value === FALSE) {
+                    $value = print_r($v, TRUE);
+                }
+            }
+            $err .= "\t\t$k => $value\n";
+        }
+    }
+    // Add the problematic line if possible.
+    if (is_readable($filename)) {
+        $source = file($filename);
+        $err .= "\nSource:\n\n";
+        // Show the line, plus prev and next, with line numbers.
+        $err .= $linenum - 2 . " " . $source[$linenum - 3];
+        $err .= $linenum - 1 . " " . $source[$linenum - 2];
+        $err .= $linenum . " " . $source[$linenum - 1];
+        $err .= $linenum + 1 . " " . $source[$linenum];
+        $err .= $linenum + 2 . " " . $source[$linenum + 1];
+    }
+
+    // Will we need to exit after this error?
+    $fatal_errors = [E_ERROR, E_USER_ERROR];
+    if (in_array($errno, $fatal_errors)) {
+        $fatal = TRUE;
+    } else {
+        $fatal = FALSE;
+    }
+
+    // Finally, display errors and stuff...
+
+    if (DEVSITE) {
+        // On a devsite we just display the problem.
+        $message = [
+            'title' => "Error",
+            'text' => "$err\n"
+        ];
+        if (is_object($PAGE)) {
+            $PAGE->error_message($message, $fatal);
+            vardump(adodb_backtrace());
+        } else {
+            vardump($message);
+            vardump(adodb_backtrace());
+        }
+    } else {
+        print ("<pre>" . htmlentities_notags($err) . "</pre>");
+        // On live sites we display a nice message and email the problem.
+        error_log($err);
+
+        $message = [
+            'title' => "Sorry, an error has occurred",
+            'text' => "We've been notified by email and will try to fix the problem soon!"
+        ];
+
+        if (is_object($PAGE)) {
+            $PAGE->error_message($message, $fatal);
+        } else {
+            print "<p>Oops, sorry, an error has occurred!</p>\n";
+        }
+        // TODO add honey badger.
+    }
+
+    // Do we need to exit?
+
+    if ($fatal) {
+        exit(1);
+    }
+
+}
+
+/**
  * Replacement for var_dump()
  */
 function vardump($blah) {
@@ -63,6 +192,60 @@ function vardump($blah) {
     var_dump($blah);
     print "</pre>\n";
 }
+
+/**
+ * Pretty prints the backtrace, copied from http://uk.php.net/manual/en/function.debug-backtrace.php.
+ */
+function adodb_backtrace($print = TRUE) {
+    $s = '';
+    if (phpversion() >= 4.3) {
+
+        $MAXSTRLEN = 64;
+
+        $traceArr = debug_backtrace();
+        array_shift($traceArr);
+        $tabs = count($traceArr) - 1;
+        foreach ($traceArr as $arr) {
+            for ($i = 0; $i < $tabs; $i++) {
+                $s .= ' &nbsp; ';
+            }
+            $tabs -= 1;
+            $s .= '<font face="Courier New,Courier">';
+            if (isset($arr['class'])) {
+                $s .= $arr['class'] . '.';
+            }
+            $args = [];
+            if (isset($arr['args'])) {
+                foreach ($arr['args'] as $v) {
+                    if (is_null($v)) {
+                        $args[] = 'null';
+                    } elseif (is_array($v)) {
+                        $args[] = 'Array[' . count($v) . ']';
+                    } elseif (is_object($v)) {
+                        $args[] = 'Object:' . get_class($v);
+                    } elseif (is_bool($v)) {
+                        $args[] = $v ? 'true' : 'false';
+                    } else {
+                        $v = (string) @$v;
+                        $str = htmlspecialchars(substr($v, 0, $MAXSTRLEN));
+                        if (strlen($v) > $MAXSTRLEN) {
+                            $str .= '...';
+                        }
+                        $args[] = $str;
+                    }
+                }
+            }
+
+            $s .= $arr['function'] . '(' . implode(', ', $args) . ')';
+            $s .= "\n";
+        }
+        if ($print) {
+            print $s;
+        }
+    }
+    return $s;
+}
+
 /**
  * Far from foolproof, but better than nothing.
  */
@@ -123,6 +306,25 @@ function twfy_debug_timestamp($label = "") {
     $timestamp_last = $t;
 }
 
+/**
+ *
+ */
+function format_timestamp($timestamp, $format) {
+    // Pass it a MYSQL TIMESTAMP (YYYYMMDDHHMMSS) and a
+    // PHP date format string (eg, "Y-m-d H:i:s")
+    // and it returns a nicely formatted string according to requirements.
+
+    // Because strtotime can't handle TIMESTAMPS.
+
+    if (preg_match("/^(\d\d\d\d)(\d\d)(\d\d)(\d\d)(\d\d)(\d\d)$/", $timestamp, $matches)) {
+        [$string, $year, $month, $day, $hour, $min, $sec] = $matches;
+
+        return gmdate($format, gmmktime($hour, $min, $sec, $month, $day, $year));
+    } else {
+        return "";
+    }
+
+}
 
 /**
  *
@@ -219,6 +421,77 @@ function relative_time($datetime) {
     // Return relative date and add proper verbiage.
     return $relative_date . ' ago';
 
+}
+
+/**
+ *
+ */
+function parse_date($date) {
+    $now = time();
+    $date = preg_replace('#\b([a-z]|on|an|of|in|the|year of our lord)\b#i', '', $date);
+    $date = preg_replace('#[\x80-\xff]#', '', $date);
+    if (!$date) {
+        return NULL;
+    }
+
+    $epoch = 0;
+    $day = NULL;
+    $year = NULL;
+    $month = NULL;
+    if (preg_match('#(\d+)/(\d+)/(\d+)#', $date, $m)) {
+        $day = $m[1];
+        $month = $m[2];
+        $year = $m[3];
+        if ($year < 100) {
+            $year += 2000;
+        }
+    } elseif (preg_match('#(\d+)/(\d+)#', $date, $m)) {
+        $day = $m[1];
+        $month = $m[2];
+        $year = date('Y');
+    } elseif (preg_match('#^([0123][0-9])([01][0-9])([0-9][0-9])$#', $date, $m)) {
+        $day = $m[1];
+        $month = $m[2];
+        $year = $m[3];
+    } else {
+        // 0 Sunday, 6 Saturday
+        $dayofweek = date('w');
+        if (preg_match('#next\s+(sun|sunday|mon|monday|tue|tues|tuesday|wed|wednes|wednesday|thu|thur|thurs|thursday|fri|friday|sat|saturday)\b#i', $date, $m)) {
+            $date = preg_replace('#next#i', 'this', $date);
+            if ($dayofweek == 5) {
+                $now = strtotime('3 days', $now);
+            } elseif ($dayofweek == 4) {
+                $now = strtotime('4 days', $now);
+            } else {
+                $now = strtotime('5 days', $now);
+            }
+        }
+        $t = strtotime($date, $now);
+        if ($t != FALSE) {
+            $day = date('d', $t);
+            $month = date('m', $t);
+            $year = date('Y', $t);
+            $epoch = $t;
+            if ("$day$month$year" == date('dmY')) {
+                $epoch = 0;
+                $day = 0;
+                $month = 0;
+                $year = 0;
+            }
+        }
+    }
+    if (!$epoch && $day && $month && $year) {
+        $t = mktime(0, 0, 0, $month, $day, $year);
+        $day = date('d', $t);
+        $month = date('m', $t);
+        $year = date('Y', $t);
+        $epoch = $t;
+    }
+
+    if ($epoch == 0) {
+        return NULL;
+    }
+    return ['iso' => "$year-$month-$day", 'epoch' => $epoch, 'day' => $day, 'month' => $month, 'year' => $year];
 }
 
 /**

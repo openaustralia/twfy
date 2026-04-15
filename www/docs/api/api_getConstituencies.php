@@ -9,6 +9,43 @@ include_once 'api_getGeometry.php';
 /**
  *
  */
+function api_getConstituencies_front() {
+    ?>
+    <p><big>Fetch a list of electoral divisions.</big></p>
+
+    <h4>Arguments</h4>
+    <p>Note only one argument can be given at present.</p>
+    <dl>
+        <dt>postcode (optional)</dt>
+        <dd>Fetch the list of electoral divisions that are within the given postcode (there can be more than one)</dd>
+        <dt>date (optional)</dt>
+        <dd>Fetch the list of electoral divisions as it was on this date.</dd>
+        <dt>search (optional)</dt>
+        <dd>Fetch the list of electoral divisions that match this search string.</dd>
+    </dl>
+
+    <h4>Example Response</h4>
+    <pre>[
+                    { name : "Warringah" },
+                    { name : "Lyons" },
+                    { name : "Fairfax" },
+                    ...
+                ]</pre>
+
+    <?php
+}
+
+/**
+ *
+ */
+function api_getConstituencies_search($s) {
+    $output = _api_getConstituencies_search($s);
+    api_output($output);
+}
+
+/**
+ *
+ */
 function _api_getConstituencies_search($s) {
     $db = new ParlDB();
     $q = $db->query('select c_main.name from constituency, constituency as c_main
@@ -28,6 +65,54 @@ function _api_getConstituencies_search($s) {
         }
     }
     return $output;
+}
+
+/**
+ *
+ */
+function api_getConstituencies_date($date) {
+    if ($date = parse_date($date)) {
+        api_getConstituencies('"' . $date['iso'] . '"');
+    } else {
+        api_error('Invalid date format');
+    }
+}
+
+/**
+ *
+ */
+function api_getConstituencies($date = 'now()') {
+    $db = new ParlDB();
+    $q = $db->query('select cons_id, name from constituency
+		where main_name and from_date <= date(' . $date . ') and date(' . $date . ') <= to_date');
+    $output = [];
+    for ($i = 0; $i < $q->rows(); $i++) {
+        $output[] = [
+            // 'id' => $q->field($i, 'cons_id'),
+            'name' => html_entity_decode($q->field($i, 'name'))
+        ];
+    }
+    api_output($output);
+}
+
+/* RADIUS_OF_EARTH
+ * Radius of the earth, in km. This is something like 6372.8 km:
+ * http://en.wikipedia.org/wiki/Earth_radius
+ */
+define('RADIUS_OF_EARTH', 6372.8);
+
+/**
+ *
+ */
+function api_getConstituencies_latitude($lat) {
+    $lon = get_http_var('longitude') + 0;
+    $d = get_http_var('distance') + 0;
+    if (!$lat) {
+        api_error('You must supply a latitude and longitude');
+        return;
+    }
+    $out = _api_getConstituencies_latitude($lat, $lon, $d);
+    api_output($out);
 }
 
 /**
@@ -64,6 +149,20 @@ function _api_getConstituencies_latitude($lat, $lon, $d) {
         return $a['distance'] <=> $b['distance'];
     });
     return $out;
+}
+
+/**
+ *
+ */
+function api_getConstituencies_longitude($lon) {
+    api_error('You must supply a latitude');
+}
+
+/**
+ *
+ */
+function api_getConstituencies_distance($d) {
+    api_error('You must supply a latitude and longitude');
 }
 
 /**
