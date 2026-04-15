@@ -17,7 +17,7 @@ if (get_http_var('s') != '' || get_http_var('pid') != '') {
     $searchstring = filter_user_input($searchstring, 'strict');
 
     $time = parse_date($searchstring);
-    if ($time['iso']) {
+    if ($time && $time['iso']) {
         header('Location: /hansard/?d=' . $time['iso']);
         exit;
     }
