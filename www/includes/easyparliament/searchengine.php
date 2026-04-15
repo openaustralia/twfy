@@ -308,7 +308,7 @@ class SEARCHENGINE {
             $remade[] = '"' . implode(' ', $phrase) . '"';
         }
         if ($this->words) {
-            $remade = array_merge($remade, $this->words);
+            $remade = [...$remade, ...$this->words];
         }
 
         $prefixes = [];
@@ -555,54 +555,6 @@ class SEARCHENGINE {
 
         return $pos;
     }
-
-    /*
-    old stemming code (does syntax highlighting with stemming, but does it badly)
-
-    $splitextract = preg_split("/([a-zA-Z]+)/", $extract, -1, PREG_SPLIT_DELIM_CAPTURE);
-    $hlextract = "";
-    foreach( $splitextract as $extractword) {
-    $hl = false;
-    foreach( $searchstring_stemwords as $word ) {
-    if ($word == '') {
-    continue;
-    }
-
-    $matchword  = $searchengine->stem($extractword);
-    #print "$extractword : $matchword : $word<br>";
-    if ($matchword == $word) {
-    $hl = true;
-    break;
-    }
-    }
-    if ($hl)
-    $hlextract .= "<span class=\"hi\">$extractword</span>";
-    else
-    $hlextract .= $extractword;
-    }
-    $hlextract = preg_replace("#</span>\s+<span class=\"hi\">#", " ", $hlextract);
-
-
-     */
-
-    /*    This doesn't work yet as PHP bindings are knackered - the idea is
-    to do all parsing here and replace queryparser, so we can do stuff
-    how we want more.  e.g. sync highlighting with the queries better */
-
-    // Instead we are now parsing in PHP, and rebuilding something to feed to
-    // query parser.  Yucky but works.
-
-    /*        $querydummy = new XapianQuery("dummy");
-    $query1 = new XapianQuery("ethiopia");
-    $query2 = new XapianQuery("economic");
-    #$query = $querydummy->querycombine(Query_OP_AND, $query1, $query2);
-    $query = new_QueryCombine(Query_OP_AND, $query1, $query2);
-    #new_QueryCombine
-    #        $query = $query1->querycombine(Query_OP_OR, $query1, $query2);
-    #        foreach ($this->words as $word) {
-    #           $query = new XapianQuery(Query_OP_OR, $query, new XapianQuery($word));
-    #      }
-    print "description:" . $query->get_description() . "<br>"; */
 }
 
 global $SEARCHENGINE;
