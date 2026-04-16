@@ -382,7 +382,7 @@ function find_members($args){
             <div id="people_results">
                 <h3>Representatives matching '<?php echo htmlentities($searchstring); ?>'</h3>
                 <ul>
-                    <li><?php print implode("</li>\n\t<li>", array_map('htmlentities', $members)); ?></li>
+                    <li><?php print implode("</li>\n\t<li>", $members); ?></li>
                 </ul>
             </div>
             <?php
