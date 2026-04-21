@@ -29,7 +29,7 @@ if (isset($info['total_results']) && $info['total_results'] > 0) {
 
     // If we're getting matches and no glossary entry, we can trigger them to add a definition
     // Obviously, only if it's a proper noun
-    if (($info['total_results'] > 0) && ($GLOSSARY['num_search_matches'] == 0)) {
+    if (($info && $info['total_results'] > 0) && ($GLOSSARY && $GLOSSARY['num_search_matches'] == 0)) {
         // I'll be leaving this empty for now, pending search engine improvements...
     }
 
