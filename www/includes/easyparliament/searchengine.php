@@ -351,8 +351,9 @@ class SEARCHENGINE {
         }
 
         $queryparser = new XapianQueryParser();
-        $queryparser->set_stemming_strategy(QueryParser_STEM_NONE);
-        $queryparser->set_default_op(Query_OP_AND);
+        $stemmer = new XapianStem("english");
+        $queryparser->set_stemmer($stemmer);
+        $queryparser->set_stemming_strategy(XapianQueryParser::STEM_NONE);
         $queryparser->add_prefix("speaker", "speaker:");
         $queryparser->add_prefix("major", "major:");
         $queryparser->add_prefix('date', 'date:');
