@@ -556,6 +556,7 @@ class SEARCHENGINE {
 
         return $pos;
     }
+
 }
 
 global $SEARCHENGINE;
