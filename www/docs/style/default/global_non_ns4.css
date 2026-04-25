@@ -4,7 +4,7 @@
 /**** GENERIC HTML ELEMENTS *****************************************************/
 
 body {
-	min-width: 950px; /* NAT */
+	/* Responsive - no fixed min-width */
 }
 
 h1 {
@@ -14,47 +14,60 @@ h1 {
 	font-size: 1px;
 	line-height: 0em;
 	}
-	
+
 h2 {
-	color: #B82E00;
-	font-weight: bold;
-	margin: 0.2em 14px 10px 18px; /* NAT */
+	color: #1976d2;
+	font-weight: 600;
+	margin: 0.5em 14px 0.8em 18px;
 	}
-	
+
 h3 {
-	color: #880101;
-	margin: 0 14px 1em 18px;
+	color: #1565c0;
+	margin: 0.8em 14px 0.8em 18px;
+	font-weight: 600;
 	}
-	
+
 h4 {
-	/* color: #4D6C25; */
-	color: #AB4329; /* NAT */
-	margin: 1em 14px 0 18px;
+	color: #0d47a1;
+	margin: 1em 14px 0.5em 18px;
+	font-weight: 600;
 	}
 
 h5 {
 	margin: 0 14px 1.4em 18px;
+	color: #1565c0;
+	font-weight: 500;
 	}
-	
+
 form {
 	margin: 0;
 	padding: 0;
 	}
 
 a:link {
-	color: #00b;
+	color: #1976d2;
+	text-decoration: none;
+	font-weight: 500;
+}
+
+a:link:hover {
 	text-decoration: underline;
+	color: #1565c0;
 }
 
 a:visited {
-	color: #505;
-	text-decoration: underline;
+	color: #7b1fa2;
+	text-decoration: none;
 	}
-	
+
+a:visited:hover {
+	text-decoration: underline;
+}
+
 p {
 	margin: 0 0 1em 0;
 	padding: 0;
-	line-height: 1.5em;
+	line-height: 1.6em;
 	}
 
 ul, ol, li {
@@ -69,17 +82,30 @@ ol li {
 	}
 dt {
 	margin-left: 0;
-	font-weight: bold;
+	font-weight: 600;
 	}
 dd {
 	margin: 0 0 1.5em 0;
 	}
 
 input.submit {
-	font-weight: bold;
-	color: #333;
-	}	
-	
+	font-weight: 600;
+	color: #fff;
+	background: linear-gradient(135deg, #1976d2 0%, #1565c0 100%);
+	border: none;
+	padding: 0.6em 1.2em;
+	border-radius: 4px;
+	cursor: pointer;
+	transition: all 0.3s ease;
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+	}
+
+input.submit:hover {
+	transform: translateY(-2px);
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+	background: linear-gradient(135deg, #1565c0 0%, #0d47a1 100%);
+	}
+
 div.break {
 	clear: both;
 	height: 1px;
@@ -97,7 +123,7 @@ div.row span.label {
   display: block;
   float: left;
   width: 10.5em;
-  font-weight: bold;
+  font-weight: 600;
   }
 
 div.row span.formw {
@@ -121,151 +147,200 @@ div.row span.formw {
 	position: relative;
 	margin: 0;
 	padding: 0;
+	background: linear-gradient(135deg, #1976d2 0%, #1565c0 100%);
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 	}
 #title {
-	padding: 15px 14px 10px 18px; /* NAT */
+	padding: 20px 14px 15px 18px;
 	line-height: 0;
-	font-size: 10%; /* Only way to stop space below images in Win IE? */
+	font-size: 10%;
 	}
 
 #search {
 	position: absolute;
 	top: 0px;
 	right: 0px;
-	width: 26%; /* NAT */
-	height: 68px;
+	width: 26%;
+	height: auto;
 	padding: 0;
-	background-color: #EBECCF; /* NAT */
+	background-color: transparent;
 	z-index: 0;
 	}
 
 #search form {
 	margin: 1.4em 14px 0 20px;
-	font-weight: bold;
+	font-weight: 500;
 	}
-	
+
+#search input[type="text"] {
+	padding: 0.6em 0.8em;
+	border: 1px solid rgba(255, 255, 255, 0.3);
+	border-radius: 4px;
+	background: rgba(255, 255, 255, 0.15);
+	color: #fff;
+	transition: all 0.3s ease;
+}
+
+#search input[type="text"]:focus {
+	background: rgba(255, 255, 255, 0.25);
+	border-color: rgba(255, 255, 255, 0.5);
+	outline: none;
+}
+
+#search input[type="text"]::placeholder {
+	color: rgba(255, 255, 255, 0.7);
+}
+
 #menu {
 	position: relative;
 	width: 100%;
-	background-color: #EBECCF;  /* NAT */
-	border-top: 1px solid #fff;
+	background-color: #fff;
+	border-bottom: 1px solid #e0e0e0;
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 	}
 
 #content {
 	clear: both;
 	width: 100%;
-	min-width: 950px; /* NAT */
+	max-width: 1400px;
+	margin: 0 auto;
+	padding: 0 20px;
+	box-sizing: border-box;
 	}
 
 #footer {
 	width: 100%;
-	padding: 0.7em 0 0.2em 0;
-	margin: 0;
-	background-color: #CDCEBC; /* NAT */
+	padding: 2em 0;
+	margin: 2em 0 0 0;
+	background-color: #263238;
+	color: #fff;
+	border-top: 1px solid #e0e0e0;
 	}
 
 #footer p {
 	margin-left: 18px;
+	color: rgba(255, 255, 255, 0.8);
 	}
+
+@media (max-width: 768px) {
+	#search {
+		position: static;
+		width: 100%;
+		height: auto;
+	}
+
+	#content {
+		padding: 0 15px;
+	}
+}
 
 /**** MENU ***********************************************************************/
 
 #topmenu {
 	position: relative;
 	margin: 0;
-	padding: 0 14px 2px 0;
-	border-top: 1px solid #fff;
+	padding: 0 14px 0 0;
+	border-top: none;
 	z-index: 10;
 	}
-	
-#bottommenu {	
+
+#bottommenu {
 	position: relative;
 	width: 100%;
-	height: 22px; /* NAT */
+	height: auto;
 	margin: 0;
-	padding: 0 0 0 0px; /* was 2px left padding */
+	padding: 0;
 	z-index: 10;
-	background-color: #CDCEBC; /* NAT */
+	background-color: transparent;
+	border-bottom: 1px solid #e0e0e0;
 	}
-	
+
 #topmenu ul,
 #bottommenu ul {
 	list-style: none;
 	margin: 0 0 0 18px;
 	padding: 0;
+	display: flex;
+	flex-wrap: wrap;
 	}
-	
+
 ul#user {
 	position: relative;
 	float: right;
 	width: 25em;
-	height: 20px;  /* NAT */
+	height: auto;
+	margin: 0;
+	padding: 0;
+	justify-content: flex-end;
 	}
 ul#user li {
-	float: right;
+	float: none;
 	}
 ul#user .name {
 	display: block;
-	margin: 3px 5px 0 0;
+	margin: 0;
+	padding: 12px 15px;
 	}
-	
+
 #topmenu li,
 #bottommenu li {
 	position: relative;
-	display: block;
-	float: left;
+	display: flex;
+	align-items: center;
+	float: none;
 	width: auto;
 	margin: 0;
 	padding: 0;
 	}
-	
-#topmenu br { 
-	clear: both; 
+
+#topmenu br {
+	clear: none;
+	display: none;
 	}
-	
+
 #topmenu a,
 #bottommenu a {
 	position: relative;
 	display: block;
 	margin: 0;
-	padding: 3px 10px;
-	background: #DECEB3;  /* NAT */
-	border-left: 1px solid #fff;
-	border-bottom: 1px solid #fff;
-	color: #000;
-	font-weight: bold;
-	width: 5.5em;
-	/* Mac IE will ignore the next line \*/
+	padding: 12px 15px;
+	background: transparent;
+	border: none;
+	color: #212121;
+	font-weight: 500;
 	width: auto;
-	/* end hack */
+	transition: all 0.3s ease;
+	border-bottom: 3px solid transparent;
 	}
-	
-#bottommenu a {
-	padding-right: 20px;
-	border-width: 0 1px; /* NAT */
-	border-style: solid; /* NAT */
-	border-color: #AE967F; /* NAT */
-	background: #DECEB3; /* NAT */
-	color: #000; /* NAT */
+
+#topmenu a:hover,
+#bottommenu a:hover {
+	background: transparent;
+	color: #1976d2;
+	text-decoration: none;
+	border-bottom-color: #1976d2;
 	}
 
 #topmenu a.on,
-#topmenu a:hover {
-	background: #EBA668; /* NAT */
-	color: #fff;
-	text-decoration: none; /* NAT */
-	}
-	
-#topmenu a.on {
-	border-bottom: 1px solid #4D6C25;
+#bottommenu a.on {
+	background: transparent;
+	color: #1976d2;
+	text-decoration: none;
+	border-bottom: 3px solid #1976d2;
+	font-weight: 600;
 	}
 
-#bottommenu a.on,
-#bottommenu a:hover {
-	background: #EBA668; /* NAT */
-	color: #fff; /* NAT */
-	text-decoration: none; /* NAT */
+@media (max-width: 768px) {
+	#topmenu ul,
+	#bottommenu ul {
+		flex-direction: column;
 	}
+
+	ul#user {
+		width: 100%;
+		justify-content: flex-start;
+	}
+}
 
 /**** STRIPES *****************************************************************/
 /**** The horizontal stripes. And/or the main column / sidebar structure.     */
@@ -276,37 +351,39 @@ div.stripe-head-1,
 div.stripe-head-2 {
 	margin: 0;
 	padding: 0;
-	background: #EBECCF; /* NAT */
+	background: #fff;
 	}
 
 div.stripe-head-2,
 div.stripe-foot {
-	background: #FDF5F5;
+	background: #f5f5f5;
 	}
 
 div.stripe-1,
 div.stripe-1-on,
 div.stripe-time-1,
 div.stripe-procedural-1 {
-	background: #F5F5F5;
+	background: #fff;
+	border-top: 1px solid #e0e0e0;
 	}
 
 div.stripe-2,
 div.stripe-2-on,
 div.stripe-time-2,
 div.stripe-procedural-2 {
-	background: #E5DFD9;
+	background: #f8f9fa;
+	border-top: 1px solid #e0e0e0;
 	}
 
 /* The main, left-column */
 
-div.main {	
+div.main {
 	float: left;
 	width: 74%; /* NAT */
 	margin: 0;
 	padding: 0;
 	background: #fff;
-	}	
+	}
 
 div.stripe-side div.main {
 	padding-top: 1em;
@@ -382,7 +459,7 @@ div.main p.speaker small,
 div.main p.unknownspeaker small {
 	font-style: italic;
 }
-	
+
 div.main p.speaker,
 div.main p.unknownspeaker {
 	margin-bottom: 0;
@@ -390,7 +467,7 @@ div.main p.unknownspeaker {
 div.main p.unknownspeaker {
 	font-weight: bold;
 	}
-	
+
 div.stripe-1-on p.speaker a,
 div.stripe-2-on p.speaker a {
 	color: #B82E00;
@@ -399,7 +476,7 @@ div.stripe-1-on p.speaker a.permalink,
 div.stripe-2-on p.speaker a.permalink {
 	color: #000;
 	}
-	
+
 div.main img.portrait {
 	margin: 0.3em 1em 1em 0;
 	border: none;
@@ -408,9 +485,9 @@ div.main img.portrait {
 div.main .textportrait {
 	float: left;
 	display: block;
-    width: 96px; 
+    width: 96px;
     min-height: 118px;
-    float: left; 
+    float: left;
 	border: 1px solid #BDE190;
     text-align: center;
     margin: 0 2em 1em 0;
@@ -433,7 +510,7 @@ div.main p.indentitalic {
 
 
 
-/**** BLOCKS *************************************************************************/	
+/**** BLOCKS *************************************************************************/
 /* A 'block' is a colored area with a headline, like all those ones on the home page. */
 
 div.block {
@@ -442,7 +519,7 @@ div.block {
 	/* border: 1px solid #BDE190; */ /* NAT */
 	background-color: #fff;
 	}
-	
+
 div.block h4 {
 	margin: 0;
 	padding: 0.15em 0.7em 0.3em 0.7em;
@@ -471,15 +548,15 @@ div#help.block h4 {
 div#help.block h4 a {
 	color: #fff;
 	}
-	
-	
-	
+
+
+
 /**** SIDEBARS ******************************************************************/
 
 div.sidebar {
 	float: right;
-	clear: none; /* NAT */
-	width: 25%; /* NAT */
+	clear: none;
+	width: 25%;
 	padding: 1em 0 0 0;
 	margin: 0;
 	background: transparent;
@@ -488,29 +565,34 @@ div.sidebar {
 /* Overriding the standard block styles for the sidebar. */
 div.sidebar div.block {
 	margin: 0 14px 1em 10px;
-	padding: 4px;
-	border: 2px solid #FFF; /* NAT */
+	padding: 0;
+	border: none;
+	border-radius: 8px;
+	background: #fff;
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+	overflow: hidden;
 	}
 div.sidebar div.block h4 {
-	background: #A8A98C; /* NAT */
+	background: linear-gradient(135deg, #1976d2 0%, #1565c0 100%);
 	color: #fff;
-	padding-left: 0.35em;
-	padding-right: 0.35em;
+	padding: 0.8em;
+	margin: 0;
+	font-weight: 600;
 	}
 div.sidebar div.block h4 a {
 	color: #fff;
 	}
-	
+
 div.sidebar div.block h5 {
 	margin: 1em 0 0 0;
 	}
-	
+
 div.sidebar div.blockbody {
-	padding: 0 0.35em 0em 0.35em;
+	padding: 0.8em;
 	}
 
 div.sidebar p {
-	line-height: 1.3em;
+	line-height: 1.5em;
 	margin-top: 0.5em;
 	margin-bottom: 1em;
 	}
@@ -518,16 +600,23 @@ div.sidebar p.vote {
 	margin: 0.2em 14px 0 10px;
 	}
 div.sidebar p.vote a {
-	background-color: #4D6C25;
-	padding: 2px 4px;
-	border-top: 2px solid #EAECE7;
-	border-right: 2px solid #F0F1ED;
-	border-bottom: 2px solid #3C541D;
-	border-left: 2px solid #324518;
+	background: linear-gradient(135deg, #1976d2 0%, #1565c0 100%);
+	padding: 0.6em 0.8em;
+	border: none;
+	border-radius: 4px;
 	color: #fff;
-	font-weight: bold;
+	font-weight: 600;
 	text-decoration: none;
+	display: inline-block;
+	transition: all 0.3s ease;
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 	}
+
+div.sidebar p.vote a:hover {
+	transform: translateY(-2px);
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+	}
+
 span.wransvote {
 	line-height: 2.2em;
 	}
@@ -539,14 +628,14 @@ div.sidebar p.comment-teaser {
 div.sidebar p.video {
 	margin: 0 14px 0 10px;
 }
-	
+
 div.sidebar p.nextprev {
 	margin: 0.5em 14px 2em 10px;
-	height: 3em;
+	height: auto;
 	}
 .up {
 	display: block;
-	font-weight: bold;
+	font-weight: 600;
 	margin-bottom: 0.5em;
 	text-align: center;
 	}
@@ -558,7 +647,7 @@ div.sidebar p.nextprev {
 	display: block;
 	float: right;
 	}
-	
+
 div.sidebar ul {
 	margin-top: 0.5em;
 	}
@@ -569,55 +658,61 @@ div.extra {
 	margin: -1.8em 14px 0 0;
 	}
 div.extra a {
-	color: #A1B487;
+	color: #1976d2;
+	font-weight: 500;
 	}
 
 
-/**** CALENDARS ****************************************************************/	
+/**** CALENDARS ****************************************************************/
 
 div.calendar {
 	float: left;
 	margin: 0 14px 1em 18px;
 	padding: 0;
-	height: 13.3em;
-	border: solid 1px #999; /* NAT */
+	height: auto;
+	border: 1px solid #e0e0e0;
+	border-radius: 8px;
+	background: #fff;
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 	}
-	
+
 div.calendar table {
 	margin: 0;
-	width: 187px;
+	width: 100%;
 }
-	
+
 div.calendar caption {
 	caption-side: top;
 	text-align: left;
-	padding: 0.3em 0.4em;
-	background: #a8a98c;
-	color: #000;
-	font-weight: bold;
-	width: 189px;
+	padding: 0.8em;
+	background: linear-gradient(135deg, #1976d2 0%, #1565c0 100%);
+	color: #fff;
+	font-weight: 600;
+	width: 100%;
+	border-radius: 8px 8px 0 0;
 	}
 div.calendar th,
 div.calendar td {
 	text-align: center;
 	font-weight: normal;
 	background: #fff;
-	padding: 0.2em 0.1em; /* NAT */
+	padding: 0.5em;
 	}
 div.calendar td {
-	padding: 0.2em 0.4em;
-	color: #4D6C25;
+	color: #212121;
 	}
 div.calendar td.on {
-	background: #DECEB3;
+	background: #1976d2;
 	color: #fff;
+	font-weight: 600;
+	border-radius: 4px;
 	}
 div.calendar td.on a {
 	color: #fff;
 	}
 div.calendar td.no, div.sidebar div.calendar td.no {
-	color: #cccccc;
-	background-color: #eeeeee;
+	color: #ccc;
+	background-color: transparent;
 }
 /* Changes for sidebar */
 div.sidebar div.calendar {
@@ -626,21 +721,29 @@ div.sidebar div.calendar {
 	height: auto;
 	}
 div.sidebar div.calendar caption {
-	font-weight: bold;
-	background: none;
+	font-weight: 600;
+	background: linear-gradient(135deg, #1976d2 0%, #1565c0 100%);
 	}
 div.sidebar div.calendar th,
 div.sidebar div.calendar td {
 	background: #fff;
 	}
 div.sidebar div.calendar td.on {
-	background: #DECEB3;
+	background: #1976d2;
 	color: #fff;
 	}
-	
-	
 
-/**** MISC THINGS ****************************************************************/	
+@media (max-width: 768px) {
+	div.sidebar {
+		float: none;
+		width: 100%;
+		padding: 1em 0;
+	}
+}
+
+
+
+/**** MISC THINGS ****************************************************************/
 
 ul#hansard-day,
 ul#hansard-day li,
@@ -712,15 +815,30 @@ dl.recent-wrans p.numindent {
 	margin: 0;
 	}
 
+table.people {
+	width: 100%;
+	border-collapse: collapse;
+	background: #fff;
+	border-radius: 8px;
+	overflow: hidden;
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+	}
 table.people th {
 	text-align: left;
-	background: #DECEB3;
+	background: linear-gradient(135deg, #1976d2 0%, #1565c0 100%);
+	color: #fff;
+	padding: 0.8em;
+	font-weight: 600;
 	}
 table.people td.row-1 {
-	background: #F5F5F5;
+	background: #fff;
+	padding: 0.8em;
+	border-bottom: 1px solid #e0e0e0;
 	}
 table.people td.row-2 {
-	background: #E5DFD9;
+	background: #f8f9fa;
+	padding: 0.8em;
+	border-bottom: 1px solid #e0e0e0;
 	}
 
 #people_results {
@@ -738,7 +856,7 @@ dl#searchresults dd {
 	}
 dl#searchresults dt {
 	margin: 0 0 0.2em 0;
-	font-weight: normal;
+	font-weight: 600;
 	}
 dl#searchresults dd {
 	margin-bottom: 1em;
@@ -753,13 +871,19 @@ div.pagelinks {
 #search_links {
 	font-size: 150%;
 	list-style-type:none;
+	display: flex;
+	gap: 1em;
+	justify-content: center;
+	flex-wrap: wrap;
 }
 #search_links li {
 	min-height: 32px;
-	margin-left:0;
-	padding-left:40px;
+	margin: 0;
+	padding-left: 40px;
 	background-repeat: no-repeat;
 	background-position: 0 0;
+	display: flex;
+	align-items: center;
 }
 #search_links_email {
 	background-image: url("../../images/icon-email.png");
@@ -769,34 +893,40 @@ div.pagelinks {
 }
 
 span.hi {
-	background: #ff3;
+	background: #fff59d;
+	padding: 2px 4px;
+	border-radius: 3px;
+	font-weight: 600;
 	}
 a span.hi {
 	text-decoration: underline;
 	}
-	
+
 span.example-input {
 	display: block;
-	background: #eee; 
-	margin: 0.2em 0;
-	padding: 2px; 
-	border-top: 1px solid #666; 
-	border-left: 1px solid #666;
+	background: #f5f5f5;
+	margin: 0.5em 0;
+	padding: 0.6em;
+	border: 1px solid #ddd;
+	border-radius: 4px;
+	font-family: 'Courier New', monospace;
 	}
-	
-	
+
+
 /* Site News */
 form.blogcomment {
 	margin-left: 18px;
 	margin-right: 14px;
 	}
 
-/* Admin */	
+/* Admin */
 p.email-template {
-	font-family: monospace;
-	background: #F5FDEA;
-	border: 1px solid #4D6C25;
+	font-family: 'Courier New', monospace;
+	background: #f5f5f5;
+	border: 1px solid #ddd;
+	border-left: 4px solid #1976d2;
 	padding: 1em;
+	border-radius: 4px;
 	}
 
 /**** GLOSSARY ***********************************************************************/
@@ -849,14 +979,14 @@ div.letters li.on a {
 	}
 
 
-/**** MP PAGE ****************************************************************/	
+/**** MP PAGE ****************************************************************/
 /* We override the standard block styles for these special MP page blocks.   */
 
 div#mp.block {
 	/* Stops contents disappearing in Win IE. Weird. */
 	line-height: 1.2em;
 	}
-	
+
 div#mp.block,
 div#mpsearch.block {
 	background: #FDF5F5;
@@ -889,7 +1019,7 @@ div#mp img.portrait {
 ul.jumpers {
 	clear: left;
 	}
-	
+
 .regmemcategory {
 	font-weight: bold;
 	}
@@ -898,7 +1028,7 @@ ul.jumpers {
 	}
 
 
-/**** HOME PAGE ****************************************************************/	
+/**** HOME PAGE ****************************************************************/
 /* We override the standard block styles for this special home page block.     */
 
 div#intro.block {

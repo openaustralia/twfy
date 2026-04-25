@@ -1,41 +1,47 @@
 body {
-	background-color: #fff;
-	font-family: Verdana, Arial, Geneva, Sans-serif;
+	background-color: #fafafa;
+	font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
 	margin: 0;
 	padding: 0;
+	color: #212121;
+	line-height: 1.6;
 	}
 
 a img {
 	border: none;
 	}
 
-/* For NS4 */	
+/* For NS4 */
 h2, h3, h4, h5, p, th, td, caption {
-	font-family: Verdana, Arial, Geneva, Sans-serif;
+	font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
 }
 
 
 /**** FONT SIZES *************************************************************/
-/**** We keep these all together so it's easy to compare and change */
+/**** Modern, responsive typography */
 
 body {
-	font-size: 80%;
+	font-size: 16px;
 	}
-	
+
 h2 {
-	font-size: 1.5em;
+	font-size: 2em;
+	font-weight: 600;
 }
 h4 {
 	font-size: 1.25em;
+	font-weight: 600;
 	}
 
 h3 {
-	font-size: 1.15em;
+	font-size: 1.5em;
+	font-weight: 600;
 }
 h5 {
 	font-size: 1.1em;
+	font-weight: 500;
 	}
-	
+
 p,
 .sidebar h4,
 .block h4,
@@ -55,12 +61,12 @@ div.calendar td,
 div.extra,
 div.main table th,
 div.main table td {
-	font-size: 0.85em;
+	font-size: 0.9em;
 	}
-	
+
 #topmenu,
 #bottommenu {
-	font-size: 12px;
+	font-size: 14px;
 	}
 
 /* Changes for the front page intro block. */
@@ -78,7 +84,7 @@ div#intro ol ul#hansard-day {
 }
 
 .error {
-	color: #B82E00;
+	color: #d32f2f;
 	}
 p.error {
 	clear: left;
@@ -88,4 +94,20 @@ p.error {
 .printonly {
 	display: none;
 }
+
+/* Modern responsive design */
+@media (max-width: 768px) {
+	body {
+		font-size: 14px;
+	}
+
+	h2 {
+		font-size: 1.6em;
+	}
+
+	h3 {
+		font-size: 1.25em;
+	}
+}
+
 /* Everything else is in global_non_ns4.css */
