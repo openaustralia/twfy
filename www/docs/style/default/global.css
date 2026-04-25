@@ -9,40 +9,40 @@ a img {
 	border: none;
 	}
 
-/* For NS4 */	
+/* For NS4 */
 h2, h3, h4, h5, p, th, td, caption {
 	font-family: Verdana, Arial, Geneva, Sans-serif;
 }
 
 
 /**** FONT SIZES *************************************************************/
-/**** We keep these all together so it's easy to compare and change */
+/**** Enlarged for better readability - much bigger text */
 
 body {
-	font-size: 80%;
+	font-size: 120%;
 	}
-	
+
 h2 {
-	font-size: 1.5em;
+	font-size: 2.2em;
 }
 h4 {
-	font-size: 1.25em;
+	font-size: 1.6em;
 	}
 
 h3 {
-	font-size: 1.15em;
+	font-size: 1.8em;
 }
 h5 {
-	font-size: 1.1em;
+	font-size: 1.4em;
 	}
-	
+
 p,
 .sidebar h4,
 .block h4,
 .block li,
 div.row,
 input.submit {
-	font-size: 1em;
+	font-size: 1.1em;
 	}
 
 small,
@@ -55,12 +55,12 @@ div.calendar td,
 div.extra,
 div.main table th,
 div.main table td {
-	font-size: 0.85em;
+	font-size: 1em;
 	}
-	
+
 #topmenu,
 #bottommenu {
-	font-size: 12px;
+	font-size: 16px;
 	}
 
 /* Changes for the front page intro block. */
@@ -68,13 +68,13 @@ div.main table td {
 div#intro h4,
 div#mp h4,
 div#intro ol {
-	font-size: 1.2em;
+	font-size: 1.4em;
 	}
 div#intro ol p {
-	font-size: 0.85em; /* Put the text (rather than the ol numbers) to normal size. */
+	font-size: 1em; /* Put the text (rather than the ol numbers) to normal size. */
 	}
 div#intro ol ul#hansard-day {
-	font-size: 0.85em;
+	font-size: 1em;
 }
 
 .error {
