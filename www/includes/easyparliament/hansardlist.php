@@ -49,6 +49,10 @@ include_once INCLUDESPATH . "easyparliament/searchlog.php";
 class HANSARDLIST {
 
     protected $db;
+    protected $listpage;
+    protected $commentspage;
+    protected $url;
+    protected $bill_title;
 
     // We add 'wrans' or 'debate' onto the end of this in the appropriate classes'
     // constructors.
@@ -1710,7 +1714,7 @@ class HANSARDLIST {
         // Construct the $fields clause.
         foreach ($fieldsarr as $table => $tablesfields) {
             foreach ($tablesfields as $n => $field) {
-                $fieldsarr2[] = $table . '.' . $field;
+                $fieldsarr2[] = "$table.$field";
             }
         }
         $fields = implode(', ', $fieldsarr2);
@@ -2641,7 +2645,7 @@ class LORDSDEBATELIST extends DEBATELIST {
     public function __construct() {
         // Sets $db.
         parent::__construct();
-        $this->gidprefix .= 'lords/';
+        $this->gidprefix = 'uk.org.publicwhip/lords/';
     }
 
 }
