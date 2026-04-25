@@ -737,13 +737,6 @@ class HANSARDLIST {
                 }
             }
 
-            /* Right back when Lords began, we sent out email alerts when they weren't on the site. So this was to work that. */
-            // $q = $this->db->query('SELECT source_url FROM hansard WHERE gid LIKE "uk.org.publicwhip/lords/'.mysqli_real_escape_string($this->db->conn, $args['gid']).'%"');
-            // $u = '';
-            // if ($q->rows()) {
-            // $u = $q->field(0, 'source_url');
-            // $u = '<br><a href="'. $u . '">' . $u . '</a>';
-            // }
             $PAGE->error_message("Sorry, there is no Hansard object with a gid of '" . htmlentities($args['gid']) . "'.");
             return FALSE;
         }
