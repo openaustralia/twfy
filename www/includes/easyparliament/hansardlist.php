@@ -737,61 +737,6 @@ class HANSARDLIST {
                 }
             }
 
-            /* A lot of written answers were moved from 10th to 11th May and 11th May to 12th May.
-            Deal with the bots who have stored links to those now non-existant written answers. */
-            /* 2007-05-31: And then they were moved BACK in the volume edition, ARGH */
-            $itemdata = $this->check_gid_change($args['gid'], '2006-05-10a', '2006-05-10c');
-            if ($itemdata) {
-                return $itemdata;
-            }
-            $itemdata = $this->check_gid_change($args['gid'], '2006-05-10a', '2006-05-11d');
-            if ($itemdata) {
-                return $itemdata;
-            }
-            $itemdata = $this->check_gid_change($args['gid'], '2006-05-11b', '2006-05-11d');
-            if ($itemdata) {
-                return $itemdata;
-            }
-            $itemdata = $this->check_gid_change($args['gid'], '2006-05-11b', '2006-05-12c');
-            if ($itemdata) {
-                return $itemdata;
-            }
-            $itemdata = $this->check_gid_change($args['gid'], '2006-05-11c', '2006-05-10c');
-            if ($itemdata) {
-                return $itemdata;
-            }
-            $itemdata = $this->check_gid_change($args['gid'], '2006-05-12b', '2006-05-11d');
-            if ($itemdata) {
-                return $itemdata;
-            }
-
-            $itemdata = $this->check_gid_change($args['gid'], '2007-01-08', '2007-01-05');
-            if ($itemdata) {
-                return $itemdata;
-            }
-            $itemdata = $this->check_gid_change($args['gid'], '2007-02-19', '2007-02-16');
-            if ($itemdata) {
-                return $itemdata;
-            }
-
-            /* More movearounds... */
-            $itemdata = $this->check_gid_change($args['gid'], '2005-10-10d', '2005-09-12a');
-            if ($itemdata) {
-                return $itemdata;
-            }
-            $itemdata = $this->check_gid_change($args['gid'], '2005-10-14a', '2005-10-13b');
-            if ($itemdata) {
-                return $itemdata;
-            }
-            $itemdata = $this->check_gid_change($args['gid'], '2005-10-18b', '2005-10-10e');
-            if ($itemdata) {
-                return $itemdata;
-            }
-            $itemdata = $this->check_gid_change($args['gid'], '2005-11-17b', '2005-11-15c');
-            if ($itemdata) {
-                return $itemdata;
-            }
-
             /* Right back when Lords began, we sent out email alerts when they weren't on the site. So this was to work that. */
             // $q = $this->db->query('SELECT source_url FROM hansard WHERE gid LIKE "uk.org.publicwhip/lords/'.mysqli_real_escape_string($this->db->conn, $args['gid']).'%"');
             // $u = '';
