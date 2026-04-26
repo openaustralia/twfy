@@ -7,7 +7,6 @@ on:
 
 permissions:
   contents: read
-  pull-requests: write
 
 jobs:
   lint:
@@ -43,6 +42,9 @@ jobs:
 
   test:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
     services:
       mysql:
         image: mysql:8.0
