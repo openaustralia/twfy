@@ -1105,6 +1105,25 @@ class THEUSER extends USER {
     }
 
     /**
+     * Validate that a redirect URL is safe (relative or same domain).
+     */
+    private function is_safe_redirect_url($url) {
+        // Relative URLs (starting with /) are safe
+        if (strpos($url, '/') === 0) {
+            return TRUE;
+        }
+
+        // Absolute URLs must be on the same domain
+        $safe_base_http = 'http://' . DOMAIN;
+        $safe_base_https = 'https://' . DOMAIN;
+        if (strpos($url, $safe_base_http) === 0 || strpos($url, $safe_base_https) === 0) {
+            return TRUE;
+        }
+
+        return FALSE;
+    }
+
+    /**
      *
      */
     public function login($returl = "", $expire = "session") {
@@ -1122,7 +1141,7 @@ class THEUSER extends USER {
         // the front page.
         global $PAGE;
 
-        if ($returl == "") {
+        if ($returl == "" || !$this->is_safe_redirect_url($returl)) {
             $URL = new URL("home");
             $returl = $URL->generate();
         }
@@ -1165,7 +1184,7 @@ class THEUSER extends USER {
         // page they were on before. But if it doesn't exist, they'll just go to
         // the front page.
 
-        if ($returl == '') {
+        if ($returl == '' || !$this->is_safe_redirect_url($returl)) {
             $URL = new URL("home");
             $returl = $URL->generate();
         }
