@@ -89,7 +89,7 @@ if (get_http_var("submitterm") != '') {
 
         // Off it goes...
         print "<p>Your entry should look something like this:</p>";
-        print "<h3>". htmlentities($title, ENT_QUOTES, 'UTF-8') . "</h3>";
+        print "<h3>" . htmlentities($title, ENT_QUOTES, 'UTF-8') . "</h3>";
 
         $PAGE->glossary_display_term($GLOSSARY);
 
