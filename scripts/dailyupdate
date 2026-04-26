@@ -6,7 +6,7 @@ source consts
 
 # Update links info
 # This loads the links with "mpinfoin.pl links" as well (so we're doing that twice)
-(cd ../../openaustralia-parser; bundle exec parse-member-links.rb)
+../../openaustralia-parser/bin/run parse-member-links.rb
 
 # Update MP info from Public Whip, FaxYourMP and other places
 #cd ~/parlparse/members

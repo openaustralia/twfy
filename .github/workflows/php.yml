@@ -1,0 +1,118 @@
+name: "PHP checks"
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Setup PHP 8.3
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: mbstring, pdo, sqlite
+          coverage: none # Use 'xdebug' or 'pcov' for code coverage
+          tools: composer
+        env:
+          fail-fast: true
+      - name: Lint
+        run: make lint-ci
+        env:
+          fail-fast: true
+      - name: composer
+        run: composer install
+        env:
+          fail-fast: true
+      - name: audit
+        run: composer validate
+        env:
+          fail-fast: true
+      - name: phpcs
+        run: make phpcs-ci
+        env:
+          fail-fast: true
+
+  test:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: test_twfy
+        options: >-
+          --health-cmd="mysqladmin ping"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=3
+        ports:
+          - 3306:3306
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Needed for SonarCloud analysis
+      - name: Setup PHP 8.3
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: mbstring, mysqli
+          coverage: xdebug
+          tools: composer
+        env:
+          fail-fast: true
+      - name: Install dependencies
+        run: composer install --no-interaction --prefer-dist
+      - name: Load database schema
+        run: |
+          mysql -h 127.0.0.1 -u root -proot test_twfy < db/schema.sql
+      - name: Run tests with coverage
+        run: |
+          set -o pipefail
+          XDEBUG_MODE=coverage ./vendor/bin/phpunit \
+            --coverage-text \
+            --coverage-clover=coverage/clover.xml \
+            --coverage-html=coverage/html \
+            --log-junit=coverage/junit.xml | tee phpunit-coverage.out
+        env:
+          DB_HOST: 127.0.0.1
+          DB_USER: root
+          DB_PASSWORD: root
+          DB_NAME: test_twfy
+      - name: Build coverage summary
+        run: |
+          {
+            echo "## Code Coverage"
+            echo
+            echo '```text'
+            if grep -q '^Code Coverage Report:' phpunit-coverage.out; then
+              sed -n '/^Code Coverage Report:/,$p' phpunit-coverage.out
+            else
+              echo "Coverage summary not found in phpunit output."
+            fi
+            echo '```'
+          } > code-coverage-results.md
+      - name: Add coverage to job summary
+        run: cat code-coverage-results.md >> "$GITHUB_STEP_SUMMARY"
+      - name: Post coverage comment on PR
+        if: github.event_name == 'pull_request'
+        uses: marocchino/sticky-pull-request-comment@v2
+        with:
+          recreate: true
+          path: code-coverage-results.md
+    #   - name: SonarCloud Scan
+    #     uses: SonarSource/sonarcloud-github-action@master
+    #     env:
+    #       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    #       SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}

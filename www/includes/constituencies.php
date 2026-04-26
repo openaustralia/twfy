@@ -1,0 +1,38 @@
+<?php
+
+/**
+ * @file
+ * $Id: constituencies.inc,v 1.2 2006/08/31 13:20:48 twfy-live Exp $
+ */
+
+/**
+ *
+ */
+function normalise_constituency_name($name) {
+    // HACK.
+    return $name;
+}
+
+/**
+ * As I don't want to do 646*2 DB queries!
+ */
+function normalise_constituency_names($names) {
+    $db = new ParlDB();
+    $q = $db->query('select constituency.name as name,c_main.name as canonical_name
+		from constituency, constituency as c_main
+		where constituency.cons_id = c_main.cons_id
+		and c_main.main_name and constituency.name in ("' . implode('","', array_values($names)) .
+        '") and constituency.from_date <= date(now())
+		and date(now()) <= constituency.to_date');
+    $lookup = [];
+    for ($i = 0; $i < $q->rows(); $i++) {
+        $name = html_entity_decode($q->field($i, 'name'));
+        $canonical = html_entity_decode($q->field($i, 'canonical_name'));
+        $lookup[$name] = $canonical;
+    }
+    $output = [];
+    foreach ($names as $area_id => $name) {
+        $output[$area_id] = $lookup[$name] ?? $name;
+    }
+    return $output;
+}
