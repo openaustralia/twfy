@@ -39,6 +39,7 @@ class COMMENT {
                                 */
     public $lastname = '';
     public $url = '';
+    public $comments_enabled = FALSE;
 
     // So that after trying to init a comment, we can test for.
     /**
