@@ -61,6 +61,9 @@ class SEARCHENGINE {
     public $phrases = [];
     public $prefixed = [];
     public $excluded = [];
+    public $gids = [];
+    public $created = [];
+    public $relevances = [];
 
     /**
      *

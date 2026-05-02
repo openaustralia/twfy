@@ -35,6 +35,7 @@ include_once INCLUDESPATH . 'dbtypes.php';
 class COMMENTLIST {
 
     private $db = NULL;
+    public $page = '';
 
     /**
      *

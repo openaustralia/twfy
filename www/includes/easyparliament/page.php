@@ -55,6 +55,7 @@ class PAGE {
      */
     public $within_stripe_main = FALSE;
     public $within_stripe_sidebar = FALSE;
+    public $blockbody_open = FALSE;
 
     /**
      *

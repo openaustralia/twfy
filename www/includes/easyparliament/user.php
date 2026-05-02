@@ -110,6 +110,7 @@ class USER {
      * Don't use the status to check access privileges - use the is_able_to() function.
      */
     public $status = "Viewer";
+    public $registrationtoken = "";
 
     // If you add more user variables above you should also:
     // * Add the appropriate code to $this->add()

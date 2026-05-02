@@ -140,6 +140,7 @@ class ALERT {
      * Boolean - Has the user confirmed via email?
      */
     public $confirmed = "";
+    public $registrationtoken = "";
 
     /**
      *

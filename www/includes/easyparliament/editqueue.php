@@ -49,6 +49,13 @@ class EDITQUEUE {
     protected $db = NULL;
 
     public $pending_count = '';
+    public $pending = [];
+    public $editqueue_id = '';
+    public $title = '';
+    public $body = '';
+    public $posted = '';
+    public $current_epobject_id = '';
+    public $current_subclass_id = '';
 
     /**
      *
