@@ -203,11 +203,11 @@ class COMMENTLIST {
 						WHERE 	comments.epobject_id = epobject.epobject_id
 						AND 	comments.epobject_id = hansard.epobject_id
 						AND 	comments.user_id = users.user_id
-						AND 	users.user_id='" . addslashes($args['user_id']) . "'
+						AND 	users.user_id=?
 						AND 	visible='1'
 						GROUP BY epobject_id
 						ORDER BY posted DESC
-						LIMIT " . $limit
+						LIMIT ? ", $args['user_id'], $limit
         );
 
         $comments = [];
@@ -250,6 +250,7 @@ class COMMENTLIST {
 
             $in = implode(', ', $comment_ids);
 
+            // TODO: parameterize this!
             $r = $this->db->query("SELECT comment_id,
 									body
 							FROM	comments
@@ -275,7 +276,7 @@ class COMMENTLIST {
         $data['comments'] = $comments;
         $data['results_per_page'] = $num;
         $data['page'] = $page;
-        $q = $this->db->query('SELECT COUNT(DISTINCT(epobject_id)) AS count FROM comments WHERE visible=1 AND user_id=' . $args['user_id']);
+        $q = $this->db->query('SELECT COUNT(DISTINCT(epobject_id)) AS count FROM comments WHERE visible=1 AND user_id=?', $args['user_id']);
         $data['total_results'] = $q->field(0, 'count');
         return $data;
 
@@ -327,15 +328,29 @@ class COMMENTLIST {
         $data['comments'] = $commentsdata;
         $data['results_per_page'] = $num;
         $data['page'] = $page;
+
+
         if (isset($args['pid']) && is_numeric($args['pid'])) {
             $data['pid'] = $args['pid'];
-            $q = 'SELECT title, first_name, last_name, constituency, house FROM member WHERE left_house="9999-12-31" and person_id = ' . $args['pid'];
-            $q = $this->db->query($q);
-            $data['full_name'] = member_full_name($q->field(0, 'house'), $q->field(0, 'title'), $q->field(0, 'first_name'), $q->field(0, 'last_name'), $q->field(0, 'constituency'));
-            $q = 'SELECT COUNT(*) AS count FROM comments,hansard,member WHERE visible=1 AND comments.epobject_id = hansard.epobject_id and hansard.speaker_id = member.member_id and person_id = ' . $args['pid'];
+            $r = $this->db->query('SELECT title, first_name, last_name, constituency, house
+                FROM member
+                WHERE left_house="9999-12-31" and person_id = ?',
+                $args['pid']);
+            $data['full_name'] = member_full_name($r->field(0, 'house'),
+                $r->field(0, 'title'),
+                $r->field(0, 'first_name'),
+                $r->field(0, 'last_name'),
+                $r->field(0, 'constituency'));
+
+            $q = 'SELECT COUNT(*) AS count FROM comments,hansard,member
+                WHERE visible=1
+                    AND comments.epobject_id = hansard.epobject_id
+                    AND hansard.speaker_id = member.member_id
+                    AND person_id = ' . $args['pid'];
         } else {
             $q = 'SELECT COUNT(*) AS count FROM comments WHERE visible=1';
         }
+        // TODO: parameterize this!
         $q = $this->db->query($q);
         $data['total_results'] = $q->field(0, 'count');
         return $data;
@@ -381,10 +396,7 @@ class COMMENTLIST {
 
         $data['comments'] = $commentsdata;
         $data['search'] = $args['s'];
-        // $data['results_per_page'] = $num;
-        // $data['page'] = $page;
-        // $q = $this->db->query('SELECT COUNT(*) AS count FROM comments WHERE visible=1');
-        // $data['total_results'] = $q->field(0, 'count');
+
         return $data;
     }
 
@@ -552,6 +564,7 @@ class COMMENTLIST {
         }
 
         // Finally, do the query!
+        // TODO: parameterize this!
         $q = $this->db->query("SELECT $fields
 						FROM 	comments
 						$join

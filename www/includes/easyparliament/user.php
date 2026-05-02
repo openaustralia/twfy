@@ -235,8 +235,7 @@ class USER {
 				registrationtime,
 				registrationip,
 				deleted
-			) VALUES (
-				?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, '0')
+			) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, '0')
 		",
             $details["firstname"],
             $details["lastname"],
@@ -273,13 +272,8 @@ class USER {
             $this->registrationtoken = $token;
 
             // Add that to the DB.
-            $r = $this->db->query("UPDATE users
-							SET	registrationtoken = ?
-							WHERE	user_id = ?
-							",
-                            $this->registrationtoken,
-                            $this->user_id
-                            );
+            $r = $this->db->query("UPDATE users SET	registrationtoken = ? WHERE	user_id = ? ",
+                            $this->registrationtoken, $this->user_id);
 
             if ($r->success()) {
                 // Updated DB OK.
@@ -880,6 +874,8 @@ class USER {
         $emailpublic = $details["emailpublic"] == TRUE ? 1 : 0;
         $optin = $details["optin"] == TRUE ? 1 : 0;
 
+
+        // TODO: parameterise this query!
         $q = $this->db->query("UPDATE users
 						SET		firstname 	 = '" . $this->db->escape($details["firstname"]) . "',
 								lastname 	 = '" . $this->db->escape($details["lastname"]) . "',
@@ -1021,8 +1017,8 @@ class THEUSER extends USER {
             // Set last_visit to now.
             $date_now = gmdate("Y-m-d H:i:s");
             $q = $this->db->query("UPDATE users
-							SET 	lastvisit = '$date_now'
-							WHERE 	user_id = '" . $this->user_id() . "'");
+							SET 	lastvisit = ?
+							WHERE 	user_id = ?", $date_now, $this->user_id());
 
             $this->lastvisit = $date_now;
         }
@@ -1222,9 +1218,8 @@ class THEUSER extends USER {
 
         $q = $this->db->query("SELECT email, password, constituency
 						FROM	users
-						WHERE	user_id = '" . $this->db->escape($user_id) . "'
-						AND		registrationtoken = '" . $this->db->escape($registrationtoken) . "'
-						");
+						WHERE	user_id = ? AND		registrationtoken = ?",
+                        $user_id, $registrationtoken);
 
         if ($q->rows() == 1) {
 
@@ -1234,18 +1229,13 @@ class THEUSER extends USER {
             $this->password = $q->field(0, 'password');
 
             // Set that they're confirmed in the DB.
-            $r = $this->db->query("UPDATE users
-							SET		confirmed = '1'
-							WHERE	user_id = '" . $this->db->escape($user_id) . "'
-							");
+            $r = $this->db->query("UPDATE users SET confirmed = '1' WHERE user_id = ?", $user_id);
 
             if ($q->field(0, 'constituency')) {
                 $MEMBER = new MEMBER(['constituency' => $q->field(0, 'constituency')]);
                 $pid = $MEMBER->person_id();
                 // This should probably be in the ALERT class.
-                $this->db->query('update alerts set confirmed=1 where email="' .
-                    $this->db->escape($this->email) . '" and criteria="speaker:' .
-                    $this->db->escape($pid) . '"');
+                $this->db->query('UPDATE alerts SET confirmed=1 WHERE email=? AND criteria=?', $this->email, "speaker:$pid");
             }
 
             if ($r->success()) {

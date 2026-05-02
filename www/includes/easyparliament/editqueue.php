@@ -87,13 +87,9 @@ class EDITQUEUE {
         $q = $this->db->query("INSERT INTO editqueue
 						(user_id, edit_type, title, body, submitted)
 						VALUES
-						(
-						'" . addslashes($THEUSER->user_id()) . "',
-						'" . $data['edit_type'] . "',
-						'" . addslashes($data['title']) . "',
-						'" . addslashes($data['body']) . "',
-						'" . $data['posted'] . "'
-						);");
+                        (?, ?, ?, ?, ?);",
+                        $THEUSER->user_id(), $data['edit_type'], $data['title'], $data['body'], $data['posted']);
+
 
         if ($q->success()) {
             // Set the object variables up.
@@ -139,10 +135,11 @@ class EDITQUEUE {
             $q = $this->db->query("INSERT INTO epobject
 							(title, body, type, created)
 							VALUES
-							('" . addslashes($this->pending[$approval_id]['title']) . "',
-							'" . addslashes($this->pending[$approval_id]['body']) . "',
-							'" . $data['epobject_type'] . "',
-							'" . $timestamp . "');");
+							(?, ?, ?, ?);",
+                            $this->pending[$approval_id]['title'],
+                            $this->pending[$approval_id]['body'],
+                            $data['epobject_type'],
+                            $timestamp);
 
             // If that didn't work we can't go any further...
             if (!$q->success()) {
@@ -161,14 +158,13 @@ class EDITQUEUE {
                     $q = $this->db->query("INSERT INTO glossary
 									(epobject_id, type, visible)
 									VALUES
-									('" . $q->insert_id() . "',
-									'2',
-									'1');");
+									(?, ?, ?)",
+                                    $q->insert_id(), 2, 1);
                     // Again, no point carrying on if this fails,
                     // so remove the previous entry.
                     if (!$q->success()) {
                         print "glossary trouble!";
-                        $q = $this->db->query("delete from epobject where epobject_id=" . $previous_insert_id . "");
+                        $q = $this->db->query("DELETE FROM epobject WHERE epobject_id=?", $previous_insert_id);
                         return FALSE;
                     }
                   break;
@@ -180,11 +176,15 @@ class EDITQUEUE {
             // the new epobject id and approval details.
             $q = $this->db->query("UPDATE editqueue
 							SET
-							epobject_id_l='" . $this->current_epobject_id . "',
-							editor_id='" . addslashes($THEUSER->user_id()) . "',
+							epobject_id_l=?,
+							editor_id=?,
 							approved='1',
-							decided='" . $timestamp . "'
-							WHERE edit_id=" . $approval_id . ";");
+							decided=?
+							WHERE edit_id=?;",
+                            $this->current_epobject_id,
+                            $THEUSER->user_id(),
+                            $timestamp,
+                            $approval_id);
             if (!$q->success()) {
                 break;
             } else {
@@ -224,10 +224,13 @@ class EDITQUEUE {
             // Update the editqueue with setting approved=0.
             $q = $this->db->query("UPDATE editqueue
 							SET
-							editor_id='" . addslashes($THEUSER->user_id()) . "',
+							editor_id=?,
 							approved='0',
-							decided='" . $timestamp . "'
-							WHERE edit_id=" . $decline_id . ";");
+							decided=?
+							WHERE edit_id=?",
+                            $THEUSER->user_id(),
+                            $timestamp,
+                            $decline_id);
             if (!$q->success()) {
                 break;
             } else {
@@ -251,7 +254,7 @@ class EDITQUEUE {
         // update glossary_id.
 
         // 1. Add the new item into the queue
-        $q = $this->db->query();
+        $q = $this->db->query(); // BRW: What is this doing?
 
         // 2. if successful, set the previous editqueue item to approved=0;
 
@@ -265,7 +268,9 @@ class EDITQUEUE {
         // Sets $this->pending and returns a body count.
         // Return organised by type? - maybe not for the moment.
 
-        $q = $this->db->query("SELECT eq.edit_id, eq.user_id, u.firstname, u.lastname, eq.glossary_id, eq.title, eq.body, eq.submitted FROM editqueue AS eq, users AS u WHERE eq.user_id = u.user_id AND eq.approved IS NULL ORDER BY eq.submitted DESC;");
+        $q = $this->db->query("SELECT eq.edit_id, eq.user_id, u.firstname, u.lastname, eq.glossary_id, eq.title, eq.body, eq.submitted
+            FROM editqueue AS eq, users AS u
+            WHERE eq.user_id = u.user_id AND eq.approved IS NULL ORDER BY eq.submitted DESC;");
         if ($q->success() && $q->rows()) {
             for ($i = 0; $i < ($q->rows()); $i++) {
                 $this->pending[$q->field($i, "edit_id")] = $q->row($i);
@@ -362,15 +367,6 @@ class GLOSSEDITQUEUE extends EDITQUEUE {
         $timestamp = date('Y-m-d H:i:s', time());
 
         foreach ($data['approvals'] as $approval_id) {
-            // Create a new epobject
-            // title VARCHAR(255),
-            // body TEXT,
-            // type INTEGER,
-            // created DATETIME,
-            // modified DATETIME,.
-            /*print "<pre>";
-            print_r($data);
-            print "</pre>";*/
             // Check to see that we actually have something to approve.
             if (!isset($this->pending[$approval_id])) {
                 break;
@@ -378,11 +374,12 @@ class GLOSSEDITQUEUE extends EDITQUEUE {
             $q = $this->db->query("INSERT INTO glossary
 							(title, body, type, created, visible)
 							VALUES
-							('" . addslashes($this->pending[$approval_id]['title']) . "',
-							'" . addslashes($this->pending[$approval_id]['body']) . "',
-							'" . $data['epobject_type'] . "',
-							'" . $timestamp . "',
-							1);");
+							(?, ?, ?, ?, ?)",
+                            $this->pending[$approval_id]['title'],
+                            $this->pending[$approval_id]['body'],
+                            $data['epobject_type'],
+                            $timestamp,
+                            1);
 
             // If that didn't work we can't go any further...
             if (!$q->success()) {
@@ -395,11 +392,15 @@ class GLOSSEDITQUEUE extends EDITQUEUE {
             // the new epobject id and approval details.
             $q = $this->db->query("UPDATE editqueue
 							SET
-							glossary_id='" . $this->current_epobject_id . "',
-							editor_id='" . addslashes($THEUSER->user_id()) . "',
+							glossary_id=?,
+							editor_id=?,
 							approved='1',
-							decided='" . $timestamp . "'
-							WHERE edit_id=" . $approval_id . ";");
+							decided=?
+							WHERE edit_id=?",
+                            $this->current_epobject_id,
+                            $THEUSER->user_id(),
+                            $timestamp,
+                            $approval_id );
             if (!$q->success()) {
                 break;
             } else {

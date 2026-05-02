@@ -145,9 +145,7 @@ class TRACKBACK {
         $epobject_id = $trackbackdata['epobject_id'];
 
         // Check this epobject_id exists.
-        $q = $this->db->query("SELECT epobject_id
-						FROM	epobject
-						WHERE	epobject_id = '" . addslashes($epobject_id) . "'");
+        $q = $this->db->query("SELECT epobject_id FROM epobject WHERE	epobject_id = ?", $epobject_id);
 
         if ($q->rows() == 0) {
             $this->_trackback_response(1, "Sorry, we don't have a valid epobject_id.");
@@ -166,15 +164,8 @@ class TRACKBACK {
         $q = $this->db->query("INSERT INTO trackbacks
 						(epobject_id, blog_name, title, excerpt, url, source_ip, posted, visible)
 						VALUES
-						('" . addslashes($epobject_id) . "',
-						'" . addslashes($blog_name) . "',
-						'" . addslashes($title) . "',
-						'" . addslashes($excerpt) . "',
-						'" . addslashes($url) . "',
-						'" . addslashes($source_ip) . "',
-						NOW(),
-						'$visible')
-						");
+						(?, ?, ?, ?, ?, ?, NOW(), ?)
+						", $epobject_id, $blog_name, $title, $excerpt, $url, $source_ip, $visible);
 
         if ($q->success()) {
             // Return a success message.
@@ -215,10 +206,10 @@ class TRACKBACK {
 								url,
 								posted
 						FROM 	trackbacks
-						WHERE 	epobject_id = '" . addslashes($epobject_id) . "'
+						WHERE 	epobject_id = ?
 						AND 	visible = 1
 						ORDER BY posted ASC
-						");
+						", $epobject_id);
 
         if ($q->rows() > 0) {
             for ($row = 0; $row < $q->rows(); $row++) {

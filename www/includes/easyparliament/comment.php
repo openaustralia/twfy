@@ -71,8 +71,7 @@ class COMMENT {
 									visible,
 									modflagged
 							FROM	comments
-							WHERE 	comment_id='" . addslashes($comment_id) . "'
-							");
+							WHERE 	comment_id=?", $comment_id);
 
             if ($q->rows() > 0) {
 
@@ -221,28 +220,6 @@ class COMMENT {
             return FALSE;
         }
 
-        /*
-        if (is_numeric($THEUSER->user_id())) {
-        // Flood check - make sure the user hasn't just posted a comment recently.
-        // To help prevent accidental duplicates, among other nasty things.
-
-        $flood_time_limit = 60; // How many seconds until a user can post again?
-
-        $q = $this->db->query("SELECT comment_id
-        FROM    comments
-        WHERE    user_id = '" . $THEUSER->user_id() . "'
-        AND        posted + 0 > NOW() - $flood_time_limit");
-
-        if ($q->rows() > 0) {
-        $message = array (
-        'title' => 'Hold your horses!',
-        'text' => "We limit people to posting one comment per $flood_time_limit seconds to help prevent duplicate postings. Please go back and try again, thanks."
-        );
-        $PAGE->error_message($message);
-        return false;
-        }
-        }
-         */
 
         // OK, let's get on with it...
 
@@ -253,20 +230,19 @@ class COMMENT {
 
         $posted = date('Y-m-d H:i:s', time());
 
-        $q_gid = $this->db->query("select gid from hansard where epobject_id = '" . addslashes($data['epobject_id']) . "'");
+        $q_gid = $this->db->query("select gid from hansard where epobject_id = ?", $data['epobject_id']);
         $data['gid'] = $q_gid->field(0, 'gid');
 
         $q = $this->db->query("INSERT INTO comments
 						(user_id, epobject_id, body, posted, visible, original_gid)
 						VALUES
-						(
-						'" . addslashes($THEUSER->user_id()) . "',
-						'" . addslashes($data['epobject_id']) . "',
-						'" . addslashes($body) . "',
-						'" . $posted . "',
-						1,
-						'" . addslashes($data['gid']) . "'
-						)");
+						(?, ?, ?, ?, 1, ?)",
+						$THEUSER->user_id(),
+						$data['epobject_id'],
+						$body,
+						$posted,
+						$data['gid']
+						);
 
         if ($q->success()) {
             // Set the object varibales up.
@@ -358,7 +334,7 @@ class COMMENT {
         global $THEUSER, $PAGE;
 
         if ($THEUSER->is_able_to('deletecomment')) {
-            $q = $this->db->query("UPDATE comments SET visible = '0' WHERE comment_id = '" . $this->comment_id . "'");
+            $q = $this->db->query("UPDATE comments SET visible = '0' WHERE comment_id = ?", $this->comment_id);
 
             if ($q->success()) {
                 return TRUE;
@@ -394,8 +370,7 @@ class COMMENT {
             $q = $this->db->query("SELECT major,
 									gid
 							FROM	hansard
-							WHERE	epobject_id = '" . addslashes($this->epobject_id) . "'
-							");
+							WHERE	epobject_id = ? ", $this->epobject_id);
 
             if ($q->rows() > 0) {
                 // If you change stuff here, you might have to change it in
@@ -425,8 +400,7 @@ class COMMENT {
             $q = $this->db->query("SELECT firstname,
 									lastname
 							FROM	users
-							WHERE	user_id = '" . addslashes($this->user_id) . "'
-							");
+							WHERE	user_id = ? ", $this->user_id);
 
             if ($q->rows() > 0) {
                 $this->firstname = $q->field(0, 'firstname');
