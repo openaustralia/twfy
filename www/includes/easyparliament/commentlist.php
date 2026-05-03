@@ -332,26 +332,23 @@ class COMMENTLIST {
 
         if (isset($args['pid']) && is_numeric($args['pid'])) {
             $data['pid'] = $args['pid'];
-            $r = $this->db->query('SELECT title, first_name, last_name, constituency, house
-                FROM member
-                WHERE left_house="9999-12-31" and person_id = ?',
-                $args['pid']);
+            $r = $this->db->query('SELECT title, first_name, last_name, constituency, house FROM member WHERE left_house="9999-12-31" AND person_id = ?', $args['pid']);
             $data['full_name'] = member_full_name($r->field(0, 'house'),
                 $r->field(0, 'title'),
                 $r->field(0, 'first_name'),
                 $r->field(0, 'last_name'),
                 $r->field(0, 'constituency'));
 
-            $q = 'SELECT COUNT(*) AS count FROM comments,hansard,member
+            $q = $this->db->query('SELECT COUNT(*) AS count FROM comments, hansard, member
                 WHERE visible=1
                     AND comments.epobject_id = hansard.epobject_id
                     AND hansard.speaker_id = member.member_id
-                    AND person_id = ' . $args['pid'];
-        } else {
-            $q = 'SELECT COUNT(*) AS count FROM comments WHERE visible=1';
+                    AND person_id = ?', $args['pid']);
+            $data['total_results'] = $q->field(0, 'count');
+            return $data;
         }
-        // TODO: parameterize this!
-        $q = $this->db->query($q);
+
+        $q = $this->db->query('SELECT COUNT(*) AS count FROM comments WHERE visible=1');
         $data['total_results'] = $q->field(0, 'count');
         return $data;
     }
