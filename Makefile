@@ -9,7 +9,7 @@ TEST_DB_USER ?= twfyuser
 TEST_DB_PASSWORD ?= twfypass
 TEST_DB_NAME ?= twfy
 
-.PHONY: help docker-build docker-run docker lint lint-ci phpcs phpcs-ci phpcs-verbose install test test-all install-xdebug test-coverage test-coverage-docker
+.PHONY: help docker-build docker-run docker lint lint-ci phpcs phpcs-ci phpcs-verbose install setup test test-all install-xdebug test-coverage test-coverage-docker
 
 help:
 	@echo "Available targets:"
@@ -19,6 +19,7 @@ help:
 	@echo "  help                                Output this help"
 	@echo "  lint                                Run linting on the www directory"
 	@echo "  install                             Install Composer and script dependencies"
+	@echo "  setup                               Install ubuntu packages required for development"
 	@echo "  test [TEST_ARGS=...]                Run PHPUnit tests"
 	@echo "  test-all [TEST_ARGS=...]            Run all PHPUnit tests including DB integration"
 	@echo "  test-docker [TEST_ARGS=...]         Run all tests in Docker with DB (simplest method)"
@@ -69,6 +70,14 @@ phpcs-ci phpcs-verbose:
 
 install: scripts/run-with-lockfile
 	composer install --no-interaction --prefer-dist
+
+# Gleaned from infrastructure: roles/internal/openaustralia/tasks/main.yml
+setup:
+	sudo apt update
+	sudo apt install \
+	libmysqlclient-dev libssl-dev ghostscript imagemagick libdbd-mysql-perl libdbi-perl libmagickcore-dev \
+	libmagickwand-dev libmysqlclient-dev libsearch-xapian-perl libxapian-dev libxml-rss-perl libxml-twig-perl \
+	libxslt1-dev mysql-client
 
 test: vendor/autoload.php
 	./vendor/bin/phpunit $(TEST_ARGS)
