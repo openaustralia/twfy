@@ -35,10 +35,10 @@ sudo apt install re2c bison autoconf build-essential libxml2-dev libssl-dev libc
 sudo apt-get install libgd-dev
 ```
 
-### Installing composer managed dependencies
+### Installing composer managed and script dependencies
 
 ```bash
-composer install
+make install
 ```
 
 ### Running the checks git does
