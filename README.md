@@ -112,7 +112,7 @@ make test-coverage-docker
 
 Coverage reports are generated in `coverage/clover.xml` (for SonarCloud) and `coverage/html/` (browsable HTML).
 
-### Database credentials
+### Database credentials when using docker
 
 When running tests with the database:
 - Host: `127.0.0.1` (or `mysql` inside Docker)
@@ -137,4 +137,19 @@ To stop the Docker containers:
 
 ```bash
 docker compose down
+```
+
+### Sharing database with openaustralia-parser for development
+
+You can setup local development for both repos by:
+ 
+```bash
+# DO NOT DO THIS ON PRODUCTION!!!!
+cd ../twfy
+cp conf/general-example.local-dev conf/general
+
+cd ../openaustralia-parser # if not already there
+script/dbconsole -p < ../twfy/db/schema.sql
+bundle exec rake db:fixtures:load   # for a limited set of fixtures
+bundle exec rake db:stats # to show which tables have data
 ```
