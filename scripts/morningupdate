@@ -54,10 +54,13 @@ $VERBOSE && echo "Parsing from APH to XML and loading into the database"
 # ./xml2db.pl $CRONQUIET --recent --lordsdebates
 #./xml2db.pl $CRONQUIET --recent --ni --quiet
 
-# Update Xapan index
-$VERBOSE && echo "Xapian indexing"
-../search/index.pl $XAPIANDB sincefile $XAPIANDB/../searchdb-lastupdated $CRONQUIET_NODASH
-
+if [ -v "$XAPIANDB" ]; then
+    # Update Xapan index
+    $VERBOSE && echo "Xapian indexing"
+    ../search/index.pl "$XAPIANDB" sincefile "$XAPIANDB/../searchdb-lastupdated" "$CRONQUIET_NODASH"
+else
+    echo "SKIPPED Xapian indexing: XAPIANDB is blank"
+fi
 # Create new RSS files.
 if $VERBOSE
 then
