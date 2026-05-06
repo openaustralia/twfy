@@ -63,7 +63,7 @@ lint-php-ci lint-php:
 	find -L www scripts -iregex '.*\.php$$' -print0 | xargs -0 -n 1 -P 4 php -l
 
 lint-perl-ci lint-perl:
-	find -L www scripts -iregex '.*\.pl$$' -print0 | xargs -0 -n 1 perl -c
+	find -L www scripts -iregex '.*\.pl$$' ! -path '*/archived/*' -print0 | xargs -0 -n 1 perl -c
 
 phpcs:
 	./vendor/bin/phpcs --standard=phpcs.xml --tab-width=4 --report=summary www scripts $(PHPCS_ARGS)
