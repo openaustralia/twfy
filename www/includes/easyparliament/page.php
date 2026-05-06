@@ -10,7 +10,7 @@ if (defined('OPTION_TRACKING') && OPTION_TRACKING) {
 
 include_once INCLUDESPATH . '../../../phplib/gaze.php';
 include_once __DIR__ . '/member.php';
-include_once  __DIR__. '/../request.php';
+include_once __DIR__ . '/../request.php';
 
 /**
  *
