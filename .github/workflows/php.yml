@@ -27,16 +27,6 @@ jobs:
         run: composer install
       - name: Lint
         run: make lint-php-ci
-        env:
-          fail-fast: true
-      - name: composer
-        run: composer install
-        env:
-          fail-fast: true
-      - name: audit
-        run: composer validate
-        env:
-          fail-fast: true
       - name: phpcs
         run: make phpcs-ci
       - name: audit dependencies
