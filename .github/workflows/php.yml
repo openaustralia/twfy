@@ -21,12 +21,22 @@ jobs:
           extensions: mbstring, pdo, sqlite
           coverage: none # Use 'xdebug' or 'pcov' for code coverage
           tools: composer
-      - name: composer install packages
-        run: composer install
       - name: validate configuration
         run: composer validate
+      - name: composer install packages
+        run: composer install
       - name: Lint
-        run: make lint-ci
+        run: make lint-php-ci
+        env:
+          fail-fast: true
+      - name: composer
+        run: composer install
+        env:
+          fail-fast: true
+      - name: audit
+        run: composer validate
+        env:
+          fail-fast: true
       - name: phpcs
         run: make phpcs-ci
       - name: audit dependencies
