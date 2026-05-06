@@ -223,8 +223,6 @@ class ALERT {
         // The BOOL variables confirmed and deleted will be true or false and will need to be
         // converted to 1/0 for MySQL.
 
-        global $REMOTE_ADDR;
-
         $alerttime = gmdate("YmdHis");
 
         $criteria = alert_details_to_criteria($details);

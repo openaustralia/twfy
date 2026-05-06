@@ -1,5 +1,7 @@
 <?php
 
+require_once __DIR__ . '/../request.php';
+
 /**
  * For doing stuff with searchlogs.
  *
@@ -46,7 +48,7 @@ class SEARCHLOG {
             $searchlogdata['query'],
             $searchlogdata['page'],
             $searchlogdata['hits'],
-            getenv('REMOTE_ADDR')
+            ip_address()
         );
 
     }
