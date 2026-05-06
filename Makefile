@@ -9,12 +9,17 @@ TEST_DB_USER ?= twfyuser
 TEST_DB_PASSWORD ?= twfypass
 TEST_DB_NAME ?= twfy
 
-all:
+.PHONY: help docker-build docker-run docker lint lint-ci phpcs phpcs-ci phpcs-verbose install setup test test-all install-xdebug test-coverage test-coverage-docker
+
+help:
 	@echo "Available targets:"
+	@echo "  docker                              Build docker image then run docker container"
 	@echo "  docker-build                        Build the Docker image for the application"
 	@echo "  docker-run                          Run the Docker container for the application"
+	@echo "  help                                Output this help"
 	@echo "  lint                                Run linting on the www directory"
-	@echo "  install                             Install Composer dependencies"
+	@echo "  install                             Install Composer and script dependencies"
+	@echo "  setup                               Install ubuntu packages required for development"
 	@echo "  test [TEST_ARGS=...]                Run PHPUnit tests"
 	@echo "  test-all [TEST_ARGS=...]            Run all PHPUnit tests including DB integration"
 	@echo "  test-docker [TEST_ARGS=...]         Run all tests in Docker with DB (simplest method)"
@@ -22,6 +27,7 @@ all:
 	@echo "  test-coverage-docker [TEST_ARGS=...] Run coverage inside Docker (no host PHP extensions needed)"
 	@echo "  phpcs [PHPCS_ARGS=...]              Run coding standards check (summary)"
 	@echo "  phpcs-verbose [PHPCS_ARGS=...]      Run coding standards check (verbose)"
+	@echo "  scripts/run-with-lockfile           Compile lockfile utility (dev only)"
 	@echo ""
 	@echo "Extra args:"
 	@echo "  TEST_ARGS      Extra args for phpunit targets e.g."
@@ -62,8 +68,16 @@ phpcs:
 phpcs-ci phpcs-verbose:
 	./vendor/bin/phpcs --standard=phpcs.xml --tab-width=4 www scripts $(PHPCS_ARGS)
 
-install:
+install: scripts/run-with-lockfile
 	composer install --no-interaction --prefer-dist
+
+# Gleaned from infrastructure: roles/internal/openaustralia/tasks/main.yml
+setup:
+	sudo apt update
+	sudo apt install \
+	libmysqlclient-dev libssl-dev ghostscript imagemagick libdbd-mysql-perl libdbi-perl libmagickcore-dev \
+	libmagickwand-dev libmysqlclient-dev libsearch-xapian-perl libxapian-dev libxml-rss-perl libxml-twig-perl \
+	libxslt1-dev mysql-client
 
 test: vendor/autoload.php
 	./vendor/bin/phpunit $(TEST_ARGS)
@@ -94,3 +108,6 @@ test-coverage-docker:
 	docker compose up -d
 	docker compose run --rm -e DB_HOST=mysql -e DB_USER=$(TEST_DB_USER) -e DB_PASSWORD=$(TEST_DB_PASSWORD) -e DB_NAME=$(TEST_DB_NAME) -e XDEBUG_MODE=coverage -v $(CURDIR):/app -w /app webhost bash -lc "php -m | grep -qi xdebug || { echo 'xdebug is missing in twfy-app. Run make docker-build first.'; exit 1; }; ./vendor/bin/phpunit --coverage-text --coverage-clover=coverage/clover.xml --coverage-html=coverage/html $(TEST_ARGS)"
 
+
+scripts/run-with-lockfile: scripts/run-with-lockfile.c
+	gcc -o scripts/run-with-lockfile scripts/run-with-lockfile.c

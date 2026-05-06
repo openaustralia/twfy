@@ -9,7 +9,8 @@ if (defined('OPTION_TRACKING') && OPTION_TRACKING) {
 }
 
 include_once INCLUDESPATH . '../../../phplib/gaze.php';
-include_once INCLUDESPATH . 'easyparliament/member.php';
+include_once __DIR__ . '/member.php';
+include_once __DIR__ . '/../request.php';
 
 /**
  *
@@ -496,7 +497,7 @@ class PAGE {
                 twfy_debug("PAGE", "This page: $this_page");
 
                 print "\t<a name=\"top\"></a>\n\n";
-                if (defined('OPTION_GAZE_URL') && OPTION_GAZE_URL && (gaze_get_country_from_ip($_SERVER["REMOTE_ADDR"]) == 'NZ' || get_http_var('nz'))) {
+                if (defined('OPTION_GAZE_URL') && OPTION_GAZE_URL && (gaze_get_country_from_ip(ip_address()) == 'NZ' || get_http_var('nz'))) {
                     print '<p align="center"><strong>New!</strong> You\'re in New Zealand, so check out <a href="http://www.theyworkforyou.co.nz">OpenAustralia.co.nz</a></p>';
                 }
 
@@ -521,7 +522,7 @@ class PAGE {
                         twfy_debug("PAGE", "This page: $this_page");
 
                         print "\t<a name=\"top\"></a>\n\n";
-                        if (defined('OPTION_GAZE_URL') && OPTION_GAZE_URL && (gaze_get_country_from_ip($_SERVER["REMOTE_ADDR"]) == 'NZ' || get_http_var('nz'))) {
+                        if (defined('OPTION_GAZE_URL') && OPTION_GAZE_URL && (gaze_get_country_from_ip(ip_address()) == 'NZ' || get_http_var('nz'))) {
                             print '<p align="center"><strong>New!</strong> You\'re in New Zealand, so check out <a href="http://www.theyworkforyou.co.nz">OpenAustralia.co.nz</a></p>';
                         }
 

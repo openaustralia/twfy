@@ -59,6 +59,8 @@
  * check_user_access()    Check a the user is allowed to view this page.
  */
 
+require_once __DIR__ . '/../request.php';
+
 /**
  *
  */
@@ -206,7 +208,6 @@ class USER {
 
         // The BOOL variables (eg, optin) will be true or false and will need to be
         // converted to 1/0 for MySQL.
-        global $REMOTE_ADDR;
 
         $registrationtime = gmdate("YmdHis");
 
@@ -247,7 +248,7 @@ class USER {
             $optin,
             $details["status"],
             $registrationtime,
-            $REMOTE_ADDR
+            ip_address()
         );
 
         if ($q->success()) {

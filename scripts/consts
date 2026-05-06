@@ -1,7 +1,8 @@
 # Constants for bash scripts
 
-PATH=/usr/local/mysql/bin:/opt/local/bin:/sbin:/bin:/usr/sbin:/usr/bin:/usr/games:/usr/local/sbin:/usr/local/bin:/usr/X11R6/bin:/home/fawkes/bin
+# Keep $PATH last so mise and other tool managers work in dev
+PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:$PATH"
+export PATH
 
 # needed for correct group permissions
 umask 002
-
