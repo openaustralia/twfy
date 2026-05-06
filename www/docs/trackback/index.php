@@ -5,7 +5,9 @@
  * This code based on stuff from http://wordpress.org/
  */
 
-include_once "../../includes/easyparliament/init.php";
+include_once __DIR__ . "/../../includes/easyparliament/init.php";
+include_once __DIR__ . "/../../includes/request.php";
+
 $this_page = 'trackback';
 
 // The gid is the gid of the thing being trackedback to.
@@ -39,12 +41,11 @@ if ((strlen('' . $epobject_id)) && (empty($HTTP_GET_VARS['__mode'])) && (strlen(
         'blog_name' => $blog_name,
         'title' => $title,
         'excerpt' => $excerpt,
-        'source_ip' => $HTTP_SERVER_VARS['REMOTE_ADDR']
+        'source_ip' => ip_address()
     ];
 
     $TRACKBACK = new TRACKBACK();
 
     $TRACKBACK->add($trackbackdata);
-
 
 }
