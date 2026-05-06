@@ -32,6 +32,8 @@ jobs:
             libdbi-perl \
             libsearch-xapian-perl \
             libxml-rss-perl \
-            libxml-twig-perl
+            libxml-twig-perl \
+            libxml-simple-perl
       - name: Lint
         run: make lint-perl-ci
+

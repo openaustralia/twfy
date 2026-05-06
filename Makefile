@@ -80,7 +80,7 @@ setup:
 	sudo apt install \
 	libmysqlclient-dev libssl-dev ghostscript imagemagick libdbd-mysql-perl libdbi-perl libmagickcore-dev \
 	libmagickwand-dev libmysqlclient-dev libsearch-xapian-perl libxapian-dev libxml-rss-perl libxml-twig-perl \
-	libxslt1-dev mysql-client
+	libxslt1-dev mysql-client libxml-simple-perl
 
 test: vendor/autoload.php
 	./vendor/bin/phpunit $(TEST_ARGS)
