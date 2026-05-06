@@ -14,6 +14,17 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+      - name: Checkout perllib
+        uses: actions/checkout@v4
+        with:
+          repository: openaustralia/perllib
+          path: perllib-checkout
+          ref: main
+      - name: Switch perllib to PR branch if it exists
+        run: git fetch origin ${{ github.head_ref || github.ref_name }} && git checkout ${{ github.head_ref || github.ref_name }} || echo "No PR branch found, using main"
+        working-directory: perllib-checkout
+      - name: Link perllib as sibling
+        run: ln -s ${{ github.workspace }}/perllib-checkout ../perllib
       - name: Install Perl dependencies
         run: |
           sudo apt-get install -y \

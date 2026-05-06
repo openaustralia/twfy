@@ -66,6 +66,17 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0  # Needed for SonarCloud analysis
+      - name: Checkout phplib
+        uses: actions/checkout@v4
+        with:
+          repository: openaustralia/phplib
+          path: phplib-checkout
+          ref: main
+      - name: Switch phplib to PR branch if it exists
+        run: git fetch origin ${{ github.head_ref || github.ref_name }} && git checkout ${{ github.head_ref || github.ref_name }} || echo "No PR branch found, using main"
+        working-directory: phplib-checkout
+      - name: Link phplib as sibling
+        run: ln -s ${{ github.workspace }}/phplib-checkout ../phplib
       - name: Setup PHP 8.3
         uses: shivammathur/setup-php@v2
         with:
