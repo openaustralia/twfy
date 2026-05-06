@@ -4,7 +4,8 @@
  * @file
  */
 
-include_once '../../../../phplib/rabx.php';
+include_once __DIR__ . '/../../../../phplib/rabx.php';
+include_once __DIR__ . '/../../includes/request.php';
 
 // The METHODS.
 
