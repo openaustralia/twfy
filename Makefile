@@ -57,8 +57,13 @@ docker-run:
 
 docker: docker-build docker-run
 
-lint:
+lint: lint-php lint-perl
+
+lint-php:
 	find -L www scripts -iregex '.*\.php$$' -print0 | xargs -0 -n 1 -P 4 php -l
+
+lint-perl:
+	find -L www scripts -iregex '.*\.pl$$' -print0 | xargs -0 -n 1 perl -c
 
 lint-ci: lint
 
