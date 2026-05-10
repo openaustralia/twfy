@@ -75,13 +75,6 @@ $methods = [
         'help' => 'Returns boundary polygon of constituency'
     ),
      */
-    /*    'getCommittee' => array(
-        'new' => true,
-        'parameters' => array('name', 'date'),
-        'required' => true,
-        'help' => 'Returns members of Select Committee',
-    ),
-     */
     'getDebates' => [
         'parameters' => ['type', 'date', 'search', 'person', 'gid', 'year', 'order', 'page', 'num'],
         'required' => TRUE,
