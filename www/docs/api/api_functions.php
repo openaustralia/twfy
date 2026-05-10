@@ -26,11 +26,6 @@ $methods = [
         'required' => true,
         'help' => 'Returns extra information for a person'
     ),
-    'getMPsInfo' => array(
-        'parameters' => array('id', 'fields'),
-        'required' => true,
-        'help' => 'Returns extra information for one or more people'
-    ),
      */
     'getRepresentatives' => [
         'parameters' => ['postcode', 'party', 'date', 'search'],
