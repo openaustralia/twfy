@@ -87,17 +87,6 @@ $methods = [
         'required' => TRUE,
         'help' => 'Returns Debates (either House of Representatives or Senate)',
     ],
-    /*    'getWrans' => array(
-        'parameters' => array('date', 'search', 'person', 'gid', 'year', 'order', 'page', 'num'),
-        'required' => true,
-        'help' => 'Returns Written Answers',
-    ),
-    'getWMS' => array(
-        'parameters' => array('date', 'search', 'person', 'gid', 'year', 'order', 'page', 'num'),
-        'required' => true,
-        'help' => 'Returns Written Ministerial Statements',
-    ),
-     */
     'getHansard' => [
         'parameters' => ['search', 'person', 'order', 'page', 'num'],
         'required' => TRUE,
