@@ -69,12 +69,6 @@ $methods = [
         'help' => 'Returns centre, bounding box of constituencies'
     ),
      */
-    /*    'getBoundary' => array(
-        'parameters' => array('name'),
-        'required' => true,
-        'help' => 'Returns boundary polygon of constituency'
-    ),
-     */
     'getDebates' => [
         'parameters' => ['type', 'date', 'search', 'person', 'gid', 'year', 'order', 'page', 'num'],
         'required' => TRUE,
