@@ -47,14 +47,6 @@ $methods = [
         'required' => FALSE,
         'help' => 'Returns list of Senators',
     ],
-    /*
-    'getGeometry' => array(
-        'new' => true,
-        'parameters' => array('name'),
-        'required' => false,
-        'help' => 'Returns centre, bounding box of constituencies'
-    ),
-     */
     'getDebates' => [
         'parameters' => ['type', 'date', 'search', 'person', 'gid', 'year', 'order', 'page', 'num'],
         'required' => TRUE,
