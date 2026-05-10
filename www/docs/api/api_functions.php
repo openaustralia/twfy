@@ -21,12 +21,6 @@ $methods = [
         'required' => TRUE,
         'help' => 'Returns main details for a member of the House of Representatives'
     ],
-    /*    'getMPInfo' => array(
-        'parameters' => array('id', 'fields'),
-        'required' => true,
-        'help' => 'Returns extra information for a person'
-    ),
-     */
     'getRepresentatives' => [
         'parameters' => ['postcode', 'party', 'date', 'search'],
         'required' => FALSE,
