@@ -10,12 +10,6 @@ include_once __DIR__ . '/../../includes/request.php';
 // The METHODS.
 
 $methods = [
-    /*    'convertURL' => array(
-            'parameters' => array('url'),
-            'required' => true,
-            'help' => 'Converts a parliament.uk Hansard URL into a TheyWorkForYou one, if possible',
-        ),
-     */
     'getDivisions' => [
         // 'parameters' => array('date', 'search', 'latitude', 'longitude', 'distance'),
         'parameters' => ['postcode', 'date', 'search'],
