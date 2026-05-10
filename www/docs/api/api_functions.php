@@ -47,11 +47,7 @@ $methods = [
         'required' => FALSE,
         'help' => 'Returns list of Senators',
     ],
-    /*    'getMLAs' => array(
-        'parameters' => array('date', 'party', 'search'),
-        'required' => false,
-        'help' => 'Returns list of MLAs',
-    ),
+    /*
     'getGeometry' => array(
         'new' => true,
         'parameters' => array('name'),
