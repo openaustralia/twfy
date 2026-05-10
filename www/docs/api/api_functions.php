@@ -51,13 +51,6 @@ $methods = [
         'required' => FALSE,
         'help' => 'Returns comments'
     ],
-    /*    'postComment' => array(
-        'parameters' => array('user_id', 'gid?'),
-        'working' => false,
-        'required' => true,
-        'help' => 'Posts a comment - needs authentication!'
-    ),
-     */
 ];
 
 /**
