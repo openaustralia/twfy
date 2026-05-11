@@ -9,7 +9,7 @@ TEST_DB_USER ?= twfyuser
 TEST_DB_PASSWORD ?= twfypass
 TEST_DB_NAME ?= twfy
 
-.PHONY: help docker-build docker-run docker lint lint-ci phpcs phpcs-ci phpcs-verbose install setup test test-all install-xdebug test-coverage test-coverage-docker
+.PHONY: help docker-build docker-run docker lint lint-perl lint-perl-ci lint-php lint-php-ci phpcs phpcs-ci phpcs-verbose install setup test test-all install-xdebug test-coverage test-coverage-docker
 
 help:
 	@echo "Available targets:"
@@ -17,7 +17,7 @@ help:
 	@echo "  docker-build                        Build the Docker image for the application"
 	@echo "  docker-run                          Run the Docker container for the application"
 	@echo "  help                                Output this help"
-	@echo "  lint                                Run linting on the www directory"
+	@echo "  lint                                Run lint-php and lint-perl on the www and scripts directories"
 	@echo "  install                             Install Composer and script dependencies"
 	@echo "  setup                               Install ubuntu packages required for development"
 	@echo "  test [TEST_ARGS=...]                Run PHPUnit tests"
@@ -57,10 +57,13 @@ docker-run:
 
 docker: docker-build docker-run
 
-lint:
+lint: lint-php lint-perl
+
+lint-php-ci lint-php:
 	find -L www scripts -iregex '.*\.php$$' -print0 | xargs -0 -n 1 -P 4 php -l
 
-lint-ci: lint
+lint-perl-ci lint-perl:
+	find -L www scripts -iregex '.*\.pl$$' ! -path '*/archived/*' -print0 | xargs -0 -n 1 perl -c
 
 phpcs:
 	./vendor/bin/phpcs --standard=phpcs.xml --tab-width=4 --report=summary www scripts $(PHPCS_ARGS)
@@ -77,7 +80,7 @@ setup:
 	sudo apt install \
 	libmysqlclient-dev libssl-dev ghostscript imagemagick libdbd-mysql-perl libdbi-perl libmagickcore-dev \
 	libmagickwand-dev libmysqlclient-dev libsearch-xapian-perl libxapian-dev libxml-rss-perl libxml-twig-perl \
-	libxslt1-dev mysql-client
+	libxslt1-dev mysql-client libxml-simple-perl
 
 test: vendor/autoload.php
 	./vendor/bin/phpunit $(TEST_ARGS)

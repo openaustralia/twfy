@@ -1,0 +1,39 @@
+name: "Perl checks"
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Checkout perllib
+        uses: actions/checkout@v4
+        with:
+          repository: openaustralia/perllib
+          path: perllib-checkout
+          ref: main
+      - name: Switch perllib to PR branch if it exists
+        run: git fetch origin ${{ github.head_ref || github.ref_name }} && git checkout ${{ github.head_ref || github.ref_name }} || echo "No PR branch found, using main"
+        working-directory: perllib-checkout
+      - name: Link perllib as sibling
+        run: ln -s ${{ github.workspace }}/perllib-checkout ../perllib
+      - name: Install Perl dependencies
+        run: |
+          sudo apt-get install -y \
+            libdbd-mysql-perl \
+            libdbi-perl \
+            libsearch-xapian-perl \
+            libxml-rss-perl \
+            libxml-twig-perl \
+            libxml-simple-perl
+      - name: Lint
+        run: make lint-perl-ci
+
