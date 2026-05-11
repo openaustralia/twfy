@@ -17,6 +17,7 @@ function mlog($message): void {
 include '../www/includes/easyparliament//init.php';
 ini_set('memory_limit', -1);
 include_once INCLUDESPATH . 'easyparliament/member.php';
+include_once INCLUDESPATH . 'alertmailer_sanitize.php';
 
 $global_start = getmicrotime();
 $db = new ParlDB();
@@ -117,7 +118,7 @@ foreach ($alertdata as $alertitem) {
     if ($toemail && strtolower($email) >= $toemail) {
         continue;
     }
-    $criteria_raw = $alertitem['criteria'];
+    $criteria_raw = sanitizeAlertCriteria($alertitem['criteria']);
     $criteria_batch = $criteria_raw . " " . $batch_query_fragment;
 
     if ($email != $current_email) {
