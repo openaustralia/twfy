@@ -1,6 +1,13 @@
 <?php
 
 /**
+ * @file
+ * alertmailer_sanitize.php
+ *
+ * Methods to sanitize input for alertmailer.
+ */
+
+/**
  * Remove unknown prefix patterns that make the search layer emit HTML warnings.
  */
 function sanitize_alert_criteria($criteria) {
