@@ -14,7 +14,7 @@ function sanitizeAlertCriteria($criteria) {
     static $known_prefixes = ['speaker', 'major', 'groupby', 'bias', 'date', 'batch', 'section'];
 
     return preg_replace_callback(
-        '/\b([A-Za-z][A-Za-z0-9_]*)\:( ?)(?!\/\/)/',
+        '/\b([A-Za-z]\w*):( ?)(?!\/\/)/',
         function ($matches) use ($known_prefixes) {
             $prefix = strtolower($matches[1]);
             if (in_array($prefix, $known_prefixes, TRUE)) {
