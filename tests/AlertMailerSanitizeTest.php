@@ -5,7 +5,7 @@ use PHPUnit\Framework\TestCase;
 require_once __DIR__ . '/../www/includes/alertmailer_sanitize.php';
 
 /**
- * Tests for sanitize_alert_criteria.
+ * Tests for sanitizeAlertCriteria.
  */
 class AlertMailerSanitizeTest extends TestCase {
 
@@ -14,7 +14,7 @@ class AlertMailerSanitizeTest extends TestCase {
      */
     public function test_unknown_prefix_colon_removed(): void {
         $criteria = 'Higher Education; Training: Mature Aged Workers; ANU;';
-        $result = sanitize_alert_criteria($criteria);
+        $result = sanitizeAlertCriteria($criteria);
 
         $this->assertSame('Higher Education; Training Mature Aged Workers; ANU;', $result);
     }
@@ -24,7 +24,7 @@ class AlertMailerSanitizeTest extends TestCase {
      */
     public function test_known_prefixes_preserved(): void {
         $criteria = 'speaker:10973 section:debate batch:2171 date:2026-05-10';
-        $result = sanitize_alert_criteria($criteria);
+        $result = sanitizeAlertCriteria($criteria);
 
         $this->assertSame($criteria, $result);
     }
@@ -34,7 +34,7 @@ class AlertMailerSanitizeTest extends TestCase {
      */
     public function test_known_prefix_case_insensitive(): void {
         $criteria = 'Speaker:10973 GROUPBY:day Bias:1:86400';
-        $result = sanitize_alert_criteria($criteria);
+        $result = sanitizeAlertCriteria($criteria);
 
         $this->assertSame($criteria, $result);
     }
@@ -44,7 +44,7 @@ class AlertMailerSanitizeTest extends TestCase {
      */
     public function test_url_like_tokens_not_modified(): void {
         $criteria = 'see http://example.com/path and https://example.org';
-        $result = sanitize_alert_criteria($criteria);
+        $result = sanitizeAlertCriteria($criteria);
 
         $this->assertSame($criteria, $result);
     }
@@ -54,7 +54,7 @@ class AlertMailerSanitizeTest extends TestCase {
      */
     public function test_mixed_prefixes_only_unknown_sanitized(): void {
         $criteria = 'topic:health speaker:10515 custom_field:value section:wrans';
-        $result = sanitize_alert_criteria($criteria);
+        $result = sanitizeAlertCriteria($criteria);
 
         $this->assertSame('topic health speaker:10515 custom_field value section:wrans', $result);
     }

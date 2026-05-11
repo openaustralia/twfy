@@ -118,7 +118,7 @@ foreach ($alertdata as $alertitem) {
     if ($toemail && strtolower($email) >= $toemail) {
         continue;
     }
-    $criteria_raw = sanitize_alert_criteria($alertitem['criteria']);
+    $criteria_raw = sanitizeAlertCriteria($alertitem['criteria']);
     $criteria_batch = $criteria_raw . " " . $batch_query_fragment;
 
     if ($email != $current_email) {

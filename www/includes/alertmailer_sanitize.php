@@ -10,7 +10,7 @@
 /**
  * Remove unknown prefix patterns that make the search layer emit HTML warnings.
  */
-function sanitize_alert_criteria($criteria) {
+function sanitizeAlertCriteria($criteria) {
     static $known_prefixes = ['speaker', 'major', 'groupby', 'bias', 'date', 'batch', 'section'];
 
     return preg_replace_callback(
