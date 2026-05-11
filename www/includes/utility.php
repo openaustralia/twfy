@@ -5,7 +5,7 @@
  * General utility functions v1.1 (well, it was). *
  */
 
-include_once 'strptime.php';
+include_once __DIR__ . '/strptime.php';
 
 /**
  *
