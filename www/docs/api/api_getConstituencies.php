@@ -4,7 +4,7 @@
  * @file
  */
 
-include_once 'api_getGeometry.php';
+include_once __DIR__ . '/api_getGeometry.php';
 
 /**
  *
