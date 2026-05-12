@@ -19,17 +19,17 @@ class ApiConvertUrlIntegrationTest extends TestCase {
     /**
      *
      */
-public static function setUpBeforeClass(): void {
+    public static function setUpBeforeClass(): void {
         $conn = getSharedTestConnection();
         if (!$conn) {
             self::markTestSkipped('Database connection not available');
         }
-}
+    }
 
     /**
      *
      */
-protected function setUp(): void {
+    protected function setUp(): void {
         $this->db = new ParlDB();
 
         // Verify connection exists.
@@ -37,7 +37,7 @@ protected function setUp(): void {
         if (!$conn) {
             $this->markTestSkipped('Database connection not available');
         }
-}
+    }
 
     /**
      * Test hansard table query by exact source_url.
