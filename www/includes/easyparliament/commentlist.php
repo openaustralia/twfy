@@ -56,6 +56,8 @@ class COMMENTLIST {
      *
      */
     public function display($view, $args = [], $format = 'html') {
+        global $PAGE;
+
         // $view is what we're viewing by:
         // 'ep' is all the comments attached to an epobject.
         // 'user' is all the comments written by a user.
