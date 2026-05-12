@@ -6,6 +6,8 @@
 
 include_once "../../includes/easyparliament/init.php";
 
+$hansardmajors = $GLOBALS['hansardmajors'] ?? [];
+
 $number_of_debates_to_show = 6;
 $number_of_wrans_to_show = 5;
 
