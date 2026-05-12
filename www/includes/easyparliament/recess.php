@@ -270,9 +270,9 @@ $GLOBALS['recessdates'][1] = [
 /**
  *
  */
-function recess_prettify($day, $month, $year, $body): array {
+function recess_prettify(int $day, int $month, int $year, int $body): array {
     global $recessdates;
-    $dates = $recessdates[$body];
+    $dates = $recessdates[$body] ?? [];
     foreach ($dates as $range) {
         [$from_year, $from_month, $from_day] = array_map('intval', explode('-', $range[0]));
         [$to_year, $to_month, $to_day] = array_map('intval', explode('-', $range[1]));
@@ -283,5 +283,5 @@ function recess_prettify($day, $month, $year, $body): array {
             return ['recess', $range[0], $range[1]];
         }
     }
-    return [];
+    return [NULL, NULL, NULL];
 }
