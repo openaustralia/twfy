@@ -6,8 +6,12 @@
 
 include_once "../../includes/easyparliament/init.php";
 
+$hansardmajors = $GLOBALS['hansardmajors'] ?? [];
+
 $number_of_debates_to_show = 6;
 $number_of_wrans_to_show = 5;
+
+$nextprevdata = [];
 
 if (($date = get_http_var('d')) && preg_match('#^\d\d\d\d-\d\d-\d\d$#', $date)) {
     $this_page = 'hansard_date';
@@ -36,14 +40,6 @@ if (($date = get_http_var('d')) && preg_match('#^\d\d\d\d-\d\d-\d\d$#', $date)) 
             'title' => $title
         ];
     }
-    // $year = substr($date, 0, 4);
-    // $URL = new URL($hansardmajors[1]['page_year']);
-    // $URL->insert(array('y'=>$year));
-    // $nextprevdata['up'] = array (
-    // 'body'  => "All of $year",
-    // 'title' => '',
-    // 'url'   => $URL->generate()
-    // );
     $DATA->set_page_metadata($this_page, 'nextprev', $nextprevdata);
     $PAGE->page_start();
     $PAGE->stripe_start();

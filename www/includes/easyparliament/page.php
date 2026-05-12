@@ -271,7 +271,7 @@ class PAGE {
 
             foreach ($links as $n => $type) {
                 if (isset($nextprev[$type]) && isset($nextprev[$type]['listurl'])) {
-
+                    $linktitle = '';
                     if (isset($nextprev[$type]['body'])) {
                         $linktitle = htmlentities(trim_characters($nextprev[$type]['body'], 0, 40));
                         if (
@@ -406,7 +406,7 @@ class PAGE {
 
             foreach ($links as $n => $type) {
                 if (isset($nextprev[$type]) && isset($nextprev[$type]['listurl'])) {
-
+                    $linktitle = '';
                     if (isset($nextprev[$type]['body'])) {
                         $linktitle = htmlentities(trim_characters($nextprev[$type]['body'], 0, 40));
                         if (
@@ -1465,6 +1465,7 @@ class PAGE {
         print $desc;
         if ($member['other_parties'] && $member['party'] != 'Speaker' && $member['party'] != 'Deputy-Speaker' && $member['party'] != 'President' && $member['party'] != 'Deputy-President') {
             print "<li>Changed party ";
+            $out = [];
             foreach ($member['other_parties'] as $r) {
                 $out[] = 'from ' . $r['from'] . ' on ' . format_date($r['date'], SHORTDATEFORMAT);
             }
