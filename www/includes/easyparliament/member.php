@@ -4,8 +4,8 @@
  * @file
  */
 
-include_once INCLUDESPATH . "postcode.php";
-include_once INCLUDESPATH . "easyparliament/glossary.php";
+include_once __DIR__ . "/../postcode.php";
+include_once __DIR__ . "/glossary.php";
 
 /**
  *

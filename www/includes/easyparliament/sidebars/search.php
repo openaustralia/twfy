@@ -10,6 +10,6 @@ $this->block_start([
     'title' => "Search Tips"
 ]);
 
-include INCLUDESPATH . 'easyparliament/staticpages/search_help.php';
+include __DIR__ . '/../staticpages/search_help.php';
 
 $this->block_end();

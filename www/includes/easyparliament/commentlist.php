@@ -27,7 +27,7 @@ of comment data and display directly (used for previewing user input).
 
  */
 
-include_once INCLUDESPATH . 'dbtypes.php';
+include_once __DIR__ . '/../dbtypes.php';
 
 /**
  *
@@ -104,7 +104,7 @@ class COMMENTLIST {
      *
      */
     public function render($data, $format = 'html', $template = 'comments') {
-        include INCLUDESPATH . "easyparliament/templates/$format/$template.php";
+        include __DIR__ . "/../easyparliament/templates/$format/$template.php";
     }
 
     /**

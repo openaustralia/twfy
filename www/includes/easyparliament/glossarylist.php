@@ -16,7 +16,7 @@ class GLOSSARYLIST {
             $format = 'html';
         }
 
-        include INCLUDESPATH . "easyparliament/templates/$format/$template.php";
+        include __DIR__ . "/../easyparliament/templates/$format/$template.php";
 
     }
 

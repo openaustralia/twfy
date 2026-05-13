@@ -11,7 +11,7 @@ francis@flourish.org
 
 Example usage:
 
-include_once INCLUDESPATH."easyparliament/searchengine.php";
+include_once __DIR__ . "/../easyparliament/searchengine.php";
 
 $searchengine = new SEARCHENGINE($searchstring);
 $description = $searchengine->query_description();
@@ -29,7 +29,7 @@ $extract = $searchengine->highlight($extract);
 
  */
 
-include_once INCLUDESPATH . 'dbtypes.php';
+include_once __DIR__ . '/../dbtypes.php';
 if (defined('XAPIANDB') && XAPIANDB) {
     if (file_exists('/usr/local/share/php5/xapian.php')) {
         include_once '/usr/local/share/php5/xapian.php';
