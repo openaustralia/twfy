@@ -6,7 +6,7 @@
  */
 
 include_once 'min-init.php';
-include_once INCLUDESPATH . 'easyparliament/member.php';
+include_once __DIR__ . '/../../includes/easyparliament/member.php';
 include_once '../api/api_functions.php';
 
 $pid = $_GET['pid'];
