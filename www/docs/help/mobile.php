@@ -6,7 +6,7 @@
 
 $_SERVER['DEVICE_TYPE'] = "mobile";
 
-include_once "../../includes/easyparliament/init.php";
+include_once __DIR__ . "/../../includes/easyparliament/init.php";
 
 $this_page = "help";
 
@@ -14,7 +14,7 @@ $PAGE->page_start_mobile();
 
 $PAGE->stripe_start();
 
-include INCLUDESPATH . 'easyparliament/staticpages/help.php';
+include __DIR__ . '/../../includes/easyparliament/staticpages/help.php';
 
 // $PAGE->stripe_end();
 

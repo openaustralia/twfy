@@ -4,9 +4,9 @@
  * @file
  */
 
-include_once "../../includes/easyparliament/init.php";
-include_once INCLUDESPATH . "easyparliament/member.php";
-include_once INCLUDESPATH . "postcode.php";
+include_once __DIR__ . "/../../includes/easyparliament/init.php";
+include_once __DIR__ . "/../../includes/easyparliament/member.php";
+include_once __DIR__ . "/../../includes/postcode.php";
 
 $pc = get_http_var('pc');
 $pc = preg_replace('#[^a-z0-9 ]#i', '', $pc);

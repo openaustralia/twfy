@@ -4,8 +4,8 @@
  * @file
  */
 
-include_once "../../includes/easyparliament/init.php";
-include_once INCLUDESPATH . "easyparliament/people.php";
+include_once __DIR__ . "/../../includes/easyparliament/init.php";
+include_once __DIR__ . "/../../includes/easyparliament/people.php";
 
 $this_page = 'peers';
 

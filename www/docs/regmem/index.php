@@ -14,7 +14,7 @@ while ($file = readdir($dh)) {
 }
 rsort($files);
 
-include_once "../../includes/easyparliament/init.php";
+include_once __DIR__ . "/../../includes/easyparliament/init.php";
 $PAGE->page_start();
 ?>
 <style type="text/css">

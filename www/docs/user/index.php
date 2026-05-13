@@ -36,8 +36,8 @@ display_user()  Displays a user's details.
  */
 
 
-include_once "../../includes/easyparliament/init.php";
-include_once "../../includes/easyparliament/member.php";
+include_once __DIR__ . "/../../includes/easyparliament/init.php";
+include_once __DIR__ . "/../../includes/easyparliament/member.php";
 
 // Which page we're on all depends on the value of the "pg" variable...
 switch (get_http_var("pg")) {

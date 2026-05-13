@@ -4,7 +4,7 @@
  * @file
  */
 
-include_once "../../includes/easyparliament/init.php";
+include_once __DIR__ . "/../../includes/easyparliament/init.php";
 
 $hansardmajors = $GLOBALS['hansardmajors'] ?? [];
 
@@ -43,7 +43,7 @@ if (($date = get_http_var('d')) && preg_match('#^\d\d\d\d-\d\d-\d\d$#', $date)) 
     $DATA->set_page_metadata($this_page, 'nextprev', $nextprevdata);
     $PAGE->page_start();
     $PAGE->stripe_start();
-    include_once INCLUDESPATH . 'easyparliament/recess.php';
+    include_once __DIR__ . '/../../includes/easyparliament/recess.php';
     $time = strtotime($date);
     $dayofweek = date('w', $time);
     $recess = recess_prettify(date('j', $time), date('n', $time), date('Y', $time), 1);
