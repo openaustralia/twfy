@@ -4,8 +4,8 @@
  * @file
  */
 
-include_once "../../includes/easyparliament/init.php";
-include_once INCLUDESPATH . "easyparliament/commentreportlist.php";
+include_once __DIR__ . "/../../includes/easyparliament/init.php";
+include_once __DIR__ . "/../../includes/easyparliament/commentreportlist.php";
 
 $this_page = "admin_home";
 
