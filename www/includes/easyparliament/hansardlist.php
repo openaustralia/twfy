@@ -4,8 +4,8 @@
  * @file
  */
 
-include_once INCLUDESPATH . "easyparliament/searchengine.php";
-include_once INCLUDESPATH . "easyparliament/searchlog.php";
+include_once __DIR__ . "/searchengine.php";
+include_once __DIR__ . "/searchlog.php";
 
 /**
  * The HANSARDLIST class and its children, DEBATELIST and WRANSLIST, display data about
@@ -195,8 +195,8 @@ class HANSARDLIST {
             return $data;
         }
 
-        $standard_template = INCLUDESPATH . "easyparliament/templates/$format/hansard_$view.php";
-        $mobile_template = INCLUDESPATH . "easyparliament/templates/$format/hansard_{$view}_mobile.php";
+        $standard_template = __DIR__ . "/../easyparliament/templates/$format/hansard_$view.php";
+        $mobile_template = __DIR__ . "/../easyparliament/templates/$format/hansard_{$view}_mobile.php";
 
         // Not every possible view here has a mobile version. So, only use the mobile version template if it exists.
         if ($mobile && file_exists($mobile_template)) {
@@ -3130,7 +3130,7 @@ class StandingCommittee extends DEBATELIST {
      *
      */
     public function _get_committee($bill_id) {
-        include_once INCLUDESPATH . "easyparliament/member.php";
+        include_once __DIR__ . "/../easyparliament/member.php";
         $q = $this->db->query('select count(*) as c from hansard where major=6 and minor=' .
             $this->db->escape($bill_id) . ' and htype=10');
         $sittings = $q->field(0, 'c');

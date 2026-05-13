@@ -117,7 +117,7 @@ class TRACKBACK {
         // We currently only have one kind of trackback template, so
         // we're ignoring $view here I'm afraid...
 
-        include INCLUDESPATH . "easyparliament/templates/{$format}/trackbacks.php";
+        include __DIR__ . "/../easyparliament/templates/{$format}/trackbacks.php";
 
     }
 

@@ -57,7 +57,7 @@ class PEOPLE {
             return $data;
         }
 
-        include INCLUDESPATH . "easyparliament/templates/{$format}/people_{$view}.php";
+        include __DIR__ . "/../easyparliament/templates/{$format}/people_{$view}.php";
         return TRUE;
 
     }

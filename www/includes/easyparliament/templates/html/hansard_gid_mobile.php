@@ -11,8 +11,8 @@
 
 global $PAGE, $this_page, $GLOSSARY, $hansardmajors;
 
-include_once INCLUDESPATH . "easyparliament/searchengine.php";
-include_once INCLUDESPATH . "easyparliament/member.php";
+include_once __DIR__ . "/../../../easyparliament/searchengine.php";
+include_once __DIR__ . "/../../../easyparliament/member.php";
 
 
 twfy_debug("TEMPLATE", "hansard_gid.php");
