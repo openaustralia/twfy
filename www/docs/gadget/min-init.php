@@ -4,8 +4,8 @@ error_reporting(E_ALL);
 ini_set('memory_limit', 16 * 1024 * 1024);
 
 include_once "../../../conf/general";
-include_once INCLUDESPATH . "utility.php";
-include_once INCLUDESPATH . "mysql.php";
+include_once __DIR__ . "/../../includes/utility.php";
+include_once __DIR__ . "/../../includes/mysql.php";
 
 /**
  *
