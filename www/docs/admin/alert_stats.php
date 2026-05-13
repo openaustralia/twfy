@@ -4,8 +4,8 @@
  * @file
  */
 
-include_once "../../includes/easyparliament/init.php";
-include_once "../../includes/easyparliament/member.php";
+include_once __DIR__ . "/../../includes/easyparliament/init.php";
+include_once __DIR__ . "/../../includes/easyparliament/member.php";
 
 $this_page = "alert_stats";
 

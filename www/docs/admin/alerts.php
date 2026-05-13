@@ -4,10 +4,10 @@
  * @file
  */
 
-include_once '../../includes/easyparliament/init.php';
-include_once INCLUDESPATH . 'easyparliament/commentreportlist.php';
-include_once INCLUDESPATH . 'easyparliament/searchengine.php';
-include_once INCLUDESPATH . 'easyparliament/member.php';
+include_once __DIR__ . "/../../includes/easyparliament/init.php";
+include_once __DIR__ . "/../../includes/easyparliament/commentreportlist.php";
+include_once __DIR__ . "/../../includes/easyparliament/searchengine.php";
+include_once __DIR__ . "/../../includes/easyparliament/member.php";
 
 $this_page = 'admin_alerts';
 
