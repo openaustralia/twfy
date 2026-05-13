@@ -12,7 +12,7 @@ $PAGE->page_start();
 
 $PAGE->stripe_start();
 
-include INCLUDESPATH . 'easyparliament/staticpages/linktous.php';
+include __DIR__ . '/../../includes/easyparliament/staticpages/linktous.php';
 
 $PAGE->stripe_end();
 
