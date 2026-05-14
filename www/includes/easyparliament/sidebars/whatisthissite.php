@@ -18,7 +18,7 @@ $helpurl = $URL->generate();
         <img src="<?php echo IMAGEPATH . "donate_greenL.png" ?>" width="108" height="43" border="0" align="right"
             hspace="4" vspace="5" alt="Donate"></a>
     <a href="<?php echo $abouturl; ?>" title="link to About Us page">OpenAustralia.org</a> is a
-    non-partisan website run by a charity, the <a href="http://www.openaustraliafoundation.org.au">OpenAustralia
+    non-partisan website run by a charity, the <a href="https://www.oaf.org.au">OpenAustralia
         Foundation</a>. It aims to make it easy for people to keep tabs on their
     representatives in Parliament.
 </p>
