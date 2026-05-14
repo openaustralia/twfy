@@ -35,7 +35,7 @@ if (isset($data['years'])) {
             // $month and $year are integers.
             // $dates is an array of dates that should be links in this month.
 
-            // From http://www.zend.com/zend/trick/tricks-Oct-2002.php
+            // From https://www.zend.com/zend/trick/tricks-Oct-2002.php
             // Adjusted for style, putting Monday first, and the URL of the page linked to.
 
 

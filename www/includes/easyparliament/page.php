@@ -3081,7 +3081,7 @@ class PAGE {
      *
      */
     public function display_calendar_month($month, $year, $dateArray, $page) {
-        // From http://www.zend.com/zend/trick/tricks-Oct-2002.php
+        // From https://www.zend.com/zend/trick/tricks-Oct-2002.php
         // Adjusted for style, putting Monday first, and the URL of the page linked to.
 
         // Used in templates/html/hansard_calendar.php.
