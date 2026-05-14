@@ -15,9 +15,9 @@
  * set_criteria() Sets search criteria from information in MP and Keyword fields.
  */
 
-include_once __DIR__ . "/../../includes/easyparliament/init.php";
-include_once __DIR__ . "/../../includes/easyparliament/people.php";
-include_once __DIR__ . "/../../includes/easyparliament/member.php";
+include_once __DIR__ . '/../../includes/easyparliament/init.php';
+include_once __DIR__ . '/../../includes/easyparliament/people.php';
+include_once __DIR__ . '/../../includes/easyparliament/member.php';
 include_once __DIR__ . '/../../../../phplib/auth.php';
 include_once __DIR__ . '/../../../../phplib/crosssell.php';
 
