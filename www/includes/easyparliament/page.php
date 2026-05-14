@@ -552,10 +552,10 @@ class PAGE {
 
         if ($this_page != 'home') {
             if (get_http_var('c4')) {
-                $HOMEURL = 'http://www.channel4.com/news/microsites/E/election2005/';
+                $HOMEURL = 'https://www.channel4.com/news/microsites/E/election2005/';
                 $HOMETITLE = 'To Channel 4\'s main election site';
             } elseif (get_http_var('c4x')) {
-                $HOMEURL = 'http://www.channel4.com/life/microsites/E/elexion/';
+                $HOMEURL = 'https://www.channel4.com/life/microsites/E/elexion/';
                 $HOMETITLE = 'To Channel 4\'s main election site';
             } else {
                 $HOMEURL = new URL('home');
