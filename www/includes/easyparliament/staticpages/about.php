@@ -22,7 +22,7 @@
         Australia</a> and administered by <a href="mailto:auspic@aph.gov.au">AUSPIC</a>.
 </p>
 <p>If you're technically minded, we make all the
-    <a href="http://software.openaustralia.org/">OpenAustralia source code</a>
+    <a href="https://software.openaustralia.org/">OpenAustralia source code</a>
     freely available. Do let us know if you want to help!
 </p>
 

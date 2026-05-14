@@ -22,7 +22,7 @@
 
     <dt><a name="knowsphp"></a>I know PHP and HTML and stuff like that.</dt>
     <dd>
-        <p>Great, check out <a href="http://software.openaustralia.org/">web application source<a>.</p>
+        <p>Great, check out <a href="https://software.openaustralia.org/">web application source<a>.</p>
     </dd>
     <!-- end old faq entry -->
 </dl>
@@ -32,7 +32,7 @@
 
     <dt><a name="knowsruby"></a>I know Ruby and I can write parsers, can I help you crunch the source data?</dt>
     <dd>
-        <p>You sure can. Check out the <a href="http://software.openaustralia.org/">parser source code</a> and let us
+        <p>You sure can. Check out the <a href="https://software.openaustralia.org/">parser source code</a> and let us
             know what you want to add.</p>
     </dd>
     <!-- end old faq entry -->
