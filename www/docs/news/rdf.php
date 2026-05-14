@@ -13,9 +13,9 @@ print '<?xml version="1.0" encoding="iso-8859-1"?>' ?>
     xmlns:sy="http://purl.org/rss/1.0/modules/syndication/" xmlns:admin="http://webns.net/mvcb/"
     xmlns:cc="http://web.resource.org/cc/" xmlns="http://purl.org/rss/1.0/">
 
-    <channel rdf:about="http://<?php DOMAIN . WEBPATH . "news/" ?>">
+    <channel rdf:about="https://<?php DOMAIN . WEBPATH . "news/" ?>">
         <title>OpenAustralia News</title>
-        <link>http://<?php echo DOMAIN . WEBPATH . "news/" ?></link>
+        <link>https://<?php echo DOMAIN . WEBPATH . "news/" ?></link>
         <description>The weblog for news about site updates, etc.</description>
         <dc:language>en-us</dc:language>
         <dc:creator></dc:creator>
@@ -31,7 +31,7 @@ print '<?xml version="1.0" encoding="iso-8859-1"?>' ?>
                         break;
                     }
                     [$title, $content, $date] = $news_row;
-                    $url = "http://" . DOMAIN . news_individual_link($date, $title);
+                    $url = "https://" . DOMAIN . news_individual_link($date, $title);
                     print "<rdf:li rdf:resource=\"$url\" />\n";
                 }
                 ?>
@@ -47,7 +47,7 @@ print '<?xml version="1.0" encoding="iso-8859-1"?>' ?>
             break;
         }
         [$title, $content, $date] = $news_row;
-        $url = "http://" . DOMAIN . news_individual_link($date, $title);
+        $url = "https://" . DOMAIN . news_individual_link($date, $title);
         $excerpt = trim_characters(news_format_body($content), 0, 250);
         $date = str_replace(" ", "T", $date) . "+00:00";
         ?>

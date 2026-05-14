@@ -105,7 +105,7 @@ function api_getDebates_type($t) {
         if (is_string($redirect)) {
             $URL = $_SERVER['REQUEST_URI'];
             $URL = str_replace($gid, $redirect, $URL);
-            // header('Location: http://' . DOMAIN . $URL);
+            // header('Location: https://' . DOMAIN . $URL);
             // exit;.
         }
     } elseif ($y = get_http_var('year')) {

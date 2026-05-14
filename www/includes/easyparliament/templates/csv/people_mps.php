@@ -56,7 +56,7 @@ function render_mps_row($mp, $order) {
     } else {
         print $mp['party'];
     }
-    print ',' . $con . ',http://' . DOMAIN . WEBPATH . 'mp/' .
+    print ',' . $con . ',https://' . DOMAIN . WEBPATH . 'mp/' .
         make_member_url($mp['first_name'] . ' ' . $mp['last_name'], $mp['constituency']);
     if ($order == 'expenses') {
         print ', �' . $mp['data_value'];

@@ -90,7 +90,7 @@ function error_handler(string $errno, string $errmsg, string $filename, int $lin
 
     $err = '';
     if (isset($_SERVER['REQUEST_URI'])) {
-        $err .= "URL:\t\thttp://" . DOMAIN . $_SERVER['REQUEST_URI'] . "\n";
+        $err .= "URL:\t\thttps://" . DOMAIN . $_SERVER['REQUEST_URI'] . "\n";
     } else {
         $err .= "URL:\t\tNone - running from command line?\n";
     }

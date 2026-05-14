@@ -311,7 +311,7 @@ class PAGE {
                 content="Parliament, government, House of Representatives, Senate, Senator, MP, Member of Parliament, MPs, Australia, Australian, <?php echo htmlentities($keywords_title) . htmlentities($keywords); ?>">
             <meta name="verify-v1" content="5FBaCDi8kCKdo4s64NEdB5EOJDNc310SwcLLYHmEbgg=">
             <link rel="author" title="Send feedback" href="mailto:<?php echo str_replace('@', '&#64;', CONTACTEMAIL); ?>">
-            <link rel="home" title="Home" href="http://<?php echo DOMAIN; ?>/">
+            <link rel="home" title="Home" href="https://<?php echo DOMAIN; ?>/">
             <?php
             echo $linkshtml;
 
@@ -321,7 +321,7 @@ class PAGE {
                 // If this page has an RSS feed set.
                 ?>
                 <link rel="alternate" type="application/rss+xml" title="OpenAustralia RSS"
-                    href="http://<?php echo DOMAIN . WEBPATH . $rssurl; ?>">
+                    href="https://<?php echo DOMAIN . WEBPATH . $rssurl; ?>">
                 <?php
             }
 
@@ -448,7 +448,7 @@ class PAGE {
             <meta name="verify-v1" content="5FBaCDi8kCKdo4s64NEdB5EOJDNc310SwcLLYHmEbgg=">
             <meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0" />
             <link rel="author" title="Send feedback" href="mailto:<?php echo str_replace('@', '&#64;', CONTACTEMAIL); ?>">
-            <link rel="home" title="Home" href="http://<?php echo DOMAIN; ?>/">
+            <link rel="home" title="Home" href="https://<?php echo DOMAIN; ?>/">
             <?php
             echo $linkshtml;
 
@@ -458,7 +458,7 @@ class PAGE {
                 // If this page has an RSS feed set.
                 ?>
                 <link rel="alternate" type="application/rss+xml" title="OpenAustralia RSS"
-                    href="http://<?php echo DOMAIN . WEBPATH . $rssurl; ?>">
+                    href="https://<?php echo DOMAIN . WEBPATH . $rssurl; ?>">
                 <?php
             }
 

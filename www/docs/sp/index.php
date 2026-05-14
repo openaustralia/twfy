@@ -48,7 +48,7 @@ if (get_http_var("d") != "") {
     if (is_string($result)) {
         $URL = new URL('spdebates');
         $URL->insert(['id' => $result]);
-        header('Location: http://' . DOMAIN . $URL->generate('none'), TRUE, 301);
+        header('Location: https://' . DOMAIN . $URL->generate('none'), TRUE, 301);
         exit;
     }
 
@@ -92,7 +92,7 @@ if (get_http_var("d") != "") {
     if (is_string($result)) {
         $URL = new URL('spdebate');
         $URL->insert(['gid' => $result]);
-        header('Location: http://' . DOMAIN . $URL->generate('none'));
+        header('Location: https://' . DOMAIN . $URL->generate('none'));
         exit;
     }
     if ($LIST->htype() == '12' || $LIST->htype() == '13') {

@@ -54,7 +54,7 @@ for ($personrow = 0; $personrow < $q->rows(); $personrow++) {
             $title = htmlentities(str_replace('&#8212;', '-', $row['parent']['body']));
 
             $link = $row['listurl'] ?? '';
-            $link = 'http://' . DOMAIN . $link;
+            $link = 'https://' . DOMAIN . $link;
 
             $description = htmlentities(trim_characters($row['body'], 0, 200));
             $contentencoded = $row['body'];
@@ -89,9 +89,9 @@ for ($personrow = 0; $personrow < $q->rows(); $personrow++) {
   xmlns="http://purl.org/rss/1.0/"
   xmlns:content="http://purl.org/rss/1.0/modules/content/">
 		
-<channel rdf:about="http://' . DOMAIN . $mpurl . '">
+<channel rdf:about="https://' . DOMAIN . $mpurl . '">
 <title>' . entities_to_numbers($MEMBER->full_name()) . '\'s recent appearances (OpenAustralia.org)</title>
-<link>http://' . DOMAIN . $mpurl . '</link>
+<link>https://' . DOMAIN . $mpurl . '</link>
 <description></description>
 <dc:language>en-gb</dc:language>
 <dc:creator>OpenAustralia.org, mprss.php script</dc:creator>

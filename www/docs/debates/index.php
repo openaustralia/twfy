@@ -72,7 +72,7 @@ if (get_http_var("d") != "") {
     if (is_string($result)) {
         $URL = new URL('debates');
         $URL->insert(['id' => $result]);
-        header('Location: http://' . DOMAIN . $URL->generate('none'), TRUE, 301);
+        header('Location: https://' . DOMAIN . $URL->generate('none'), TRUE, 301);
         exit;
     }
 
