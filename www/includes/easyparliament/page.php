@@ -1255,7 +1255,7 @@ class PAGE {
             }
         }
         $links[] = '<a href="' . WEBPATH . 'api/">API</a> / <a href="http://data.openaustralia.org">XML</a>';
-        $links[] = '<a href="http://software.openaustralia.org">Source code</a>';
+        $links[] = '<a href="https://software.openaustralia.org">Source code</a>';
 
         $qs = $_SERVER['QUERY_STRING'];
         if (preg_match('/.*show_pc.*/i', $qs)) {
