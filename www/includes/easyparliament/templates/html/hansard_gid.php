@@ -173,7 +173,7 @@ if (isset($data['rows'])) {
             $video_content = '';
             if ($data['info']['major'] == 1 && $first_speech_displayed == 0) { # only Commons debates currently
                 $autostart = get_http_var('autoPlay');
-                $video_content = "<p class='video'><script type=\"text/javascript\" src=\"http://parlvid.mysociety.org/video.cgi?gid=";
+                $video_content = "<p class='video'><script type=\"text/javascript\" src=\"https://parlvid.mysociety.org/video.cgi?gid=";
                 $video_content .= $row['gid'];
                 if ($autostart == 'true') {
                     $video_content .= "&autostart=true";
@@ -263,7 +263,7 @@ if (isset($data['rows'])) {
 
                     #                if ($data['info']['major'] == 1) { # Commons debates only
                     if (0) {
-                        ?><!-- | <script type="text/javascript" src="http://parlvid.mysociety.org/video.cgi?gid=<?php
+                        ?><!-- | <script type="text/javascript" src="https://parlvid.mysociety.org/video.cgi?gid=<?php
                         echo $row['gid'];
                         ?>&output=js-link"></script> -->
                     <?php
