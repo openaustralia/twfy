@@ -1,11 +1,11 @@
 <?php
 
-include_once "../../includes/easyparliament/init.php";
-include_once INCLUDESPATH . "easyparliament/member.php";
-include_once INCLUDESPATH . "easyparliament/glossary.php";
+include_once __DIR__ . "/../../includes/easyparliament/init.php";
+include_once __DIR__ . "/../../includes/easyparliament/member.php";
+include_once __DIR__ . "/../../includes/easyparliament/glossary.php";
 
 // From http://cvs.sourceforge.net/viewcvs.py/publicwhip/publicwhip/website/
-include_once INCLUDESPATH . "postcode.php";
+include_once __DIR__ . "/../../includes/postcode.php";
 
 if (get_http_var('s') != '' || get_http_var('pid') != '') {
 
@@ -184,7 +184,7 @@ if (get_http_var('s') != '' || get_http_var('pid') != '') {
     $this_page = 'search_help';
     $PAGE->page_start();
     $PAGE->stripe_start();
-    include INCLUDESPATH . 'easyparliament/staticpages/search_help.php';
+    include __DIR__ . '/../../includes/easyparliament/staticpages/search_help.php';
 }
 
 $PAGE->stripe_end([
