@@ -8,7 +8,7 @@ if (!function_exists('strptime')) {
 
     /**
      * Implementation of strptime() for PHP on Windows.
-     * Modified from http://au.php.net/manual/en/function.strptime.php#82004
+     * Modified from https://au.php.net/manual/en/function.strptime.php#82004
      *
      * @param string $date
      *   Date string to parse.
@@ -87,7 +87,7 @@ if (!function_exists('strptime')) {
 
     /**
      * Called by strptime().
-     * Modified from http://au.php.net/manual/en/function.strptime.php#81611
+     * Modified from https://au.php.net/manual/en/function.strptime.php#81611
      *
      * @param string $date
      *   Date string to parse.
