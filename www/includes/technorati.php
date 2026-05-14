@@ -70,7 +70,7 @@ function technorati($url) {
 
 // functions/classes bits and pieces  from elsewhere below.
 
-// This is the only line that you need to change. Go to http://www.technorati.com/members/apikey.html
+// This is the only line that you need to change. Go to https://www.technorati.com/members/apikey.html
 // (sign up if you have to) and put your API key in the url below. Change the URL to your blog URL.
 
 /**
