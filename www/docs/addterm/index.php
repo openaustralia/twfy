@@ -4,9 +4,9 @@
  * @file
  */
 
-include_once "../../includes/easyparliament/init.php";
-include_once INCLUDESPATH . "easyparliament/glossary.php";
-include_once INCLUDESPATH . "easyparliament/glossarylist.php";
+include_once __DIR__ . "/../../includes/easyparliament/init.php";
+include_once __DIR__ . "/../../includes/easyparliament/glossary.php";
+include_once __DIR__ . "/../../includes/easyparliament/glossarylist.php";
 
 
 // $this_page = "glossary_addterm";

@@ -5,8 +5,8 @@
  */
 
 $this_page = '404';
-include_once dirname(__FILE__) . '/../includes/easyparliament/init.php';
-include_once INCLUDESPATH . 'easyparliament/member.php';
+include_once __DIR__ . '/../includes/easyparliament/init.php';
+include_once __DIR__ . '/../includes/easyparliament/member.php';
 
 $PAGE->page_start();
 $PAGE->stripe_start();
