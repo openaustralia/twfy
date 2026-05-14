@@ -825,7 +825,7 @@ function send_email($to, $subject, $message, $bulk = FALSE) {
 
 //
 // Cal's functions from
-// http://www.iamcal.com/publish/article.php?id=13
+// https://www.iamcal.com/publish/article.php?id=13
 
 /**
  * Call this with a key name to get a GET or POST variable.
