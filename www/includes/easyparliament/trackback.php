@@ -128,7 +128,7 @@ class TRACKBACK {
         /*
         $data = array (
         'epobject_id'     => '34533',
-        'url'             => 'http://www.gyford.com/weblog/my_entry.html',
+        'url'             => 'https://www.example.com/weblog/my_entry.html',
         'blog_name'     => "Phil's weblog",
         'title'         => 'Interesting speech',
         'excerpt'         => 'My MP has posted an interesting speech, etc',
