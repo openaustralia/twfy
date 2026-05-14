@@ -9,8 +9,8 @@
 // Pass it a GET string like ?rid=37&cid=54
 // where rid is a report_id and cid is a comment_id.
 
-include_once "../../includes/easyparliament/init.php";
-include_once INCLUDESPATH . "easyparliament/commentreport.php";
+include_once __DIR__ . "/../../includes/easyparliament/init.php";
+include_once __DIR__ . "/../../includes/easyparliament/commentreport.php";
 
 $this_page = "admin_commentreport";
 
@@ -135,9 +135,9 @@ function view($REPORT, $COMMENT, $FORMURL) {
     $REPORT->display();
 
     ?>
-    
+
     <p><strong>Do you wish to delete the comment?</strong></p>
-    
+
     <form action="<?php echo $FORMURL->generate(); ?>" method="post">
         <p><input type="submit" name="yes" value=" Yes "> &nbsp;
         <input type="submit" name="no" value=" No ">
@@ -158,7 +158,7 @@ function get_template_contents($template) {
     // so may be scope for rationalising...
     global $PAGE;
 
-    $filename = INCLUDESPATH . "easyparliament/templates/emails/" . $template . ".txt";
+    $filename = include_once __DIR__ . "/../../includes/easyparliament/templates/emails/" . $template . ".txt";
 
     if (!file_exists($filename)) {
         $PAGE->error_message("Sorry, we could not find the email template.");
@@ -190,7 +190,7 @@ function prepare_emails_for_deleting($REPORT, $COMMENT, $FORMURL) {
         <p><strong>You've chosen to delete this comment.</strong> You can now send an email to both the person who posted the comment, and the person who made the report. Uncheck a box to prevent an email from being sent. The comment will not be deleted until you click the button below.</p>
 
         <form action="<?php echo $FORMURL->generate(); ?>" method="post">
-            
+
             <p><strong><input type="checkbox" name="sendtocommenter" value="true" checked id="sendtocommenter"> <label for="sendtocommenter">Send this email to the person who posted the comment:</label></strong></p>
 
 <!--            <p class="email-template"><?php echo $commentermail; ?></p> -->
@@ -224,14 +224,14 @@ function prepare_emails_for_not_deleting($REPORT, $COMMENT, $FORMURL) {
 
     ?>
         <p><strong>You have chosen not to delete this comment.</strong> You can now send an email to the person who made the report (uncheck the box to send no email). The report will not be resolved until you click the button below.</p>
-        
+
         <form action="<?php echo $FORMURL->generate(); ?>" method="post">
             <p>&nbsp;<br><strong><input type="checkbox" name="sendtoreporter" value="true" checked id="sendtoreporter"> <label for="sendtoreporter">Send this email to the person who reported the comment:</label></strong></p>
 
             <p class="email-template"><?php echo $reportermail; ?></p>
-            
+
             <p>Enter a reason to replace {REASON}: <input type="text" name="declinedreason" size="40"></p>
-            
+
             <p><input type="submit" name="resolve" value=" Resolve this report ">
             <input type="hidden" name="deletecomment" value="false">
             <input type="hidden" name="rid" value="<?php echo htmlentities($REPORT->report_id()); ?>">
