@@ -9,7 +9,7 @@ include dirname(__FILE__) . '/../../includes/easyparliament/init.php';
 require_once "editme.php";
 print '<?xml version="1.0" encoding="iso-8859-1"?>' ?>
 
-<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dc="http://purl.org/dc/elements/1.1/"
+<rdf:RDF xmlns:rdf="https://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dc="http://purl.org/dc/elements/1.1/"
     xmlns:sy="http://purl.org/rss/1.0/modules/syndication/" xmlns:admin="http://webns.net/mvcb/"
     xmlns:cc="http://web.resource.org/cc/" xmlns="http://purl.org/rss/1.0/">
 

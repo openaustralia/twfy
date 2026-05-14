@@ -85,7 +85,7 @@ for ($personrow = 0; $personrow < $q->rows(); $personrow++) {
     $rsstext = '<?xml version="1.0" encoding="iso-8859-1"?>
 <rdf:RDF
   xmlns:dc="http://purl.org/dc/elements/1.1/"
-  xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+  xmlns:rdf="https://www.w3.org/1999/02/22-rdf-syntax-ns#"
   xmlns="http://purl.org/rss/1.0/"
   xmlns:content="http://purl.org/rss/1.0/modules/content/">
 		
