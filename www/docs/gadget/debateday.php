@@ -4,7 +4,8 @@
  * @file
  */
 
-include_once '../../includes/easyparliament/init.php';
+include_once __DIR__ . '/../../includes/easyparliament/init.php';
+
 $LIST = new DEBATELIST();
 // Guess it should really use a View of none, but this way I get all
 // the display stuff done for me...
