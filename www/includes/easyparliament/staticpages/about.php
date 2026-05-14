@@ -17,7 +17,7 @@
 </p>
 
 <p>The Australian Hansard is
-    <a href="https://www.ag.gov.au/cca">Copyright Commonwealth of Australia</a>,
+    <a href="https://www.aph.gov.au/Help/Disclaimer_Privacy_Copyright">Copyright Commonwealth of Australia</a>,
     and is used with permission. Images of politicians are <a href="https://www.aph.gov.au/Help/Disclaimer_Privacy_Copyright">Copyright Commonwealth of
         Australia</a> and administered by <a href="mailto:auspic@aph.gov.au">AUSPIC</a>.
 </p>
