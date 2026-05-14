@@ -1254,7 +1254,7 @@ class PAGE {
                 $links[] = '<a href="' . $URL->generate() . '">' . $title . '</a>';
             }
         }
-        $links[] = '<a href="' . WEBPATH . 'api/">API</a> / <a href="http://data.openaustralia.org">XML</a>';
+        $links[] = '<a href="' . WEBPATH . 'api/">API</a> / <a href="https://data.openaustralia.org.au">XML</a>';
         $links[] = '<a href="https://software.openaustralia.org">Source code</a>';
 
         $qs = $_SERVER['QUERY_STRING'];
