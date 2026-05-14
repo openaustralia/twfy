@@ -46,82 +46,82 @@
 
 <table class="people" border="0" cellpadding="3" cellspacing="0">
     <tr>
-        <td><img src="http://www.gravatar.com/avatar/b22adbe107ae92088a105b551354d487?s=32&d=identicon&r=g" width="32"
+        <td><img src="https://www.gravatar.com/avatar/b22adbe107ae92088a105b551354d487?s=32&d=identicon&r=g" width="32"
                 height="32" alt="Avatar for Tim Ansell"></td>
         <td>Tim Ansell</td>
     </tr>
     <tr>
-        <td><img src="http://www.gravatar.com/avatar/039a87be2d3843f64170f5e625252e84?s=32&d=identicon&r=g" width="32"
+        <td><img src="https://www.gravatar.com/avatar/039a87be2d3843f64170f5e625252e84?s=32&d=identicon&r=g" width="32"
                 height="32" alt="Avatar for Nathanael Boehm"></td>
         <td>Nathanael Boehm</td>
     </tr>
     <tr>
-        <td><img src="http://www.gravatar.com/avatar/9f24adfa971912d72f72c1396ef63351?s=32&d=identicon&r=g" width="32"
+        <td><img src="https://www.gravatar.com/avatar/9f24adfa971912d72f72c1396ef63351?s=32&d=identicon&r=g" width="32"
                 height="32" alt="Avatar for Lachie Cox"></td>
         <td>Lachie Cox</td>
     </tr>
     <tr>
-        <td><img src="http://www.gravatar.com/avatar/b30d37e67e4c4584a71d977763651513?s=32&d=identicon&r=g" width="32"
+        <td><img src="https://www.gravatar.com/avatar/b30d37e67e4c4584a71d977763651513?s=32&d=identicon&r=g" width="32"
                 height="32" alt="Avatar for Henare Degan"></td>
         <td>Henare Degan</td>
     </tr>
     <tr>
-        <td><img src="http://www.gravatar.com/avatar/839aef22d6c767b07a630ceb9ac26793?s=32&d=identicon&r=g" width="32"
+        <td><img src="https://www.gravatar.com/avatar/839aef22d6c767b07a630ceb9ac26793?s=32&d=identicon&r=g" width="32"
                 height="32" alt="Avatar for Simon Elvery"></td>
         <td>Simon Elvery</td>
     </tr>
     <tr>
-        <td><img src="http://www.gravatar.com/avatar/011c7cbc5af9c3c81b12b9c173a9db32?s=32&d=identicon&r=g" width="32"
+        <td><img src="https://www.gravatar.com/avatar/011c7cbc5af9c3c81b12b9c173a9db32?s=32&d=identicon&r=g" width="32"
                 height="32" alt="Avatar for Ray Haleblian"></td>
         <td>Ray Haleblian</td>
     </tr>
     <tr>
-        <td><img src="http://www.gravatar.com/avatar/8b4c4881fbc0495bb58f4bc7b59fd960?s=32&d=identicon&r=g" width="32"
+        <td><img src="https://www.gravatar.com/avatar/8b4c4881fbc0495bb58f4bc7b59fd960?s=32&d=identicon&r=g" width="32"
                 height="32" alt="Avatar for Matt Joyce"></td>
         <td>Matt Joyce</td>
     </tr>
     <tr>
-        <td><img src="http://www.gravatar.com/avatar/a1ed877d79337034f8e1bb46f2dad8e3?s=32&d=identicon&r=g" width="32"
+        <td><img src="https://www.gravatar.com/avatar/a1ed877d79337034f8e1bb46f2dad8e3?s=32&d=identicon&r=g" width="32"
                 height="32" alt="Avatar for Daniel Kinsman"></td>
         <td>Daniel Kinsman</td>
     </tr>
     <tr>
-        <td><img src="http://www.gravatar.com/avatar/5a600494d91ea4223e7256989155f687?s=32&d=identicon&r=g" width="32"
+        <td><img src="https://www.gravatar.com/avatar/5a600494d91ea4223e7256989155f687?s=32&d=identicon&r=g" width="32"
                 height="32" alt="Avatar for Matthew Landauer"></td>
         <td>Matthew Landauer</td>
     </tr>
     <tr>
-        <td><img src="http://www.gravatar.com/avatar/4dde9fa837cdd695790518e140efbf7d?s=32&d=identicon&r=g" width="32"
+        <td><img src="https://www.gravatar.com/avatar/4dde9fa837cdd695790518e140efbf7d?s=32&d=identicon&r=g" width="32"
                 height="32" alt="Avatar for Rob Manson"></td>
         <td>Rob Manson</td>
     </tr>
     <tr>
-        <td><img src="http://www.gravatar.com/avatar/d25d7166e80639478ef1811788b8e61e?s=32&d=identicon&r=g" width="32"
+        <td><img src="https://www.gravatar.com/avatar/d25d7166e80639478ef1811788b8e61e?s=32&d=identicon&r=g" width="32"
                 height="32" alt="Avatar for Bruno Mattarollo"></td>
         <td>Bruno Mattarollo</td>
     </tr>
     <tr>
-        <td><img src="http://www.gravatar.com/avatar/0a6ceb73d181645bcaff2c21e8fe0e85?s=32&d=identicon&r=g" width="32"
+        <td><img src="https://www.gravatar.com/avatar/0a6ceb73d181645bcaff2c21e8fe0e85?s=32&d=identicon&r=g" width="32"
                 height="32" alt="Avatar for Wade Millican"></td>
         <td>Wade Millican</td>
     </tr>
     <tr>
-        <td><img src="http://www.gravatar.com/avatar/6a5ba0842a531163425d66839569a68?s=32&d=identicon&r=g" width="32"
+        <td><img src="https://www.gravatar.com/avatar/6a5ba0842a531163425d66839569a68?s=32&d=identicon&r=g" width="32"
                 height="32" alt="Avatar for Matthew Panetta"></td>
         <td>Matthew Panetta</td>
     </tr>
     <tr>
-        <td><img src="http://www.gravatar.com/avatar/b6d632e6f84a8b522199a91d75b7eb39?s=32&d=identicon&r=g" width="32"
+        <td><img src="https://www.gravatar.com/avatar/b6d632e6f84a8b522199a91d75b7eb39?s=32&d=identicon&r=g" width="32"
                 height="32" alt="Avatar for Sarah Stokely"></td>
         <td>Sarah Stokely</td>
     </tr>
     <tr>
-        <td><img src="http://www.gravatar.com/avatar/87bb46366f13106c2deebf655af73b38?s=32&d=identicon&r=g" width="32"
+        <td><img src="https://www.gravatar.com/avatar/87bb46366f13106c2deebf655af73b38?s=32&d=identicon&r=g" width="32"
                 height="32" alt="Avatar for Katherine Szuminska"></td>
         <td>Katherine Szuminska</td>
     </tr>
     <tr>
-        <td><img src="http://www.gravatar.com/avatar/3c1983a3371799ba1a78606dc62655db?s=32&d=identicon&r=g" width="32"
+        <td><img src="https://www.gravatar.com/avatar/3c1983a3371799ba1a78606dc62655db?s=32&d=identicon&r=g" width="32"
                 height="32" alt="Avatar for Justin Wells"></td>
         <td>Justin Wells</td>
     </tr>
