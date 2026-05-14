@@ -113,7 +113,7 @@ Now, the Register of Interests is available for all sitting Senators and Represe
 
 See, for instance, the <a href="/mp/kevin_rudd/griffith#register">Register of Interests for the Prime Minister, Kevin Rudd</a>, available at the bottom of his page. (<a href="/regmem/scan/register_interests_10552.pdf">direct link</a>)
 
-This latest addition was largely made possible by the generous help of volunteer <a href="http://shiny.thorne.id.au/">Stephen Thorne</a> at <a href="http://netboxblue.com/">Netbox Blue</a> who scanned the 1500 pages of the Register of Members' Interests and <a href="https://www.aph.gov.au/HOUSE/dept/bios/bw.htm">Bernard Wright</a>, the Registrar of Members' Interests, for providing us with the hardcopy material.
+This latest addition was largely made possible by the generous help of volunteer Stephen Thorne at Netbox Blue who scanned the 1500 pages of the Register of Members' Interests and <a href="https://adb.anu.edu.au/biography/wright-bernard-clive-28242">Bernard Wright</a>, the Registrar of Members' Interests, for providing us with the hardcopy material.
 
 EOT
 ,
