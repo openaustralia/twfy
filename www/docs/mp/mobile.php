@@ -32,11 +32,11 @@ Either way, we print the forms.
 
  */
 
-include_once __DIR__ . "/../../includes/easyparliament/init.php";
-include_once __DIR__ . "/../../includes/easyparliament/member.php";
+include_once __DIR__ . '/../../includes/easyparliament/init.php';
+include_once __DIR__ . '/../../includes/easyparliament/member.php';
 
 // From http://cvs.sourceforge.net/viewcvs.py/publicwhip/publicwhip/website/
-include_once __DIR__ . "/../../includes/postcode.php";
+include_once __DIR__ . '/../../includes/postcode.php';
 include_once __DIR__ . '/../api/api_getGeometry.php';
 include_once __DIR__ . '/../api/api_getConstituencies.php';
 

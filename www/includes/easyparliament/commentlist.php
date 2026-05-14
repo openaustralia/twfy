@@ -104,7 +104,7 @@ class COMMENTLIST {
      *
      */
     public function render($data, $format = 'html', $template = 'comments') {
-        include __DIR__ . "/../easyparliament/templates/$format/$template.php";
+        include __DIR__ . '/../easyparliament/templates/$format/$template.php';
     }
 
     /**

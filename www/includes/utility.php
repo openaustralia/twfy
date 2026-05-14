@@ -742,7 +742,7 @@ function send_template_email($data, $merge, $bulk = FALSE) {
         return FALSE;
     }
 
-    $filename = __DIR__ . "/easyparliament/templates/emails/" . $data['template'] . ".txt";
+    $filename = __DIR__ . '/easyparliament/templates/emails/' . $data['template'] . '.txt';
 
     if (!file_exists($filename)) {
         $PAGE->error_message("Sorry, we could not find the email template '" . htmlentities($data['template']) . "'.");

@@ -1,11 +1,11 @@
 <?php
 
-include_once __DIR__ . "/../../includes/easyparliament/init.php";
-include_once __DIR__ . "/../../includes/easyparliament/member.php";
-include_once __DIR__ . "/../../includes/easyparliament/glossary.php";
+include_once __DIR__ . '/../../includes/easyparliament/init.php';
+include_once __DIR__ . '/../../includes/easyparliament/member.php';
+include_once __DIR__ . '/../../includes/easyparliament/glossary.php';
 
 // From http://cvs.sourceforge.net/viewcvs.py/publicwhip/publicwhip/website/
-include_once __DIR__ . "/../../includes/postcode.php";
+include_once __DIR__ . '/../../includes/postcode.php';
 
 if (get_http_var('s') != '' || get_http_var('pid') != '') {
 

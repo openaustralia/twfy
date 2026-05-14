@@ -11,7 +11,7 @@ francis@flourish.org
 
 Example usage:
 
-include_once __DIR__ . "/../easyparliament/searchengine.php";
+include_once __DIR__ . '/../easyparliament/searchengine.php';
 
 $searchengine = new SEARCHENGINE($searchstring);
 $description = $searchengine->query_description();

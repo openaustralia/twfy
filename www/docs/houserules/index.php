@@ -6,7 +6,7 @@
 
 $this_page = "houserules";
 
-include_once __DIR__ . "/../../includes/easyparliament/init.php";
+include_once __DIR__ . '/../../includes/easyparliament/init.php';
 
 $PAGE->page_start();
 
