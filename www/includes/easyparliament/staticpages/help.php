@@ -180,7 +180,7 @@
     <dt><a name="regmem-links"></a>Why are there two Register of Interests links for some MPs?</dt>
     <dd>
         <p>In early 2009, OpenAustralia.org was <a
-                href="https://www.openaustraliafoundation.org.au/2009/01/05/the-register-of-senators-interests-is-now-online-2/">the
+                href="https://www.oaf.org.au/2009/01/05/the-register-of-senators-interests-is-now-online-2/">the
                 first to publish</a> the important Register of Interests online. We're happy to say that Australian
             Parliament House now publishes this register online themselves.</p>
 
