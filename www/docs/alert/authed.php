@@ -13,8 +13,8 @@
 //
 // $Id: authed.php,v 1.1 2006/05/26 08:44:46 matthew Exp $.
 
-include_once "../../includes/easyparliament/init.php";
-include_once INCLUDESPATH . '../../../phplib/auth.php';
+include_once __DIR__ . '/../../includes/easyparliament/init.php';
+include_once __DIR__ . '/../../../../phplib/auth.php';
 
 header("Content-Type: text/plain");
 

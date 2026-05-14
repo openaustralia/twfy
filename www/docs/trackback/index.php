@@ -5,8 +5,8 @@
  * This code based on stuff from http://wordpress.org/
  */
 
-include_once __DIR__ . "/../../includes/easyparliament/init.php";
-include_once __DIR__ . "/../../includes/request.php";
+include_once __DIR__ . '/../../includes/easyparliament/init.php';
+include_once __DIR__ . '/../../includes/request.php';
 
 $this_page = 'trackback';
 
