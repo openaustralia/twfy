@@ -32,14 +32,14 @@ Either way, we print the forms.
 
  */
 
-include_once "../../includes/easyparliament/init.php";
-include_once INCLUDESPATH . "easyparliament/member.php";
+include_once __DIR__ . "/../../includes/easyparliament/init.php";
+include_once __DIR__ . "/../../includes/easyparliament/member.php";
 
 // From http://cvs.sourceforge.net/viewcvs.py/publicwhip/publicwhip/website/
-include_once INCLUDESPATH . "postcode.php";
-include_once INCLUDESPATH . 'technorati.php';
-include_once '../api/api_getGeometry.php';
-include_once '../api/api_getConstituencies.php';
+include_once __DIR__ . "/../../includes/postcode.php";
+include_once __DIR__ . '/../../includes/technorati.php';
+include_once __DIR__ . '/../api/api_getGeometry.php';
+include_once __DIR__ . '/../api/api_getConstituencies.php';
 
 twfy_debug_timestamp("after includes");
 
