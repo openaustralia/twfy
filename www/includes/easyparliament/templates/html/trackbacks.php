@@ -16,7 +16,7 @@
         array (
             'trackback_id'	=> '37',
             'gid' 			=> '2003-02-28.475.3',
-            'url' 			=> 'https://www.gyford.com/weblog/my_entry.html',
+            'url' 			=> 'https://www.example.com/weblog/my_entry.html',
             'blog_name' 	=> "Phil's weblog",
             'title' 		=> 'Interesting speech',
             'excerpt' 		=> 'My MP has posted an interesting speech, etc',
