@@ -162,7 +162,7 @@ EOT
     6 => [
         'Government website changes everything',
         <<<EOT
-We've completely rewritten the engine that drives OpenAustralia. We didn't want to, the government (website) made us do it. No really. For a bit of background read our blog post <a href="http://blog.openaustralia.org/2008/10/13/why-is-openaustralia-not-getting-updated/">"Why is OpenAustralia not getting updated?"</a>.
+We've completely rewritten the engine that drives OpenAustralia. We didn't want to, the government (website) made us do it. No really. For a bit of background read our blog post <a href="https://blog.openaustralia.org/2008/10/13/why-is-openaustralia-not-getting-updated/">"Why is OpenAustralia not getting updated?"</a>.
 
 The outage of new update has only been over the last couple of weeks (from 13 Oct) and this all fixed now. I did quit a paying job to make it happen, so if that makes you feel like <a href="https://www.openaustraliafoundation.org.au/donate/">donating some money to us</a>, please go ahead!
 
@@ -208,7 +208,7 @@ EOT
 This news feed will tell you about updates to the site.
 
 There have been some pretty exciting developments behind the scenes, which you can follow on our blog at
-<a href="http://blog.openaustralia.org">blog.openaustralia.org</a>. There's a link at the bottom of every page as well.
+<a href="https://blog.openaustralia.org">blog.openaustralia.org</a>. There's a link at the bottom of every page as well.
 
 EOT
 ,
