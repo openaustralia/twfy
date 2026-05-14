@@ -5,7 +5,7 @@
  */
 
 header('Content-type: application/rss+xml');
-include dirname(__FILE__) . '/../../includes/easyparliament/init.php';
+include __DIR__ . '/../../includes/easyparliament/init.php';
 require_once "editme.php";
 print '<?xml version="1.0" encoding="iso-8859-1"?>' ?>
 
