@@ -85,18 +85,6 @@ EOT
         'Henare'
     ],
 
-    11 => [
-        'Our new home on Facebook',
-        <<<EOT
-If you're a user of Facebook, come and visit <a href="http://www.facebook.com/pages/OpenAustralia/59877428354">our new home on Facebook</a> and invite your friends along. Do your bit by letting even more people know about OpenAustralia.org.
-
-Also, you can talk amongst your fellow OpenAustralia fans, leave comments, post links and all the usual stuff.
-EOT
-,
-        '2009-05-12 16:30:00',
-        'Matthew'
-    ],
-
     10 => [
         'Opening up the procedures of Parliament',
         <<<EOT
