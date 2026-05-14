@@ -19,7 +19,7 @@ define("ALLOWTRACKBACKS", TRUE);
 
 // These variables are so we can keep date/time formats consistent across the site
 // and change them easily.
-// Formats here: http://www.php.net/manual/en/function.date.php
+// Formats here: https://www.php.net/manual/en/function.date.php
 // Monday, 31 December 2003.
 define("LONGERDATEFORMAT", "l, j F Y");
 // 31 December 2003
