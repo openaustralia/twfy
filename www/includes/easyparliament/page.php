@@ -2388,7 +2388,7 @@ class PAGE {
      */
     public function recess_message() {
         // Returns a message if parliament is currently in recess.
-        include_once __DIR__ . "/../easyparliament/recess.php";
+        include_once __DIR__ . '/../easyparliament/recess.php';
         $message = '';
         [$name, $from, $to] = recess_prettify(date('j'), date('n'), date('Y'), 1);
         if ($name) {

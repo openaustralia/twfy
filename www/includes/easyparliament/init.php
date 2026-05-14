@@ -42,7 +42,7 @@ define('CONSTITUENCY_COOKIE', 'constituency');
  * And now all the files we'll include on every page.
  ********************************************************************************/
 
-include_once dirname(__FILE__) . '/../../../conf/general';
+include_once __DIR__ . '/../../../conf/general';
 include_once __DIR__ . '/../utility.php';
 twfy_debug_timestamp("after including utility.php");
 
@@ -62,8 +62,8 @@ if (!isset($_SERVER['WINDIR'])) {
     define('STARTTIMES', $rusage['ru_stime.tv_sec'] * 1000000 + $rusage['ru_stime.tv_usec']);
     define('STARTTIMEU', $rusage['ru_utime.tv_sec'] * 1000000 + $rusage['ru_utime.tv_usec']);
 }
-include_once __DIR__ . "/../data.php";
-include_once __DIR__ . "/../mysql.php";
+include_once __DIR__ . '/../data.php';
+include_once __DIR__ . '/../mysql.php';
 
 /**
  *
@@ -79,17 +79,17 @@ class ParlDB extends MySQL {
 
 }
 
-include_once __DIR__ . "/../url.php";
-include_once __DIR__ . "/../lib_filter.php";
-include_once __DIR__ . "/../easyparliament/skin.php";
-include_once __DIR__ . "/../easyparliament/user.php";
-include_once __DIR__ . "/../easyparliament/page.php";
-include_once __DIR__ . "/../easyparliament/hansardlist.php";
-include_once __DIR__ . "/../easyparliament/commentlist.php";
-include_once __DIR__ . "/../easyparliament/comment.php";
-include_once __DIR__ . "/../easyparliament/trackback.php";
+include_once __DIR__ . '/../url.php';
+include_once __DIR__ . '/../lib_filter.php';
+include_once __DIR__ . '/../easyparliament/skin.php';
+include_once __DIR__ . '/../easyparliament/user.php';
+include_once __DIR__ . '/../easyparliament/page.php';
+include_once __DIR__ . '/../easyparliament/hansardlist.php';
+include_once __DIR__ . '/../easyparliament/commentlist.php';
+include_once __DIR__ . '/../easyparliament/comment.php';
+include_once __DIR__ . '/../easyparliament/trackback.php';
 
 // Added in as new module by Richard Allan MP.
-include_once __DIR__ . "/../easyparliament/alert.php";
+include_once __DIR__ . '/../easyparliament/alert.php';
 
 twfy_debug_timestamp("at end of init.php");
