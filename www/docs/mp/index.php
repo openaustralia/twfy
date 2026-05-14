@@ -32,7 +32,6 @@ include_once __DIR__ . "/../../includes/easyparliament/member.php";
 
 // From http://cvs.sourceforge.net/viewcvs.py/publicwhip/publicwhip/website/
 include_once __DIR__ . "/../../includes/postcode.php";
-include_once __DIR__ . "/../../includes/technorati.php";
 include_once __DIR__ . "/../api/api_getGeometry.php";
 include_once __DIR__ . "/../api/api_getConstituencies.php";
 
@@ -414,14 +413,6 @@ if (isset($MEMBER) && is_array($MEMBER->person_id())) {
         }
     }
 
-    /*    $body = technorati_pretty();
-    if ($body) {
-    $sidebars[] = array (
-    'type' => 'html',
-    'content' => '<div class="block"><h4>People talking about this MP</h4><div class="blockbody">' . $body . '</div></div>'
-    );
-    }
-     */
     $sidebars[] = [
         'type' => 'html',
         'content' => '<div class="block"><h4>Journalist?</h4>
