@@ -1607,7 +1607,7 @@ class PAGE {
         <?php
         } elseif ($member['current_member'][3]) {
             ?>
-            <li><a href="http://www.writetothem.com/"><strong>Send a message to your MLA</strong></a> <small>(via
+            <li><a href="https://www.writetothem.com/"><strong>Send a message to your MLA</strong></a> <small>(via
                     WriteToThem.com)</small></li>
         <?php } elseif ($member['current_member'][2]) {
         ?>
@@ -3398,7 +3398,7 @@ function display_writetothem_numbers($year, $extra_info) {
     if (isset($extra_info["writetothem_responsiveness_notes_$year"])) {
         ?>
                 <li>Responsiveness to messages sent via <a
-                        href="http://www.writetothem.com/stats/<?php echo $year ?>/mps">WriteToThem.com</a> in
+                        href="https://www.writetothem.com/stats/<?php echo $year ?>/mps">WriteToThem.com</a> in
                     <?php echo $year ?>:
                     <?php echo $extra_info["writetothem_responsiveness_notes_$year"] ?>.
                 </li>
@@ -3425,6 +3425,6 @@ function display_writetothem_numbers($year, $extra_info) {
         }
         $extra_info["writetothem_responsiveness_fuzzy_response_description_$year"] = $a;
 
-        return display_stats_line("writetothem_responsiveness_fuzzy_response_description_$year", 'Replied within 2 or 3 weeks to <a href="http://www.writetothem.com/stats/' . $year . '/mps" title="From WriteToThem.com">', "", "</a> <!-- Mean: " . $mean . " --> number of messages sent via WriteToThem.com during " . $year . ", according to constituents", "", $extra_info);
+        return display_stats_line("writetothem_responsiveness_fuzzy_response_description_$year", 'Replied within 2 or 3 weeks to <a href="https://www.writetothem.com/stats/' . $year . '/mps" title="From WriteToThem.com">', "", "</a> <!-- Mean: " . $mean . " --> number of messages sent via WriteToThem.com during " . $year . ", according to constituents", "", $extra_info);
     }
 }
