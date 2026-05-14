@@ -60,7 +60,7 @@ Dir.glob('**/*.php').each do |file|
   next if file.start_with? "vendor/"
 
   puts "Parsing #{file}..."
-  File.read(file).scan(%r{https?://[^\s"'<>]+}).each do |url|
+  File.read(file).scan(%r{https?://[^\s"'<>\\\{\}\(\)]+}).each do |url|
     url_files[url] << file unless EXCLUDED.any? { |ex| url.include?(ex) }
   end
 end
@@ -93,11 +93,11 @@ end
 puts "Results...", ""
 
 puts
-fmt = "%-12s %6s" 
+fmt = "%-12s %6s"
 puts fmt % ["Status", "Count"]
 puts fmt % ["-" * 12, "-" * 6]
 total = 0
-counts.sort.each do |code, count|
+counts.sort_by { |code, _| code.to_s }.each do |code, count|
   puts fmt % [code, count]
   total += count
 end
