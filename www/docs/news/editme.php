@@ -176,7 +176,7 @@ EOT
     5 => [
         'A new look OpenAustralia',
         <<<EOT
-OpenAustralia has a lovely and sleek new look courtesy of <a href="http://www.purecaffeine.com/">Nathanael Boehm</a>.
+OpenAustralia has a lovely and sleek new look courtesy of <a href="https://www.purecaffeine.com/">Nathanael Boehm</a>.
 
 We're always interested in feedback, so let us know what you think by <a href="mailto:contact@openaustralia.org">emailing us</a> at the usual place. Enjoy!
 EOT
