@@ -212,7 +212,7 @@ function api_front_page($error = '') {
     <p>
         Parliamentary material (that's data returned from getDebates and
         getHansard), is Copyright Commonwealth of Australia and is
-        <a href="https://aph.gov.au/legal/copyright.htm">provided by them</a>
+        <a href="https://www.aph.gov.au/Help/Disclaimer_Privacy_Copyright#c">provided by them</a>
         under a <a href="http://creativecommons.org/licenses/by-nc-nd/3.0/au/">
             Creative Commons 3.0 Attribution-NonCommercial-NoDerivs</a> licence.
     </p>
