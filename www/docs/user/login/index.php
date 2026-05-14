@@ -12,7 +12,7 @@ If the input is OK, the user is logged in and taken to wherever they were before
 If the input is not OK, the form is displayed again with error messages.
  */
 
-include_once "../../../includes/easyparliament/init.php";
+include_once __DIR__ . "/../../../includes/easyparliament/init.php";
 
 $this_page = "userlogin";
 

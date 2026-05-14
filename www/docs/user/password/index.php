@@ -12,7 +12,7 @@ If input isn't OK (or the email doesn't work) we display the form with error mes
 
  */
 
-include_once "../../../includes/easyparliament/init.php";
+include_once __DIR__ . "/../../../includes/easyparliament/init.php";
 
 $this_page = "userpassword";
 

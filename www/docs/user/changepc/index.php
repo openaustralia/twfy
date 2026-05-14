@@ -5,7 +5,7 @@
  * For a non-logged-in user changing their postcode.
  */
 
-include_once "../../../includes/easyparliament/init.php";
+include_once __DIR__ . "/../../../includes/easyparliament/init.php";
 
 $this_page = "userchangepc";
 
