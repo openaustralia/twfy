@@ -498,7 +498,7 @@ class PAGE {
 
                 print "\t<a name=\"top\"></a>\n\n";
                 if (defined('OPTION_GAZE_URL') && OPTION_GAZE_URL && (gaze_get_country_from_ip(ip_address()) == 'NZ' || get_http_var('nz'))) {
-                    print '<p align="center"><strong>New!</strong> You\'re in New Zealand, so check out <a href="http://www.theyworkforyou.co.nz">OpenAustralia.co.nz</a></p>';
+                    print '<p align="center"><strong>New!</strong> You\'re in New Zealand, so check out <a href="https://www.theyworkforyou.co.nz">OpenAustralia.co.nz</a></p>';
                 }
 
                 $this->title_bar();
@@ -523,7 +523,7 @@ class PAGE {
 
                         print "\t<a name=\"top\"></a>\n\n";
                         if (defined('OPTION_GAZE_URL') && OPTION_GAZE_URL && (gaze_get_country_from_ip(ip_address()) == 'NZ' || get_http_var('nz'))) {
-                            print '<p align="center"><strong>New!</strong> You\'re in New Zealand, so check out <a href="http://www.theyworkforyou.co.nz">OpenAustralia.co.nz</a></p>';
+                            print '<p align="center"><strong>New!</strong> You\'re in New Zealand, so check out <a href="https://www.theyworkforyou.co.nz">OpenAustralia.co.nz</a></p>';
                         }
 
                         $this->title_bar_mobile();
