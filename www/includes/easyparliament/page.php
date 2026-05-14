@@ -5,10 +5,10 @@
  */
 
 if (defined('OPTION_TRACKING') && OPTION_TRACKING) {
-    require_once INCLUDESPATH . '../../../phplib/tracking.php';
+    require_once __DIR__ . '/../../../../phplib/tracking.php';
 }
 
-include_once INCLUDESPATH . '../../../phplib/gaze.php';
+include_once __DIR__ . '/../../../../phplib/gaze.php';
 include_once __DIR__ . '/member.php';
 include_once __DIR__ . '/../request.php';
 
@@ -1107,7 +1107,7 @@ class PAGE {
     public function include_sidebar_template($sidebarname) {
         global $this_page, $DATA;
 
-        $sidebarpath = INCLUDESPATH . 'easyparliament/sidebars/' . $sidebarname . '.php';
+        $sidebarpath = __DIR__ . '/../easyparliament/sidebars/' . $sidebarname . '.php';
 
         if (file_exists($sidebarpath)) {
             include $sidebarpath;
@@ -2394,7 +2394,7 @@ class PAGE {
      */
     public function recess_message() {
         // Returns a message if parliament is currently in recess.
-        include_once INCLUDESPATH . "easyparliament/recess.php";
+        include_once __DIR__ . "/../easyparliament/recess.php";
         $message = '';
         [$name, $from, $to] = recess_prettify(date('j'), date('n'), date('Y'), 1);
         if ($name) {

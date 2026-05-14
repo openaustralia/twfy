@@ -23,7 +23,7 @@
 // $data['info'] may have 'onday', a 'yyyy-mm-dd' date which indicates
 // which date will be highlighted (otherwise, today is).
 
-include_once INCLUDESPATH . "easyparliament/recess.php";
+include_once __DIR__ . "/../../../easyparliament/recess.php";
 global $PAGE, $DATA, $this_page, $hansardmajors;
 
 twfy_debug("TEMPLATE", "hansard_calendar.php");
