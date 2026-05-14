@@ -172,8 +172,8 @@
                 href="https://www.aph.gov.au/Parliamentary_Business/Committees/House_of_Representatives_Committees?url=pmi/index.htm">Standing
                 Committee of Privileges and Members' Interests</a>.</p>
 
-        <p>You might also be interested in <a href="https://www.smh.com.au/politics">a searchable
-                database</a> of the register, compiled by SMH. Note that this was created in 2012 and may not be up to
+        <p>You might also be interested in <a href="https://www.smh.com.au/politics">a searchable database</a>
+            of the register, compiled by SMH. Note that this was created in 2012 and may not be up to
             date.</p>
     </dd>
 
