@@ -4,8 +4,8 @@
  * @file
  */
 
-include_once '../../includes/easyparliament/init.php';
-include_once INCLUDESPATH . 'postcode.php';
+include_once __DIR__ . '/../../includes/easyparliament/init.php';
+include_once __DIR__ . '/../../includes/postcode.php';
 include_once __DIR__ . '/api_functions.php';
 include_once __DIR__ . '/../../../../phplib/auth.php';
 

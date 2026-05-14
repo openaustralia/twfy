@@ -4,7 +4,7 @@
  * @file
  */
 
-include_once INCLUDESPATH . 'easyparliament/member.php';
+include_once __DIR__ . '/../../includes/easyparliament/member.php';
 
 /**
  *
