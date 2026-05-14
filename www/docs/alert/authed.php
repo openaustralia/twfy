@@ -9,7 +9,7 @@
 // Uses shared secret for authentication.
 //
 // Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
-// Email: matthew@mysociety.org. WWW: http://www.mysociety.org
+// Email: matthew@mysociety.org. WWW: https://www.mysociety.org
 //
 // $Id: authed.php,v 1.1 2006/05/26 08:44:46 matthew Exp $.
 
