@@ -4,7 +4,7 @@
  * @file
  * Nasty way of implementing "by department" stuff with the current schema .*/
 
-include_once "../../includes/easyparliament/init.php";
+include_once __DIR__ . "/../../includes/easyparliament/init.php";
 
 $dept = get_http_var('dept');
 $PAGE->page_start();
