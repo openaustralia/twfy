@@ -76,7 +76,7 @@ Many of you may have been in the same situation as this - you're out having a qu
 
 A feature that we added to the site recently, created by yours truly, is the ability to share speeches on social networks. You may have noticed that there is a "Share This" link next to each speech listed on OpenAustralia. Simply hover over that link and select the social network you want to share the speech on and start a discussion with your friends.
 
-If you have a <a href="http://www.wordpress.org/">Wordpress blog</a> that you host yourself you'll be interested in a plugin that was developed by <a href="http://www.sherifmansour.com/">Sherif Mansour</a> at our recent Hackfest in Sydney called <a href="http://code.google.com/p/poli-press/">PoliPress</a>. Using this plugin you can import speeches from OpenAustralia right into your own blog to discuss them or comment on them.
+If you have a <a href="https://www.wordpress.org/">Wordpress blog</a> that you host yourself you'll be interested in a plugin that was developed by <a href="http://www.sherifmansour.com/">Sherif Mansour</a> at our recent Hackfest in Sydney called <a href="http://code.google.com/p/poli-press/">PoliPress</a>. Using this plugin you can import speeches from OpenAustralia right into your own blog to discuss them or comment on them.
 
 We hope you enjoy the new features and if you have any ideas for what you'd like to see on OpenAustralia, <a href="mailto:contact@openaustralia.org">please get in touch</a>!
 EOT

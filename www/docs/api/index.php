@@ -250,7 +250,7 @@ function api_front_page($error = '') {
 
     <ul>
         <li><a href="http://code.google.com/p/poli-press/">PoliPress</a> is a <a
-                href="http://www.wordpress.org/">WordPress</a> plugin that lets you quote members of parliament and search
+                href="https://www.wordpress.org/">WordPress</a> plugin that lets you quote members of parliament and search
             the Australian Hansard from within your WordPress blog.</li>
         <li><a href="https://github.com/henare/oa4wp/">OpenAustralia for WordPress</a> is another WordPress plugin. It
             displays your MP's most recent speeches on your blog.</li>
