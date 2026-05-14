@@ -346,7 +346,7 @@ class USER {
 
         $urltoken = $this->user_id . '-' . $this->registrationtoken;
 
-        $confirmurl = 'http://' . DOMAIN . WEBPATH . 'U/' . $urltoken;
+        $confirmurl = 'https://' . DOMAIN . WEBPATH . 'U/' . $urltoken;
 
         // Arrays we need to send a templated email.
         $data = [
@@ -469,7 +469,7 @@ class USER {
 
         $merge = [
             'EMAIL' => $this->email(),
-            'LOGINURL' => "http://" . DOMAIN . $URL->generate(),
+            'LOGINURL' => "https://" . DOMAIN . $URL->generate(),
             'PASSWORD' => $this->password()
         ];
 

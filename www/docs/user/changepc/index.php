@@ -15,7 +15,7 @@ if (get_http_var('forget') == 't') {
 
     // The cookie will have already been read for this page, so we need to reload.
     $URL = new URL($this_page);
-    header("Location: http://" . DOMAIN . $URL->generate());
+    header("Location: https://" . DOMAIN . $URL->generate());
 }
 
 if (!$THEUSER->constituency_is_set()) {

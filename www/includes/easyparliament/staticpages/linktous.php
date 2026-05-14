@@ -10,7 +10,7 @@
 <p>Alternatively, if you would like to place an OpenAustralia search box on your site, like this one&hellip;</p>
 
 <?php
-$url = "http://" . DOMAIN . WEBPATH;
+$url = "https://" . DOMAIN . WEBPATH;
 $link_to_us_form = <<<END
 <!-- OpenAustralia box, begin -->
 <div style='position: relative; width: 17em; color: #000000; background-color: #EBECCF; font-family: Arial, Geneva, Sans-serif; margin-bottom: 1em; border: 1px solid #AE967F; padding: 0 10px 2em 10px;'>
