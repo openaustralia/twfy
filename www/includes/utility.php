@@ -194,7 +194,7 @@ function vardump($blah) {
 }
 
 /**
- * Pretty prints the backtrace, copied from http://uk.php.net/manual/en/function.debug-backtrace.php.
+ * Pretty prints the backtrace, copied from https://uk.php.net/manual/en/function.debug-backtrace.php.
  */
 function adodb_backtrace($print = TRUE) {
     $s = '';
