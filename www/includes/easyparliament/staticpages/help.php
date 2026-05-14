@@ -47,7 +47,7 @@
             and the divisions (voting) and so far goes back to the beginning of 2006. It also does not include
             committees. Think of what we've done
             thus far as a mere taster of what could be possible.
-            If you want the complete, definitive record, go to the <a href="http://www.aph.gov.au/"
+            If you want the complete, definitive record, go to the <a href="https://www.aph.gov.au/"
                 title="Link to Australian Parliament website">Australian Parliament</a> site, and you might be able to
             find what you want.</p>
     </dd>
@@ -167,9 +167,9 @@
             the things that have been considered to be a potential influence on their behaviour in Parliament.</p>
 
         <p>Find out more at the <a
-                href="http://www.aph.gov.au/Parliamentary_Business/Committees/Senate/Senators_Interests">Senate Standing
+                href="https://www.aph.gov.au/Parliamentary_Business/Committees/Senate/Senators_Interests">Senate Standing
                 Committee of Senators' Interests</a> and the <a
-                href="http://www.aph.gov.au/Parliamentary_Business/Committees/House_of_Representatives_Committees?url=pmi/index.htm">Standing
+                href="https://www.aph.gov.au/Parliamentary_Business/Committees/House_of_Representatives_Committees?url=pmi/index.htm">Standing
                 Committee of Privileges and Members' Interests</a>.</p>
 
         <p>You might also be interested in <a href="https://www.smh.com.au/politics">a searchable
