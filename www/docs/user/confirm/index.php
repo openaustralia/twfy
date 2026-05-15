@@ -15,8 +15,8 @@
 // We then print a nice welcome message.
 
 
-include_once "../../../includes/easyparliament/init.php";
-include_once __DIR__ . "/../../includes/easyparliament/member.php";
+include_once __DIR__ . "/../../../includes/easyparliament/init.php";
+include_once __DIR__ . "/../../../includes/easyparliament/member.php";
 
 
 if (get_http_var('welcome') == 't') {

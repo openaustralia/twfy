@@ -6,7 +6,7 @@
 
 $this_page = "emailfriend";
 
-include_once __DIR__ . "/../../includes/easyparliament/init.php";
+include_once __DIR__ . '/../../includes/easyparliament/init.php';
 include_once __DIR__ . '/../../includes/easyparliament/member.php';
 
 $PAGE->page_start();

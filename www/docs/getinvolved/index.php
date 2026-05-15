@@ -4,7 +4,7 @@
  * @file
  */
 
-include_once __DIR__ . "/../../includes/easyparliament/init.php";
+include_once __DIR__ . '/../../includes/easyparliament/init.php';
 
 $this_page = "getinvolved";
 

@@ -4,7 +4,8 @@
  * @file
  */
 
-include_once '../../includes/easyparliament/init.php';
+include_once __DIR__ . '/../../includes/easyparliament/init.php';
+
 $site = [
     '194.60.38.10' => 'Parliament',
     '194.203.158.97' => 'Conservatives Central Headquarters',
