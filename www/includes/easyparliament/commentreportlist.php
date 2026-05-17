@@ -62,8 +62,8 @@ class COMMENTREPORTLIST {
         $q = $this->db->query("UPDATE commentreports
 						SET 	locked = NULL,
 								lockedby = 0
-						WHERE	locked < '$time'
-						");
+						WHERE	locked < ?
+						", $time);
 
     }
 
@@ -91,8 +91,7 @@ class COMMENTREPORTLIST {
 						AND		commentreports.comment_id = comments.comment_id
 						AND		commentreports.user_id = users.user_id
 						ORDER BY commentreports.reported ASC
-						LIMIT	$number_to_fetch
-						");
+						LIMIT	?", $number_to_fetch);
 
         $r = $this->db->query("SELECT comments.comment_id,
 		commentreports.report_id,
@@ -106,7 +105,7 @@ class COMMENTREPORTLIST {
 		AND commentreports.comment_id = comments.comment_id
 		AND commentreports.user_id IS NULL
 		ORDER BY commentreports.reported ASC
-		LIMIT $number_to_fetch");
+		LIMIT ?", $number_to_fetch);
 
         $data = [];
 

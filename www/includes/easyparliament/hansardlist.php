@@ -215,7 +215,7 @@ class HANSARDLIST {
         // Returns number of items in debates or wrans, depending on which class this is,
         // DEBATELIST or WRANSLIST.
 
-        $q = $this->db->query("SELECT COUNT(*) AS count FROM hansard WHERE major='" . $this->major . "'");
+        $q = $this->db->query("SELECT COUNT(*) AS count FROM hansard WHERE major=?", $this->major);
 
         return $q->field(0, 'count');
     }
@@ -246,8 +246,7 @@ class HANSARDLIST {
 
         $q = $this->db->query("SELECT MAX(hdate) AS hdate
 						FROM 	hansard
-						WHERE	major = '" . $this->major . "'
-						");
+						WHERE	major = ?", $this->major);
         if ($q->rows() > 0) {
 
             $hdate = $q->field(0, 'hdate');
@@ -419,28 +418,31 @@ class HANSARDLIST {
         // a vaguely simple way to do this. So this is it for now...
 
         // Find the epobject_id of the previous item (if any):
+        // TODO: convert $where to a parameterised query.
         $q = $this->db->query("SELECT epobject_id
 						FROM 	hansard
-						WHERE 	hdate = '" . $itemdata['hdate'] . "'
-						AND 	hpos < '" . $itemdata['hpos'] . "'
-						AND 	major = '" . $itemdata['major'] . "'
+						WHERE 	hdate = ?
+						AND 	hpos < ?
+						AND 	major = ?
 						AND 	$where
 						ORDER BY hpos DESC
-						LIMIT 1");
+                        LIMIT 1
+                        ", $itemdata['hdate'], $itemdata['hpos'], $itemdata['major']);
 
         if ($q->rows() > 0) {
             $prev_item_id = $q->field(0, 'epobject_id');
         }
 
         // Find the epobject_id of the next item (if any):
+        // TODO: convert $where to a parameterised query.
         $q = $this->db->query("SELECT epobject_id
 						FROM 	hansard
-						WHERE 	hdate = '" . $itemdata['hdate'] . "'
-						AND 	hpos > '" . $itemdata['hpos'] . "'
-						AND 	major = '" . $itemdata['major'] . "'
+						WHERE 	hdate = ?
+						AND 	hpos > ?
+						AND 	major = ?
 						AND 	$where
 						ORDER BY hpos ASC
-						LIMIT 1");
+						LIMIT 1", $itemdata['hdate'], $itemdata['hpos'], $itemdata['major']);
 
         if ($q->rows() > 0) {
             $next_item_id = $q->field(0, 'epobject_id');
@@ -589,15 +591,13 @@ class HANSARDLIST {
             if ($nextorprev == 'next') {
                 $q = $this->db->query("SELECT MIN(hdate) AS hdate
 							FROM 	hansard
-							WHERE 	major = '" . $this->major . "'
-							AND		hdate > '" . $this->db->escape($date) . "'
-							");
+							WHERE 	major = ?
+							AND		hdate > ?", $this->major, $date);
             } else {
                 $q = $this->db->query("SELECT MAX(hdate) AS hdate
 							FROM 	hansard
-							WHERE 	major = '" . $this->major . "'
-							AND		hdate < '" . $this->db->escape($date) . "'
-							");
+							WHERE 	major = ?
+							AND		hdate < ?", $this->major, $date);
             }
 
             // The '!= NULL' bit is needed otherwise I was getting errors
@@ -796,13 +796,6 @@ class HANSARDLIST {
                 return $itemdata;
             }
 
-            /* Right back when Lords began, we sent out email alerts when they weren't on the site. So this was to work that. */
-            // $q = $this->db->query('SELECT source_url FROM hansard WHERE gid LIKE "uk.org.publicwhip/lords/'.mysqli_real_escape_string($this->db->conn, $args['gid']).'%"');
-            // $u = '';
-            // if ($q->rows()) {
-            // $u = $q->field(0, 'source_url');
-            // $u = '<br><a href="'. $u . '">' . $u . '</a>';
-            // }
             $PAGE->error_message("Sorry, there is no Hansard object with a gid of '" . htmlentities($args['gid']) . "'.");
             return FALSE;
         }
@@ -943,6 +936,7 @@ class HANSARDLIST {
 
         $data = [];
 
+        // TODO: paramerize this query!
         $q = $this->db->query("SELECT DISTINCT(hdate)
 						FROM 	hansard
 						$major
@@ -997,6 +991,7 @@ class HANSARDLIST {
             $majorwhere = '';
         }
 
+        // TODO: paramerize this query!
         $q = $this->db->query("SELECT hansard.subsection_id, hansard.section_id,
 					hansard.htype, hansard.gid, hansard.major,
 					hansard.hdate, hansard.htime, hansard.speaker_id,
@@ -1208,8 +1203,8 @@ class HANSARDLIST {
 				    hansard.hpos,
                                     epobject.body
                             FROM hansard, epobject
-                            WHERE hansard.gid = '$gid'
-                            AND hansard.epobject_id = epobject.epobject_id"
+                            WHERE hansard.gid = ?
+                            AND hansard.epobject_id = epobject.epobject_id", $gid
             );
 
             if ($q->rows() > 1) {

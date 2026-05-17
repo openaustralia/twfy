@@ -85,9 +85,9 @@ class COMMENTREPORT {
 									users.lastname AS u_lastname
 							FROM	commentreports,
 									users
-                            WHERE	commentreports.report_id = '" . $this->db->escape($report_id) . "'
+                            WHERE	commentreports.report_id = ?
 							AND		commentreports.user_id = users.user_id
-							");
+							", $report_id);
 
             if ($q->rows() > 0) {
                 $this->report_id = $report_id;
@@ -125,7 +125,7 @@ class COMMENTREPORT {
 									commentreports.lastname,
 									commentreports.email
 							FROM	commentreports
-                            WHERE	commentreports.report_id = '" . $this->db->escape($report_id) . "'");
+                            WHERE	commentreports.report_id = ?", $report_id);
 
                 if ($q->rows() > 0) {
                     $this->report_id = $report_id;
@@ -281,8 +281,8 @@ class COMMENTREPORT {
 
             $q = $this->db->query("SELECT report_id
 							FROM	commentreports
-							WHERE	user_id = '" . $THEUSER->user_id() . "'
-							AND		reported + 0 > NOW() - $flood_time_limit");
+							WHERE	user_id = ?
+							AND		reported + 0 > NOW() - $flood_time_limit", $THEUSER->user_id());
 
             if ($q->rows() > 0) {
                 $PAGE->error_message("Sorry, we limit people to posting one report per $flood_time_limit seconds to help prevent duplicate reports. Please go back and try again, thanks.");
@@ -318,6 +318,7 @@ class COMMENTREPORT {
 						";
         }
 
+        // TODO: parameterize this!
         $q = $this->db->query($sql);
 
         if ($q->success()) {
@@ -433,10 +434,10 @@ class COMMENTREPORT {
             $time = gmdate("Y-m-d H:i:s");
 
             $q = $this->db->query("UPDATE commentreports
-							SET		locked = '$time',
-									lockedby = '" . $THEUSER->user_id() . "'
-							WHERE	report_id = '" . $this->report_id . "'
-							");
+							SET		locked = ?,
+									lockedby = ?
+							WHERE	report_id = ?",
+                $time, $THEUSER->user_id(), $this->report_id());
 
             if ($q->success()) {
                 $this->locked = $time;
@@ -461,8 +462,7 @@ class COMMENTREPORT {
         $q = $this->db->query("UPDATE commentreports
 						SET		locked = NULL,
 								lockedby = NULL
-						WHERE	report_id = '" . $this->report_id . "'
-						");
+						WHERE	report_id = ? ", $this->report_id);
 
         if ($q->success()) {
             $this->locked = NULL;
@@ -511,12 +511,12 @@ class COMMENTREPORT {
 
                 $q = $this->db->query("UPDATE commentreports
 								SET 	resolved = '$time',
-										resolvedby = '" . $this->db->escape($THEUSER->user_id()) . "',
+										resolvedby = ?,
 										locked = NULL,
 										lockedby = NULL,
-										upheld = '$upheldsql'
-								WHERE 	report_id = '" . $this->db->escape($this->report_id) . "'
-								");
+										upheld =  ?
+								WHERE 	report_id = ?
+								", $THEUSER->user_id(), $upheldsql, $this->report_id);
 
                 if ($q->success()) {
 

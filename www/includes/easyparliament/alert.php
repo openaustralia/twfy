@@ -167,9 +167,8 @@ class ALERT {
 						deleted,
 						confirmed
 						FROM alerts
-						WHERE confirmed =" . $confirmed .
-            " AND deleted=" . $deleted .
-            ' ORDER BY email');
+						WHERE confirmed=? AND deleted=?
+						ORDER BY email", $confirmed, $deleted);
 
         $data = [];
 
@@ -238,6 +237,7 @@ class ALERT {
             }
         }
 
+        // TODO: parameterize this!
         $sql = "INSERT INTO alerts (email, criteria, deleted, confirmed, recommended, created) ";
         $sql .= "VALUES (";
         $sql .= "'" . $this->db->escape($details["email"]) . "',";
@@ -273,10 +273,8 @@ class ALERT {
 
             // Add that to the database.
 
-            $r = $this->db->query("UPDATE alerts
-                        SET registrationtoken = '" . $this->db->escape($this->registrationtoken) . "'
-                        WHERE alert_id = '" . $this->db->escape($this->alert_id) . "'
-						");
+            $r = $this->db->query("UPDATE alerts SET registrationtoken = ? WHERE alert_id = ?",
+                $this->registrationtoken, $this->alert_id);
 
             if ($r->success()) {
                 // Updated DB OK.
@@ -294,10 +292,8 @@ class ALERT {
                     }
                 } elseif ($instantly_confirm) {
                     // No confirmation email needed.
-                    $s = $this->db->query("UPDATE alerts
-						SET confirmed = '1'
-                        WHERE alert_id = '" . $this->db->escape($this->alert_id) . "'
-						");
+                    $s = $this->db->query("UPDATE alerts SET confirmed = '1'
+                        WHERE alert_id = ?", $this->alert_id);
                     return 1;
                 }
             } else {
@@ -403,17 +399,16 @@ class ALERT {
 
         $q = $this->db->query("SELECT email, criteria
 						FROM alerts
-                        WHERE alert_id = '" . $this->db->escape($alert_id) . "'
-                        AND registrationtoken = '" . $this->db->escape($registrationtoken) . "'
-						");
+                        WHERE alert_id = ? AND registrationtoken = ?",
+                        $alert_id, $registrationtoken);
 
         if ($q->rows() == 1) {
             $this->criteria = $q->field(0, 'criteria');
             $this->email = $q->field(0, 'email');
             $r = $this->db->query("UPDATE alerts
 						SET confirmed = '1', deleted = '0'
-                        WHERE	alert_id = '" . $this->db->escape($alert_id) . "'
-						");
+                        WHERE alert_id = ?",
+                        $alert_id);
 
             if ($r->success()) {
                 $this->confirmed = TRUE;
@@ -454,17 +449,16 @@ class ALERT {
 
         $q = $this->db->query("SELECT email, criteria
 						FROM alerts
-                        WHERE alert_id = '" . $this->db->escape($alert_id) . "'
-                        AND registrationtoken = '" . $this->db->escape($registrationtoken) . "'
-						");
+                        WHERE alert_id = ? AND registrationtoken = ?",
+                        $alert_id, $registrationtoken);
 
         if ($q->rows() == 1) {
 
             // Set that they're confirmed in the DB.
             $r = $this->db->query("UPDATE alerts
 						SET deleted = '1'
-                        WHERE	alert_id = '" . $this->db->escape($alert_id) . "'
-						");
+                        WHERE alert_id = ?",
+                        $alert_id);
 
             if ($r->success()) {
 
