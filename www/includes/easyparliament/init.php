@@ -79,6 +79,19 @@ class ParlDB extends MySQL {
 
 }
 
+/**
+ * Returns the shared ParlDB instance for this request.
+ */
+function get_parl_db() {
+    static $db = null;
+
+    if ($db === null) {
+        $db = new ParlDB();
+    }
+
+    return $db;
+}
+
 include_once __DIR__ . '/../url.php';
 include_once __DIR__ . '/../lib_filter.php';
 include_once __DIR__ . '/../easyparliament/skin.php';
