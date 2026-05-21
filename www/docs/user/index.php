@@ -911,7 +911,7 @@ function display_user($user_id = "") {
             $name = $USER->firstname() . " " . $USER->lastname();
             $url = $USER->url();
 
-            if ($USER->emailpublic() == true) {
+            if ($USER->emailpublic()) {
                 $email = $USER->email();
             }
 

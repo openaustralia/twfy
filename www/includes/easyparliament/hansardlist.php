@@ -1704,13 +1704,13 @@ class HANSARDLIST {
             'hansard' => ['epobject_id', 'htype', 'gid', 'hpos', 'section_id', 'subsection_id', 'hdate', 'htime', 'source_url', 'major']
         ];
 
-        if (isset($amount['speaker']) && $amount['speaker'] == true) {
+        if (!empty($amount['speaker'])) {
             $fieldsarr['hansard'][] = 'speaker_id';
         }
 
         if (
-            (isset($amount['body']) && $amount['body'] == true) ||
-            (isset($amount['comment']) && $amount['comment'] == true)
+            !empty($amount['body']) ||
+            !empty($amount['comment'])
         ) {
             $fieldsarr['epobject'] = ['body'];
             $join = 'LEFT OUTER JOIN epobject ON hansard.epobject_id = epobject.epobject_id';
@@ -1808,7 +1808,7 @@ class HANSARDLIST {
                 // on the daily list pages.
 
                 if (
-                    (isset($amount['excerpt']) && $amount['excerpt'] == true) &&
+                    !empty($amount['excerpt']) &&
                     ($item['htype'] == '10' ||
                         $item['htype'] == '11')
                 ) {
