@@ -34,10 +34,10 @@ function lensort($a, $b) {
  *
  */
 function wikipedize($source) {
-    $was_array = FALSE;
+    $was_array = false;
     if (is_array($source)) {
         $source = implode('|||', $source);
-        $was_array = TRUE;
+        $was_array = true;
     }
 
     // Set up various variables.
@@ -123,20 +123,20 @@ function antiTagInTag($content = '', $format = 'htmlhead') {
     $contentwalker = 0;
     $length = strlen($content);
     $tagend = -1;
-    for ($tagstart = strpos($content, '<', $tagend + 1); $tagstart !== FALSE && $tagstart < strlen($content); $tagstart = strpos($content, '<', $tagend)) {
+    for ($tagstart = strpos($content, '<', $tagend + 1); $tagstart !== false && $tagstart < strlen($content); $tagstart = strpos($content, '<', $tagend)) {
         // Got the start of a tag.  Now find the proper end!
         $walker = $tagstart + 1;
         $open = 1;
         while ($open != 0 && $walker < strlen($content)) {
             $nextopen = strpos($content, '<', $walker);
             $nextclose = strpos($content, '>', $walker);
-            if ($nextclose === FALSE) {
+            if ($nextclose === false) {
                 // ERROR! Open waka without close waka!
 
                 // Echo '<code>Error in antiTagInTag - malformed tag!</code> ';.
                 return $content;
             }
-            if ($nextopen === FALSE || $nextopen > $nextclose) {
+            if ($nextopen === false || $nextopen > $nextclose) {
                 // No more opens, but there was a close; or, a close happens before the next open.
 
                 // Walker goes to the close+1, and open decrements.

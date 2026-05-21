@@ -22,13 +22,13 @@ if (isset($data['rows'])) {
         if ($row['htype'] == '10' && isset($row['excerpt']) && strstr($row['excerpt'], "was asked&#8212;")) {
             // We fake it here. We hope this section only has a single line like
             // "The Secretary of State was asked-" and we don't want to make it a link.
-            $has_content = FALSE;
+            $has_content = false;
         } elseif (isset($row['contentcount']) && $row['contentcount'] > 0) {
-            $has_content = TRUE;
+            $has_content = true;
         } elseif ($row['htype'] == '11' && $hansardmajors[$row['major']]['type'] == 'other') {
-            $has_content = TRUE;
+            $has_content = true;
         } else {
-            $has_content = FALSE;
+            $has_content = false;
         }
 
         $entry = $row;

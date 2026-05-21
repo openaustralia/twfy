@@ -7,7 +7,7 @@ use PHPUnit\Framework\TestCase;
  */
 class ApiGetConstituenciesIntegrationTest extends TestCase {
 
-    private static $connection = NULL;
+    private static $connection = null;
 
     /**
      *

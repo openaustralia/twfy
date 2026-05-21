@@ -30,7 +30,7 @@ include_once __DIR__ . "/../wikipedia.php";
  */
 class GLOSSARY {
 
-    private $db = NULL;
+    private $db = null;
     private $stopwords = [];
     private $alphabet = [];
 
@@ -219,17 +219,17 @@ class GLOSSARY {
 
         if (!$THEUSER->is_able_to('addterm')) {
             error("Sorry, you are not allowed to add Glossary terms.");
-            return FALSE;
+            return false;
         }
 
         if ($data['title'] == '') {
             error("Sorry, you can't define a term without a title");
-            return FALSE;
+            return false;
         }
 
         if ($data['body'] == '') {
             error("You haven't entered a definition!");
-            return FALSE;
+            return false;
         }
 
         if (is_numeric($THEUSER->user_id())) {
@@ -246,7 +246,7 @@ class GLOSSARY {
 
             if ($q->rows() > 0) {
                 error("Sorry, we limit people to posting one term per $flood_time_limit seconds to help prevent duplicate postings. Please go back and try again, thanks.");
-                return FALSE;
+                return false;
             }
         }
 
@@ -269,7 +269,7 @@ class GLOSSARY {
         if ($success) {
             return ($success);
         } else {
-            return FALSE;
+            return false;
         }
     }
 

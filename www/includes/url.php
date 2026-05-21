@@ -175,7 +175,7 @@ class URL {
         $url_args = [];
 
         foreach (array_merge($this->session_vars, $overrideVars) as $key => $var) {
-            if ($var != NULL) {
+            if ($var != null) {
                 $url_args[] = "$key=" . urlencode(stripslashes($var));
             }
         }

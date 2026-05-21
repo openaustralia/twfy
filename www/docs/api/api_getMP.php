@@ -177,7 +177,7 @@ function _api_getMP_constituency($constituency) {
     $db = new ParlDB();
 
     if ($constituency == '') {
-        return FALSE;
+        return false;
     }
 
     if ($constituency == 'Orkney ') {
@@ -205,5 +205,5 @@ function _api_getMP_constituency($constituency) {
         }
     }
 
-    return FALSE;
+    return false;
 }

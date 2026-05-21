@@ -17,7 +17,7 @@ function sanitizeAlertCriteria($criteria) {
         '/\b([A-Za-z]\w*):( ?)(?!\/\/)/',
         function ($matches) use ($known_prefixes) {
             $prefix = strtolower($matches[1]);
-            if (in_array($prefix, $known_prefixes, TRUE)) {
+            if (in_array($prefix, $known_prefixes, true)) {
                 return $matches[0];
             }
             return $matches[1] . ' ';

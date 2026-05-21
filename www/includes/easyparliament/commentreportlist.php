@@ -12,7 +12,7 @@
  */
 class COMMENTREPORTLIST {
 
-    private $db = NULL;
+    private $db = null;
 
     /**
      *

@@ -12,9 +12,9 @@ include_once __DIR__ . "/glossary.php";
  */
 class MEMBER {
 
-    private $db = NULL;
+    private $db = null;
 
-    public $valid = FALSE;
+    public $valid = false;
     public $member_id;
     public $person_id;
     public $first_name;
@@ -30,8 +30,8 @@ class MEMBER {
     /**
      * Is this MP THEUSERS's MP?
      */
-    public $the_users_mp = FALSE;
-    public $canonical = TRUE;
+    public $the_users_mp = false;
+    public $canonical = true;
     /**
      * Which house we should display this person in.
      */
@@ -102,7 +102,7 @@ class MEMBER {
         }
 
         if (!$person_id) {
-            $this->valid = FALSE;
+            $this->valid = false;
             return;
         }
 
@@ -112,12 +112,12 @@ class MEMBER {
                 // Not very long, it made Lord Patel go wrong.
                 $person_id = $person_id[0];
             } else {
-                $this->valid = FALSE;
+                $this->valid = false;
                 $this->person_id = $person_id;
                 return;
             }
         }
-        $this->valid = TRUE;
+        $this->valid = true;
 
         // Get the data.
         $q = $this->db->query("SELECT member_id, house, title,
@@ -128,7 +128,7 @@ class MEMBER {
                         ORDER BY left_house DESC, house", $person_id);
 
         if (!$q->rows() > 0) {
-            $this->valid = FALSE;
+            $this->valid = false;
             return;
         }
 
@@ -148,7 +148,7 @@ class MEMBER {
             $entered_time = strtotime($entered_house);
             $left_time = strtotime($left_house);
             if ($left_time === -1) {
-                $left_time = FALSE;
+                $left_time = false;
             }
 
             if (!isset($this->entered_house[$house]) || $entered_time < $this->entered_house[$house]['time']) {
@@ -228,7 +228,7 @@ class MEMBER {
             return $q->field(0, 'person_id');
         } else {
             // $PAGE->error_message("Sorry, there is no member with a member ID of '" . htmlentities($member_id) . "'.");
-            return FALSE;
+            return false;
         }
     }
 
@@ -248,7 +248,7 @@ class MEMBER {
         global $PAGE;
         if ($constituency == '') {
             $PAGE->error_message("Sorry, no constituency was found.");
-            return FALSE;
+            return false;
         }
 
         if ($constituency == 'Orkney ') {
@@ -272,7 +272,7 @@ class MEMBER {
                 return $q->field(0, 'person_id');
             } else {
                 // $PAGE->error_message("Sorry, there is no current member for the '" . htmlentities(html_entity_decode($constituency)) . "' constituency.");
-                return FALSE;
+                return false;
             }
         }
     }
@@ -284,7 +284,7 @@ class MEMBER {
         global $PAGE, $this_page;
         if ($name == '') {
             $PAGE->error_message('Sorry, no name was found.');
-            return FALSE;
+            return false;
         }
 
         $q = "SELECT DISTINCT person_id,constituency,left_house FROM member WHERE ";
@@ -295,7 +295,7 @@ class MEMBER {
             }
             if (!$success) {
                 $PAGE->error_message('Sorry, that name was not recognised.');
-                return FALSE;
+                return false;
             }
             $first_name = $this->db->escape($m[1]);
             $middle_name = $this->db->escape($m[2]);
@@ -310,7 +310,7 @@ class MEMBER {
             }
             if (!$success) {
                 $PAGE->error_message('Sorry, that name was not recognised.');
-                return FALSE;
+                return false;
             }
             $first_name = $this->db->escape($m[1]);
             $middle_name = $this->db->escape($m[2]);
@@ -325,7 +325,7 @@ class MEMBER {
             }
             if (!$success) {
                 $PAGE->error_message('Sorry, that name was not recognised.');
-                return FALSE;
+                return false;
             }
             $first_name = $m[1];
             $middle_name = $m[2];
@@ -337,7 +337,7 @@ class MEMBER {
             if ($const) {
                 $normalised = normalise_constituency_name($const);
                 if ($normalised && strtolower($normalised) != strtolower($const)) {
-                    $this->canonical = FALSE;
+                    $this->canonical = false;
                     $const = $normalised;
                 }
             }
@@ -371,11 +371,11 @@ class MEMBER {
         } elseif ($q->rows > 0) {
             return $q->field(0, 'person_id');
         } elseif ($const && $this_page != 'peer') {
-            $this->canonical = FALSE;
+            $this->canonical = false;
             return $this->name_to_person_id($name);
         } else {
             $PAGE->error_message("Sorry, there is no current member with that name.");
-            return FALSE;
+            return false;
         }
     }
 
@@ -389,7 +389,7 @@ class MEMBER {
             twfy_debug('MP', "set_users_mp converting postcode to person");
             $constituency = $THEUSER->constituency();
             if ($constituency == $this->constituency()) {
-                $this->the_users_mp = TRUE;
+                $this->the_users_mp = true;
             }
         }
     }
@@ -544,7 +544,7 @@ class MEMBER {
     /**
      *
      */
-    public function full_name($no_mp_title = FALSE) {
+    public function full_name($no_mp_title = false) {
         $title = $this->title;
         if ($no_mp_title && $this->house_disp == 1) {
             $title = '';
@@ -563,7 +563,7 @@ class MEMBER {
      *
      */
     public function house($house) {
-        return in_array($house, $this->houses) ? TRUE : FALSE;
+        return in_array($house, $this->houses) ? true : false;
     }
 
     /**
@@ -583,7 +583,7 @@ class MEMBER {
     /**
      *
      */
-    public function party_text($party = NULL) {
+    public function party_text($party = null) {
         global $parties;
         if (!$party) {
             $party = $this->party;
@@ -600,7 +600,7 @@ class MEMBER {
      */
     public function entered_house($house = 0) {
         if ($house) {
-            return array_key_exists($house, $this->entered_house) ? $this->entered_house[$house] : NULL;
+            return array_key_exists($house, $this->entered_house) ? $this->entered_house[$house] : null;
         }
         return $this->entered_house;
     }
@@ -625,9 +625,9 @@ class MEMBER {
     /**
      *
      */
-    public function left_house($house = NULL) {
+    public function left_house($house = null) {
         if (!is_null($house)) {
-            return array_key_exists($house, $this->left_house) ? $this->left_house[$house] : NULL;
+            return array_key_exists($house, $this->left_house) ? $this->left_house[$house] : null;
         }
         return $this->left_house;
     }
@@ -726,7 +726,7 @@ class MEMBER {
     /**
      *
      */
-    public function url($absolute = TRUE) {
+    public function url($absolute = true) {
         $house = $this->house_disp;
         if ($house == 1) {
             $URL = new URL('mp');
@@ -739,7 +739,7 @@ class MEMBER {
         } elseif ($house == 0) {
             $URL = new URL('royal');
         }
-        $member_url = make_member_url($this->full_name(TRUE), $this->constituency(), $house);
+        $member_url = make_member_url($this->full_name(true), $this->constituency(), $house);
         if ($absolute) {
             return 'https://' . DOMAIN . $URL->generate('none') . $member_url;
         } else {
@@ -860,9 +860,9 @@ function party_to_colour($party) {
 /**
  *
  */
-function find_rep_image($pid, $smallonly = FALSE) {
-    $image = NULL;
-    $sz = NULL;
+function find_rep_image($pid, $smallonly = false) {
+    $image = null;
+    $sz = null;
     if (!$smallonly && is_file(FILEIMAGEPATH . 'mpsL/' . $pid . '.jpg')) {
         $image = IMAGEPATH . 'mpsL/' . $pid . '.jpg';
         $sz = 'L';

@@ -60,7 +60,7 @@ for ($personrow = 0; $personrow < $q->rows(); $personrow++) {
             $contentencoded = $row['body'];
 
             $hdate = format_date($row['hdate'], 'Y-m-d');
-            if ($row['htime'] != NULL) {
+            if ($row['htime'] != null) {
                 $htime = format_time($row['htime'], 'H:i:s');
             } else {
                 $htime = '00:00:00';
@@ -111,7 +111,7 @@ for ($personrow = 0; $personrow < $q->rows(); $personrow++) {
     // Write the text to the file...
     $filename = $rsspath . $person_id . '.rdf';
     $fh = fopen($filename, "w");
-    if (fwrite($fh, $rsstext) === FALSE) {
+    if (fwrite($fh, $rsstext) === false) {
         echo "Could not write to file ($filename)\n";
     }
     fclose($fh);

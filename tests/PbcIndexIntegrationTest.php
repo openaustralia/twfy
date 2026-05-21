@@ -84,7 +84,7 @@ class PbcIndexIntegrationTest extends TestCase {
             $this->assertTrue(method_exists($q, 'field'));
         } else {
             // Skip if no test data.
-            $this->assertTrue(TRUE);
+            $this->assertTrue(true);
         }
     }
 

@@ -111,8 +111,8 @@ class MemberPartyTest extends TestCase {
         $this->assertIsArray($result);
         $this->assertEquals(2, count($result));
         // First element is path (or null), second is size (or null)
-        $this->assertTrue($result[0] === NULL || is_string($result[0]));
-        $this->assertTrue($result[1] === NULL || is_string($result[1]));
+        $this->assertTrue($result[0] === null || is_string($result[0]));
+        $this->assertTrue($result[1] === null || is_string($result[1]));
     }
 
     /**
@@ -121,7 +121,7 @@ class MemberPartyTest extends TestCase {
     public function test_find_rep_image_size_indicators() {
         // When testing with mock data, sizes should be 'L' or 'S' or null.
         $result = find_rep_image('12345');
-        if ($result[1] !== NULL) {
+        if ($result[1] !== null) {
             $this->assertContains($result[1], ['L', 'S']);
         } else {
             $this->assertNull($result[1]);
@@ -144,10 +144,10 @@ class MemberPartyTest extends TestCase {
      */
     public function test_find_rep_image_smallonly_flag() {
         // With smallonly = true, should skip large images.
-        $result = find_rep_image('12345', TRUE);
+        $result = find_rep_image('12345', true);
         $this->assertIsArray($result);
         // If a file is found, size should be 'S' (small)
-        if ($result[1] !== NULL) {
+        if ($result[1] !== null) {
             $this->assertEquals('S', $result[1]);
         }
     }
@@ -157,7 +157,7 @@ class MemberPartyTest extends TestCase {
      */
     public function test_find_rep_image_without_smallonly() {
         // Default = false, should check large images first.
-        $result = find_rep_image('12345', FALSE);
+        $result = find_rep_image('12345', false);
         $this->assertIsArray($result);
     }
 

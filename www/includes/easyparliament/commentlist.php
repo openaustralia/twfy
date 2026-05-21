@@ -34,7 +34,7 @@ include_once __DIR__ . '/../dbtypes.php';
  */
 class COMMENTLIST {
 
-    private $db = NULL;
+    private $db = null;
     public $page = '';
 
     /**
@@ -82,7 +82,7 @@ class COMMENTLIST {
         } else {
             // Don't have a valid $view;.
             $PAGE->error_message("You haven't specified a view type.");
-            return FALSE;
+            return false;
         }
 
         if ($view == 'user') {
@@ -97,7 +97,7 @@ class COMMENTLIST {
 
         $this->render($data, $format, $template);
 
-        return TRUE;
+        return true;
     }
 
     /**
@@ -126,7 +126,7 @@ class COMMENTLIST {
         // For getting the data.
         $input = [
             'amount' => [
-                'user' => TRUE
+                'user' => true
             ],
             'where' => [
                 'comments.epobject_id=' => $args['epobject_id'],
@@ -317,7 +317,7 @@ class COMMENTLIST {
         }
         $input = [
             'amount' => [
-                'user' => TRUE
+                'user' => true
             ],
             'where' => $where,
             'order' => 'posted DESC',
@@ -370,7 +370,7 @@ class COMMENTLIST {
 
         $input = [
             'amount' => [
-                'user' => TRUE
+                'user' => true
             ],
             'where' => [
                 'comments.body LIKE' => "%$args[s]%"
@@ -403,7 +403,7 @@ class COMMENTLIST {
         $major = $urldata['major'];
         $gid = $urldata['gid'];
         $comment_id = $urldata['comment_id'];
-        $user_id = $urldata['user_id'] ?? FALSE;
+        $user_id = $urldata['user_id'] ?? false;
 
         // If you change stuff here, you might have to change it in
         // $COMMENT->_set_url() too...
@@ -505,7 +505,7 @@ class COMMENTLIST {
 					INNER JOIN hansard ON comments.epobject_id = hansard.epobject_id';
 
         // Add on the stuff for getting a user's details.
-        if (isset($amount['user']) && $amount['user'] == TRUE) {
+        if (isset($amount['user']) && $amount['user'] == true) {
             $fieldsarr['users'] = ['firstname', 'lastname', 'user_id'];
             // Like doing "FROM comments, users" but it's easier to add
             // an "INNER JOIN..." automatically to the query.
@@ -513,7 +513,7 @@ class COMMENTLIST {
         }
 
         // Add on that we need to get the hansard item's body.
-        if (isset($amount['hansard']) && $amount['hansard'] == TRUE) {
+        if (isset($amount['hansard']) && $amount['hansard'] == true) {
             $fieldsarr['epobject'] = ['body'];
             $fieldsarr['member'] = ['first_name', 'last_name'];
             $join .= ' LEFT OUTER JOIN member ON hansard.speaker_id = member.member_id';

@@ -36,11 +36,11 @@ if (isset($data['rows'])) {
                 $desc = '';
                 if (isset($speaker['office'])) {
                     $desc = $speaker['office'][0]['pretty'];
-                    if (strpos($desc, 'PPS') !== FALSE) {
+                    if (strpos($desc, 'PPS') !== false) {
                         $desc .= ', ';
                     }
                 }
-                if (!$desc || strpos($desc, 'PPS') !== FALSE) {
+                if (!$desc || strpos($desc, 'PPS') !== false) {
                     if ($speaker['house'] == 1 && $speaker['party'] != 'Speaker' && $speaker['party'] != 'Deputy Speaker' && $speaker['constituency']) {
                         $desc .= $speaker['constituency'] . ', ';
                     }
@@ -57,11 +57,11 @@ if (isset($data['rows'])) {
     if (isset($data['subrows'])) {
         foreach ($data['subrows'] as $row) {
             if (isset($row['contentcount']) && $row['contentcount'] > 0) {
-                $has_content = TRUE;
+                $has_content = true;
             } elseif ($row['htype'] == '11' && $hansardmajors[$row['major']]['type'] == 'other') {
-                $has_content = TRUE;
+                $has_content = true;
             } else {
-                $has_content = FALSE;
+                $has_content = false;
             }
             $entry = $row;
             if (isset($row['excerpt'])) {

@@ -26,8 +26,8 @@ require_once __DIR__ . '/../request.php';
  */
 class SEARCHLOG {
 
-    private $db = NULL;
-    private $SEARCHURL = NULL;
+    private $db = null;
+    private $SEARCHURL = null;
 
     /**
      *

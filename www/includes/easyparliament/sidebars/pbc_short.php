@@ -9,6 +9,6 @@ $this->block_start([
     'id' => 'help',
     'title' => "What are Public Bill Committees?",
     'url' => '/bills/#help',
-    'body' => FALSE
+    'body' => false
 ]);
 $this->block_end();

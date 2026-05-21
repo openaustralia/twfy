@@ -13,27 +13,27 @@ $methods = [
     'getDivisions' => [
         // 'parameters' => array('date', 'search', 'latitude', 'longitude', 'distance'),
         'parameters' => ['postcode', 'date', 'search'],
-        'required' => FALSE,
+        'required' => false,
         'help' => 'Returns list of electoral divisions',
     ],
     'getRepresentative' => [
         'parameters' => ['id', 'division', 'always_return'],
-        'required' => TRUE,
+        'required' => true,
         'help' => 'Returns main details for a member of the House of Representatives'
     ],
     'getRepresentatives' => [
         'parameters' => ['postcode', 'party', 'date', 'search'],
-        'required' => FALSE,
+        'required' => false,
         'help' => 'Returns list of members of the House of Representatives',
     ],
     'getSenator' => [
         'parameters' => ['id'],
-        'required' => TRUE,
+        'required' => true,
         'help' => 'Returns details for a Senator'
     ],
     'getSenators' => [
         'parameters' => ['date', 'party', 'state', 'search'],
-        'required' => FALSE,
+        'required' => false,
         'help' => 'Returns list of Senators',
     ],
     /*
@@ -46,17 +46,17 @@ $methods = [
      */
     'getDebates' => [
         'parameters' => ['type', 'date', 'search', 'person', 'gid', 'year', 'order', 'page', 'num'],
-        'required' => TRUE,
+        'required' => true,
         'help' => 'Returns Debates (either House of Representatives or Senate)',
     ],
     'getHansard' => [
         'parameters' => ['search', 'person', 'order', 'page', 'num'],
-        'required' => TRUE,
+        'required' => true,
         'help' => 'Returns any of the above',
     ],
     'getComments' => [
         'parameters' => ['search', 'page', 'num', 'pid'],
-        'required' => FALSE,
+        'required' => false,
         'help' => 'Returns comments'
     ],
 ];
@@ -83,9 +83,9 @@ function api_check_key($key) {
     $db = new ParlDB();
     $q = $db->query('SELECT user_id FROM api_key WHERE api_key = ?', $key);
     if (!$q->rows()) {
-        return FALSE;
+        return false;
     }
-    return TRUE;
+    return true;
 }
 
 /**
@@ -129,7 +129,7 @@ function api_sidebar() {
 /**
  * Output functions.
  */
-function api_output($arr, $last_mod = NULL) {
+function api_output($arr, $last_mod = null) {
     $output = get_http_var('output');
     if (!get_http_var('docs')) {
         $cond = api_header($output, $last_mod);
@@ -158,13 +158,13 @@ function api_output($arr, $last_mod = NULL) {
 /**
  *
  */
-function api_header($o, $last_mod = NULL) {
+function api_header($o, $last_mod = null) {
     if ($last_mod && array_key_exists('HTTP_IF_MODIFIED_SINCE', $_SERVER)) {
         $t = cond_parse_http_date($_SERVER['HTTP_IF_MODIFIED_SINCE']);
         if (isset($t) && $t >= $last_mod) {
             header('HTTP/1.0 304 Not Modified');
             header('Last-Modified: ' . date('r', $last_mod));
-            return TRUE;
+            return true;
         }
     }
     if ($o == 'xml') {
@@ -181,7 +181,7 @@ function api_header($o, $last_mod = NULL) {
     if ($last_mod > 0) {
         header('Last-Modified: ' . date('r', $last_mod));
     }
-    return FALSE;
+    return false;
 }
 
 /**
@@ -220,7 +220,7 @@ $api_xml_arr = 0;
 /**
  *
  */
-function api_output_xml($v, $k = NULL) {
+function api_output_xml($v, $k = null) {
     global $api_xml_arr;
     $verbose = get_http_var('verbose') ? "\n" : '';
     if (is_array($v)) {
@@ -255,7 +255,7 @@ function api_output_js($v, $level = 0) {
             return '[' . implode(",$verbose", array_map('api_output_js', $v)) . ']';
         }
         $out = '{' . $verbose;
-        $b = FALSE;
+        $b = false;
         foreach ($v as $k => $vv) {
             if ($b) {
                 $out .= ",$verbose";
@@ -267,7 +267,7 @@ function api_output_js($v, $level = 0) {
                 $out .= '"' . $k . '":';
             }
             $out .= api_output_js($vv, $level + 1);
-            $b = TRUE;
+            $b = true;
         }
         if ($verbose) {
             $out .= "\n" . str_repeat(' ', $level * 2);
@@ -363,7 +363,7 @@ function cond_parse_http_date($date) {
         $M = $ma[5];
         $S = $ma[6];
     } else {
-        return NULL;
+        return null;
     }
 
     return gmmktime($H, $M, $S, $m, $d, $Y);
