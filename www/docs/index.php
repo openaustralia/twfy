@@ -195,10 +195,11 @@ $includes = [
         'type' => 'include',
         'content' => 'whatisthissite'
     ],
-    [
-        'type' => 'include',
-        'content' => 'comments_recent',
-    ]
+    // remove comments
+    // [
+    //     'type' => 'include',
+    //     'content' => 'comments_recent',
+    // ]
 ];
 $PAGE->stripe_end($includes);
 $PAGE->page_end();
