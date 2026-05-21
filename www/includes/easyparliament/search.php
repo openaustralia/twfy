@@ -1,6 +1,6 @@
 <?php
 
-function highlighted_html($text, $searchterm){
+function highlighted_html(string $text, string $searchterm): string {
     $escaped_text = htmlentities($text);
     if ($searchterm === '') {
         return $escaped_text;
@@ -11,12 +11,16 @@ function highlighted_html($text, $searchterm){
     return preg_replace($pattern, '<span class="hi">$0</span>', $escaped_text);
 }
 
-function find_comments($args){
+function find_comments(array $args): void {
     $commentlist = new COMMENTLIST;
     $commentlist->display('search', $args);
 }
 
-function find_constituency($args){
+/**
+ * @param array<string, mixed> $args
+ * @return false|null
+ */
+function find_constituency(array $args){
     // We see if the user is searching for a postcode or constituency.
     global $PAGE;
     $db = getParlDB();
@@ -98,7 +102,11 @@ function find_constituency($args){
     }
 }
 
-function find_members($args){
+/**
+ * @param array<string, mixed> $args
+ * @return false|null
+ */
+function find_members(array $args){
     // Maybe there'll be a better place to put this at some point...
     global $PAGE, $parties;
     $db = getParlDB();
@@ -210,7 +218,10 @@ function find_members($args){
 
 // Checks to see if the search term provided has any similar matching entries in the glossary.
 // If it does, show links off to them.
-function find_glossary_items($args){
+/**
+ * @param array<string, mixed> $args
+ */
+function find_glossary_items(array $args): void {
 
     $searchterm = $args['s'];
     $GLOSSARY = new GLOSSARY($args);
