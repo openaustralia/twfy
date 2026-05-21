@@ -925,9 +925,6 @@ class HANSARDLIST {
      *
      */
     public function _get_data_by_recent($args) {
-        // Like _get_data_by_id() and _get_data_by_date()
-        // this returns a $data array suitable for sending to a template.
-        // It lists recent dates with debates/wrans on them, with links.
 
         if (isset($args['days']) && is_numeric($args['days'])) {
             $limit = 'LIMIT ' . $args['days'];
@@ -1503,8 +1500,8 @@ class HANSARDLIST {
             // Check there are some dates for this year/month.
             $q = $this->db->query("SELECT epobject_id
 							FROM	hansard
-							WHERE	hdate >= '" . $this->db->escape($firstyear) . "-" . $this->db->escape($firstmonth) . "-01'
-							AND 	hdate <= '" . $this->db->escape($finalyear) . "-" . $this->db->escape($finalmonth) . "-31'
+                            WHERE	hdate >= '" . $this->db->escape(sprintf('%04d-%02d-01', intval($firstyear), intval($firstmonth))) . "'
+                            AND 	hdate <= '" . $this->db->escape(sprintf('%04d-%02d-%02d', intval($finalyear), intval($finalmonth), date('t', mktime(0, 0, 0, intval($finalmonth), 1, intval($finalyear))))) . "'
 							LIMIT 	1
 							");
 
@@ -1516,11 +1513,19 @@ class HANSARDLIST {
         }
 
         // OK, Now we have $firstyear, $firstmonth, $finalyear, $finalmonth set up.
+        $firstyear = intval($firstyear);
+        $firstmonth = intval($firstmonth);
+        $finalyear = intval($finalyear);
+        $finalmonth = intval($finalmonth);
+
+        $first_date = sprintf('%04d-%02d-01', $firstyear, $firstmonth);
+        $final_day = date('t', mktime(0, 0, 0, $finalmonth, 1, $finalyear));
+        $final_date = sprintf('%04d-%02d-%02d', $finalyear, $finalmonth, $final_day);
 
         // Get the data...
 
         if ($finalyear > $firstyear || $finalmonth >= $firstmonth) {
-            $where = "AND hdate <= '" . $this->db->escape($finalyear) . "-" . $this->db->escape($finalmonth) . "-31'";
+            $where = "AND hdate <= '" . $this->db->escape($final_date) . "'";
         } else {
             $where = '';
         }
@@ -1528,7 +1533,7 @@ class HANSARDLIST {
         $q = $this->db->query("SELECT 	DISTINCT(hdate) AS hdate
 						FROM		hansard
 						WHERE		major = '" . $this->db->escape($this->major) . "'
-						AND			hdate >= '" . $this->db->escape($firstyear) . "-" . $this->db->escape($firstmonth) . "-01'
+                        AND			hdate >= '" . $this->db->escape($first_date) . "'
 						$where
 						ORDER BY	hdate ASC
 						");
