@@ -505,7 +505,7 @@ class COMMENTLIST {
 					INNER JOIN hansard ON comments.epobject_id = hansard.epobject_id';
 
         // Add on the stuff for getting a user's details.
-        if (isset($amount['user']) && $amount['user'] == true) {
+        if (!empty($amount['user'])) {
             $fieldsarr['users'] = ['firstname', 'lastname', 'user_id'];
             // Like doing "FROM comments, users" but it's easier to add
             // an "INNER JOIN..." automatically to the query.
@@ -513,7 +513,7 @@ class COMMENTLIST {
         }
 
         // Add on that we need to get the hansard item's body.
-        if (isset($amount['hansard']) && $amount['hansard'] == true) {
+        if (!empty($amount['hansard'])) {
             $fieldsarr['epobject'] = ['body'];
             $fieldsarr['member'] = ['first_name', 'last_name'];
             $join .= ' LEFT OUTER JOIN member ON hansard.speaker_id = member.member_id';

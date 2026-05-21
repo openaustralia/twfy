@@ -138,7 +138,7 @@ class TRACKBACK {
 
         // This code originally based on stuff from http://wordpress.org/
 
-        if ($this->trackbacks_enabled() == false) {
+        if (!$this->trackbacks_enabled()) {
             $this->_trackback_response(1, 'Sorry, trackbacks are disabled.');
         }
 
