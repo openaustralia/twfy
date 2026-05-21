@@ -1,5 +1,17 @@
 <?php
 
+/**
+ * Search helper functions for search page widgets.
+ */
+
+/**
+ * Escape text and highlight occurrences of the search term.
+ *
+ * @param string $text Raw text to display.
+ * @param string $searchterm User search term.
+ *
+ * @return string Escaped HTML with matched terms wrapped in highlight markup.
+ */
 function highlighted_html(string $text, string $searchterm): string {
     $escaped_text = htmlentities($text);
     if ($searchterm === '') {
@@ -11,16 +23,24 @@ function highlighted_html(string $text, string $searchterm): string {
     return preg_replace($pattern, '<span class="hi">$0</span>', $escaped_text);
 }
 
+/**
+ * Render comment search results.
+ *
+ * @param array<string, mixed> $args Search arguments.
+ */
 function find_comments(array $args): void {
-    $commentlist = new COMMENTLIST;
+    $commentlist = new COMMENTLIST();
     $commentlist->display('search', $args);
 }
 
 /**
- * @param array<string, mixed> $args
- * @return false|null
+ * Render constituency/postcode matches.
+ *
+ * @param array<string, mixed> $args Search arguments.
+ *
+ * @return false|null Returns false on missing search input; otherwise null.
  */
-function find_constituency(array $args){
+function find_constituency(array $args) {
     // We see if the user is searching for a postcode or constituency.
     global $PAGE;
     $db = getParlDB();
@@ -103,10 +123,13 @@ function find_constituency(array $args){
 }
 
 /**
- * @param array<string, mixed> $args
- * @return false|null
+ * Render member matches for the search term.
+ *
+ * @param array<string, mixed> $args Search arguments.
+ *
+ * @return false|null Returns false on missing search input; otherwise null.
  */
-function find_members(array $args){
+function find_members(array $args) {
     // Maybe there'll be a better place to put this at some point...
     global $PAGE, $parties;
     $db = getParlDB();
@@ -123,7 +146,7 @@ function find_members(array $args){
     $searchwords = explode(' ', preg_replace('#[^a-z ]#i', '', $searchstring));
     $params = [];
 
-    // Clean up searchwords and handle special cases
+    // Clean up searchwords and handle special cases.
     $cleaned_words = [];
     foreach ($searchwords as $searchword) {
         $word = htmlentities($searchword);
@@ -184,11 +207,11 @@ function find_members(array $args){
                     $former = '';
                 }
                 if ($q->field($n, 'house') == 1) {
-                    $URL1->insert(array('pid' => $last_pid));
+                    $URL1->insert(['pid' => $last_pid]);
                     $s = '<a href="' . htmlentities($URL1->generate()) . '"><strong>';
                     $s .= htmlentities($q->field($n, 'first_name')) . ' ' . htmlentities($q->field($n, 'last_name')) . '</strong></a> (' . $former . htmlentities($q->field($n, 'constituency')) . ', ';
                 } else {
-                    $URL2->insert(array('pid' => $last_pid));
+                    $URL2->insert(['pid' => $last_pid]);
                     $s = '<a href="' . htmlentities($URL2->generate()) . '"><strong>';
                     $s .= htmlentities(member_full_name($q->field($n, 'house'), $q->field($n, 'title'), $q->field($n, 'first_name'), $q->field($n, 'last_name'), $q->field($n, 'constituency')));
                     $s .= '</strong></a> (';
@@ -199,7 +222,7 @@ function find_members(array $args){
                 }
                 $s .= htmlentities($party) . ')';
                 $MOREURL = new URL('search');
-                $MOREURL->insert(array('pid' => $last_pid, 'pop' => 1, 's' => null));
+                $MOREURL->insert(['pid' => $last_pid, 'pop' => 1, 's' => null]);
                 $s .= ' - <a href="' . htmlentities($MOREURL->generate()) . '">View recent appearances</a>';
                 $members[] = $s;
             }
@@ -216,10 +239,11 @@ function find_members(array $args){
 
 }
 
-// Checks to see if the search term provided has any similar matching entries in the glossary.
-// If it does, show links off to them.
+
 /**
- * @param array<string, mixed> $args
+ * Render links to glossary entries that match the search term.
+ *
+ * @param array<string, mixed> $args Search arguments.
  */
 function find_glossary_items(array $args): void {
 
