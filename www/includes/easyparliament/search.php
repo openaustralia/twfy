@@ -1,5 +1,16 @@
 <?php
 
+function highlighted_html($text, $searchterm){
+    $escaped_text = htmlentities($text);
+    if ($searchterm === '') {
+        return $escaped_text;
+    }
+
+    $escaped_searchterm = htmlentities($searchterm);
+    $pattern = '/' . preg_quote($escaped_searchterm, '/') . '/i';
+    return preg_replace($pattern, '<span class="hi">$0</span>', $escaped_text);
+}
+
 function find_comments($args){
     $commentlist = new COMMENTLIST;
     $commentlist->display('search', $args);
@@ -63,13 +74,13 @@ function find_constituency($args){
         $URL = new URL('mp');
         if ($MEMBER->valid) {
             $URL->insert(['m' => $MEMBER->member_id()]);
-            print '<h3>MP for ' . preg_replace("#$searchterm#i", '<span class="hi">$0</span>', $constituency);
+            print '<h3>MP for ' . highlighted_html($constituency, $searchterm);
             if ($validpostcode) {
                 // Display the postcode the user searched for.
                 print ' (' . htmlentities(strtoupper($args['s'])) . ')';
             }
             print '</h3>';
-            print "<p><a href=\"" . $URL->generate() . "\"><strong>" . htmlentities($MEMBER->first_name()) . ' ' . htmlentities($MEMBER->last_name()) . "</strong></a>\n                    (" . htmlentities($MEMBER->party()) . ")</p>";
+            print "<p><a href=\"" . htmlentities($URL->generate()) . "\"><strong>" . htmlentities($MEMBER->first_name()) . ' ' . htmlentities($MEMBER->last_name()) . "</strong></a>\n                    (" . htmlentities($MEMBER->party()) . ")</p>";
         }
 
     } elseif (count($constituencies)) {
@@ -80,8 +91,8 @@ function find_constituency($args){
             if ($MEMBER->valid) {
                 $URL->insert(['m' => $MEMBER->member_id()]);
             }
-            print '<li><a href="' . $URL->generate() . '"><strong>' . htmlentities($MEMBER->first_name()) . ' ' . htmlentities($MEMBER->last_name()) . '</strong></a>';
-            print '(' . preg_replace("#$searchterm#i", '<span class="hi">$0</span>', $constituency) . ', ' . htmlentities($MEMBER->party()) . ')</li>';
+            print '<li><a href="' . htmlentities($URL->generate()) . '"><strong>' . htmlentities($MEMBER->first_name()) . ' ' . htmlentities($MEMBER->last_name()) . '</strong></a>';
+            print '(' . highlighted_html($constituency, $searchterm) . ', ' . htmlentities($MEMBER->party()) . ')</li>';
         }
         print '</ul>';
     }
@@ -166,22 +177,22 @@ function find_members($args){
                 }
                 if ($q->field($n, 'house') == 1) {
                     $URL1->insert(array('pid' => $last_pid));
-                    $s = '<a href="' . $URL1->generate() . '"><strong>';
-                    $s .= $q->field($n, 'first_name') . ' ' . $q->field($n, 'last_name') . '</strong></a> (' . $former . $q->field($n, 'constituency') . ', ';
+                    $s = '<a href="' . htmlentities($URL1->generate()) . '"><strong>';
+                    $s .= htmlentities($q->field($n, 'first_name')) . ' ' . htmlentities($q->field($n, 'last_name')) . '</strong></a> (' . $former . htmlentities($q->field($n, 'constituency')) . ', ';
                 } else {
                     $URL2->insert(array('pid' => $last_pid));
-                    $s = '<a href="' . $URL2->generate() . '"><strong>';
-                    $s .= member_full_name($q->field($n, 'house'), $q->field($n, 'title'), $q->field($n, 'first_name'), $q->field($n, 'last_name'), $q->field($n, 'constituency'));
+                    $s = '<a href="' . htmlentities($URL2->generate()) . '"><strong>';
+                    $s .= htmlentities(member_full_name($q->field($n, 'house'), $q->field($n, 'title'), $q->field($n, 'first_name'), $q->field($n, 'last_name'), $q->field($n, 'constituency')));
                     $s .= '</strong></a> (';
                 }
                 $party = $q->field($n, 'party');
                 if (isset($parties[$party])) {
                     $party = $parties[$party];
                 }
-                $s .= $party . ')';
+                $s .= htmlentities($party) . ')';
                 $MOREURL = new URL('search');
                 $MOREURL->insert(array('pid' => $last_pid, 'pop' => 1, 's' => null));
-                $s .= ' - <a href="' . $MOREURL->generate() . '">View recent appearances</a>';
+                $s .= ' - <a href="' . htmlentities($MOREURL->generate()) . '">View recent appearances</a>';
                 $members[] = $s;
             }
         }
@@ -215,7 +226,7 @@ function find_glossary_items($args){
         $n = 1;
         foreach ($GLOSSARY->search_matches as $glossary_id => $term) {
             $URL->update(['gl' => $glossary_id]);
-            echo '<a href="' . $URL->generate() . '"><strong>' . htmlentities($term['title']) . '</strong></a>';
+            echo '<a href="' . htmlentities($URL->generate()) . '"><strong>' . htmlentities($term['title']) . '</strong></a>';
             if ($n < $GLOSSARY->num_search_matches) {
                 echo ', ';
             }
