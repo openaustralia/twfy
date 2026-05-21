@@ -185,14 +185,12 @@ function find_members($args){
                 $members[] = $s;
             }
         }
-        ?>
-            <div id="people_results">
-                <h3>Representatives matching '<?php print htmlentities($searchstring); ?>'</h3>
-                <ul>
-                    <li><?php print implode("</li>\n\t<li>", $members); ?></li>
-                </ul>
-            </div>
-            <?php
+        echo '<div id="people_results">';
+        echo "<h3>Representatives matching '" . htmlentities($searchstring) . "'</h3>";
+        echo '<ul>';
+        echo '<li>' . implode("</li>\n\t<li>", $members) . '</li>';
+        echo '</ul>';
+        echo '</div>';
     }
 
     // We don't display anything if there were no matches.
@@ -212,22 +210,17 @@ function find_glossary_items($args){
         $URL = new URL('glossary');
         $URL->insert(['gl' => ""]);
 
-        ?>
-            <h3>Matching glossary terms:</h3>
-            <p>
-                <?php
-                $n = 1;
-                foreach ($GLOSSARY->search_matches as $glossary_id => $term) {
-                    $URL->update(['gl' => $glossary_id]);
-                    ?><a href="<?php print $URL->generate(); ?>"><strong><?php print htmlentities($term['title']); ?></strong></a>
-                    <?php
-                    if ($n < $GLOSSARY->num_search_matches) {
-                        print ", ";
-                    }
-                    $n++;
-                }
-                ?>
-            </p>
-            <?php
+        echo '<h3>Matching glossary terms:</h3>';
+        echo '<p>';
+        $n = 1;
+        foreach ($GLOSSARY->search_matches as $glossary_id => $term) {
+            $URL->update(['gl' => $glossary_id]);
+            echo '<a href="' . $URL->generate() . '"><strong>' . htmlentities($term['title']) . '</strong></a>';
+            if ($n < $GLOSSARY->num_search_matches) {
+                echo ', ';
+            }
+            $n++;
+        }
+        echo '</p>';
     }
 }
