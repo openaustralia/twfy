@@ -55,7 +55,7 @@ class COMMENT {
         $this->db = new ParlDB();
 
         // Set in init.php.
-        if (ALLOWCOMMENTS == true) {
+        if (ALLOWCOMMENTS) {
             $this->comments_enabled = true;
         } else {
             $this->comments_enabled = false;

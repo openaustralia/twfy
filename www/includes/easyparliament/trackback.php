@@ -44,7 +44,7 @@ class TRACKBACK {
         $this->db = new ParlDB();
 
         // Set in init.php.
-        if (ALLOWTRACKBACKS == true) {
+        if (ALLOWTRACKBACKS) {
             $this->trackbacks_enabled = true;
         } else {
             $this->trackbacks_enabled = false;
