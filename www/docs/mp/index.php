@@ -51,7 +51,7 @@ if ($cconstituency == 'mysociety test constituency') {
 }
 
 // Special case names.
-$redirect = FALSE;
+$redirect = false;
 if ($name == 'sion simon') {
     $name = "si&ocirc;n simon";
 }
@@ -72,11 +72,11 @@ if ($name == 'caral ni chuilin') {
 }
 if ($name == 'a j beith') {
     $name = 'alan beith';
-    $redirect = TRUE;
+    $redirect = true;
 }
 if ($name == 'micky brady') {
     $name = 'mickey brady';
-    $redirect = TRUE;
+    $redirect = true;
 }
 
 // Special stuff for Ynys Mon.
@@ -351,8 +351,8 @@ if (isset($MEMBER) && is_array($MEMBER->person_id())) {
     }
 
     if ($MEMBER->house(1)) {
-        $lat = NULL;
-        $lon = NULL;
+        $lat = null;
+        $lon = null;
         $geometry = _api_getGeometry_name($MEMBER->constituency());
         if (isset($geometry['centre_lat'])) {
             $lat = $geometry['centre_lat'];

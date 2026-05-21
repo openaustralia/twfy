@@ -36,7 +36,7 @@ function error($s) {
 function get_person_id($c) {
     $db = new ParlDB();
     if ($c == '') {
-        return FALSE;
+        return false;
     }
     if ($c == 'Orkney ') {
         $c = 'Orkney &amp; Shetland';
@@ -51,5 +51,5 @@ function get_person_id($c) {
     if ($q->rows > 0) {
         return $q->field(0, 'person_id');
     }
-    return FALSE;
+    return false;
 }

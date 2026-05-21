@@ -9,6 +9,6 @@ $this->block_start([
     'id' => 'help',
     'title' => "What is the Northern Ireland Assembly?",
     'url' => '/ni/#help',
-    'body' => FALSE
+    'body' => false
 ]);
 $this->block_end();

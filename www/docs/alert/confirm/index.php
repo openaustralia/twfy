@@ -54,9 +54,9 @@ if ($success) {
 function confirm_success($ALERT) {
     global $PAGE, $this_page, $THEUSER;
     $this_page = 'alertconfirmsucceeded';
-    $criteria = $ALERT->criteria_pretty(TRUE);
+    $criteria = $ALERT->criteria_pretty(true);
     $email = $ALERT->email();
-    $extra = NULL;
+    $extra = null;
     $PAGE->page_start();
     $PAGE->stripe_start();
     ?>

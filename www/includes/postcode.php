@@ -34,9 +34,9 @@ function postcode_to_constituency($postcode) {
 
     if ($last_postcode == $postcode) {
         twfy_debug("TIME", "Postcode "
-            . print_r($postcode, TRUE)
+            . print_r($postcode, true)
             . " looked up last time, is "
-            . print_r($last_postcode_value, TRUE));
+            . print_r($last_postcode_value, true));
         return $last_postcode_value;
     }
 
@@ -45,9 +45,9 @@ function postcode_to_constituency($postcode) {
     $ret = postcode_to_constituency_internal($postcode);
     $duration = getmicrotime() - $start;
     twfy_debug("TIME", "Postcode "
-        . print_r($postcode, TRUE)
+        . print_r($postcode, true)
         . " lookup took $duration seconds, returned "
-        . print_r($ret, TRUE));
+        . print_r($ret, true));
     twfy_debug_timestamp();
     $last_postcode = $postcode;
     $last_postcode_value = $ret;
@@ -63,7 +63,7 @@ function fake_postcode($postcode) {
     $query = "select name from constituency where main_name and cons_id = '" . $fake_cons_id . "'";
     $q2 = $db->query($query);
     if ($q2->rows <= 0) {
-        return FALSE;
+        return false;
     }
 
     return $q2->field(0, "name");

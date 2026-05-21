@@ -74,7 +74,7 @@ function _api_getGeometry_name($name) {
             return $data;
         }
     }
-    return NULL;
+    return null;
 }
 
 /**

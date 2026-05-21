@@ -9,7 +9,7 @@ $this->block_start([
     'id' => 'help',
     'title' => "What are written ministerial statements?",
     'url' => '/wms/#help',
-    'body' => FALSE
+    'body' => false
 ]);
 
 $this->block_end();

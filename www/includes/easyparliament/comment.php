@@ -22,30 +22,30 @@
  */
 class COMMENT {
 
-    private $db = NULL;
+    private $db = null;
 
     public $comment_id = '';
     public $user_id = '';
     public $epobject_id = '';
     public $body = '';
     public $posted = '';
-    public $visible = FALSE;
+    public $visible = false;
     /**
      * Is a datetime when set.
      */
-    public $modflagged = NULL;
+    public $modflagged = null;
     public $firstname = '';    /**
                                 * Of the person who posted it.
                                 */
     public $lastname = '';
     public $url = '';
-    public $comments_enabled = FALSE;
+    public $comments_enabled = false;
 
     // So that after trying to init a comment, we can test for.
     /**
      * If it exists in the DB.
      */
-    public $exists = FALSE;
+    public $exists = false;
 
     /**
      *
@@ -55,10 +55,10 @@ class COMMENT {
         $this->db = new ParlDB();
 
         // Set in init.php.
-        if (ALLOWCOMMENTS == TRUE) {
-            $this->comments_enabled = TRUE;
+        if (ALLOWCOMMENTS) {
+            $this->comments_enabled = true;
         } else {
-            $this->comments_enabled = FALSE;
+            $this->comments_enabled = false;
         }
 
         if (is_numeric($comment_id)) {
@@ -88,9 +88,9 @@ class COMMENT {
                 $this->_set_url();
                 $this->_set_username();
 
-                $this->exists = TRUE;
+                $this->exists = true;
             } else {
-                $this->exists = FALSE;
+                $this->exists = false;
             }
         }
     }
@@ -189,7 +189,7 @@ class COMMENT {
 
         global $THEUSER, $PAGE;
 
-        if ($this->comments_enabled() == FALSE) {
+        if (!$this->comments_enabled()) {
             $PAGE->error_message("Sorry, the posting of comments has been temporarily disabled.");
             return;
         }
@@ -200,7 +200,7 @@ class COMMENT {
                 'text' => 'You are not allowed to post comments.'
             ];
             $PAGE->error_message($message);
-            return FALSE;
+            return false;
         }
 
         if (!is_numeric($data['epobject_id'])) {
@@ -209,7 +209,7 @@ class COMMENT {
                 'text' => "We don't have an epobject id."
             ];
             $PAGE->error_message($message);
-            return FALSE;
+            return false;
         }
 
         if ($data['body'] == '') {
@@ -218,7 +218,7 @@ class COMMENT {
                 'text' => "You haven't entered a comment!."
             ];
             $PAGE->error_message($message);
-            return FALSE;
+            return false;
         }
 
         /*
@@ -280,7 +280,7 @@ class COMMENT {
             return $this->comment_id();
 
         } else {
-            return FALSE;
+            return false;
         }
     }
 
@@ -323,7 +323,7 @@ class COMMENT {
             $flag = "'$date'";
 
         } elseif ($switch == 'off') {
-            $date = NULL;
+            $date = null;
             $flag = 'NULL';
 
         } else {
@@ -337,14 +337,14 @@ class COMMENT {
 
         if ($q->success()) {
             $this->modflagged = $date;
-            return TRUE;
+            return true;
         } else {
             $message = [
                 'title' => 'Sorry',
                 'text' => "We couldn't update the comment's modflag."
             ];
             $PAGE->error_message($message);
-            return FALSE;
+            return false;
         }
 
     }
@@ -361,14 +361,14 @@ class COMMENT {
             $q = $this->db->query("UPDATE comments SET visible = '0' WHERE comment_id = '" . $this->comment_id . "'");
 
             if ($q->success()) {
-                return TRUE;
+                return true;
             } else {
                 $message = [
                     'title' => 'Sorry',
                     'text' => "We were unable to delete the comment."
                 ];
                 $PAGE->error_message($message);
-                return FALSE;
+                return false;
             }
 
         } else {
@@ -377,7 +377,7 @@ class COMMENT {
                 'text' => "You are not authorised to delete comments."
             ];
             $PAGE->error_message($message);
-            return FALSE;
+            return false;
         }
 
     }

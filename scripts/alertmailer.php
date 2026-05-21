@@ -50,13 +50,13 @@ $batch_query_fragment = trim($batch_query_fragment);
 mlog("batch_query_fragment: " . $batch_query_fragment . "\n");
 
 // For testing purposes, specify nomail on command line to not send out emails.
-$nomail = FALSE;
+$nomail = false;
 $onlyemail = '';
 $fromemail = '';
 $toemail = '';
 for ($k = 1; $k < $argc; $k++) {
     if ($argv[$k] == '--nomail') {
-        $nomail = TRUE;
+        $nomail = true;
     }
     if (preg_match('#^--only=(.*)$#', $argv[$k], $m)) {
         $onlyemail = $m[1];
@@ -138,7 +138,7 @@ foreach ($alertdata as $alertitem) {
         mlog("\nEMAIL: $email, uid $user_id; memory usage : " . memory_get_usage() . "\n");
     }
 
-    $data = NULL;
+    $data = null;
     if (!isset($results[$criteria_batch])) {
         mlog("  ALERT $active/$outof QUERY $queries : Xapian query '$criteria_batch'");
         $start = getmicrotime();
@@ -178,7 +178,7 @@ foreach ($alertdata as $alertitem) {
         $major = 0;
         $count = [];
         $total = 0;
-        $any_content = FALSE;
+        $any_content = false;
         foreach ($data['rows'] as $row) {
             if ($major != $row['major']) {
                 $count[$major] = $total;
@@ -198,7 +198,7 @@ foreach ($alertdata as $alertitem) {
             }
             --$k;
             if ($k >= 0) {
-                $any_content = TRUE;
+                $any_content = true;
                 $parentbody = str_replace(['&#8212;', '<span class="hi">', '</span>'], ['-', '*', '*'], $row['parent']['body']);
                 $body = str_replace(['&#163;', '&#8212;', '<span class="hi">', '</span>'], ["\xa3", '-', '*', '*'], $row['body']);
                 if (isset($row['speaker']) && count($row['speaker'])) {
@@ -296,7 +296,7 @@ function write_and_send_email($email, $user_id, $data) {
     $m = ['DATA' => $data];
     if (!$nomail) {
         // True = "Precedence: bulk".
-        $success = send_template_email($d, $m, TRUE);
+        $success = send_template_email($d, $m, true);
         mlog("sent ... ");
         // Sleep if time between sending mails is less than a certain number of seconds on average.
         // Number of seconds per mail not to be quicker than.

@@ -181,41 +181,41 @@ class Metadata {
             'url' => 'alert/',
         ],
         'alertconfirm' => [
-            'track' => TRUE,
+            'track' => true,
             'url' => 'alert/confirm/'
         ],
         'alertconfirmfailed' => [
             'title' => 'Oops!',
-            'track' => TRUE,
+            'track' => true,
             'url' => 'alert/confirm/'
         ],
         'alertconfirmsucceeded' => [
             'title' => 'Alert Confirmed!',
-            'track' => TRUE,
+            'track' => true,
             'url' => 'alert/confirm/'
         ],
         'alertdelete' => [
-            'track' => TRUE,
+            'track' => true,
             'url' => 'alert/delete/'
         ],
         'alertdeletefailed' => [
             'title' => 'Oops!',
-            'track' => TRUE,
+            'track' => true,
             'url' => 'alert/delete/'
         ],
         'alertdeletesucceeded' => [
             'title' => 'Alert Unsubscribed!',
-            'track' => TRUE,
+            'track' => true,
             'url' => 'alert/delete/'
         ],
         'alertundeletesucceeded' => [
             'title' => 'Alert Resubscribed!',
-            'track' => TRUE,
+            'track' => true,
             'url' => 'alert/undelete/'
         ],
         'alertundeletefailed' => [
             'title' => 'Oops!',
-            'track' => TRUE,
+            'track' => true,
             'url' => 'alert/undelete/'
         ],
         'alertwelcome' => [
@@ -274,20 +274,20 @@ class Metadata {
 
         'debate' => [
             'parent' => 'debatesfront',
-            'track' => TRUE,
+            'track' => true,
             'url' => 'debate/',
             'session_vars' => ['id'],
         ],
         'debates' => [
             'parent' => 'debatesfront',
-            'track' => TRUE,
+            'track' => true,
             'url' => 'debates/',
             'session_vars' => ['id'],
         ],
         'debatesday' => [
             'parent' => 'debatesfront',
             'session_vars' => ['d'],
-            'track' => TRUE,
+            'track' => true,
             'url' => 'debates/',
         ],
         'debatesfront' => [
@@ -297,7 +297,7 @@ class Metadata {
             ],
             'parent' => 'hansard',
             'title' => 'House debates',
-            'track' => TRUE,
+            'track' => true,
             'rss' => 'debates/debates.rss',
             'url' => 'debates/'
         ],
@@ -318,7 +318,7 @@ class Metadata {
         'glossary' => [
             'heading' => 'Glossary',
             'parent' => 'help_us_out',
-            'track' => TRUE,
+            'track' => true,
             'url' => 'glossary/'
         ],
         'glossary_addterm' => [
@@ -344,7 +344,7 @@ class Metadata {
         'glossary_item' => [
             'heading' => 'Glossary heading',
             'parent' => 'help_us_out',
-            'track' => TRUE,
+            'track' => true,
             'url' => 'glossary/',
             'session_vars' => ['g']
         ],
@@ -354,13 +354,13 @@ class Metadata {
                 'title' => "House of Representatives and Senate debates"
             ],
             'title' => 'House of Representatives and Senate debates',
-            'track' => TRUE,
+            'track' => true,
             'url' => 'hansard/'
         ],
         'hansard_date' => [
             'parent' => 'hansard',
             'title' => 'House of Representatives',
-            'track' => TRUE,
+            'track' => true,
             'url' => 'hansard/'
         ],
         'help' => [
@@ -369,7 +369,7 @@ class Metadata {
                 'title' => "Answers to your questions"
             ],
             'title' => 'Help',
-            'track' => TRUE,
+            'track' => true,
             'url' => 'help/'
         ],
         'help_us_out' => [
@@ -388,7 +388,7 @@ class Metadata {
                 'title' => "The front page of the site"
             ],
             'title' => "Are your Representatives and Senators working for you in Australia's Parliament?",
-            'track' => TRUE,
+            'track' => true,
             'rss' => 'news/index.rdf',
             'url' => ''
         ],
@@ -405,20 +405,20 @@ class Metadata {
 
         'lordsdebate' => [
             'parent' => 'lordsdebatesfront',
-            'track' => TRUE,
+            'track' => true,
             'url' => 'senate/',
             'session_vars' => ['gid'],
         ],
         'lordsdebates' => [
             'parent' => 'lordsdebatesfront',
-            'track' => TRUE,
+            'track' => true,
             'url' => 'senate/',
             'session_vars' => ['id'],
         ],
         'lordsdebatesday' => [
             'parent' => 'lordsdebatesfront',
             'session_vars' => ['d'],
-            'track' => TRUE,
+            'track' => true,
             'url' => 'senate/',
         ],
         'lordsdebatesfront' => [
@@ -428,7 +428,7 @@ class Metadata {
             ],
             'parent' => 'hansard',
             'title' => 'Senate debates',
-            'track' => TRUE,
+            'track' => true,
             'rss' => 'senate/senate.rss',
             'url' => 'senate/'
         ],
@@ -440,7 +440,7 @@ class Metadata {
 
         'peer' => [
             'title' => 'Senator',
-            'track' => TRUE,
+            'track' => true,
             'url' => 'senator/'
         ],
         'peers' => [
@@ -449,13 +449,13 @@ class Metadata {
                 'title' => "List of all Senators"
             ],
             'title' => 'All Senators',
-            'track' => TRUE,
+            'track' => true,
             'url' => 'senators/'
         ],
 
         'mla' => [
             'title' => 'MLA',
-            'track' => TRUE,
+            'track' => true,
             'url' => 'mla/'
         ],
         'mlas' => [
@@ -464,13 +464,13 @@ class Metadata {
                 'title' => "List of all MLAs"
             ],
             'title' => 'All MLAs',
-            'track' => TRUE,
+            'track' => true,
             'url' => 'mlas/'
         ],
 
         'msp' => [
             'title' => 'MSP',
-            'track' => TRUE,
+            'track' => true,
             'url' => 'msp/'
         ],
         'msps' => [
@@ -479,29 +479,29 @@ class Metadata {
                 'title' => "List of all MSPs"
             ],
             'title' => 'All MSPs',
-            'track' => TRUE,
+            'track' => true,
             'url' => 'msps/'
         ],
 
         /* Not 'Your MP', whose name is 'yourmp'... */
         'mp' => [
             'title' => 'MP',
-            'track' => TRUE,
+            'track' => true,
             'url' => 'mp/'
         ],
         'emailfriend' => [
             'title' => 'Send this page to a friend',
-            'track' => TRUE,
+            'track' => true,
             'url' => 'email/'
         ],
         'c4_mp' => [
             'title' => 'MP',
-            'track' => TRUE,
+            'track' => true,
             'url' => 'mp/c4/'
         ],
         'c4x_mp' => [
             'title' => 'MP',
-            'track' => TRUE,
+            'track' => true,
             'url' => 'mp/c4x/'
         ],
         // The directory MPs' RSS feeds are stored in.
@@ -515,36 +515,36 @@ class Metadata {
                 'title' => "Your Representative and list of all Members of the House of Representatives"
             ],
             'title' => 'All Members of the House of Representatives',
-            'track' => TRUE,
+            'track' => true,
             'url' => 'mps/'
         ],
         'c4_mps' => [
             'title' => 'All MPs',
-            'track' => TRUE,
+            'track' => true,
             'url' => 'mps/c4/'
         ],
         'c4x_mps' => [
             'title' => 'All MPs',
-            'track' => TRUE,
+            'track' => true,
             'url' => 'mps/c4x/'
         ],
 
         'nidebate' => [
             'parent' => 'nidebatesfront',
-            'track' => TRUE,
+            'track' => true,
             'url' => 'ni/',
             'session_vars' => ['gid'],
         ],
         'nidebates' => [
             'parent' => 'nidebatesfront',
-            'track' => TRUE,
+            'track' => true,
             'url' => 'ni/',
             'session_vars' => ['id'],
         ],
         'nidebatesday' => [
             'parent' => 'nidebatesfront',
             'session_vars' => ['d'],
-            'track' => TRUE,
+            'track' => true,
             'url' => 'ni/',
         ],
         'nidebatesfront' => [
@@ -554,7 +554,7 @@ class Metadata {
             ],
             'parent' => 'hansard',
             'title' => 'Northern Ireland Assembly debates',
-            'track' => TRUE,
+            'track' => true,
             'rss' => 'ni/ni.rss',
             'url' => 'ni/'
         ],
@@ -639,7 +639,7 @@ class Metadata {
 
         'search' => [
             'sidebar' => 'search',
-            'track' => TRUE,
+            'track' => true,
             'url' => 'search/',
             'session_vars' => ['s', 'pid', 'o', 'pop']
         ],
@@ -657,7 +657,7 @@ class Metadata {
             'rss' => 'news/index.rdf',
             'sidebar' => 'sitenews',
             'title' => 'OpenAustralia news',
-            'track' => TRUE,
+            'track' => true,
             'url' => 'news/'
         ],
         'sitenews_archive' => [
@@ -665,7 +665,7 @@ class Metadata {
             'rss' => 'news/index.rdf',
             'sidebar' => 'sitenews',
             'title' => 'Archive',
-            'track' => TRUE,
+            'track' => true,
             'url' => 'news/archives/'
         ],
         'sitenews_atom' => [
@@ -697,20 +697,20 @@ class Metadata {
         /* Scottish Parliament */
         'spdebate' => [
             'parent' => 'spdebatesfront',
-            'track' => TRUE,
+            'track' => true,
             'url' => 'sp/',
             'session_vars' => ['id'],
         ],
         'spdebates' => [
             'parent' => 'spdebatesfront',
-            'track' => TRUE,
+            'track' => true,
             'url' => 'sp/',
             'session_vars' => ['id'],
         ],
         'spdebatesday' => [
             'parent' => 'spdebatesfront',
             'session_vars' => ['d'],
-            'track' => TRUE,
+            'track' => true,
             'url' => 'sp/',
         ],
         'spdebatesfront' => [
@@ -720,7 +720,7 @@ class Metadata {
             ],
             'parent' => 'hansard',
             'title' => 'Scottish Parliament debates',
-            'track' => TRUE,
+            'track' => true,
             'rss' => 'sp/sp.rss',
             'url' => 'sp/'
         ],
@@ -1026,7 +1026,7 @@ class Metadata {
         $key = $args["key"];
         $value = $args["value"];
 
-        twfy_debug("DATA", "Setting: " . $type . "[" . $item . "][" . $key . "] = '" . print_r($value, TRUE) . "'");
+        twfy_debug("DATA", "Setting: " . $type . "[" . $item . "][" . $key . "] = '" . print_r($value, true) . "'");
 
         $this->$type[$item][$key] = $value;
     }
@@ -1056,7 +1056,7 @@ class Metadata {
         }
 
         // We got nothin'.
-        return FALSE;
+        return false;
     }
 
 }

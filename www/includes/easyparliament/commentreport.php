@@ -20,7 +20,7 @@
  */
 class COMMENTREPORT {
 
-    private $db = NULL;
+    private $db = null;
 
     public $report_id = '';
     public $comment_id = '';
@@ -30,18 +30,18 @@ class COMMENTREPORT {
     /**
      * Datetime.
      */
-    public $reported = NULL;
+    public $reported = null;
     /**
      * Datetime.
      */
-    public $resolved = NULL;
+    public $resolved = null;
     public $resolvedby = '';     /**
                                   * User_id.
                                   */
     /**
      * Datetime.
      */
-    public $locked = NULL;
+    public $locked = null;
     public $lockedby = '';        /**
                                    * User_id.
                                    */
@@ -268,7 +268,7 @@ class COMMENTREPORT {
 
         if (!$THEUSER->is_able_to('reportcomment')) {
             $PAGE->error_message("Sorry, you are not allowed to post reports.");
-            return FALSE;
+            return false;
         }
 
         if (is_numeric($THEUSER->user_id()) && $THEUSER->user_id() > 0) {
@@ -286,7 +286,7 @@ class COMMENTREPORT {
 
             if ($q->rows() > 0) {
                 $PAGE->error_message("Sorry, we limit people to posting one report per $flood_time_limit seconds to help prevent duplicate reports. Please go back and try again, thanks.");
-                return FALSE;
+                return false;
             }
         }
 
@@ -377,9 +377,9 @@ class COMMENTREPORT {
             // send_template_email in utility.php.
             send_template_email($data, $merge);
 
-            return TRUE;
+            return true;
         } else {
-            return FALSE;
+            return false;
         }
 
     }
@@ -441,14 +441,14 @@ class COMMENTREPORT {
             if ($q->success()) {
                 $this->locked = $time;
                 $this->lockedby = $THEUSER->user_id();
-                return TRUE;
+                return true;
             } else {
                 $PAGE->error_message("Sorry, we were unable to lock this report.");
-                return FALSE;
+                return false;
             }
         } else {
             $PAGE->error_message("You are not authorised to delete comments.");
-            return FALSE;
+            return false;
         }
     }
 
@@ -465,11 +465,11 @@ class COMMENTREPORT {
 						");
 
         if ($q->success()) {
-            $this->locked = NULL;
-            $this->lockedby = NULL;
-            return TRUE;
+            $this->locked = null;
+            $this->lockedby = null;
+            return true;
         } else {
-            return FALSE;
+            return false;
         }
     }
 
@@ -497,7 +497,7 @@ class COMMENTREPORT {
 
                     if (!$success) {
                         // Abort!
-                        return FALSE;
+                        return false;
                     }
 
                     $upheldsql = '1';
@@ -522,23 +522,23 @@ class COMMENTREPORT {
 
                     $this->resolved = $time;
                     $this->resolvedby = $THEUSER->user_id();
-                    $this->locked = NULL;
-                    $this->lockedby = NULL;
+                    $this->locked = null;
+                    $this->lockedby = null;
                     $this->upheld = $upheld;
 
-                    return TRUE;
+                    return true;
                 } else {
                     $PAGE->error_message("Sorry, we couldn't resolve this report.");
-                    return FALSE;
+                    return false;
                 }
             } else {
                 $PAGE->error_message("This report has already been resolved (on " . $this->resolved . ")");
-                return FALSE;
+                return false;
             }
 
         } else {
             $PAGE->error_message("You are not authorised to resolve reports.");
-            return FALSE;
+            return false;
         }
     }
 

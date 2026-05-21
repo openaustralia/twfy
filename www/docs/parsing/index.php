@@ -25,12 +25,12 @@ $notloaded = '';
     $db = new ParlDB();
     $q = $db->query('SELECT DISTINCT(hdate) AS hdate, major FROM hansard');
     for ($i = 0; $i < $q->rows(); $i++) {
-        $hdates[$q->field($i, 'hdate')][$q->field($i, 'major')] = TRUE;
+        $hdates[$q->field($i, 'hdate')][$q->field($i, 'major')] = true;
     }
     foreach ($dir as $k => $bit) {
         $out = [];
         $dh = opendir("$html$bit/");
-        while (FALSE !== ($filename = readdir($dh))) {
+        while (false !== ($filename = readdir($dh))) {
             if (substr($filename, -5) != '.html' || substr($filename, -8, 3) == 'tmp') {
                 continue;
             }

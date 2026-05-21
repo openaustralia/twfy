@@ -46,7 +46,7 @@
  */
 class EDITQUEUE {
 
-    protected $db = NULL;
+    protected $db = null;
 
     public $pending_count = '';
     public $pending = [];
@@ -105,7 +105,7 @@ class EDITQUEUE {
             return $this->editqueue_id;
 
         } else {
-            return FALSE;
+            return false;
         }
     }
 
@@ -121,7 +121,7 @@ class EDITQUEUE {
         // We need a list of editqueue items to play with.
         $this->get_pending();
         if (!isset($this->pending)) {
-            return FALSE;
+            return false;
         }
         $timestamp = date('Y-m-d H:i:s', time());
 
@@ -147,7 +147,7 @@ class EDITQUEUE {
             // If that didn't work we can't go any further...
             if (!$q->success()) {
                 print "epobject trouble";
-                return FALSE;
+                return false;
             }
             $this->current_epobject_id = $q->insert_id();
 
@@ -169,7 +169,7 @@ class EDITQUEUE {
                     if (!$q->success()) {
                         print "glossary trouble!";
                         $q = $this->db->query("delete from epobject where epobject_id=" . $previous_insert_id . "");
-                        return FALSE;
+                        return false;
                     }
                   break;
 
@@ -197,7 +197,7 @@ class EDITQUEUE {
 
         $this->update_pending_count();
 
-        return TRUE;
+        return true;
     }
 
     /**
@@ -211,7 +211,7 @@ class EDITQUEUE {
         // We need a list of editqueue items to play with.
         $this->get_pending();
         if (!isset($this->pending)) {
-            return FALSE;
+            return false;
         }
         $timestamp = date('Y-m-d H:i:s', time());
 
@@ -238,7 +238,7 @@ class EDITQUEUE {
 
         $this->update_pending_count();
 
-        return TRUE;
+        return true;
 
     }
 
@@ -273,9 +273,9 @@ class EDITQUEUE {
 
             $this->update_pending_count();
 
-            return TRUE;
+            return true;
         } else {
-            return FALSE;
+            return false;
         }
     }
 
@@ -357,7 +357,7 @@ class GLOSSEDITQUEUE extends EDITQUEUE {
         // We need a list of editqueue items to play with.
         $this->get_pending();
         if (!isset($this->pending)) {
-            return FALSE;
+            return false;
         }
         $timestamp = date('Y-m-d H:i:s', time());
 
@@ -387,7 +387,7 @@ class GLOSSEDITQUEUE extends EDITQUEUE {
             // If that didn't work we can't go any further...
             if (!$q->success()) {
                 print "glossary trouble";
-                return FALSE;
+                return false;
             }
             $this->current_epobject_id = $q->insert_id();
 
@@ -410,7 +410,7 @@ class GLOSSEDITQUEUE extends EDITQUEUE {
 
         $this->update_pending_count();
 
-        return TRUE;
+        return true;
     }
 
 }

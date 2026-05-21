@@ -52,10 +52,10 @@ global $xapiandb;
  */
 class SEARCHENGINE {
 
-    public $query = NULL;
-    public $stemerr = NULL;
-    public $enquire = NULL;
-    public $stemmer = NULL;
+    public $query = null;
+    public $stemerr = null;
+    public $enquire = null;
+    public $stemmer = null;
     public $wordchars = '';
     public $words = [];
     public $phrases = [];
@@ -75,7 +75,7 @@ class SEARCHENGINE {
 
         $this->query = $query;
         $this->stemmer = new XapianStem('english');
-        $this->enquire = NULL;
+        $this->enquire = null;
 
         // Any characters other than this are treated as, basically, white space
         // (apart from quotes and minuses, special case below)
@@ -109,7 +109,7 @@ class SEARCHENGINE {
         } else {
             $all_words = [];
         }
-        $in_quote = FALSE;
+        $in_quote = false;
         foreach ($all_words as $word) {
             if ($word == '"') {
                 $in_quote = !$in_quote;
@@ -122,7 +122,7 @@ class SEARCHENGINE {
                 continue;
             }
 
-            if (strpos($word, ':') !== FALSE) {
+            if (strpos($word, ':') !== false) {
                 $items = explode(":", strtolower($word));
                 $type = $items[0];
                 $value = implode(":", array_slice($items, 1));
@@ -158,7 +158,7 @@ class SEARCHENGINE {
                     }
                 }
                 array_push($this->prefixed, [$type, $value]);
-            } elseif (strpos($word, '-') !== FALSE) {
+            } elseif (strpos($word, '-') !== false) {
                 array_push($this->excluded, str_replace("-", "", strtolower($word)));
             } elseif ($in_quote) {
                 array_push($this->phrases[count($this->phrases) - 1], strtolower($word));
@@ -167,10 +167,10 @@ class SEARCHENGINE {
             }
         }
 
-        twfy_debug("SEARCH", "words: " . var_export($this->words, TRUE));
-        twfy_debug("SEARCH", "phrases: " . var_export($this->phrases, TRUE));
-        twfy_debug("SEARCH", "prefixed: " . var_export($this->prefixed, TRUE));
-        twfy_debug("SEARCH", "excluded: " . var_export($this->excluded, TRUE));
+        twfy_debug("SEARCH", "words: " . var_export($this->words, true));
+        twfy_debug("SEARCH", "phrases: " . var_export($this->phrases, true));
+        twfy_debug("SEARCH", "prefixed: " . var_export($this->prefixed, true));
+        twfy_debug("SEARCH", "excluded: " . var_export($this->excluded, true));
         // twfy_debug("SEARCH", "rough: " . var_export($this->rough, true));.
     }
 
@@ -282,14 +282,14 @@ class SEARCHENGINE {
      * Return textual description of search.
      */
     public function query_description_short() {
-        return $this->query_description_internal(FALSE);
+        return $this->query_description_internal(false);
     }
 
     /**
      * Return textual description of search.
      */
     public function query_description_long() {
-        return $this->query_description_internal(TRUE);
+        return $this->query_description_internal(true);
     }
 
     /**
@@ -341,7 +341,7 @@ class SEARCHENGINE {
      */
     public function run_count() {
         if (!defined('XAPIANDB') || !XAPIANDB) {
-            return NULL;
+            return null;
         }
 
         $start = getmicrotime();
@@ -373,10 +373,10 @@ class SEARCHENGINE {
 
         // Set collapsing and sorting.
         global $PAGE;
-        $collapsed = FALSE;
+        $collapsed = false;
         foreach ($this->prefixed as $items) {
             if ($items[0] == 'groupby') {
-                $collapsed = TRUE;
+                $collapsed = true;
                 if ($items[1] == 'day') {
                     $this->enquire->set_collapse_key(2);
                 } elseif ($items[1] == 'debate') {
@@ -392,7 +392,7 @@ class SEARCHENGINE {
                 $this->enquire->set_bias($weight, intval($halflife));
             } elseif ($items[0] == 'speaker') {
                 // Don't do any collapsing if we're searching for a person's speeches.
-                $collapsed = TRUE;
+                $collapsed = true;
             }
         }
         // Default to grouping by subdebate, i.e. by page.
@@ -424,11 +424,11 @@ class SEARCHENGINE {
         // NOTE: this is to do sort by date.
         switch ($sort_order) {
             case 'date':
-                $this->enquire->set_sort_by_value_then_relevance(0, TRUE);
+                $this->enquire->set_sort_by_value_then_relevance(0, true);
               break;
 
             case 'created':
-                $this->enquire->set_sort_by_value_then_relevance(6, TRUE);
+                $this->enquire->set_sort_by_value_then_relevance(6, true);
               break;
 
             default:
@@ -563,7 +563,7 @@ class SEARCHENGINE {
 }
 
 global $SEARCHENGINE;
-$SEARCHENGINE = NULL;
+$SEARCHENGINE = null;
 
 /**
  *
@@ -585,7 +585,7 @@ function search_by_usage($search, $house = 0) {
         return $data;
     }
     if (count($gids) == 10000) {
-        $data['limit_reached'] = TRUE;
+        $data['limit_reached'] = true;
     }
 
     // Fetch all the speakers of the results, count them up and get min/max date usage.
