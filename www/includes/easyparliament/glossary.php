@@ -100,6 +100,20 @@ class GLOSSARY {
     }
 
     /**
+     * Backward-compatible read access for callers outside this class.
+     */
+    public function get_stopwords() {
+        return $this->stopwords;
+    }
+
+    /**
+     * Backward-compatible read access for callers outside this class.
+     */
+    public function get_alphabet() {
+        return $this->alphabet;
+    }
+
+    /**
      *
      */
     private function get_glossary_item($args = []):int {

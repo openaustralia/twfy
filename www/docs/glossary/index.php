@@ -42,7 +42,8 @@ if ((get_http_var('az') != '') && is_string(get_http_var('az'))) {
 }
 
 // Now check it's in the populated glossary alphabet.
-if (isset($az) && array_key_exists($az, $GLOSSARY->alphabet)) {
+$alphabet = $GLOSSARY->get_alphabet();
+if (isset($az) && array_key_exists($az, $alphabet)) {
     $GLOSSARY->current_letter = $az;
     // Otherwise make it the first letter of the current term.
 } elseif (isset($term)) {
@@ -114,7 +115,7 @@ if ($GLOSSARY->glossary_id != '') {
         <ul class="glossary">
             <?php
             $URL = new URL('glossary');
-            foreach ($GLOSSARY->alphabet[$GLOSSARY->current_letter] as $glossary_id) {
+            foreach ($alphabet[$GLOSSARY->current_letter] as $glossary_id) {
                 $URL->insert(['gl' => $glossary_id]);
                 $term_link = $URL->generate('url');
                 ?>
