@@ -1497,13 +1497,16 @@ class HANSARDLIST {
                 $finalmonth = 12;
             }
 
+            // change to date strings
+            $from = sprintf('%04d-%02d-01', intval($firstyear), intval($firstmonth));
+            $to = sprintf('%04d-%02d-%02d', intval($finalyear), intval($finalmonth), date('t', mktime(0, 0, 0, intval($finalmonth), 1, intval($finalyear))));
             // Check there are some dates for this year/month.
             $q = $this->db->query("SELECT epobject_id
 							FROM	hansard
-                            WHERE	hdate >= '" . $this->db->escape(sprintf('%04d-%02d-01', intval($firstyear), intval($firstmonth))) . "'
-                            AND 	hdate <= '" . $this->db->escape(sprintf('%04d-%02d-%02d', intval($finalyear), intval($finalmonth), date('t', mktime(0, 0, 0, intval($finalmonth), 1, intval($finalyear))))) . "'
+                            WHERE	hdate >= ?
+                            AND 	hdate <= ?
 							LIMIT 	1
-							");
+							", $from, $to);
 
             if ($q->rows() == 0) {
                 // No data in db, so return empty array!
