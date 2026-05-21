@@ -1,16 +1,20 @@
 <?php
 
 /**
+ * @file
  * Search helper functions for search page widgets.
  */
 
 /**
  * Escape text and highlight occurrences of the search term.
  *
- * @param string $text Raw text to display.
- * @param string $searchterm User search term.
+ * @param string $text
+ *   Raw text to display.
+ * @param string $searchterm
+ *   User search term.
  *
- * @return string Escaped HTML with matched terms wrapped in highlight markup.
+ * @return string
+ *   Escaped HTML with matched terms wrapped in highlight markup.
  */
 function highlighted_html(string $text, string $searchterm): string {
     $escaped_text = htmlentities($text);
@@ -26,7 +30,8 @@ function highlighted_html(string $text, string $searchterm): string {
 /**
  * Render comment search results.
  *
- * @param array<string, mixed> $args Search arguments.
+ * @param array<string, mixed> $args
+ *   Search arguments.
  */
 function find_comments(array $args): void {
     $commentlist = new COMMENTLIST();
@@ -36,9 +41,11 @@ function find_comments(array $args): void {
 /**
  * Render constituency/postcode matches.
  *
- * @param array<string, mixed> $args Search arguments.
+ * @param array<string, mixed> $args
+ *   Search arguments.
  *
- * @return false|null Returns false on missing search input; otherwise null.
+ * @return false|null
+ *   Returns false on missing search input; otherwise null.
  */
 function find_constituency(array $args) {
     // We see if the user is searching for a postcode or constituency.
@@ -125,9 +132,11 @@ function find_constituency(array $args) {
 /**
  * Render member matches for the search term.
  *
- * @param array<string, mixed> $args Search arguments.
+ * @param array<string, mixed> $args
+ *   Search arguments.
  *
- * @return false|null Returns false on missing search input; otherwise null.
+ * @return false|null
+ *   Returns false on missing search input; otherwise null.
  */
 function find_members(array $args) {
     // Maybe there'll be a better place to put this at some point...
@@ -239,11 +248,11 @@ function find_members(array $args) {
 
 }
 
-
 /**
  * Render links to glossary entries that match the search term.
  *
- * @param array<string, mixed> $args Search arguments.
+ * @param array<string, mixed> $args
+ *   Search arguments.
  */
 function find_glossary_items(array $args): void {
 
