@@ -15,7 +15,7 @@ $rsspath = BASEDIR . '/rss/mp/';
 umask(002);
 
 $HANSARDLIST = new HANSARDLIST();
-$db = $HANSARDLIST->db;
+$db = get_parl_db();
 
 // Get all the person ids we need feeds for...
 $q = $db->query("SELECT person_id, group_concat(member_id order by member_id separator ',') as member_ids
@@ -88,7 +88,7 @@ for ($personrow = 0; $personrow < $q->rows(); $personrow++) {
   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
   xmlns="http://purl.org/rss/1.0/"
   xmlns:content="http://purl.org/rss/1.0/modules/content/">
-		
+
 <channel rdf:about="https://' . DOMAIN . $mpurl . '">
 <title>' . entities_to_numbers($MEMBER->full_name()) . '\'s recent appearances (OpenAustralia.org)</title>
 <link>https://' . DOMAIN . $mpurl . '</link>
