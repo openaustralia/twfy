@@ -1497,7 +1497,7 @@ class HANSARDLIST {
                 $finalmonth = 12;
             }
 
-            // change to date strings
+            // Change to date strings.
             $from = sprintf('%04d-%02d-01', intval($firstyear), intval($firstmonth));
             $to = sprintf('%04d-%02d-%02d', intval($finalyear), intval($finalmonth), date('t', mktime(0, 0, 0, intval($finalmonth), 1, intval($finalyear))));
             // Check there are some dates for this year/month.
