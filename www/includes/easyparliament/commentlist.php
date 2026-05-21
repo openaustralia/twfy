@@ -109,7 +109,7 @@ class COMMENTLIST {
             $format = 'html';
         }
 
-        include __DIR__ . '/../easyparliament/templates/' . $format . '/' . $template . '.php';
+        include_once __DIR__ . '/../easyparliament/templates/' . $format . '/' . $template . '.php';
     }
 
     /**
