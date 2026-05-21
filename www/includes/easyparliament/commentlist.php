@@ -104,6 +104,11 @@ class COMMENTLIST {
      *
      */
     public function render($data, $format = 'html', $template = 'comments') {
+        $valid_formats = ['html', 'api'];
+        if (!in_array($format, $valid_formats, true)) {
+            $format = 'html';
+        }
+
         include __DIR__ . '/../easyparliament/templates/' . $format . '/' . $template . '.php';
     }
 
