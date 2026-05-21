@@ -125,7 +125,7 @@ function alert_details_to_criteria($details) {
  */
 class ALERT {
 
-    private $db = NULL;
+    private $db = null;
 
     public $alert_id = "";
     public $email = "";
@@ -208,7 +208,7 @@ class ALERT {
     /**
      * FUNCTION: add.
      */
-    public function add($details, $confirmation_email = FALSE, $instantly_confirm = TRUE) {
+    public function add($details, $confirmation_email = false, $instantly_confirm = true) {
 
         /*
         Adds a new alert's info into the database.
@@ -326,7 +326,7 @@ class ALERT {
             !isset($details['email']) ||
             $details['email'] == ''
         ) {
-            return FALSE;
+            return false;
         }
 
         // We prefix the registration token with the alert's id and '-'.
@@ -351,9 +351,9 @@ class ALERT {
 
         $success = send_template_email($data, $merge);
         if ($success) {
-            return TRUE;
+            return true;
         } else {
-            return FALSE;
+            return false;
         }
     }
 
@@ -366,12 +366,12 @@ class ALERT {
         if ($email != "") {
             $q = $this->db->query("SELECT alert_id FROM alerts WHERE email = ?", $email);
             if ($q->rows() > 0) {
-                return TRUE;
+                return true;
             } else {
-                return FALSE;
+                return false;
             }
         } else {
-            return FALSE;
+            return false;
         }
 
     }
@@ -393,12 +393,12 @@ class ALERT {
         }
         $token_parts = explode($arg, $token);
         if (count($token_parts) != 2) {
-            return FALSE;
+            return false;
         }
         [$alert_id, $registrationtoken] = $token_parts;
 
         if (!is_numeric($alert_id) || $registrationtoken == '') {
-            return FALSE;
+            return false;
         }
 
         $q = $this->db->query("SELECT email, criteria
@@ -416,15 +416,15 @@ class ALERT {
 						");
 
             if ($r->success()) {
-                $this->confirmed = TRUE;
-                return TRUE;
+                $this->confirmed = true;
+                return true;
             } else {
-                return FALSE;
+                return false;
             }
         } else {
             // Couldn't find this alert in the DB. Maybe the token was
             // wrong or incomplete?
-            return FALSE;
+            return false;
         }
     }
 
@@ -444,12 +444,12 @@ class ALERT {
         }
         $bits = explode($arg, $token);
         if (count($bits) < 2) {
-            return FALSE;
+            return false;
         }
         [$alert_id, $registrationtoken] = $bits;
 
         if (!is_numeric($alert_id) || $registrationtoken == '') {
-            return FALSE;
+            return false;
         }
 
         $q = $this->db->query("SELECT email, criteria
@@ -468,18 +468,18 @@ class ALERT {
 
             if ($r->success()) {
 
-                $this->deleted = TRUE;
-                return TRUE;
+                $this->deleted = true;
+                return true;
 
             } else {
                 // Couldn't delete this alert in the DB.
-                return FALSE;
+                return false;
             }
 
         } else {
             // Couldn't find this alert in the DB. Maybe the token was
             // wrong or incomplete?
-            return FALSE;
+            return false;
         }
     }
 
@@ -507,7 +507,7 @@ class ALERT {
     /**
      *
      */
-    public function criteria_pretty($html = FALSE) {
+    public function criteria_pretty($html = false) {
         $criteria = explode(' ', $this->criteria);
         $words = [];
         $spokenby = '';

@@ -161,7 +161,7 @@ class HANSARDLIST {
         } else {
             // Don't have a valid $view.
             $PAGE->error_message("You haven't specified a view type.");
-            return FALSE;
+            return false;
         }
 
         // Set the values of this page's headings depending on the data we've fetched.
@@ -204,7 +204,7 @@ class HANSARDLIST {
         } else {
             include $standard_template;
         }
-        return TRUE;
+        return true;
 
     }
 
@@ -317,7 +317,7 @@ class HANSARDLIST {
             // For getting hansard data.
             $input = [
                 'amount' => [
-                    'body' => TRUE
+                    'body' => true
                 ],
                 'where' => [
                     'hansard.epobject_id=' => $itemdata['section_id']
@@ -359,7 +359,7 @@ class HANSARDLIST {
             // For getting hansard data.
             $input = [
                 'amount' => [
-                    'body' => TRUE
+                    'body' => true
                 ],
                 'where' => [
                     'hansard.epobject_id=' => $itemdata['subsection_id']
@@ -368,7 +368,7 @@ class HANSARDLIST {
 
             $subsectiondata = $this->_get_hansard_data($input);
             if (count($subsectiondata) == 0) {
-                $subsectiondata = NULL;
+                $subsectiondata = null;
             } else {
                 $subsectiondata = $subsectiondata[0];
             }
@@ -395,8 +395,8 @@ class HANSARDLIST {
         // What we return.
         $nextprevdata = [];
 
-        $prev_item_id = FALSE;
-        $next_item_id = FALSE;
+        $prev_item_id = false;
+        $next_item_id = false;
 
         if ($itemdata['htype'] == '10' || $itemdata['htype'] == '11') {
             // Debate subsection or section - get the next one.
@@ -457,8 +457,8 @@ class HANSARDLIST {
             // For getting hansard data.
             $input = [
                 'amount' => [
-                    'body' => TRUE,
-                    'speaker' => TRUE
+                    'body' => true,
+                    'speaker' => true
                 ],
                 'where' => $wherearr,
                 'order' => 'hpos DESC',
@@ -501,8 +501,8 @@ class HANSARDLIST {
             // For getting hansard data.
             $input = [
                 'amount' => [
-                    'body' => TRUE,
-                    'speaker' => TRUE
+                    'body' => true,
+                    'speaker' => true
                 ],
                 'where' => $wherearr,
                 'order' => 'hpos ASC',
@@ -602,7 +602,7 @@ class HANSARDLIST {
 
             // The '!= NULL' bit is needed otherwise I was getting errors
             // when displaying the first day of debates.
-            if ($q->rows() > 0 && $q->field(0, 'hdate') != NULL) {
+            if ($q->rows() > 0 && $q->field(0, 'hdate') != null) {
 
                 $URL->insert(['d' => $q->field(0, 'hdate')]);
 
@@ -651,19 +651,19 @@ class HANSARDLIST {
             $date = $args['date'];
         } else {
             $PAGE->error_message("Sorry, we don't have a date.");
-            return FALSE;
+            return false;
         }
 
         if (!preg_match("/^(\d\d\d\d)-(\d{1,2})-(\d{1,2})$/", $date, $matches)) {
             $PAGE->error_message("Sorry, '" . htmlentities($date) . "' isn't of the right format (YYYY-MM-DD).");
-            return FALSE;
+            return false;
         }
 
         [$string, $year, $month, $day] = $matches;
 
         if (!checkdate($month, $day, $year)) {
             $PAGE->error_message("Sorry, '" . htmlentities($date) . "' isn't a valid date.");
-            return FALSE;
+            return false;
         }
 
         $day = substr("0$day", -2);
@@ -682,16 +682,16 @@ class HANSARDLIST {
 
         if (!isset($args['gid']) && $args['gid'] == '') {
             $PAGE->error_message("Sorry, we don't have an item gid.");
-            return FALSE;
+            return false;
         }
 
         // Get all the data just for this epobject_id.
         $input = [
             'amount' => [
-                'body' => TRUE,
-                'speaker' => TRUE,
-                'comment' => TRUE,
-                'votes' => TRUE
+                'body' => true,
+                'speaker' => true,
+                'comment' => true,
+                'votes' => true
             ],
             'where' => [
                 // Need to add the 'uk.org.publicwhip/debate/' or whatever on before
@@ -804,7 +804,7 @@ class HANSARDLIST {
             // $u = '<br><a href="'. $u . '">' . $u . '</a>';
             // }
             $PAGE->error_message("Sorry, there is no Hansard object with a gid of '" . htmlentities($args['gid']) . "'.");
-            return FALSE;
+            return false;
         }
 
         return $itemdata;
@@ -817,10 +817,10 @@ class HANSARDLIST {
     public function check_gid_change($gid, $from, $to) {
         $input = [
             'amount' => [
-                'body' => TRUE,
-                'speaker' => TRUE,
-                'comment' => TRUE,
-                'votes' => TRUE
+                'body' => true,
+                'speaker' => true,
+                'comment' => true,
+                'votes' => true
             ]
         ];
         if (strstr($gid, $from)) {
@@ -833,7 +833,7 @@ class HANSARDLIST {
                 return $itemdata;
             }
         }
-        return NULL;
+        return null;
     }
 
     /**
@@ -863,9 +863,9 @@ class HANSARDLIST {
             // Then for each of those we'll get the subsections and rows.
             $input = [
                 'amount' => [
-                    'body' => TRUE,
-                    'comment' => TRUE,
-                    'excerpt' => TRUE
+                    'body' => true,
+                    'comment' => true,
+                    'excerpt' => true
                 ],
                 'where' => [
                     'hdate=' => "$date",
@@ -891,9 +891,9 @@ class HANSARDLIST {
                     // Get the subsections within the section.
                     $input = [
                         'amount' => [
-                            'body' => TRUE,
-                            'comment' => TRUE,
-                            'excerpt' => TRUE
+                            'body' => true,
+                            'comment' => true,
+                            'excerpt' => true
                         ],
                         'where' => [
                             'section_id=' => $sections[$n]['epobject_id'],
@@ -1086,7 +1086,7 @@ class HANSARDLIST {
             $searchstring = $args['s'];
         } else {
             $PAGE->error_message("No search string");
-            return FALSE;
+            return false;
         }
 
         // What we'll return.
@@ -1447,7 +1447,7 @@ class HANSARDLIST {
 							WHERE	major = '" . $this->db->escape($this->major) . "'
 							");
 
-            if ($q->field(0, 'hdate') != NULL) {
+            if ($q->field(0, 'hdate') != null) {
                 $recentdate = $q->field(0, 'hdate');
             } else {
                 $PAGE->error_message("Couldn't find the most recent date");
@@ -1696,13 +1696,13 @@ class HANSARDLIST {
             'hansard' => ['epobject_id', 'htype', 'gid', 'hpos', 'section_id', 'subsection_id', 'hdate', 'htime', 'source_url', 'major']
         ];
 
-        if (isset($amount['speaker']) && $amount['speaker'] == TRUE) {
+        if (isset($amount['speaker']) && $amount['speaker'] == true) {
             $fieldsarr['hansard'][] = 'speaker_id';
         }
 
         if (
-            (isset($amount['body']) && $amount['body'] == TRUE) ||
-            (isset($amount['comment']) && $amount['comment'] == TRUE)
+            (isset($amount['body']) && $amount['body'] == true) ||
+            (isset($amount['comment']) && $amount['comment'] == true)
         ) {
             $fieldsarr['epobject'] = ['body'];
             $join = 'LEFT OUTER JOIN epobject ON hansard.epobject_id = epobject.epobject_id';
@@ -1800,7 +1800,7 @@ class HANSARDLIST {
                 // on the daily list pages.
 
                 if (
-                    (isset($amount['excerpt']) && $amount['excerpt'] == TRUE) &&
+                    (isset($amount['excerpt']) && $amount['excerpt'] == true) &&
                     ($item['htype'] == '10' ||
                         $item['htype'] == '11')
                 ) {
@@ -1859,7 +1859,7 @@ class HANSARDLIST {
 
                 // Get the user/anon votes items that have them.
                 if (
-                    ($this->major == 3 || $this->major == 8) && (isset($amount['votes']) && $amount['votes'] == TRUE) &&
+                    ($this->major == 3 || $this->major == 8) && (isset($amount['votes']) && $amount['votes'] == true) &&
                     $item['htype'] == '12'
                 ) {
                     // Debate speech or written answers (not questions).
@@ -1869,7 +1869,7 @@ class HANSARDLIST {
 
                 // Get the speaker for this item, if applicable.
                 if (
-                    (isset($amount['speaker']) && $amount['speaker'] == TRUE) &&
+                    (isset($amount['speaker']) && $amount['speaker'] == true) &&
                     $item['speaker_id'] != ''
                 ) {
 
@@ -1877,7 +1877,7 @@ class HANSARDLIST {
                 }
 
                 // Get comment count and (if any) most recent comment for each item.
-                if (isset($amount['comment']) && $amount['comment'] == TRUE) {
+                if (isset($amount['comment']) && $amount['comment'] == true) {
 
                     // All the things we need to get the comment data.
                     $item_data = [
@@ -2292,7 +2292,7 @@ class HANSARDLIST {
         if (isset($itemdata['major']) && $hansardmajors[$itemdata['major']]['type'] == 'other' and ($itemdata['htype'] == '12' or $itemdata['htype'] == '13')) {
             // Find the gid of the subheading which holds this part.
             $input = [
-                'amount' => ['gid' => TRUE],
+                'amount' => ['gid' => true],
                 'where' => [
                     'epobject_id=' => $itemdata['subsection_id'],
                 ],
@@ -2308,7 +2308,7 @@ class HANSARDLIST {
         // If a WMS main heading, go to next gid.
         if (isset($itemdata['major']) && $itemdata['major'] == 4 && $itemdata['htype'] == '10') {
             $input = [
-                'amount' => ['gid' => TRUE],
+                'amount' => ['gid' => true],
                 'where' => [
                     'section_id=' => $itemdata['epobject_id'],
                 ],
@@ -2405,10 +2405,10 @@ class HANSARDLIST {
 
             // What data do we want for each item?
             $amount = [
-                'body' => TRUE,
-                'speaker' => TRUE,
-                'comment' => TRUE,
-                'votes' => TRUE
+                'body' => true,
+                'speaker' => true,
+                'comment' => true,
+                'votes' => true
             ];
 
             if ($itemdata['htype'] == '10') {
@@ -2431,9 +2431,9 @@ class HANSARDLIST {
 
                     $input = [
                         'amount' => [
-                            'body' => TRUE,
-                            'comment' => TRUE,
-                            'excerpt' => TRUE
+                            'body' => true,
+                            'comment' => true,
+                            'excerpt' => true
                         ],
                         'where' => [
                             'section_id=' => $sectionrow['epobject_id'],
@@ -2498,7 +2498,7 @@ class HANSARDLIST {
         twfy_debug(get_class($this), "getting data by column");
 
         $input = [
-            'amount' => ['body' => TRUE, 'comment' => TRUE],
+            'amount' => ['body' => true, 'comment' => true],
             'where' => ['hdate=' => $args['date'], 'major=' => $this->major, 'gid LIKE ' => '%.' . $args['column'] . '.%'],
             'order' => 'hpos'
         ];
@@ -2626,7 +2626,7 @@ class SPWRANSLIST extends WRANSLIST {
         if ($gid) {
             return str_replace('uk.org.publicwhip/spwa/', '', $gid);
         }
-        return NULL;
+        return null;
     }
 
 }
@@ -3164,9 +3164,9 @@ class StandingCommittee extends DEBATELIST {
         $data = [];
         $input = [
             'amount' => [
-                'body' => TRUE,
-                'comment' => TRUE,
-                'excerpt' => TRUE
+                'body' => true,
+                'comment' => true,
+                'excerpt' => true
             ],
             'where' => [
                 'htype=' => '10',
@@ -3182,9 +3182,9 @@ class StandingCommittee extends DEBATELIST {
                 $sectionrow = $this->_get_section($sections[$n]);
                 $input = [
                     'amount' => [
-                        'body' => TRUE,
-                        'comment' => TRUE,
-                        'excerpt' => TRUE
+                        'body' => true,
+                        'comment' => true,
+                        'excerpt' => true
                     ],
                     'where' => [
                         'section_id=' => $sections[$n]['epobject_id'],

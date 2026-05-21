@@ -9,6 +9,6 @@ $this->block_start([
     'id' => 'help',
     'title' => "What is the Scottish Parliament?",
     'url' => '/sp/#help',
-    'body' => FALSE
+    'body' => false
 ]);
 $this->block_end();

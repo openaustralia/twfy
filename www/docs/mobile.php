@@ -35,14 +35,14 @@ $PAGE->block_start(['id' => 'intro', 'title' => 'At OpenAustralia.org you can:']
     function your_mp_bullet_point() {
         global $THEUSER, $MPURL;
         print "<li>";
-        $pc_form = TRUE;
+        $pc_form = true;
         if ($THEUSER->constituency_is_set()) {
             // (We don't allow the user to search for a postcode if they
             // already have one set in their prefs.)
 
             $MEMBER = new MEMBER(['constituency' => $THEUSER->constituency()]);
             if ($MEMBER->valid) {
-                $pc_form = FALSE;
+                $pc_form = false;
                 $CHANGEURL = new URL('userchangepc');
                 $mpname = $MEMBER->first_name() . ' ' . $MEMBER->last_name();
                 $former = "";

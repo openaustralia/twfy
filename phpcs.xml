@@ -23,6 +23,7 @@
     <exclude name="Drupal.NamingConventions.ValidFunctionName"/>
     <exclude name="Drupal.NamingConventions.ValidVariableName"/>
     <exclude name="Drupal.WhiteSpace.ScopeIndent" />
+    <exclude name="Generic.PHP.UpperCaseConstant"/>
   </rule>
 
   <!-- Require } else { on same line (K&R style) -->
@@ -30,6 +31,9 @@
 
   <!-- Require function opening { on same line (K&R style) -->
   <rule ref="Generic.Functions.OpeningFunctionBraceKernighanRitchie" />
+
+  <!-- Require true/false/null in lowercase to match SonarCloud php:S1781 -->
+  <rule ref="Generic.PHP.LowerCaseConstant" />
 
   <!-- Override some settings -->
   <rule ref="Drupal.WhiteSpace.ScopeIndent">

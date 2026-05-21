@@ -26,14 +26,14 @@
  */
 class TRACKBACK {
 
-    private $db = NULL;
+    private $db = null;
 
-    private $trackbacks_enabled = FALSE;
+    private $trackbacks_enabled = false;
 
     /**
      * Do trackbacks need moderation before appearing on the site?
      */
-    public $moderate_trackbacks = FALSE;
+    public $moderate_trackbacks = false;
     // Note, there's no code for processing trackbacks for moderation at the moment.
 
     /**
@@ -44,10 +44,10 @@ class TRACKBACK {
         $this->db = new ParlDB();
 
         // Set in init.php.
-        if (ALLOWTRACKBACKS == TRUE) {
-            $this->trackbacks_enabled = TRUE;
+        if (ALLOWTRACKBACKS == true) {
+            $this->trackbacks_enabled = true;
         } else {
-            $this->trackbacks_enabled = FALSE;
+            $this->trackbacks_enabled = false;
         }
     }
 
@@ -89,7 +89,7 @@ class TRACKBACK {
 
         } else {
             $PAGE->error_message("You haven't specified a valid view type.");
-            return FALSE;
+            return false;
         }
 
         $data = [
@@ -138,7 +138,7 @@ class TRACKBACK {
 
         // This code originally based on stuff from http://wordpress.org/
 
-        if ($this->trackbacks_enabled() == FALSE) {
+        if ($this->trackbacks_enabled() == false) {
             $this->_trackback_response(1, 'Sorry, trackbacks are disabled.');
         }
 
@@ -199,7 +199,7 @@ class TRACKBACK {
 
         if (!isset($args['epobject_id']) || $args['epobject_id'] == '') {
             $PAGE->error_message("We need an epobject_id to display trackbacks");
-            return FALSE;
+            return false;
         }
 
         $epobject_id = $args['epobject_id'];
@@ -250,7 +250,7 @@ class TRACKBACK {
 
         if (!is_numeric($args['num'])) {
             $PAGE->error_message("We need to know how many trackbacks to display.");
-            return FALSE;
+            return false;
         }
 
         $num = $args['num'];

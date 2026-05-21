@@ -27,7 +27,7 @@ if (get_http_var('d')) {
     if ($gid) {
         $URL = new URL('spwrans');
         $URL->insert(['id' => $gid]);
-        header('Location: https://' . DOMAIN . $URL->generate('none'), TRUE, 301);
+        header('Location: https://' . DOMAIN . $URL->generate('none'), true, 301);
         exit;
     }
     $PAGE->error_message("Couldn't match that Scottish Parliament ID to a GID.");
@@ -67,7 +67,7 @@ if (get_http_var('d')) {
     if (is_string($result)) {
         $URL = new URL('spwrans');
         $URL->insert(['id' => $result]);
-        header('Location: https://' . DOMAIN . $URL->generate('none'), TRUE, 301);
+        header('Location: https://' . DOMAIN . $URL->generate('none'), true, 301);
         exit;
     }
 

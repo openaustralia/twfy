@@ -44,9 +44,9 @@ class PAGE {
     /**
      * Use the page_started() function to do this.
      */
-    public $page_start_done = FALSE;
+    public $page_start_done = false;
 
-    public $heading_displayed = FALSE;
+    public $heading_displayed = false;
 
     // We want to know where we are with the stripes, the main structural elements
     // of most pages, so that if we output an error message we can wrap it in HTML
@@ -54,9 +54,9 @@ class PAGE {
     /**
      * Changed in $this->stripe_start().
      */
-    public $within_stripe_main = FALSE;
-    public $within_stripe_sidebar = FALSE;
-    public $blockbody_open = FALSE;
+    public $within_stripe_main = false;
+    public $within_stripe_sidebar = false;
+    public $blockbody_open = false;
 
     /**
      *
@@ -104,7 +104,7 @@ class PAGE {
             $this->page_body();
             $this->content_start();
 
-            $this->page_start_done = TRUE;
+            $this->page_start_done = true;
 
         }
     }
@@ -155,7 +155,7 @@ class PAGE {
             $this->page_body_mobile();
             $this->content_start();
 
-            $this->page_start_done = TRUE;
+            $this->page_start_done = true;
 
         }
     }
@@ -163,7 +163,7 @@ class PAGE {
     /**
      *
      */
-    public function page_end($extra = NULL) {
+    public function page_end($extra = null) {
         $this->content_end();
         $this->page_footer($extra);
     }
@@ -179,24 +179,24 @@ class PAGE {
      *
      */
     public function page_started() {
-        return $this->page_start_done == TRUE ? TRUE : FALSE;
+        return $this->page_start_done == true ? true : false;
     }
 
     /**
      *
      */
     public function heading_displayed() {
-        return $this->heading_displayed == TRUE ? TRUE : FALSE;
+        return $this->heading_displayed == true ? true : false;
     }
 
     /**
      *
      */
     public function within_stripe() {
-        if ($this->within_stripe_main == TRUE || $this->within_stripe_sidebar == TRUE) {
-            return TRUE;
+        if ($this->within_stripe_main == true || $this->within_stripe_sidebar == true) {
+            return true;
         } else {
-            return FALSE;
+            return false;
         }
     }
 
@@ -204,10 +204,10 @@ class PAGE {
      *
      */
     public function within_stripe_sidebar() {
-        if ($this->within_stripe_sidebar == TRUE) {
-            return TRUE;
+        if ($this->within_stripe_sidebar == true) {
+            return true;
         } else {
-            return FALSE;
+            return false;
         }
     }
 
@@ -993,7 +993,7 @@ class PAGE {
         print '>';
         print '<div class="main">';
 
-        $this->within_stripe_main = TRUE;
+        $this->within_stripe_main = true;
         // On most, uncomplicated pages, the first stripe on a page will include
         // the page heading. So, if we haven't already printed a heading on this
         // page, we do it now...
@@ -1049,12 +1049,12 @@ class PAGE {
     public function stripe_end($contents = [], $extra = '') {
         global $DATA, $this_page;
 
-        $this->within_stripe_main = FALSE;
+        $this->within_stripe_main = false;
         ?>
                         </div> <!-- end .main -->
                         <div class="sidebar">
                             <?php
-                            $this->within_stripe_sidebar = TRUE;
+                            $this->within_stripe_sidebar = true;
                             $extrahtml = '';
 
                             if (count($contents) == 0) {
@@ -1079,7 +1079,7 @@ class PAGE {
                                 }
                             }
 
-                            $this->within_stripe_sidebar = FALSE;
+                            $this->within_stripe_sidebar = false;
                             ?>
                         </div> <!-- end .sidebar -->
                         <div class="break"></div>
@@ -1123,7 +1123,7 @@ class PAGE {
      */
     public function block_start($data = []) {
 
-        $this->blockbody_open = FALSE;
+        $this->blockbody_open = false;
 
         if (isset($data['id']) && $data['id'] != '') {
             $id = ' id="' . $data['id'] . '"';
@@ -1142,11 +1142,11 @@ class PAGE {
                             <h4><?php echo $title; ?></h4><?php
                         } ?>
                         <?php
-                        if (!isset($data['body']) || $data['body'] == TRUE) {
+                        if (!isset($data['body']) || $data['body'] == true) {
                             ?>
                             <div class="blockbody">
                                 <?php
-                                $this->blockbody_open = TRUE;
+                                $this->blockbody_open = true;
                         }
     }
 
@@ -1196,7 +1196,7 @@ class PAGE {
 
         if ($page_text == '' && !is_bool($page_text)) {
             // If the metadata 'heading' is set, but empty, we display nothing.
-        } elseif ($page_text == FALSE) {
+        } elseif ($page_text == false) {
             // But if it just hasn't been set, we use the 'title'.
             $page_text = $DATA->page_metadata($this_page, "title");
         }
@@ -1227,7 +1227,7 @@ class PAGE {
         }
 
         // So we don't print the heading twice by accident from $this->stripe_start().
-        $this->heading_displayed = TRUE;
+        $this->heading_displayed = true;
     }
 
     /**
@@ -1282,7 +1282,7 @@ class PAGE {
     /**
      *
      */
-    public function page_footer($extra = NULL) {
+    public function page_footer($extra = null) {
         global $DATA, $this_page;
 
         // DAMN, this really shouldn't be in PAGE.
@@ -1593,7 +1593,7 @@ class PAGE {
             print '<li>Sinn F&eacute;in MPs do not take their seats in Parliament</li>';
         }
 
-        if ($member['the_users_mp'] == TRUE) {
+        if ($member['the_users_mp'] == true) {
         ?>
         <?php
         } elseif ($member['current_member'][1]) {
@@ -1658,7 +1658,7 @@ class PAGE {
 
             ?> <a name="topics"></a>
             <?php $this->block_start(['id' => 'topics', 'title' => 'Committees and topics of interest']);
-            $topics_block_empty = TRUE;
+            $topics_block_empty = true;
 
             // Select committee membership.
             if (array_key_exists('office', $extra_info)) {
@@ -1679,18 +1679,18 @@ class PAGE {
                         print '<li>' . $min . '</li>';
                     }
                     print "</ul>";
-                    $topics_block_empty = FALSE;
+                    $topics_block_empty = false;
                 }
             }
-            $wrans_dept = FALSE;
-            $wrans_dept_1 = NULL;
-            $wrans_dept_2 = NULL;
+            $wrans_dept = false;
+            $wrans_dept_1 = null;
+            $wrans_dept_2 = null;
             if (isset($extra_info['wrans_departments'])) {
-                $wrans_dept = TRUE;
+                $wrans_dept = true;
                 $wrans_dept_1 = "<li><strong>Departments:</strong> " . $extra_info['wrans_departments'] . "</p>";
             }
             if (isset($extra_info['wrans_subjects'])) {
-                $wrans_dept = TRUE;
+                $wrans_dept = true;
                 $wrans_dept_2 = "<li><strong>Subjects (based on headings added by Hansard):</strong> " . $extra_info['wrans_subjects'] . "</p>";
             }
 
@@ -1704,7 +1704,7 @@ class PAGE {
                     print $wrans_dept_2;
                 }
                 print "</ul>";
-                $topics_block_empty = FALSE;
+                $topics_block_empty = false;
                 $WRANSURL = new URL('search');
                 $WRANSURL->insert(['pid' => $member['person_id'], 's' => 'section:wrans', 'pop' => 1]);
                 ?>
@@ -1716,7 +1716,7 @@ class PAGE {
 
             // Public Bill Committees.
             if (count($extra_info['pbc'])) {
-                $topics_block_empty = FALSE;
+                $topics_block_empty = false;
                 print '<h5>Public Bill Committees <small>(sittings attended)</small></h5> <ul>';
                 foreach ($extra_info['pbc'] as $bill_id => $arr) {
                     print '<li>';
@@ -1817,13 +1817,13 @@ class PAGE {
 
                 $MOREURL->insert(['pid' => $member['person_id'], 's' => 'section:wrans', 'pop' => 1]);
                 // We assume that if they've answered a question, they're a minister.
-                $minister = FALSE;
-                $Lminister = FALSE;
+                $minister = false;
+                $Lminister = false;
                 if (isset($extra_info['wrans_answered_inlastyear']) && $extra_info['wrans_answered_inlastyear'] > 0 && $extra_info['wrans_asked_inlastyear'] == 0) {
-                    $minister = TRUE;
+                    $minister = true;
                 }
                 if (isset($extra_info['Lwrans_answered_inlastyear']) && $extra_info['Lwrans_answered_inlastyear'] > 0 && $extra_info['Lwrans_asked_inlastyear'] == 0) {
-                    $Lminister = TRUE;
+                    $Lminister = true;
                 }
                 // $displayed_stuff |= display_stats_line('wrans_asked_inlastyear', 'Has received answers to <a href="' . $MOREURL->generate() . '">', 'written question', '</a> ' . $since_text, '', $extra_info, $minister, $Lminister);
             }
@@ -2145,7 +2145,7 @@ class PAGE {
     /**
      *
      */
-    public function error_message($message, $fatal = FALSE) {
+    public function error_message($message, $fatal = false) {
         // If $fatal is true, we exit the page right here.
         // $message is like the array used in $this->message()
 
@@ -2175,7 +2175,7 @@ class PAGE {
     /**
      *
      */
-    public function error_message_mobile($message, $fatal = FALSE) {
+    public function error_message_mobile($message, $fatal = false) {
         // If $fatal is true, we exit the page right here.
         // $message is like the array used in $this->message()
 
@@ -2227,11 +2227,11 @@ class PAGE {
             $class = ' class="' . $class . '"';
         }
 
-        $need_to_close_stripe = FALSE;
+        $need_to_close_stripe = false;
 
         if (!$this->within_stripe()) {
             $this->stripe_start();
-            $need_to_close_stripe = TRUE;
+            $need_to_close_stripe = true;
         }
 
         if (isset($message['title'])) {
@@ -3317,8 +3317,8 @@ $PAGE = new PAGE();
 /**
  *
  */
-function display_stats_line($category, $blurb, $type, $inwhat, $afterstuff, $extra_info, $minister = FALSE, $Lminister = FALSE) {
-    $return = FALSE;
+function display_stats_line($category, $blurb, $type, $inwhat, $afterstuff, $extra_info, $minister = false, $Lminister = false) {
+    $return = false;
     if (isset($extra_info[$category])) {
         $return = display_stats_line_house(1, $category, $blurb, $type, $inwhat, $extra_info, $minister, $afterstuff);
     }
@@ -3382,7 +3382,7 @@ function display_stats_line_house($house, $category, $blurb, $type, $inwhat, $ex
         }
     }
     print ".$afterstuff</li>";
-    return TRUE;
+    return true;
 }
 
 /**
@@ -3397,7 +3397,7 @@ function display_writetothem_numbers($year, $extra_info) {
                     <?php echo $extra_info["writetothem_responsiveness_notes_$year"] ?>.
                 </li>
                 <?php
-                return TRUE;
+                return true;
     } elseif (isset($extra_info["writetothem_responsiveness_mean_$year"])) {
         $mean = $extra_info["writetothem_responsiveness_mean_$year"];
 

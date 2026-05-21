@@ -71,7 +71,7 @@ class PcGadgetIntegrationTest extends TestCase {
      */
     private function get_person_id($c) {
         if ($c == '') {
-            return FALSE;
+            return false;
         }
         if ($c == 'Orkney ') {
             $c = 'Orkney &amp; Shetland';
@@ -86,7 +86,7 @@ class PcGadgetIntegrationTest extends TestCase {
         if ($q->rows > 0) {
             return $q->field(0, 'person_id');
         }
-        return FALSE;
+        return false;
     }
 
 }

@@ -112,12 +112,12 @@ function error_handler(string $errno, string $errmsg, string $filename, int $lin
     if (count($_POST)) {
         $err .= "_POST:";
         foreach ($_POST as $k => $v) {
-            if (is_scalar($v) || $v === NULL) {
+            if (is_scalar($v) || $v === null) {
                 $value = (string) $v;
             } else {
                 $value = json_encode($v);
-                if ($value === FALSE) {
-                    $value = print_r($v, TRUE);
+                if ($value === false) {
+                    $value = print_r($v, true);
                 }
             }
             $err .= "\t\t$k => $value\n";
@@ -138,9 +138,9 @@ function error_handler(string $errno, string $errmsg, string $filename, int $lin
     // Will we need to exit after this error?
     $fatal_errors = [E_ERROR, E_USER_ERROR];
     if (in_array($errno, $fatal_errors)) {
-        $fatal = TRUE;
+        $fatal = true;
     } else {
-        $fatal = FALSE;
+        $fatal = false;
     }
 
     // Finally, display errors and stuff...
@@ -196,7 +196,7 @@ function vardump($blah) {
 /**
  * Pretty prints the backtrace, copied from https://uk.php.net/manual/en/function.debug-backtrace.php.
  */
-function adodb_backtrace($print = TRUE) {
+function adodb_backtrace($print = true) {
     $s = '';
     if (phpversion() >= 4.3) {
 
@@ -256,9 +256,9 @@ function validate_email($string) {
             '[-!#$%&\'*+\\\\0-9=?A-Z^_`a-z{|}~]+\.' .
             '[-!#$%&\'*+\\.\\0-9=?A-Z^_`a-z{|}~]+$/', $string)
     ) {
-        return FALSE;
+        return false;
     } else {
-        return TRUE;
+        return true;
     }
 }
 
@@ -270,9 +270,9 @@ function validate_postcode($postcode) {
 
     $num = '0123456789';
     if (preg_match("/^[$num][$num][$num][$num]/", $postcode)) {
-        return TRUE;
+        return true;
     } else {
-        return FALSE;
+        return false;
     }
 }
 
@@ -431,13 +431,13 @@ function parse_date($date) {
     $date = preg_replace('#\b([a-z]|on|an|of|in|the|year of our lord)\b#i', '', $date);
     $date = preg_replace('#[\x80-\xff]#', '', $date);
     if (!$date) {
-        return NULL;
+        return null;
     }
 
     $epoch = 0;
-    $day = NULL;
-    $year = NULL;
-    $month = NULL;
+    $day = null;
+    $year = null;
+    $month = null;
     if (preg_match('#(\d+)/(\d+)/(\d+)#', $date, $m)) {
         $day = $m[1];
         $month = $m[2];
@@ -467,7 +467,7 @@ function parse_date($date) {
             }
         }
         $t = strtotime($date, $now);
-        if ($t != FALSE) {
+        if ($t != false) {
             $day = date('d', $t);
             $month = date('m', $t);
             $year = date('Y', $t);
@@ -489,7 +489,7 @@ function parse_date($date) {
     }
 
     if ($epoch == 0) {
-        return NULL;
+        return null;
     }
     return ['iso' => "$year-$month-$day", 'epoch' => $epoch, 'day' => $day, 'month' => $month, 'year' => $year];
 }
@@ -664,7 +664,7 @@ function htmlentities_notags($text) {
 /**
  *
  */
-function fix_gid_from_db($gid, $keepmajor = FALSE) {
+function fix_gid_from_db($gid, $keepmajor = false) {
     // The gids in the database are longer than we use in the site.
     // Feed this a gid from the db and it will be returned truncated.
 
@@ -704,7 +704,7 @@ function gid_to_anchor($gid) {
 /**
  *
  */
-function send_template_email($data, $merge, $bulk = FALSE) {
+function send_template_email($data, $merge, $bulk = false) {
     /*
     We should have some email templates in INCLUDESPATH/easyparliament/templates/emails/.
 
@@ -739,14 +739,14 @@ function send_template_email($data, $merge, $bulk = FALSE) {
 
     if (!isset($data['to']) || $data['to'] == '') {
         $PAGE->error_message("We need an email address to send to.");
-        return FALSE;
+        return false;
     }
 
     $filename = __DIR__ . '/easyparliament/templates/emails/' . $data['template'] . '.txt';
 
     if (!file_exists($filename)) {
         $PAGE->error_message("Sorry, we could not find the email template '" . htmlentities($data['template']) . "'.");
-        return FALSE;
+        return false;
     }
 
     // Get the text from the template.
@@ -772,7 +772,7 @@ function send_template_email($data, $merge, $bulk = FALSE) {
         $subject = $data['subject'];
     } else {
         $PAGE->error_message("We don't have a subject line for the email, so it wasn't sent.");
-        return FALSE;
+        return false;
     }
 
     // Now merge all the tokens from $merge into $emailtext...
@@ -796,7 +796,7 @@ function send_template_email($data, $merge, $bulk = FALSE) {
 /**
  *
  */
-function send_email($to, $subject, $message, $bulk = FALSE) {
+function send_email($to, $subject, $message, $bulk = false) {
     // Use this rather than PHP's mail() direct, so we can make alterations
     // easily to all the emails we send out from the site.
 
@@ -1005,9 +1005,9 @@ function prettify_office($pos, $dept) {
 function major_summary($data, $limit = "") {
     global $hansardmajors;
     $db = new ParlDB();
-    $one_date = FALSE;
+    $one_date = false;
     if (isset($data['date'])) {
-        $one_date = TRUE;
+        $one_date = true;
     }
     $limitsql = "";
     if ($limit) {

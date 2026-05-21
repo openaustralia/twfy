@@ -22,7 +22,7 @@ $data = [];
 for ($i = 0; $i < $q->rows(); $i++) {
     $body = $q->field($i, 'body');
     $major = $q->field($i, 'major');
-    $data[$body][$major] = TRUE;
+    $data[$body][$major] = true;
 }
 
 print '<p>List of departments who have had questions or statements within the past week</p>';

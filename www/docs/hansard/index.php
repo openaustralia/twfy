@@ -19,7 +19,7 @@ if (($date = get_http_var('d')) && preg_match('#^\d\d\d\d-\d\d-\d\d$#', $date)) 
     $URL = new URL($this_page);
     $db = new ParlDB();
     $q = $db->query("SELECT MIN(hdate) AS hdate FROM hansard WHERE hdate > '$date'");
-    if ($q->rows() > 0 && $q->field(0, 'hdate') != NULL) {
+    if ($q->rows() > 0 && $q->field(0, 'hdate') != null) {
         $URL->insert(['d' => $q->field(0, 'hdate')]);
         $title = format_date($q->field(0, 'hdate'), SHORTDATEFORMAT);
         $nextprevdata['next'] = [
@@ -30,7 +30,7 @@ if (($date = get_http_var('d')) && preg_match('#^\d\d\d\d-\d\d-\d\d$#', $date)) 
         ];
     }
     $q = $db->query("SELECT MAX(hdate) AS hdate FROM hansard WHERE hdate < '$date'");
-    if ($q->rows() > 0 && $q->field(0, 'hdate') != NULL) {
+    if ($q->rows() > 0 && $q->field(0, 'hdate') != null) {
         $URL->insert(['d' => $q->field(0, 'hdate')]);
         $title = format_date($q->field(0, 'hdate'), SHORTDATEFORMAT);
         $nextprevdata['prev'] = [

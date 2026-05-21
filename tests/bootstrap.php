@@ -15,7 +15,7 @@ function twfy_debug(string $type, string $msg): void {
  *
  */
 function getmicrotime(): float {
-    return microtime(TRUE);
+    return microtime(true);
 }
 
 /**
@@ -72,14 +72,14 @@ function getTestDbConfig(): ?array {
     $pass = getenv('DB_PASSWORD');
     $name = getenv('DB_NAME');
 
-    if (!$host || $user === FALSE || $name === FALSE) {
-        return NULL;
+    if (!$host || $user === false || $name === false) {
+        return null;
     }
 
     return [
         'host' => $host,
         'user' => $user,
-        'pass' => $pass === FALSE ? '' : $pass,
+        'pass' => $pass === false ? '' : $pass,
         'name' => $name,
     ];
 }
@@ -95,18 +95,18 @@ function getSharedTestConnection(): ?mysqli {
     }
 
     $config = getTestDbConfig();
-    if ($config === NULL) {
-        return NULL;
+    if ($config === null) {
+        return null;
     }
 
     try {
         $conn = @mysqli_connect($config['host'], $config['user'], $config['pass'], $config['name']);
     } catch (mysqli_sql_exception $e) {
-        return NULL;
+        return null;
     }
 
     if (!$conn) {
-        return NULL;
+        return null;
     }
 
     $global_connection = $conn;
@@ -119,11 +119,11 @@ function getSharedTestConnection(): ?mysqli {
 function setMySqlConnection(MySQL $db, mysqli $conn): bool {
     try {
         $prop = new ReflectionProperty(MySQL::class, 'conn');
-        $prop->setAccessible(TRUE);
+        $prop->setAccessible(true);
         $prop->setValue($db, $conn);
-        return TRUE;
+        return true;
     } catch (ReflectionException $e) {
-        return FALSE;
+        return false;
     }
 }
 
@@ -154,14 +154,14 @@ require_once __DIR__ . '/../www/includes/easyparliament/user.php';
 function getTestDatabase(): ?MySQL {
     $conn = getSharedTestConnection();
     if (!$conn) {
-        return NULL;
+        return null;
     }
 
     // Create a MySQL instance that uses this connection.
     $db = new MySQL();
 
     if (!setMySqlConnection($db, $conn)) {
-        return NULL;
+        return null;
     }
 
     return $db;

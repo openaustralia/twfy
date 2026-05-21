@@ -121,7 +121,7 @@ function person_history($p) {
             $name = $m[2];
             $ddata = $m[4];
             if (preg_match('/Nil\./', $ddata)) {
-                $nil[$_] = TRUE;
+                $nil[$_] = true;
             }
             preg_match_all('#<category type="(.*?)" name="(.*?)">(.*?)</category>#s', $ddata, $mm, PREG_SET_ORDER);
             foreach ($mm as $k => $m) {
@@ -158,12 +158,12 @@ function person_history($p) {
             }
         }
         if ($oout) {
-            $out .= span_row("<h4>$pretty - <a href=\"./?d=$iso#$p\">View full entry</a></h4>", TRUE) . $oout;
+            $out .= span_row("<h4>$pretty - <a href=\"./?d=$iso#$p\">View full entry</a></h4>", true) . $oout;
         }
     }
     $_ = $earliest;
     $pretty = format_date(preg_replace("#$dir/regmem(.*?)\.xml#", '$1', $_), LONGDATEFORMAT);
-    $out .= span_row("<h4>$pretty (first entry we have)</h4>", TRUE);
+    $out .= span_row("<h4>$pretty (first entry we have)</h4>", true);
     if (array_key_exists($_, $nil)) {
         $out .= span_row('Nothing');
     }
@@ -230,7 +230,7 @@ function register_history($f) {
                     $out .= clean_diff($old, $new);
                 }
                 if ($out) {
-                    print span_row('<h4>' . $names[$person_id] . ' - <a href="?p=' . $person_id . '">Register history</a> | <a href="http://www.openaustralia.org/mp/?pid=' . $person_id . '">MP\'s page</a></h4>', TRUE) . $out;
+                    print span_row('<h4>' . $names[$person_id] . ' - <a href="?p=' . $person_id . '">Register history</a> | <a href="http://www.openaustralia.org/mp/?pid=' . $person_id . '">MP\'s page</a></h4>', true) . $out;
                 }
             }
             print '</table>';
@@ -385,7 +385,7 @@ function show_register($d) {
                     foreach ($data as $person_id => $v) {
                         $out = '';
                         foreach ($v as $cat_type => $vv) {
-                            $out .= cat_heading($cat_type, FALSE);
+                            $out .= cat_heading($cat_type, false);
                             $d = (array_key_exists('only', $data[$person_id][$cat_type]) ? $data[$person_id][$cat_type]['only'] : '');
                             $out .= prettify($d) . "\n";
                         }
@@ -456,11 +456,11 @@ function prettify($s) {
 /**
  *
  */
-function cat_heading($cat_type, $table = TRUE) {
+function cat_heading($cat_type, $table = true) {
     global $cats;
     $row = "<h5>$cat_type. $cats[$cat_type]</h5>";
     if ($table) {
-        return span_row($row, TRUE);
+        return span_row($row, true);
     }
     return $row;
 }
@@ -468,7 +468,7 @@ function cat_heading($cat_type, $table = TRUE) {
 /**
  *
  */
-function span_row($s, $heading = FALSE) {
+function span_row($s, $heading = false) {
     if ($heading) {
         return "<tr><th colspan=\"2\">$s</th></tr>\n";
     }

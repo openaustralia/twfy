@@ -9,7 +9,7 @@ $this->block_start([
     'id' => 'help',
     'title' => "What are written answers?",
     'url' => '/wrans/#help',
-    'body' => FALSE
+    'body' => false
 ]);
 
 $this->block_end();

@@ -48,7 +48,7 @@ if (get_http_var("d") != "") {
     if (is_string($result)) {
         $URL = new URL('spdebates');
         $URL->insert(['id' => $result]);
-        header('Location: https://' . DOMAIN . $URL->generate('none'), TRUE, 301);
+        header('Location: https://' . DOMAIN . $URL->generate('none'), true, 301);
         exit;
     }
 
