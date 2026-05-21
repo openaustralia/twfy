@@ -194,7 +194,7 @@ function find_comments($args){
 
 function find_constituency($args){
     // We see if the user is searching for a postcode or constituency.
-    global $PAGE, $db;
+    global $PAGE;
 
     if ($args['s'] != '') {
         $searchterm = $args['s'];
@@ -226,10 +226,11 @@ function find_constituency($args){
         if (normalise_constituency_name($try)) {
             $constituency = normalise_constituency_name($try);
         } else {
-            $q = $db->query("select distinct
-                    (select name from constituency where cons_id = o.cons_id and main_name) as name
-                from constituency AS o where name like ?
-                and from_date <= date(now()) and date(now()) <= to_date", "%" . $try . "%");
+            $db = new ParlDB();
+            $q = $db->query("SELECT DISTINCT
+                    (SELECT NAME FROM CONSTITUENCY WHERE cons_id = o.cons_id and main_name) as name
+                FROM constituency AS o WHERE name LIKE ?
+                AND from_date <= date(now()) AND date(now()) <= to_date", "%$try%");
             for ($n = 0; $n < $q->rows(); $n++) {
                 $constituencies[] = $q->field($n, 'name');
             }
@@ -276,7 +277,7 @@ function find_constituency($args){
 
 function find_members($args){
     // Maybe there'll be a better place to put this at some point...
-    global $PAGE, $db, $parties;
+    global $PAGE, $parties;
 
     if ($args['s'] != '') {
         // $args['s'] should have been tidied up by the time we get here.
@@ -326,6 +327,7 @@ function find_members($args){
         ];
     }
 
+    $db = new ParlDB();
     $q = $db->query("SELECT person_id,
                             title, first_name, last_name,
                             constituency, party,
