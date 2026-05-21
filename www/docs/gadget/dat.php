@@ -31,7 +31,7 @@ $row['full_name'] = member_full_name(
 if (isset($parties[$row['party']])) {
     $row['party'] = $parties[$row['party']];
 }
-[$image, $sz] = find_rep_image($row['person_id'], TRUE);
+[$image, $sz] = find_rep_image($row['person_id'], true);
 if ($image) {
     $row['image'] = $image;
 }
@@ -59,7 +59,7 @@ $q = $db->query("select data_key, data_value from personinfo
 	where data_key like 'public\_whip%' and person_id = ?
 // order so both_voted is always first...
 	order by data_key", $pid);
-$none = FALSE;
+$none = false;
 $output = [];
 for ($i = 0; $i < $q->rows(); $i++) {
     $key = str_replace(['public_whip_dreammp', '_distance'], '', $q->field($i, 'data_key'));
@@ -67,14 +67,14 @@ for ($i = 0; $i < $q->rows(); $i++) {
         continue;
     }
     if ($none) {
-        $none = FALSE;
+        $none = false;
         $output[$key] = -1;
         continue;
     }
     $value = $q->field($i, 'data_value');
     if (preg_match('#_both_voted$#', $key)) {
         if ($value == 0) {
-            $none = TRUE;
+            $none = true;
         }
         continue;
     }
@@ -83,20 +83,20 @@ for ($i = 0; $i < $q->rows(); $i++) {
 $pw = '<ul>';
 display_dream_comparison(996, "a <strong>transparent Parliament</strong>");
 display_dream_comparison(811, "introducing a <strong>smoking ban</strong>");
-display_dream_comparison(230, "introducing <strong>ID cards</strong>", TRUE);
+display_dream_comparison(230, "introducing <strong>ID cards</strong>", true);
 display_dream_comparison(363, "introducing <strong>foundation hospitals</strong>");
-display_dream_comparison(367, "introducing <strong>student top-up fees</strong>", TRUE);
-display_dream_comparison(258, "Labour's <strong>anti-terrorism laws</strong>", TRUE);
-display_dream_comparison(219, "the <strong>Iraq war</strong>", TRUE);
+display_dream_comparison(367, "introducing <strong>student top-up fees</strong>", true);
+display_dream_comparison(258, "Labour's <strong>anti-terrorism laws</strong>", true);
+display_dream_comparison(219, "the <strong>Iraq war</strong>", true);
 display_dream_comparison(975, "investigating the <strong>Iraq war</strong>");
 display_dream_comparison(984, "replacing <strong>Trident</strong>");
-display_dream_comparison(358, "the <strong>hunting ban</strong>", TRUE);
+display_dream_comparison(358, "the <strong>hunting ban</strong>", true);
 display_dream_comparison(826, "equal <strong>gay rights</strong>");
 
 /**
  *
  */
-function display_dream_comparison($id, $text, $inverse = FALSE) {
+function display_dream_comparison($id, $text, $inverse = false) {
     global $pw, $output;
     if (!array_key_exists($id, $output)) {
         return;

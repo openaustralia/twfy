@@ -110,16 +110,16 @@ $mysqltotalduration = 0.0;
  */
 class MySQLQuery {
 
-    private $conn = NULL;
+    private $conn = null;
 
     public $fieldnames_byid = [];
     public $fieldnames_byname = [];
-    public $success = TRUE;
-    public $rows = NULL;
+    public $success = true;
+    public $rows = null;
     public $fields = 0;
     public $data = [];
-    public $insert_id = NULL;
-    public $affected_rows = NULL;
+    public $insert_id = null;
+    public $affected_rows = null;
 
     /**
      *
@@ -134,12 +134,12 @@ class MySQLQuery {
     public function query($sql = "") {
 
         if (empty($sql)) {
-            $this->success = FALSE;
+            $this->success = false;
             return;
         }
 
         if (empty($this->conn)) {
-            $this->success = FALSE;
+            $this->success = false;
             return;
         }
 
@@ -154,7 +154,7 @@ class MySQLQuery {
             if ((!$q) or (empty($q))) {
                 // A failed query.
 
-                $this->success = FALSE;
+                $this->success = false;
 
                 return;
 
@@ -167,14 +167,14 @@ class MySQLQuery {
 
                 $this->affected_rows = mysqli_affected_rows($this->conn);
 
-                $this->success = TRUE;
+                $this->success = true;
 
                 return;
 
             } else {
 
                 // A successful SELECT, SHOW, EXPLAIN or DESCRIBE query.
-                $this->success = TRUE;
+                $this->success = true;
 
                 $result = [];
                 for ($i = 0; $i < mysqli_num_fields($q); $i++) {
@@ -325,7 +325,7 @@ class MySQLQuery {
      */
     public function error($errormsg) {
         // When a query goes wrong...
-        $this->success = FALSE;
+        $this->success = false;
 
         trigger_error($errormsg, E_USER_ERROR);
 
@@ -335,14 +335,14 @@ class MySQLQuery {
     // End MySQLQuery class.
 }
 
-$global_connection = NULL;
+$global_connection = null;
 
 /**
  *
  */
 class MySQL {
 
-    private $conn = NULL;
+    private $conn = null;
 
     public function __construct() {
     }
@@ -371,7 +371,7 @@ class MySQL {
         // Select default character set.
         $q = new MySQLQuery($this->conn);
 
-        return TRUE;
+        return true;
     }
 
     /**

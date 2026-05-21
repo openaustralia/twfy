@@ -39,7 +39,7 @@ global $PAGE, $DATA, $this_page, $THEUSER;
 
 // Something's telling me these subheadings shouldn't be in this template...!
 
-if (isset($data['comments'][0]['preview']) && $data['comments'][0]['preview'] == TRUE) {
+if (!empty($data['comments'][0]['preview'])) {
     // If we're just previewing a comment, we passed in 'preview' => true.
     $subheading = 'Your comment would look like this:';
 

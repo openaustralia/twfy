@@ -10,7 +10,7 @@
  */
 class PEOPLE {
 
-    private $db = NULL;
+    private $db = null;
 
     /**
      *
@@ -37,7 +37,7 @@ class PEOPLE {
 
         } else {
             $PAGE->error_message("You haven't specified a view type.");
-            return FALSE;
+            return false;
         }
 
         $return = $this->render($view, $data, $format);
@@ -58,7 +58,7 @@ class PEOPLE {
         }
 
         include __DIR__ . "/../easyparliament/templates/{$format}/people_{$view}.php";
-        return TRUE;
+        return true;
 
     }
 

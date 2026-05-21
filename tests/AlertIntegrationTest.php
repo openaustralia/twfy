@@ -7,7 +7,7 @@ use PHPUnit\Framework\TestCase;
  */
 class AlertIntegrationTest extends TestCase {
 
-    private static $connection = NULL;
+    private static $connection = null;
 
     /**
      *
@@ -105,7 +105,7 @@ public static function setUpBeforeClass(): void {
             $this->assertIsObject($member);
         } catch (Exception $e) {
             // PID may not exist, but class should attempt instantiation.
-            $this->assertTrue(TRUE);
+            $this->assertTrue(true);
         }
     }
 

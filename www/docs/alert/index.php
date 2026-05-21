@@ -108,7 +108,7 @@ function add_alert($details) {
 
     global $ALERT, $PAGE, $THEUSER, $this_page;
 
-    $extra = NULL;
+    $extra = null;
 
     // Instantiate an instance of ALERT.
     $ALERT = new ALERT();
@@ -121,11 +121,11 @@ function add_alert($details) {
             $site = 'unknown';
         }
         $extra = 'from_' . $site . '=1';
-        $confirm = FALSE;
+        $confirm = false;
     } elseif ($THEUSER->loggedin()) {
-        $confirm = FALSE;
+        $confirm = false;
     } else {
-        $confirm = TRUE;
+        $confirm = true;
     }
 
     // If this goes well, the alert will be added to the database and a confirmation email will be sent to them.
@@ -139,7 +139,7 @@ function add_alert($details) {
     $PAGE->page_start();
     $PAGE->stripe_start();
 
-    $advert = FALSE;
+    $advert = false;
     if ($success > 0 && !$confirm) {
         if ($details['pid']) {
             $MEMBER = new MEMBER(['person_id' => $details['pid']]);
@@ -156,7 +156,7 @@ function add_alert($details) {
             'title' => 'Your alert has been added',
             'text' => 'You will now receive email alerts on any day when ' . $criteria . ' in parliament.'
         ];
-        $advert = TRUE;
+        $advert = true;
     } elseif ($success > 0) {
         $message = [
             'title' => "We're nearly done...",
@@ -167,7 +167,7 @@ function add_alert($details) {
             'title' => 'You already have this alert',
             'text' => 'You already appear to be subscribed to this email alert, so we have not signed you up to it again.'
         ];
-        $advert = TRUE;
+        $advert = true;
     } else {
         $message = [
             'title' => "This alert has not been accepted",

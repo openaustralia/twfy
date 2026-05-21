@@ -283,5 +283,5 @@ function recess_prettify(int $day, int $month, int $year, int $body): array {
             return ['recess', $range[0], $range[1]];
         }
     }
-    return [NULL, NULL, NULL];
+    return [null, null, null];
 }

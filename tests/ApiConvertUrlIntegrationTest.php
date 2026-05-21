@@ -110,7 +110,7 @@ class ApiConvertUrlIntegrationTest extends TestCase {
             $this->assertTrue(method_exists($q, 'field'));
         } else {
 // No test data is OK.
-            $this->assertTrue(TRUE);
+            $this->assertTrue(true);
         }
     }
 

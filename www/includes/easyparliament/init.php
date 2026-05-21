@@ -14,8 +14,8 @@ ini_set('memory_limit', 32 * 1024 * 1024);
 
 
 // In case we need to switch these off globally at some point...
-define("ALLOWCOMMENTS", TRUE);
-define("ALLOWTRACKBACKS", TRUE);
+define("ALLOWCOMMENTS", true);
+define("ALLOWTRACKBACKS", true);
 
 // These variables are so we can keep date/time formats consistent across the site
 // and change them easily.

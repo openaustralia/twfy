@@ -35,7 +35,7 @@ class RecessTest extends TestCase {
     public function test_date_outside_recess_returns_null_triplet(): void {
         $result = recess_prettify(12, 5, 2026, 1);
 
-        $this->assertSame([NULL, NULL, NULL], $result);
+        $this->assertSame([null, null, null], $result);
     }
 
     /**
@@ -44,7 +44,7 @@ class RecessTest extends TestCase {
     public function test_unknown_body_returns_null_triplet(): void {
         $result = recess_prettify(10, 4, 2026, 999);
 
-        $this->assertSame([NULL, NULL, NULL], $result);
+        $this->assertSame([null, null, null], $result);
     }
 
 }

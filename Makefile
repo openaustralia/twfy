@@ -8,8 +8,9 @@ TEST_DB_HOST ?= 127.0.0.1:$(MYSQL_HOST_PORT)
 TEST_DB_USER ?= twfyuser
 TEST_DB_PASSWORD ?= twfypass
 TEST_DB_NAME ?= twfy
+SONAR_SCANNER ?= sonar-scanner
 
-.PHONY: help docker-build docker-run docker lint lint-perl lint-perl-ci lint-php lint-php-ci phpcs phpcs-ci phpcs-verbose install setup test test-all install-xdebug test-coverage test-coverage-docker
+.PHONY: help docker-build docker-run docker lint lint-perl lint-perl-ci lint-php lint-php-ci phpcs phpcs-ci phpcs-verbose phpcs-sonar sonar-ci install setup test test-all install-xdebug test-coverage test-coverage-docker
 
 help:
 	@echo "Available targets:"
@@ -27,6 +28,8 @@ help:
 	@echo "  test-coverage-docker [TEST_ARGS=...] Run coverage inside Docker (no host PHP extensions needed)"
 	@echo "  phpcs [PHPCS_ARGS=...]              Run coding standards check (summary)"
 	@echo "  phpcs-verbose [PHPCS_ARGS=...]      Run coding standards check (verbose)"
+	@echo "  phpcs-sonar [PHPCS_ARGS=...]        Generate PHPCS checkstyle report for SonarQube"
+	@echo "  sonar-ci [TEST_ARGS=... PHPCS_ARGS=...] Run coverage + PHPCS report + Sonar scanner"
 	@echo "  scripts/run-with-lockfile           Compile lockfile utility (dev only)"
 	@echo ""
 	@echo "Extra args:"
@@ -70,6 +73,14 @@ phpcs:
 
 phpcs-ci phpcs-verbose:
 	./vendor/bin/phpcs --standard=phpcs.xml --tab-width=4 www scripts $(PHPCS_ARGS)
+
+phpcs-sonar:
+	mkdir -p coverage
+	./vendor/bin/phpcs --standard=phpcs.xml --tab-width=4 --report=checkstyle --report-file=coverage/phpcs.xml www scripts $(PHPCS_ARGS) || true
+
+sonar-ci: test-coverage phpcs-sonar
+	@command -v $(SONAR_SCANNER) >/dev/null 2>&1 || { echo "$(SONAR_SCANNER) not found on PATH"; exit 1; }
+	$(SONAR_SCANNER)
 
 install: scripts/run-with-lockfile
 	composer install --no-interaction --prefer-dist

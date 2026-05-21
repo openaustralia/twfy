@@ -9,6 +9,6 @@ $this->block_start([
     'id' => 'help',
     'title' => "What are House debates?",
     'url' => WEBPATH . 'debates/#help',
-    'body' => FALSE
+    'body' => false
 ]);
 $this->block_end();

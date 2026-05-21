@@ -35,7 +35,7 @@ if (!is_numeric($report_id) || !is_numeric($comment_id)) {
 
 $COMMENT = new COMMENT($comment_id);
 
-if ($COMMENT->exists() == FALSE) {
+if (!$COMMENT->exists()) {
     // Exit.
     trigger_error("This is an invalid comment ID", E_USER_ERROR);
 }
@@ -162,7 +162,7 @@ function get_template_contents($template) {
 
     if (!file_exists($filename)) {
         $PAGE->error_message("Sorry, we could not find the email template.");
-        return FALSE;
+        return false;
     }
 
     // Get the text from the template.
@@ -250,16 +250,16 @@ function resolve($REPORT, $COMMENT) {
     global $PAGE;
 
     if (get_http_var('deletecomment') == 'true') {
-        $upheld = TRUE;
+        $upheld = true;
     } else {
-        $upheld = FALSE;
+        $upheld = false;
     }
 
     $success = $REPORT->resolve($upheld, $COMMENT);
 
     if ($success) {
 
-        if ($upheld == TRUE) {
+        if ($upheld) {
             print "<p>The comment has been deleted.</p>\n";
         }
 
@@ -290,7 +290,7 @@ function resolve($REPORT, $COMMENT) {
          ];
 
             // Add stuff specific to each type of email.
-            if ($upheld == TRUE) {
+            if ($upheld) {
                 $data['template'] = 'report_upheld';
 
             } else {
