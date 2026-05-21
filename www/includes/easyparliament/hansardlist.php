@@ -1535,11 +1535,11 @@ class HANSARDLIST {
 
         $q = $this->db->query("SELECT 	DISTINCT(hdate) AS hdate
 						FROM		hansard
-						WHERE		major = '" . $this->db->escape($this->major) . "'
-                        AND			hdate >= '" . $this->db->escape($first_date) . "'
+						WHERE		major = ?
+                        AND			hdate >= ?
 						$where
 						ORDER BY	hdate ASC
-						");
+						", $this->major, $first_date);
 
         if ($q->rows() > 0) {
 
