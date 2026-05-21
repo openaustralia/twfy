@@ -2723,8 +2723,9 @@ class PAGE {
         // Print out a nice list of lettered links to glossary pages.
 
         $letters = [];
+        $alphabet = $GLOSSARY->get_alphabet();
 
-        foreach ($GLOSSARY->alphabet as $letter => $eps) {
+        foreach ($alphabet as $letter => $eps) {
             // If we're writing out the current letter (list or item)
             if ($letter == $GLOSSARY->current_letter) {
                 // If we're in item view - show the letter as "on" but make it a link.
@@ -2738,7 +2739,7 @@ class PAGE {
                     // Otherwise in list view show no link.
                     $letters[] = "<li class=\"on\">" . $letter . "</li>";
                 }
-            } elseif (!empty($GLOSSARY->alphabet[$letter])) {
+            } elseif (!empty($alphabet[$letter])) {
                 $URL = new URL('glossary');
                 $URL->insert(['az' => $letter]);
                 $letter_link = $URL->generate('url');
