@@ -141,8 +141,6 @@ $PAGE->block_start(['id' => 'intro', 'title' => 'At OpenAustralia.org you can:']
         global $hansardmajors;
         ?>
         <li>
-            <p><strong>Read and comment on:</strong></p>
-
             <?php
             $DEBATELIST = new DEBATELIST();
             $data[1] = $DEBATELIST->most_recent_day();
