@@ -101,7 +101,7 @@ if (get_http_var('s') != '' || get_http_var('pid') != '') {
                 </th>
                 <th>Date range</th>
             </tr>
-            <?
+            <?php
             foreach ($data['speakers'] as $pid => $speaker) {
                 print '<tr><td align="center">';
                 print $speaker['count'] . '</td><td>';
