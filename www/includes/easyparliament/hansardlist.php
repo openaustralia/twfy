@@ -1867,7 +1867,7 @@ class HANSARDLIST {
 
                 // Get the user/anon votes items that have them.
                 if (
-                    ($this->major == 3 || $this->major == 8) && (isset($amount['votes']) && $amount['votes'] == true) &&
+                    ($this->major == 3 || $this->major == 8) && !empty($amount['votes']) &&
                     $item['htype'] == '12'
                 ) {
                     // Debate speech or written answers (not questions).
@@ -1877,7 +1877,7 @@ class HANSARDLIST {
 
                 // Get the speaker for this item, if applicable.
                 if (
-                    (isset($amount['speaker']) && $amount['speaker'] == true) &&
+                    !empty($amount['speaker']) &&
                     $item['speaker_id'] != ''
                 ) {
 
@@ -1885,7 +1885,7 @@ class HANSARDLIST {
                 }
 
                 // Get comment count and (if any) most recent comment for each item.
-                if (isset($amount['comment']) && $amount['comment'] == true) {
+                if (!empty($amount['comment'])) {
 
                     // All the things we need to get the comment data.
                     $item_data = [

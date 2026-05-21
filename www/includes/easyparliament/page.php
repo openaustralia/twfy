@@ -179,21 +179,21 @@ class PAGE {
      *
      */
     public function page_started() {
-        return $this->page_start_done == true ? true : false;
+        return (bool) $this->page_start_done;
     }
 
     /**
      *
      */
     public function heading_displayed() {
-        return $this->heading_displayed == true ? true : false;
+        return (bool) $this->heading_displayed;
     }
 
     /**
      *
      */
     public function within_stripe() {
-        if ($this->within_stripe_main == true || $this->within_stripe_sidebar == true) {
+        if ($this->within_stripe_main || $this->within_stripe_sidebar) {
             return true;
         } else {
             return false;
@@ -204,7 +204,7 @@ class PAGE {
      *
      */
     public function within_stripe_sidebar() {
-        if ($this->within_stripe_sidebar == true) {
+        if ($this->within_stripe_sidebar) {
             return true;
         } else {
             return false;
@@ -1142,7 +1142,7 @@ class PAGE {
                             <h4><?php echo $title; ?></h4><?php
                         } ?>
                         <?php
-                        if (!isset($data['body']) || $data['body'] == true) {
+                        if (!isset($data['body']) || $data['body']) {
                             ?>
                             <div class="blockbody">
                                 <?php
@@ -1593,7 +1593,7 @@ class PAGE {
             print '<li>Sinn F&eacute;in MPs do not take their seats in Parliament</li>';
         }
 
-        if ($member['the_users_mp'] == true) {
+        if ($member['the_users_mp']) {
         ?>
         <?php
         } elseif ($member['current_member'][1]) {

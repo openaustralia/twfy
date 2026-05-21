@@ -219,9 +219,9 @@ class USER {
             $details["status"] = "User";
         }
 
-        $optin = $details["optin"] == true ? 1 : 0;
+        $optin = !empty($details["optin"]) ? 1 : 0;
 
-        $emailpublic = $details["emailpublic"] == true ? 1 : 0;
+        $emailpublic = !empty($details["emailpublic"]) ? 1 : 0;
 
         $q = $this->db->query("INSERT INTO users (
 				firstname,
@@ -847,9 +847,9 @@ class USER {
         if (isset($details["deleted"])) {
             // 'deleted' won't always be an option (ie, if the user is updating
             // their own info).
-            if ($details['deleted'] == true) {
+            if ($details['deleted']) {
                 $del = '1';
-            } elseif ($details['deleted'] == false) {
+            } else {
                 $del = '0';
             }
             if (isset($del)) {
@@ -860,9 +860,9 @@ class USER {
         if (isset($details["confirmed"])) {
             // 'confirmed' won't always be an option (ie, if the user is updating
             // their own info).
-            if ($details['confirmed'] == true) {
+            if ($details['confirmed']) {
                 $con = '1';
-            } elseif ($details['confirmed'] == false) {
+            } else {
                 $con = '0';
             }
             if (isset($con)) {
@@ -878,8 +878,8 @@ class USER {
         }
 
         // Convert internal true/false variables to MySQL BOOL 1/0 variables.
-        $emailpublic = $details["emailpublic"] == true ? 1 : 0;
-        $optin = $details["optin"] == true ? 1 : 0;
+        $emailpublic = !empty($details["emailpublic"]) ? 1 : 0;
+        $optin = !empty($details["optin"]) ? 1 : 0;
 
         $q = $this->db->query("UPDATE users
 						SET		firstname 	 = '" . $this->db->escape($details["firstname"]) . "',
@@ -964,7 +964,7 @@ class THEUSER extends USER {
                     // But we need to check the password before we log them in.
                     // And make sure the user hasn't been "deleted".
 
-                    if (md5($this->password()) == $matches[2] && $this->deleted() == false) {
+                    if (md5($this->password()) == $matches[2] && !$this->deleted()) {
                         // The correct password is in the cookie,
                         // and the user isn't deleted, so set the user to be logged in.
 

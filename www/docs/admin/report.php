@@ -35,7 +35,7 @@ if (!is_numeric($report_id) || !is_numeric($comment_id)) {
 
 $COMMENT = new COMMENT($comment_id);
 
-if ($COMMENT->exists() == false) {
+if (!$COMMENT->exists()) {
     // Exit.
     trigger_error("This is an invalid comment ID", E_USER_ERROR);
 }
@@ -259,7 +259,7 @@ function resolve($REPORT, $COMMENT) {
 
     if ($success) {
 
-        if ($upheld == true) {
+        if ($upheld) {
             print "<p>The comment has been deleted.</p>\n";
         }
 
@@ -290,7 +290,7 @@ function resolve($REPORT, $COMMENT) {
          ];
 
             // Add stuff specific to each type of email.
-            if ($upheld == true) {
+            if ($upheld) {
                 $data['template'] = 'report_upheld';
 
             } else {

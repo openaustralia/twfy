@@ -189,7 +189,7 @@ class COMMENT {
 
         global $THEUSER, $PAGE;
 
-        if ($this->comments_enabled() == false) {
+        if (!$this->comments_enabled()) {
             $PAGE->error_message("Sorry, the posting of comments has been temporarily disabled.");
             return;
         }

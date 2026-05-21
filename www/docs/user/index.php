@@ -647,7 +647,7 @@ function display_form($details = [], $errors = []) {
         <div class="row">
             <span class="label">&nbsp;</span>
             <span class="formw"><input type="radio" name="emailpublic" id="emailpublictrue" value="true" <?php
-            if (isset($details["emailpublic"]) && $details["emailpublic"] == true) {
+            if (!empty($details["emailpublic"])) {
                 print " checked";
             }
             ?>> <label
@@ -656,7 +656,7 @@ function display_form($details = [], $errors = []) {
                 if (
                     ($this_page == "userjoin" && get_http_var("submitted") != "true")
                     ||
-                    (isset($details["emailpublic"]) && $details["emailpublic"] == false)
+                    (isset($details["emailpublic"]) && !$details["emailpublic"])
                 ) {
                     print " checked";
                 }
@@ -683,7 +683,7 @@ function display_form($details = [], $errors = []) {
         <div class="row">
             <span class="label">&nbsp;</span>
             <span class="formw"><input type="radio" name="optin" id="optintrue" value="true" <?php
-            if (isset($details["optin"]) && $details["optin"] == true) {
+            if (!empty($details["optin"])) {
                 print " checked";
             }
             ?>> <label
@@ -692,7 +692,7 @@ function display_form($details = [], $errors = []) {
                 if (
                     ($this_page == "userjoin" && get_http_var("submitted") != "true")
                     ||
-                    (isset($details["optin"]) && $details["optin"] == false)
+                    (isset($details["optin"]) && !$details["optin"])
                 ) {
                     print " checked";
                 }
@@ -716,7 +716,7 @@ function display_form($details = [], $errors = []) {
             <div class="row">
                 <span class="label">&nbsp;</span>
                 <span class="formw"><input type="radio" name="mp_alert" id="mp_alerttrue" value="true" <?php
-                if (isset($details["mp_alert"]) && $details["mp_alert"] == true) {
+                if (!empty($details["mp_alert"])) {
                     print ' checked';
                 }
                 ?>> <label
@@ -725,7 +725,7 @@ function display_form($details = [], $errors = []) {
                     if (
                         ($this_page == "userjoin" && get_http_var("submitted") != "true")
                         ||
-                        (isset($details["mp_alert"]) && $details["mp_alert"] == false)
+                        (isset($details["mp_alert"]) && !$details["mp_alert"])
                     ) {
                         print ' checked';
                     }
@@ -759,7 +759,7 @@ function display_form($details = [], $errors = []) {
             <div class="row">
                 <span class="label"><label for="confirmed">Confirmed?</label></span>
                 <span class="formw"><input type="checkbox" name="confirmed[]" id="confirmed" value="true" <?php
-                if (isset($details["confirmed"]) && $details["confirmed"] == true) {
+                if (!empty($details["confirmed"])) {
                     print " checked";
                 }
                 ?>></span>
@@ -768,7 +768,7 @@ function display_form($details = [], $errors = []) {
             <div class="row">
                 <span class="label"><label for="deleted">"Deleted"?</label></span>
                 <span class="formw"><input type="checkbox" name="deleted[]" id="deleted" value="true" <?php
-                if (isset($details["deleted"]) && $details["deleted"] == true) {
+                if (!empty($details["deleted"])) {
                     print " checked";
                 }
                 ?>> <small>(No data will
@@ -934,8 +934,8 @@ function display_user($user_id = "") {
         if ($edited) {
             // We want to show all the info to the user.
             $email = $THEUSER->email();
-            $emailpublic = $THEUSER->emailpublic() == true ? "Yes" : "No";
-            $optin = $THEUSER->optin() == true ? "Yes" : "No";
+            $emailpublic = $THEUSER->emailpublic() ? "Yes" : "No";
+            $optin = $THEUSER->optin() ? "Yes" : "No";
             $constituency = $THEUSER->constituency();
         } else {
             // We're showing them how they're seen to other people.

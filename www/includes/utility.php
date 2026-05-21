@@ -467,7 +467,7 @@ function parse_date($date) {
             }
         }
         $t = strtotime($date, $now);
-        if ($t != false) {
+        if ($t) {
             $day = date('d', $t);
             $month = date('m', $t);
             $year = date('Y', $t);

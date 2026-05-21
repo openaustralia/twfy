@@ -32,7 +32,7 @@ if (get_http_var('testing') == 'true') {
 
     $testcookie = get_cookie_var('testcookie');
 
-    if ($testcookie != true) {
+    if (!$testcookie) {
         voteerror("Your browser must be able to accept cookies before you can register a vote.");
     } else {
         // Delete the test cookie.
