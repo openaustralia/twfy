@@ -54,7 +54,7 @@ $VERBOSE && echo "Parsing from APH to XML and loading into the database"
 # ./xml2db.pl $CRONQUIET --recent --lordsdebates
 #./xml2db.pl $CRONQUIET --recent --ni --quiet
 
-if [ -v "$XAPIANDB" ]; then
+if [ -n "$XAPIANDB" ]; then
     # Update Xapan index
     $VERBOSE && echo "Xapian indexing"
     ../search/index.pl "$XAPIANDB" sincefile "$XAPIANDB/../searchdb-lastupdated" "$CRONQUIET_NODASH"
