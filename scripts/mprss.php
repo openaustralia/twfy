@@ -15,7 +15,7 @@ $rsspath = BASEDIR . '/rss/mp/';
 umask(002);
 
 $HANSARDLIST = new HANSARDLIST();
-$db = get_parl_db();
+$db = getParlDB();
 
 // Get all the person ids we need feeds for...
 $q = $db->query("SELECT person_id, group_concat(member_id order by member_id separator ',') as member_ids

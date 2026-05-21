@@ -82,7 +82,7 @@ class ParlDB extends MySQL {
 /**
  * Returns the shared ParlDB instance for this request.
  */
-function get_parl_db() {
+function getParlDB() {
     static $db = null;
 
     if ($db === null) {

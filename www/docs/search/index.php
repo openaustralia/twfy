@@ -207,7 +207,7 @@ function find_comments($args){
 function find_constituency($args){
     // We see if the user is searching for a postcode or constituency.
     global $PAGE;
-    $db = get_parl_db();
+    $db = getParlDB();
 
     if ($args['s'] != '') {
         $searchterm = $args['s'];
@@ -290,7 +290,7 @@ function find_constituency($args){
 function find_members($args){
     // Maybe there'll be a better place to put this at some point...
     global $PAGE, $parties;
-    $db = get_parl_db();
+    $db = getParlDB();
 
 
 
