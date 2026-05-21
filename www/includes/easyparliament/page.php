@@ -1196,7 +1196,7 @@ class PAGE {
 
         if ($page_text == '' && !is_bool($page_text)) {
             // If the metadata 'heading' is set, but empty, we display nothing.
-        } elseif ($page_text == false) {
+        } elseif (!$page_text) {
             // But if it just hasn't been set, we use the 'title'.
             $page_text = $DATA->page_metadata($this_page, "title");
         }
