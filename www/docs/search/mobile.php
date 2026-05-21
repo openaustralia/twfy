@@ -187,14 +187,14 @@ if (get_http_var('s') != '' || get_http_var('pid') != '') {
 
 $PAGE->page_end_mobile();
 function find_comments($args){
-    global $PAGE, $db;
     $commentlist = new COMMENTLIST;
     $commentlist->display('search', $args);
 }
 
 function find_constituency($args){
     // We see if the user is searching for a postcode or constituency.
-    global $PAGE, $db;
+    global $PAGE;
+    $db = get_parl_db();
 
     if ($args['s'] != '') {
         $searchterm = $args['s'];
@@ -276,7 +276,8 @@ function find_constituency($args){
 
 function find_members($args){
     // Maybe there'll be a better place to put this at some point...
-    global $PAGE, $db, $parties;
+    global $PAGE, $parties;
+    $db = get_parl_db();
 
     if ($args['s'] != '') {
         // $args['s'] should have been tidied up by the time we get here.
