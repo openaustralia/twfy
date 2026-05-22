@@ -258,15 +258,6 @@ class Metadata {
             'session_vars' => ['id']
         ],
 
-        'comments_recent' => [
-            'menu' => [
-                'text' => 'Recent comments',
-                'title' => "Recently posted comments"
-            ],
-            'title' => "Recent comments",
-            'url' => 'comments/recent/'
-        ],
-
         'contact' => [
             'title' => 'Contact OpenAustralia.org',
             'url' => 'contact/'
