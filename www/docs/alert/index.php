@@ -19,7 +19,6 @@ include_once __DIR__ . '/../../includes/easyparliament/init.php';
 include_once __DIR__ . '/../../includes/easyparliament/people.php';
 include_once __DIR__ . '/../../includes/easyparliament/member.php';
 include_once __DIR__ . '/../../../../phplib/auth.php';
-include_once __DIR__ . '/../../../../phplib/crosssell.php';
 
 $this_page = "alert";
 
