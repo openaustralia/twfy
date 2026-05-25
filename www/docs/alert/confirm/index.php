@@ -34,7 +34,6 @@
 
 include_once __DIR__ . '/../../../includes/easyparliament/init.php';
 include_once __DIR__ . '/../../../includes/easyparliament/member.php';
-include_once __DIR__ . '/../../../../../phplib/crosssell.php';
 
 // Instantiate an instance of ALERT.
 

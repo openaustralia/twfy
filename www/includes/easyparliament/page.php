@@ -8,7 +8,6 @@ if (defined('OPTION_TRACKING') && OPTION_TRACKING) {
     require_once __DIR__ . '/../../../../phplib/tracking.php';
 }
 
-include_once __DIR__ . '/../../../../phplib/gaze.php';
 include_once __DIR__ . '/member.php';
 include_once __DIR__ . '/../request.php';
 
