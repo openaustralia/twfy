@@ -8,21 +8,27 @@
  * Stub functions that mysql.php depends on at include-time and at runtime.
  * These are replaced by real implementations in the live application.
  */
-function twfy_debug(string $type, string $msg): void {
+if (!function_exists('twfy_debug')) {
+    function twfy_debug(string $type, string $msg): void {
+    }
 }
 
 /**
  *
  */
-function getmicrotime(): float {
-    return microtime(true);
+if (!function_exists('getmicrotime')) {
+    function getmicrotime(): float {
+        return microtime(true);
+    }
 }
 
 /**
  *
  */
-function get_cookie_var(string $varname): string {
-    return $_COOKIE[$varname] ?? '';
+if (!function_exists('get_cookie_var')) {
+    function get_cookie_var(string $varname): string {
+        return $_COOKIE[$varname] ?? '';
+    }
 }
 
 if (!defined('CONSTITUENCY_COOKIE')) {
