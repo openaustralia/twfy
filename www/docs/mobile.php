@@ -195,14 +195,6 @@ $includes = [
     [
         'type' => 'include',
         'content' => 'whatisthissite'
-    ],
-    [
-        'type' => 'include',
-        'content' => 'sitenews_recent'
-    ],
-    [
-        'type' => 'include',
-        'content' => 'comments_recent',
     ]
 ];
 
