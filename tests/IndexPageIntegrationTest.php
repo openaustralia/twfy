@@ -5,53 +5,23 @@
  * Integration test for www/docs/index.php page rendering.
  */
 
-require_once __DIR__ . '/bootstrap.php';
+require_once __DIR__ . '/PageRenderingIntegrationTestCase.php';
 
-use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\PreserveGlobalState;
+use PHPUnit\Framework\Attributes\RunInSeparateProcess;
 
 /**
  * Integration tests for homepage rendering.
  */
-class IndexPageIntegrationTest extends TestCase {
-
-    /**
-     *
-     */
-    public static function setUpBeforeClass(): void {
-        $conn = getSharedTestConnection();
-        if (!$conn) {
-            self::markTestSkipped('Database connection not available');
-        }
-    }
-
-    /**
-     *
-     */
-    protected function setUp(): void {
-        $conn = getSharedTestConnection();
-        if (!$conn) {
-            $this->markTestSkipped('Database connection not available');
-        }
-    }
+class IndexPageIntegrationTest extends PageRenderingIntegrationTestCase {
 
     /**
      * Test that the index page renders without errors.
      */
+    #[RunInSeparateProcess]
+    #[PreserveGlobalState(false)]
     public function test_index_page_renders(): void {
-        $_SERVER['DEVICE_TYPE'] = 'desktop';
-        $_SERVER['REQUEST_METHOD'] = 'GET';
-        $_SERVER['REQUEST_URI'] = '/';
-        $_SERVER['HTTP_HOST'] = 'localhost';
-        $_GET = [];
-        $_POST = [];
-
-        ob_start();
-        include __DIR__ . '/../www/docs/index.php';
-        $output = ob_get_clean();
-
-        $this->assertNotEmpty($output);
-        $this->assertStringContainsString('<html', $output);
-        $this->assertStringContainsString('OpenAustralia', $output);
+        $this->assertPageRenders(__DIR__ . '/../www/docs/index.php', 'desktop');
     }
 
 }
