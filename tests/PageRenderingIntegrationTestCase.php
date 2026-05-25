@@ -2,7 +2,10 @@
 
 /**
  * @file
- * Base test case for page rendering integration tests using process isolation.
+ * Base test case for page rendering integration tests.
+ *
+ * Uses proc_open to run pages in a completely separate PHP process,
+ * avoiding symbol conflicts between the test bootstrap and the application.
  */
 
 require_once __DIR__ . '/bootstrap.php';
@@ -11,9 +14,6 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * Base class for page rendering tests.
- *
- * Subclasses use #[RunInSeparateProcess] to avoid symbol conflicts
- * between the test bootstrap and the application's init.php.
  */
 abstract class PageRenderingIntegrationTestCase extends TestCase {
 
@@ -54,20 +54,47 @@ abstract class PageRenderingIntegrationTestCase extends TestCase {
     }
 
     /**
-     * Render a page script and assert it produces valid output.
+     * Render a page script in a separate process and assert it produces valid output.
      */
     protected function assertPageRenders(string $script, string $deviceType = 'desktop'): string {
-        $_SERVER['DEVICE_TYPE'] = $deviceType;
-        $_SERVER['REQUEST_METHOD'] = 'GET';
-        $_SERVER['REQUEST_URI'] = '/';
-        $_SERVER['HTTP_HOST'] = 'localhost';
-        $_GET = [];
-        $_POST = [];
+        $config = getTestDbConfig();
+        $env = [
+            'DB_HOST' => $config['host'],
+            'DB_USER' => $config['user'],
+            'DB_PASSWORD' => $config['pass'],
+            'DB_NAME' => $config['name'],
+        ];
 
-        ob_start();
-        include $script;
-        $output = ob_get_clean();
+        $cmd = sprintf(
+            'php -d display_errors=stderr -r %s',
+            escapeshellarg(
+                '$_SERVER["DEVICE_TYPE"] = ' . var_export($deviceType, true) . ';' .
+                '$_SERVER["REQUEST_METHOD"] = "GET";' .
+                '$_SERVER["REQUEST_URI"] = "/";' .
+                '$_SERVER["HTTP_HOST"] = "localhost";' .
+                '$_GET = []; $_POST = [];' .
+                'chdir(dirname(' . var_export($script, true) . '));' .
+                'include ' . var_export($script, true) . ';'
+            )
+        );
 
+        $descriptors = [
+            0 => ['pipe', 'r'],
+            1 => ['pipe', 'w'],
+            2 => ['pipe', 'w'],
+        ];
+
+        $process = proc_open($cmd, $descriptors, $pipes, dirname($script), $env + getenv());
+        $this->assertIsResource($process);
+
+        fclose($pipes[0]);
+        $output = stream_get_contents($pipes[1]);
+        $stderr = stream_get_contents($pipes[2]);
+        fclose($pipes[1]);
+        fclose($pipes[2]);
+        $exitCode = proc_close($process);
+
+        $this->assertSame(0, $exitCode, "Page rendered with errors: $stderr");
         $this->assertNotEmpty($output);
         $this->assertStringContainsString('<html', $output);
         $this->assertStringContainsString('OpenAustralia', $output);
