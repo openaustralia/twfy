@@ -534,7 +534,7 @@ class PAGE {
 
         // $img = '<img src="' . IMAGEPATH . 'theyworkforyoucom.gif" width="293" height="28" alt="OpenAustralia.org">';
 
-        $img = '<img src="' . IMAGEPATH . 'openaustraliaorgbeta.gif" width="262" height="32" alt="OpenAustralia.org beta">';
+        $img = '<img src="' . IMAGEPATH . 'openaustraliaorg2026.png" width="262" height="32" alt="OpenAustralia.org">';
 
         // isn't this very hacky? shouldn't we be cobranding cleverly using METADATA? ( I've repeated this below however -stef".
         if (get_http_var('c4')) {
@@ -589,7 +589,7 @@ class PAGE {
 
         // $img = '<img src="' . IMAGEPATH . 'theyworkforyoucom.gif" width="293" height="28" alt="OpenAustralia.org">';
 
-        $img = '<img src="' . IMAGEPATH . 'openaustraliaorgbeta.gif" width="262" height="32" alt="OpenAustralia.org beta">';
+        $img = '<img src="' . IMAGEPATH . 'openaustraliaorg2026.png" width="262" height="32" alt="OpenAustralia.org">';
 
         // isn't this very hacky? shouldn't we be cobranding cleverly using METADATA? ( I've repeated this below however -stef".
         if (get_http_var('c4')) {
