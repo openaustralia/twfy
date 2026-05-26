@@ -82,7 +82,6 @@ class SEARCHLOG {
         $query = $q->field($row, 'query_string');
         // Deduplicate repeated terms (e.g. from bots hitting search with duplicated queries)
         $query = implode(' ', array_unique(explode(' ', $query)));
-        // $this->SEARCHURL->reset();
         $this->SEARCHURL->insert(['s' => $query, 'pop' => 1]);
         $url = $this->SEARCHURL->generate();
         $htmlescape = 1;
