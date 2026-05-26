@@ -306,7 +306,6 @@ function twfy_debug_timestamp($label = "") {
     $timestamp_last = $t;
 }
 
-
 /**
  *
  */
