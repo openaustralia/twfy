@@ -41,11 +41,13 @@ class SEARCHLOG {
      *
      */
     public function add($searchlogdata) {
+        // Deduplicate repeated terms before storing
+        $query = implode(' ', array_unique(explode(' ', $searchlogdata['query'])));
 
         $this->db->query("INSERT INTO search_query_log
             (query_string, page_number, count_hits, ip_address, query_time)
             VALUES (?, ?, ?, ?, NOW())",
-            $searchlogdata['query'],
+            $query,
             $searchlogdata['page'],
             $searchlogdata['hits'],
             ip_address()
@@ -65,7 +67,7 @@ class SEARCHLOG {
                     AND query_time > date_sub(NOW(), INTERVAL 1 DAY)
                 GROUP BY query_string
                 ORDER BY c desc
-                LIMIT $count;");
+                LIMIT ?", $count);
 
         $popular_searches = [];
         for ($row = 0; $row < $q->rows(); $row++) {
@@ -75,10 +77,12 @@ class SEARCHLOG {
     }
 
     /**
-     *
      */
     public function _db_row_to_array($q, $row) {
         $query = $q->field($row, 'query_string');
+        // Deduplicate repeated terms (e.g. from bots hitting search with duplicated queries)
+        $query = implode(' ', array_unique(explode(' ', $query)));
+        // $this->SEARCHURL->reset();
         $this->SEARCHURL->insert(['s' => $query, 'pop' => 1]);
         $url = $this->SEARCHURL->generate();
         $htmlescape = 1;
