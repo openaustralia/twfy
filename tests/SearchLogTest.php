@@ -9,6 +9,24 @@ require_once __DIR__ . '/../www/includes/easyparliament/searchlog.php';
  */
 class SearchLogTest extends TestCase {
 
+    protected function setUp(): void {
+        $_SERVER['REMOTE_ADDR'] = '127.0.0.1';
+    }
+
+    /**
+     * Create a SEARCHLOG instance without invoking the constructor
+     * (which requires URL and DB dependencies).
+     */
+    private function createSearchLog($db): SEARCHLOG {
+        $ref = new ReflectionClass(SEARCHLOG::class);
+        $searchlog = $ref->newInstanceWithoutConstructor();
+
+        $prop = $ref->getProperty('db');
+        $prop->setValue($searchlog, $db);
+
+        return $searchlog;
+    }
+
     /**
      * Test that add() deduplicates repeated terms before storing.
      */
@@ -25,11 +43,7 @@ class SearchLogTest extends TestCase {
                 return $this->createMock(MySQLQuery::class);
             });
 
-        $searchlog = new SEARCHLOG();
-        // Replace the private db property via reflection.
-        $ref = new ReflectionClass($searchlog);
-        $prop = $ref->getProperty('db');
-        $prop->setValue($searchlog, $db);
+        $searchlog = $this->createSearchLog($db);
 
         $searchlog->add([
             'query' => 'speaker:10749 speaker:10749 speaker:10749',
@@ -55,10 +69,7 @@ class SearchLogTest extends TestCase {
                 return $this->createMock(MySQLQuery::class);
             });
 
-        $searchlog = new SEARCHLOG();
-        $ref = new ReflectionClass($searchlog);
-        $prop = $ref->getProperty('db');
-        $prop->setValue($searchlog, $db);
+        $searchlog = $this->createSearchLog($db);
 
         $searchlog->add([
             'query' => 'climate change speaker:10749',
@@ -84,10 +95,7 @@ class SearchLogTest extends TestCase {
                 return $this->createMock(MySQLQuery::class);
             });
 
-        $searchlog = new SEARCHLOG();
-        $ref = new ReflectionClass($searchlog);
-        $prop = $ref->getProperty('db');
-        $prop->setValue($searchlog, $db);
+        $searchlog = $this->createSearchLog($db);
 
         $searchlog->add([
             'query' => 'budget budget speaker:10749 speaker:10749',
@@ -119,10 +127,26 @@ class SearchLogTest extends TestCase {
         $db = $this->createMock(ParlDB::class);
         $db->method('query')->willReturn($mockResult);
 
-        $searchlog = new SEARCHLOG();
+        $searchlog = $this->createSearchLog($db);
+
+        // Set up a simple URL mock that captures the 's' value.
+        $mockUrl = new class {
+            private $session_vars = [];
+            public function reset() { $this->session_vars = []; }
+            public function insert($arr) {
+                foreach ($arr as $k => $v) { $this->session_vars[$k] = $v; }
+            }
+            public function generate($encode = 'html', $overrideVars = []) {
+                $args = [];
+                foreach (array_merge($this->session_vars, $overrideVars) as $k => $v) {
+                    if ($v != null) { $args[] = "$k=" . urlencode($v); }
+                }
+                return '/search/?' . implode('&amp;', $args);
+            }
+        };
         $ref = new ReflectionClass($searchlog);
-        $prop = $ref->getProperty('db');
-        $prop->setValue($searchlog, $db);
+        $prop = $ref->getProperty('SEARCHURL');
+        $prop->setValue($searchlog, $mockUrl);
 
         $results = $searchlog->popular_recent(10);
 

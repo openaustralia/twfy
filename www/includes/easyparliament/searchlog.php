@@ -152,6 +152,3 @@ class SEARCHLOG {
     }
 
 }
-
-global $SEARCHLOG;
-$SEARCHLOG = new SEARCHLOG();

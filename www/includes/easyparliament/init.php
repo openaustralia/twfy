@@ -100,6 +100,10 @@ include_once __DIR__ . '/../easyparliament/user.php';
 include_once __DIR__ . '/../easyparliament/page.php';
 include_once __DIR__ . '/../easyparliament/hansardlist.php';
 include_once __DIR__ . '/../easyparliament/commentlist.php';
+
+// initialise searchlogging
+global $SEARCHLOG;
+$SEARCHLOG = new SEARCHLOG();
 include_once __DIR__ . '/../easyparliament/comment.php';
 include_once __DIR__ . '/../easyparliament/trackback.php';
 
