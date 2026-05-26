@@ -41,7 +41,7 @@ class SEARCHLOG {
      *
      */
     public function add($searchlogdata) {
-        // Deduplicate repeated terms before storing
+        // Deduplicate repeated terms before storing.
         $query = implode(' ', array_unique(explode(' ', $searchlogdata['query'])));
 
         $this->db->query("INSERT INTO search_query_log
