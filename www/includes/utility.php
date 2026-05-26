@@ -56,7 +56,7 @@ function twfy_debug($header, $text = "") {
 }
 
 /**
- *
+ * This is set as the default error handler. Your code tools may try to convince you it isn't used, but it is.
  */
 function error_handler(string $errno, string $errmsg, string $filename, int $linenum, ?array $vars = []) {
     // Custom error-handling function.
@@ -306,25 +306,6 @@ function twfy_debug_timestamp($label = "") {
     $timestamp_last = $t;
 }
 
-/**
- *
- */
-function format_timestamp($timestamp, $format) {
-    // Pass it a MYSQL TIMESTAMP (YYYYMMDDHHMMSS) and a
-    // PHP date format string (eg, "Y-m-d H:i:s")
-    // and it returns a nicely formatted string according to requirements.
-
-    // Because strtotime can't handle TIMESTAMPS.
-
-    if (preg_match("/^(\d\d\d\d)(\d\d)(\d\d)(\d\d)(\d\d)(\d\d)$/", $timestamp, $matches)) {
-        [$string, $year, $month, $day, $hour, $min, $sec] = $matches;
-
-        return gmdate($format, gmmktime($hour, $min, $sec, $month, $day, $year));
-    } else {
-        return "";
-    }
-
-}
 
 /**
  *

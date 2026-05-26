@@ -101,16 +101,6 @@ class URL {
     /**
      *
      */
-    public function restore() {
-        // Call this to reset the session vars to how they were when
-        // the object was instantiated.
-        $this->session_vars = $this->original_session_vars;
-
-    }
-
-    /**
-     *
-     */
     public function reset() {
         // Call this to remove all the session_vars.
         $this->session_vars = [];
@@ -192,60 +182,4 @@ class URL {
             }
         }
     }
-
-    /*     DEPRECATED. Use hidden_form_vars() in utility.php instead. */
-
-    // Use this when you have a form and want to retain some/all of the
-    // variables in the URL get string.
-    // If you have a form that changes, say, $s, then you'll need to
-    // pass "s" in in the $remove_vars array, so it isn't created as a.
-
-    /**
-     * Hidden variable.
-     */
-    public function hidden_form_varsOLD($remove_vars = [], $insert_vars = []) {
-        // This should really be tidied up lots. That $dont_keep array for a start is NASTY!
-        // You can also pass in an array of variables to remove() and insert().
-
-        foreach ($_GET as $key => $val) {
-            $vars[$key] = get_http_var($key);
-        }
-        foreach ($_POST as $key => $val) {
-            $vars[$key] = get_http_var($key);
-        }
-
-        // We'll want to reset things to this when we're done.
-        $old_session_vars = $this->session_vars;
-        $this->reset();
-        $this->insert($vars);
-        $this->remove($remove_vars);
-        $this->insert($insert_vars);
-
-        $html = "";
-
-        // Put keys of any variables you never want to hang on to in here:
-        // VERY BAD!
-        $dont_keep = [];
-        $this->remove($dont_keep);
-
-        foreach ($this->session_vars as $key => $val) {
-            if (!in_array($key, $dont_keep)) {
-                $html .= '<input type="hidden" name="' . $key . '" value="' . $val . "\">\n";
-
-            }
-        }
-
-        // Reset $session_vars to how it was before.
-        // Otherwise if you call functions after you've generated hidden vars
-        // everything will be changed around from how it was before.
-        $this->session_vars = $old_session_vars;
-
-        if ($html != "") {
-            return $html . "\n";
-        } else {
-            return $html;
-        }
-
-    }
-
 }
