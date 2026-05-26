@@ -39,7 +39,7 @@
  * CLASS:  ALERT.
  */
 function suggest_alerts($email, $criteria, $maxresults) {
-    
+
     // Speaker only.
     if (stripos($criteria, "speaker:") == 0) {
         // Find emails who follow this speaker
@@ -48,15 +48,14 @@ function suggest_alerts($email, $criteria, $maxresults) {
         // Select and count criteria.
         $sql = "SELECT count(*) AS c, criteria FROM alerts ";
         // From emails which have the provided criteria/pid.
-        $sql .= "WHERE email = any (SELECT email FROM alerts WHERE criteria like '%$criteria%') ";
+        $sql .= "WHERE email = any (SELECT email FROM alerts WHERE criteria like ?) ";
         // Filter in simple speaker alerts 'speaker:nnnnn'.
-        $sql .= "AND LENGTH(criteria)=13.AND LEFT(criteria,8)='speaker:' ";
+        $sql .= "AND LENGTH(criteria)=13 AND LEFT(criteria,8)='speaker:' ";
         // Disregard any alert of this emailer (already following)
-        $sql .= "AND NOT(criteria=ANY(SELECT criteria FROM alerts WHERE email='$email')) ";
-        // $sql.="AND email like '%foo.test%' "; // filter in my test alerts  // REMOVE ME.
-        // Most commo first.
+        $sql .= "AND NOT(criteria=ANY(SELECT criteria FROM alerts WHERE email= ?)) ";
+        // Most common first.
         $sql .= "GROUP BY criteria ORDER BY c DESC";
-        $q = getParlDB()->query($sql);
+        $q = getParlDB()->query($sql, "%$criteria%", $email);
         $resultcount = $q->rows();
         // If something was returned.
         if ($resultcount > 0) {
@@ -145,7 +144,7 @@ class ALERT {
      *
      */
     public function __construct() {
-        
+
     }
 
     /**
@@ -238,9 +237,7 @@ class ALERT {
         }
 
         $sql = "INSERT INTO alerts (email, criteria, deleted, confirmed, recommended, created) ";
-        $sql .= "VALUES (";
-        $sql .= "'" . getParlDB()->escape($details["email"]) . "',";
-        $sql .= "'" . getParlDB()->escape($criteria) . "', '0','0',";
+        $sql .= "VALUES (?, ?, '0', '0', ";
         // MJ OA-437 add as recommendation.
         if ($details['recommended'] == 1) {
             $sql .= "'1',";
@@ -249,7 +246,7 @@ class ALERT {
         }
         $sql .= "NOW() )";
 
-        $q = getParlDB()->query($sql);
+        $q = getParlDB()->query($sql, $details['email'], $criteria);
 
         if ($q->success()) {
 
@@ -273,9 +270,9 @@ class ALERT {
             // Add that to the database.
 
             $r = getParlDB()->query("UPDATE alerts
-                        SET registrationtoken = '" . getParlDB()->escape($this->registrationtoken) . "'
-                        WHERE alert_id = '" . getParlDB()->escape($this->alert_id) . "'
-						");
+                        SET registrationtoken = ?
+                        WHERE alert_id = ?
+						", $this->registrationtoken, $this->alert_id);
 
             if ($r->success()) {
                 // Updated DB OK.
@@ -295,8 +292,8 @@ class ALERT {
                     // No confirmation email needed.
                     $s = getParlDB()->query("UPDATE alerts
 						SET confirmed = '1'
-                        WHERE alert_id = '" . getParlDB()->escape($this->alert_id) . "'
-						");
+                        WHERE alert_id = ?
+						", $this->alert_id);
                     return 1;
                 }
             } else {
@@ -402,17 +399,17 @@ class ALERT {
 
         $q = getParlDB()->query("SELECT email, criteria
 						FROM alerts
-                        WHERE alert_id = '" . getParlDB()->escape($alert_id) . "'
-                        AND registrationtoken = '" . getParlDB()->escape($registrationtoken) . "'
-						");
+                        WHERE alert_id = ?
+                        AND registrationtoken = ?
+						", $alert_id, $registrationtoken);
 
         if ($q->rows() == 1) {
             $this->criteria = $q->field(0, 'criteria');
             $this->email = $q->field(0, 'email');
             $r = getParlDB()->query("UPDATE alerts
 						SET confirmed = '1', deleted = '0'
-                        WHERE	alert_id = '" . getParlDB()->escape($alert_id) . "'
-						");
+                        WHERE	alert_id = ?
+						", $alert_id);
 
             if ($r->success()) {
                 $this->confirmed = true;
@@ -453,17 +450,17 @@ class ALERT {
 
         $q = getParlDB()->query("SELECT email, criteria
 						FROM alerts
-                        WHERE alert_id = '" . getParlDB()->escape($alert_id) . "'
-                        AND registrationtoken = '" . getParlDB()->escape($registrationtoken) . "'
-						");
+                        WHERE alert_id = ?
+                        AND registrationtoken = ?
+						", $alert_id, $registrationtoken);
 
         if ($q->rows() == 1) {
 
             // Set that they're confirmed in the DB.
             $r = getParlDB()->query("UPDATE alerts
 						SET deleted = '1'
-                        WHERE	alert_id = '" . getParlDB()->escape($alert_id) . "'
-						");
+                        WHERE	alert_id = ?
+						", $alert_id);
 
             if ($r->success()) {
 

@@ -87,8 +87,8 @@ function _api_getMP_row($row) {
     }
 
     // Ministerialships and Select Committees.
-    
-    $q = getParlDB()->query('SELECT * FROM moffice WHERE to_date="9999-12-31" and person=' . $row['person_id'] . ' ORDER BY from_date DESC');
+
+    $q = getParlDB()->query('SELECT * FROM moffice WHERE to_date="9999-12-31" and person = ? ORDER BY from_date DESC', $row['person_id']);
     for ($i = 0; $i < $q->rows(); $i++) {
         $row['office'][] = $q->row($i);
     }
@@ -105,10 +105,10 @@ function _api_getMP_row($row) {
  *
  */
 function api_getMP_id($id) {
-    
+
     $q = getParlDB()->query("select * from member
-		where house=1 and person_id = '" . getParlDB()->escape($id) . "'
-		order by left_house desc");
+		where house=1 and person_id = ?
+		order by left_house desc", $id);
     if ($q->rows()) {
         $output = [];
         $last_mod = 0;
@@ -174,7 +174,7 @@ function api_getMP_constituency($constituency) {
  * Should all be abstracted properly :-/.
  */
 function _api_getMP_constituency($constituency) {
-    
+
 
     if ($constituency == '') {
         return false;
@@ -190,16 +190,16 @@ function _api_getMP_constituency($constituency) {
     }
 
     $q = getParlDB()->query("SELECT * FROM member
-		WHERE constituency = '" . getParlDB()->escape($constituency) . "'
-		AND left_reason = 'still_in_office' AND house=1");
+		WHERE constituency = ?
+		AND left_reason = 'still_in_office' AND house=1", $constituency);
     if ($q->rows > 0) {
         return _api_getMP_row($q->row(0));
     }
 
     if (get_http_var('always_return')) {
         $q = getParlDB()->query("SELECT * FROM member
-			WHERE house=1 AND constituency = '" . getParlDB()->escape($constituency) . "'
-			ORDER BY left_house DESC LIMIT 1");
+			WHERE house=1 AND constituency = ?
+			ORDER BY left_house DESC LIMIT 1", $constituency);
         if ($q->rows > 0) {
             return _api_getMP_row($q->row(0));
         }

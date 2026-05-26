@@ -10,7 +10,7 @@ include_once 'api_getMP.php';
  * Shared API functions for get<Members>
  */
 function _api_getMembers_output($sql, ...$params) {
-    
+
     $q = getParlDB()->query($sql, ...$params);
     $output = [];
     $last_mod = 0;
@@ -99,8 +99,6 @@ function api_getMembers_date($house, $date) {
  *
  */
 function api_getMembers($house, $date = 'now()') {
-    // Needed to call db->escape()
-    
-    _api_getMembers_output('select * from member where house=' . getParlDB()->escape($house) .
-        ' AND entered_house <= date(' . $date . ') and date(' . $date . ') <= left_house');
+    _api_getMembers_output('select * from member where house= ? ' .
+        ' AND entered_house <= date(' . $date . ') and date(' . $date . ') <= left_house', $house);
 }
