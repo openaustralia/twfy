@@ -7,7 +7,7 @@
 include_once __DIR__ . "/../../includes/easyparliament/init.php";
 $this_page = "admin_statistics";
 
-$db = new ParlDB();
+
 
 $PAGE->page_start();
 
@@ -29,11 +29,11 @@ $debate_speeches = $DEBATELIST->total_speeches();
 
 $wrans_questions = $WRANSLIST->total_questions();
 
-$q = $db->query("SELECT min(hdate) as mindate, max(hdate) as maxdate from hansard");
+$q = getParlDB()->query("SELECT min(hdate) as mindate, max(hdate) as maxdate from hansard");
 $datefrom = format_date($q->field(0, 'mindate'), SHORTDATEFORMAT);
 $dateto = format_date($q->field(0, 'maxdate'), SHORTDATEFORMAT);
 
-$q = $db->query("SELECT count(distinct hdate) as count from hansard");
+$q = getParlDB()->query("SELECT count(distinct hdate) as count from hansard");
 $uniquedates = $q->field(0, 'count');
 ?>
 

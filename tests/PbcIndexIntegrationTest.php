@@ -14,7 +14,6 @@ use PHPUnit\Framework\TestCase;
  */
 class PbcIndexIntegrationTest extends TestCase {
 
-    protected $db;
 
     /**
      *
@@ -30,7 +29,6 @@ class PbcIndexIntegrationTest extends TestCase {
      *
      */
     protected function setUp(): void {
-        $this->db = new ParlDB();
 
         // Verify connection exists.
         $conn = getSharedTestConnection();
@@ -43,7 +41,7 @@ class PbcIndexIntegrationTest extends TestCase {
      * Test querying bills table with title and session.
      */
     public function test_query_bills_by_title_and_session(): void {
-        $q = $this->db->query('SELECT id, standingprefix FROM bills WHERE title = ? AND session = ?', 'Test Bill', '2006-07');
+        $q = getParlDB()->query('SELECT id, standingprefix FROM bills WHERE title = ? AND session = ?', 'Test Bill', '2006-07');
         // Query should succeed even if no results.
         $this->assertIsObject($q);
     }
@@ -52,7 +50,7 @@ class PbcIndexIntegrationTest extends TestCase {
      * Test bills table has required columns.
      */
     public function test_bills_table_structure(): void {
-        $q = $this->db->query('DESCRIBE bills');
+        $q = getParlDB()->query('DESCRIBE bills');
         $this->assertIsObject($q);
         $this->assertGreaterThan(0, $q->rows());
     }
@@ -61,7 +59,7 @@ class PbcIndexIntegrationTest extends TestCase {
      * Test querying bills returns zero rows for non-existent bill.
      */
     public function test_query_bills_no_results(): void {
-        $q = $this->db->query('SELECT id, standingprefix FROM bills WHERE title = ? AND session = ?', 'Nonexistent Bill XYZ', '2099-99');
+        $q = getParlDB()->query('SELECT id, standingprefix FROM bills WHERE title = ? AND session = ?', 'Nonexistent Bill XYZ', '2099-99');
         $this->assertSame(0, $q->rows());
     }
 
@@ -69,7 +67,7 @@ class PbcIndexIntegrationTest extends TestCase {
      * Test bills query row counting.
      */
     public function test_bills_query_has_rows_method(): void {
-        $q = $this->db->query('SELECT id FROM bills LIMIT 1');
+        $q = getParlDB()->query('SELECT id FROM bills LIMIT 1');
         // Query object should have rows() method.
         $this->assertTrue(method_exists($q, 'rows'));
     }
@@ -78,7 +76,7 @@ class PbcIndexIntegrationTest extends TestCase {
      * Test bills field extraction.
      */
     public function test_bills_field_extraction(): void {
-        $q = $this->db->query('SELECT id, standingprefix FROM bills LIMIT 1');
+        $q = getParlDB()->query('SELECT id, standingprefix FROM bills LIMIT 1');
         if ($q->rows() > 0) {
             // Method should exist to extract fields.
             $this->assertTrue(method_exists($q, 'field'));

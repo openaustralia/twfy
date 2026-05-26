@@ -14,7 +14,6 @@ use PHPUnit\Framework\TestCase;
  */
 class ApiConvertUrlIntegrationTest extends TestCase {
 
-    protected $db;
 
     /**
      *
@@ -30,7 +29,6 @@ class ApiConvertUrlIntegrationTest extends TestCase {
      *
      */
     protected function setUp(): void {
-        $this->db = new ParlDB();
 
         // Verify connection exists.
         $conn = getSharedTestConnection();
@@ -44,7 +42,7 @@ class ApiConvertUrlIntegrationTest extends TestCase {
      */
     public function test_query_hansard_by_exact_url(): void {
         $url = 'http://example.com/hansard';
-        $q = $this->db->query('SELECT gid, major, htype, subsection_id FROM hansard WHERE source_url = ? ORDER BY gid LIMIT 1', $url);
+        $q = getParlDB()->query('SELECT gid, major, htype, subsection_id FROM hansard WHERE source_url = ? ORDER BY gid LIMIT 1', $url);
         $this->assertIsObject($q);
     }
 
@@ -53,7 +51,7 @@ class ApiConvertUrlIntegrationTest extends TestCase {
      */
     public function test_query_hansard_by_like_url(): void {
         $url_nohash = 'hansard%';
-        $q = $this->db->query('SELECT gid, major, htype, subsection_id FROM hansard WHERE source_url LIKE ? ORDER BY gid LIMIT 1', "%$url_nohash%");
+        $q = getParlDB()->query('SELECT gid, major, htype, subsection_id FROM hansard WHERE source_url LIKE ? ORDER BY gid LIMIT 1', "%$url_nohash%");
         $this->assertIsObject($q);
     }
 
@@ -61,7 +59,7 @@ class ApiConvertUrlIntegrationTest extends TestCase {
      * Test hansard table structure with required columns.
      */
     public function test_hansard_table_columns(): void {
-        $q = $this->db->query('DESCRIBE hansard');
+        $q = getParlDB()->query('DESCRIBE hansard');
         $this->assertIsObject($q);
         $this->assertGreaterThan(0, $q->rows());
     }
@@ -71,7 +69,7 @@ class ApiConvertUrlIntegrationTest extends TestCase {
      */
     public function test_query_hansard_by_epobject_id(): void {
         $epobject_id = 12345;
-        $q = $this->db->query('SELECT gid FROM hansard WHERE epobject_id = ?', $epobject_id);
+        $q = getParlDB()->query('SELECT gid FROM hansard WHERE epobject_id = ?', $epobject_id);
         $this->assertIsObject($q);
     }
 
@@ -80,7 +78,7 @@ class ApiConvertUrlIntegrationTest extends TestCase {
      */
     public function test_hansard_rows_exact_match(): void {
         $url = 'http://example.com/nonexistent';
-        $q = $this->db->query('SELECT gid FROM hansard WHERE source_url = ?', $url);
+        $q = getParlDB()->query('SELECT gid FROM hansard WHERE source_url = ?', $url);
 
         $hasResults = ($q->rows() > 0);
         // Just verify the query method works (may or may not have results)
@@ -92,7 +90,7 @@ class ApiConvertUrlIntegrationTest extends TestCase {
      */
     public function test_hansard_rows_like_match(): void {
         $url_nohash = 'hansard';
-        $q = $this->db->query('SELECT gid FROM hansard WHERE source_url LIKE ?', "%$url_nohash%");
+        $q = getParlDB()->query('SELECT gid FROM hansard WHERE source_url LIKE ?', "%$url_nohash%");
 
         $hasResults = ($q->rows() > 0);
         // Just verify the query method works.
@@ -103,7 +101,7 @@ class ApiConvertUrlIntegrationTest extends TestCase {
      * Test hansard field extraction after successful query.
      */
     public function test_hansard_field_extraction(): void {
-        $q = $this->db->query('SELECT gid, major, htype, subsection_id FROM hansard LIMIT 1');
+        $q = getParlDB()->query('SELECT gid, major, htype, subsection_id FROM hansard LIMIT 1');
 
         if ($q->rows() > 0) {
             // Verify field extraction methods work.
@@ -120,7 +118,7 @@ class ApiConvertUrlIntegrationTest extends TestCase {
     public function test_hansard_bound_url_pattern(): void {
         $url_nohash = 'cmhansrd/cm061004';
         $url_bound = str_replace('cmhansrd/cm', 'cmhansrd/vo', $url_nohash);
-        $q = $this->db->query('SELECT gid FROM hansard WHERE source_url LIKE ? LIMIT 1', "%$url_bound%");
+        $q = getParlDB()->query('SELECT gid FROM hansard WHERE source_url LIKE ? LIMIT 1', "%$url_bound%");
 
         $this->assertIsObject($q);
     }
@@ -131,14 +129,14 @@ class ApiConvertUrlIntegrationTest extends TestCase {
     public function test_multiple_query_attempts(): void {
         $url = 'http://example.com/hansard/061004';
 
-        $q1 = $this->db->query('SELECT gid FROM hansard WHERE source_url = ? LIMIT 1', $url);
+        $q1 = getParlDB()->query('SELECT gid FROM hansard WHERE source_url = ? LIMIT 1', $url);
         $this->assertIsObject($q1);
 
-        $q2 = $this->db->query('SELECT gid FROM hansard WHERE source_url LIKE ? LIMIT 1', "%$url%");
+        $q2 = getParlDB()->query('SELECT gid FROM hansard WHERE source_url LIKE ? LIMIT 1', "%$url%");
         $this->assertIsObject($q2);
 
         $url_bound = str_replace('cmhansrd/cm', 'cmhansrd/vo', $url);
-        $q3 = $this->db->query('SELECT gid FROM hansard WHERE source_url LIKE ? LIMIT 1', "%$url_bound%");
+        $q3 = getParlDB()->query('SELECT gid FROM hansard WHERE source_url LIKE ? LIMIT 1', "%$url_bound%");
         $this->assertIsObject($q3);
     }
 
@@ -146,7 +144,7 @@ class ApiConvertUrlIntegrationTest extends TestCase {
      * Test hansard query for htype values detection.
      */
     public function test_hansard_htype_values(): void {
-        $q = $this->db->query('SELECT DISTINCT htype FROM hansard LIMIT 5');
+        $q = getParlDB()->query('SELECT DISTINCT htype FROM hansard LIMIT 5');
         $this->assertIsObject($q);
     }
 
@@ -155,7 +153,7 @@ class ApiConvertUrlIntegrationTest extends TestCase {
      */
     public function test_hansard_subsection_parent_lookup(): void {
         $subsection_id = 1;
-        $q = $this->db->query('SELECT epobject_id FROM hansard WHERE epobject_id = ?', $subsection_id);
+        $q = getParlDB()->query('SELECT epobject_id FROM hansard WHERE epobject_id = ?', $subsection_id);
         $this->assertIsObject($q);
     }
 

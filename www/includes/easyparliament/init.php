@@ -82,8 +82,14 @@ class ParlDB extends MySQL {
 
 /**
  * Returns the shared ParlDB instance for this request.
+ * In tests, set $GLOBALS['parldb_override'] to inject a mock/test DB.
  */
 function getParlDB() {
+    global $parldb_override;
+    if ($parldb_override !== null) {
+        return $parldb_override;
+    }
+
     static $db = null;
 
     if ($db === null) {
@@ -91,6 +97,13 @@ function getParlDB() {
     }
 
     return $db;
+}
+
+/**
+ * Convenience wrapper for getParlDB()->query().
+ */
+function parlDBQuery($sql, ...$params) {
+    return getParlDB()->query($sql, ...$params);
 }
 
 include_once __DIR__ . '/../url.php';

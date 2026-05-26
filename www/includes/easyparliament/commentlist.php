@@ -34,7 +34,6 @@ include_once __DIR__ . '/../dbtypes.php';
  */
 class COMMENTLIST {
 
-    private $db = null;
     public $page = '';
 
     /**
@@ -43,7 +42,7 @@ class COMMENTLIST {
     public function __construct() {
         global $this_page;
 
-        $this->db = new ParlDB();
+        
 
         // We use this to create permalinks to comments. For the moment we're
         // assuming they're on the same page we're currently looking at:
@@ -194,7 +193,7 @@ class COMMENTLIST {
         // We're NOT getting the comment bodies. Why? Because adding them to this query
         // would fetch the text for the oldest comment on an epobject group, rather
         // than the most recent. So we'll get the comment bodies later...
-        $q = $this->db->query("SELECT MAX(comments.comment_id) AS comment_id,
+        $q = getParlDB()->query("SELECT MAX(comments.comment_id) AS comment_id,
 								MAX(comments.posted) AS posted,
 								COUNT(*) AS total_comments,
 								comments.epobject_id,
@@ -257,7 +256,7 @@ class COMMENTLIST {
 
             $in = implode(', ', $comment_ids);
 
-            $r = $this->db->query("SELECT comment_id,
+            $r = getParlDB()->query("SELECT comment_id,
 									body
 							FROM	comments
 							WHERE	comment_id IN ($in)
@@ -282,7 +281,7 @@ class COMMENTLIST {
         $data['comments'] = $comments;
         $data['results_per_page'] = $num;
         $data['page'] = $page;
-        $q = $this->db->query('SELECT COUNT(DISTINCT(epobject_id)) AS count FROM comments WHERE visible=1 AND user_id=' . $args['user_id']);
+        $q = getParlDB()->query('SELECT COUNT(DISTINCT(epobject_id)) AS count FROM comments WHERE visible=1 AND user_id=' . $args['user_id']);
         $data['total_results'] = $q->field(0, 'count');
         return $data;
 
@@ -337,13 +336,13 @@ class COMMENTLIST {
         if (isset($args['pid']) && is_numeric($args['pid'])) {
             $data['pid'] = $args['pid'];
             $q = 'SELECT title, first_name, last_name, constituency, house FROM member WHERE left_house="9999-12-31" and person_id = ' . $args['pid'];
-            $q = $this->db->query($q);
+            $q = getParlDB()->query($q);
             $data['full_name'] = member_full_name($q->field(0, 'house'), $q->field(0, 'title'), $q->field(0, 'first_name'), $q->field(0, 'last_name'), $q->field(0, 'constituency'));
             $q = 'SELECT COUNT(*) AS count FROM comments,hansard,member WHERE visible=1 AND comments.epobject_id = hansard.epobject_id and hansard.speaker_id = member.member_id and person_id = ' . $args['pid'];
         } else {
             $q = 'SELECT COUNT(*) AS count FROM comments WHERE visible=1';
         }
-        $q = $this->db->query($q);
+        $q = getParlDB()->query($q);
         $data['total_results'] = $q->field(0, 'count');
         return $data;
     }
@@ -390,7 +389,7 @@ class COMMENTLIST {
         $data['search'] = $args['s'];
         // $data['results_per_page'] = $num;
         // $data['page'] = $page;
-        // $q = $this->db->query('SELECT COUNT(*) AS count FROM comments WHERE visible=1');
+        // $q = getParlDB()->query('SELECT COUNT(*) AS count FROM comments WHERE visible=1');
         // $data['total_results'] = $q->field(0, 'count');
         return $data;
     }
@@ -450,7 +449,7 @@ class COMMENTLIST {
      * $gidextra = 'debate';
      * }
      *
-     * $q = $this->db->query ("SELECT epobject_id FROM hansard WHERE gid = 'uk.org.publicwhip/" . $gidextra . '/' . addslashes($args['gid']) . "'");
+     * $q = getParlDB()->query ("SELECT epobject_id FROM hansard WHERE gid = 'uk.org.publicwhip/" . $gidextra . '/' . addslashes($args['gid']) . "'");
      *
      * if ($q->rows() > 0) {
      * unset($args['gid']);
@@ -559,7 +558,7 @@ class COMMENTLIST {
         }
 
         // Finally, do the query!
-        $q = $this->db->query("SELECT $fields
+        $q = getParlDB()->query("SELECT $fields
 						FROM 	comments
 						$join
 						WHERE $where

@@ -17,8 +17,8 @@ function normalise_constituency_name($name) {
  * As I don't want to do 646*2 DB queries!
  */
 function normalise_constituency_names($names) {
-    $db = new ParlDB();
-    $q = $db->query('select constituency.name as name,c_main.name as canonical_name
+    
+    $q = getParlDB()->query('select constituency.name as name,c_main.name as canonical_name
 		from constituency, constituency as c_main
 		where constituency.cons_id = c_main.cons_id
 		and c_main.main_name and constituency.name in ("' . implode('","', array_values($names)) .

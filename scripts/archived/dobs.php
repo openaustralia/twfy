@@ -9,10 +9,9 @@
 
 include '/data/vhost/www.openaustralia.org/includes/easyparliament/init.php';
 include INCLUDESPATH . 'easyparliament/member.php';
-$db = new ParlDB();
 $f = file('../../DoBs.csv');
 foreach ($f as $r) {
     $a = explode('|', $r);
-    $q = $db->query('SELECT person_id FROM member WHERE member_id = ?', $a[0]);
+    $q = getParlDB()->query('SELECT person_id FROM member WHERE member_id = ?', $a[0]);
     print $q->field(0, 'person_id') . '|' . trim($a[1]) . '|' . trim($a[2]) . "\n";
 }

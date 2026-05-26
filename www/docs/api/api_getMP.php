@@ -87,8 +87,8 @@ function _api_getMP_row($row) {
     }
 
     // Ministerialships and Select Committees.
-    $db = new ParlDB();
-    $q = $db->query('SELECT * FROM moffice WHERE to_date="9999-12-31" and person=' . $row['person_id'] . ' ORDER BY from_date DESC');
+    
+    $q = getParlDB()->query('SELECT * FROM moffice WHERE to_date="9999-12-31" and person=' . $row['person_id'] . ' ORDER BY from_date DESC');
     for ($i = 0; $i < $q->rows(); $i++) {
         $row['office'][] = $q->row($i);
     }
@@ -105,9 +105,9 @@ function _api_getMP_row($row) {
  *
  */
 function api_getMP_id($id) {
-    $db = new ParlDB();
-    $q = $db->query("select * from member
-		where house=1 and person_id = '" . $db->escape($id) . "'
+    
+    $q = getParlDB()->query("select * from member
+		where house=1 and person_id = '" . getParlDB()->escape($id) . "'
 		order by left_house desc");
     if ($q->rows()) {
         $output = [];
@@ -174,7 +174,7 @@ function api_getMP_constituency($constituency) {
  * Should all be abstracted properly :-/.
  */
 function _api_getMP_constituency($constituency) {
-    $db = new ParlDB();
+    
 
     if ($constituency == '') {
         return false;
@@ -189,16 +189,16 @@ function _api_getMP_constituency($constituency) {
         $constituency = $normalised;
     }
 
-    $q = $db->query("SELECT * FROM member
-		WHERE constituency = '" . $db->escape($constituency) . "'
+    $q = getParlDB()->query("SELECT * FROM member
+		WHERE constituency = '" . getParlDB()->escape($constituency) . "'
 		AND left_reason = 'still_in_office' AND house=1");
     if ($q->rows > 0) {
         return _api_getMP_row($q->row(0));
     }
 
     if (get_http_var('always_return')) {
-        $q = $db->query("SELECT * FROM member
-			WHERE house=1 AND constituency = '" . $db->escape($constituency) . "'
+        $q = getParlDB()->query("SELECT * FROM member
+			WHERE house=1 AND constituency = '" . getParlDB()->escape($constituency) . "'
 			ORDER BY left_house DESC LIMIT 1");
         if ($q->rows > 0) {
             return _api_getMP_row($q->row(0));

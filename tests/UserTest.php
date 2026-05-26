@@ -15,7 +15,6 @@ use PHPUnit\Framework\TestCase;
  */
 class UserTest extends TestCase {
 
-    protected $db;
     protected $testUserId;
 
     /**
@@ -32,7 +31,6 @@ public static function setUpBeforeClass(): void {
      *
      */
 protected function setUp(): void {
-        $this->db = new ParlDB();
 
         // Verify connection exists.
         $conn = getSharedTestConnection();
@@ -47,7 +45,7 @@ protected function setUp(): void {
 protected function tearDown(): void {
         // Clean up test user.
         if ($this->testUserId) {
-            $this->db->query('DELETE FROM users WHERE user_id = ?', $this->testUserId);
+            getParlDB()->query('DELETE FROM users WHERE user_id = ?', $this->testUserId);
         }
 }
 

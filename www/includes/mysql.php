@@ -17,8 +17,7 @@
  *
  * Then, when you need to do queries, you do:
  *
- * $db = new ParlDB;
- * $q = $db->query("SELECT haddock FROM fish");
+  * $q = getParlDB()->query("SELECT haddock FROM fish");
  *
  * $q is then a MySQLQuery object.
  *
@@ -26,7 +25,7 @@
  * extending MySQL.
  *
  *
- * Call $db->display_total_duration() at the end of a page to send total query time to debug().
+ * Call getParlDB()->display_total_duration() at the end of a page to send total query time to debug().
  *
  *
  * (n is 0-based below...)

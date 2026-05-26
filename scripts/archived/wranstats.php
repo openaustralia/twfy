@@ -7,9 +7,7 @@
 include '/data/vhost/www.openaustralia.org/includes/easyparliament/init.php';
 // Include INCLUDESPATH . 'easyparliament/member.php';.
 
-$db = new ParlDB();
-
-$q = $db->query(
+$q = getParlDB()->query(
     'select person_id, first_name, last_name, constituency,
 		count(hansard.epobject_id) as wrans,
 		sum(yes_votes) + IFNULL((select sum(vote) from uservotes, hansard, member as member2
@@ -35,15 +33,15 @@ for ($i = 0; $i < $q->rows(); $i++) {
     $yes = $q->field($i, 'yes');
     $no = $q->field($i, 'no');
     if ($p_id) {
-        $qq = $db->query('(select hansard.epobject_id from hansard,member,uservotes
+        $qq = getParlDB()->query('(select hansard.epobject_id from hansard,member,uservotes
 			where hansard.epobject_id=uservotes.epobject_id
 				and hansard.speaker_id=member.member_id
-				and person_id = ' . $p_id . ' and major=3 and minor=2 and left_house>curdate())
+				and person_id = ? and major=3 and minor=2 and left_house>curdate())
 		union
 			(select hansard.epobject_id from hansard,member,anonvotes
 			 where hansard.epobject_id=anonvotes.epobject_id
 			 	and hansard.speaker_id=member.member_id
-				and person_id = ' . $p_id . ' and major=3 and minor=2 and left_house>curdate())');
+				and person_id = ? and major=3 and minor=2 and left_house>curdate())', $p_id, $p_id);
         $wrans_with_votes = $qq->rows();
     } else {
         $wrans_with_votes = '';

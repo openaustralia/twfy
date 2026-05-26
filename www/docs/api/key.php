@@ -21,8 +21,8 @@ if ($THEUSER->loggedin()) {
     if (get_http_var('create_key')) {
         create_key(get_http_var('commercial'), get_http_var('reason'));
     }
-    $db = new ParlDB();
-    $q = $db->query('SELECT api_key, commercial, created, reason FROM api_key WHERE user_id = ?', $THEUSER->user_id());
+    
+    $q = getParlDB()->query('SELECT api_key, commercial, created, reason FROM api_key WHERE user_id = ?', $THEUSER->user_id());
     $keys = [];
     for ($i = 0; $i < $q->rows(); $i++) {
         $keys[] = [$q->field($i, 'api_key'), $q->field($i, 'commercial'), $q->field($i, 'created'), $q->field($i, 'reason')];
@@ -42,13 +42,13 @@ if ($THEUSER->loggedin()) {
         }
         echo ', created ', $created;
         echo '</span><br><em>Usage statistics</em>: ';
-        $q = $db->query('SELECT count(*) as count FROM api_stats WHERE api_key="' . $key . '" AND query_time > NOW() - interval 1 day');
+        $q = getParlDB()->query('SELECT count(*) as count FROM api_stats WHERE api_key="' . $key . '" AND query_time > NOW() - interval 1 day');
         $c = $q->field(0, 'count');
         echo "last 24 hours: $c, ";
-        $q = $db->query('SELECT count(*) as count FROM api_stats WHERE api_key="' . $key . '" AND query_time > NOW() - interval 1 week');
+        $q = getParlDB()->query('SELECT count(*) as count FROM api_stats WHERE api_key="' . $key . '" AND query_time > NOW() - interval 1 week');
         $c = $q->field(0, 'count');
         echo "last week: $c, ";
-        $q = $db->query('SELECT count(*) as count FROM api_stats WHERE api_key="' . $key . '" AND query_time > NOW() - interval 1 month');
+        $q = getParlDB()->query('SELECT count(*) as count FROM api_stats WHERE api_key="' . $key . '" AND query_time > NOW() - interval 1 month');
         $c = $q->field(0, 'count');
         echo "last month: $c";
         echo '</p>';
@@ -74,11 +74,11 @@ $PAGE->page_end();
 function create_key($commercial, $reason) {
     global $THEUSER;
     $key = auth_ab64_encode(urandom_bytes(16));
-    $db = new ParlDB();
-    $db->query('INSERT INTO api_key (user_id, api_key, commercial, created, reason) VALUES
+    
+    getParlDB()->query('INSERT INTO api_key (user_id, api_key, commercial, created, reason) VALUES
 		(' . $THEUSER->user_id() . ', "' . $key . '", '
-        . $db->escape($commercial) . ', NOW(), "'
-        . $db->escape($reason) . '")');
+        . getParlDB()->escape($commercial) . ', NOW(), "'
+        . getParlDB()->escape($reason) . '")');
 }
 
 /**

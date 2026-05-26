@@ -9,11 +9,11 @@ include_once __DIR__ . "/../../includes/easyparliament/init.php";
 $dept = get_http_var('dept');
 $PAGE->page_start();
 $PAGE->stripe_start();
-$db = new ParlDB();
+
 
 print '<h2>Departments</h2>';
 
-$q = $db->query('select major,body from hansard,epobject
+$q = getParlDB()->query('select major,body from hansard,epobject
 	where hansard.epobject_id=epobject.epobject_id and major in (3,4) and section_id=0
 	and hdate>(select max(hdate) from hansard where major in (3,4)) - interval 7 day
 	group by body, major

@@ -48,7 +48,6 @@ include_once __DIR__ . "/searchlog.php";
  */
 class HANSARDLIST {
 
-    protected $db;
     protected $listpage;
     protected $commentspage;
     protected $url;
@@ -118,7 +117,7 @@ class HANSARDLIST {
      *
      */
     public function __construct() {
-        $this->db = new ParlDB();
+        
     }
 
     /**
@@ -215,7 +214,7 @@ class HANSARDLIST {
         // Returns number of items in debates or wrans, depending on which class this is,
         // DEBATELIST or WRANSLIST.
 
-        $q = $this->db->query("SELECT COUNT(*) AS count FROM hansard WHERE major='" . $this->major . "'");
+        $q = getParlDB()->query("SELECT COUNT(*) AS count FROM hansard WHERE major='" . $this->major . "'");
 
         return $q->field(0, 'count');
     }
@@ -244,7 +243,7 @@ class HANSARDLIST {
         // What we return.
         $data = [];
 
-        $q = $this->db->query("SELECT MAX(hdate) AS hdate
+        $q = getParlDB()->query("SELECT MAX(hdate) AS hdate
 						FROM 	hansard
 						WHERE	major = '" . $this->major . "'
 						");
@@ -419,7 +418,7 @@ class HANSARDLIST {
         // a vaguely simple way to do this. So this is it for now...
 
         // Find the epobject_id of the previous item (if any):
-        $q = $this->db->query("SELECT epobject_id
+        $q = getParlDB()->query("SELECT epobject_id
 						FROM 	hansard
 						WHERE 	hdate = '" . $itemdata['hdate'] . "'
 						AND 	hpos < '" . $itemdata['hpos'] . "'
@@ -433,7 +432,7 @@ class HANSARDLIST {
         }
 
         // Find the epobject_id of the next item (if any):
-        $q = $this->db->query("SELECT epobject_id
+        $q = getParlDB()->query("SELECT epobject_id
 						FROM 	hansard
 						WHERE 	hdate = '" . $itemdata['hdate'] . "'
 						AND 	hpos > '" . $itemdata['hpos'] . "'
@@ -587,16 +586,16 @@ class HANSARDLIST {
             $URL->reset();
 
             if ($nextorprev == 'next') {
-                $q = $this->db->query("SELECT MIN(hdate) AS hdate
+                $q = getParlDB()->query("SELECT MIN(hdate) AS hdate
 							FROM 	hansard
 							WHERE 	major = '" . $this->major . "'
-							AND		hdate > '" . $this->db->escape($date) . "'
+							AND		hdate > '" . getParlDB()->escape($date) . "'
 							");
             } else {
-                $q = $this->db->query("SELECT MAX(hdate) AS hdate
+                $q = getParlDB()->query("SELECT MAX(hdate) AS hdate
 							FROM 	hansard
 							WHERE 	major = '" . $this->major . "'
-							AND		hdate < '" . $this->db->escape($date) . "'
+							AND		hdate < '" . getParlDB()->escape($date) . "'
 							");
             }
 
@@ -702,13 +701,13 @@ class HANSARDLIST {
 
         twfy_debug(get_class($this), "looking for redirected gid");
         $gid = $this->gidprefix . $args['gid'];
-        $q = $this->db->query("SELECT gid_to FROM gidredirect WHERE gid_from = ?", $gid);
+        $q = getParlDB()->query("SELECT gid_to FROM gidredirect WHERE gid_from = ?", $gid);
         if ($q->rows() == 0) {
             $itemdata = $this->_get_hansard_data($input);
         } else {
             do {
                 $gid = $q->field(0, 'gid_to');
-                $q = $this->db->query("SELECT gid_to FROM gidredirect WHERE gid_from = ?", $gid);
+                $q = getParlDB()->query("SELECT gid_to FROM gidredirect WHERE gid_from = ?", $gid);
             } while ($q->rows() > 0);
             $redirected_gid = $gid;
             twfy_debug(get_class($this), "found redirected gid $redirected_gid");
@@ -797,7 +796,7 @@ class HANSARDLIST {
             }
 
             /* Right back when Lords began, we sent out email alerts when they weren't on the site. So this was to work that. */
-            // $q = $this->db->query('SELECT source_url FROM hansard WHERE gid LIKE "uk.org.publicwhip/lords/'.mysqli_real_escape_string($this->db->conn, $args['gid']).'%"');
+            // $q = getParlDB()->query('SELECT source_url FROM hansard WHERE gid LIKE "uk.org.publicwhip/lords/'.mysqli_real_escape_string(getParlDB()->conn, $args['gid']).'%"');
             // $u = '';
             // if ($q->rows()) {
             // $u = $q->field(0, 'source_url');
@@ -940,7 +939,7 @@ class HANSARDLIST {
 
         $data = [];
 
-        $q = $this->db->query("SELECT DISTINCT(hdate)
+        $q = getParlDB()->query("SELECT DISTINCT(hdate)
 						FROM 	hansard
 						$major
 						ORDER BY hdate DESC
@@ -994,7 +993,7 @@ class HANSARDLIST {
             $majorwhere = '';
         }
 
-        $q = $this->db->query("SELECT hansard.subsection_id, hansard.section_id,
+        $q = getParlDB()->query("SELECT hansard.subsection_id, hansard.section_id,
 					hansard.htype, hansard.gid, hansard.major,
 					hansard.hdate, hansard.htime, hansard.speaker_id,
 					epobject.body, epobject_section.body AS body_section,
@@ -1194,7 +1193,7 @@ class HANSARDLIST {
             }
 
             // Get the data for the gid from the database.
-            $q = $this->db->query(
+            $q = getParlDB()->query(
                 "SELECT hansard.gid,
                                     hansard.hdate,
                                     hansard.section_id,
@@ -1439,9 +1438,9 @@ class HANSARDLIST {
             // 'recentyear' will include all the months that haven't happened yet.
 
             // Find the most recent date we have data for.
-            $q = $this->db->query("SELECT MAX(hdate) AS hdate
+            $q = getParlDB()->query("SELECT MAX(hdate) AS hdate
 							FROM	hansard
-							WHERE	major = '" . $this->db->escape($this->major) . "'
+							WHERE	major = '" . getParlDB()->escape($this->major) . "'
 							");
 
             if ($q->field(0, 'hdate') != null) {
@@ -1501,7 +1500,7 @@ class HANSARDLIST {
             $from = sprintf('%04d-%02d-01', intval($firstyear), intval($firstmonth));
             $to = sprintf('%04d-%02d-%02d', intval($finalyear), intval($finalmonth), date('t', mktime(0, 0, 0, intval($finalmonth), 1, intval($finalyear))));
             // Check there are some dates for this year/month.
-            $q = $this->db->query("SELECT epobject_id
+            $q = getParlDB()->query("SELECT epobject_id
 							FROM	hansard
                             WHERE	hdate >= ?
                             AND 	hdate <= ?
@@ -1528,12 +1527,12 @@ class HANSARDLIST {
         // Get the data...
 
         if ($finalyear > $firstyear || $finalmonth >= $firstmonth) {
-            $where = "AND hdate <= '" . $this->db->escape($final_date) . "'";
+            $where = "AND hdate <= '" . getParlDB()->escape($final_date) . "'";
         } else {
             $where = '';
         }
 
-        $q = $this->db->query("SELECT 	DISTINCT(hdate) AS hdate
+        $q = getParlDB()->query("SELECT 	DISTINCT(hdate) AS hdate
 						FROM		hansard
 						WHERE		major = ?
                         AND			hdate >= ?
@@ -1613,14 +1612,14 @@ class HANSARDLIST {
                 $nextprev['prev'] = ['body' => 'Previous year'];
                 $nextprev['next'] = ['body' => 'Next year'];
 
-                $q = $this->db->query("SELECT DATE_FORMAT(hdate, '%Y') AS year
+                $q = getParlDB()->query("SELECT DATE_FORMAT(hdate, '%Y') AS year
 							FROM hansard WHERE major = " . $this->major . "
 							AND year(hdate) < " . $firstyear . "
 							ORDER BY hdate DESC
 							LIMIT 1");
 
                 $prevyear = $q->field(0, 'year');
-                $q = $this->db->query("SELECT DATE_FORMAT(hdate, '%Y') AS year
+                $q = getParlDB()->query("SELECT DATE_FORMAT(hdate, '%Y') AS year
 							FROM hansard WHERE major = " . $this->major . "
 							AND year(hdate) > " . $finalyear . "
 							ORDER BY hdate
@@ -1730,7 +1729,7 @@ class HANSARDLIST {
         $wherearr2 = [];
         // Construct the $where clause.
         foreach ($wherearr as $key => $val) {
-            $wherearr2[] = "$key'" . $this->db->escape($val) . "'";
+            $wherearr2[] = "$key'" . getParlDB()->escape($val) . "'";
         }
         $where = implode(" AND ", $wherearr2);
 
@@ -1742,7 +1741,7 @@ class HANSARDLIST {
         }
 
         // Finally, do the query!
-        $q = $this->db->query("SELECT $fields
+        $q = getParlDB()->query("SELECT $fields
 						FROM 	hansard
 						$join
 						WHERE $where
@@ -1790,7 +1789,7 @@ class HANSARDLIST {
                         $where = "subsection_id = '" . $item['epobject_id'] . "'";
                     }
 
-                    $r = $this->db->query("SELECT COUNT(*) AS count
+                    $r = getParlDB()->query("SELECT COUNT(*) AS count
 									FROM 	hansard
 									WHERE 	$where
 									AND htype = 12
@@ -1813,12 +1812,12 @@ class HANSARDLIST {
                         $item['htype'] == '11')
                 ) {
                     if ($item['htype'] == '10') {
-                        $where = "hansard.section_id = '" . $this->db->escape($item['epobject_id']) . "'
-                                    AND hansard.subsection_id = '" . $this->db->escape($item['epobject_id']) . "'";
+                        $where = "hansard.section_id = '" . getParlDB()->escape($item['epobject_id']) . "'
+                                    AND hansard.subsection_id = '" . getParlDB()->escape($item['epobject_id']) . "'";
                     } elseif ($item['htype'] == '11') {
-                        $where = "hansard.subsection_id = '" . $this->db->escape($item['epobject_id']) . "'";
+                        $where = "hansard.subsection_id = '" . getParlDB()->escape($item['epobject_id']) . "'";
                     }
-                    $r = $this->db->query("SELECT epobject.body
+                    $r = getParlDB()->query("SELECT epobject.body
                                     FROM 	hansard,
                                             epobject
                                     WHERE	$where
@@ -1917,9 +1916,9 @@ class HANSARDLIST {
         $votes = [];
 
         // YES user votes.
-        $q = $this->db->query("SELECT COUNT(vote) as totalvotes
+        $q = getParlDB()->query("SELECT COUNT(vote) as totalvotes
 						FROM	uservotes
-						WHERE	epobject_id = '" . $this->db->escape($epobject_id) . "'
+						WHERE	epobject_id = '" . getParlDB()->escape($epobject_id) . "'
 						AND 	vote = '1'
 						GROUP BY epobject_id");
 
@@ -1930,9 +1929,9 @@ class HANSARDLIST {
         }
 
         // NO user votes.
-        $q = $this->db->query("SELECT COUNT(vote) as totalvotes
+        $q = getParlDB()->query("SELECT COUNT(vote) as totalvotes
 						FROM	uservotes
-						WHERE	epobject_id = '" . $this->db->escape($epobject_id) . "'
+						WHERE	epobject_id = '" . getParlDB()->escape($epobject_id) . "'
 						AND 	vote = '0'
 						GROUP BY epobject_id");
 
@@ -1944,10 +1943,10 @@ class HANSARDLIST {
 
         // Get the anon votes for each item.
 
-        $q = $this->db->query("SELECT yes_votes,
+        $q = getParlDB()->query("SELECT yes_votes,
 								no_votes
 						FROM	anonvotes
-						WHERE	epobject_id = '" . $this->db->escape($epobject_id) . "'");
+						WHERE	epobject_id = '" . getParlDB()->escape($epobject_id) . "'");
 
         if ($q->rows() > 0) {
             $votes['anon']['yes'] = $q->field(0, 'yes_votes');
@@ -2012,9 +2011,9 @@ class HANSARDLIST {
             } else {
                 // We haven't cached the gid, so fetch from db.
 
-                $r = $this->db->query("SELECT gid
+                $r = getParlDB()->query("SELECT gid
 								FROM 	hansard
-								WHERE	epobject_id = '" . $this->db->escape($parent_epobject_id) . "'
+								WHERE	epobject_id = '" . getParlDB()->escape($parent_epobject_id) . "'
 								");
 
                 if ($r->rows() > 0) {
@@ -2058,14 +2057,14 @@ class HANSARDLIST {
             if (!isset($this->speakers[$speaker_id])) {
                 // Speaker isn't cached, so fetch the data.
 
-                $q = $this->db->query("SELECT title, first_name,
+                $q = getParlDB()->query("SELECT title, first_name,
 										last_name,
 										house,
 										constituency,
 										party,
                                         person_id
 								FROM 	member
-						WHERE	member_id = '" . $this->db->escape($speaker_id) . "'");
+						WHERE	member_id = '" . getParlDB()->escape($speaker_id) . "'");
                 if ($q->rows() > 0) {
                     // *SHOULD* only get one row back here...
                     $house = $q->field(0, 'house');
@@ -2101,7 +2100,7 @@ class HANSARDLIST {
                         $speaker['party'] = $parties[$speaker['party']];
                     }
 
-                    $q = $this->db->query("SELECT dept, position FROM moffice WHERE person=$speaker[person_id]
+                    $q = getParlDB()->query("SELECT dept, position FROM moffice WHERE person=$speaker[person_id]
 								AND to_date>='$hdate' AND from_date<='$hdate'");
                     if ($q->rows() > 0) {
                         for ($row = 0; $row < $q->rows(); $row++) {
@@ -2158,14 +2157,14 @@ class HANSARDLIST {
                 // Not doing this for Wrans sections because we don't
                 // need it anywhere. Arbitrary but it'll save us MySQL time!
 
-                $q = $this->db->query("SELECT c.comment_id,
+                $q = getParlDB()->query("SELECT c.comment_id,
 									c.user_id,
 									c.body,
 									c.posted,
 									u.firstname,
 									u.lastname
 							FROM	comments c, users u
-                            WHERE	c.epobject_id = '" . $this->db->escape($item_data['epobject_id']) . "'
+                            WHERE	c.epobject_id = '" . getParlDB()->escape($item_data['epobject_id']) . "'
                             AND		c.user_id = u.user_id
 							AND		c.visible = 1
 							ORDER BY c.posted ASC
@@ -2223,10 +2222,10 @@ class HANSARDLIST {
         } else {
             // Just getting a count of the comments on this item.
             $from = "comments";
-            $where = "epobject_id = '" . $this->db->escape($item_data['epobject_id']) . "'";
+            $where = "epobject_id = '" . getParlDB()->escape($item_data['epobject_id']) . "'";
         }
 
-        $q = $this->db->query("SELECT COUNT(*) AS count
+        $q = getParlDB()->query("SELECT COUNT(*) AS count
 						FROM 	$from
 						WHERE	$where
 						AND		visible = 1
@@ -2538,7 +2537,7 @@ class WMSLIST extends WRANSLIST {
      *
      */
     public function __construct() {
-        $this->db = new ParlDB();
+        
         $this->gidprefix .= 'wms/';
     }
 
@@ -2629,7 +2628,7 @@ class SPWRANSLIST extends WRANSLIST {
      *
      */
     public function get_gid_from_spid($spid) {
-        $q = $this->db->query("select gid from hansard where gid like 'uk.org.publicwhip/spwa/%.$spid.h'");
+        $q = getParlDB()->query("select gid from hansard where gid like 'uk.org.publicwhip/spwa/%.$spid.h'");
         $gid = $q->field(0, 'gid');
         if ($gid) {
             return str_replace('uk.org.publicwhip/spwa/', '', $gid);
@@ -2702,7 +2701,7 @@ class DEBATELIST extends HANSARDLIST {
             $items_to_list = 5;
         }
 
-        $q = $this->db->query("SELECT subsection_id,
+        $q = getParlDB()->query("SELECT subsection_id,
 								section_id,
 								htype,
 								gid,
@@ -2778,7 +2777,7 @@ class DEBATELIST extends HANSARDLIST {
      */
     public function total_speeches() {
 
-        $q = $this->db->query("SELECT COUNT(*) AS count FROM hansard WHERE major='" . $this->major . "' AND htype = 12");
+        $q = getParlDB()->query("SELECT COUNT(*) AS count FROM hansard WHERE major='" . $this->major . "' AND htype = 12");
 
         return $q->field(0, 'count');
     }
@@ -2820,11 +2819,11 @@ class DEBATELIST extends HANSARDLIST {
         }
 
         if ($args['num'] == 1) {
-            $datewhere = "h.hdate = '" . $this->db->escape($recentday['hdate']) . "'";
+            $datewhere = "h.hdate = '" . getParlDB()->escape($recentday['hdate']) . "'";
         } else {
             $firstdate = gmdate('Y-m-d', $recentday['timestamp'] - (86400 * $args['days']));
-            $datewhere = "h.hdate >= '" . $this->db->escape($firstdate) . "'
-						AND		h.hdate <= '" . $this->db->escape($recentday['hdate']) . "'";
+            $datewhere = "h.hdate >= '" . getParlDB()->escape($firstdate) . "'
+						AND		h.hdate <= '" . getParlDB()->escape($recentday['hdate']) . "'";
         }
 
         $sql = "SELECT COUNT(*) AS count,
@@ -2842,9 +2841,9 @@ class DEBATELIST extends HANSARDLIST {
 						AND 	sech.epobject_id = h.subsection_id
 						GROUP BY h.subsection_id , h.hdate
 						ORDER BY count DESC
-						LIMIT 	" . $this->db->escape($args['num']) . "
+						LIMIT 	" . getParlDB()->escape($args['num']) . "
 						";
-        $q = $this->db->query($sql);
+        $q = getParlDB()->query($sql);
 
         for ($row = 0; $row < $q->rows; $row++) {
 
@@ -2878,9 +2877,9 @@ class DEBATELIST extends HANSARDLIST {
             // of the parent section, so let's get that.
             if ($item_data['htype'] == 11) {
 
-                $r = $this->db->query("SELECT body
+                $r = getParlDB()->query("SELECT body
 								FROM	epobject
-						WHERE	epobject_id = '" . $this->db->escape($item_data['section_id']) . "'");
+						WHERE	epobject_id = '" . getParlDB()->escape($item_data['section_id']) . "'");
                 if ($r->rows() > 0) {
                     $debate['body'] = $r->field(0, 'body') . ' | ' . $debate['body'];
                 }
@@ -2930,7 +2929,7 @@ class WRANSLIST extends HANSARDLIST {
      *
      */
     public function total_questions() {
-        $q = $this->db->query("SELECT COUNT(*) AS count FROM hansard WHERE major='" . $this->major . "' AND minor = 1");
+        $q = getParlDB()->query("SELECT COUNT(*) AS count FROM hansard WHERE major='" . $this->major . "' AND minor = 1");
         return $q->field(0, 'count');
     }
 
@@ -2948,13 +2947,13 @@ class WRANSLIST extends HANSARDLIST {
         $offset = ($page - 1) * 20;
         $limit = 20;
         $person_id = $args['person_id'];
-        // $q = $this->db->query("SELECT COUNT(gid) AS count FROM hansard h, member m
+        // $q = getParlDB()->query("SELECT COUNT(gid) AS count FROM hansard h, member m
         // WHERE major = 3 AND htype = 12 AND minor = 1
         // AND h.speaker_id = m.member_id
         // AND person_id = $person_id");
         // $total_results = $q->field(0, 'count');
         $total_results = 0;
-        $q = $this->db->query("SELECT e.body, es.body AS section_body, ess.body AS subsection_body,
+        $q = getParlDB()->query("SELECT e.body, es.body AS section_body, ess.body AS subsection_body,
 						h.hdate, h.htype, h.gid, h.subsection_id, h.section_id, h.epobject_id
 					FROM hansard h, epobject e, epobject es, epobject ess, member m
 					WHERE h.htype = 12 AND major = 3 AND minor = 1
@@ -2969,7 +2968,7 @@ class WRANSLIST extends HANSARDLIST {
             $subsection_id = $q->field($row, 'subsection_id');
             $section_body = $q->field($row, 'section_body');
             $subsection_body = $q->field($row, 'subsection_body');
-            $r = $this->db->query("SELECT e.body
+            $r = getParlDB()->query("SELECT e.body
 							FROM	hansard h, epobject e
 							WHERE	h.epobject_id = e.epobject_id
 							AND	minor = 2
@@ -3019,11 +3018,11 @@ class WRANSLIST extends HANSARDLIST {
         }
 
         if ($args['num'] == 1) {
-            $datewhere = "h.hdate = '" . $this->db->escape($recentday['hdate']) . "'";
+            $datewhere = "h.hdate = '" . getParlDB()->escape($recentday['hdate']) . "'";
         } else {
             $firstdate = gmdate('Y-m-d', $recentday['timestamp'] - (86400 * $args['days']));
-            $datewhere = "h.hdate >= '" . $this->db->escape($firstdate) . "'
-						AND		h.hdate <= '" . $this->db->escape($recentday['hdate']) . "'";
+            $datewhere = "h.hdate >= '" . getParlDB()->escape($firstdate) . "'
+						AND		h.hdate <= '" . getParlDB()->escape($recentday['hdate']) . "'";
         }
 
         // Get a random selection of subsections in wrans.
@@ -3032,7 +3031,7 @@ class WRANSLIST extends HANSARDLIST {
         } else {
             $htype = 'htype = 11 and section_id != 0';
         }
-        $q = $this->db->query("SELECT e.body,
+        $q = getParlDB()->query("SELECT e.body,
 								h.hdate,
 								h.htype,
 								h.gid,
@@ -3046,7 +3045,7 @@ class WRANSLIST extends HANSARDLIST {
 						AND		$datewhere
 						AND		h.epobject_id = e.epobject_id
 						ORDER BY RAND()
-                        LIMIT 	" . $this->db->escape($args['num']) . "");
+                        LIMIT 	" . getParlDB()->escape($args['num']) . "");
 
         for ($row = 0; $row < $q->rows(); $row++) {
             // This array just used for getting further data about this debate.
@@ -3068,7 +3067,7 @@ class WRANSLIST extends HANSARDLIST {
             // Get the parent section for this item.
             $parentbody = '';
             if ($q->field($row, 'section_id')) {
-                $r = $this->db->query("SELECT e.body
+                $r = getParlDB()->query("SELECT e.body
 							FROM	hansard h, epobject e
 							WHERE	h.epobject_id = e.epobject_id
 							AND		h.epobject_id = '" . $q->field($row, 'section_id') . "'
@@ -3077,7 +3076,7 @@ class WRANSLIST extends HANSARDLIST {
             }
 
             // Get the question for this item.
-            $r = $this->db->query("SELECT e.body,
+            $r = getParlDB()->query("SELECT e.body,
 									h.speaker_id, h.hdate
 							FROM	hansard h, epobject e
 							WHERE	h.epobject_id = e.epobject_id
@@ -3139,11 +3138,11 @@ class StandingCommittee extends DEBATELIST {
      */
     public function _get_committee($bill_id) {
         include_once __DIR__ . "/../easyparliament/member.php";
-        $q = $this->db->query('select count(*) as c from hansard where major=6 and minor=' .
-            $this->db->escape($bill_id) . ' and htype=10');
+        $q = getParlDB()->query('select count(*) as c from hansard where major=6 and minor=' .
+            getParlDB()->escape($bill_id) . ' and htype=10');
         $sittings = $q->field(0, 'c');
-        $q = $this->db->query('select member_id,sum(attending) as attending, sum(chairman) as chairman
-			from pbc_members where bill_id=' . $this->db->escape($bill_id)
+        $q = getParlDB()->query('select member_id,sum(attending) as attending, sum(chairman) as chairman
+			from pbc_members where bill_id=' . getParlDB()->escape($bill_id)
             . ' group by member_id');
         $comm = ['sittings' => $sittings];
         for ($i = 0; $i < $q->rows(); $i++) {
@@ -3219,13 +3218,13 @@ class StandingCommittee extends DEBATELIST {
     public function _get_data_by_session($args) {
         global $DATA, $this_page;
         $session = $args['session'];
-        $e_session = $this->db->escape($session);
-        $q = $this->db->query('select id, title from bills where session="' . $e_session . '" order by title');
+        $e_session = getParlDB()->escape($session);
+        $q = getParlDB()->query('select id, title from bills where session="' . $e_session . '" order by title');
         $bills = [];
         for ($i = 0; $i < $q->rows(); $i++) {
             $bills[$q->field($i, 'id')] = $q->field($i, 'title');
         }
-        $q = $this->db->query('select minor,count(*) as c from hansard where major=6 and htype=12
+        $q = getParlDB()->query('select minor,count(*) as c from hansard where major=6 and htype=12
 			and minor in (' . implode(',', array_keys($bills)) . ')
 			group by minor');
         $counts = [];
@@ -3236,7 +3235,7 @@ class StandingCommittee extends DEBATELIST {
             // $comments[$minor] = 0;
         }
         /*
-        $q = $this->db->query('select minor,epobject_id from hansard where major=6 and htype=10
+        $q = getParlDB()->query('select minor,epobject_id from hansard where major=6 and htype=10
         and minor in (' . implode(',', array_keys($bills)) . ')');
         for ($i=0; $i<$q->rows(); $i++) {
         $comments[$q->field($i, 'minor')] += $this->_get_comment_count_for_epobject(array(
@@ -3259,9 +3258,9 @@ class StandingCommittee extends DEBATELIST {
         $nextprev = [];
         $nextprev['prev'] = ['body' => 'Previous session', 'title' => ''];
         $nextprev['next'] = ['body' => 'Next session', 'title' => ''];
-        $q = $this->db->query("SELECT session FROM bills WHERE session < '" . $e_session . "' ORDER BY session DESC LIMIT 1");
+        $q = getParlDB()->query("SELECT session FROM bills WHERE session < '" . $e_session . "' ORDER BY session DESC LIMIT 1");
         $prevyear = $q->field(0, 'session');
-        $q = $this->db->query("SELECT session FROM bills WHERE session > '" . $e_session . "' ORDER BY session ASC LIMIT 1");
+        $q = getParlDB()->query("SELECT session FROM bills WHERE session > '" . $e_session . "' ORDER BY session ASC LIMIT 1");
         $nextyear = $q->field(0, 'session');
         if ($prevyear) {
             $nextprev['prev']['url'] = $YEARURL->generate() . $prevyear . '/';
@@ -3281,7 +3280,7 @@ class StandingCommittee extends DEBATELIST {
         if (!isset($args['num'])) {
             $args['num'] = 20;
         }
-        $q = $this->db->query('select gid, minor, hdate from hansard
+        $q = getParlDB()->query('select gid, minor, hdate from hansard
 			where htype=10 and major=6
 			order by hdate desc limit ' . $args['num']);
         $data = [];
@@ -3289,7 +3288,7 @@ class StandingCommittee extends DEBATELIST {
             $minor = $q->field($i, 'minor');
             $gid = $q->field($i, 'gid');
             $hdate = format_date($q->field($i, 'hdate'), LONGDATEFORMAT);
-            $qq = $this->db->query('select title, session from bills where id=' . $minor);
+            $qq = getParlDB()->query('select title, session from bills where id=' . $minor);
             $title = $qq->field(0, 'title');
             $session = $qq->field(0, 'session');
             preg_match('#_(\d\d)-(\d)_#', $gid, $m);

@@ -10,13 +10,12 @@
  */
 class PEOPLE {
 
-    private $db = null;
 
     /**
      *
      */
     public function __construct() {
-        $this->db = new ParlDB();
+        
     }
 
     /**
@@ -142,7 +141,7 @@ class PEOPLE {
             }
         }
 
-        $q = $this->db->query($query . "ORDER BY $sqlorder");
+        $q = getParlDB()->query($query . "ORDER BY $sqlorder");
 
         $data = [];
 

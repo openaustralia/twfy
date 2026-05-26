@@ -591,8 +591,8 @@ function search_by_usage($search, $house = 0) {
     // Fetch all the speakers of the results, count them up and get min/max date usage.
     $speaker_count = [];
     $gids = implode('","', $gids);
-    $db = new ParlDB();
-    $q = $db->query('SELECT gid,speaker_id,hdate FROM hansard WHERE gid IN ("' . $gids . '")');
+    
+    $q = getParlDB()->query('SELECT gid,speaker_id,hdate FROM hansard WHERE gid IN ("' . $gids . '")');
     for ($n = 0; $n < $q->rows(); $n++) {
         $gid = $q->field($n, 'gid');
         // This is member ID.
@@ -615,7 +615,7 @@ function search_by_usage($search, $house = 0) {
     // Fetch details of all the speakers.
     if (count($speaker_count)) {
         $speaker_ids = implode(',', array_keys($speaker_count));
-        $q = $db->query('SELECT member_id, person_id, title,first_name,last_name,constituency,house,party,
+        $q = getParlDB()->query('SELECT member_id, person_id, title,first_name,last_name,constituency,house,party,
                                 moffice_id, dept, position, from_date, to_date, left_house
                             FROM member LEFT JOIN moffice ON member.person_id = moffice.person
                             WHERE member_id IN (' . $speaker_ids . ')

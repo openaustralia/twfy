@@ -34,7 +34,7 @@ function error($s) {
  *
  */
 function get_person_id($c) {
-    $db = new ParlDB();
+    
     if ($c == '') {
         return false;
     }
@@ -45,7 +45,7 @@ function get_person_id($c) {
     if ($n) {
         $c = $n;
     }
-    $q = $db->query("SELECT person_id FROM member
+    $q = getParlDB()->query("SELECT person_id FROM member
 		WHERE constituency = ?
 		AND left_reason = 'still_in_office' AND house=1", $c);
     if ($q->rows > 0) {

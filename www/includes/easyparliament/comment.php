@@ -22,7 +22,6 @@
  */
 class COMMENT {
 
-    private $db = null;
 
     public $comment_id = '';
     public $user_id = '';
@@ -52,7 +51,7 @@ class COMMENT {
      */
     public function __construct($comment_id = '') {
 
-        $this->db = new ParlDB();
+        
 
         // Set in init.php.
         if (ALLOWCOMMENTS) {
@@ -64,7 +63,7 @@ class COMMENT {
         if (is_numeric($comment_id)) {
             // We're getting the data for an existing comment from the DB.
 
-            $q = $this->db->query("SELECT user_id,
+            $q = getParlDB()->query("SELECT user_id,
 									epobject_id,
 									body,
 									posted,
@@ -228,7 +227,7 @@ class COMMENT {
 
         $flood_time_limit = 60; // How many seconds until a user can post again?
 
-        $q = $this->db->query("SELECT comment_id
+        $q = getParlDB()->query("SELECT comment_id
         FROM    comments
         WHERE    user_id = '" . $THEUSER->user_id() . "'
         AND        posted + 0 > NOW() - $flood_time_limit");
@@ -253,10 +252,10 @@ class COMMENT {
 
         $posted = date('Y-m-d H:i:s', time());
 
-        $q_gid = $this->db->query("select gid from hansard where epobject_id = '" . addslashes($data['epobject_id']) . "'");
+        $q_gid = getParlDB()->query("select gid from hansard where epobject_id = '" . addslashes($data['epobject_id']) . "'");
         $data['gid'] = $q_gid->field(0, 'gid');
 
-        $q = $this->db->query("INSERT INTO comments
+        $q = getParlDB()->query("INSERT INTO comments
 						(user_id, epobject_id, body, posted, visible, original_gid)
 						VALUES
 						(
@@ -330,7 +329,7 @@ class COMMENT {
             $PAGE->error_message("Why are you trying to switch this comment's modflag to '" . htmlentities($switch) . "'!");
         }
 
-        $q = $this->db->query("UPDATE comments
+        $q = getParlDB()->query("UPDATE comments
 						SET		modflagged = $flag
 						WHERE 	comment_id = '" . $this->comment_id . "'
 						");
@@ -358,7 +357,7 @@ class COMMENT {
         global $THEUSER, $PAGE;
 
         if ($THEUSER->is_able_to('deletecomment')) {
-            $q = $this->db->query("UPDATE comments SET visible = '0' WHERE comment_id = '" . $this->comment_id . "'");
+            $q = getParlDB()->query("UPDATE comments SET visible = '0' WHERE comment_id = '" . $this->comment_id . "'");
 
             if ($q->success()) {
                 return true;
@@ -391,7 +390,7 @@ class COMMENT {
 
         if ($this->url == '') {
 
-            $q = $this->db->query("SELECT major,
+            $q = getParlDB()->query("SELECT major,
 									gid
 							FROM	hansard
 							WHERE	epobject_id = '" . addslashes($this->epobject_id) . "'
@@ -422,7 +421,7 @@ class COMMENT {
         // Gets and sets the user's name who posted the comment.
 
         if ($this->firstname == '' && $this->lastname == '') {
-            $q = $this->db->query("SELECT firstname,
+            $q = getParlDB()->query("SELECT firstname,
 									lastname
 							FROM	users
 							WHERE	user_id = '" . addslashes($this->user_id) . "'

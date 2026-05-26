@@ -20,7 +20,6 @@
  */
 class COMMENTREPORT {
 
-    private $db = null;
 
     public $report_id = '';
     public $comment_id = '';
@@ -65,11 +64,11 @@ class COMMENTREPORT {
     public function __construct($report_id = '') {
         // Pass it a report id and it gets and sets this report's data.
 
-        $this->db = new ParlDB();
+        
 
         if (is_numeric($report_id)) {
 
-            $q = $this->db->query("SELECT commentreports.comment_id,
+            $q = getParlDB()->query("SELECT commentreports.comment_id,
 									commentreports.user_id,
 									commentreports.body,
 									DATE_FORMAT(commentreports.reported, '" . SHORTDATEFORMAT_SQL . ' ' . TIMEFORMAT_SQL . "') AS reported,
@@ -85,7 +84,7 @@ class COMMENTREPORT {
 									users.lastname AS u_lastname
 							FROM	commentreports,
 									users
-                            WHERE	commentreports.report_id = '" . $this->db->escape($report_id) . "'
+                            WHERE	commentreports.report_id = '" . getParlDB()->escape($report_id) . "'
 							AND		commentreports.user_id = users.user_id
 							");
 
@@ -112,7 +111,7 @@ class COMMENTREPORT {
                     $this->user_id = $q->field(0, 'user_id');
                 }
             } else {
-                $q = $this->db->query("SELECT commentreports.comment_id,
+                $q = getParlDB()->query("SELECT commentreports.comment_id,
 									commentreports.user_id,
 									commentreports.body,
 									DATE_FORMAT(commentreports.reported, '" . SHORTDATEFORMAT_SQL . ' ' . TIMEFORMAT_SQL . "') AS reported,
@@ -125,7 +124,7 @@ class COMMENTREPORT {
 									commentreports.lastname,
 									commentreports.email
 							FROM	commentreports
-                            WHERE	commentreports.report_id = '" . $this->db->escape($report_id) . "'");
+                            WHERE	commentreports.report_id = '" . getParlDB()->escape($report_id) . "'");
 
                 if ($q->rows() > 0) {
                     $this->report_id = $report_id;
@@ -279,7 +278,7 @@ class COMMENTREPORT {
             // How many seconds until a user can post again?
             $flood_time_limit = 20;
 
-            $q = $this->db->query("SELECT report_id
+            $q = getParlDB()->query("SELECT report_id
 							FROM	commentreports
 							WHERE	user_id = '" . $THEUSER->user_id() . "'
 							AND		reported + 0 > NOW() - $flood_time_limit");
@@ -299,26 +298,26 @@ class COMMENTREPORT {
         if ($THEUSER->isloggedin()) {
             $sql = "INSERT INTO commentreports
 									(comment_id, body, reported, user_id)
-                            VALUES	('" . $this->db->escape($COMMENT->comment_id()) . "',
-                                    '" . $this->db->escape($body) . "',
+                            VALUES	('" . getParlDB()->escape($COMMENT->comment_id()) . "',
+                                    '" . getParlDB()->escape($body) . "',
 									'$time',
-                                    '" . $this->db->escape($THEUSER->user_id()) . "'
+                                    '" . getParlDB()->escape($THEUSER->user_id()) . "'
 									)
 						";
         } else {
             $sql = "INSERT INTO commentreports
 									(comment_id, body, reported, firstname, lastname, email)
-                            VALUES	('" . $this->db->escape($COMMENT->comment_id()) . "',
-                                    '" . $this->db->escape($body) . "',
+                            VALUES	('" . getParlDB()->escape($COMMENT->comment_id()) . "',
+                                    '" . getParlDB()->escape($body) . "',
 									'$time',
-                                    '" . $this->db->escape($reportdata['firstname']) . "',
-                                    '" . $this->db->escape($reportdata['lastname']) . "',
-                                    '" . $this->db->escape($reportdata['email']) . "'
+                                    '" . getParlDB()->escape($reportdata['firstname']) . "',
+                                    '" . getParlDB()->escape($reportdata['lastname']) . "',
+                                    '" . getParlDB()->escape($reportdata['email']) . "'
 									)
 						";
         }
 
-        $q = $this->db->query($sql);
+        $q = getParlDB()->query($sql);
 
         if ($q->success()) {
             // Inserted OK, so set up this object's variables.
@@ -432,7 +431,7 @@ class COMMENTREPORT {
         if ($THEUSER->is_able_to('deletecomment')) {
             $time = gmdate("Y-m-d H:i:s");
 
-            $q = $this->db->query("UPDATE commentreports
+            $q = getParlDB()->query("UPDATE commentreports
 							SET		locked = '$time',
 									lockedby = '" . $THEUSER->user_id() . "'
 							WHERE	report_id = '" . $this->report_id . "'
@@ -458,7 +457,7 @@ class COMMENTREPORT {
     public function unlock() {
         // Unlock a comment so it can be examined by someone else.
 
-        $q = $this->db->query("UPDATE commentreports
+        $q = getParlDB()->query("UPDATE commentreports
 						SET		locked = NULL,
 								lockedby = NULL
 						WHERE	report_id = '" . $this->report_id . "'
@@ -509,13 +508,13 @@ class COMMENTREPORT {
                     $COMMENT->set_modflag('off');
                 }
 
-                $q = $this->db->query("UPDATE commentreports
+                $q = getParlDB()->query("UPDATE commentreports
 								SET 	resolved = '$time',
-										resolvedby = '" . $this->db->escape($THEUSER->user_id()) . "',
+										resolvedby = '" . getParlDB()->escape($THEUSER->user_id()) . "',
 										locked = NULL,
 										lockedby = NULL,
 										upheld = '$upheldsql'
-								WHERE 	report_id = '" . $this->db->escape($this->report_id) . "'
+								WHERE 	report_id = '" . getParlDB()->escape($this->report_id) . "'
 								");
 
                 if ($q->success()) {

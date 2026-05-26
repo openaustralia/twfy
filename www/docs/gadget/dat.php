@@ -11,8 +11,8 @@ include_once '../api/api_functions.php';
 
 $pid = $_GET['pid'];
 
-$db = new ParlDB();
-$q = $db->query("select * from member
+
+$q = getParlDB()->query("select * from member
 	where house=1 and person_id = ?
 	order by left_house desc limit 1", $pid);
 if (!$q->rows()) {
@@ -36,7 +36,7 @@ if ($image) {
     $row['image'] = $image;
 }
 
-$q = $db->query("SELECT position,dept FROM moffice WHERE to_date='9999-12-31'
+$q = getParlDB()->query("SELECT position,dept FROM moffice WHERE to_date='9999-12-31'
 	and source='chgpages/selctee' and person=?
 	ORDER BY from_date DESC", $pid);
 for ($i = 0; $i < $q->rows(); $i++) {
@@ -44,7 +44,7 @@ for ($i = 0; $i < $q->rows(); $i++) {
 }
 
 /*
-$q = $db->query("SELECT title,chairman from pbc_members,bills where member_id=".$row['member_id']
+$q = getParlDB()->query("SELECT title,chairman from pbc_members,bills where member_id=".$row['member_id']
 . ' and bill_id=bills.id');
 for ($i=0; $i<$q->rows(); $i++) {
 $member = 'Member';
@@ -55,7 +55,7 @@ $row['selctee'][] = $member . ', ' . $q->field($i, 'title');
 }
  */
 
-$q = $db->query("select data_key, data_value from personinfo
+$q = getParlDB()->query("select data_key, data_value from personinfo
 	where data_key like 'public\_whip%' and person_id = ?
 // order so both_voted is always first...
 	order by data_key", $pid);
@@ -118,7 +118,7 @@ $pw .= '</ul>';
 $output = $row;
 $output['pw_data'] = $pw;
 
-$q = $db->query("select * from memberinfo where member_id = ?
+$q = getParlDB()->query("select * from memberinfo where member_id = ?
     and data_key in ('swing_to_lose_seat_today', 'majority_in_seat')", $row['member_id']);
 for ($i = 0; $i < $q->rows(); $i++) {
     $key = $q->field($i, 'data_key');

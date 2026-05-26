@@ -15,7 +15,6 @@ use PHPUnit\Framework\TestCase;
  */
 class PcGadgetIntegrationTest extends TestCase {
 
-    protected $db;
 
     /**
      *
@@ -31,7 +30,6 @@ class PcGadgetIntegrationTest extends TestCase {
      *
      */
     protected function setUp(): void {
-        $this->db = new ParlDB();
 
         // Verify connection exists.
         $conn = getSharedTestConnection();
@@ -61,7 +59,7 @@ class PcGadgetIntegrationTest extends TestCase {
      */
     public function test_get_person_id_query(): void {
         // Test that a query against member table structure works.
-        $q = $this->db->query('SELECT person_id FROM member WHERE left_reason = ? AND house = ? LIMIT 1', 'still_in_office', 1);
+        $q = getParlDB()->query('SELECT person_id FROM member WHERE left_reason = ? AND house = ? LIMIT 1', 'still_in_office', 1);
         // Query should succeed.
         $this->assertIsObject($q);
     }
@@ -80,7 +78,7 @@ class PcGadgetIntegrationTest extends TestCase {
         if ($n) {
             $c = $n;
         }
-        $q = $this->db->query("SELECT person_id FROM member
+        $q = getParlDB()->query("SELECT person_id FROM member
             WHERE constituency = ?
             AND left_reason = 'still_in_office' AND house=1", $c);
         if ($q->rows > 0) {

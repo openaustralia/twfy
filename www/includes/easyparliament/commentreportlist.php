@@ -12,13 +12,12 @@
  */
 class COMMENTREPORTLIST {
 
-    private $db = null;
 
     /**
      *
      */
     public function __construct() {
-        $this->db = new ParlDB();
+        
     }
 
     /**
@@ -59,7 +58,7 @@ class COMMENTREPORTLIST {
 
         $time = gmdate("Y-m-d H:i:s", (time() - ($minutes * 60)));
 
-        $q = $this->db->query("UPDATE commentreports
+        $q = getParlDB()->query("UPDATE commentreports
 						SET 	locked = NULL,
 								lockedby = 0
 						WHERE	locked < '$time'
@@ -77,7 +76,7 @@ class COMMENTREPORTLIST {
 
         $number_to_fetch = 100;
 
-        $q = $this->db->query("SELECT comments.comment_id,
+        $q = getParlDB()->query("SELECT comments.comment_id,
 								commentreports.report_id,
 								commentreports.body,
 								DATE_FORMAT(commentreports.reported, '" . SHORTDATEFORMAT_SQL . ' ' . TIMEFORMAT_SQL . "') AS reported,
@@ -94,7 +93,7 @@ class COMMENTREPORTLIST {
 						LIMIT	$number_to_fetch
 						");
 
-        $r = $this->db->query("SELECT comments.comment_id,
+        $r = getParlDB()->query("SELECT comments.comment_id,
 		commentreports.report_id,
 		commentreports.body,
 		DATE_FORMAT(commentreports.reported, '" . SHORTDATEFORMAT_SQL . ' ' . TIMEFORMAT_SQL . "') AS reported,
