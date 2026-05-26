@@ -65,6 +65,36 @@ if (!defined('WEBPATH')) {
 }
 
 require_once __DIR__ . '/../www/includes/mysql.php';
+
+/**
+ * Returns the shared ParlDB instance, with test override support.
+ */
+if (!function_exists('getParlDB')) {
+    function getParlDB() {
+        global $parldb_override;
+        if ($parldb_override !== null) {
+            return $parldb_override;
+        }
+
+        static $db = null;
+
+        if ($db === null) {
+            $db = new ParlDB();
+        }
+
+        return $db;
+    }
+}
+
+/**
+ * Convenience wrapper for getParlDB()->query().
+ */
+if (!function_exists('parlDBQuery')) {
+    function parlDBQuery($sql, ...$params) {
+        return getParlDB()->query($sql, ...$params);
+    }
+}
+
 require_once __DIR__ . '/../www/includes/easyparliament/member.php';
 require_once __DIR__ . '/../www/includes/easyparliament/alert.php';
 require_once __DIR__ . '/../www/docs/api/api_getConstituencies.php';
