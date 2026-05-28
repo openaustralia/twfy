@@ -42,11 +42,11 @@ function _api_getLord_row($row) {
 /**
  *
  */
-function api_getLord_id($id) {
+function api_getLord_id(int $id) {
 
-    $q = getParlDB()->query("select * from member
-		where house=2 and person_id = ?
-		order by left_house desc", $id);
+    $q = parlDBQuery("SELECT * from member
+		WHERE house=2 AND person_id = ?
+		ORDER BY left_house DESC", $id);
     if ($q->rows()) {
         $output = [];
         $last_mod = 0;

@@ -22,7 +22,7 @@ if ($THEUSER->loggedin()) {
         create_key(get_http_var('commercial'), get_http_var('reason'));
     }
 
-    $q = getParlDB()->query('SELECT api_key, commercial, created, reason FROM api_key WHERE user_id = ?', $THEUSER->user_id());
+    $q = parlDBQuery('SELECT api_key, commercial, created, reason FROM api_key WHERE user_id = ?', $THEUSER->user_id());
     $keys = [];
     for ($i = 0; $i < $q->rows(); $i++) {
         $keys[] = [$q->field($i, 'api_key'), $q->field($i, 'commercial'), $q->field($i, 'created'), $q->field($i, 'reason')];
@@ -42,13 +42,13 @@ if ($THEUSER->loggedin()) {
         }
         echo ', created ', $created;
         echo '</span><br><em>Usage statistics</em>: ';
-        $q = getParlDB()->query('SELECT count(*) as count FROM api_stats WHERE api_key = ? AND query_time > NOW() - interval 1 day', $key);
+        $q = parlDBQuery('SELECT count(*) as count FROM api_stats WHERE api_key = ? AND query_time > NOW() - interval 1 day', $key);
         $c = $q->field(0, 'count');
         echo "last 24 hours: $c, ";
-        $q = getParlDB()->query('SELECT count(*) as count FROM api_stats WHERE api_key = ? AND query_time > NOW() - interval 1 week', $key);
+        $q = parlDBQuery('SELECT count(*) as count FROM api_stats WHERE api_key = ? AND query_time > NOW() - interval 1 week', $key);
         $c = $q->field(0, 'count');
         echo "last week: $c, ";
-        $q = getParlDB()->query('SELECT count(*) as count FROM api_stats WHERE api_key = ? AND query_time > NOW() - interval 1 month', $key);
+        $q = parlDBQuery('SELECT count(*) as count FROM api_stats WHERE api_key = ? AND query_time > NOW() - interval 1 month', $key);
         $c = $q->field(0, 'count');
         echo "last month: $c";
         echo '</p>';
@@ -75,7 +75,7 @@ function create_key($commercial, $reason) {
     global $THEUSER;
     $key = auth_ab64_encode(urandom_bytes(16));
 
-    getParlDB()->query('INSERT INTO api_key (user_id, api_key, commercial, created, reason) VALUES (?, ?, ?, NOW(), ?)',
+    parlDBQuery('INSERT INTO api_key (user_id, api_key, commercial, created, reason) VALUES (?, ?, ?, NOW(), ?)',
         $THEUSER->user_id(), $key, $commercial, $reason);
 }
 
