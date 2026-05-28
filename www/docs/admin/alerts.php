@@ -11,8 +11,6 @@ include_once __DIR__ . "/../../includes/easyparliament/member.php";
 
 $this_page = 'admin_alerts';
 
-
-
 $PAGE->page_start();
 $PAGE->stripe_start();
 

@@ -17,7 +17,7 @@
  *
  * Then, when you need to do queries, you do:
  *
-  * $q = parlDBQuery("SELECT haddock FROM fish");
+ * $q = parlDBQuery("SELECT haddock FROM fish");
  *
  * $q is then a MySQLQuery object.
  *

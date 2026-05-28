@@ -167,7 +167,6 @@ function api_getMP_constituency($constituency) {
  */
 function _api_getMP_constituency($constituency) {
 
-
     if ($constituency == '') {
         return false;
     }

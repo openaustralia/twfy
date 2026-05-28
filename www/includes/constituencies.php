@@ -32,7 +32,7 @@ function normalise_constituency_names($names) {
         $lookup[$name] = $canonical;
     }
     $output = [];
-    foreach ($names AS $area_id => $name) {
+    foreach ($names as $area_id => $name) {
         $output[$area_id] = $lookup[$name] ?? $name;
     }
     return $output;

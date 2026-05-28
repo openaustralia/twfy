@@ -17,7 +17,7 @@ if (($date = get_http_var('d')) && preg_match('#^\d\d\d\d-\d\d-\d\d$#', $date)) 
     $this_page = 'hansard_date';
     $PAGE->set_hansard_headings(['date' => $date]);
     $URL = new URL($this_page);
-    
+
     $q = parlDBQuery("SELECT MIN(hdate) AS hdate FROM hansard WHERE hdate > '$date'");
     if ($q->rows() > 0 && $q->field(0, 'hdate') != null) {
         $URL->insert(['d' => $q->field(0, 'hdate')]);

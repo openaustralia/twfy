@@ -73,8 +73,6 @@ class GLOSSARY {
          * With no argument it will pick up all items.
          */
 
-        
-
         $this->replace_order = [];
         if (isset($args['s']) && ($args['s'] != "")) {
             $args['s'] = urldecode($args['s']);

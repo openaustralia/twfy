@@ -33,7 +33,7 @@ class SEARCHLOG {
      */
     public function __construct() {
         $this->SEARCHURL = new URL('search');
-        
+
     }
 
     /**

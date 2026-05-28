@@ -423,7 +423,10 @@ class COMMENTLIST {
         return $url;
     }
 
-    public function _get_comment_data($input) {
+    /**
+     *
+     */
+public function _get_comment_data($input) {
         // Generic function for getting hansard data from the DB.
         // It returns an empty array if no data was found.
         // It returns an array of items if 1 or more were found.
@@ -569,6 +572,6 @@ class COMMENTLIST {
 
         return $data;
 
-    }
+}
 
 }

@@ -1285,7 +1285,7 @@ class PAGE {
         global $DATA, $this_page;
 
         // DAMN, this really shouldn't be in PAGE.
-        
+
         getParlDB()->display_total_duration();
 
         $duration = getmicrotime() - STARTTIME;

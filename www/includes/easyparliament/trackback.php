@@ -40,7 +40,6 @@ class TRACKBACK {
      */
     public function __construct() {
 
-
         // Set in init.php.
         if (ALLOWTRACKBACKS) {
             $this->trackbacks_enabled = true;
@@ -248,7 +247,7 @@ class TRACKBACK {
         if ($num > 1000) {
              $PAGE->error_message("Sorry, we won't display more than 1000 trackbacks at a time.");
             $num = 1000;
-        } else if ($num == 0) {
+        } elseif ($num == 0) {
             $num = 100;
         }
 

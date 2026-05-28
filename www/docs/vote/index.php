@@ -6,8 +6,6 @@
 
 include_once __DIR__ . "/../../includes/easyparliament/init.php";
 
-
-
 $this_page = "epvote";
 
 // For when the user votes on whether a Hansard things is interesting or not.

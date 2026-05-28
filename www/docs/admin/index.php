@@ -9,9 +9,6 @@ include_once __DIR__ . "/../../includes/easyparliament/commentreportlist.php";
 
 $this_page = "admin_home";
 
-
-
-
 $PAGE->page_start();
 
 $PAGE->stripe_start();

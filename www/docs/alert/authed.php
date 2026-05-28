@@ -26,7 +26,7 @@ if (!$pid || !ctype_digit($pid)) {
 } else {
     $authed = auth_verify_with_shared_secret($email, OPTION_AUTH_SHARED_SECRET, $sign);
     if ($authed) {
-        
+
         $criteria = "speaker:$pid";
         $q = parlDBQuery('SELECT alert_id from alerts WHERE email=? AND criteria=? AND confirmed AND NOT deleted', $email, $criteria);
         $already_signed = $q->rows();

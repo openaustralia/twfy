@@ -34,7 +34,7 @@ function error($s) {
  *
  */
 function get_person_id($c) {
-    
+
     if ($c == '') {
         return false;
     }

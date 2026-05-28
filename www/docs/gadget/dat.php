@@ -45,7 +45,8 @@ for ($i = 0; $i < $q->rows(); $i++) {
 
 $q = parlDBQuery("SELECT data_key, data_value from personinfo
 	WHERE data_key LIKE 'public\_whip%' AND person_id = ?
-	ORDER BY data_key", $pid); // order so both_voted is always first...
+// Order so both_voted is always first...
+	ORDER BY data_key", $pid);
 $none = false;
 $output = [];
 for ($i = 0; $i < $q->rows(); $i++) {

@@ -69,7 +69,7 @@ function wikipedize($source) {
     $phrases = array_unique(array_merge($propernounphrases1[0], $propernounphrases2[0], $propernounphrases3[1], $acronyms[0]));
     // Sort into order, largest first.
     usort($phrases, "lensort");
-    
+
     foreach ($phrases as $i => $phrase) {
         $phrases[$i] = getParlDB()->escape(str_replace(' ', '_', trim($phrase)));
     }
@@ -77,7 +77,7 @@ function wikipedize($source) {
     // Open up a db connection, and whittle our list down even further, against
     // the real titles.
     $matched = [];
-    
+
     $source = explode('|||', $source);
     $q = parlDBQuery("SELECT title FROM titles WHERE title IN ('" . implode("','", $phrases) . "')");
     for ($i = 0; $i < $q->rows(); $i++) {

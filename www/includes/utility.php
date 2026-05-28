@@ -984,7 +984,7 @@ function prettify_office($pos, $dept) {
  */
 function major_summary($data, $limit = "") {
     global $hansardmajors;
-    
+
     $one_date = false;
     if (isset($data['date'])) {
         $one_date = true;

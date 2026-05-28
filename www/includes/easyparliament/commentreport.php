@@ -64,7 +64,6 @@ class COMMENTREPORT {
     public function __construct($report_id = '') {
         // Pass it a report id and it gets and sets this report's data.
 
-
         if (is_numeric($report_id)) {
 
             $q = parlDBQuery("SELECT commentreports.comment_id,
