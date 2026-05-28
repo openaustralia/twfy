@@ -123,7 +123,6 @@ class USER {
      * Change things in the add/edit/view user page.
      */
     public function __construct() {
-        
     }
 
     /**
@@ -135,7 +134,7 @@ class USER {
         // Returns true if we've found user_id in the DB, false otherwise.
 
         // Look for this user_id's details.
-        $q = getParlDB()->query("SELECT firstname,
+        $q = parlDBQuery("SELECT firstname,
 								lastname,
 								password,
 								email,
@@ -222,7 +221,7 @@ class USER {
 
         $emailpublic = !empty($details["emailpublic"]) ? 1 : 0;
 
-        $q = getParlDB()->query("INSERT INTO users (
+        $q = parlDBQuery("INSERT INTO users (
 				firstname,
 				lastname,
 				email,
@@ -273,7 +272,7 @@ class USER {
             $this->registrationtoken = $token;
 
             // Add that to the DB.
-            $r = getParlDB()->query("UPDATE users
+            $r = parlDBQuery("UPDATE users
 							SET	registrationtoken = ?
 							WHERE	user_id = ?
 							",
@@ -433,7 +432,7 @@ class USER {
 
         $passwordforDB = password_hash($pwd, PASSWORD_DEFAULT);
 
-        $q = getParlDB()->query("UPDATE users SET password = ? WHERE email = ?", $passwordforDB, $email);
+        $q = parlDBQuery("UPDATE users SET password = ? WHERE email = ?", $passwordforDB, $email);
 
         if ($q->success()) {
             $this->password = $pwd;
@@ -486,7 +485,7 @@ class USER {
         // Returns true if there's a user with this user_id.
 
         if (is_numeric($user_id)) {
-            $q = getParlDB()->query("SELECT user_id FROM users WHERE user_id = ?", $user_id);
+            $q = parlDBQuery("SELECT user_id FROM users WHERE user_id = ?", $user_id);
             if ($q->rows() > 0) {
                 return true;
             } else {
@@ -505,7 +504,7 @@ class USER {
         // Returns true if there's a user with this email address.
 
         if ($email != "") {
-            $q = getParlDB()->query("SELECT user_id FROM users WHERE email = ?", $email);
+            $q = parlDBQuery("SELECT user_id FROM users WHERE email = ?", $email);
             if ($q->rows() > 0) {
                 return true;
             } else {
@@ -821,7 +820,7 @@ class USER {
 
         // Update email alerts if email address changed.
         if ($this->email != $details['email']) {
-            getParlDB()->query('UPDATE alerts SET email = ? WHERE email = ?', $details['email'], $this->email);
+            parlDBQuery('UPDATE alerts SET email = ? WHERE email = ?', $details['email'], $this->email);
         }
 
         // These are used to put optional fragments of SQL in, depending
@@ -880,7 +879,7 @@ class USER {
         $emailpublic = !empty($details["emailpublic"]) ? 1 : 0;
         $optin = !empty($details["optin"]) ? 1 : 0;
 
-        $q = getParlDB()->query("UPDATE users
+        $q = parlDBQuery("UPDATE users
 						SET		firstname 	 = '" . getParlDB()->escape($details["firstname"]) . "',
 								lastname 	 = '" . getParlDB()->escape($details["lastname"]) . "',
 								email		 = '" . getParlDB()->escape($details["email"]) . "',
@@ -1020,7 +1019,7 @@ class THEUSER extends USER {
         if ($this->isloggedin()) {
             // Set last_visit to now.
             $date_now = gmdate("Y-m-d H:i:s");
-            $q = getParlDB()->query("UPDATE users
+            $q = parlDBQuery("UPDATE users
 							SET 	lastvisit = '$date_now'
 							WHERE 	user_id = '" . $this->user_id() . "'");
 
@@ -1063,7 +1062,7 @@ class THEUSER extends USER {
         // are correct. We can then continue with logging the user in (taking into
         // account their cookie remembering settings etc) with $this->login().
 
-        $q = getParlDB()->query("SELECT user_id, password, deleted, confirmed FROM users WHERE email = ?", $email);
+        $q = parlDBQuery("SELECT user_id, password, deleted, confirmed FROM users WHERE email = ?", $email);
 
         if ($q->rows() == 1) {
             // OK.
@@ -1077,7 +1076,7 @@ class THEUSER extends USER {
                 if ($valid_password) {
                     // Upgrade to the more secure Bcrypt hash.
                     $newHash = password_hash($userenteredpassword, PASSWORD_DEFAULT);
-                    $q_update = getParlDB()->query("UPDATE users SET password = ? WHERE email=?", $newHash, $email);
+                    $q_update = parlDBQuery("UPDATE users SET password = ? WHERE email=?", $newHash, $email);
                     $dbpassword = $newHash;
                 }
             } else {
@@ -1234,7 +1233,7 @@ class THEUSER extends USER {
             $this->password = $q->field(0, 'password');
 
             // Set that they're confirmed in the DB.
-            $r = getParlDB()->query("UPDATE users
+            $r = parlDBQuery("UPDATE users
 							SET		confirmed = '1'
 							WHERE	user_id = '" . getParlDB()->escape($user_id) . "'
 							");
@@ -1243,8 +1242,8 @@ class THEUSER extends USER {
                 $MEMBER = new MEMBER(['constituency' => $q->field(0, 'constituency')]);
                 $pid = $MEMBER->person_id();
                 // This should probably be in the ALERT class.
-                getParlDB()->query('update alerts set confirmed=1 where email="' .
-                    getParlDB()->escape($this->email) . '" and criteria="speaker:' .
+                parlDBQuery('UPDATE alerts set confirmed=1 WHERE email="' .
+                    getParlDB()->escape($this->email) . '" AND criteria="speaker:' .
                     getParlDB()->escape($pid) . '"');
             }
 
