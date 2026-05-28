@@ -22,7 +22,7 @@ include_once INCLUDESPATH . 'alertmailer_sanitize.php';
 $global_start = getmicrotime();
 
 // Get current value of latest batch.
-$q = getParlDB()->query('SELECT max(indexbatch_id) as max_batch_id FROM indexbatch');
+$q = parlDBQuery('SELECT max(indexbatch_id) as max_batch_id FROM indexbatch');
 $max_batch_id = $q->field(0, 'max_batch_id');
 mlog("max_batch_id: " . $max_batch_id . "\n");
 
@@ -126,7 +126,7 @@ foreach ($alertdata as $alertitem) {
         }
         $current_email = $email;
         $email_text = '';
-        $q = getParlDB()->query('SELECT user_id FROM users WHERE email = ?', $email);
+        $q = parlDBQuery('SELECT user_id FROM users WHERE email = ?', $email);
         if ($q->rows() > 0) {
             $user_id = $q->field(0, 'user_id');
             $registered++;
@@ -191,7 +191,7 @@ foreach ($alertdata as $alertitem) {
                 continue;
             }
             $gid_to = "uk.org.publicwhip/{$sects_short[$major]}/{$row['gid']}";
-            $q = getParlDB()->query('SELECT gid_from FROM gidredirect WHERE gid_to = ?', $gid_to);
+            $q = parlDBQuery('SELECT gid_from FROM gidredirect WHERE gid_to = ?', $gid_to);
             if ($q->rows() > 0) {
                 continue;
             }

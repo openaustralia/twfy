@@ -12,6 +12,6 @@ include INCLUDESPATH . 'easyparliament/member.php';
 $f = file('../../DoBs.csv');
 foreach ($f as $r) {
     $a = explode('|', $r);
-    $q = getParlDB()->query('SELECT person_id FROM member WHERE member_id = ?', $a[0]);
+    $q = parlDBQuery('SELECT person_id FROM member WHERE member_id = ?', $a[0]);
     print $q->field(0, 'person_id') . '|' . trim($a[1]) . '|' . trim($a[2]) . "\n";
 }

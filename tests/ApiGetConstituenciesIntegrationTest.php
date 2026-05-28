@@ -82,9 +82,9 @@ class ApiGetConstituenciesIntegrationTest extends TestCase {
      */
     public function test_get_all_constituencies_current() {
         $this->assertNotNull(self::$connection);
-        
-        $q = getParlDB()->query('select cons_id, name from constituency
-            where main_name and from_date <= date(now()) and date(now()) <= to_date');
+
+        $q = parlDBQuery('SELECT cons_id, name FROM constituency
+            WHERE main_name AND from_date <= DATE(NOW()) AND DATE(NOW()) <= to_date');
         // Query should work (may return 0 rows if no test data)
         $this->assertGreaterThanOrEqual(0, $q->rows());
     }
@@ -121,13 +121,13 @@ class ApiGetConstituenciesIntegrationTest extends TestCase {
      */
     public function test_constituencies_main_name_only() {
         $this->assertNotNull(self::$connection);
-        
-        $q = getParlDB()->query('select count(*) as c from constituency
-            where main_name and from_date <= date(now()) and date(now()) <= to_date');
+
+        $q = parlDBQuery('SELECT COUNT(*) AS c FROM constituency
+            WHERE main_name AND from_date <= DATE(NOW()) AND DATE(NOW()) <= to_date');
         $main_count = $q->field(0, 'c');
 
-        $q2 = getParlDB()->query('select count(*) as c from constituency
-            where from_date <= date(now()) and date(now()) <= to_date');
+        $q2 = parlDBQuery('SELECT COUNT(*) AS c FROM constituency
+            WHERE from_date <= DATE(NOW()) AND DATE(NOW()) <= to_date');
         $total_count = $q2->field(0, 'c');
 
         // main_name should filter down the results (when data exists)
@@ -139,9 +139,9 @@ class ApiGetConstituenciesIntegrationTest extends TestCase {
      */
     public function test_get_constituencies_by_date() {
         $this->assertNotNull(self::$connection);
-        
-        $q = getParlDB()->query('select cons_id, name from constituency
-            where main_name and from_date <= date("2023-01-01") and date("2023-01-01") <= to_date');
+
+        $q = parlDBQuery('SELECT cons_id, name FROM constituency
+            WHERE main_name AND from_date <= DATE("2023-01-01") AND DATE("2023-01-01") <= to_date');
         // Query should work (may return 0 rows if no test data for that date)
         $this->assertGreaterThanOrEqual(0, $q->rows());
     }

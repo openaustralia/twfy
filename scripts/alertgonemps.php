@@ -45,7 +45,7 @@ foreach ($alertdata as $alertitem) {
     preg_match('#speaker:(\d+)#', $criteria, $m);
     $person_id = $m[1];
     if (!isset($leftd[$person_id])) {
-        $q = getParlDB()->query('SELECT first_name,last_name,MAX(left_house) as l FROM member WHERE person_id = ? GROUP BY first_name', $person_id);
+        $q = parlDBQuery('SELECT first_name, last_name, MAX(left_house) as l FROM member WHERE person_id = ? GROUP BY first_name', $person_id);
         $leftd[$person_id] = $q->field(0, 'l');
         $named[$person_id] = $q->field(0, 'first_name') . ' ' . $q->field(0, 'last_name');
     }
@@ -61,7 +61,7 @@ foreach ($alertdata as $alertitem) {
         }
         $current_email = $email;
         $email_text = '';
-        $q = getParlDB()->query('SELECT user_id FROM users WHERE email = ?', $email);
+        $q = parlDBQuery('SELECT user_id FROM users WHERE email = ?', $email);
         if ($q->rows() > 0) {
             $user_id = $q->field(0, 'user_id');
             $registered++;

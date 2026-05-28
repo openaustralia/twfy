@@ -42,8 +42,8 @@ protected function setUp(): void {
      */
 protected function tearDown(): void {
         // Clean up any test data.
-        getParlDB()->query('DELETE FROM alerts WHERE email = ?', 'test-gone-mp@example.com');
-        getParlDB()->query('DELETE FROM alerts WHERE email = ?', 'test-active-mp@example.com');
+        parlDBQuery('DELETE FROM alerts WHERE email = ?', 'test-gone-mp@example.com');
+        parlDBQuery('DELETE FROM alerts WHERE email = ?', 'test-active-mp@example.com');
 }
 
     /**
@@ -51,7 +51,7 @@ protected function tearDown(): void {
      */
     public function test_user_lookup_registered(): void {
         // This test requires existing user data in database.
-        $q = getParlDB()->query('SELECT user_id FROM users LIMIT 1');
+        $q = parlDBQuery('SELECT user_id FROM users LIMIT 1');
         // If query succeeds, we found a user.
         $this->assertIsObject($q);
     }
@@ -61,7 +61,7 @@ protected function tearDown(): void {
      */
     public function test_user_lookup_unregistered(): void {
         $uniqueEmail = 'nonexistent_alert_' . time() . '@example.com';
-        $q = getParlDB()->query('SELECT user_id FROM users WHERE email = ?', $uniqueEmail);
+        $q = parlDBQuery('SELECT user_id FROM users WHERE email = ?', $uniqueEmail);
         $this->assertSame(0, $q->rows());
     }
 

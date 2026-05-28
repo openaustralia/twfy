@@ -72,7 +72,7 @@ function api_log_call($key) {
     $query = $_SERVER['REQUEST_URI'];
     $query = preg_replace('#key=[A-Za-z0-9]+&?#', '', $query);
     
-    getParlDB()->query("INSERT INTO api_stats (api_key, ip_address, query_time, query)
+    parlDBQuery("INSERT INTO api_stats (api_key, ip_address, query_time, query)
 		VALUES (?, ?, NOW(), ?)", $key, $ip, $query);
 }
 
@@ -81,7 +81,7 @@ function api_log_call($key) {
  */
 function api_check_key($key) {
     
-    $q = getParlDB()->query('SELECT user_id FROM api_key WHERE api_key = ?', $key);
+    $q = parlDBQuery('SELECT user_id FROM api_key WHERE api_key = ?', $key);
     if (!$q->rows()) {
         return false;
     }
