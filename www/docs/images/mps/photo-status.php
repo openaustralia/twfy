@@ -11,11 +11,9 @@ $DATA->set_page_metadata($this_page, 'heading', 'MPs photo status on OpenAustral
 $PAGE->page_start();
 $PAGE->stripe_start();
 
-$query = 'SELECT person_id, first_name, last_name, constituency, party
+$q = parlDBQuery('SELECT person_id, first_name, last_name, constituency, party
             FROM member
-            WHERE house=1 AND left_house = (SELECT MAX(left_house) FROM member) ';
-
-$q = getParlDB()->query($query . "ORDER BY last_name, first_name");
+            WHERE house=1 AND left_house = (SELECT MAX(left_house) FROM member) ORDER BY last_name, first_name');
 $out = ['both' => '', 'small' => '', 'none' => ''];
 for ($i = 0; $i < $q->rows(); $i++) {
     $p_id = $q->field($i, 'person_id');

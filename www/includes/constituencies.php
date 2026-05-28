@@ -14,16 +14,17 @@ function normalise_constituency_name($name) {
 }
 
 /**
- * As I don't want to do 646*2 DB queries!
+ * as I don't want to do 646*2 DB queries!
  */
 function normalise_constituency_names($names) {
-    
-    $q = getParlDB()->query('select constituency.name as name,c_main.name as canonical_name
-		from constituency, constituency as c_main
-		where constituency.cons_id = c_main.cons_id
-		and c_main.main_name and constituency.name in ("' . implode('","', array_values($names)) .
-        '") and constituency.from_date <= date(now())
-		and date(now()) <= constituency.to_date');
+
+    $q = parlDBQuery('SELECT constituency.name AS name,c_main.name AS canonical_name
+		from constituency, constituency AS c_main
+		WHERE constituency.cons_id = c_main.cons_id
+		AND c_main.main_name AND constituency.name in ?
+        AND constituency.from_date <= date(NOW())
+		AND date(NOW()) <= constituency.to_date',
+        array_values($names));
     $lookup = [];
     for ($i = 0; $i < $q->rows(); $i++) {
         $name = html_entity_decode($q->field($i, 'name'));
@@ -31,7 +32,7 @@ function normalise_constituency_names($names) {
         $lookup[$name] = $canonical;
     }
     $output = [];
-    foreach ($names as $area_id => $name) {
+    foreach ($names AS $area_id => $name) {
         $output[$area_id] = $lookup[$name] ?? $name;
     }
     return $output;

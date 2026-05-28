@@ -106,7 +106,7 @@ if (is_numeric(get_http_var('id')) && is_numeric(get_http_var('v'))) {
     }
 
     // Make sure it's a valid epobject_id.
-    $q = getParlDB()->query("SELECT epobject_id FROM epobject WHERE epobject_id = ?", $epobject_id);
+    $q = parlDBQuery("SELECT epobject_id FROM epobject WHERE epobject_id = ?", $epobject_id);
     if ($q->rows() != 1) {
         voteerror("We need a valid epobject id.");
     }
@@ -135,19 +135,19 @@ if (is_numeric(get_http_var('id')) && is_numeric(get_http_var('v'))) {
         }
 
         // Vote!
-        $q = getParlDB()->query("SELECT epobject_id FROM anonvotes WHERE epobject_id = ?", $epobject_id);
+        $q = parlDBQuery("SELECT epobject_id FROM anonvotes WHERE epobject_id = ?", $epobject_id);
 
         if ($q->rows() == 1) {
             if ($vote == 1) {
-                $q = getParlDB()->query("UPDATE anonvotes SET yes_votes = yes_votes + 1 WHERE epobject_id = ?", $epobject_id);
+                $q = parlDBQuery("UPDATE anonvotes SET yes_votes = yes_votes + 1 WHERE epobject_id = ?", $epobject_id);
             } else {
-                $q = getParlDB()->query("UPDATE anonvotes SET no_votes = no_votes + 1 WHERE epobject_id = ?", $epobject_id);
+                $q = parlDBQuery("UPDATE anonvotes SET no_votes = no_votes + 1 WHERE epobject_id = ?", $epobject_id);
             }
         } else {
             if ($vote == 1) {
-                $q = getParlDB()->query("INSERT INTO anonvotes (epobject_id, yes_votes) VALUES (?, '1')", $epobject_id);
+                $q = parlDBQuery("INSERT INTO anonvotes (epobject_id, yes_votes) VALUES (?, '1')", $epobject_id);
             } else {
-                $q = getParlDB()->query("INSERT INTO anonvotes (epobject_id, no_votes) VALUES (?, '1')", $epobject_id);
+                $q = parlDBQuery("INSERT INTO anonvotes (epobject_id, no_votes) VALUES (?, '1')", $epobject_id);
             }
         }
         if (!$q->success()) {

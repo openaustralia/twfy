@@ -16,8 +16,8 @@ $id = get_http_var('id');
 
 $bill_id = null;
 if ($bill && $session) {
-    
-    $q = getParlDB()->query('select id,standingprefix from bills where title=? and session = ?', $bill, $session);
+
+    $q = parlDBQuery('SELECT id,standingprefix from bills WHERE title=? AND session = ?', $bill, $session);
     if ($q->rows()) {
         $bill_id = $q->field(0, 'id');
         $standingprefix = $q->field(0, 'standingprefix');

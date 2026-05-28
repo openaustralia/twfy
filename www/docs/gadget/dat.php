@@ -105,8 +105,8 @@ $pw .= '</ul>';
 $output = $row;
 $output['pw_data'] = $pw;
 
-$q = getParlDB()->query("select * from memberinfo where member_id = ?
-    and data_key in ('swing_to_lose_seat_today', 'majority_in_seat')", $row['member_id']);
+$q = parlDBQuery("SELECT * from memberinfo WHERE member_id = ?
+    AND data_key in ('swing_to_lose_seat_today', 'majority_in_seat')", $row['member_id']);
 for ($i = 0; $i < $q->rows(); $i++) {
     $key = $q->field($i, 'data_key');
     $output[$key] = number_format($q->field($i, 'data_value'));

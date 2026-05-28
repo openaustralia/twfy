@@ -58,10 +58,9 @@ function postcode_to_constituency($postcode) {
  * Map a postcode to an MP, random but deterministic.
  */
 function fake_postcode($postcode) {
-    
+
     $fake_cons_id = abs(crc32($postcode) % 630);
-    $query = "select name from constituency where main_name and cons_id = '" . $fake_cons_id . "'";
-    $q2 = getParlDB()->query($query);
+    $q2 = parlDBQuery("SELECT name from constituency WHERE main_name AND cons_id = ?", $fake_cons_id);
     if ($q2->rows <= 0) {
         return false;
     }
@@ -73,14 +72,12 @@ function fake_postcode($postcode) {
  *
  */
 function postcode_to_constituency_internal($postcode) {
-    // Try and match with regexp to exclude non postcodes quickly.
+    // Try AND match with regexp to exclude non postcodes quickly.
     if (!is_postcode($postcode)) {
         return '';
     }
 
-    
-
-    $q = getParlDB()->query('select name from postcode_lookup where postcode = ?', $postcode);
+    $q = parlDBQuery('SELECT name from postcode_lookup WHERE postcode = ?', $postcode);
     if ($q->rows == 1) {
         $name = $q->field(0, 'name');
         return $name;

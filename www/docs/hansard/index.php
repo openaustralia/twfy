@@ -18,7 +18,7 @@ if (($date = get_http_var('d')) && preg_match('#^\d\d\d\d-\d\d-\d\d$#', $date)) 
     $PAGE->set_hansard_headings(['date' => $date]);
     $URL = new URL($this_page);
     
-    $q = getParlDB()->query("SELECT MIN(hdate) AS hdate FROM hansard WHERE hdate > '$date'");
+    $q = parlDBQuery("SELECT MIN(hdate) AS hdate FROM hansard WHERE hdate > '$date'");
     if ($q->rows() > 0 && $q->field(0, 'hdate') != null) {
         $URL->insert(['d' => $q->field(0, 'hdate')]);
         $title = format_date($q->field(0, 'hdate'), SHORTDATEFORMAT);
@@ -29,7 +29,7 @@ if (($date = get_http_var('d')) && preg_match('#^\d\d\d\d-\d\d-\d\d$#', $date)) 
             'title' => $title
         ];
     }
-    $q = getParlDB()->query("SELECT MAX(hdate) AS hdate FROM hansard WHERE hdate < '$date'");
+    $q = parlDBQuery("SELECT MAX(hdate) AS hdate FROM hansard WHERE hdate < '$date'");
     if ($q->rows() > 0 && $q->field(0, 'hdate') != null) {
         $URL->insert(['d' => $q->field(0, 'hdate')]);
         $title = format_date($q->field(0, 'hdate'), SHORTDATEFORMAT);

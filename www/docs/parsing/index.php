@@ -23,7 +23,7 @@ $notloaded = '';
 
     $hdates = [];
     
-    $q = getParlDB()->query('SELECT DISTINCT(hdate) AS hdate, major FROM hansard');
+    $q = parlDBQuery('SELECT DISTINCT(hdate) AS hdate, major FROM hansard');
     for ($i = 0; $i < $q->rows(); $i++) {
         $hdates[$q->field($i, 'hdate')][$q->field($i, 'major')] = true;
     }
