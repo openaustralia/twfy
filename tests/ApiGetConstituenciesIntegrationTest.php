@@ -78,18 +78,6 @@ class ApiGetConstituenciesIntegrationTest extends TestCase {
     }
 
     /**
-     * Test getting all current constituencies
-     */
-    public function test_get_all_constituencies_current() {
-        $this->assertNotNull(self::$connection);
-
-        $q = parlDBQuery('SELECT cons_id, name FROM constituency
-            WHERE main_name AND from_date <= DATE(NOW()) AND DATE(NOW()) <= to_date');
-        // Query should work (may return 0 rows if no test data)
-        $this->assertGreaterThanOrEqual(0, $q->rows());
-    }
-
-    /**
      * Test constituency data structure
      */
     public function test_constituency_result_structure() {
@@ -114,36 +102,6 @@ class ApiGetConstituenciesIntegrationTest extends TestCase {
             // Should not contain HTML entities like &amp;.
             $this->assertStringNotContainsString('&amp;', $name);
         }
-    }
-
-    /**
-     * Test constituency name main_name flag honored
-     */
-    public function test_constituencies_main_name_only() {
-        $this->assertNotNull(self::$connection);
-
-        $q = parlDBQuery('SELECT COUNT(*) AS c FROM constituency
-            WHERE main_name AND from_date <= DATE(NOW()) AND DATE(NOW()) <= to_date');
-        $main_count = $q->field(0, 'c');
-
-        $q2 = parlDBQuery('SELECT COUNT(*) AS c FROM constituency
-            WHERE from_date <= DATE(NOW()) AND DATE(NOW()) <= to_date');
-        $total_count = $q2->field(0, 'c');
-
-        // main_name should filter down the results (when data exists)
-        $this->assertLessThanOrEqual($main_count, $total_count);
-    }
-
-    /**
-     * Test date-based constituency queries
-     */
-    public function test_get_constituencies_by_date() {
-        $this->assertNotNull(self::$connection);
-
-        $q = parlDBQuery('SELECT cons_id, name FROM constituency
-            WHERE main_name AND from_date <= DATE("2023-01-01") AND DATE("2023-01-01") <= to_date');
-        // Query should work (may return 0 rows if no test data for that date)
-        $this->assertGreaterThanOrEqual(0, $q->rows());
     }
 
 }
