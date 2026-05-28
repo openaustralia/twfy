@@ -13,7 +13,7 @@ $PAGE->page_start();
 $PAGE->stripe_start();
 $PAGE->block_start(['id' => 'alerts', 'title' => 'Alert Statistics']);
 
-$q = getParlDB()->query('select alert_id, criteria from alerts where criteria not like "%speaker:%" and criteria like "%,%" and confirmed and not deleted');
+$q = parlDBQuery('SELECT alert_id, criteria FROM alerts WHERE criteria NOT LIKE "%speaker:%" AND criteria LIKE "%,%" AND confirmed AND NOT deleted');
 print '<h3>People who probably wanted separate signups</h3> <table>';
 for ($i = 0; $i < $q->rows(); $i++) {
     $id = $q->field($i, 'alert_id');
@@ -22,7 +22,7 @@ for ($i = 0; $i < $q->rows(); $i++) {
 }
 print '</table>';
 
-$q = getParlDB()->query('select count(*) as c, criteria from alerts where criteria like "speaker:%" and confirmed and not deleted group by criteria order by c desc');
+$q = parlDBQuery('SELECT COUNT(*) AS c, criteria FROM alerts WHERE criteria LIKE "speaker:%" AND confirmed AND NOT deleted GROUP BY criteria ORDER BY c DESC');
 $tots = [];
 $name = [];
 for ($i = 0; $i < $q->rows(); $i++) {
@@ -41,7 +41,7 @@ for ($i = 0; $i < $q->rows(); $i++) {
         $name[$person_id] = $MEMBER->full_name();
     }
 }
-$q = getParlDB()->query('select count(*) as c, criteria from alerts where criteria like "speaker:%" and not confirmed group by criteria order by c desc');
+$q = parlDBQuery('SELECT COUNT(*) AS c, criteria FROM alerts WHERE criteria LIKE "speaker:%" AND NOT confirmed GROUP BY criteria ORDER BY c DESC');
 $unconfirmed = [];
 for ($i = 0; $i < $q->rows(); $i++) {
     $c = $q->field($i, 'c');
@@ -69,14 +69,14 @@ print '</table>';
 $unconfirmed = [];
 $confirmed = [];
 $total = [];
-$q = getParlDB()->query("select count(*) as c, criteria from alerts where criteria not like '%speaker:%' and confirmed and not deleted group by criteria having c>1 order by c desc");
+$q = parlDBQuery("SELECT COUNT(*) AS c, criteria FROM alerts WHERE criteria NOT LIKE '%speaker:%' AND confirmed AND NOT deleted GROUP BY criteria HAVING c>1 ORDER BY c DESC");
 for ($i = 0; $i < $q->rows(); $i++) {
     $c = $q->field($i, 'c');
     $criteria = $q->field($i, 'criteria');
     $confirmed[$criteria] = $c;
     $total[$criteria] = 1;
 }
-$q = getParlDB()->query("select count(*) as c, criteria from alerts where criteria not like '%speaker:%' and not confirmed group by criteria having c>1 order by c desc");
+$q = parlDBQuery("SELECT COUNT(*) AS c, criteria FROM alerts WHERE criteria NOT LIKE '%speaker:%' AND NOT confirmed GROUP BY criteria HAVING c>1 ORDER BY c DESC");
 for ($i = 0; $i < $q->rows(); $i++) {
     $c = $q->field($i, 'c');
     $criteria = $q->field($i, 'criteria');

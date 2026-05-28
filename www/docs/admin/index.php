@@ -20,18 +20,18 @@ $PAGE->stripe_start();
 
 $PAGE->block_start(['title' => 'Stats']);
 
-$q = getParlDB()->query("SELECT COUNT(*) AS count FROM users WHERE confirmed = '1'");
+$q = parlDBQuery("SELECT COUNT(*) AS count FROM users WHERE confirmed = '1'");
 $confirmedusers = $q->field(0, 'count');
 
-$q = getParlDB()->query("SELECT COUNT(*) AS count FROM users WHERE confirmed = '0'");
+$q = parlDBQuery("SELECT COUNT(*) AS count FROM users WHERE confirmed = '0'");
 $unconfirmedusers = $q->field(0, 'count');
 
 $olddate = gmdate("Y-m-d H:i:s", time() - 86400);
-$q = getParlDB()->query("SELECT COUNT(*) AS count FROM users WHERE lastvisit > '$olddate'");
+$q = parlDBQuery("SELECT COUNT(*) AS count FROM users WHERE lastvisit > '$olddate'");
 $dayusers = $q->field(0, 'count');
 
 $olddate = gmdate("Y-m-d H:i:s", time() - 86400 * 7);
-$q = getParlDB()->query("SELECT COUNT(*) AS count FROM users WHERE lastvisit > '$olddate'");
+$q = parlDBQuery("SELECT COUNT(*) AS count FROM users WHERE lastvisit > '$olddate'");
 $weekusers = $q->field(0, 'count');
 ?>
 <ul>
@@ -50,7 +50,7 @@ $PAGE->block_end();
 <h4>Recently registered users</h4>
 <?php
 
-$q = getParlDB()->query("SELECT firstname,
+$q = parlDBQuery("SELECT firstname,
 						lastname,
 						email,
 						user_id,

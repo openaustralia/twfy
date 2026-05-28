@@ -20,7 +20,7 @@ $PAGE->stripe_start();
 <?php
 
 // Get a list of the users who have the most deleted comments.
-$q = getParlDB()->query("SELECT COUNT(*) AS deletedcount,
+$q = parlDBQuery("SELECT COUNT(*) AS deletedcount,
 						u.user_id,
 						u.firstname,
 						u.lastname,
@@ -39,7 +39,7 @@ for ($row = 0; $row < $q->rows(); $row++) {
     $user_id = $q->field($row, 'user_id');
 
     // Get the total comments posted for this user.
-    $r = getParlDB()->query("SELECT COUNT(*) AS totalcount
+    $r = parlDBQuery("SELECT COUNT(*) AS totalcount
 					FROM	comments
 					WHERE	user_id = '" . $user_id . "'");
 
@@ -49,7 +49,7 @@ for ($row = 0; $row < $q->rows(); $row++) {
 
 
     // Get complaints made about this user's comments, but not upheld.
-    $r = getParlDB()->query("SELECT COUNT(*) AS count
+    $r = parlDBQuery("SELECT COUNT(*) AS count
 					FROM commentreports, comments
 					WHERE	commentreports.comment_id = comments.comment_id
 					AND		comments.user_id = '$user_id'
@@ -84,7 +84,7 @@ $PAGE->display_table($tabledata);
 ?>
 <h4>Users who've made most rejected reports</h4>
 <?php
-$q = getParlDB()->query("SELECT COUNT(*) AS rejectedcount,
+$q = parlDBQuery("SELECT COUNT(*) AS rejectedcount,
 						cr.user_id,
 						u.firstname,
 						u.lastname
@@ -106,7 +106,7 @@ for ($row = 0; $row < $q->rows(); $row++) {
     $USERURL->insert(['u' => $user_id]);
 
     // Get how many valid complaints they've submitted.
-    $r = getParlDB()->query("SELECT COUNT(*) AS upheldcount
+    $r = parlDBQuery("SELECT COUNT(*) AS upheldcount
 					FROM commentreports
 					WHERE	user_id = '$user_id'
 					AND		upheld = '1'");

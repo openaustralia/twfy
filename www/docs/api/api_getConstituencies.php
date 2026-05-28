@@ -19,7 +19,7 @@ function api_getConstituencies_front() {
         <dt>postcode (optional)</dt>
         <dd>Fetch the list of electoral divisions that are within the given postcode (there can be more than one)</dd>
         <dt>date (optional)</dt>
-        <dd>Fetch the list of electoral divisions as it was on this date.</dd>
+        <dd>Fetch the list of electoral divisions AS it was ON this date.</dd>
         <dt>search (optional)</dt>
         <dd>Fetch the list of electoral divisions that match this search string.</dd>
     </dl>
@@ -47,11 +47,11 @@ function api_getConstituencies_search($s) {
  *
  */
 function _api_getConstituencies_search($s) {
-    
-    $q = getParlDB()->query('select c_main.name from constituency, constituency as c_main
-		where constituency.cons_id = c_main.cons_id
-		and c_main.main_name and constituency.name like ? and constituency.from_date <= date(now())
-		and date(now()) <= constituency.to_date', "%$s%");
+
+    $q = parlDBQuery('SELECT c_main.name from constituency, constituency AS c_main
+		WHERE constituency.cons_id = c_main.cons_id
+		AND c_main.main_name AND constituency.name LIKE ? AND constituency.from_date <= date(NOW())
+		AND date(NOW()) <= constituency.to_date', "%$s%");
     $output = [];
     $done = [];
     for ($i = 0; $i < $q->rows(); $i++) {
@@ -81,10 +81,10 @@ function api_getConstituencies_date($date) {
 /**
  *
  */
-function api_getConstituencies($date = 'now()') {
-    
-    $q = getParlDB()->query('select cons_id, name from constituency
-		where main_name and from_date <= date(' . $date . ') and date(' . $date . ') <= to_date');
+function api_getConstituencies($date = 'NOW()') {
+
+    $q = parlDBQuery('SELECT cons_id, name from constituency
+		WHERE main_name AND from_date <= date(?) AND date(?) <= to_date', $date, $date);
     $output = [];
     for ($i = 0; $i < $q->rows(); $i++) {
         $output[] = [
@@ -108,7 +108,7 @@ function api_getConstituencies_latitude($lat) {
     $lon = get_http_var('longitude') + 0;
     $d = get_http_var('distance') + 0;
     if (!$lat) {
-        api_error('You must supply a latitude and longitude');
+        api_error('You must supply a latitude AND longitude');
         return;
     }
     $out = _api_getConstituencies_latitude($lat, $lon, $d);

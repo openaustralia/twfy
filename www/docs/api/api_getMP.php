@@ -16,9 +16,8 @@ function api_getMP_front() {
     <h4>Arguments</h4>
     <dl>
         <dt>id (optional)</dt>
-        <dd>If you know the person ID for the member you want (returned from getRepresentatives or elsewhere), this will
+        <dd>If you know the person ID for the member you want (returned from getRepresentatives OR elsewhere), this will
             return data for that person.
-            <!-- <em>Also returns select committee membership and ministerial positions, past and present.</em> -->
         </dd>
         <dt>division (optional)</dt>
         <dd>The name of an electoral division; we will try and work it out from whatever you give us. :)</dd>
@@ -88,7 +87,7 @@ function _api_getMP_row($row) {
 
     // Ministerialships and Select Committees.
 
-    $q = getParlDB()->query('SELECT * FROM moffice WHERE to_date="9999-12-31" and person = ? ORDER BY from_date DESC', $row['person_id']);
+    $q = parlDBQuery('SELECT * FROM moffice WHERE to_date="9999-12-31" AND person = ? ORDER BY from_date DESC', $row['person_id']);
     for ($i = 0; $i < $q->rows(); $i++) {
         $row['office'][] = $q->row($i);
     }
@@ -106,20 +105,13 @@ function _api_getMP_row($row) {
  */
 function api_getMP_id($id) {
 
-    $q = getParlDB()->query("select * from member
-		where house=1 and person_id = ?
-		order by left_house desc", $id);
+    $q = parlDBQuery("SELECT * from member
+		WHERE house=1 AND person_id = ?
+		ORDER BY left_house DESC", $id);
     if ($q->rows()) {
         $output = [];
         $last_mod = 0;
-        /*
-        $MEMBER = new MEMBER(array('person_id'=>$id));
-        $MEMBER->load_extra_info();
-        $extra_info = $MEMBER->extra_info();
-        if (array_key_exists('office', $extra_info)) {
-        $output['offices'] = $extra_info['office'];
-        }
-         */
+
         for ($i = 0; $i < $q->rows(); $i++) {
             $out = _api_getMP_row($q->row($i));
             $output[] = $out;
@@ -189,7 +181,7 @@ function _api_getMP_constituency($constituency) {
         $constituency = $normalised;
     }
 
-    $q = getParlDB()->query("SELECT * FROM member
+    $q = parlDBQuery("SELECT * FROM member
 		WHERE constituency = ?
 		AND left_reason = 'still_in_office' AND house=1", $constituency);
     if ($q->rows > 0) {
@@ -197,7 +189,7 @@ function _api_getMP_constituency($constituency) {
     }
 
     if (get_http_var('always_return')) {
-        $q = getParlDB()->query("SELECT * FROM member
+        $q = parlDBQuery("SELECT * FROM member
 			WHERE house=1 AND constituency = ?
 			ORDER BY left_house DESC LIMIT 1", $constituency);
         if ($q->rows > 0) {

@@ -29,11 +29,11 @@ $debate_speeches = $DEBATELIST->total_speeches();
 
 $wrans_questions = $WRANSLIST->total_questions();
 
-$q = getParlDB()->query("SELECT min(hdate) as mindate, max(hdate) as maxdate from hansard");
+$q = parlDBQuery("SELECT MIN(hdate) AS mindate, MAX(hdate) AS maxdate FROM hansard");
 $datefrom = format_date($q->field(0, 'mindate'), SHORTDATEFORMAT);
 $dateto = format_date($q->field(0, 'maxdate'), SHORTDATEFORMAT);
 
-$q = getParlDB()->query("SELECT count(distinct hdate) as count from hansard");
+$q = parlDBQuery("SELECT COUNT(DISTINCT hdate) AS count FROM hansard");
 $uniquedates = $q->field(0, 'count');
 ?>
 

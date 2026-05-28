@@ -11,7 +11,7 @@ include_once 'api_getMP.php';
  */
 function _api_getMembers_output($sql, ...$params) {
 
-    $q = getParlDB()->query($sql, ...$params);
+    $q = parlDBQuery($sql, ...$params);
     $output = [];
     $last_mod = 0;
     for ($i = 0; $i < $q->rows(); $i++) {
@@ -35,9 +35,9 @@ function api_getMembers_party($house, $s) {
     if (isset($canon_to_short[ucwords($s)])) {
         $s = $canon_to_short[ucwords($s)];
     }
-    _api_getMembers_output('select * from member
-		where house = ?
-		and party like ? and entered_house <= date(now()) and date(now()) <= left_house',
+    _api_getMembers_output('SELECT * from member
+		WHERE house = ?
+		AND party LIKE ? AND entered_house <= date(NOW()) AND date(NOW()) <= left_house',
         $house, "%$s%");
 }
 
@@ -51,9 +51,9 @@ function api_getMembers_state($house, $s) {
     if (isset($canon_to_short[ucwords($s)])) {
         $s = $canon_to_short[ucwords($s)];
     }
-    _api_getMembers_output('select * from member
-                where house = ?
-                and constituency like ? and entered_house <= date(now()) and date(now()) <= left_house',
+    _api_getMembers_output('SELECT * from member
+                WHERE house = ?
+                AND constituency LIKE ? AND entered_house <= date(NOW()) AND date(NOW()) <= left_house',
         $house, "%$s%");
 }
 
@@ -62,24 +62,24 @@ function api_getMembers_state($house, $s) {
  */
 function api_getMembers_search($house, $s) {
     if ($house == 2) {
-        _api_getMembers_output("select * from member
-			where house = ?
-			and (first_name like ?
-			or last_name like ?
-			or concat(first_name, ' ', last_name) like ?
-			or constituency like ?)
-			and entered_house <= date(now()) and date(now()) <= left_house",
+        _api_getMembers_output("SELECT * from member
+			WHERE house = ?
+			AND (first_name LIKE ?
+			OR last_name LIKE ?
+			OR CONCAT(first_name, ' ', last_name) LIKE ?
+			OR constituency LIKE ?)
+			AND entered_house <= date(NOW()) AND date(NOW()) <= left_house",
         $house, "%$s%", "%$s%", "%$s%", "%$s%");
     } else {
-        _api_getMembers_output("select * from member
-			where house = ?
-			and (
-                first_name like ?
-                or last_name like ?
-                or concat(first_name, ' ', last_name) like ?
+        _api_getMembers_output("SELECT * from member
+			WHERE house = ?
+			AND (
+                first_name LIKE ?
+                OR last_name LIKE ?
+                OR CONCAT(first_name, ' ', last_name) LIKE ?
             )
-			and entered_house <= date(now())
-            and date(now()) <= left_house",
+			AND entered_house <= date(NOW())
+            AND date(NOW()) <= left_house",
         $house, "%$s%", "%$s%", "%$s%");
     }
 }
@@ -98,7 +98,7 @@ function api_getMembers_date($house, $date) {
 /**
  *
  */
-function api_getMembers($house, $date = 'now()') {
-    _api_getMembers_output('select * from member where house= ? ' .
-        ' AND entered_house <= date(' . $date . ') and date(' . $date . ') <= left_house', $house);
+function api_getMembers($house, $date = 'NOW()') {
+    _api_getMembers_output('SELECT * from member WHERE house= ? ' .
+        ' AND entered_house <= date(' . $date . ') AND date(' . $date . ') <= left_house', $house);
 }

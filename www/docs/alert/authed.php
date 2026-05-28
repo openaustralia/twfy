@@ -22,20 +22,20 @@ $email = get_http_var('email');
 $sign = get_http_var('sign');
 $pid = get_http_var('pid');
 if (!$pid || !ctype_digit($pid)) {
-    print 'not valid';
+    print 'NOT valid';
 } else {
     $authed = auth_verify_with_shared_secret($email, OPTION_AUTH_SHARED_SECRET, $sign);
     if ($authed) {
         
         $criteria = "speaker:$pid";
-        $q = getParlDB()->query('select alert_id from alerts where email=? and criteria=? and confirmed and not deleted', $email, $criteria);
+        $q = parlDBQuery('SELECT alert_id from alerts WHERE email=? AND criteria=? AND confirmed AND NOT deleted', $email, $criteria);
         $already_signed = $q->rows();
         if ($already_signed) {
             print "already signed";
         } else {
-            print "not signed";
+            print "NOT signed";
         }
     } else {
-        print "not authed";
+        print "NOT authed";
     }
 }

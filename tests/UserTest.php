@@ -45,7 +45,7 @@ protected function setUp(): void {
 protected function tearDown(): void {
         // Clean up test user.
         if ($this->testUserId) {
-            getParlDB()->query('DELETE FROM users WHERE user_id = ?', $this->testUserId);
+            parlDBQuery('DELETE FROM users WHERE user_id = ?', $this->testUserId);
         }
 }
 

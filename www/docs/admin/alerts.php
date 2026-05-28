@@ -17,13 +17,13 @@ $PAGE->page_start();
 $PAGE->stripe_start();
 
 print '<h4>Statistics</h4>';
-$q = getParlDB()->query('SELECT COUNT(*) AS c FROM alerts');
+$q = parlDBQuery('SELECT COUNT(*) AS c FROM alerts');
 $total = $q->field(0, 'c');
-$q = getParlDB()->query('SELECT COUNT(*) AS c FROM alerts WHERE confirmed=1 AND deleted=0');
+$q = parlDBQuery('SELECT COUNT(*) AS c FROM alerts WHERE confirmed=1 AND deleted=0');
 $active = $q->field(0, 'c');
-$q = getParlDB()->query('SELECT COUNT(*) AS c FROM alerts WHERE deleted=1');
+$q = parlDBQuery('SELECT COUNT(*) AS c FROM alerts WHERE deleted=1');
 $deleted = $q->field(0, 'c');
-$q = getParlDB()->query('SELECT COUNT(*) AS c FROM alerts WHERE confirmed=0');
+$q = parlDBQuery('SELECT COUNT(*) AS c FROM alerts WHERE confirmed=0');
 $unconfirmed = $q->field(0, 'c');
 $rows = [['Total', $total], ['Active', $active], ['Deleted', $deleted], ['Unconfirmed', $unconfirmed]];
 $tabledata = [
@@ -38,7 +38,7 @@ if (isset($_GET['o']) && $_GET['o'] == 'c') {
 }
 
 print '<h4>Active alerts</h4>';
-$q = getParlDB()->query('SELECT email,criteria,created FROM alerts WHERE confirmed=1 AND deleted=0 ORDER BY ' . $order);
+$q = parlDBQuery('SELECT email,criteria,created FROM alerts WHERE confirmed=1 AND deleted=0 ORDER BY ' . $order);
 $tabledata = [
     'header' => ['<a href="alerts.php">Email</a>', 'Criteria', '<a href="alerts.php?o=c">Created</a>'],
     'rows' => generate_rows($q)
@@ -46,12 +46,12 @@ $tabledata = [
 $PAGE->display_table($tabledata);
 
 print '<h4>Deleted alerts</h4>';
-$q = getParlDB()->query('SELECT email,criteria,created FROM alerts WHERE deleted=1 ORDER BY ' . $order);
+$q = parlDBQuery('SELECT email,criteria,created FROM alerts WHERE deleted=1 ORDER BY ' . $order);
 $tabledata['rows'] = generate_rows($q);
 $PAGE->display_table($tabledata);
 
 print '<h4>Unconfirmed alerts</h4>';
-$q = getParlDB()->query('SELECT email,criteria,created FROM alerts WHERE confirmed=0 ORDER BY ' . $order);
+$q = parlDBQuery('SELECT email,criteria,created FROM alerts WHERE confirmed=0 ORDER BY ' . $order);
 $tabledata['rows'] = generate_rows($q);
 $PAGE->display_table($tabledata);
 
@@ -76,7 +76,7 @@ function generate_rows($q) {
         $email = $q->field($row, 'email');
         $criteria = $q->field($row, 'criteria');
         $SEARCHENGINE = new SEARCHENGINE($criteria);
-        $r = getParlDB()->query("SELECT user_id,firstname,lastname FROM users WHERE email = ?", $email);
+        $r = parlDBQuery("SELECT user_id,firstname,lastname FROM users WHERE email = ?", $email);
         if ($r->rows() > 0) {
             $user_id = $r->field(0, 'user_id');
             $USERURL->insert(['u' => $user_id]);
