@@ -382,6 +382,9 @@ class MySQL {
         $i = 0;
         return preg_replace_callback('/\?/', function ($match) use (&$i, $params) {
             $value = $params[$i++];
+            if ($value === null) {
+                return 'NULL';
+            }
             if (is_array($value)) {
                 $escaped = array_map(fn($v) => "'" . $this->escape((string) $v) . "'", $value);
                 return '(' . implode(', ', $escaped) . ')';

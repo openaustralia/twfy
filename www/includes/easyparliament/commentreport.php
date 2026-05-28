@@ -64,11 +64,10 @@ class COMMENTREPORT {
     public function __construct($report_id = '') {
         // Pass it a report id and it gets and sets this report's data.
 
-        
 
         if (is_numeric($report_id)) {
 
-            $q = getParlDB()->query("SELECT commentreports.comment_id,
+            $q = parlDBQuery("SELECT commentreports.comment_id,
 									commentreports.user_id,
 									commentreports.body,
 									DATE_FORMAT(commentreports.reported, '" . SHORTDATEFORMAT_SQL . ' ' . TIMEFORMAT_SQL . "') AS reported,
@@ -111,7 +110,7 @@ class COMMENTREPORT {
                     $this->user_id = $q->field(0, 'user_id');
                 }
             } else {
-                $q = getParlDB()->query("SELECT commentreports.comment_id,
+                $q = parlDBQuery("SELECT commentreports.comment_id,
 									commentreports.user_id,
 									commentreports.body,
 									DATE_FORMAT(commentreports.reported, '" . SHORTDATEFORMAT_SQL . ' ' . TIMEFORMAT_SQL . "') AS reported,
@@ -124,7 +123,8 @@ class COMMENTREPORT {
 									commentreports.lastname,
 									commentreports.email
 							FROM	commentreports
-                            WHERE	commentreports.report_id = '" . getParlDB()->escape($report_id) . "'");
+                            WHERE	commentreports.report_id = ?",
+                    $report_id);
 
                 if ($q->rows() > 0) {
                     $this->report_id = $report_id;
@@ -278,10 +278,11 @@ class COMMENTREPORT {
             // How many seconds until a user can post again?
             $flood_time_limit = 20;
 
-            $q = getParlDB()->query("SELECT report_id
+            $q = parlDBQuery("SELECT report_id
 							FROM	commentreports
-							WHERE	user_id = '" . $THEUSER->user_id() . "'
-							AND		reported + 0 > NOW() - $flood_time_limit");
+							WHERE	user_id = ?
+							AND		reported + 0 > NOW() - ?",
+                $THEUSER->user_id(), $flood_time_limit);
 
             if ($q->rows() > 0) {
                 $PAGE->error_message("Sorry, we limit people to posting one report per $flood_time_limit seconds to help prevent duplicate reports. Please go back and try again, thanks.");
@@ -296,28 +297,17 @@ class COMMENTREPORT {
         $time = gmdate("Y-m-d H:i:s");
 
         if ($THEUSER->isloggedin()) {
-            $sql = "INSERT INTO commentreports
+            $q = parlDBQuery("INSERT INTO commentreports
 									(comment_id, body, reported, user_id)
-                            VALUES	('" . getParlDB()->escape($COMMENT->comment_id()) . "',
-                                    '" . getParlDB()->escape($body) . "',
-									'$time',
-                                    '" . getParlDB()->escape($THEUSER->user_id()) . "'
-									)
-						";
+                            VALUES	(?, ?, ?, ?)",
+                $COMMENT->comment_id(), $body, $time, $THEUSER->user_id());
         } else {
-            $sql = "INSERT INTO commentreports
+            $q = parlDBQuery("INSERT INTO commentreports
 									(comment_id, body, reported, firstname, lastname, email)
-                            VALUES	('" . getParlDB()->escape($COMMENT->comment_id()) . "',
-                                    '" . getParlDB()->escape($body) . "',
-									'$time',
-                                    '" . getParlDB()->escape($reportdata['firstname']) . "',
-                                    '" . getParlDB()->escape($reportdata['lastname']) . "',
-                                    '" . getParlDB()->escape($reportdata['email']) . "'
-									)
-						";
+                            VALUES	(?, ?, ?, ?, ?, ?)",
+                $COMMENT->comment_id(), $body, $time,
+                $reportdata['firstname'], $reportdata['lastname'], $reportdata['email']);
         }
-
-        $q = getParlDB()->query($sql);
 
         if ($q->success()) {
             // Inserted OK, so set up this object's variables.
@@ -431,11 +421,11 @@ class COMMENTREPORT {
         if ($THEUSER->is_able_to('deletecomment')) {
             $time = gmdate("Y-m-d H:i:s");
 
-            $q = getParlDB()->query("UPDATE commentreports
-							SET		locked = '$time',
-									lockedby = '" . $THEUSER->user_id() . "'
-							WHERE	report_id = '" . $this->report_id . "'
-							");
+            $q = parlDBQuery("UPDATE commentreports
+							SET		locked = ?,
+									lockedby = ?
+							WHERE	report_id = ?",
+                $time, $THEUSER->user_id(), $this->report_id);
 
             if ($q->success()) {
                 $this->locked = $time;
@@ -457,11 +447,11 @@ class COMMENTREPORT {
     public function unlock() {
         // Unlock a comment so it can be examined by someone else.
 
-        $q = getParlDB()->query("UPDATE commentreports
+        $q = parlDBQuery("UPDATE commentreports
 						SET		locked = NULL,
 								lockedby = NULL
-						WHERE	report_id = '" . $this->report_id . "'
-						");
+						WHERE	report_id = ?",
+                        $this->report_id);
 
         if ($q->success()) {
             $this->locked = null;
@@ -508,7 +498,7 @@ class COMMENTREPORT {
                     $COMMENT->set_modflag('off');
                 }
 
-                $q = getParlDB()->query("UPDATE commentreports
+                $q = parlDBQuery("UPDATE commentreports
 								SET 	resolved = '$time',
 										resolvedby = '" . getParlDB()->escape($THEUSER->user_id()) . "',
 										locked = NULL,

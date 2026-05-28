@@ -124,7 +124,7 @@ class GLOSSARY {
             $this->alphabet[$letter] = [];
         }
 
-        $q = getParlDB()->query("SELECT g.glossary_id, g.title, g.body, u.user_id, u.firstname, u.lastname
+        $q = parlDBQuery("SELECT g.glossary_id, g.title, g.body, u.user_id, u.firstname, u.lastname
 			FROM editqueue AS eq, glossary AS g, users AS u
 			WHERE g.glossary_id=eq.glossary_id AND u.user_id=eq.user_id AND g.visible=1 AND eq.approved=1
 			ORDER by g.title");
@@ -178,16 +178,15 @@ class GLOSSARY {
         // Search for and fetch glossary item with a title
         // Useful for the search page, and nowhere else (so far)
 
-        $this->query = addslashes($args['s']);
+        $this->query = $args['s'];
         $this->search_matches = [];
         $this->num_search_matches = 0;
 
-        $query = "SELECT g.glossary_id, g.title, g.body, u.user_id, u.firstname, u.lastname
+        $q = parlDBQuery("SELECT g.glossary_id, g.title, g.body, u.user_id, u.firstname, u.lastname
 			FROM editqueue AS eq, glossary AS g, users AS u
 			WHERE g.glossary_id=eq.glossary_id AND u.user_id=eq.user_id AND g.visible=1
-				AND g.title LIKE '%" . $this->query . "%'
-			ORDER by g.title";
-        $q = getParlDB()->query($query);
+				AND g.title LIKE ?
+			ORDER by g.title", '%' . $this->query . '%');
         if ($q->success() && $q->rows()) {
             for ($i = 0; $i < $q->rows(); $i++) {
                 $this->search_matches[$q->field($i, "glossary_id")] = $q->row($i);
@@ -252,10 +251,11 @@ class GLOSSARY {
             // How many seconds until a user can post again?
             $flood_time_limit = 20;
 
-            $q = getParlDB()->query("SELECT glossary_id
+            $q = parlDBQuery("SELECT glossary_id
 							FROM	editqueue
-							WHERE	user_id = '" . $THEUSER->user_id() . "'
-							AND		submitted + 0 > NOW() - $flood_time_limit");
+							WHERE	user_id = ?
+							AND		submitted + 0 > NOW() - ?",
+                $THEUSER->user_id(), $flood_time_limit);
 
             if ($q->rows() > 0) {
                 error("Sorry, we limit people to posting one term per $flood_time_limit seconds to help prevent duplicate postings. Please go back and try again, thanks.");
@@ -290,7 +290,7 @@ class GLOSSARY {
      *
      */
     public function delete($glossary_id) {
-        $q = getParlDB()->query("DELETE from glossary where glossary_id=$glossary_id LIMIT 1;");
+        $q = parlDBQuery("DELETE from glossary where glossary_id = ? LIMIT 1", $glossary_id);
         // If that worked, we need to update the editqueue,
         // and remove the term from the already generated object list.
         if ($q->affected_rows() >= 1) {

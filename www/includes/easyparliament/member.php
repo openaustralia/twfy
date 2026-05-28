@@ -85,7 +85,6 @@ class MEMBER {
 
         global $PAGE, $this_page;
 
-        
         $person_id = '';
         if (isset($args['member_id']) && is_numeric($args['member_id'])) {
             $person_id = $this->member_id_to_person_id($args['member_id']);
@@ -119,7 +118,7 @@ class MEMBER {
         $this->valid = true;
 
         // Get the data.
-        $q = getParlDB()->query("SELECT member_id, house, title,
+        $q = parlDBQuery("SELECT member_id, house, title,
 			first_name, last_name, constituency, party,
 			entered_house, left_house, entered_reason, left_reason, person_id
 			FROM member
@@ -221,7 +220,7 @@ class MEMBER {
      */
     public function member_id_to_person_id($member_id) {
         global $PAGE;
-        $q = getParlDB()->query("SELECT person_id FROM member
+        $q = parlDBQuery("SELECT person_id FROM member
 					WHERE member_id = ?", $member_id);
         if ($q->rows > 0) {
             return $q->field(0, 'person_id');
@@ -259,14 +258,14 @@ class MEMBER {
             $constituency = $normalised;
         }
 
-        $q = getParlDB()->query("SELECT person_id FROM member
+        $q = parlDBQuery("SELECT person_id FROM member
 					WHERE constituency = ?
 					AND left_reason = 'still_in_office'", $constituency);
 
         if ($q->rows > 0) {
             return $q->field(0, 'person_id');
         } else {
-            $q = getParlDB()->query("SELECT person_id FROM member WHERE constituency = ? ORDER BY left_house DESC LIMIT 1", $constituency);
+            $q = parlDBQuery("SELECT person_id FROM member WHERE constituency = ? ORDER BY left_house DESC LIMIT 1", $constituency);
             if ($q->rows > 0) {
                 return $q->field(0, 'person_id');
             } else {
@@ -293,7 +292,7 @@ class MEMBER {
                 $success = preg_match('#^(.*?)() (.*)$#', $name, $m);
             }
             if (!$success) {
-                $PAGE->error_message('Sorry, that name was not recognised.');
+                $PAGE->error_message('Sorry, that name was NOT recognised.');
                 return false;
             }
             $first_name = getParlDB()->escape($m[1]);
@@ -301,14 +300,14 @@ class MEMBER {
             $last_name = getParlDB()->escape($m[3]);
             $q .= "house = 4 AND (";
             $q .= "(first_name='$first_name $middle_name' AND last_name='$last_name')";
-            $q .= " or (first_name='$first_name' AND last_name='$middle_name $last_name') )";
+            $q .= " OR (first_name='$first_name' AND last_name='$middle_name $last_name') )";
         } elseif ($this_page == 'mla') {
             $success = preg_match('#^(.*?) (.*?) (.*?)$#', $name, $m);
             if (!$success) {
                 $success = preg_match('#^(.*?)() (.*)$#', $name, $m);
             }
             if (!$success) {
-                $PAGE->error_message('Sorry, that name was not recognised.');
+                $PAGE->error_message('Sorry, that name was NOT recognised.');
                 return false;
             }
             $first_name = getParlDB()->escape($m[1]);
@@ -316,14 +315,14 @@ class MEMBER {
             $last_name = getParlDB()->escape($m[3]);
             $q .= "house = 3 AND (";
             $q .= "(first_name='$first_name $middle_name' AND last_name='$last_name')";
-            $q .= " or (first_name='$first_name' AND last_name='$middle_name $last_name') )";
+            $q .= " OR (first_name='$first_name' AND last_name='$middle_name $last_name') )";
         } elseif (strstr($this_page, 'mp') || $this_page == 'peer') {
             $success = preg_match('#^(.*?) (.*?) (.*?)$#', $name, $m);
             if (!$success) {
                 $success = preg_match('#^(.*?)() (.*)$#', $name, $m);
             }
             if (!$success) {
-                $PAGE->error_message('Sorry, that name was not recognised.');
+                $PAGE->error_message('Sorry, that name was NOT recognised.');
                 return false;
             }
             $first_name = $m[1];
@@ -348,7 +347,7 @@ class MEMBER {
             $q .= ' AND constituency=\'' . getParlDB()->escape($const) . "'";
         }
         $q .= ' ORDER BY left_house DESC';
-        $q = getParlDB()->query($q);
+        $q = parlDBQuery($q);
         if ($q->rows > 1) {
             // Hacky as a very hacky thing that's graduated in hacking from the University of Hacksville
             // Anyone who wants to do it properly, feel free.
@@ -398,19 +397,19 @@ class MEMBER {
      */
     public function load_extra_info() {
 
-        $q = getParlDB()->query('SELECT * FROM moffice WHERE person=? ORDER BY from_date DESC', $this->person_id);
+        $q = parlDBQuery('SELECT * FROM moffice WHERE person=? ORDER BY from_date DESC', $this->person_id);
         for ($row = 0; $row < $q->rows(); $row++) {
             $this->extra_info['office'][] = $q->row($row);
         }
 
-        $q = getParlDB()->query("SELECT data_key, data_value
+        $q = parlDBQuery("SELECT data_key, data_value
                         FROM 	memberinfo
                         WHERE	member_id = ?", $this->member_id);
         for ($row = 0; $row < $q->rows(); $row++) {
             $this->extra_info[$q->field($row, 'data_key')] = $q->field($row, 'data_value');
         }
 
-        $q = getParlDB()->query("SELECT data_key, data_value
+        $q = parlDBQuery("SELECT data_key, data_value
                         FROM 	personinfo
                         WHERE	person_id = ?", $this->person_id);
         for ($row = 0; $row < $q->rows(); $row++) {
@@ -479,7 +478,7 @@ class MEMBER {
                 $GLOSSARY->glossarise($this->extra_info['register_member_interests_html']);
         }
 
-        $q = getParlDB()->query('select count(*) as c from alerts where criteria like "%speaker:' . $this->person_id . '%" and confirmed and not deleted');
+        $q = parlDBQuery('SELECT COUNT(*) AS c from alerts WHERE criteria LIKE "%speaker:' . $this->person_id . '%" AND confirmed AND NOT deleted');
         $this->extra_info['number_of_alerts'] = $q->field(0, 'c');
 
         if (isset($this->extra_info['reading_ease'])) {
@@ -490,13 +489,13 @@ class MEMBER {
         }
 
         // Public Bill Committees.
-        $q = getParlDB()->query('select bill_id,session,title,sum(attending) as a,sum(chairman) as c
+        $q = parlDBQuery('SELECT bill_id,session,title, SUM(attending) AS a,SUM(chairman) AS c
 		from pbc_members, bills
-		where bill_id = bills.id and member_id = ? group by bill_id', $this->member_id());
+		WHERE bill_id = bills.id AND member_id = ? GROUP BY bill_id', $this->member_id());
         $this->extra_info['pbc'] = [];
         for ($i = 0; $i < $q->rows(); $i++) {
             $bill_id = $q->field($i, 'bill_id');
-            $c = getParlDB()->query('select count(*) as c from hansard where major=6 and minor=' . $bill_id . ' and htype=10');
+            $c = parlDBQuery('SELECT COUNT(*) AS c from hansard WHERE major=6 AND minor=? AND htype=10', $bill_id);
             $c = $c->field(0, 'c');
             $title = $q->field($i, 'title');
             $attending = $q->field($i, 'a');
@@ -678,7 +677,7 @@ class MEMBER {
         if (isset($this->reasons[$left_reason])) {
             $left_reason = $this->reasons[$left_reason];
             if (is_array($left_reason)) {
-                $q = getParlDB()->query("SELECT MAX(left_house) AS max FROM member");
+                $q = parlDBQuery("SELECT MAX(left_house) AS max FROM member");
                 $max = $q->field(0, 'max');
                 if ((!$mponly && $max == $this->left_house) || ($mponly && $max == $this->mp_left_house)) {
                     return $left_reason[0];
@@ -779,7 +778,7 @@ class MEMBER {
         if (is_null($entered_house)) {
             return '';
         }
-        $q = getParlDB()->query('SELECT DISTINCT(person_id), first_name, last_name FROM member WHERE house=1 AND constituency = "' . $this->constituency() . '" AND person_id != ' . $this->person_id() . ' AND entered_house < "' . $entered_house['date'] . '"');
+        $q = parlDBQuery('SELECT DISTINCT(person_id), first_name, last_name FROM member WHERE house=1 AND constituency = ? AND person_id != ? AND entered_house < ?', $this->constituency(), $this->person_id(), $entered_house['date']);
         for ($r = 0; $r < $q->rows(); $r++) {
             $pid = $q->field($r, 'person_id');
             $name = $q->field($r, 'first_name') . ' ' . $q->field($r, 'last_name');
@@ -803,7 +802,7 @@ class MEMBER {
         if (is_null($entered_house)) {
             return '';
         }
-        $q = getParlDB()->query('SELECT DISTINCT(person_id), first_name, last_name FROM member WHERE house=1 AND constituency = "' . $this->constituency() . '" AND person_id != ' . $this->person_id() . ' AND entered_house > "' . $entered_house['date'] . '"');
+        $q = parlDBQuery('SELECT DISTINCT(person_id), first_name, last_name FROM member WHERE house=1 AND constituency = ? AND person_id != ? AND entered_house > ?', $this->constituency(), $this->person_id(), $entered_house['date']);
         if ($this->person_id() == 10218) {
             return;
         }

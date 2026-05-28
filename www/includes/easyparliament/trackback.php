@@ -40,7 +40,6 @@ class TRACKBACK {
      */
     public function __construct() {
 
-        
 
         // Set in init.php.
         if (ALLOWTRACKBACKS) {
@@ -199,7 +198,7 @@ class TRACKBACK {
         // What we return.
         $trackbackdata = [];
 
-        $q = getParlDB()->query("SELECT trackback_id,
+        $q = parlDBQuery("SELECT trackback_id,
 								epobject_id,
 								blog_name,
 								title,
@@ -245,12 +244,18 @@ class TRACKBACK {
             return false;
         }
 
-        $num = $args['num'];
+        $num = (int) $args['num'];
+        if ($num > 1000) {
+             $PAGE->error_message("Sorry, we won't display more than 1000 trackbacks at a time.");
+            $num = 1000;
+        } else if ($num == 0) {
+            $num = 100;
+        }
 
         // What we return.
         $trackbackdata = [];
 
-        $q = getParlDB()->query("SELECT trackback_id,
+        $q = parlDBQuery("SELECT trackback_id,
 								epobject_id,
 								blog_name,
 								title,
@@ -260,8 +265,7 @@ class TRACKBACK {
 						FROM 	trackbacks
 						WHERE 	visible = 1
 						ORDER BY posted DESC
-						LIMIt	$num
-						");
+						LIMIT	?", $num);
 
         if ($q->rows() > 0) {
             for ($row = 0; $row < $q->rows(); $row++) {

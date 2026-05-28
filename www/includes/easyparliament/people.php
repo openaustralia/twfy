@@ -15,7 +15,6 @@ class PEOPLE {
      *
      */
     public function __construct() {
-        
     }
 
     /**
@@ -101,9 +100,11 @@ class PEOPLE {
 
         $order = 'last_name';
         $sqlorder = 'last_name, first_name';
+        $house = (int) $args['house'];
         $query = 'SELECT person_id, title, first_name, last_name, constituency, party, dept, position
 			FROM member LEFT OUTER JOIN moffice ON member.person_id = moffice.person AND to_date="9999-12-31"
-			WHERE house=' . $args['house'] . ' AND left_house = (SELECT MAX(left_house) FROM member) ';
+			WHERE house=? AND left_house = (SELECT MAX(left_house) FROM member) ';
+        $params = [$house];
         if (isset($args['order'])) {
             // Lords.
             if ($args['order'] == 'name') {
@@ -122,26 +123,29 @@ class PEOPLE {
                 $sqlorder = 'data_value+0 DESC, last_name, first_name';
                 $query = 'SELECT member.person_id, title, first_name, last_name, constituency, party, dept, position, data_value
 					FROM member LEFT OUTER JOIN moffice ON member.person_id=moffice.person AND to_date="9999-12-31", personinfo
-					WHERE member.person_id = personinfo.person_id AND house=1 AND left_house = (SELECT MAX(left_house) FROM member)
+					WHERE member.person_id = personinfo.person_id AND house=? AND left_house = (SELECT MAX(left_house) FROM member)
 					AND data_key="expenses2004_total" ';
+                $params = [1];
             } elseif ($args['order'] == 'debates') {
                 $order = 'debates';
                 $sqlorder = 'data_value+0 DESC, last_name, first_name';
                 $query = 'SELECT member.person_id, title, first_name, last_name, constituency, party, dept, position, data_value
 					FROM member LEFT OUTER JOIN moffice ON member.person_id=moffice.person AND to_date="9999-12-31", personinfo
-					WHERE member.person_id = personinfo.person_id AND house=1 AND left_house = (SELECT MAX(left_house) FROM member)
+					WHERE member.person_id = personinfo.person_id AND house=? AND left_house = (SELECT MAX(left_house) FROM member)
 					AND data_key="debate_sectionsspoken_inlastyear" ';
+                $params = [1];
             } elseif ($args['order'] == 'safety') {
                 $order = 'safety';
                 $sqlorder = 'data_value+0 DESC, last_name, first_name';
                 $query = 'SELECT member.person_id, title, first_name, last_name, constituency, party, dept, position, data_value
 					FROM member LEFT OUTER JOIN moffice ON member.person_id=moffice.person AND to_date="9999-12-31", memberinfo
-					WHERE member.member_id = memberinfo.member_id AND house=1 AND left_house = (SELECT MAX(left_house) FROM member)
+					WHERE member.member_id = memberinfo.member_id AND house=? AND left_house = (SELECT MAX(left_house) FROM member)
 					AND data_key="swing_to_lose_seat_today" ';
+                $params = [1];
             }
         }
 
-        $q = getParlDB()->query($query . "ORDER BY $sqlorder");
+        $q = parlDBQuery($query . "ORDER BY $sqlorder", ...$params);
 
         $data = [];
 

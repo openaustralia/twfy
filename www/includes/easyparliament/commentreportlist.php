@@ -17,7 +17,7 @@ class COMMENTREPORTLIST {
      *
      */
     public function __construct() {
-        
+
     }
 
     /**
@@ -58,7 +58,7 @@ class COMMENTREPORTLIST {
 
         $time = gmdate("Y-m-d H:i:s", (time() - ($minutes * 60)));
 
-        $q = getParlDB()->query("UPDATE commentreports
+        $q = parlDBQuery("UPDATE commentreports
 						SET 	locked = NULL,
 								lockedby = 0
 						WHERE	locked < '$time'
@@ -76,36 +76,33 @@ class COMMENTREPORTLIST {
 
         $number_to_fetch = 100;
 
-        $q = getParlDB()->query("SELECT comments.comment_id,
-								commentreports.report_id,
-								commentreports.body,
-								DATE_FORMAT(commentreports.reported, '" . SHORTDATEFORMAT_SQL . ' ' . TIMEFORMAT_SQL . "') AS reported,
-								commentreports.locked,
-								users.firstname,
-								users.lastname
-						FROM	comments,
-								users,
-								commentreports
+        $q = parlDBQuery("SELECT comments.comment_id,
+                            commentreports.report_id,
+                            commentreports.body,
+                            DATE_FORMAT(commentreports.reported, '" . SHORTDATEFORMAT_SQL . ' ' . TIMEFORMAT_SQL . "') AS reported,
+                            commentreports.locked,
+                            users.firstname,
+                            users.lastname
+						FROM comments, users, commentreports
 						WHERE	commentreports.resolved IS NULL
-						AND		commentreports.comment_id = comments.comment_id
-						AND		commentreports.user_id = users.user_id
+                            AND		commentreports.comment_id = comments.comment_id
+                            AND		commentreports.user_id = users.user_id
 						ORDER BY commentreports.reported ASC
-						LIMIT	$number_to_fetch
-						");
+						LIMIT	$number_to_fetch ");
 
-        $r = getParlDB()->query("SELECT comments.comment_id,
-		commentreports.report_id,
-		commentreports.body,
-		DATE_FORMAT(commentreports.reported, '" . SHORTDATEFORMAT_SQL . ' ' . TIMEFORMAT_SQL . "') AS reported,
-		commentreports.locked,
-		commentreports.firstname,
-		commentreports.lastname
-		FROM comments, commentreports
-		WHERE commentreports.resolved IS NULL
-		AND commentreports.comment_id = comments.comment_id
-		AND commentreports.user_id IS NULL
-		ORDER BY commentreports.reported ASC
-		LIMIT $number_to_fetch");
+        $r = parlDBQuery("SELECT comments.comment_id,
+                            commentreports.report_id,
+                            commentreports.body,
+                            DATE_FORMAT(commentreports.reported, '" . SHORTDATEFORMAT_SQL . ' ' . TIMEFORMAT_SQL . "') AS reported,
+                            commentreports.locked,
+                            commentreports.firstname,
+                            commentreports.lastname
+                        FROM comments, commentreports
+                        WHERE commentreports.resolved IS NULL
+                            AND commentreports.comment_id = comments.comment_id
+                            AND commentreports.user_id IS NULL
+                        ORDER BY commentreports.reported ASC
+                            LIMIT $number_to_fetch");
 
         $data = [];
 
@@ -125,6 +122,7 @@ class COMMENTREPORTLIST {
             }
 
         }
+
         if ($r->rows() > 0) {
             for ($n = 0; $n < $r->rows(); $n++) {
                 $data[] = [

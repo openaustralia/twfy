@@ -60,7 +60,7 @@ class EDITQUEUE {
      *
      */
     public function __construct() {
-        
+
     }
 
     /**
@@ -83,16 +83,11 @@ class EDITQUEUE {
 
         global $THEUSER;
 
-        $q = getParlDB()->query("INSERT INTO editqueue
+        $q = parlDBQuery("INSERT INTO editqueue
 						(user_id, edit_type, title, body, submitted)
 						VALUES
-						(
-						'" . addslashes($THEUSER->user_id()) . "',
-						'" . $data['edit_type'] . "',
-						'" . addslashes($data['title']) . "',
-						'" . addslashes($data['body']) . "',
-						'" . $data['posted'] . "'
-						);");
+						(?, ?, ?, ?, ?);",
+            $THEUSER->user_id(), $data['edit_type'], $data['title'], $data['body'], $data['posted']);
 
         if ($q->success()) {
             // Set the object variables up.
@@ -135,13 +130,14 @@ class EDITQUEUE {
             if (!isset($this->pending[$approval_id])) {
                 break;
             }
-            $q = getParlDB()->query("INSERT INTO epobject
+            $q = parlDBQuery("INSERT INTO epobject
 							(title, body, type, created)
 							VALUES
-							('" . addslashes($this->pending[$approval_id]['title']) . "',
-							'" . addslashes($this->pending[$approval_id]['body']) . "',
-							'" . $data['epobject_type'] . "',
-							'" . $timestamp . "');");
+							(?, ?, ?, ?);",
+                $this->pending[$approval_id]['title'],
+                $this->pending[$approval_id]['body'],
+                $data['epobject_type'],
+                $timestamp);
 
             // If that didn't work we can't go any further...
             if (!$q->success()) {
@@ -157,17 +153,15 @@ class EDITQUEUE {
                 // Glossary item.
                 case 2:
                     $previous_insert_id = $q->insert_id();
-                    $q = getParlDB()->query("INSERT INTO glossary
+                    $q = parlDBQuery("INSERT INTO glossary
 									(epobject_id, type, visible)
 									VALUES
-									('" . $q->insert_id() . "',
-									'2',
-									'1');");
-                    // Again, no point carrying on if this fails,
+									(?, '2', '1');", $previous_insert_id);
+                    // Again, no point carrying ON if this fails,
                     // so remove the previous entry.
                     if (!$q->success()) {
                         print "glossary trouble!";
-                        $q = getParlDB()->query("delete from epobject where epobject_id=" . $previous_insert_id . "");
+                        $q = parlDBQuery("DELETE FROM epobject WHERE epobject_id=?", $previous_insert_id);
                         return false;
                     }
                   break;
@@ -177,13 +171,14 @@ class EDITQUEUE {
 
             // Then finally update the editqueue with
             // the new epobject id and approval details.
-            $q = getParlDB()->query("UPDATE editqueue
+            $q = parlDBQuery("UPDATE editqueue
 							SET
-							epobject_id_l='" . $this->current_epobject_id . "',
-							editor_id='" . addslashes($THEUSER->user_id()) . "',
+							epobject_id_l=?,
+							editor_id=?,
 							approved='1',
-							decided='" . $timestamp . "'
-							WHERE edit_id=" . $approval_id . ";");
+							decided=?
+							WHERE edit_id=?;",
+                $this->current_epobject_id, $THEUSER->user_id(), $timestamp, $approval_id);
             if (!$q->success()) {
                 break;
             } else {
@@ -221,12 +216,13 @@ class EDITQUEUE {
             }
 
             // Update the editqueue with setting approved=0.
-            $q = getParlDB()->query("UPDATE editqueue
+            $q = parlDBQuery("UPDATE editqueue
 							SET
-							editor_id='" . addslashes($THEUSER->user_id()) . "',
+							editor_id=?,
 							approved='0',
-							decided='" . $timestamp . "'
-							WHERE edit_id=" . $decline_id . ";");
+							decided=?
+							WHERE edit_id=?;",
+                $THEUSER->user_id(), $timestamp, $decline_id);
             if (!$q->success()) {
                 break;
             } else {
@@ -250,7 +246,8 @@ class EDITQUEUE {
         // update glossary_id.
 
         // 1. Add the new item into the queue
-        $q = getParlDB()->query();
+        // BRENDA says: the code is missing here? Could this be how they shut off comments?
+        // $q = parlDBQuery();
 
         // 2. if successful, set the previous editqueue item to approved=0;
 
@@ -374,14 +371,14 @@ class GLOSSEDITQUEUE extends EDITQUEUE {
             if (!isset($this->pending[$approval_id])) {
                 break;
             }
-            $q = getParlDB()->query("INSERT INTO glossary
+            $q = parlDBQuery("INSERT INTO glossary
 							(title, body, type, created, visible)
 							VALUES
-							('" . addslashes($this->pending[$approval_id]['title']) . "',
-							'" . addslashes($this->pending[$approval_id]['body']) . "',
-							'" . $data['epobject_type'] . "',
-							'" . $timestamp . "',
-							1);");
+							(?, ?, ?, ?, 1);",
+                $this->pending[$approval_id]['title'],
+                $this->pending[$approval_id]['body'],
+                $data['epobject_type'],
+                $timestamp);
 
             // If that didn't work we can't go any further...
             if (!$q->success()) {
@@ -392,13 +389,14 @@ class GLOSSEDITQUEUE extends EDITQUEUE {
 
             // Then finally update the editqueue with
             // the new epobject id and approval details.
-            $q = getParlDB()->query("UPDATE editqueue
+            $q = parlDBQuery("UPDATE editqueue
 							SET
-							glossary_id='" . $this->current_epobject_id . "',
-							editor_id='" . addslashes($THEUSER->user_id()) . "',
+							glossary_id=?,
+							editor_id=?,
 							approved='1',
-							decided='" . $timestamp . "'
-							WHERE edit_id=" . $approval_id . ";");
+							decided=?
+							WHERE edit_id=?;",
+                $this->current_epobject_id, $THEUSER->user_id(), $timestamp, $approval_id);
             if (!$q->success()) {
                 break;
             } else {
