@@ -51,8 +51,6 @@ class COMMENT {
      */
     public function __construct($comment_id = '') {
 
-        
-
         // Set in init.php.
         if (ALLOWCOMMENTS) {
             $this->comments_enabled = true;
@@ -63,7 +61,7 @@ class COMMENT {
         if (is_numeric($comment_id)) {
             // We're getting the data for an existing comment from the DB.
 
-            $q = getParlDB()->query("SELECT user_id,
+            $q = parlDBQuery("SELECT user_id,
 									epobject_id,
 									body,
 									posted,
@@ -196,7 +194,7 @@ class COMMENT {
         if (!$THEUSER->is_able_to('addcomment')) {
             $message = [
                 'title' => 'Sorry',
-                'text' => 'You are not allowed to post comments.'
+                'text' => 'You are NOT allowed to post comments.'
             ];
             $PAGE->error_message($message);
             return false;
@@ -220,29 +218,6 @@ class COMMENT {
             return false;
         }
 
-        /*
-        if (is_numeric($THEUSER->user_id())) {
-        // Flood check - make sure the user hasn't just posted a comment recently.
-        // To help prevent accidental duplicates, among other nasty things.
-
-        $flood_time_limit = 60; // How many seconds until a user can post again?
-
-        $q = getParlDB()->query("SELECT comment_id
-        FROM    comments
-        WHERE    user_id = '" . $THEUSER->user_id() . "'
-        AND        posted + 0 > NOW() - $flood_time_limit");
-
-        if ($q->rows() > 0) {
-        $message = array (
-        'title' => 'Hold your horses!',
-        'text' => "We limit people to posting one comment per $flood_time_limit seconds to help prevent duplicate postings. Please go back and try again, thanks."
-        );
-        $PAGE->error_message($message);
-        return false;
-        }
-        }
-         */
-
         // OK, let's get on with it...
 
         // Tidy up the HTML tags
@@ -252,20 +227,13 @@ class COMMENT {
 
         $posted = date('Y-m-d H:i:s', time());
 
-        $q_gid = getParlDB()->query("select gid from hansard where epobject_id = '" . addslashes($data['epobject_id']) . "'");
+        $q_gid = parlDBQuery("SELECT gid FROM hansard WHERE epobject_id = ?", $data['epobject_id']);
         $data['gid'] = $q_gid->field(0, 'gid');
 
-        $q = getParlDB()->query("INSERT INTO comments
+        $q = parlDBQuery("INSERT INTO comments
 						(user_id, epobject_id, body, posted, visible, original_gid)
-						VALUES
-						(
-						'" . addslashes($THEUSER->user_id()) . "',
-						'" . addslashes($data['epobject_id']) . "',
-						'" . addslashes($body) . "',
-						'" . $posted . "',
-						1,
-						'" . addslashes($data['gid']) . "'
-						)");
+						VALUES (?, ?, ?, ?, 1, ?)",
+            $THEUSER->user_id(), $data['epobject_id'], $body, $posted, $data['gid']);
 
         if ($q->success()) {
             // Set the object varibales up.
@@ -319,20 +287,17 @@ class COMMENT {
 
         if ($switch == 'on') {
             $date = gmdate("Y-m-d H:i:s");
-            $flag = "'$date'";
-
         } elseif ($switch == 'off') {
             $date = null;
-            $flag = 'NULL';
 
         } else {
             $PAGE->error_message("Why are you trying to switch this comment's modflag to '" . htmlentities($switch) . "'!");
         }
 
-        $q = getParlDB()->query("UPDATE comments
-						SET		modflagged = $flag
-						WHERE 	comment_id = '" . $this->comment_id . "'
-						");
+        $q = parlDBQuery("UPDATE comments
+						SET		modflagged = ?
+						WHERE 	comment_id = ?",
+                        $date, $this->comment_id);
 
         if ($q->success()) {
             $this->modflagged = $date;
@@ -357,7 +322,7 @@ class COMMENT {
         global $THEUSER, $PAGE;
 
         if ($THEUSER->is_able_to('deletecomment')) {
-            $q = getParlDB()->query("UPDATE comments SET visible = '0' WHERE comment_id = '" . $this->comment_id . "'");
+            $q = parlDBQuery("UPDATE comments SET visible = '0' WHERE comment_id = '" . $this->comment_id . "'");
 
             if ($q->success()) {
                 return true;
@@ -390,7 +355,7 @@ class COMMENT {
 
         if ($this->url == '') {
 
-            $q = getParlDB()->query("SELECT major,
+            $q = parlDBQuery("SELECT major,
 									gid
 							FROM	hansard
 							WHERE	epobject_id = '" . addslashes($this->epobject_id) . "'
@@ -421,7 +386,7 @@ class COMMENT {
         // Gets and sets the user's name who posted the comment.
 
         if ($this->firstname == '' && $this->lastname == '') {
-            $q = getParlDB()->query("SELECT firstname,
+            $q = parlDBQuery("SELECT firstname,
 									lastname
 							FROM	users
 							WHERE	user_id = '" . addslashes($this->user_id) . "'

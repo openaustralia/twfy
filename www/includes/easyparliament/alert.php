@@ -55,7 +55,7 @@ function suggest_alerts($email, $criteria, $maxresults) {
         $sql .= "AND NOT(criteria=ANY(SELECT criteria FROM alerts WHERE email= ?)) ";
         // Most common first.
         $sql .= "GROUP BY criteria ORDER BY c DESC";
-        $q = getParlDB()->query($sql, "%$criteria%", $email);
+        $q = parlDBQuery($sql, "%$criteria%", $email);
         $resultcount = $q->rows();
         // If something was returned.
         if ($resultcount > 0) {
@@ -158,7 +158,7 @@ class ALERT {
         // so that only live confirmed alerts are chosen.
 
         // Look for this alert_id's details.
-        $q = getParlDB()->query("SELECT alert_id,
+        $q = parlDBQuery("SELECT alert_id,
 						email,
 						criteria,
 						registrationtoken,
@@ -225,11 +225,11 @@ class ALERT {
 
         $criteria = alert_details_to_criteria($details);
 
-        $q = getParlDB()->query("SELECT * FROM alerts WHERE email = ? AND criteria = ? AND confirmed = 1", $details['email'], $criteria);
+        $q = parlDBQuery("SELECT * FROM alerts WHERE email = ? AND criteria = ? AND confirmed = 1", $details['email'], $criteria);
         if ($q->rows() > 0) {
             $deleted = $q->field(0, 'deleted');
             if ($deleted) {
-                getParlDB()->query("UPDATE alerts SET deleted = 0 WHERE email = ? AND criteria = ? AND confirmed = 1", $details['email'], $criteria);
+                parlDBQuery("UPDATE alerts SET deleted = 0 WHERE email = ? AND criteria = ? AND confirmed = 1", $details['email'], $criteria);
                 return 1;
             } else {
                 return -2;
@@ -246,7 +246,7 @@ class ALERT {
         }
         $sql .= "NOW() )";
 
-        $q = getParlDB()->query($sql, $details['email'], $criteria);
+        $q = parlDBQuery($sql, $details['email'], $criteria);
 
         if ($q->success()) {
 
@@ -269,7 +269,7 @@ class ALERT {
 
             // Add that to the database.
 
-            $r = getParlDB()->query("UPDATE alerts
+            $r = parlDBQuery("UPDATE alerts
                         SET registrationtoken = ?
                         WHERE alert_id = ?
 						", $this->registrationtoken, $this->alert_id);
@@ -290,7 +290,7 @@ class ALERT {
                     }
                 } elseif ($instantly_confirm) {
                     // No confirmation email needed.
-                    $s = getParlDB()->query("UPDATE alerts
+                    $s = parlDBQuery("UPDATE alerts
 						SET confirmed = '1'
                         WHERE alert_id = ?
 						", $this->alert_id);
@@ -360,7 +360,7 @@ class ALERT {
         // Returns true if there's a user with this email address.
 
         if ($email != "") {
-            $q = getParlDB()->query("SELECT alert_id FROM alerts WHERE email = ?", $email);
+            $q = parlDBQuery("SELECT alert_id FROM alerts WHERE email = ?", $email);
             if ($q->rows() > 0) {
                 return true;
             } else {
@@ -397,7 +397,7 @@ class ALERT {
             return false;
         }
 
-        $q = getParlDB()->query("SELECT email, criteria
+        $q = parlDBQuery("SELECT email, criteria
 						FROM alerts
                         WHERE alert_id = ?
                         AND registrationtoken = ?
@@ -406,7 +406,7 @@ class ALERT {
         if ($q->rows() == 1) {
             $this->criteria = $q->field(0, 'criteria');
             $this->email = $q->field(0, 'email');
-            $r = getParlDB()->query("UPDATE alerts
+            $r = parlDBQuery("UPDATE alerts
 						SET confirmed = '1', deleted = '0'
                         WHERE	alert_id = ?
 						", $alert_id);
@@ -448,7 +448,7 @@ class ALERT {
             return false;
         }
 
-        $q = getParlDB()->query("SELECT email, criteria
+        $q = parlDBQuery("SELECT email, criteria
 						FROM alerts
                         WHERE alert_id = ?
                         AND registrationtoken = ?
@@ -457,7 +457,7 @@ class ALERT {
         if ($q->rows() == 1) {
 
             // Set that they're confirmed in the DB.
-            $r = getParlDB()->query("UPDATE alerts
+            $r = parlDBQuery("UPDATE alerts
 						SET deleted = '1'
                         WHERE	alert_id = ?
 						", $alert_id);

@@ -43,7 +43,7 @@ class SEARCHLOG {
         // Deduplicate repeated terms before storing.
         $query = implode(' ', array_unique(explode(' ', $searchlogdata['query'])));
 
-        getParlDB()->query("INSERT INTO search_query_log
+        parlDBQuery("INSERT INTO search_query_log
             (query_string, page_number, count_hits, ip_address, query_time)
             VALUES (?, ?, ?, ?, NOW())",
             $query,
@@ -59,7 +59,7 @@ class SEARCHLOG {
      */
     public function popular_recent($count) {
 
-        $q = getParlDB()->query("
+        $q = parlDBQuery("
                 SELECT query_string, count(*) AS c
                 FROM search_query_log
                 WHERE count_hits != 0
@@ -85,7 +85,7 @@ class SEARCHLOG {
         $url = $this->SEARCHURL->generate();
         $htmlescape = 1;
         if ($pos = strpos($query, ':')) {
-            $qq = getParlDB()->query('SELECT first_name, last_name FROM member WHERE person_id = ? LIMIT 1', substr($query, $pos + 1));
+            $qq = parlDBQuery('SELECT first_name, last_name FROM member WHERE person_id = ? LIMIT 1', substr($query, $pos + 1));
             if ($qq->rows()) {
                 $query = $qq->field(0, 'first_name') . ' ' . $qq->field(0, 'last_name');
                 $htmlescape = 0;
@@ -107,7 +107,7 @@ class SEARCHLOG {
      */
     public function admin_recent_searches($count) {
 
-        $q = getParlDB()->query("SELECT query_string, page_number, count_hits, ip_address, query_time
+        $q = parlDBQuery("SELECT query_string, page_number, count_hits, ip_address, query_time
                 FROM search_query_log ORDER BY query_time desc LIMIT $count");
         $searches_array = [];
         for ($row = 0; $row < $q->rows(); $row++) {
@@ -121,7 +121,7 @@ class SEARCHLOG {
      */
     public function admin_popular_searches($count) {
 
-        $q = getParlDB()->query("SELECT *, count(*) AS c FROM search_query_log
+        $q = parlDBQuery("SELECT *, count(*) AS c FROM search_query_log
                 WHERE count_hits != 0 AND query_string NOT LIKE '%speaker:%'
                 AND query_time > date_sub(NOW(), INTERVAL 30 DAY)
                 GROUP BY query_string ORDER BY c desc LIMIT $count;");
@@ -138,7 +138,7 @@ class SEARCHLOG {
      */
     public function admin_failed_searches() {
 
-        $q = getParlDB()->query("SELECT query_string, page_number, count_hits, ip_address, query_time,
+        $q = parlDBQuery("SELECT query_string, page_number, count_hits, ip_address, query_time,
                 COUNT(*) AS group_count, MIN(query_time) AS min_time, MAX(query_time) AS max_time,
                 COUNT(distinct ip_address) as count_ips
                 FROM search_query_log GROUP BY query_string HAVING count_hits = 0

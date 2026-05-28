@@ -170,7 +170,7 @@ if (is_numeric(get_http_var('id')) && is_numeric(get_http_var('v'))) {
         // User is logged in.
 
         // See if the user's already voted for this.
-        $q = getParlDB()->query("SELECT vote FROM uservotes WHERE epobject_id = ? AND user_id = ?", $epobject_id, $THEUSER->user_id());
+        $q = parlDBQuery("SELECT vote FROM uservotes WHERE epobject_id = ? AND user_id = ?", $epobject_id, $THEUSER->user_id());
         if (!$q->success()) {
             voteerror("Something went wrong and we couldn't register your vote");
         }
@@ -179,7 +179,7 @@ if (is_numeric(get_http_var('id')) && is_numeric(get_http_var('v'))) {
             voteerror("You have already rated this item. You can only rate something once.");
         } else {
             // Add the vote.
-            $q = getParlDB()->query("INSERT INTO uservotes (user_id, epobject_id, vote) VALUES (?, ?, ?)", $THEUSER->user_id(), $epobject_id, $vote);
+            $q = parlDBQuery("INSERT INTO uservotes (user_id, epobject_id, vote) VALUES (?, ?, ?)", $THEUSER->user_id(), $epobject_id, $vote);
             if (!$q->success()) {
                 voteerror("Something went wrong and we couldn't register your vote");
             }

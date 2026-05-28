@@ -144,7 +144,7 @@ class TRACKBACK {
         $epobject_id = $trackbackdata['epobject_id'];
 
         // Check this epobject_id exists.
-        $q = getParlDB()->query("SELECT epobject_id
+        $q = parlDBQuery("SELECT epobject_id
 						FROM	epobject
 						WHERE	epobject_id = '" . addslashes($epobject_id) . "'");
 
@@ -162,18 +162,11 @@ class TRACKBACK {
 
         $visible = $this->moderate_trackbacks ? 0 : 1;
 
-        $q = getParlDB()->query("INSERT INTO trackbacks
+        $q = parlDBQuery("INSERT INTO trackbacks
 						(epobject_id, blog_name, title, excerpt, url, source_ip, posted, visible)
 						VALUES
-						('" . addslashes($epobject_id) . "',
-						'" . addslashes($blog_name) . "',
-						'" . addslashes($title) . "',
-						'" . addslashes($excerpt) . "',
-						'" . addslashes($url) . "',
-						'" . addslashes($source_ip) . "',
-						NOW(),
-						'$visible')
-						");
+						(?, ?, ?, ?, ?, ?, NOW(), ?)",
+            $epobject_id, $blog_name, $title, $excerpt, $url, $source_ip, $visible);
 
         if ($q->success()) {
             // Return a success message.
