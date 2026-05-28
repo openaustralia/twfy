@@ -12,12 +12,10 @@ class SearchLogTest extends TestCase {
     protected function setUp(): void {
         $_SERVER['REMOTE_ADDR'] = '127.0.0.1';
     }
-
     protected function tearDown(): void {
         global $parldb_override;
         $parldb_override = null;
     }
-
     /**
      * Create a SEARCHLOG instance without invoking the constructor
      * (which requires URL and DB dependencies), using the global
