@@ -16,7 +16,7 @@ function api_getMP_front() {
     <h4>Arguments</h4>
     <dl>
         <dt>id (optional)</dt>
-        <dd>If you know the person ID for the member you want (returned from getRepresentatives OR elsewhere), this will
+        <dd>If you know the person ID for the member you want (returned from getRepresentatives or elsewhere), this will
             return data for that person.
         </dd>
         <dt>division (optional)</dt>

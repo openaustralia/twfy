@@ -292,7 +292,7 @@ class MEMBER {
                 $success = preg_match('#^(.*?)() (.*)$#', $name, $m);
             }
             if (!$success) {
-                $PAGE->error_message('Sorry, that name was NOT recognised.');
+                $PAGE->error_message('Sorry, that name was not recognised.');
                 return false;
             }
             $first_name = getParlDB()->escape($m[1]);
@@ -307,7 +307,7 @@ class MEMBER {
                 $success = preg_match('#^(.*?)() (.*)$#', $name, $m);
             }
             if (!$success) {
-                $PAGE->error_message('Sorry, that name was NOT recognised.');
+                $PAGE->error_message('Sorry, that name was not recognised.');
                 return false;
             }
             $first_name = getParlDB()->escape($m[1]);
@@ -322,7 +322,7 @@ class MEMBER {
                 $success = preg_match('#^(.*?)() (.*)$#', $name, $m);
             }
             if (!$success) {
-                $PAGE->error_message('Sorry, that name was NOT recognised.');
+                $PAGE->error_message('Sorry, that name was not recognised.');
                 return false;
             }
             $first_name = $m[1];

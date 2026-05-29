@@ -19,7 +19,7 @@ function api_getConstituencies_front() {
         <dt>postcode (optional)</dt>
         <dd>Fetch the list of electoral divisions that are within the given postcode (there can be more than one)</dd>
         <dt>date (optional)</dt>
-        <dd>Fetch the list of electoral divisions AS it was ON this date.</dd>
+        <dd>Fetch the list of electoral divisions as it was on this date.</dd>
         <dt>search (optional)</dt>
         <dd>Fetch the list of electoral divisions that match this search string.</dd>
     </dl>
@@ -108,7 +108,7 @@ function api_getConstituencies_latitude($lat) {
     $lon = get_http_var('longitude') + 0;
     $d = get_http_var('distance') + 0;
     if (!$lat) {
-        api_error('You must supply a latitude AND longitude');
+        api_error('You must supply a latitude and longitude');
         return;
     }
     $out = _api_getConstituencies_latitude($lat, $lon, $d);

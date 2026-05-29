@@ -22,7 +22,7 @@ $email = get_http_var('email');
 $sign = get_http_var('sign');
 $pid = get_http_var('pid');
 if (!$pid || !ctype_digit($pid)) {
-    print 'NOT valid';
+    print 'not valid';
 } else {
     $authed = auth_verify_with_shared_secret($email, OPTION_AUTH_SHARED_SECRET, $sign);
     if ($authed) {
@@ -33,9 +33,9 @@ if (!$pid || !ctype_digit($pid)) {
         if ($already_signed) {
             print "already signed";
         } else {
-            print "NOT signed";
+            print "not signed";
         }
     } else {
-        print "NOT authed";
+        print "not authed";
     }
 }

@@ -194,7 +194,7 @@ class COMMENT {
         if (!$THEUSER->is_able_to('addcomment')) {
             $message = [
                 'title' => 'Sorry',
-                'text' => 'You are NOT allowed to post comments.'
+                'text' => 'You are not allowed to post comments.'
             ];
             $PAGE->error_message($message);
             return false;
