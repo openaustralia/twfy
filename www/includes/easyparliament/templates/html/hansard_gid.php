@@ -555,7 +555,7 @@ function generate_votes($votes, $major, $id, $gid)
 
         $VOTEURL->insert(array('v' => '0'));
 
-        $html .= '<a href="' . $VOTEURL->generate() . '" title="Rate this as not answering the question">No!</a> ' . $novotes . ' ' . $noplural . ' not!</span>';
+        $html .= '<a href="' . $VOTEURL->generate() . '" title="Rate this as NOT answering the question">No!</a> ' . $novotes . ' ' . $noplural . ' not!</span>';
 
     } elseif ($major == 1) {
         // Debates.
