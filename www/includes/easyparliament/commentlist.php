@@ -512,7 +512,7 @@ public function _get_comment_data($input) {
         $wherearr2 = [];
         // Construct the $where clause.
         foreach ($wherearr as $key => $val) {
-            $wherearr2[] = "$key'" . addslashes($val) . "'";
+            $wherearr2[] = "$key'" . addslashes($val) . "'"; #FIXME
         }
         $where = implode(" AND ", $wherearr2);
 
