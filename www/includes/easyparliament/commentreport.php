@@ -80,11 +80,9 @@ class COMMENTREPORT {
 									commentreports.email,
 									users.firstname AS u_firstname,
 									users.lastname AS u_lastname
-							FROM	commentreports,
-									users
-                            WHERE	commentreports.report_id = '" . getParlDB()->escape($report_id) . "'
-							AND		commentreports.user_id = users.user_id
-							");
+							FROM	commentreports, users
+                            WHERE	commentreports.report_id = ?
+							AND		commentreports.user_id = users.user_id ", $report_id);
 
             if ($q->rows() > 0) {
                 $this->report_id = $report_id;
@@ -122,8 +120,7 @@ class COMMENTREPORT {
 									commentreports.lastname,
 									commentreports.email
 							FROM	commentreports
-                            WHERE	commentreports.report_id = ?",
-                    $report_id);
+                            WHERE	commentreports.report_id = ?", $report_id);
 
                 if ($q->rows() > 0) {
                     $this->report_id = $report_id;
