@@ -103,7 +103,6 @@ function write_and_send_email($email, $user_id, $data) {
     } else {
         $success = 1;
         $out .= $data . "\n\n";
-        // Print $data . "\n\n";.
     }
     if (!$success) {
         $globalsuccess = 0;
