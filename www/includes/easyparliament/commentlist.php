@@ -170,18 +170,18 @@ class COMMENTLIST {
         }
 
         if (isset($args['num']) && is_numeric($args['num'])) {
-            $num = $args['num'];
+            $num = (int) $args['num'];
         } else {
             $num = 10;
         }
 
         if (isset($args['page']) && is_numeric($args['page'])) {
-            $page = $args['page'];
+            $page = (int) $args['page'];
         } else {
             $page = 1;
         }
 
-        $limit = $num * ($page - 1) . ',' . $num;
+        $offset = $num * ($page - 1);
 
         // We're getting the most recent comments posted to epobjects.
         // We're grouping them by epobject so we can just link to each hansard thing once.
@@ -207,11 +207,12 @@ class COMMENTLIST {
 						WHERE 	comments.epobject_id = epobject.epobject_id
 						AND 	comments.epobject_id = hansard.epobject_id
 						AND 	comments.user_id = users.user_id
-						AND 	users.user_id='" . addslashes($args['user_id']) . "'
-						AND 	visible='1'
+						AND 	users.user_id = ?
+						AND 	visible = '1'
 						GROUP BY epobject_id
 						ORDER BY posted DESC
-						LIMIT " . $limit
+						LIMIT ? OFFSET ?",
+            $args['user_id'], $num, $offset
         );
 
         $comments = [];

@@ -142,9 +142,7 @@ class TRACKBACK {
         $epobject_id = $trackbackdata['epobject_id'];
 
         // Check this epobject_id exists.
-        $q = parlDBQuery("SELECT epobject_id
-						FROM	epobject
-						WHERE	epobject_id = '" . addslashes($epobject_id) . "'");
+        $q = parlDBQuery("SELECT epobject_id FROM epobject WHERE epobject_id = ?", $epobject_id);
 
         if ($q->rows() == 0) {
             $this->_trackback_response(1, "Sorry, we don't have a valid epobject_id.");
@@ -205,10 +203,10 @@ class TRACKBACK {
 								url,
 								posted
 						FROM 	trackbacks
-						WHERE 	epobject_id = '" . addslashes($epobject_id) . "'
+						WHERE 	epobject_id = ?
 						AND 	visible = 1
 						ORDER BY posted ASC
-						");
+						", $epobject_id);
 
         if ($q->rows() > 0) {
             for ($row = 0; $row < $q->rows(); $row++) {

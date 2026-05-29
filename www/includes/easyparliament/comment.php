@@ -68,8 +68,8 @@ class COMMENT {
 									visible,
 									modflagged
 							FROM	comments
-							WHERE 	comment_id='" . addslashes($comment_id) . "'
-							");
+							WHERE 	comment_id = ?
+							", $comment_id);
 
             if ($q->rows() > 0) {
 
@@ -322,7 +322,7 @@ class COMMENT {
         global $THEUSER, $PAGE;
 
         if ($THEUSER->is_able_to('deletecomment')) {
-            $q = parlDBQuery("UPDATE comments SET visible = '0' WHERE comment_id = '" . $this->comment_id . "'");
+            $q = parlDBQuery("UPDATE comments SET visible = '0' WHERE comment_id = ?", $this->comment_id);
 
             if ($q->success()) {
                 return true;
@@ -355,11 +355,7 @@ class COMMENT {
 
         if ($this->url == '') {
 
-            $q = parlDBQuery("SELECT major,
-									gid
-							FROM	hansard
-							WHERE	epobject_id = '" . addslashes($this->epobject_id) . "'
-							");
+            $q = parlDBQuery("SELECT major, gid FROM hansard WHERE epobject_id = ?", $this->epobject_id);
 
             if ($q->rows() > 0) {
                 // If you change stuff here, you might have to change it in
@@ -386,11 +382,7 @@ class COMMENT {
         // Gets and sets the user's name who posted the comment.
 
         if ($this->firstname == '' && $this->lastname == '') {
-            $q = parlDBQuery("SELECT firstname,
-									lastname
-							FROM	users
-							WHERE	user_id = '" . addslashes($this->user_id) . "'
-							");
+            $q = parlDBQuery("SELECT firstname, lastname FROM users WHERE user_id = ?", $this->user_id);
 
             if ($q->rows() > 0) {
                 $this->firstname = $q->field(0, 'firstname');
