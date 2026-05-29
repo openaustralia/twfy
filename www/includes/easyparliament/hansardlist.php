@@ -1514,8 +1514,10 @@ class HANSARDLIST {
 
         // Get the data...
 
+        $params = [$this->major, $first_date];
         if ($finalyear > $firstyear || $finalmonth >= $firstmonth) {
-            $where = "AND hdate <= '" . getParlDB()->escape($final_date) . "'";
+            $where = "AND hdate <= ?";
+            $params[] = $final_date;
         } else {
             $where = '';
         }
@@ -1526,7 +1528,7 @@ class HANSARDLIST {
                         AND			hdate >= ?
 						$where
 						ORDER BY	hdate ASC
-						", $this->major, $first_date);
+						", ...$params);
 
         if ($q->rows() > 0) {
 
