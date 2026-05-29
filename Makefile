@@ -125,3 +125,7 @@ test-coverage-docker:
 
 scripts/run-with-lockfile: scripts/run-with-lockfile.c
 	gcc -o scripts/run-with-lockfile scripts/run-with-lockfile.c
+
+check-links:
+	ruby scripts/check-links.rb
+

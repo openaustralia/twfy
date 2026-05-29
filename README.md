@@ -153,3 +153,36 @@ script/dbconsole -p < ../twfy/db/schema.sql
 bundle exec rake db:fixtures:load   # for a limited set of fixtures
 bundle exec rake db:stats # to show which tables have data
 ```
+
+### Checking Links
+
+To perform a simplistic static check of links in php files, run:
+
+```bash
+make check-links
+```
+
+This will output suggested sed commands to run to fix urls in php files.
+NOTE: It isn't smart enough to handle dynamically generated urls, so check before applying recommendations.
+
+It follows permanent redirections and suggests the url be updated accordingly, for example (note the http to https
+change and the slash added to the end of the url):
+
+```
+sed -i 's|http://theyworkforyou.com/api|https://www.theyworkforyou.com/api/|g' www/docs/api/index.php
+```
+
+It will report broken links (check it is not part of a dynamic link that does work when checked in full):
+
+```
+# BROKEN http://hurring.com/code/python/serialize/ (404) in files: www/docs/api/index.php
+# BROKEN https://www.aph.gov.au/Help/Disclaimer_Privacy_Copyright#c (403) in files: www/docs/api/index.php
+```
+
+It will list temporary redirections, which you probably should leave as is, aside from changing http to https where
+appropriate:
+
+```
+# Ignore 302 redirect http://creativecommons.org/licenses/by-nc-nd/3.0/au/ to https://creativecommons.org/licenses/by-nc-nd/3.0/au/ in files: www/docs/api/index.php
+# Ignore 302 redirect http://creativecommons.org/licenses/by-sa/2.5/ to https://creativecommons.org/licenses/by-sa/2.5/ in files: www/docs/api/index.php
+```
