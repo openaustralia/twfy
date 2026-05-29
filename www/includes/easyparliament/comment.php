@@ -225,7 +225,7 @@ class COMMENT {
         // In utility.php.
         $body = filter_user_input($data['body'], 'comment');
 
-        $posted = date('Y-m-d H:i:s', time());
+        $posted = date('Y-m-d H:i:s', time()); #FIXME handle timezones
 
         $q_gid = parlDBQuery("SELECT gid FROM hansard WHERE epobject_id = ?", $data['epobject_id']);
         $data['gid'] = $q_gid->field(0, 'gid');
