@@ -10,7 +10,8 @@
 /**
  * Look up a member's left_house date and full name by person_id.
  *
- * @return array{left_house: string, name: string}|null
+ * @return array|null
+ *   Array with 'left_house' (string) and 'name' (string) keys, or null if not found.
  */
 function get_member_departure_info(int $person_id): ?array {
     $q = parlDBQuery(
@@ -29,7 +30,8 @@ function get_member_departure_info(int $person_id): ?array {
 /**
  * Look up a user_id by email address.
  *
- * @return int The user_id, or 0 if not found.
+ * @return int
+ *   The user_id, or 0 if not found.
  */
 function get_user_id_by_email(string $email): int {
     $q = parlDBQuery('SELECT user_id FROM users WHERE email = ?', $email);
@@ -42,8 +44,10 @@ function get_user_id_by_email(string $email): int {
 /**
  * Filter alerts to only speaker alerts for members who have left.
  *
- * @param array $alertdata Array of alert rows with 'email' and 'criteria' keys.
- * @return array{alerts: array, mp_count: int, registered: int, unregistered: int}
+ * @param array $alertdata
+ *   Array of alert rows with 'email' and 'criteria' keys.
+ * @return array
+ *   Array with 'alerts', 'mp_count', 'registered', 'unregistered' keys.
  *   'alerts' is an array of ['email' => string, 'person_id' => int, 'name' => string, 'user_id' => int]
  */
 function find_gone_mp_alerts(array $alertdata): array {
