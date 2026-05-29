@@ -295,6 +295,7 @@ class MEMBER {
                 $PAGE->error_message('Sorry, that name was not recognised.');
                 return false;
             }
+            #FIXME
             $first_name = getParlDB()->escape($m[1]);
             $middle_name = getParlDB()->escape($m[2]);
             $last_name = getParlDB()->escape($m[3]);
