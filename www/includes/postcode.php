@@ -72,7 +72,7 @@ function fake_postcode($postcode) {
  *
  */
 function postcode_to_constituency_internal($postcode) {
-    // Try AND match with regexp to exclude non postcodes quickly.
+    // Try and match with regexp to exclude non postcodes quickly.
     if (!is_postcode($postcode)) {
         return '';
     }
