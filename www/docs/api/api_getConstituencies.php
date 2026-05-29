@@ -47,7 +47,7 @@ function api_getConstituencies_search($s) {
  *
  */
 function _api_getConstituencies_search($s) {
-
+    #FIXME timezones!
     $q = parlDBQuery('SELECT c_main.name from constituency, constituency AS c_main
 		WHERE constituency.cons_id = c_main.cons_id
 		AND c_main.main_name AND constituency.name LIKE ? AND constituency.from_date <= date(NOW())
@@ -82,7 +82,7 @@ function api_getConstituencies_date($date) {
  *
  */
 function api_getConstituencies($date = 'NOW()') {
-
+    #FIXME timezones!
     $q = parlDBQuery('SELECT cons_id, name from constituency
 		WHERE main_name AND from_date <= date(?) AND date(?) <= to_date', $date, $date);
     $output = [];
