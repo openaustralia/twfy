@@ -71,7 +71,7 @@ function wikipedize($source) {
     usort($phrases, "lensort");
 
     foreach ($phrases as $i => $phrase) {
-        $phrases[$i] = getParlDB()->escape(str_replace(' ', '_', trim($phrase)));
+        $phrases[$i] = str_replace(' ', '_', trim($phrase));
     }
 
     // Open up a db connection, and whittle our list down even further, against
@@ -79,7 +79,7 @@ function wikipedize($source) {
     $matched = [];
 
     $source = explode('|||', $source);
-    $q = parlDBQuery("SELECT title FROM titles WHERE title IN ('" . implode("','", $phrases) . "')");
+    $q = parlDBQuery("SELECT title FROM titles WHERE title IN ?", $phrases);
     for ($i = 0; $i < $q->rows(); $i++) {
         $wikistring = $q->field($i, 'title');
         $phrase = str_replace('_', ' ', $wikistring);
