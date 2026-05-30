@@ -1212,11 +1212,11 @@ class THEUSER extends USER {
             return false;
         }
 
-        $q = getParlDB()->query("SELECT email, password, constituency
+        $q = parlDBQuery("SELECT email, password, constituency
 						FROM	users
-						WHERE	user_id = '" . getParlDB()->escape($user_id) . "'
-						AND		registrationtoken = '" . getParlDB()->escape($registrationtoken) . "'
-						");
+						WHERE	user_id = ?
+						AND		registrationtoken = ?
+						", $user_id, $registrationtoken);
 
         if ($q->rows() == 1) {
 
@@ -1228,16 +1228,15 @@ class THEUSER extends USER {
             // Set that they're confirmed in the DB.
             $r = parlDBQuery("UPDATE users
 							SET		confirmed = '1'
-							WHERE	user_id = '" . getParlDB()->escape($user_id) . "'
-							");
+							WHERE	user_id = ?
+							", $user_id);
 
             if ($q->field(0, 'constituency')) {
                 $MEMBER = new MEMBER(['constituency' => $q->field(0, 'constituency')]);
                 $pid = $MEMBER->person_id();
                 // This should probably be in the ALERT class.
-                parlDBQuery('UPDATE alerts set confirmed=1 WHERE email="' .
-                    getParlDB()->escape($this->email) . '" AND criteria="speaker:' .
-                    getParlDB()->escape($pid) . '"');
+                parlDBQuery('UPDATE alerts SET confirmed = 1 WHERE email = ? AND criteria = ?',
+                    $this->email, 'speaker:' . $pid);
             }
 
             if ($r->success()) {
