@@ -313,12 +313,16 @@ div.blockbody {
     align-items: stretch;
 }
 
-#home-page #intro ol > li.oa-intro-wide {
+#home-page #intro ol > li:nth-child(4) {
     grid-column: 1 / -1;
 }
 
-#home-page #intro ol > li.oa-intro-wide .oa-intro-card {
-    min-height: 0;
+#home-page #intro ol > li:nth-child(4) {
+    padding: 14px;
+    border: 1px solid #e6ddd2;
+    border-radius: 14px;
+    background: #fff;
+    box-shadow: 0 1px 2px rgba(24, 24, 27, 0.08), 0 6px 14px rgba(24, 24, 27, 0.06);
 }
 
 #home-page #intro .oa-intro-card {
