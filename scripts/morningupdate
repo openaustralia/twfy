@@ -41,19 +41,6 @@ date +"%Y-%m-%d %H:%M:%S %Z"
 $VERBOSE && echo "Parsing from APH to XML and loading into the database"
 ../../openaustralia-parser/bin/run parse-speeches.rb previous-working-day
 
-# Load recent new files from XML into the database
-# $VERBOSE && echo "Loading into database"
-# --cronquiet because we think things are reliable enough we decide we don't
-# want email on success each day just for the database loader
-#./xml2db.pl $CRONQUIET --all --members
-# We do these on separate lines, so if one fails, others still run
-#./xml2db.pl $CRONQUIET --recent --wrans --quiet
-# ./xml2db.pl $CRONQUIET --recent --debates
-#./xml2db.pl $CRONQUIET --recent --westminhall --quiet
-#./xml2db.pl $CRONQUIET --recent --wms --quiet
-# ./xml2db.pl $CRONQUIET --recent --lordsdebates
-#./xml2db.pl $CRONQUIET --recent --ni --quiet
-
 if [ -n "$XAPIANDB" ]; then
     # Update Xapan index
     $VERBOSE && echo "Xapian indexing"
