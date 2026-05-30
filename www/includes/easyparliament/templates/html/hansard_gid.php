@@ -250,9 +250,7 @@ if (isset($data['rows'])) {
                         class="permalink">Link to this</a><?php
                     }
                     if (isset($row['source_url']) && $row['source_url'] != '') {
-                        echo ' | <a href="', $row['source_url'], '" title="The source of this piece of text">',
-                            ($hansardmajors[$data['info']['major']]['location'] == 'Scotland' ? 'Official Report' : 'Hansard'),
-                            ' source</a>';
+                        echo ' | <a href="', $row['source_url'], '" title="The source of this piece of text">Hansard source</a>';
                     }
 
                     if ($data['info']['major'] == 8 && preg_match('#\d{4}-\d\d-\d\d\.(.*?)\.q#', $row['gid'], $m)) {
