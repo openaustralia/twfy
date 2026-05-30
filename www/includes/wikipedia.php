@@ -79,6 +79,9 @@ function wikipedize($source) {
     $matched = [];
 
     $source = explode('|||', $source);
+    if (empty($phrases)) {
+        return implode('', $source);
+    }
     $q = parlDBQuery("SELECT title FROM titles WHERE title IN ?", $phrases);
     for ($i = 0; $i < $q->rows(); $i++) {
         $wikistring = $q->field($i, 'title');
