@@ -272,15 +272,6 @@ if (isset($data['rows'])) {
 
             $body = $row['body'];
 
-            if ($hansardmajors[$data['info']['major']]['location'] == 'Scotland') {
-                $body = preg_replace('# (S\dW-\d+) #', ' <a href="/spwrans/?spid=$1">$1</a> ', $body);
-                $body = preg_replace(
-                    '#<citation id="uk\.org\.publicwhip/(.*?)/(.*?)">\[(.*?)\]</citation>#e',
-                    "'[<a href=\"/' . ('$1'=='spor'?'sp/?g':('$1'=='spwa'?'spwrans/?':'debate/?')) . 'id=$2' . '\">$3</a>]'",
-                    $body
-                );
-            }
-
             #			$body = preg_replace('#<phrase class="offrep" id="([^"]*?)/([^"]*?)">#', '<a href="/$1/?id=$2.0">', $body);
 #			$body = str_replace('</phrase>', '</a>', $body);
             # Okay, this is truly strange. It appears that when preg_replace is called on a very long string it can return
