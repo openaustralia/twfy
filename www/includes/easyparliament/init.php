@@ -43,6 +43,48 @@ define('CONSTITUENCY_COOKIE', 'constituency');
  ********************************************************************************/
 
 include_once __DIR__ . '/../../../conf/general';
+
+// Composer autoload (for OpenTelemetry and other vendored libs). Optional:
+// in some minimal CLI contexts vendor/ may not be present, so don't hard-fail.
+$__twfy_autoload = __DIR__ . '/../../../vendor/autoload.php';
+if (is_readable($__twfy_autoload)) {
+    require_once $__twfy_autoload;
+}
+unset($__twfy_autoload);
+
+// OpenTelemetry bootstrap. No-op if OTEL_EXPORTER_OTLP_ENDPOINT is empty/undefined.
+include_once __DIR__ . '/../otel.php';
+otel_init();
+
+// For HTTP requests, open a root server span covering the whole request. The
+// shutdown handler registered by otel_init() will flush spans at end of process;
+// we close the span explicitly here on shutdown so its duration is accurate.
+if (PHP_SAPI !== 'cli' && otel_tracer() !== null) {
+    $__twfy_root_span = otel_start_root_span(
+        sprintf('%s %s', $_SERVER['REQUEST_METHOD'] ?? 'GET', $_SERVER['REQUEST_URI'] ?? '/'),
+        [
+            'http.request.method' => $_SERVER['REQUEST_METHOD'] ?? 'GET',
+            'url.path'            => parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?? '/',
+            'url.scheme'          => !empty($_SERVER['HTTPS']) ? 'https' : 'http',
+            'server.address'      => $_SERVER['HTTP_HOST'] ?? '',
+            'user_agent.original' => $_SERVER['HTTP_USER_AGENT'] ?? '',
+            'client.address'      => $_SERVER['REMOTE_ADDR'] ?? '',
+        ],
+        \OpenTelemetry\API\Trace\SpanKind::KIND_SERVER,
+    );
+    register_shutdown_function(static function () {
+        global $__twfy_root_span;
+        if (!empty($__twfy_root_span)) {
+            $status = http_response_code();
+            if (is_int($status) && $__twfy_root_span['span'] !== null) {
+                $__twfy_root_span['span']->setAttribute('http.response.status_code', $status);
+            }
+            otel_end_root_span($__twfy_root_span);
+            $__twfy_root_span = null;
+        }
+    });
+}
+
 include_once __DIR__ . '/../utility.php';
 twfy_debug_timestamp("after including utility.php");
 
