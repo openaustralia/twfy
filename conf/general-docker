@@ -140,3 +140,12 @@ define('ADDTHIS_USERNAME', 'openaustralia');
 // Host to use when loading They Vote For You data
 define('PUBLICWHIP_HOST', 'https://theyvoteforyou.org.au');
 define('DISPLAY_VOTING_DATA', true);
+
+// *******************************************************************************
+// OpenTelemetry tracing.
+// Leave OTEL_EXPORTER_OTLP_ENDPOINT empty to disable tracing entirely.
+// In docker dev this points at the bundled Jaeger all-in-one container.
+define('OTEL_SERVICE_NAME', 'twfy');
+define('OTEL_EXPORTER_OTLP_ENDPOINT', 'http://jaeger:4318');
+define('OTEL_EXPORTER_OTLP_HEADERS', '');
+define('OTEL_DEPLOYMENT_ENVIRONMENT', 'dev');
