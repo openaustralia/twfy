@@ -476,7 +476,7 @@ h4 {
 
 /* Legacy page titles are rendered inside stripe containers. */
 #content .main > h2 {
-    margin: 18px 0 14px;
+    margin: 18px 14px 14px 18px;
     font-size: clamp(1.9rem, 3.3vw, 2.55rem) !important;
     line-height: 1.15;
     font-weight: 800 !important;
@@ -485,7 +485,7 @@ h4 {
 }
 
 #content .main > h3 {
-    margin: 0 0 12px;
+    margin: 0 14px 12px 18px;
     font-size: 1.2rem !important;
     line-height: 1.3;
     font-weight: 700 !important;
@@ -501,6 +501,24 @@ h4 {
 
 a {
     text-underline-offset: 2px;
+}
+
+#content .main a {
+    text-decoration-thickness: 1.5px;
+}
+
+#content .main a:hover {
+    text-decoration-thickness: 2px;
+}
+
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+    outline: 3px solid #0f62fe;
+    outline-offset: 2px;
+    box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.9);
 }
 
 input[type="text"],
@@ -562,6 +580,192 @@ table[border="1"] td {
 table.people th {
     background: #f4e6d8;
     color: #4f2a20;
+}
+
+/* Shared visual treatment for legacy easyparliament templates. */
+#searchresults,
+dl.recent-wrans,
+dl.big-debates,
+.trackbacks dl {
+    margin: 14px 0;
+    border: 1px solid #e4d7c8;
+    border-radius: 12px;
+    background: #fff;
+    overflow: hidden;
+}
+
+#searchresults dt,
+dl.recent-wrans dt,
+dl.big-debates dt,
+.trackbacks dt {
+    margin: 0;
+    padding: 12px 14px 8px;
+    border-top: 1px solid #f0e7dc;
+    font-weight: 700;
+    color: #5a261a;
+}
+
+#searchresults dt:first-child,
+dl.recent-wrans dt:first-child,
+dl.big-debates dt:first-child,
+.trackbacks dt:first-child {
+    border-top: 0;
+}
+
+#searchresults dd,
+dl.recent-wrans dd,
+dl.big-debates dd,
+.trackbacks dd {
+    margin: 0;
+    padding: 0 14px 12px;
+    color: #40352c;
+}
+
+#searchresults dd p {
+    margin: 0;
+    line-height: 1.55;
+}
+
+ul#hansard-day,
+ul.hansard-day {
+    margin: 12px 0;
+    padding: 0;
+    list-style: none;
+}
+
+ul#hansard-day > li,
+ul.hansard-day > li {
+    margin: 0 0 10px;
+    padding: 12px 14px;
+    border: 1px solid #e3d7c9;
+    border-radius: 12px;
+    background: #fff;
+    box-shadow: 0 1px 3px rgba(42, 36, 31, 0.08);
+}
+
+ul#hansard-day ul,
+ul.hansard-day ul {
+    margin: 10px 0 0;
+    padding: 0;
+    list-style: none;
+}
+
+ul#hansard-day ul li,
+ul.hansard-day ul li {
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px dashed #e8ddce;
+}
+
+.excerpt-debates {
+    display: inline-block;
+    margin-top: 4px;
+    color: #6b5a4d;
+    font-size: 0.94rem;
+    line-height: 1.45;
+}
+
+.hansard .dates,
+.hansard ul {
+    margin: 10px 0;
+    padding: 0;
+    list-style: none;
+}
+
+.hansard .dates li,
+.hansard ul li {
+    margin: 0 0 8px;
+    padding: 10px 12px;
+    border: 1px solid #e3d6c7;
+    border-radius: 10px;
+    background: #fff;
+}
+
+.comment,
+.comments .block1,
+.comments .block2 {
+    border: 1px solid #e3d8ca;
+    border-radius: 12px;
+    background: #fff;
+    box-shadow: 0 1px 4px rgba(42, 36, 31, 0.08);
+    padding: 12px 14px;
+    margin: 10px 0;
+}
+
+.comment .credit {
+    margin: 0 0 8px;
+    color: #6f4a34;
+}
+
+p.comment {
+    margin: 0;
+    line-height: 1.55;
+}
+
+.comment-teaser,
+.wransvote,
+p.vote {
+    border: 1px solid #eadfce;
+    border-radius: 10px;
+    background: #fffaf5;
+    padding: 8px 10px;
+}
+
+.calendar {
+    border: 1px solid #e2d5c7;
+    border-radius: 12px;
+    background: #fff;
+    padding: 8px;
+}
+
+.calendar table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 6px;
+}
+
+.calendar td {
+    border-radius: 8px;
+    background: #f9f2ea;
+    text-align: center;
+}
+
+.calendar td.on {
+    background: #f7ddbf;
+    font-weight: 700;
+}
+
+.calendar td.no {
+    opacity: 0.55;
+}
+
+#questions {
+    width: 100%;
+    border: 1px solid #e1d4c6;
+    border-radius: 12px;
+    overflow: hidden;
+    background: #fff;
+}
+
+#questions td,
+#questions th {
+    border-bottom: 1px solid #eee4d7;
+    padding: 9px 10px;
+}
+
+#questions tr:nth-child(even) {
+    background: #fcf8f2;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
 }
 
 #footer {
