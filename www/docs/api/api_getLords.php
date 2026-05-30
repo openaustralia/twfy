@@ -80,6 +80,6 @@ function api_getLords_date($date) {
 /**
  *
  */
-function api_getLords($date = 'now()') {
+function api_getLords($date = null) {
     api_getMembers(2, $date);
 }
