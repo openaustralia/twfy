@@ -77,8 +77,12 @@ jobs:
       - name: Install dependencies
         run: composer install --no-interaction --prefer-dist
       - name: Load database schema
-        run: |
-          mysql -h 127.0.0.1 -u root -proot test_twfy < db/schema.sql
+        run: ./vendor/bin/phinx migrate -c phinx.php
+        env:
+          DB_HOST: 127.0.0.1
+          DB_USER: root
+          DB_PASSWORD: root
+          DB_NAME: test_twfy
       - name: Run tests with coverage
         run: |
           set -o pipefail
