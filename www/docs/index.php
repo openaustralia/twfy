@@ -11,7 +11,7 @@ include_once __DIR__ . "/../includes/easyparliament/member.php";
 
 $PAGE->page_start();
 
-$PAGE->stripe_start();
+$PAGE->stripe_start('side', 'home-page');
 $message = $PAGE->recess_message();
 if ($message != '') {
     print '<p id="warning">' . $message . '</p>';
@@ -24,6 +24,7 @@ $HANSARDURL = new URL('hansard');
 $MPURL = new URL('yourmp');
 $PAGE->block_start(['id' => 'intro', 'title' => 'At OpenAustralia.org you can:']);
 ?>
+<p class="oa-options-lead"><strong>Choose one option to get started:</strong> find your Representative by postcode, search Hansard, or create an email alert.</p>
 <ol>
 
     <?php
@@ -55,7 +56,7 @@ $PAGE->block_start(['id' => 'intro', 'title' => 'At OpenAustralia.org you can:']
                         <a class="oa-intro-link" href="<?php echo $MPURL->generate(); ?>"><strong>Find out more about <?php echo $mpname; ?>, your
                                     <?php echo $former ?> Representative</strong></a>
                     </p>
-                    <p class="mt-3 mb-0">
+                    <p class="oa-intro-actions">
                         <a
                             href="<?php echo $CHANGEURL->generate(); ?>"
                             class="oa-btn-primary"
@@ -105,19 +106,23 @@ $PAGE->block_start(['id' => 'intro', 'title' => 'At OpenAustralia.org you can:']
             $SEARCHURL = new URL('search');
             ?>
             <form action="<?php echo $SEARCHURL->generate(); ?>" method="get">
-                <p><strong><label
-                            for="s">Search<?php echo get_http_var("keyword") ? ' Hansard for \'' . htmlspecialchars(get_http_var("keyword")) . '\'' : '' ?>:</label></strong>
-                    <input type="text" name="s" id="s" size="15" maxlength="100" class="text"
-                        value="<?php echo htmlspecialchars(get_http_var("keyword")) ?>">&nbsp;&nbsp;<input type="submit"
-                        value="SEARCH" class="submit">
-                </p>
+                <div class="oa-intro-card">
+                    <p class="oa-intro-title"><label
+                            for="s">Search<?php echo get_http_var("keyword") ? ' Hansard for \'' . htmlspecialchars(get_http_var("keyword")) . '\'' : '' ?>:</label></p>
+                    <div class="oa-intro-subpanel">
+                        <div class="oa-field-row">
+                            <input type="text" name="s" id="s" size="15" maxlength="100" class="oa-postcode-input"
+                                value="<?php echo htmlspecialchars(get_http_var("keyword")) ?>">
+                            <input type="submit" value="Search" class="oa-btn-primary">
+                        </div>
+                    </div>
                 <?php
                 // Display popular queries.
                 global $SEARCHLOG;
                 $popular_searches = $SEARCHLOG->popular_recent(10);
                 if (count($popular_searches) > 0) {
                     ?>
-                    <p>Popular searches today:
+                    <p class="mt-3 mb-0 text-sm">Popular searches today:
                         <?php
                         $lentotal = 0;
                         $correct_amount = [];
@@ -135,6 +140,7 @@ $PAGE->block_start(['id' => 'intro', 'title' => 'At OpenAustralia.org you can:']
                     </p> <?php
                 }
                 ?>
+                </div>
             </form>
         </li>
         <?php
@@ -149,7 +155,7 @@ $PAGE->block_start(['id' => 'intro', 'title' => 'At OpenAustralia.org you can:']
             <li>
                 <div class="oa-intro-card">
                     <p class="oa-intro-title">Sign up to be emailed when '<?php echo htmlspecialchars(get_http_var('keyword')) ?>' is mentioned in Parliament</p>
-                    <p class="mt-3 mb-0">
+                    <p class="oa-intro-actions">
                         <a
                             href="<?php echo WEBPATH . "alert?keyword=" . htmlspecialchars(get_http_var('keyword')) ?>&only=1"
                             class="oa-btn-primary"
@@ -161,7 +167,7 @@ $PAGE->block_start(['id' => 'intro', 'title' => 'At OpenAustralia.org you can:']
             <li>
                 <div class="oa-intro-card">
                     <p class="oa-intro-title">Sign up to be emailed when something relevant to you happens in Parliament</p>
-                    <p class="mt-3 mb-0">
+                    <p class="oa-intro-actions">
                         <a
                             href="<?php echo WEBPATH . "alert/" ?>"
                             class="oa-btn-primary"
@@ -172,42 +178,6 @@ $PAGE->block_start(['id' => 'intro', 'title' => 'At OpenAustralia.org you can:']
         <?php }
     }
 
-    /**
-     * Comment on (recent debates)
-     */
-    function comment_on_recent_bullet_point() {
-        global $hansardmajors;
-        ?>
-        <li>
-            <p><strong>Read and comment on:</strong></p>
-
-            <?php
-            $DEBATELIST = new DEBATELIST();
-            $data[1] = $DEBATELIST->most_recent_day();
-            $WRANSLIST = new WRANSLIST();
-            $data[3] = $WRANSLIST->most_recent_day();
-            $WHALLLIST = new WHALLLIST();
-            $data[2] = $WHALLLIST->most_recent_day();
-            $WMSLIST = new WMSLIST();
-            $data[4] = $WMSLIST->most_recent_day();
-            $LORDSDEBATELIST = new LORDSDEBATELIST();
-            $data[101] = $LORDSDEBATELIST->most_recent_day();
-            $NILIST = new NILIST();
-            $data[5] = $NILIST->most_recent_day();
-            foreach (array_keys($hansardmajors) as $major) {
-                if (array_key_exists($major, $data)) {
-                    unset($data[$major]['listurl']);
-                    if (count($data[$major]) == 0) {
-                        unset($data[$major]);
-                    }
-                }
-            }
-            major_summary($data);
-            ?>
-        </li>
-        <?php
-    }
-
     if (get_http_var('keyword')) {
         // This is for links from Google adverts, where we want to
         // promote the features relating to their original search higher
@@ -215,12 +185,10 @@ $PAGE->block_start(['id' => 'intro', 'title' => 'At OpenAustralia.org you can:']
         search_bullet_point();
         email_alert_bullet_point();
         your_mp_bullet_point();
-        comment_on_recent_bullet_point();
     } else {
         your_mp_bullet_point();
         search_bullet_point();
         email_alert_bullet_point();
-        comment_on_recent_bullet_point();
     }
 
     ?>

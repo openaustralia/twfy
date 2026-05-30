@@ -289,6 +289,121 @@ div.blockbody {
     color: #fff;
 }
 
+#intro .oa-options-lead {
+    margin: 0 0 10px;
+    color: #5f2f23;
+    font-size: 0.98rem;
+    line-height: 1.5;
+}
+
+/* Homepage-only: Material-style card treatment for the three key actions. */
+#home-page #intro ol {
+    gap: 14px;
+    grid-template-columns: repeat(3, minmax(220px, 1fr));
+    align-items: stretch;
+    width: 100%;
+}
+
+#home-page #intro ol > li {
+    border: 0;
+    background: transparent;
+    box-shadow: none;
+    padding: 0;
+    display: flex;
+    align-items: stretch;
+}
+
+#home-page #intro .oa-intro-card {
+    margin-top: 0;
+    max-width: none;
+    border: 1px solid #e6ddd2;
+    border-radius: 14px;
+    background: #fff;
+    box-shadow: 0 1px 2px rgba(24, 24, 27, 0.08), 0 6px 14px rgba(24, 24, 27, 0.06);
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    transition: box-shadow 160ms ease, transform 160ms ease;
+}
+
+#home-page #intro .oa-intro-card:hover {
+    box-shadow: 0 8px 18px rgba(24, 24, 27, 0.12), 0 3px 6px rgba(24, 24, 27, 0.08);
+    transform: translateY(-1px);
+}
+
+#home-page #intro .oa-intro-subpanel {
+    border: 1px solid #ece4da;
+    border-radius: 10px;
+    background: #faf9f7;
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    flex: 1;
+}
+
+#home-page #intro {
+    border: 0;
+    background: #fff;
+    box-shadow: none;
+}
+
+#home-page #intro .block-title {
+    background: #fff;
+    border-bottom: 1px solid #eee3d7;
+    padding: 8px 0 12px;
+}
+
+#home-page #intro .blockbody {
+    background: #fff;
+    padding: 12px 0 0;
+}
+
+#home-page #intro .oa-intro-title {
+    font-size: 1.05rem;
+    color: var(--oa-heading);
+    min-height: 3.1rem;
+}
+
+#home-page #intro .oa-intro-actions {
+    margin: auto 0 0;
+    padding-top: 12px;
+}
+
+#home-page #intro .oa-field-row {
+    margin-top: auto;
+}
+
+#home-page #intro .oa-btn-primary,
+#home-page #intro input.submit,
+#home-page #intro button[type="submit"] {
+    min-height: 42px;
+    border-radius: 10px;
+    padding: 10px 16px;
+    font-size: 0.92rem;
+    font-weight: 800;
+    letter-spacing: 0.01em;
+    box-shadow: 0 1px 2px rgba(24, 24, 27, 0.18);
+}
+
+#home-page #intro form p {
+    margin-bottom: 0.5em;
+}
+
+@media (max-width: 980px) {
+    #home-page #intro ol {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 760px) {
+    #home-page #intro ol {
+        grid-template-columns: 1fr;
+    }
+}
+
 #intro ol {
     list-style: none;
     margin: 0;
