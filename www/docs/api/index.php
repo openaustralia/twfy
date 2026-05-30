@@ -230,12 +230,9 @@ function api_front_page($error = '') {
     <h3>Bindings</h3>
 
     <ul>
-        <li><a href="source/oaapi.phps">PHP source</a> and <a href="source/test.phps">example</a> (thanks to Mark Kinkade
-            for adapting <a href="https://github.com/rubenarakelyan/twfyapi/">Ruben Arakelyan's TWFY bindings</a>)</li>
+        <li><a href="https://github.com/rubenarakelyan/twfyapi/">Ruben Arakelyan's TWFY bindings</a></li>
         <li><a href="https://github.com/henare/openaustralia-api/">Ruby</a>, by <a href="http://www.acooper.org/">Alex
                 Cooper</a>, updated by <a href="https://www.henaredegan.com/">Henare Degan</a></li>
-        <li><a href="https://github.com/rubenarakelyan/twfyapi/">PHP &amp; ASP.NET</a>, by <a href="http://ra.me.uk/">Ruben
-                Arakelyan</a></li>
         <li><a href="https://pypi.python.org/pypi/openaustralia">Python</a>, by Chris Nilsson</li>
     </ul>
 
