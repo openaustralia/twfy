@@ -17,6 +17,7 @@ help:
 	@echo "  docker                              Build docker image then run docker container"
 	@echo "  docker-build                        Build the Docker image for the application"
 	@echo "  docker-run                          Run the Docker container for the application"
+	@echo "  docker-migrate                      Run pending Phinx migrations against the docker mysql"
 	@echo "  help                                Output this help"
 	@echo "  lint                                Run lint-php and lint-perl on the www and scripts directories"
 	@echo "  install                             Install Composer and script dependencies"
@@ -59,6 +60,13 @@ docker-run:
 	docker compose up -d $(DOCKER_ARGS)
 
 docker: docker-build docker-run
+
+# Run pending Phinx migrations against the docker mysql service via the webhost container.
+docker-migrate:
+	docker compose up -d mysql
+	docker compose run --rm \
+		-e DB_HOST=mysql -e DB_USER=$(TEST_DB_USER) -e DB_PASSWORD=$(TEST_DB_PASSWORD) -e DB_NAME=$(TEST_DB_NAME) \
+		-v $(CURDIR):/app -w /app webhost ./vendor/bin/phinx migrate -c phinx.php
 
 lint: lint-php lint-perl
 
