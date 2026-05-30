@@ -10,7 +10,6 @@ include_once __DIR__ . '/../../includes/request.php';
 /**
  * The METHODS.
  */
-
 function api_get_methods() {
     return [
         'getDivisions' => [
