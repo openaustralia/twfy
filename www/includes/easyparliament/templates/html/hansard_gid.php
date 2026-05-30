@@ -114,18 +114,10 @@ if (isset($data['rows'])) {
 
             $PAGE->stripe_start('head-2');
             ?>
-            <!-- ADDTHIS JAVASCRIPT BEGIN -->
-            <?php if (defined('ADDTHIS_USERNAME') && ADDTHIS_USERNAME)
-                print '<script type="text/javascript">var addthis_pub = "' . ADDTHIS_USERNAME . '";</script>' ?>
-                <script type="text/javascript" src="https://s7.addthis.com/js/250/addthis_widget.js"></script>
-                <!-- ADDTHIS JAVASCRIPT END -->
-                <h4><?php echo $section_title; ?></h4>
+            <h4><?php echo $section_title; ?></h4>
             <h5><?php echo $subsection_title; ?></h5>
             <?php
-            #			$body = technorati_pretty();
-#			if ($body) {
-#				print '<div class="blockbody">' . $body . '</div>';
-#			}
+
             $PAGE->stripe_end(array(
                 array(
                     'type' => 'nextprev'
@@ -240,37 +232,33 @@ if (isset($data['rows'])) {
                 if (isset($speaker['office'])) {
                     $desc .= ', ' . $speaker['office'][0]['pretty'];
                 }
-                if ($desc)
+                if ($desc) {
                     print "($desc)";
-                ?> <a href="https://www.addthis.com/bookmark.php"
-                    onmouseover="return addthis_open(this, '', '<?php echo 'https://', DOMAIN, $row['commentsurl']; ?>', '');"
-                    onmouseout="addthis_close();" onclick="return addthis_sendto();">Share this</a><?php
-                    if ($hansardmajors[$data['info']['major']]['type'] == 'debate' && $this_page == $hansardmajors[$data['info']['major']]['page_all']) {
-                        ?> | <a href="<?php echo $row['commentsurl']; ?>" title="Copy this URL to link directly to this piece of text"
-                        class="permalink">Link to this</a><?php
-                    }
-                    if (isset($row['source_url']) && $row['source_url'] != '') {
-                        echo ' | <a href="', $row['source_url'], '" title="The source of this piece of text">Hansard source</a>';
-                    }
+                }
 
-                    #                if ($data['info']['major'] == 1) { # Commons debates only
-                    if (0) {
-                        ?><!-- | <script type="text/javascript" src="https://parlvid.mysociety.org/video.cgi?gid=<?php
-                        echo $row['gid'];
-                        ?>&output=js-link"></script> -->
-                    <?php
-                    }
-                    echo "</small>";
+                if ($hansardmajors[$data['info']['major']]['type'] == 'debate' && $this_page == $hansardmajors[$data['info']['major']]['page_all']) {
+                    ?> | <a href="<?php echo $row['commentsurl']; ?>" title="Copy this URL to link directly to this piece of text"
+                    class="permalink">Link to this</a><?php
+                }
+                if (isset($row['source_url']) && $row['source_url'] != '') {
+                    echo ' | <a href="', $row['source_url'], '" title="The source of this piece of text">',
+                        ($hansardmajors[$data['info']['major']]['location'] == 'Scotland' ? 'Official Report' : 'Hansard'),
+                        ' source</a>';
+                }
+                echo "</small>";
             }
 
             $body = $row['body'];
 
-            #			$body = preg_replace('#<phrase class="offrep" id="([^"]*?)/([^"]*?)">#', '<a href="/$1/?id=$2.0">', $body);
-#			$body = str_replace('</phrase>', '</a>', $body);
-            # Okay, this is truly strange. It appears that when preg_replace is called on a very long string it can return
-            # empty which in the regular expression below should not happen. TODO: Needs more investigation
-            # For the time being have commented the line below out (which we don't need anyway for OpenAustralia)
-            #$body = preg_replace('#(<p[^>]*class=".*?)("[^>]*)pwmotiontext="moved"#', '$1 moved$2', $body);
+            if ($hansardmajors[$data['info']['major']]['location'] == 'Scotland') {
+                $body = preg_replace('# (S\dW-\d+) #', ' <a href="/spwrans/?spid=$1">$1</a> ', $body);
+                $body = preg_replace(
+                    '#<citation id="uk\.org\.publicwhip/(.*?)/(.*?)">\[(.*?)\]</citation>#e',
+                    "'[<a href=\"/' . ('$1'=='spor'?'sp/?g':('$1'=='spwa'?'spwrans/?':'debate/?')) . 'id=$2' . '\">$3</a>]'",
+                    $body
+                );
+            }
+
             $body = str_replace('pwmotiontext="moved"', 'class="moved"', $body);
             $body = str_replace('<a href="h', '<a rel="nofollow" href="h', $body); # As even sites in Hansard lapse and become spam-sites
             echo str_replace('</p><p', '</p> <p', $body); # NN4 font size bug
@@ -284,17 +272,9 @@ if (isset($data['rows'])) {
                 $sidebarhtml .= generate_votes($row['votes'], $row['major'], $row['epobject_id'], $row['gid']);
             }
 
-            # Do the logic for this in the function; plus why shouldn't
-# you be able to comment on speeches with unknown speakers?
-#			if (($hansardmajors[$data['info']['major']]['type'] == 'debate') && isset($row['speaker']) && count($row['speaker']) > 0) {
             $sidebarhtml .= generate_commentteaser($row, $data['info']['major']);
-            #			}
 
             $PAGE->stripe_end(array(
-                #array (
-                #	'type' => 'html',
-                #	'content' => $video_content
-                #),
                 array(
                     'type' => 'html',
                     'content' => $sidebarhtml
