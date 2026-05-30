@@ -179,39 +179,37 @@ $PAGE->block_start(['id' => 'intro', 'title' => 'At OpenAustralia.org you can:']
     }
 
     /**
-     * Read and comment on recent debates.
+     * Comment on (recent debates)
      */
     function comment_on_recent_bullet_point() {
         global $hansardmajors;
         ?>
-        <li class="oa-intro-wide">
-            <div class="oa-intro-card">
-                <p class="oa-intro-title">Read and comment on recent parliamentary activity</p>
+        <li>
+            <p><strong>Read and comment on:</strong></p>
 
-                <?php
-                $DEBATELIST = new DEBATELIST();
-                $data[1] = $DEBATELIST->most_recent_day();
-                $WRANSLIST = new WRANSLIST();
-                $data[3] = $WRANSLIST->most_recent_day();
-                $WHALLLIST = new WHALLLIST();
-                $data[2] = $WHALLLIST->most_recent_day();
-                $WMSLIST = new WMSLIST();
-                $data[4] = $WMSLIST->most_recent_day();
-                $LORDSDEBATELIST = new LORDSDEBATELIST();
-                $data[101] = $LORDSDEBATELIST->most_recent_day();
-                $NILIST = new NILIST();
-                $data[5] = $NILIST->most_recent_day();
-                foreach (array_keys($hansardmajors) as $major) {
-                    if (array_key_exists($major, $data)) {
-                        unset($data[$major]['listurl']);
-                        if (count($data[$major]) == 0) {
-                            unset($data[$major]);
-                        }
+            <?php
+            $DEBATELIST = new DEBATELIST();
+            $data[1] = $DEBATELIST->most_recent_day();
+            $WRANSLIST = new WRANSLIST();
+            $data[3] = $WRANSLIST->most_recent_day();
+            $WHALLLIST = new WHALLLIST();
+            $data[2] = $WHALLLIST->most_recent_day();
+            $WMSLIST = new WMSLIST();
+            $data[4] = $WMSLIST->most_recent_day();
+            $LORDSDEBATELIST = new LORDSDEBATELIST();
+            $data[101] = $LORDSDEBATELIST->most_recent_day();
+            $NILIST = new NILIST();
+            $data[5] = $NILIST->most_recent_day();
+            foreach (array_keys($hansardmajors) as $major) {
+                if (array_key_exists($major, $data)) {
+                    unset($data[$major]['listurl']);
+                    if (count($data[$major]) == 0) {
+                        unset($data[$major]);
                     }
                 }
-                major_summary($data);
-                ?>
-            </div>
+            }
+            major_summary($data);
+            ?>
         </li>
         <?php
     }
