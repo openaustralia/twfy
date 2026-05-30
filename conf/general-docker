@@ -133,10 +133,6 @@ define('OPTION_GAZE_URL', '');
 // mySociety debug level thing. Probably leave as 0.
 define('OPTION_PHP_DEBUG_LEVEL', 0);
 
-// *******************************************************************************
-// AddThis.com Sharing Analytics. Leave blank or comment out to disable addthis analytics.
-define('ADDTHIS_USERNAME', 'openaustralia');
-
 // Host to use when loading They Vote For You data
 define('PUBLICWHIP_HOST', 'https://theyvoteforyou.org.au');
 define('DISPLAY_VOTING_DATA', true);
