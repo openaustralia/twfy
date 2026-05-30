@@ -67,11 +67,33 @@ mysqladmin -u root -p create twfy
 
 grant all on twfy.* to twfy@localhost identified by 'mypass';
 
-4. create database schema. The creation script is in the 'db'
-   subdirectory of the theyworkforyou source code package.
+4. create database schema. Migrations are managed with Phinx
+   (https://phinx.org/). To create all tables on a fresh install:
 
-$ cd db
-$ mysql -u twfy -p twfy < schema.sql
+$ ./vendor/bin/phinx migrate -c phinx.php
+
+   This requires composer dependencies to be installed first
+   (`composer install`). Phinx reads DB_HOST, DB_USER, DB_PASSWORD and
+   DB_NAME from conf/general (or environment variables of the same names).
+
+   Subsequent schema changes are added as new migrations under
+   db/migrations/ and applied with the same `phinx migrate` command.
+   See https://book.cakephp.org/phinx/0/en/ for migration authoring.
+
+   The legacy db/schema.sql is retained only as the source of truth
+   captured by the initial migration; do not import it directly.
+
+   If you are upgrading an existing install whose schema was already
+   created from db/schema.sql, mark the initial migration as already-run
+   so Phinx doesn't try to recreate (and drop) your tables:
+
+$ mysql -u twfy -p twfy -e \
+    "INSERT INTO phinxlog (version, migration_name, start_time, end_time, breakpoint) \
+     VALUES (20260530000000, 'InitialSchema', NOW(), NOW(), 0)"
+
+   You may need to create the phinxlog table first by running
+   `phinx migrate -t 0 -c phinx.php` (which creates the tracking table
+   without applying any migrations).
 
 5. Configure the configuration file
 
