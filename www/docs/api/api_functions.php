@@ -7,8 +7,9 @@
 include_once __DIR__ . '/../../../../phplib/rabx.php';
 include_once __DIR__ . '/../../includes/request.php';
 
-// The METHODS.
-
+/**
+ * The METHODS.
+ */
 function api_get_methods() {
     return [
         'getDivisions' => [
