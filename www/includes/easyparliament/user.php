@@ -825,10 +825,8 @@ class USER {
 
         // These are used to put optional fragments of SQL in, depending
         // on whether we're changing those things or not.
-        $passwordsql = "";
-        $deletedsql = "";
-        $confirmedsql = "";
-        $statussql = "";
+        $extra_sql = '';
+        $extra_params = [];
 
         if (isset($details["password"]) && $details["password"] != "") {
             // The password is being updated.
@@ -839,40 +837,29 @@ class USER {
             // Different to legacy md5-crypt hashes from the PHP 5.x era which has `$1$` prefix.
             $passwordforDB = password_hash($details["password"], PASSWORD_DEFAULT);
 
-            $passwordsql = "password	= '" . getParlDB()->escape($passwordforDB) . "', ";
+            $extra_sql .= "password = ?, ";
+            $extra_params[] = $passwordforDB;
         }
 
         if (isset($details["deleted"])) {
             // 'deleted' won't always be an option (ie, if the user is updating
             // their own info).
-            if ($details['deleted']) {
-                $del = '1';
-            } else {
-                $del = '0';
-            }
-            if (isset($del)) {
-                $deletedsql = "deleted	= '$del', ";
-            }
+            $extra_sql .= "deleted = ?, ";
+            $extra_params[] = $details['deleted'] ? '1' : '0';
         }
 
         if (isset($details["confirmed"])) {
             // 'confirmed' won't always be an option (ie, if the user is updating
             // their own info).
-            if ($details['confirmed']) {
-                $con = '1';
-            } else {
-                $con = '0';
-            }
-            if (isset($con)) {
-                $confirmedsql = "confirmed	= '$con', ";
-            }
+            $extra_sql .= "confirmed = ?, ";
+            $extra_params[] = $details['confirmed'] ? '1' : '0';
         }
 
         if (isset($details["status"]) && $details["status"] != "") {
             // 'status' won't always be an option (ie, if the user is updating
             // their own info.
-            $statussql = "status	= '" . getParlDB()->escape($details["status"]) . "', ";
-
+            $extra_sql .= "status = ?, ";
+            $extra_params[] = $details["status"];
         }
 
         // Convert internal true/false variables to MySQL BOOL 1/0 variables.
@@ -880,18 +867,24 @@ class USER {
         $optin = !empty($details["optin"]) ? 1 : 0;
 
         $q = parlDBQuery("UPDATE users
-						SET		firstname 	 = '" . getParlDB()->escape($details["firstname"]) . "',
-								lastname 	 = '" . getParlDB()->escape($details["lastname"]) . "',
-								email		 = '" . getParlDB()->escape($details["email"]) . "',
-								emailpublic	 = '" . $emailpublic . "',
-								constituency = '" . getParlDB()->escape($details["constituency"]) . "',
-								url			 = '" . getParlDB()->escape($details["url"]) . "',"
-            . $passwordsql
-            . $deletedsql
-            . $confirmedsql
-            . $statussql . "
-								optin 		= '" . $optin . "'
-						WHERE 	user_id 	= '" . getParlDB()->escape($details["user_id"]) . "'");
+						SET		firstname    = ?,
+								lastname     = ?,
+								email        = ?,
+								emailpublic  = ?,
+								constituency = ?,
+								url          = ?,
+								$extra_sql
+								optin        = ?
+						WHERE 	user_id      = ?",
+            $details["firstname"],
+            $details["lastname"],
+            $details["email"],
+            $emailpublic,
+            $details["constituency"],
+            $details["url"],
+            ...$extra_params,
+            ...[$optin, $details["user_id"]]
+        );
 
         // If we're returning to
         // $this->update_self() then $THEUSER will have its variables
