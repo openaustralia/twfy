@@ -202,6 +202,18 @@ class SKIN {
                 <?php
             }
         }
+
+        $modernStyle = '';
+        if (isset($skinstyles['global']) && $skinstyles['global'] != '') {
+            $modernStyle = $skinstyles['global'];
+        } elseif (isset($skinstyles['mobile']) && $skinstyles['mobile'] != '') {
+            $modernStyle = $skinstyles['mobile'];
+        }
+        if ($modernStyle != '' && file_exists(__DIR__ . '/../../docs/style/' . $modernStyle . '/modern.css')) {
+            ?>
+            <link rel="stylesheet" href="<?php echo WEBPATH; ?>style/<?php echo $modernStyle; ?>/modern.css" type="text/css">
+            <?php
+        }
         ?>
         <script>
             tailwind.config = {

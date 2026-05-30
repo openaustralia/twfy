@@ -94,23 +94,45 @@ $PAGE->block_start(['id' => 'intro', 'title' => 'Election special! Find out how 
             $MEMBER = new MEMBER(['postcode' => $THEUSER->postcode()]);
             $mpname = $MEMBER->first_name() . ' ' . $MEMBER->last_name();
             ?>
-            <p><a href="<?php echo $MPURL->generate(); ?>"><strong>Find out more about how <?php echo $mpname; ?>, your
-                        ex-MP, represented you over the last parliament</strong></a><br>
-                In <?php echo strtoupper(htmlentities($THEUSER->postcode())); ?> (<a
-                    href="<?php echo $CHANGEURL->generate(); ?>">Change your postcode</a>)</p>
+            <div class="mt-2 max-w-3xl rounded-2xl border border-[#AE967F] bg-gradient-to-b from-white to-[#FDF5F5] p-5 shadow-sm">
+                <p class="m-0 text-base font-semibold leading-relaxed text-[#B82E00]"><a
+                        class="text-[#B82E00] no-underline hover:underline"
+                        href="<?php echo $MPURL->generate(); ?>">Find out more about how <?php echo $mpname; ?>, your
+                            ex-MP, represented you over the last parliament</a></p>
+                <p class="mt-3 mb-0 text-sm leading-relaxed text-[#AB4329]">In <?php echo strtoupper(htmlentities($THEUSER->postcode())); ?> (<a
+                        class="font-semibold text-[#880101] no-underline hover:underline"
+                        href="<?php echo $CHANGEURL->generate(); ?>">Change your postcode</a>)</p>
+            </div>
             <?php
 
         } else {
             // User is not logged in and doesn't have a personal postcode set.
             ?>
             <form action="<?php echo $MPURL->generate(); ?>" method="get">
-                <p><strong>Now that the election has been called, you can use this site to find out what your ex-MP did
+                <div class="mt-2 max-w-3xl rounded-2xl border border-[#AE967F] bg-gradient-to-b from-white to-[#FDF5F5] p-5 shadow-sm">
+                    <p class="m-0 text-base font-semibold leading-relaxed text-[#B82E00]">Now that the election has been called, you can use this site to find out what your ex-MP did
                         throughout the last parliament. We have performance stats, speeches, voting records and
-                        more...</strong><br>
-                    <label for="pc">Enter your Australian postcode here:</label>&nbsp; <input type="text" name="pc" id="pc"
-                        size="8" maxlength="10" value="<?php echo htmlentities($THEUSER->postcode()); ?>"
-                        class="text">&nbsp;&nbsp;<input type="submit" value=" GO " class="submit">
-                </p>
+                        more...</p>
+                    <div class="mt-3 rounded-lg border border-[#DECEB3] bg-white p-3">
+                        <label for="pc" class="block text-sm font-semibold text-[#880101]">Enter your Australian postcode here:</label>
+                        <div class="mt-3 flex flex-wrap items-center gap-3">
+                            <input
+                                type="text"
+                                name="pc"
+                                id="pc"
+                                size="8"
+                                maxlength="10"
+                                value="<?php echo htmlentities($THEUSER->postcode()); ?>"
+                                class="h-10 w-32 rounded-md border border-[#AE967F] bg-white px-3 py-2 text-sm text-[#880101] shadow-sm outline-none focus:border-[#B82E00] focus:ring-2 focus:ring-[#EBA668]"
+                            >
+                            <button
+                                type="submit"
+                                class="inline-flex h-10 min-w-24 items-center justify-center rounded-md border px-4 text-sm font-semibold text-white shadow-sm focus:outline-none focus:ring-2 focus:ring-[#EBA668]"
+                                style="background-color:#880101;color:#ffffff;border-color:#880101;"
+                            >GO</button>
+                        </div>
+                    </div>
+                </div>
             </form>
             <?php
         }
@@ -122,17 +144,34 @@ $PAGE->block_start(['id' => 'intro', 'title' => 'Election special! Find out how 
         $SEARCHURL = new URL('search');
         ?>
         <form action="<?php echo $SEARCHURL->generate(); ?>" method="get">
-            <p><strong>Search everything said in Parliament since 2001, or for an ex-MP or constituency</strong><br>
-                <label for="s">Type what you are looking for:</label>&nbsp; <input type="text" name="s" id="s" size="15"
-                    maxlength="100" class="text">&nbsp;&nbsp;<input type="submit" value="SEARCH" class="submit">
-            </p>
+            <div class="mt-4 max-w-3xl rounded-2xl border border-[#AE967F] bg-gradient-to-b from-white to-[#FDF5F5] p-5 shadow-sm">
+                <p class="m-0 text-base font-semibold leading-relaxed text-[#B82E00]">Search everything said in Parliament since 2001, or for an ex-MP or constituency</p>
+                <div class="mt-3 rounded-lg border border-[#DECEB3] bg-white p-3">
+                    <label for="s" class="block text-sm font-semibold text-[#880101]">Type what you are looking for:</label>
+                    <div class="mt-3 flex flex-wrap items-center gap-3">
+                        <input
+                            type="text"
+                            name="s"
+                            id="s"
+                            size="15"
+                            maxlength="100"
+                            class="h-10 w-52 rounded-md border border-[#AE967F] bg-white px-3 py-2 text-sm text-[#880101] shadow-sm outline-none focus:border-[#B82E00] focus:ring-2 focus:ring-[#EBA668]"
+                        >
+                        <button
+                            type="submit"
+                            class="inline-flex h-10 min-w-24 items-center justify-center rounded-md border px-4 text-sm font-semibold text-white shadow-sm focus:outline-none focus:ring-2 focus:ring-[#EBA668]"
+                            style="background-color:#880101;color:#ffffff;border-color:#880101;"
+                        >SEARCH</button>
+                    </div>
+                </div>
+            </div>
             <?php
             // Display popular queries.
             global $SEARCHLOG;
             $popular_searches = $SEARCHLOG->popular_recent(10);
             if (count($popular_searches) > 0) {
                 ?>
-                <p>Popular searches today:
+                <p class="mt-3 text-sm text-[#AB4329]">Popular searches today:
                     <?php
                     $lentotal = 0;
                     $correct_amount = [];

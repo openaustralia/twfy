@@ -50,9 +50,19 @@ $PAGE->block_start(['id' => 'intro', 'title' => 'At OpenAustralia.org you can:']
                     $former = 'former';
                 }
                 ?>
-                <p><a href="<?php echo $MPURL->generate(); ?>"><strong>Find out more about <?php echo $mpname; ?>, your
-                            <?php echo $former ?> Representative</strong></a>
-                    (<a href="<?php echo $CHANGEURL->generate(); ?>">Change</a>)</p>
+                <div class="mt-3 max-w-xl rounded-2xl border border-[#AE967F] bg-gradient-to-b from-white to-[#FDF5F5] p-5 shadow-sm">
+                    <p class="m-0 text-base font-semibold text-[#B82E00]">
+                        <a class="text-[#B82E00] no-underline hover:underline" href="<?php echo $MPURL->generate(); ?>"><strong>Find out more about <?php echo $mpname; ?>, your
+                                    <?php echo $former ?> Representative</strong></a>
+                    </p>
+                    <p class="mt-3 mb-0">
+                        <a
+                            href="<?php echo $CHANGEURL->generate(); ?>"
+                            class="inline-flex items-center rounded-md border px-3 py-1.5 text-sm font-semibold no-underline"
+                            style="background-color:#880101;color:#ffffff;border-color:#880101;"
+                        >Change</a>
+                    </p>
+                </div>
                 <?php
             }
         }
