@@ -149,7 +149,9 @@ cd ../twfy
 cp conf/general-example.local-dev conf/general
 
 cd ../openaustralia-parser # if not already there
-script/dbconsole -p < ../twfy/db/schema.sql
+cd ../twfy
+make docker-migrate                # or: ./vendor/bin/phinx migrate -c phinx.php
+cd ../openaustralia-parser
 bundle exec rake db:fixtures:load   # for a limited set of fixtures
 bundle exec rake db:stats # to show which tables have data
 ```
