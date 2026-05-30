@@ -386,6 +386,9 @@ class MySQL {
                 return 'NULL';
             }
             if (is_array($value)) {
+                if (empty($value)) {
+                    return '(NULL)';
+                }
                 $escaped = array_map(fn($v) => "'" . $this->escape((string) $v) . "'", $value);
                 return '(' . implode(', ', $escaped) . ')';
             }
