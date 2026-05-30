@@ -8,6 +8,14 @@
 include dirname(__FILE__) . '/../www/includes/easyparliament/init.php';
 include_once INCLUDESPATH . 'easyparliament/member.php';
 
+// OpenTelemetry root span for this background job.
+otel_init();
+$__otel_job = otel_start_root_span('job mprss', ['job.name' => 'mprss']);
+register_shutdown_function(static function () {
+    global $__otel_job;
+    if (!empty($__otel_job)) { otel_end_root_span($__otel_job); $__otel_job = null; }
+});
+
 // Where all the RSS feeds go.
 $rsspath = BASEDIR . '/rss/mp/';
 
