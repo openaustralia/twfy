@@ -1142,7 +1142,7 @@ class PAGE {
         ?>
                     <div class="block" <?php echo $id; ?>>
                         <?php if ($title) { ?>
-                            <h4><?php echo $title; ?></h4><?php
+                            <h4 class="block-title"><?php echo $title; ?></h4><?php
                         } ?>
                         <?php
                         if (!isset($data['body']) || $data['body']) {

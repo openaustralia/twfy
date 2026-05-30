@@ -50,16 +50,15 @@ $PAGE->block_start(['id' => 'intro', 'title' => 'At OpenAustralia.org you can:']
                     $former = 'former';
                 }
                 ?>
-                <div class="mt-3 max-w-xl rounded-2xl border border-[#AE967F] bg-gradient-to-b from-white to-[#FDF5F5] p-5 shadow-sm">
-                    <p class="m-0 text-base font-semibold text-[#B82E00]">
-                        <a class="text-[#B82E00] no-underline hover:underline" href="<?php echo $MPURL->generate(); ?>"><strong>Find out more about <?php echo $mpname; ?>, your
+                <div class="oa-intro-card">
+                    <p class="oa-intro-title">
+                        <a class="oa-intro-link" href="<?php echo $MPURL->generate(); ?>"><strong>Find out more about <?php echo $mpname; ?>, your
                                     <?php echo $former ?> Representative</strong></a>
                     </p>
                     <p class="mt-3 mb-0">
                         <a
                             href="<?php echo $CHANGEURL->generate(); ?>"
-                            class="inline-flex items-center rounded-md border px-3 py-1.5 text-sm font-semibold no-underline"
-                            style="background-color:#880101;color:#ffffff;border-color:#880101;"
+                            class="oa-btn-primary"
                         >Change</a>
                     </p>
                 </div>
@@ -69,23 +68,22 @@ $PAGE->block_start(['id' => 'intro', 'title' => 'At OpenAustralia.org you can:']
 
         if ($pc_form) { ?>
             <form action="<?php echo $MPURL->generate(); ?>" method="get">
-                <div class="mt-3 max-w-xl rounded-2xl border border-[#AE967F] bg-gradient-to-b from-white to-[#FDF5F5] p-5 shadow-sm">
-                    <p class="m-0 text-base font-semibold text-[#B82E00]">Find out more about your Representative</p>
-                    <div class="mt-3 rounded-lg border border-[#DECEB3] bg-white p-3">
-                        <label for="pc" class="block text-sm font-semibold text-[#880101]">Enter your Australian postcode</label>
-                        <div class="mt-3 flex flex-wrap items-center gap-3">
+                <div class="oa-intro-card">
+                    <p class="oa-intro-title">Find out more about your Representative</p>
+                    <div class="oa-intro-subpanel">
+                        <label for="pc" class="oa-field-label">Enter your Australian postcode</label>
+                        <div class="oa-field-row">
                             <input
                                 type="text"
                                 name="pc"
                                 id="pc"
                                 size="8"
                                 maxlength="10"
-                                class="h-10 w-32 rounded-md border border-[#AE967F] bg-white px-3 py-2 text-sm text-[#880101] shadow-sm outline-none focus:border-[#B82E00] focus:ring-2 focus:ring-[#EBA668]"
+                                class="oa-postcode-input"
                             >
                             <button
                                 type="submit"
-                                class="inline-flex h-10 min-w-24 items-center justify-center rounded-md border px-4 text-sm font-semibold text-white shadow-sm focus:outline-none focus:ring-2 focus:ring-[#EBA668]"
-                                style="background-color:#880101;color:#ffffff;border-color:#880101;"
+                                class="oa-btn-primary"
                             >Find</button>
                         </div>
                     </div>
@@ -149,14 +147,27 @@ $PAGE->block_start(['id' => 'intro', 'title' => 'At OpenAustralia.org you can:']
     function email_alert_bullet_point() {
         if (get_http_var("keyword")) { ?>
             <li>
-                <p><a href="<?php echo WEBPATH . "alert?keyword=" . htmlspecialchars(get_http_var('keyword')) ?>&only=1"><strong>Sign
-                            up to be emailed when '<?php echo htmlspecialchars(get_http_var('keyword')) ?>' is mentioned in
-                            Parliament</strong></a></p>
+                <div class="oa-intro-card">
+                    <p class="oa-intro-title">Sign up to be emailed when '<?php echo htmlspecialchars(get_http_var('keyword')) ?>' is mentioned in Parliament</p>
+                    <p class="mt-3 mb-0">
+                        <a
+                            href="<?php echo WEBPATH . "alert?keyword=" . htmlspecialchars(get_http_var('keyword')) ?>&only=1"
+                            class="oa-btn-primary"
+                        >Create email alert</a>
+                    </p>
+                </div>
             </li>
         <?php } else { ?>
             <li>
-                <p><a href="<?php echo WEBPATH . "alert/" ?>"><strong>Sign up to be emailed when something relevant to you
-                            happens in Parliament</strong></a></p>
+                <div class="oa-intro-card">
+                    <p class="oa-intro-title">Sign up to be emailed when something relevant to you happens in Parliament</p>
+                    <p class="mt-3 mb-0">
+                        <a
+                            href="<?php echo WEBPATH . "alert/" ?>"
+                            class="oa-btn-primary"
+                        >Create email alert</a>
+                    </p>
+                </div>
             </li>
         <?php }
     }
