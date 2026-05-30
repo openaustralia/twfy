@@ -495,13 +495,13 @@ class COMMENTREPORT {
                 }
 
                 $q = parlDBQuery("UPDATE commentreports
-								SET 	resolved = '$time',
-										resolvedby = '" . getParlDB()->escape($THEUSER->user_id()) . "',
+								SET 	resolved = ?,
+										resolvedby = ?,
 										locked = NULL,
 										lockedby = NULL,
-										upheld = '$upheldsql'
-								WHERE 	report_id = '" . getParlDB()->escape($this->report_id) . "'
-								");
+										upheld = ?
+								WHERE 	report_id = ?
+								", $time, $THEUSER->user_id(), $upheldsql, $this->report_id);
 
                 if ($q->success()) {
 
