@@ -93,8 +93,6 @@ if (get_http_var("d") != "") {
     $args['epobject_id'] = $WMSLIST->epobject_id();
     $COMMENTLIST->display('ep', $args);
     $PAGE->stripe_end();
-    // $TRACKBACK = new TRACKBACK;
-    // $TRACKBACK->display('epobject_id', $commendata);
 } else {
     // No date or debate id. Show recent WMS.
 

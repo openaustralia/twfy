@@ -324,12 +324,6 @@ if (isset($data['rows'])) {
 
         } // End htype 12.
 
-
-        // TRACKBACK AUTO DISCOVERY
-/*		if (isset($row['trackback']) && count($row['trackback']) > 0) {
-
-			$PAGE->trackback_rss($row['trackback']);
-		} */
         ob_flush(); //flush the output buffer
 
     } // End cycling through rows.
@@ -623,20 +617,11 @@ pairs along the lines of:
             'no'	=> '30'
         )
     ),
-    'trackback'		=> array (
-        'itemurl'		=> 'http://www.easyparliament.com/debate/?id=2003-12-31.475.3',
-        'pingurl'		=> 'http://www.easyparliament.com/trackback?g=debate_2003-02-28.475.3',
-        'title'			=> 'Title of this item or page',
-        'date'			=> '2003-12-31T23:00:00+00:00'
-    )
     etc.
 
 Note: There are two URLs.
     'listurl' is a link to the item in context, in the list view.
     'commentsurl' is the page where we can see this item and all its comments.
-
-Note: The 'trackback' array won't always be there - only if we think we're going to
-    be using it for Auto Discovery on this page.
 
 Note: Speaker's only there if there is a speaker for this item.
 

@@ -74,7 +74,6 @@ define('DISPLAY_VOTING_DATA', true);
 
 // Defined in init.php
 define('ALLOWCOMMENTS', true);
-define('ALLOWTRACKBACKS', true);
 define('LONGERDATEFORMAT', 'l, j F Y');
 define('LONGDATEFORMAT', 'j F Y');
 define('SHORTDATEFORMAT', 'j M Y');

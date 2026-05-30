@@ -162,11 +162,6 @@ class Metadata {
             'parent' => 'admin',
             'url' => 'admin/statistics.php'
         ],
-        'admin_trackbacks' => [
-            'title' => 'Recent trackbacks',
-            'parent' => 'admin',
-            'url' => 'admin/trackbacks.php'
-        ],
 
         // Added by Richard Allan for email alert functions.
 
@@ -756,11 +751,6 @@ class Metadata {
             'parent' => 'spwransfront',
             'title' => 'Scottish Parliament Written answers for ',
             'url' => 'spwrans/'
-        ],
-
-        // The URL 3rd parties need to ping something here.
-        'trackback' => [
-            'url' => 'trackback/'
         ],
 
         'useralerts' => [

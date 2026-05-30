@@ -653,10 +653,6 @@ function fix_gid_from_db($gid, $keepmajor = false) {
     // You will almost always want $keepmajor to be false.
     // This returns '2003-02-28.475.3' which is used for URLs.
 
-    // However, trackbacks want a bit more info, so we can tell what
-    // kind of thing they link to. So they need $keepmajor to be true.
-    // This returns 'debate_2003-02-28.475.3'.
-
     if ($keepmajor) {
         $newgid = substr($gid, strpos($gid, '/') + 1);
         $newgid = str_replace('/', '_', $newgid);

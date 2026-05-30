@@ -2410,36 +2410,6 @@ class PAGE {
     /**
      *
      */
-    public function trackback_rss($trackbackdata) {
-        /*
-        Outputs Trackback Auto Discovery RSS for something.
-
-        $trackbackdata = array (
-        'itemurl'   => 'http://www.easyparliament.org/debate/?id=2003-02-28.544.2',
-        'pingurl'   => 'http://www.easyparliament.org/trackback/?e=2345',
-        'title'     => 'This item or page title',
-        'date'      => '2003-02-28T13:47:00+00:00'
-        );
-        */
-        ?>
-                <!--
-<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-        xmlns:dc="http://purl.org/dc/elements/1.1/"
-        xmlns:trackback="http://madskills.com/public/xml/rss/module/trackback/">
-<rdf:Description
-    rdf:about="<?php echo $trackbackdata['itemurl']; ?>"
-    trackback:ping="<?php echo $trackbackdata['pingurl']; ?>"
-    dc:identifier="<?php echo $trackbackdata['itemurl']; ?>"
-    dc:title="<?php echo str_replace('"', "'", $trackbackdata['title']); ?>"
-    dc:date="<?php echo $trackbackdata['date']; ?>">
-</rdf:RDF>
--->
-                <?php
-    }
-
-    /**
-     *
-     */
     public function search_form($value = '') {
         global $SEARCHENGINE;
         // Search box on the search page.
@@ -3273,7 +3243,6 @@ class PAGE {
         $pages = [
             'admin_home',
             'admin_comments',
-            'admin_trackbacks',
             'admin_searchlogs',
             'admin_popularsearches',
             'admin_failedsearches',
