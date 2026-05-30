@@ -66,6 +66,6 @@ function api_getRepresentatives_date($date) {
 /**
  *
  */
-function api_getRepresentatives($date = 'now()') {
+function api_getRepresentatives($date = null) {
     api_getMPs($date);
 }
