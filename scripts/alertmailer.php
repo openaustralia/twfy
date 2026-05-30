@@ -19,6 +19,14 @@ ini_set('memory_limit', -1);
 include_once INCLUDESPATH . 'easyparliament/member.php';
 include_once INCLUDESPATH . 'alertmailer_sanitize.php';
 
+// OpenTelemetry root span for this background job.
+otel_init();
+$__otel_job = otel_start_root_span('job alertmailer', ['job.name' => 'alertmailer']);
+register_shutdown_function(static function () {
+    global $__otel_job;
+    if (!empty($__otel_job)) { otel_end_root_span($__otel_job); $__otel_job = null; }
+});
+
 $global_start = getmicrotime();
 
 // Get current value of latest batch.
