@@ -194,7 +194,7 @@ CREATE TABLE `alerts` (
   `registrationtoken` varchar(34) NOT NULL default '',
   `confirmed` tinyint(1) NOT NULL default '0',
   `created` datetime NOT NULL default '0000-01-01 00:00:00',
-  `recommended` tinyint(1) NOT NULL default '0', 
+  `recommended` tinyint(1) NOT NULL default '0',
   PRIMARY KEY  (`alert_id`),
   KEY `email` (`email`),
   KEY `confirmed` (`confirmed`,`deleted`)
@@ -288,21 +288,6 @@ CREATE TABLE `search_query_log` (
   `query_time` datetime default NULL,
   PRIMARY KEY  (`id`),
   KEY `query_time` (`query_time`)
-);
-
-DROP TABLE IF EXISTS `trackbacks`;
-CREATE TABLE `trackbacks` (
-  `trackback_id` int(11) NOT NULL auto_increment,
-  `epobject_id` int(11) default NULL,
-  `blog_name` varchar(255) default NULL,
-  `title` varchar(255) default NULL,
-  `excerpt` varchar(255) default NULL,
-  `url` varchar(255) default NULL,
-  `posted` datetime default NULL,
-  `visible` tinyint(1) NOT NULL default '0',
-  `source_ip` varchar(20) default NULL,
-  PRIMARY KEY  (`trackback_id`),
-  KEY `visible` (`visible`)
 );
 
 DROP TABLE IF EXISTS `users`;
