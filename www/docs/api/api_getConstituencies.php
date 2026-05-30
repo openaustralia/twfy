@@ -81,10 +81,14 @@ function api_getConstituencies_date($date) {
 /**
  *
  */
-function api_getConstituencies($date = 'NOW()') {
+function api_getConstituencies($date = null) {
     // FIXME timezones!
-    $q = parlDBQuery('SELECT cons_id, name from constituency
-		WHERE main_name AND from_date <= date(?) AND date(?) <= to_date', $date, $date);
+    if ($date === null) {
+        $q = parlDBQuery('SELECT cons_id, name from constituency WHERE main_name AND from_date <= CURRENT_DATE AND CURRENT_DATE <= to_date');
+    } else {
+        $q = parlDBQuery('SELECT cons_id, name from constituency WHERE main_name AND from_date <= date(?) AND date(?) <= to_date',
+            $date, $date);
+    }
     $output = [];
     for ($i = 0; $i < $q->rows(); $i++) {
         $output[] = [
