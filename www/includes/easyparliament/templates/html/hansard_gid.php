@@ -114,18 +114,10 @@ if (isset($data['rows'])) {
 
             $PAGE->stripe_start('head-2');
             ?>
-            <!-- ADDTHIS JAVASCRIPT BEGIN -->
-            <?php if (defined('ADDTHIS_USERNAME') && ADDTHIS_USERNAME)
-                print '<script type="text/javascript">var addthis_pub = "' . ADDTHIS_USERNAME . '";</script>' ?>
-                <script type="text/javascript" src="https://s7.addthis.com/js/250/addthis_widget.js"></script>
-                <!-- ADDTHIS JAVASCRIPT END -->
-                <h4><?php echo $section_title; ?></h4>
+            <h4><?php echo $section_title; ?></h4>
             <h5><?php echo $subsection_title; ?></h5>
             <?php
-            #			$body = technorati_pretty();
-#			if ($body) {
-#				print '<div class="blockbody">' . $body . '</div>';
-#			}
+
             $PAGE->stripe_end(array(
                 array(
                     'type' => 'nextprev'
@@ -240,34 +232,25 @@ if (isset($data['rows'])) {
                 if (isset($speaker['office'])) {
                     $desc .= ', ' . $speaker['office'][0]['pretty'];
                 }
-                if ($desc)
+                if ($desc) {
                     print "($desc)";
-                ?> <a href="https://www.addthis.com/bookmark.php"
-                    onmouseover="return addthis_open(this, '', '<?php echo 'https://', DOMAIN, $row['commentsurl']; ?>', '');"
-                    onmouseout="addthis_close();" onclick="return addthis_sendto();">Share this</a><?php
-                    if ($hansardmajors[$data['info']['major']]['type'] == 'debate' && $this_page == $hansardmajors[$data['info']['major']]['page_all']) {
-                        ?> | <a href="<?php echo $row['commentsurl']; ?>" title="Copy this URL to link directly to this piece of text"
-                        class="permalink">Link to this</a><?php
-                    }
-                    if (isset($row['source_url']) && $row['source_url'] != '') {
-                        echo ' | <a href="', $row['source_url'], '" title="The source of this piece of text">',
-                            ($hansardmajors[$data['info']['major']]['location'] == 'Scotland' ? 'Official Report' : 'Hansard'),
-                            ' source</a>';
-                    }
+                }
 
-                    if ($data['info']['major'] == 8 && preg_match('#\d{4}-\d\d-\d\d\.(.*?)\.q#', $row['gid'], $m)) {
-                        # Scottish Wrans only
-                        print " | Question $m[1]";
-                    }
+                if ($hansardmajors[$data['info']['major']]['type'] == 'debate' && $this_page == $hansardmajors[$data['info']['major']]['page_all']) {
+                    ?> | <a href="<?php echo $row['commentsurl']; ?>" title="Copy this URL to link directly to this piece of text"
+                    class="permalink">Link to this</a><?php
+                }
+                if (isset($row['source_url']) && $row['source_url'] != '') {
+                    echo ' | <a href="', $row['source_url'], '" title="The source of this piece of text">',
+                        ($hansardmajors[$data['info']['major']]['location'] == 'Scotland' ? 'Official Report' : 'Hansard'),
+                        ' source</a>';
+                }
 
-                    #                if ($data['info']['major'] == 1) { # Commons debates only
-                    if (0) {
-                        ?><!-- | <script type="text/javascript" src="https://parlvid.mysociety.org/video.cgi?gid=<?php
-                        echo $row['gid'];
-                        ?>&output=js-link"></script> -->
-                    <?php
-                    }
-                    echo "</small>";
+                if ($data['info']['major'] == 8 && preg_match('#\d{4}-\d\d-\d\d\.(.*?)\.q#', $row['gid'], $m)) {
+                    # Scottish Wrans only
+                    print " | Question $m[1]";
+                }
+                echo "</small>";
             }
 
             $body = $row['body'];

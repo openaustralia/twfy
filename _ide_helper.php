@@ -68,7 +68,6 @@ define('OPTION_GAZE_URL', '');
 define('OPTION_PHP_DEBUG_LEVEL', 0);
 
 // Misc
-define('ADDTHIS_USERNAME', '');
 define('PUBLICWHIP_HOST', '');
 define('DISPLAY_VOTING_DATA', true);
 
