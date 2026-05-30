@@ -98,7 +98,12 @@ function api_getMembers_date($house, $date) {
 /**
  *
  */
-function api_getMembers($house, $date = 'NOW()') {
-    _api_getMembers_output('SELECT * from member WHERE house= ? ' .
-        ' AND entered_house <= date(' . $date . ') AND date(' . $date . ') <= left_house', $house);
+function api_getMembers($house, $date = null) {
+    if ($date === null) {
+        _api_getMembers_output('SELECT * from member WHERE house= ? ' .
+            ' AND entered_house <= date(NOW()) AND date(NOW()) <= left_house', $house);
+    } else {
+        _api_getMembers_output('SELECT * from member WHERE house= ? ' .
+            ' AND entered_house <= date(?) AND date(?) <= left_house', $house, $date, $date);
+    }
 }
