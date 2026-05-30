@@ -315,18 +315,7 @@ class PAGE {
             echo $linkshtml;
 
             $SKIN->output_stylesheets();
-            ?>
-            <script>
-                tailwind = {
-                    config: {
-                        corePlugins: {
-                            preflight: false
-                        }
-                    }
-                };
-            </script>
-            <script src="https://cdn.tailwindcss.com"></script>
-            <?php
+
 
             if ($rssurl = $DATA->page_metadata($this_page, 'rss')) {
                 // If this page has an RSS feed set.
@@ -465,18 +454,8 @@ class PAGE {
 
             $SKIN->output_stylesheets();
             ?>
-            <script>
-                tailwind = {
-                    config: {
-                        corePlugins: {
-                            preflight: false
-                        }
-                    }
-                };
-            </script>
-            <script src="https://cdn.tailwindcss.com"></script>
-            <?php
 
+            <?php
             if ($rssurl = $DATA->page_metadata($this_page, 'rss')) {
                 // If this page has an RSS feed set.
                 ?>

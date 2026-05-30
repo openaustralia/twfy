@@ -202,6 +202,34 @@ class SKIN {
                 <?php
             }
         }
+        ?>
+        <script>
+            tailwind.config = {
+                theme: {
+                    extend: {
+                        colors: {
+                            oa: {
+                                brand: '#880101',
+                                accent: '#EBA668',
+                                heading: '#B82E00',
+                                subheading: '#AB4329',
+                                paper: '#FDF5F5',
+                                panel: '#EBECCF',
+                                stripe1: '#F5F5F5',
+                                stripe2: '#E5DFD9',
+                                menu: '#DECEB3',
+                                border: '#AE967F'
+                            }
+                        }
+                    }
+                },
+                corePlugins: {
+                    preflight: false
+                }
+            };
+        </script>
+        <script src="https://cdn.tailwindcss.com"></script>
+        <?php
     }
 
 }

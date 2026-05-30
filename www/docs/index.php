@@ -59,10 +59,27 @@ $PAGE->block_start(['id' => 'intro', 'title' => 'At OpenAustralia.org you can:']
 
         if ($pc_form) { ?>
             <form action="<?php echo $MPURL->generate(); ?>" method="get">
-                <p><strong>Find out more about your Representative</strong><br>
-                    <label for="pc">Enter your Australian postcode here:</label>&nbsp; <input type="text" name="pc" id="pc"
-                        size="8" maxlength="10" class="text">&nbsp;&nbsp;<input type="submit" value=" GO " class="submit">
-                </p>
+                <div class="mt-3 max-w-xl rounded-2xl border border-[#AE967F] bg-gradient-to-b from-white to-[#FDF5F5] p-5 shadow-sm">
+                    <p class="m-0 text-base font-semibold text-[#B82E00]">Find out more about your Representative</p>
+                    <div class="mt-3 rounded-lg border border-[#DECEB3] bg-white p-3">
+                        <label for="pc" class="block text-sm font-semibold text-[#880101]">Enter your Australian postcode</label>
+                        <div class="mt-3 flex flex-wrap items-center gap-3">
+                            <input
+                                type="text"
+                                name="pc"
+                                id="pc"
+                                size="8"
+                                maxlength="10"
+                                class="h-10 w-32 rounded-md border border-[#AE967F] bg-white px-3 py-2 text-sm text-[#880101] shadow-sm outline-none focus:border-[#B82E00] focus:ring-2 focus:ring-[#EBA668]"
+                            >
+                            <button
+                                type="submit"
+                                class="inline-flex h-10 min-w-24 items-center justify-center rounded-md border px-4 text-sm font-semibold text-white shadow-sm focus:outline-none focus:ring-2 focus:ring-[#EBA668]"
+                                style="background-color:#880101;color:#ffffff;border-color:#880101;"
+                            >Find</button>
+                        </div>
+                    </div>
+                </div>
             </form>
             <?php
         }
