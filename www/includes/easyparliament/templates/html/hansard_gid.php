@@ -253,11 +253,6 @@ if (isset($data['rows'])) {
                         echo ' | <a href="', $row['source_url'], '" title="The source of this piece of text">Hansard source</a>';
                     }
 
-                    if ($data['info']['major'] == 8 && preg_match('#\d{4}-\d\d-\d\d\.(.*?)\.q#', $row['gid'], $m)) {
-                        # Scottish Wrans only
-                        print " | Question $m[1]";
-                    }
-
                     #                if ($data['info']['major'] == 1) { # Commons debates only
                     if (0) {
                         ?><!-- | <script type="text/javascript" src="https://parlvid.mysociety.org/video.cgi?gid=<?php
