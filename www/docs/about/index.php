@@ -10,7 +10,7 @@ include_once __DIR__ . '/../../includes/easyparliament/init.php';
 
 $PAGE->page_start();
 
-$PAGE->stripe_start();
+$PAGE->stripe_start('side', 'about-page');
 
 include __DIR__ . '/../../includes/easyparliament/staticpages/about.php';
 
