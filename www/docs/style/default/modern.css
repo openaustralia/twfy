@@ -313,6 +313,14 @@ div.blockbody {
     align-items: stretch;
 }
 
+#home-page #intro ol > li.oa-intro-wide {
+    grid-column: 1 / -1;
+}
+
+#home-page #intro ol > li.oa-intro-wide .oa-intro-card {
+    min-height: 0;
+}
+
 #home-page #intro .oa-intro-card {
     margin-top: 0;
     max-width: none;
