@@ -314,9 +314,9 @@ if (isset($data['rows'])) {
 
     if (isset($data['subrows'])) {
         $PAGE->stripe_start();
-        print '<ul>';
+        print '<ul class="oa-subrows-list">';
         foreach ($data['subrows'] as $row) {
-            print '<li>';
+            print '<li class="oa-subrows-item">';
             if (isset($row['contentcount']) && $row['contentcount'] > 0) {
                 $has_content = true;
             } elseif ($row['htype'] == '11' && $hansardmajors[$row['major']]['type'] == 'other') {
@@ -325,7 +325,7 @@ if (isset($data['rows'])) {
                 $has_content = false;
             }
             if ($has_content) {
-                print '<a href="' . $row['listurl'] . '"><strong>' . $row['body'] . '</strong></a> ';
+                print '<a class="oa-subrows-link" href="' . $row['listurl'] . '"><strong>' . $row['body'] . '</strong></a> ';
                 // For the "x speeches, x comments" text.
                 $moreinfo = array();
                 if ($hansardmajors[$row['major']]['type'] != 'other') {
@@ -339,14 +339,14 @@ if (isset($data['rows'])) {
                     $moreinfo[] = $row['totalcomments'] . " $plural";
                 }
                 if (count($moreinfo) > 0) {
-                    print "<small>(" . implode(', ', $moreinfo) . ") </small>";
+                    print "<small class=\"oa-subrows-meta\">(" . implode(', ', $moreinfo) . ") </small>";
                 }
             } else {
                 // Nothing in this item, so no link.
-                print '<strong>' . $row['body'] . '</strong>';
+                print '<strong class="oa-subrows-heading">' . $row['body'] . '</strong>';
             }
             if (isset($row['excerpt'])) {
-                print "<br>\n\t\t\t\t\t<span class=\"excerpt-debates\">" . trim_characters($row['excerpt'], 0, 200) . "</span>";
+                print "<br>\n\t\t\t\t\t<span class=\"excerpt-debates oa-subrows-excerpt\">" . trim_characters($row['excerpt'], 0, 200) . "</span>";
             }
         }
         print '</ul>';

@@ -740,7 +740,7 @@ class MEMBER {
         }
         $member_url = make_member_url($this->full_name(true), $this->constituency(), $house);
         if ($absolute) {
-            return 'https://' . DOMAIN . $URL->generate('none') . $member_url;
+            return '//' . DOMAIN . $URL->generate('none') . $member_url;
         } else {
             return $URL->generate('none') . $member_url;
         }

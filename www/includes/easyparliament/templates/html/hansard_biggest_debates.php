@@ -26,7 +26,7 @@
 twfy_debug("TEMPLATE", "hansard_biggest_debates.php");
 if (array_key_exists('data', $data) && is_array($data['data'])) {
     ?>
-    <dl class="big-debates">
+    <dl class="big-debates oa-big-debates">
         <?php
 
         $count = 0;
@@ -45,20 +45,27 @@ if (array_key_exists('data', $data) && is_array($data['data'])) {
                 $extrainfo[] = $debate['totalcomments'] . ' ' . $plural;
             }
 
-            $debateline = '<strong><a href="' . $debate['list_url'] . '">' . $debate['body'] . '</a></strong> <small>(' . implode(', ', $extrainfo) . ')</small>';
+            $debate_title = htmlentities($debate['body']);
+            $debate_date = htmlentities(format_date($debate['hdate'], LONGERDATEFORMAT));
+            $extra_info = htmlentities(implode(', ', $extrainfo));
+            $debate_label = htmlentities('View debate: ' . $debate['body']);
+
+            $debateline = '<strong class="oa-big-debates-title"><a class="oa-big-debates-link" href="' . $debate['list_url'] . '" aria-label="' . $debate_label . '">' . $debate_title . '</a></strong> <small class="oa-big-debates-meta">' . $extra_info . '</small>';
 
             if (isset($debate['parent'])) {
-                $firstline = '<strong><a href="' . $debate['list_url'] . '">' . $debate['parent']['body'] . '</a></strong>';
-                $secondline = $debateline . "<br>\n\t\t\t\t";
+                $parent_title = htmlentities($debate['parent']['body']);
+                $parent_label = htmlentities('View debate section: ' . $debate['parent']['body']);
+                $firstline = '<strong class="oa-big-debates-parent"><a class="oa-big-debates-link" href="' . $debate['list_url'] . '" aria-label="' . $parent_label . '">' . $parent_title . '</a></strong>';
+                $secondline = '<span class="oa-big-debates-child">' . $debateline . "</span><br>\n\t\t\t\t";
             } else {
                 $firstline = $debateline;
                 $secondline = '';
             }
-            $secondline .= format_date($debate['hdate'], LONGERDATEFORMAT);
+            $secondline .= '<span class="oa-big-debates-date">' . $debate_date . '</span>';
 
             ?>
-            <dt><a name="d<?php echo $count; ?>"></a><?php echo $firstline; ?></dt>
-            <dd><?php echo $secondline; ?></dd>
+            <dt class="oa-big-debates-dt"><a id="d<?php echo $count; ?>" name="d<?php echo $count; ?>"></a><?php echo $firstline; ?></dt>
+            <dd class="oa-big-debates-dd"><?php echo $secondline; ?></dd>
             <?php
         }
         ?>
