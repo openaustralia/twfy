@@ -62,7 +62,7 @@ docker-run:
 docker: docker-build docker-run
 
 # Run pending Phinx migrations against the docker mysql service via the webhost container.
-docker-migrate:
+docker-migrate: vendor/autoload.php
 	docker compose up -d mysql
 	docker compose run --rm \
 		-e DB_HOST=mysql -e DB_USER=$(TEST_DB_USER) -e DB_PASSWORD=$(TEST_DB_PASSWORD) -e DB_NAME=$(TEST_DB_NAME) \
