@@ -1730,7 +1730,7 @@ class HANSARDLIST {
             $limit = "LIMIT $limit";
         }
 
-        // FIXME: convert to parameters
+        // FIXME: convert to parameters.
         // Finally, do the query!
         $q = parlDBQuery("SELECT $fields
 						FROM 	hansard
@@ -2814,7 +2814,7 @@ class DEBATELIST extends HANSARDLIST {
 						AND		h.hdate <= '" . getParlDB()->escape($recentday['hdate']) . "'";
         }
 
-        // FIXME: This query needs converting to parameters
+        // FIXME: This query needs converting to parameters.
         $sql = "SELECT COUNT(*) AS count,
 								body,
 								h.hdate,
