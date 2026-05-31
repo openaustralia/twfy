@@ -327,11 +327,8 @@ $cond_time_re = '([01][0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9]|6[012])';
  *
  */
 function cond_parse_http_date($date) {
-    $H = $M = $S = 0;
-    $Y = $m = $d = 0;
-
     $ma = [];
-    global $cond_wkday_re, $cond_weekday_re, $cond_month_re, $cond_month_map,
+    global $cond_wkday_re, $cond_weekday_re, $cond_month_map,
     $cond_date1_re, $cond_date2_re, $cond_date3_re, $cond_time_re;
     if (preg_match("/^$cond_wkday_re, $cond_date1_re $cond_time_re GMT\$/", $date, $ma)) {
         /* RFC 1123 */
