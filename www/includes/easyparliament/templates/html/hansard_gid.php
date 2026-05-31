@@ -29,7 +29,12 @@ if (!isset($data['info'])) {
 
 $PAGE->page_start();
 
-$debates_inner_mode = ($this_page == 'debates' || $this_page == 'debate');
+$debates_inner_mode = (
+    $this_page == 'debates'
+    || $this_page == 'debate'
+    || $this_page == 'lordsdebates'
+    || $this_page == 'lordsdebate'
+);
 
 $PAGE->stripe_start('head-1');
 
