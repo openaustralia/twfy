@@ -10,7 +10,7 @@
 
 include_once __DIR__ . "/../../../includes/easyparliament/init.php";
 
-$this_page = "userlogout";
+$GLOBALS['this_page'] = "userlogout";
 
 $URL = new URL($this_page);
 if (get_http_var("ret") != "") {

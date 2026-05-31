@@ -24,7 +24,7 @@
 // which date will be highlighted (otherwise, today is).
 
 include_once __DIR__ . "/../../../easyparliament/recess.php";
-global $PAGE, $DATA, $this_page, $hansardmajors;
+global $PAGE, $DATA, $hansardmajors;
 
 twfy_debug("TEMPLATE", "hansard_calendar.php");
 

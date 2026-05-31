@@ -25,7 +25,6 @@ if (isset($data['info']['results_per_page'])) { ?>
 <openSearch:itemsPerPage><?php echo $data['info']['results_per_page'] ?></openSearch:itemsPerPage>
 <?php }
 
-global $this_page;
 twfy_debug("TEMPLATE", "rss/hansard_search.php");
 
 if (isset($data['rows']) && count($data['rows']) > 0) {

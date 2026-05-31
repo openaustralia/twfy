@@ -12,7 +12,7 @@ include_once __DIR__ . "/../../includes/easyparliament/glossary.php";
 
 if (get_http_var("d") != "") {
     // We have a date. so show all WMS on this day.
-    $this_page = "wmsday";
+    $GLOBALS['this_page'] = "wmsday";
     $args = [
         'date' => get_http_var('d')
     ];
@@ -23,7 +23,7 @@ if (get_http_var("d") != "") {
 
     // Show a calendar for a particular year's WMS.
 
-    $this_page = 'wmsyear';
+    $GLOBALS['this_page'] = 'wmsyear';
 
     if (is_numeric(get_http_var('y'))) {
         $pagetitle = $DATA->page_metadata($this_page, 'title');
@@ -53,7 +53,7 @@ if (get_http_var("d") != "") {
         ]
     ]);
 } elseif (get_http_var('id') != '') {
-    $this_page = 'wms';
+    $GLOBALS['this_page'] = 'wms';
     $args = [
         'gid' => get_http_var('id'),
         // Search terms to be highlighted.
@@ -98,7 +98,7 @@ if (get_http_var("d") != "") {
 } else {
     // No date or debate id. Show recent WMS.
 
-    $this_page = "wmsfront";
+    $GLOBALS['this_page'] = "wmsfront";
 
     $PAGE->page_start();
 

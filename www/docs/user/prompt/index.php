@@ -14,7 +14,7 @@
 // (Use other types for, say, glossary entries.)
 
 
-$this_page = "userprompt";
+$GLOBALS['this_page'] = "userprompt";
 
 include_once "../../../includes/easyparliament/init.php";
 

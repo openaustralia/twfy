@@ -4,7 +4,7 @@
  * @file
  */
 
-$this_page = "houserules";
+$GLOBALS['this_page'] = "houserules";
 
 include_once __DIR__ . '/../../includes/easyparliament/init.php';
 

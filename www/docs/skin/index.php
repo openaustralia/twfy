@@ -4,7 +4,7 @@
  * @file
  */
 
-$this_page = "skin";
+$GLOBALS['this_page'] = "skin";
 
 include_once __DIR__ . "/../../includes/easyparliament/init.php";
 

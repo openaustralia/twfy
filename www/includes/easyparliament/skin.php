@@ -42,7 +42,7 @@
  * );
  *
  *
- * To change skin, be on a page where $this_page="skin" and have "newskin=foo" in the URL.
+ * To change skin, be on a page where $GLOBALS['this_page']="skin" and have "newskin=foo" in the URL.
  * (We could change this to allow the skin to be changed on any page...)
  *
  * Call $SKIN->output_stylesheets() from wherever you need the stylesheets to appear.

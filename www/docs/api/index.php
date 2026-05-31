@@ -81,7 +81,7 @@ if ($q_method = get_http_var('method')) {
 function api_documentation_front($method, $explorer) {
     global $PAGE, $this_page, $DATA;
     $methods = api_get_methods();
-    $this_page = 'api_doc_front';
+    $GLOBALS['this_page'] = 'api_doc_front';
     $DATA->set_page_metadata($this_page, 'title', "$method function");
     $PAGE->page_start();
     $PAGE->stripe_start();
@@ -146,7 +146,7 @@ function api_documentation_front($method, $explorer) {
 function api_front_page($error = '') {
     global $PAGE, $this_page, $THEUSER;
     $methods = api_get_methods();
-    $this_page = 'api_front';
+    $GLOBALS['this_page'] = 'api_front';
     $PAGE->page_start();
     $PAGE->stripe_start();
     if ($error) {

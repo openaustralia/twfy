@@ -15,7 +15,7 @@ include_once __DIR__ . "/../../includes/easyparliament/glossary.php";
 
 if (get_http_var("d") != "") {
     if (get_http_var('c') != '') {
-        $this_page = 'debatescolumn';
+        $GLOBALS['this_page'] = 'debatescolumn';
         $args = [
             'date' => get_http_var('d'),
             'column' => get_http_var('c')
@@ -26,7 +26,7 @@ if (get_http_var("d") != "") {
     } else {
         // We have a date. so show all debates on this day.
 
-        $this_page = "debatesday";
+        $GLOBALS['this_page'] = "debatesday";
 
         $args = [
             'date' => get_http_var('d')
@@ -44,7 +44,7 @@ if (get_http_var("d") != "") {
     // or a subsection id (so we'd get the whole debate),
     // or an item id within a debate in which case we just get that item and some headings.
 
-    $this_page = "debates";
+    $GLOBALS['this_page'] = "debates";
 
     $args = [
         'gid' => get_http_var('id'),
@@ -97,7 +97,7 @@ if (get_http_var("d") != "") {
 
     // Show a calendar for a particular year's debates.
 
-    $this_page = 'debatesyear';
+    $GLOBALS['this_page'] = 'debatesyear';
     $year = (is_numeric(get_http_var('y'))) ? get_http_var('y') : date('Y');
 
     $pagetitle = $DATA->page_metadata($this_page, 'title');
@@ -132,7 +132,7 @@ if (get_http_var("d") != "") {
 } else {
     // No date or debate id. Show recent years with debates on.
 
-    $this_page = "debatesfront";
+    $GLOBALS['this_page'] = "debatesfront";
 
     $PAGE->page_start_mobile();
 

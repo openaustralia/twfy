@@ -27,7 +27,7 @@ if ($bill && $session) {
 $committee = new StandingCommittee($session, $bill);
 
 if ($bill_id && !$id) {
-    $this_page = 'pbc_bill';
+    $GLOBALS['this_page'] = 'pbc_bill';
     $args = [
         'id' => $bill_id,
         'title' => $bill,
@@ -35,7 +35,7 @@ if ($bill_id && !$id) {
     ];
     $committee->display('bill', $args);
 } elseif ($bill_id && $id) {
-    $this_page = 'pbc_clause';
+    $GLOBALS['this_page'] = 'pbc_clause';
     $args = [
         'gid' => $standingprefix . $id,
         's' => get_http_var('s'),
@@ -64,14 +64,14 @@ if ($bill_id && !$id) {
         $PAGE->stripe_end();
     }
 } elseif ($session) {
-    $this_page = 'pbc_session';
+    $GLOBALS['this_page'] = 'pbc_session';
     $DATA->set_page_metadata($this_page, 'title', "Session $session");
     $args = [
         'session' => $session,
     ];
     $committee->display('session', $args);
 } else {
-    $this_page = "pbc_front";
+    $GLOBALS['this_page'] = "pbc_front";
     $PAGE->page_start();
     $PAGE->stripe_start();
     ?>

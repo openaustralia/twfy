@@ -8,7 +8,7 @@
 include_once __DIR__ . '/../../includes/easyparliament/init.php';
 include_once __DIR__ . '/../../includes/request.php';
 
-$this_page = 'trackback';
+$GLOBALS['this_page'] = 'trackback';
 
 // The gid is the gid of the thing being trackedback to.
 // eg, '3424'.

@@ -6,7 +6,7 @@
 
 include_once __DIR__ . '/../../includes/easyparliament/init.php';
 
-$this_page = "getinvolved";
+$GLOBALS['this_page'] = "getinvolved";
 
 $PAGE->page_start();
 

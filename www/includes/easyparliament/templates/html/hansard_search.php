@@ -18,7 +18,7 @@ $data['info'] = array (
 );
 */
 
-global $PAGE, $this_page, $GLOSSARY;
+global $PAGE, $GLOSSARY;
 
 twfy_debug("TEMPLATE", "hansard_search.php");
 

@@ -11,7 +11,7 @@ include_once __DIR__ . '/../../../../phplib/auth.php';
 
 $a = auth_ab64_encode(urandom_bytes(32));
 
-$this_page = 'api_key';
+$GLOBALS['this_page'] = 'api_key';
 $PAGE->page_start();
 $PAGE->stripe_start();
 api_key_current_message();

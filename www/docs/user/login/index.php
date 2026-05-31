@@ -14,7 +14,7 @@ If the input is not OK, the form is displayed again with error messages.
 
 include_once __DIR__ . "/../../../includes/easyparliament/init.php";
 
-$this_page = "userlogin";
+$GLOBALS['this_page'] = "userlogin";
 
 if (get_http_var("submitted") == "true") {
     // Form has been submitted, so check input.
@@ -78,7 +78,7 @@ if (get_http_var("submitted") == "true") {
  *
  */
 function display_page($errors = []) {
-    global $PAGE, $this_page, $THEUSER;
+    global $PAGE, $THEUSER;
 
     $PAGE->page_start();
 

@@ -20,7 +20,7 @@ include_once __DIR__ . '/../../includes/easyparliament/people.php';
 include_once __DIR__ . '/../../includes/easyparliament/member.php';
 include_once __DIR__ . '/../../../../phplib/auth.php';
 
-$this_page = "alert";
+$GLOBALS['this_page'] = "alert";
 
 $args = ['action' => $this_page];
 
@@ -72,7 +72,7 @@ if (
  */
 function check_input($details) {
 
-    global $ALERT, $this_page;
+    global $ALERT;
 
     $errors = [];
 
@@ -105,7 +105,7 @@ function check_input($details) {
  */
 function add_alert($details) {
 
-    global $ALERT, $PAGE, $THEUSER, $this_page;
+    global $ALERT, $PAGE, $THEUSER;
 
     $extra = null;
 
@@ -132,7 +132,7 @@ function add_alert($details) {
 
     // Display results message on blank page for both success and failure.
 
-    $this_page = 'alertwelcome';
+    $GLOBALS['this_page'] = 'alertwelcome';
     $URL = new URL('alertwelcome');
     $backlink = $URL->generate();
     $PAGE->page_start();

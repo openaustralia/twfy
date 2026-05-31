@@ -5,8 +5,6 @@
  * Used on the 'All MPs' page to produce the list of MPs in CSV format.
  */
 
-global $this_page;
-
 twfy_debug("TEMPLATE", "people_mlas.php");
 
 $order = $data['info']['order'];

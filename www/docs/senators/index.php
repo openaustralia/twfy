@@ -7,7 +7,7 @@
 include_once __DIR__ . "/../../includes/easyparliament/init.php";
 include_once __DIR__ . "/../../includes/easyparliament/people.php";
 
-$this_page = 'peers';
+$GLOBALS['this_page'] = 'peers';
 
 if (get_http_var('f') != 'csv') {
     $PAGE->page_start();

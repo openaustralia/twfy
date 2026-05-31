@@ -9,7 +9,7 @@ include_once __DIR__ . "/../../includes/easyparliament/init.php";
 include_once __DIR__ . "/../../includes/easyparliament/editqueue.php";
 include_once __DIR__ . "/../../includes/easyparliament/glossary.php";
 
-$this_page = "admin_glossary";
+$GLOBALS['this_page'] = "admin_glossary";
 
 $EDITQUEUE = new GLOSSEDITQUEUE();
 

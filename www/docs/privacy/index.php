@@ -4,7 +4,7 @@
  * @file
  */
 
-$this_page = "privacy";
+$GLOBALS['this_page'] = "privacy";
 
 include_once __DIR__ . "/../../includes/easyparliament/init.php";
 

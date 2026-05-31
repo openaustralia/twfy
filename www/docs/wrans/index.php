@@ -13,7 +13,7 @@ include_once __DIR__ . "/../../includes/easyparliament/member.php";
 if (get_http_var("d") != "") {
     // We have a date. so show all wrans on this day.
 
-    $this_page = "wransday";
+    $GLOBALS['this_page'] = "wransday";
 
     $args = [
         'date' => get_http_var('d')
@@ -29,7 +29,7 @@ if (get_http_var("d") != "") {
     // Could be a section id or a q/a id.
     // Either way, we'll get a section heading and the q/as beneath it.
 
-    $this_page = "wrans";
+    $GLOBALS['this_page'] = "wrans";
     $args = [
         'gid' => get_http_var('id'),
         // Search terms to be highlighted.
@@ -82,7 +82,7 @@ if (get_http_var("d") != "") {
 
     // No date or wrans id. Show recent days with wrans on.
 
-    $this_page = 'wransyear';
+    $GLOBALS['this_page'] = 'wransyear';
 
     if (is_numeric(get_http_var('y'))) {
         $pagetitle = $DATA->page_metadata($this_page, 'title');
@@ -113,7 +113,7 @@ if (get_http_var("d") != "") {
 
 
 } elseif (get_http_var('pid')) {
-    $this_page = "wransmp";
+    $GLOBALS['this_page'] = "wransmp";
     $args = [
         'person_id' => get_http_var('pid'),
         'page' => get_http_var('p')
@@ -129,7 +129,7 @@ if (get_http_var("d") != "") {
 
     // No date or wrans id. Show recent days with wrans on.
 
-    $this_page = "wransfront";
+    $GLOBALS['this_page'] = "wransfront";
 
     $PAGE->page_start();
 

@@ -85,7 +85,7 @@ class PAGE {
                     $text = "That's all folks!";
                 }
 
-                $this_page = 'home';
+                $GLOBALS['this_page'] = 'home';
 
                 $this->page_header();
                 $this->page_body();
@@ -136,7 +136,7 @@ class PAGE {
                     $text = "That's all folks!";
                 }
 
-                $this_page = 'home';
+                $GLOBALS['this_page'] = 'home';
 
                 $this->page_header_mobile();
                 $this->page_body_mobile();
@@ -964,7 +964,7 @@ class PAGE {
      *
      */
     public function content_start() {
-        global $DATA, $this_page;
+        global $DATA;
 
         // Where the actual meat of the page begins, after the title and menu.
         ?>
@@ -1046,7 +1046,7 @@ class PAGE {
      * // eg, the 'Source' bit on Hansard pages.
      */
     public function stripe_end($contents = [], $extra = '') {
-        global $DATA, $this_page;
+        global $DATA;
 
         $this->within_stripe_main = false;
         ?>
@@ -1098,7 +1098,7 @@ class PAGE {
      *
      */
     public function include_sidebar_template($sidebarname) {
-        global $this_page, $DATA;
+        global $DATA;
 
         $sidebarpath = __DIR__ . '/../easyparliament/sidebars/' . $sidebarname . '.php';
 
@@ -1282,7 +1282,7 @@ class PAGE {
      *
      */
     public function page_footer($extra = null) {
-        global $DATA, $this_page;
+        global $DATA;
 
         // DAMN, this really shouldn't be in PAGE.
 

@@ -12,7 +12,7 @@
  * See the comments.php template for an example of $data.
  */
 
-global $PAGE, $DATA, $this_page;
+global $PAGE, $DATA;
 
 if (isset($data['comments']) && count($data['comments']) > 0) {
 

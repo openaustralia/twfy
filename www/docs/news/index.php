@@ -23,7 +23,7 @@ if (preg_match("#/(\d\d\d\d)/(\d\d)/(\d\d)/([a-z0-9_]+)(\.php)?$#", $uri, $match
             continue;
         }
 
-        $this_page = 'sitenews_individual';
+        $GLOBALS['this_page'] = 'sitenews_individual';
         $DATA->set_page_metadata($this_page, 'title', $title);
         $PAGE->page_start();
         $PAGE->stripe_start();
@@ -38,7 +38,7 @@ if (preg_match("#/(\d\d\d\d)/(\d\d)/(\d\d)/([a-z0-9_]+)(\.php)?$#", $uri, $match
 } elseif (preg_match("#/(\d\d\d\d)/(\d\d)/?(index.php)?$#", $uri, $matches)) {
     // Month index.
     [$all, $year, $month] = $matches;
-    $this_page = 'sitenews_date';
+    $GLOBALS['this_page'] = 'sitenews_date';
     $DATA->set_page_metadata($this_page, 'title', format_date("$year-$month-01", "F Y"));
     $PAGE->page_start();
     $PAGE->stripe_start();
@@ -58,7 +58,7 @@ if (preg_match("#/(\d\d\d\d)/(\d\d)/(\d\d)/([a-z0-9_]+)(\.php)?$#", $uri, $match
     }
 } else {
     // Front page /news.
-    $this_page = 'sitenews';
+    $GLOBALS['this_page'] = 'sitenews';
     $PAGE->page_start();
     $PAGE->stripe_start();
     $c = 0;

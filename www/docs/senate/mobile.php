@@ -13,7 +13,7 @@ include_once __DIR__ . "/../../includes/easyparliament/glossary.php";
 
 if (get_http_var("d") != "") {
     if (get_http_var('c') != '') {
-        $this_page = 'lordsdebatescolumn';
+        $GLOBALS['this_page'] = 'lordsdebatescolumn';
         $args = [
             'date' => get_http_var('d'),
             'column' => get_http_var('c')
@@ -24,7 +24,7 @@ if (get_http_var("d") != "") {
     } else {
         // We have a date. so show all debates on this day.
 
-        $this_page = "lordsdebatesday";
+        $GLOBALS['this_page'] = "lordsdebatesday";
 
         $args = [
             'date' => get_http_var('d')
@@ -42,7 +42,7 @@ if (get_http_var("d") != "") {
     // or a subsection id (so we'd get the whole debate),
     // or an item id within a debate in which case we just get that item and some headings.
 
-    $this_page = "lordsdebates";
+    $GLOBALS['this_page'] = "lordsdebates";
 
     $args = [
         'gid' => get_http_var('id'),
@@ -89,7 +89,7 @@ if (get_http_var("d") != "") {
 
     // Show a calendar for a particular year's debates.
 
-    $this_page = 'lordsdebatesyear';
+    $GLOBALS['this_page'] = 'lordsdebatesyear';
 
     if (is_numeric(get_http_var('y'))) {
         $pagetitle = $DATA->page_metadata($this_page, 'title');
@@ -122,7 +122,7 @@ if (get_http_var("d") != "") {
      */
 
 } elseif (get_http_var('gid') != '') {
-    $this_page = 'lordsdebate';
+    $GLOBALS['this_page'] = 'lordsdebate';
     $args = ['gid' => get_http_var('gid')];
     $LORDSDEBATELIST = new LORDSDEBATELIST();
     $args['mobile'] = 1;
@@ -148,7 +148,7 @@ if (get_http_var("d") != "") {
 } else {
     // No date or debate id. Show recent years with debates on.
 
-    $this_page = "lordsdebatesfront";
+    $GLOBALS['this_page'] = "lordsdebatesfront";
 
     $PAGE->page_start_mobile();
 
