@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use Phinx\Migration\AbstractMigration;
+use Phinx\Migration\IrreversibleMigrationException;
 
 /**
  * Initial schema — loads db/schema.sql verbatim.
@@ -11,8 +12,21 @@ use Phinx\Migration\AbstractMigration;
  * introduced. All subsequent schema changes should be made as new migrations.
  */
 final class InitialSchema extends AbstractMigration {
+    function shouldRun(): bool {
+        // Only run this migration if the 'member' table doesn't exist, which is a good proxy for whether the schema has been set up at all.
+        $exists = $this->hasTable('member');
+        if ($exists) {
+            echo "Skipping InitialSchema migration because 'member' table already exists.\n";
+        }
+        return !$exists;
+    }
 
     public function up(): void {
+        if (!$this->shouldRun()) {
+            return;
+        }
+
+
         $schema = file_get_contents(__DIR__ . '/../schema.sql');
         if ($schema === false) {
             throw new RuntimeException('Could not read db/schema.sql');
@@ -20,6 +34,7 @@ final class InitialSchema extends AbstractMigration {
 
         // Split on semicolons at end of line and execute each non-empty statement.
         // Comments (-- ...) are fine for the MySQL adapter to receive.
+        // Note: NOT suitable for BEGIN stmt; stmt; ... END blocks, so be careful if you copy this elsewhere
         $statements = preg_split('/;\s*\R/', $schema);
         foreach ($statements as $sql) {
             $sql = trim($sql);
@@ -31,41 +46,8 @@ final class InitialSchema extends AbstractMigration {
     }
 
     public function down(): void {
-        $tables = [
-            'api_stats',
-            'api_key',
-            'video_timestamps',
-            'campaigners_sent_email',
-            'campaigners',
-            'mentions',
-            'uservotes',
-            'users',
-            'trackbacks',
-            'search_query_log',
-            'glossary',
-            'editqueue',
-            'comments',
-            'commentreports',
-            'anonvotes',
-            'alerts',
-            'titles',
-            'pbc_members',
-            'bills',
-            'indexbatch',
-            'postcode_lookup',
-            'personinfo',
-            'moffice',
-            'memberinfo',
-            'member',
-            'hansard',
-            'gidredirect',
-            'epobject',
-            'constituency',
-            'consinfo',
-        ];
-        foreach ($tables as $table) {
-            $this->execute("DROP TABLE IF EXISTS `$table`");
-        }
+        throw new IrreversibleMigrationException(
+            'InitialSchema is irreversible: it loads the entire baseline schema from db/schema.sql.'
+        );
     }
-
 }

@@ -9,7 +9,7 @@
  * test suite already passes them in via the Makefile.
  */
 
-// Load DB_* constants from conf/general if present; otherwise fall back to env.
+// Load DB_* constants from conf/general if present (DB_* env variables will override regardless)
 $confFile = __DIR__ . '/conf/general';
 if (is_readable($confFile)) {
     include_once $confFile;
