@@ -79,6 +79,16 @@ The site will be available at <http://localhost> (override the port with
 `TWFY_HTTP_PORT=8080 make docker-run`), and MySQL on `127.0.0.1:3306`
 (override with `TWFY_MYSQL_PORT`).
 
+### MySQL version
+
+We run **MySQL 8.0** in production (currently 8.0.44). The `mysql:8.0`
+image is pinned in [`docker-compose.yml`](docker-compose.yml) and in the
+GitHub Actions workflow (`.github/workflows/php.yml`) so local
+development, CI and production stay aligned. Schema dumps from
+`mysqldump` are sensitive to the server version, so keep these in sync —
+bumping one without the others will cause spurious `db/schema.sql` diffs
+in the `schema-check` CI job.
+
 On first start, load the schema and apply any migrations:
 
 ```bash
