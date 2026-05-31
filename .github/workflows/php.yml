@@ -126,6 +126,9 @@ jobs:
     name: Schema in git matches migrations
     runs-on: ubuntu-latest
     needs: lint
+    permissions:
+      contents: read
+      pull-requests: write
     services:
       mysql:
         image: mysql:8.0
@@ -168,8 +171,48 @@ jobs:
             --ignore-table=test_twfy.phinxlog \
             test_twfy > /tmp/schema.dumped.sql
       - name: Compare against db/schema.sql in git
+        id: schema_diff
         run: |
-          if ! diff -u db/schema.sql /tmp/schema.dumped.sql; then
-            echo "::error::db/schema.sql is out of date with migrations. Run 'make docker-dump-schema' and commit the result."
-            exit 1
+          if diff -u db/schema.sql /tmp/schema.dumped.sql > /tmp/schema.diff; then
+            echo "matches=true" >> "$GITHUB_OUTPUT"
+            {
+              echo "## ✅ Schema matches migrations"
+              echo
+              echo "The committed \`db/schema.sql\` matches the schema produced by running all Phinx migrations from scratch."
+            } > /tmp/schema-drift-comment.md
+          else
+            echo "matches=false" >> "$GITHUB_OUTPUT"
+            {
+              echo "## ❌ Schema drift detected"
+              echo
+              echo "The committed \`db/schema.sql\` does not match the schema produced by running all Phinx migrations from scratch."
+              echo
+              echo "Run \`make docker-dump-schema\` locally and commit the updated \`db/schema.sql\`."
+              echo
+              echo "<details><summary>Diff (committed vs. migrated)</summary>"
+              echo
+              echo '```diff'
+              # Cap to keep the comment within GitHub's 65k char limit.
+              head -c 60000 /tmp/schema.diff
+              if [ "$(wc -c < /tmp/schema.diff)" -gt 60000 ]; then
+                echo
+                echo "... (diff truncated)"
+              fi
+              echo '```'
+              echo
+              echo "</details>"
+            } > /tmp/schema-drift-comment.md
           fi
+      - name: Post schema check comment on PR
+        if: github.event_name == 'pull_request'
+        uses: marocchino/sticky-pull-request-comment@v2
+        with:
+          header: schema-drift
+          recreate: true
+          path: /tmp/schema-drift-comment.md
+      - name: Fail if schema drifted
+        if: steps.schema_diff.outputs.matches == 'false'
+        run: |
+          echo "::error::db/schema.sql is out of date with migrations. Run 'make docker-dump-schema' and commit the result."
+          cat /tmp/schema.diff
+          exit 1
