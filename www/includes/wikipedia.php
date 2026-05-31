@@ -79,23 +79,25 @@ function wikipedize($source) {
     $matched = [];
 
     $source = explode('|||', $source);
-    $q = parlDBQuery("SELECT title FROM titles WHERE title IN ?", $phrases);
-    for ($i = 0; $i < $q->rows(); $i++) {
-        $wikistring = $q->field($i, 'title');
-        $phrase = str_replace('_', ' ', $wikistring);
+    if (!empty($phrases)) {
+        $q = parlDBQuery("SELECT title FROM titles WHERE title IN ?", $phrases);
+        for ($i = 0; $i < $q->rows(); $i++) {
+            $wikistring = $q->field($i, 'title');
+            $phrase = str_replace('_', ' ', $wikistring);
 
-        // See if already matched a string this one is contained within.
-        foreach ($matched as $got) {
-            if (strstr($got, $phrase)) {
-                continue 2;
+            // See if already matched a string this one is contained within.
+            foreach ($matched as $got) {
+                if (strstr($got, $phrase)) {
+                    continue 2;
+                }
             }
-        }
 
-        // Go ahead.
-        twfy_debug("WIKIPEDIA", "Matched '$phrase'");
-        // 1 means only replace one match for phrase per paragraph
-        $source = preg_replace("/{$phrase}/", "<a href=\"http://en.wikipedia.org/wiki/{$wikistring}\">{$phrase}</a>", $source, 1);
-        array_push($matched, $phrase);
+            // Go ahead.
+            twfy_debug("WIKIPEDIA", "Matched '$phrase'");
+            // 1 means only replace one match for phrase per paragraph
+            $source = preg_replace("/{$phrase}/", "<a href=\"http://en.wikipedia.org/wiki/{$wikistring}\">{$phrase}</a>", $source, 1);
+            array_push($matched, $phrase);
+        }
     }
 
     if (!$was_array) {
