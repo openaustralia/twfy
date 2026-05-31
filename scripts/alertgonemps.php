@@ -63,10 +63,8 @@ foreach ($alertdata as $alertitem) {
         $email_text = '';
         $q = parlDBQuery('SELECT user_id FROM users WHERE email = ?', $email);
         if ($q->rows() > 0) {
-            $user_id = $q->field(0, 'user_id');
             $registered++;
         } else {
-            $user_id = 0;
             $unregistered++;
         }
     }
