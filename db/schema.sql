@@ -382,22 +382,6 @@ CREATE TABLE `titles` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `trackbacks` (
-  `trackback_id` int NOT NULL AUTO_INCREMENT,
-  `epobject_id` int DEFAULT NULL,
-  `blog_name` varchar(255) DEFAULT NULL,
-  `title` varchar(255) DEFAULT NULL,
-  `excerpt` varchar(255) DEFAULT NULL,
-  `url` varchar(255) DEFAULT NULL,
-  `posted` datetime DEFAULT NULL,
-  `visible` tinyint(1) NOT NULL DEFAULT '0',
-  `source_ip` varchar(20) DEFAULT NULL,
-  PRIMARY KEY (`trackback_id`),
-  KEY `visible` (`visible`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `users` (
   `user_id` mediumint NOT NULL AUTO_INCREMENT,
   `firstname` varchar(255) NOT NULL DEFAULT '',
