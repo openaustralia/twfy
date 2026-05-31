@@ -4,25 +4,230 @@
  * @file
  */
 ?>
-<ul>
-    <li><a href="#moderation">How do you moderate comments?</a></li>
-    <li><a href="#missing">Is this the whole of Hansard?</a></li>
-    <li><a href="#privacy">What is your Privacy Policy?</a></li>
-    <li><a href="#cookie">What is your Cookie Policy?</a></li>
-    <li><a href="#extreme">What's that weird 'urchin' javascript I spy in your page source?</a></li>
-    <li><a href="#rss">What is RSS?</a></li>
-    <li><a href="#votingrecord">How is the voting record decided?</a></li>
-    <li><a href="#numbers">Why should I read in more depth than just the numbers?</a></li>
-    <li><a href="#api">Do you have the data as a spreadsheet file, XML or in an API?</a></li>
-    <li><a href="#regmem">What is the Register of Interests and how can I use it?</a></li>
-    <li><a href="#regmem-links">Why are there two Register of Interests links for some MPs?</a></li>
+<style>
+    .oa-help-faq {
+        --faq-bg: #ebeccf;
+        --faq-card: #ffffff;
+        --faq-text: #333333;
+        --faq-muted: #555555;
+        --faq-accent: #b82e00;
+        --faq-accent-soft: #fdf5f5;
+        --faq-border: #cdcebc;
+        --faq-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+        position: relative;
+        margin: 0 auto;
+        max-width: 980px;
+        padding: 1.5rem 1rem 2.5rem;
+        color: var(--faq-text);
+        font-family: Verdana, Arial, Geneva, Sans-serif;
+        background: radial-gradient(circle at 90% 0%, #f8f1e5 0, rgba(248, 241, 229, 0) 40%),
+            radial-gradient(circle at 10% 12%, #f5f5f5 0, rgba(245, 245, 245, 0) 38%),
+            var(--faq-bg);
+        border: 1px solid var(--faq-border);
+        border-radius: 16px;
+        box-shadow: var(--faq-shadow);
+        overflow: hidden;
+    }
 
-</ul>
+    .oa-help-faq::before {
+        content: "";
+        position: absolute;
+        top: -40px;
+        right: -60px;
+        width: 220px;
+        height: 220px;
+        border-radius: 50%;
+        background: rgba(184, 46, 0, 0.08);
+        pointer-events: none;
+    }
 
-<br>
+    .oa-help-faq__hero {
+        position: relative;
+        margin-bottom: 1.5rem;
+        padding: 1.4rem 1.4rem 1rem;
+        background: linear-gradient(125deg, #fff 0%, #fbf5e9 55%, #fff 100%);
+        border: 1px solid var(--faq-border);
+        border-radius: 12px;
+    }
 
-<!-- start new faq entry -->
-<dl>
+    .oa-help-faq__eyebrow {
+        margin: 0;
+        font-size: 0.72rem;
+        text-transform: uppercase;
+        letter-spacing: 0.16em;
+        color: var(--faq-accent);
+        font-weight: 700;
+    }
+
+    .oa-help-faq__title {
+        display: block;
+        margin: 0.35rem 0 0.45rem;
+        font-size: clamp(1.6rem, 2.8vw, 2.2rem);
+        line-height: 1.2;
+        color: #b82e00;
+    }
+
+    .oa-help-faq__intro {
+        margin: 0;
+        max-width: 65ch;
+        color: var(--faq-muted);
+        font-size: 1.02rem;
+        line-height: 1.5;
+    }
+
+    .oa-help-faq__index-title {
+        margin: 0.4rem 0 0.8rem;
+        font-size: 1.05rem;
+        color: #ab4329;
+    }
+
+    .oa-help-faq__index {
+        margin: 0 0 1.4rem;
+        padding: 0;
+        list-style: none;
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 0.5rem;
+    }
+
+    .oa-help-faq__index li {
+        margin: 0;
+    }
+
+    .oa-help-faq__index a {
+        display: block;
+        padding: 0.65rem 0.8rem;
+        border-radius: 8px;
+        border: 1px solid #d6c8b5;
+        text-decoration: none;
+        color: #00b;
+        font-size: 0.94rem;
+        line-height: 1.3;
+        background: #fff;
+        transition: transform 0.12s ease, background-color 0.2s ease, border-color 0.2s ease;
+    }
+
+    .oa-help-faq__index a:hover,
+    .oa-help-faq__index a:focus {
+        background: var(--faq-accent-soft);
+        border-color: #eba668;
+        transform: translateY(-1px);
+    }
+
+    .oa-help-faq dl {
+        margin: 0;
+    }
+
+    .oa-help-faq dt {
+        position: relative;
+        margin: 0;
+        padding: 1rem 1.1rem 0.2rem 2.5rem;
+        font-size: 1.14rem;
+        font-weight: 700;
+        color: #ab4329;
+        background: var(--faq-card);
+        border: 1px solid var(--faq-border);
+        border-bottom: 0;
+        border-top-left-radius: 12px;
+        border-top-right-radius: 12px;
+    }
+
+    .oa-help-faq dt::before {
+        content: "Q";
+        position: absolute;
+        left: 0.9rem;
+        top: 0.95rem;
+        width: 1.2rem;
+        height: 1.2rem;
+        border-radius: 50%;
+        text-align: center;
+        line-height: 1.2rem;
+        font-size: 0.74rem;
+        color: #fff;
+        background: #eba668;
+    }
+
+    .oa-help-faq dd {
+        margin: 0 0 1.1rem;
+        padding: 0.2rem 1.1rem 1.05rem 2.5rem;
+        background: var(--faq-card);
+        border: 1px solid var(--faq-border);
+        border-top: 0;
+        border-bottom-left-radius: 12px;
+        border-bottom-right-radius: 12px;
+    }
+
+    .oa-help-faq p {
+        margin: 0.55rem 0;
+        line-height: 1.58;
+    }
+
+    .oa-help-faq a {
+        color: #00b;
+    }
+
+    .oa-help-faq a:visited {
+        color: #505;
+    }
+
+    .oa-help-faq a:hover,
+    .oa-help-faq a:focus {
+        color: #00b;
+    }
+
+    @media (max-width: 760px) {
+        .oa-help-faq {
+            padding: 1rem 0.75rem 1.6rem;
+            border-radius: 12px;
+        }
+
+        .oa-help-faq__hero {
+            padding: 1rem 0.95rem;
+        }
+
+        .oa-help-faq__index {
+            grid-template-columns: 1fr;
+        }
+
+        .oa-help-faq dt {
+            padding: 0.95rem 0.8rem 0.2rem 2.1rem;
+            font-size: 1.04rem;
+        }
+
+        .oa-help-faq dt::before {
+            left: 0.68rem;
+        }
+
+        .oa-help-faq dd {
+            padding: 0.2rem 0.8rem 0.95rem 2.1rem;
+        }
+    }
+</style>
+
+<section class="oa-help-faq">
+    <header class="oa-help-faq__hero">
+        <p class="oa-help-faq__eyebrow">Help and FAQ</p>
+        <h1 class="oa-help-faq__title">Frequently asked questions</h1>
+        <p class="oa-help-faq__intro">Quick answers about OpenAustralia.org, your data, and how to navigate key
+            features of the site.</p>
+    </header>
+
+    <h2 class="oa-help-faq__index-title">Jump to a question</h2>
+    <ul class="oa-help-faq__index">
+        <li><a href="#moderation">How do you moderate comments?</a></li>
+        <li><a href="#missing">Is this the whole of Hansard?</a></li>
+        <li><a href="#privacy">What is your Privacy Policy?</a></li>
+        <li><a href="#cookie">What is your Cookie Policy?</a></li>
+        <li><a href="#rss">What is RSS?</a></li>
+        <li><a href="#votingrecord">How is the voting record decided?</a></li>
+        <li><a href="#numbers">Why should I read in more depth than just the numbers?</a></li>
+        <li><a href="#api">Do you have the data as a spreadsheet file, XML or in an API?</a></li>
+        <li><a href="#regmem">What is the Register of Interests and how can I use it?</a></li>
+        <li><a href="#regmem-links">Why are there two Register of Interests links for some MPs?</a></li>
+    </ul>
+
+    <!-- start new faq entry -->
+    <dl>
 
     <dt><a name="moderation"></a>How do you moderate comments?</dt>
     <dd>
@@ -65,23 +270,11 @@
         </p>
         <!-- end old faq entry -->
 
-
         <!-- start new faq entry -->
     <dt><a name="cookie"></a>What is your Cookie Policy?</dt>
     <dd>
         <p>We use cookies to save you from having to repeatedly log in to the site, and also to remember your electoral
             division. The site will work with cookies disabled, but it won't be as good. </p>
-    </dd>
-    <!-- end old faq entry -->
-
-
-    <!-- start new faq entry -->
-    <dt><a name="extreme"></a>What's that weird 'urchin' javascript I spy in your page source?</dt>
-    <dd>
-        <p>We use Google Analytics to track aggregated traffic through the website. It captures nothing that you won't
-            find in an Apache logfile, but has an interface we like, and is dead easy to use. Rest assured, we only
-            track usage data for one reason only: to help us understand how we can make the site work better for you
-            lot. If anyone wants to whinge about 'Web Bugs', expect short shrift. </p>
     </dd>
     <!-- end old faq entry -->
 
@@ -190,3 +383,4 @@
     </dd>
 
 </dl>
+</section>
