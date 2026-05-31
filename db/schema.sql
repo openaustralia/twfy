@@ -343,17 +343,6 @@ CREATE TABLE `personinfo` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `phinxlog` (
-  `version` bigint NOT NULL,
-  `migration_name` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `start_time` timestamp NULL DEFAULT NULL,
-  `end_time` timestamp NULL DEFAULT NULL,
-  `breakpoint` tinyint(1) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`version`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `postcode_lookup` (
   `postcode` varchar(10) NOT NULL DEFAULT '',
   `name` varchar(100) NOT NULL DEFAULT '',
