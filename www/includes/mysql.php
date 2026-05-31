@@ -295,12 +295,12 @@ class MySQLQuery {
 
             $html .= "<table border=\"1\">\n<tr>\n";
 
-            foreach ($this->fieldnames_byid as $index => $fieldname) {
+            foreach ($this->fieldnames_byid as $fieldname) {
                 $html .= "<th>" . htmlentities($fieldname) . "</th>";
             }
             $html .= "</tr>\n";
 
-            foreach ($this->data as $index => $row) {
+            foreach ($this->data as $row) {
                 $html .= "<tr>";
                 foreach ($row as $n => $field) {
                     if ($this->fieldnames_byid[$n] == "email" || $this->fieldnames_byid[$n] == "password" || $this->fieldnames_byid[$n] == "postcode") {
@@ -327,14 +327,12 @@ class MySQLQuery {
         $this->success = false;
 
         trigger_error($errormsg, E_USER_ERROR);
-
-        return;
     }
 
     // End MySQLQuery class.
 }
 
-$global_connection = null;
+$GLOBALS['global_connection'] = null;
 
 /**
  *
@@ -368,7 +366,7 @@ class MySQL {
         $this->conn = $global_connection;
 
         // Select default character set.
-        $q = new MySQLQuery($this->conn);
+        new MySQLQuery($this->conn);
 
         return true;
     }
@@ -380,7 +378,7 @@ class MySQL {
      */
     protected function build_parameterized_sql(string $sql, array $params): string {
         $i = 0;
-        return preg_replace_callback('/\?/', function ($match) use (&$i, $params) {
+        return (string) preg_replace_callback('/\?/', function () use (&$i, $params) {
             $value = $params[$i++];
             if ($value === null) {
                 return 'NULL';
