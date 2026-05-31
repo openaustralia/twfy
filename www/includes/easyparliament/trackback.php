@@ -26,7 +26,6 @@
  */
 class TRACKBACK {
 
-    private $db = null;
 
     private $trackbacks_enabled = false;
 
@@ -40,8 +39,6 @@ class TRACKBACK {
      * But switching this to true will mark all incoming trackbacks as invisible.
      */
     public function __construct() {
-
-        $this->db = new ParlDB();
 
         // Set in init.php.
         if (ALLOWTRACKBACKS) {
@@ -145,9 +142,7 @@ class TRACKBACK {
         $epobject_id = $trackbackdata['epobject_id'];
 
         // Check this epobject_id exists.
-        $q = $this->db->query("SELECT epobject_id
-						FROM	epobject
-						WHERE	epobject_id = '" . addslashes($epobject_id) . "'");
+        $q = parlDBQuery("SELECT epobject_id FROM epobject WHERE epobject_id = ?", $epobject_id);
 
         if ($q->rows() == 0) {
             $this->_trackback_response(1, "Sorry, we don't have a valid epobject_id.");
@@ -163,18 +158,11 @@ class TRACKBACK {
 
         $visible = $this->moderate_trackbacks ? 0 : 1;
 
-        $q = $this->db->query("INSERT INTO trackbacks
+        $q = parlDBQuery("INSERT INTO trackbacks
 						(epobject_id, blog_name, title, excerpt, url, source_ip, posted, visible)
 						VALUES
-						('" . addslashes($epobject_id) . "',
-						'" . addslashes($blog_name) . "',
-						'" . addslashes($title) . "',
-						'" . addslashes($excerpt) . "',
-						'" . addslashes($url) . "',
-						'" . addslashes($source_ip) . "',
-						NOW(),
-						'$visible')
-						");
+						(?, ?, ?, ?, ?, ?, NOW(), ?)",
+            $epobject_id, $blog_name, $title, $excerpt, $url, $source_ip, $visible);
 
         if ($q->success()) {
             // Return a success message.
@@ -207,7 +195,7 @@ class TRACKBACK {
         // What we return.
         $trackbackdata = [];
 
-        $q = $this->db->query("SELECT trackback_id,
+        $q = parlDBQuery("SELECT trackback_id,
 								epobject_id,
 								blog_name,
 								title,
@@ -215,10 +203,10 @@ class TRACKBACK {
 								url,
 								posted
 						FROM 	trackbacks
-						WHERE 	epobject_id = '" . addslashes($epobject_id) . "'
+						WHERE 	epobject_id = ?
 						AND 	visible = 1
 						ORDER BY posted ASC
-						");
+						", $epobject_id);
 
         if ($q->rows() > 0) {
             for ($row = 0; $row < $q->rows(); $row++) {
@@ -253,12 +241,18 @@ class TRACKBACK {
             return false;
         }
 
-        $num = $args['num'];
+        $num = (int) $args['num'];
+        if ($num > 1000) {
+             $PAGE->error_message("Sorry, we won't display more than 1000 trackbacks at a time.");
+            $num = 1000;
+        } elseif ($num == 0) {
+            $num = 100;
+        }
 
         // What we return.
         $trackbackdata = [];
 
-        $q = $this->db->query("SELECT trackback_id,
+        $q = parlDBQuery("SELECT trackback_id,
 								epobject_id,
 								blog_name,
 								title,
@@ -268,8 +262,7 @@ class TRACKBACK {
 						FROM 	trackbacks
 						WHERE 	visible = 1
 						ORDER BY posted DESC
-						LIMIt	$num
-						");
+						LIMIT	?", $num);
 
         if ($q->rows() > 0) {
             for ($row = 0; $row < $q->rows(); $row++) {

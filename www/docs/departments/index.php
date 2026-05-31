@@ -9,15 +9,15 @@ include_once __DIR__ . "/../../includes/easyparliament/init.php";
 $dept = get_http_var('dept');
 $PAGE->page_start();
 $PAGE->stripe_start();
-$db = new ParlDB();
+
 
 print '<h2>Departments</h2>';
 
-$q = $db->query('select major,body from hansard,epobject
-	where hansard.epobject_id=epobject.epobject_id and major in (3,4) and section_id=0
-	and hdate>(select max(hdate) from hansard where major in (3,4)) - interval 7 day
-	group by body, major
-	order by body');
+$q = parlDBQuery('SELECT major,body from hansard,epobject
+	WHERE hansard.epobject_id=epobject.epobject_id AND major in (3,4) AND section_id=0
+	AND hdate>(SELECT MAX(hdate) from hansard WHERE major in (3,4)) - interval 7 day
+	GROUP BY body, major
+	ORDER BY body');
 $data = [];
 for ($i = 0; $i < $q->rows(); $i++) {
     $body = $q->field($i, 'body');

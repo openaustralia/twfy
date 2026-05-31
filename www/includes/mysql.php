@@ -17,8 +17,7 @@
  *
  * Then, when you need to do queries, you do:
  *
- * $db = new ParlDB;
- * $q = $db->query("SELECT haddock FROM fish");
+ * $q = parlDBQuery("SELECT haddock FROM fish");
  *
  * $q is then a MySQLQuery object.
  *
@@ -26,7 +25,7 @@
  * extending MySQL.
  *
  *
- * Call $db->display_total_duration() at the end of a page to send total query time to debug().
+ * Call getParlDB()->display_total_duration() at the end of a page to send total query time to debug().
  *
  *
  * (n is 0-based below...)
@@ -308,7 +307,7 @@ class MySQLQuery {
                         // Don't want to risk this data being displayed on any page.
                         $html .= "<td>**MASKED**</td>";
                     } else {
-                        $html .= "<td>" . htmlentities($field) . "</td>";
+                        $html .= "<td>" . htmlentities((string) ($field ?? '')) . "</td>";
                     }
                 }
                 $html .= "</tr>\n";
@@ -383,6 +382,13 @@ class MySQL {
         $i = 0;
         return preg_replace_callback('/\?/', function ($match) use (&$i, $params) {
             $value = $params[$i++];
+            if ($value === null) {
+                return 'NULL';
+            }
+            if (is_array($value)) {
+                $escaped = array_map(fn($v) => "'" . $this->escape((string) $v) . "'", $value);
+                return '(' . implode(', ', $escaped) . ')';
+            }
             if (is_int($value) || is_float($value)) {
                 return (string) $value;
             }

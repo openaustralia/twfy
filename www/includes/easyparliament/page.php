@@ -1285,8 +1285,8 @@ class PAGE {
         global $DATA, $this_page;
 
         // DAMN, this really shouldn't be in PAGE.
-        $db = new ParlDB();
-        $db->display_total_duration();
+
+        getParlDB()->display_total_duration();
 
         $duration = getmicrotime() - STARTTIME;
         twfy_debug("TIME", "Total time for page: $duration seconds.");

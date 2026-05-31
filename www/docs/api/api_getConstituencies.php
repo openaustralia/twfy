@@ -47,11 +47,11 @@ function api_getConstituencies_search($s) {
  *
  */
 function _api_getConstituencies_search($s) {
-    $db = new ParlDB();
-    $q = $db->query('select c_main.name from constituency, constituency as c_main
-		where constituency.cons_id = c_main.cons_id
-		and c_main.main_name and constituency.name like ? and constituency.from_date <= date(now())
-		and date(now()) <= constituency.to_date', "%$s%");
+    // FIXME timezones!
+    $q = parlDBQuery('SELECT c_main.name from constituency, constituency AS c_main
+		WHERE constituency.cons_id = c_main.cons_id
+		AND c_main.main_name AND constituency.name LIKE ? AND constituency.from_date <= date(NOW())
+		AND date(NOW()) <= constituency.to_date', "%$s%");
     $output = [];
     $done = [];
     for ($i = 0; $i < $q->rows(); $i++) {
@@ -71,8 +71,8 @@ function _api_getConstituencies_search($s) {
  *
  */
 function api_getConstituencies_date($date) {
-    if ($date = parse_date($date)) {
-        api_getConstituencies('"' . $date['iso'] . '"');
+    if ($parsed_date = parse_date($date)) {
+        api_getConstituencies($parsed_date['iso']);
     } else {
         api_error('Invalid date format');
     }
@@ -81,10 +81,14 @@ function api_getConstituencies_date($date) {
 /**
  *
  */
-function api_getConstituencies($date = 'now()') {
-    $db = new ParlDB();
-    $q = $db->query('select cons_id, name from constituency
-		where main_name and from_date <= date(' . $date . ') and date(' . $date . ') <= to_date');
+function api_getConstituencies($date = null) {
+    // FIXME timezones!
+    if ($date === null) {
+        $q = parlDBQuery('SELECT cons_id, name from constituency WHERE main_name AND from_date <= CURRENT_DATE AND CURRENT_DATE <= to_date');
+    } else {
+        $q = parlDBQuery('SELECT cons_id, name from constituency WHERE main_name AND from_date <= date(?) AND date(?) <= to_date',
+            $date, $date);
+    }
     $output = [];
     for ($i = 0; $i < $q->rows(); $i++) {
         $output[] = [

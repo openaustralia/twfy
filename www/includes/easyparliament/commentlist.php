@@ -34,7 +34,6 @@ include_once __DIR__ . '/../dbtypes.php';
  */
 class COMMENTLIST {
 
-    private $db = null;
     public $page = '';
 
     /**
@@ -42,8 +41,6 @@ class COMMENTLIST {
      */
     public function __construct() {
         global $this_page;
-
-        $this->db = new ParlDB();
 
         // We use this to create permalinks to comments. For the moment we're
         // assuming they're on the same page we're currently looking at:
@@ -173,18 +170,18 @@ class COMMENTLIST {
         }
 
         if (isset($args['num']) && is_numeric($args['num'])) {
-            $num = $args['num'];
+            $num = (int) $args['num'];
         } else {
             $num = 10;
         }
 
         if (isset($args['page']) && is_numeric($args['page'])) {
-            $page = $args['page'];
+            $page = (int) $args['page'];
         } else {
             $page = 1;
         }
 
-        $limit = $num * ($page - 1) . ',' . $num;
+        $offset = $num * ($page - 1);
 
         // We're getting the most recent comments posted to epobjects.
         // We're grouping them by epobject so we can just link to each hansard thing once.
@@ -194,7 +191,7 @@ class COMMENTLIST {
         // We're NOT getting the comment bodies. Why? Because adding them to this query
         // would fetch the text for the oldest comment on an epobject group, rather
         // than the most recent. So we'll get the comment bodies later...
-        $q = $this->db->query("SELECT MAX(comments.comment_id) AS comment_id,
+        $q = parlDBQuery("SELECT MAX(comments.comment_id) AS comment_id,
 								MAX(comments.posted) AS posted,
 								COUNT(*) AS total_comments,
 								comments.epobject_id,
@@ -210,11 +207,12 @@ class COMMENTLIST {
 						WHERE 	comments.epobject_id = epobject.epobject_id
 						AND 	comments.epobject_id = hansard.epobject_id
 						AND 	comments.user_id = users.user_id
-						AND 	users.user_id='" . addslashes($args['user_id']) . "'
-						AND 	visible='1'
+						AND 	users.user_id = ?
+						AND 	visible = '1'
 						GROUP BY epobject_id
 						ORDER BY posted DESC
-						LIMIT " . $limit
+						LIMIT ? OFFSET ?",
+            $args['user_id'], $num, $offset
         );
 
         $comments = [];
@@ -255,13 +253,11 @@ class COMMENTLIST {
 
             }
 
-            $in = implode(', ', $comment_ids);
-
-            $r = $this->db->query("SELECT comment_id,
+            $r = parlDBQuery("SELECT comment_id,
 									body
 							FROM	comments
-							WHERE	comment_id IN ($in)
-							");
+							WHERE	comment_id IN ?",
+                $comment_ids);
 
             if ($r->rows() > 0) {
 
@@ -282,7 +278,7 @@ class COMMENTLIST {
         $data['comments'] = $comments;
         $data['results_per_page'] = $num;
         $data['page'] = $page;
-        $q = $this->db->query('SELECT COUNT(DISTINCT(epobject_id)) AS count FROM comments WHERE visible=1 AND user_id=' . $args['user_id']);
+        $q = parlDBQuery('SELECT COUNT(DISTINCT(epobject_id)) AS count FROM comments WHERE visible=1 AND user_id=?', $args['user_id']);
         $data['total_results'] = $q->field(0, 'count');
         return $data;
 
@@ -336,14 +332,15 @@ class COMMENTLIST {
         $data['page'] = $page;
         if (isset($args['pid']) && is_numeric($args['pid'])) {
             $data['pid'] = $args['pid'];
-            $q = 'SELECT title, first_name, last_name, constituency, house FROM member WHERE left_house="9999-12-31" and person_id = ' . $args['pid'];
-            $q = $this->db->query($q);
+            $q = parlDBQuery('SELECT title, first_name, last_name, constituency, house FROM member WHERE left_house="9999-12-31" AND person_id = ?', $args['pid']);
             $data['full_name'] = member_full_name($q->field(0, 'house'), $q->field(0, 'title'), $q->field(0, 'first_name'), $q->field(0, 'last_name'), $q->field(0, 'constituency'));
-            $q = 'SELECT COUNT(*) AS count FROM comments,hansard,member WHERE visible=1 AND comments.epobject_id = hansard.epobject_id and hansard.speaker_id = member.member_id and person_id = ' . $args['pid'];
+            $q = parlDBQuery('SELECT COUNT(*) AS count FROM comments, hansard, member
+                WHERE visible=1 AND comments.epobject_id = hansard.epobject_id
+                    AND hansard.speaker_id = member.member_id AND person_id = ?',
+                $args['pid']);
         } else {
-            $q = 'SELECT COUNT(*) AS count FROM comments WHERE visible=1';
+            $q = parlDBQuery('SELECT COUNT(*) AS count FROM comments WHERE visible=1');
         }
-        $q = $this->db->query($q);
         $data['total_results'] = $q->field(0, 'count');
         return $data;
     }
@@ -388,10 +385,6 @@ class COMMENTLIST {
 
         $data['comments'] = $commentsdata;
         $data['search'] = $args['s'];
-        // $data['results_per_page'] = $num;
-        // $data['page'] = $page;
-        // $q = $this->db->query('SELECT COUNT(*) AS count FROM comments WHERE visible=1');
-        // $data['total_results'] = $q->field(0, 'count');
         return $data;
     }
 
@@ -432,37 +425,9 @@ class COMMENTLIST {
     }
 
     /**
-     * Function _fix_gid ($args) {
      *
-     * Replace a hansard object gid with an epobject_id.
-     * $args may have a 'gid' element. If so, we replace it
-     * with the hansard object's epobject_id as 'epobject_id', because
-     * comments are tied to epobject_ids.
-     * Returns the corrected $args array.
-     *
-     * global $this_page;
-     *
-     * if (isset($args['gid']) && !isset($args['epobject_id'])) {
-     *
-     * if ($this_page == 'wran' || $this_page == 'wrans') {
-     * $gidextra = 'wrans';
-     * } else {
-     * $gidextra = 'debate';
-     * }
-     *
-     * $q = $this->db->query ("SELECT epobject_id FROM hansard WHERE gid = 'uk.org.publicwhip/" . $gidextra . '/' . addslashes($args['gid']) . "'");
-     *
-     * if ($q->rows() > 0) {
-     * unset($args['gid']);
-     * $args['epobject_id'] = $q->field(0, 'epobject_id');
-     * }
-     * }
-     *
-     * return $args;
-     *
-     * }
      */
-    public function _get_comment_data($input) {
+public function _get_comment_data($input) {
         // Generic function for getting hansard data from the DB.
         // It returns an empty array if no data was found.
         // It returns an array of items if 1 or more were found.
@@ -546,6 +511,7 @@ class COMMENTLIST {
 
         $wherearr2 = [];
         // Construct the $where clause.
+        // FIXME: parameterise this query.
         foreach ($wherearr as $key => $val) {
             $wherearr2[] = "$key'" . addslashes($val) . "'";
         }
@@ -559,7 +525,7 @@ class COMMENTLIST {
         }
 
         // Finally, do the query!
-        $q = $this->db->query("SELECT $fields
+        $q = parlDBQuery("SELECT $fields
 						FROM 	comments
 						$join
 						WHERE $where
@@ -608,6 +574,6 @@ class COMMENTLIST {
 
         return $data;
 
-    }
+}
 
 }

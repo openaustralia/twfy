@@ -11,10 +11,10 @@ include_once '../api/api_functions.php';
 
 $pid = $_GET['pid'];
 
-$db = new ParlDB();
-$q = $db->query("select * from member
-	where house=1 and person_id = ?
-	order by left_house desc limit 1", $pid);
+
+$q = parlDBQuery("SELECT * from member
+	WHERE house=1 AND person_id = ?
+	ORDER BY left_house DESC LIMIT 1", $pid);
 if (!$q->rows()) {
     print '<error>Unknown ID</error>';
     exit;
@@ -36,29 +36,17 @@ if ($image) {
     $row['image'] = $image;
 }
 
-$q = $db->query("SELECT position,dept FROM moffice WHERE to_date='9999-12-31'
-	and source='chgpages/selctee' and person=?
+$q = parlDBQuery("SELECT position,dept FROM moffice WHERE to_date='9999-12-31'
+	AND source='chgpages/selctee' AND person=?
 	ORDER BY from_date DESC", $pid);
 for ($i = 0; $i < $q->rows(); $i++) {
     $row['selctee'][] = prettify_office($q->field($i, 'position'), $q->field($i, 'dept'));
 }
 
-/*
-$q = $db->query("SELECT title,chairman from pbc_members,bills where member_id=".$row['member_id']
-. ' and bill_id=bills.id');
-for ($i=0; $i<$q->rows(); $i++) {
-$member = 'Member';
-if ($q->field($i, 'chairman')) {
-$member = 'Chairman';
-}
-$row['selctee'][] = $member . ', ' . $q->field($i, 'title');
-}
- */
-
-$q = $db->query("select data_key, data_value from personinfo
-	where data_key like 'public\_whip%' and person_id = ?
-// order so both_voted is always first...
-	order by data_key", $pid);
+$q = parlDBQuery("SELECT data_key, data_value from personinfo
+	WHERE data_key LIKE 'public\_whip%' AND person_id = ?
+// Order so both_voted is always first...
+	ORDER BY data_key", $pid);
 $none = false;
 $output = [];
 for ($i = 0; $i < $q->rows(); $i++) {
@@ -118,8 +106,8 @@ $pw .= '</ul>';
 $output = $row;
 $output['pw_data'] = $pw;
 
-$q = $db->query("select * from memberinfo where member_id = ?
-    and data_key in ('swing_to_lose_seat_today', 'majority_in_seat')", $row['member_id']);
+$q = parlDBQuery("SELECT * from memberinfo WHERE member_id = ?
+    AND data_key in ('swing_to_lose_seat_today', 'majority_in_seat')", $row['member_id']);
 for ($i = 0; $i < $q->rows(); $i++) {
     $key = $q->field($i, 'data_key');
     $output[$key] = number_format($q->field($i, 'data_value'));

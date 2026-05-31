@@ -7,59 +7,54 @@
 include_once __DIR__ . '/../../../../phplib/rabx.php';
 include_once __DIR__ . '/../../includes/request.php';
 
-// The METHODS.
-
-$methods = [
-    'getDivisions' => [
-        // 'parameters' => array('date', 'search', 'latitude', 'longitude', 'distance'),
-        'parameters' => ['postcode', 'date', 'search'],
-        'required' => false,
-        'help' => 'Returns list of electoral divisions',
-    ],
-    'getRepresentative' => [
-        'parameters' => ['id', 'division', 'always_return'],
-        'required' => true,
-        'help' => 'Returns main details for a member of the House of Representatives'
-    ],
-    'getRepresentatives' => [
-        'parameters' => ['postcode', 'party', 'date', 'search'],
-        'required' => false,
-        'help' => 'Returns list of members of the House of Representatives',
-    ],
-    'getSenator' => [
-        'parameters' => ['id'],
-        'required' => true,
-        'help' => 'Returns details for a Senator'
-    ],
-    'getSenators' => [
-        'parameters' => ['date', 'party', 'state', 'search'],
-        'required' => false,
-        'help' => 'Returns list of Senators',
-    ],
-    /*
-    'getGeometry' => array(
-        'new' => true,
-        'parameters' => array('name'),
-        'required' => false,
-        'help' => 'Returns centre, bounding box of constituencies'
-    ),
-     */
-    'getDebates' => [
-        'parameters' => ['type', 'date', 'search', 'person', 'gid', 'year', 'order', 'page', 'num'],
-        'required' => true,
-        'help' => 'Returns Debates (either House of Representatives or Senate)',
-    ],
-    'getHansard' => [
-        'parameters' => ['search', 'person', 'order', 'page', 'num'],
-        'required' => true,
-        'help' => 'Returns any of the above',
-    ],
-    'getComments' => [
-        'parameters' => ['search', 'page', 'num', 'pid'],
-        'required' => false,
-        'help' => 'Returns comments'
-    ],
-];
+/**
+ * The METHODS.
+ */
+function api_get_methods() {
+    return [
+        'getDivisions' => [
+            // 'parameters' => array('date', 'search', 'latitude', 'longitude', 'distance'),
+            'parameters' => ['postcode', 'date', 'search'],
+            'required' => false,
+            'help' => 'Returns list of electoral divisions',
+        ],
+        'getRepresentative' => [
+            'parameters' => ['id', 'division', 'always_return'],
+            'required' => true,
+            'help' => 'Returns main details for a member of the House of Representatives'
+        ],
+        'getRepresentatives' => [
+            'parameters' => ['postcode', 'party', 'date', 'search'],
+            'required' => false,
+            'help' => 'Returns list of members of the House of Representatives',
+        ],
+        'getSenator' => [
+            'parameters' => ['id'],
+            'required' => true,
+            'help' => 'Returns details for a Senator'
+        ],
+        'getSenators' => [
+            'parameters' => ['date', 'party', 'state', 'search'],
+            'required' => false,
+            'help' => 'Returns list of Senators',
+        ],
+        'getDebates' => [
+            'parameters' => ['type', 'date', 'search', 'person', 'gid', 'year', 'order', 'page', 'num'],
+            'required' => true,
+            'help' => 'Returns Debates (either House of Representatives or Senate)',
+        ],
+        'getHansard' => [
+            'parameters' => ['search', 'person', 'order', 'page', 'num'],
+            'required' => true,
+            'help' => 'Returns any of the above',
+        ],
+        'getComments' => [
+            'parameters' => ['search', 'page', 'num', 'pid'],
+            'required' => false,
+            'help' => 'Returns comments'
+        ],
+    ];
+}
 
 /**
  * Key-related functions.
@@ -71,8 +66,8 @@ function api_log_call($key) {
     $ip = ip_address();
     $query = $_SERVER['REQUEST_URI'];
     $query = preg_replace('#key=[A-Za-z0-9]+&?#', '', $query);
-    $db = new ParlDB();
-    $db->query("INSERT INTO api_stats (api_key, ip_address, query_time, query)
+    // FIXME handle timezones.
+    parlDBQuery("INSERT INTO api_stats (api_key, ip_address, query_time, query)
 		VALUES (?, ?, NOW(), ?)", $key, $ip, $query);
 }
 
@@ -80,8 +75,8 @@ function api_log_call($key) {
  *
  */
 function api_check_key($key) {
-    $db = new ParlDB();
-    $q = $db->query('SELECT user_id FROM api_key WHERE api_key = ?', $key);
+
+    $q = parlDBQuery('SELECT user_id FROM api_key WHERE api_key = ?', $key);
     if (!$q->rows()) {
         return false;
     }
@@ -98,7 +93,7 @@ function api_key_current_message() {
  * Front-end sidebar of all methods.
  */
 function api_sidebar() {
-    global $methods;
+    $methods = api_get_methods();
     $sidebar = '<div class="block"><h4>API Functions</h4> <div class="blockbody"><ul>';
     foreach ($methods as $method => $data) {
         $sidebar .= '<li';
