@@ -18,7 +18,7 @@ if (get_http_var("d") != "") {
             'date' => get_http_var('d'),
             'column' => get_http_var('c')
         ];
-        $LIST = new LORDSDEBATELIST();
+        $LIST = new SENATEDEBATELIST();
         $args['mobile'] = 1;
         $LIST->display('column', $args);
     } else {
@@ -30,7 +30,7 @@ if (get_http_var("d") != "") {
             'date' => get_http_var('d')
         ];
 
-        $LIST = new LORDSDEBATELIST();
+        $LIST = new SENATEDEBATELIST();
 
         $args['mobile'] = 1;
         $LIST->display('date', $args);
@@ -66,7 +66,7 @@ if (get_http_var("d") != "") {
         $GLOSSARY = new GLOSSARY($args);
     }
 
-    $LIST = new LORDSDEBATELIST();
+    $LIST = new SENATEDEBATELIST();
 
     $args['mobile'] = 1;
     $result = $LIST->display('gid', $args);
@@ -104,7 +104,7 @@ if (get_http_var("d") != "") {
         'year' => get_http_var('y')
     ];
 
-    $LIST = new LORDSDEBATELIST();
+    $LIST = new SENATEDEBATELIST();
 
     $args['mobile'] = 1;
     $LIST->display('calendar', $args);
@@ -124,9 +124,9 @@ if (get_http_var("d") != "") {
 } elseif (get_http_var('gid') != '') {
     $this_page = 'lordsdebate';
     $args = ['gid' => get_http_var('gid')];
-    $LORDSDEBATELIST = new LORDSDEBATELIST();
+    $SENATEDEBATELIST = new SENATEDEBATELIST();
     $args['mobile'] = 1;
-    $result = $LORDSDEBATELIST->display('gid', $args);
+    $result = $SENATEDEBATELIST->display('gid', $args);
     // If it is a redirect, change URL.
     if (is_string($result)) {
         $URL = new URL('lordsdebate');
@@ -134,11 +134,11 @@ if (get_http_var("d") != "") {
         header('Location: //' . DOMAIN . $URL->generate('none'), true, 301);
         exit;
     }
-    if ($LORDSDEBATELIST->htype() == '12' || $LORDSDEBATELIST->htype() == '13') {
+    if ($SENATEDEBATELIST->htype() == '12' || $SENATEDEBATELIST->htype() == '13') {
         // $PAGE->stripe_start('side', 'comments');
         $COMMENTLIST = new COMMENTLIST();
         $args['user_id'] = get_http_var('u');
-        $args['epobject_id'] = $LORDSDEBATELIST->epobject_id();
+        $args['epobject_id'] = $SENATEDEBATELIST->epobject_id();
         $args['mobile'] = 1;
         $COMMENTLIST->display('ep', $args);
         // $PAGE->stripe_end();
@@ -157,8 +157,8 @@ if (get_http_var("d") != "") {
     <h4>Busiest debates from the most recent week</h4>
     <?php
 
-    $LORDSDEBATELIST = new LORDSDEBATELIST();
-    $LORDSDEBATELIST->display('biggest_debates', ['days' => 7, 'num' => 20, 'mobile' => 1]);
+    $SENATEDEBATELIST = new SENATEDEBATELIST();
+    $SENATEDEBATELIST->display('biggest_debates', ['days' => 7, 'num' => 20, 'mobile' => 1]);
 
     $rssurl = $DATA->page_metadata($this_page, 'rss');
     /*

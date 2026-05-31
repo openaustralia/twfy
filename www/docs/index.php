@@ -191,8 +191,8 @@ $PAGE->block_start(['id' => 'intro', 'title' => 'At OpenAustralia.org you can:']
             $data[1] = $DEBATELIST->most_recent_day();
 
             # THE SENATE
-            $LORDSDEBATELIST = new LORDSDEBATELIST();
-            $data[101] = $LORDSDEBATELIST->most_recent_day();
+            $SENATEDEBATELIST = new SENATEDEBATELIST();
+            $data[101] = $SENATEDEBATELIST->most_recent_day();
 
             foreach (array_keys($hansardmajors) as $major) {
                 if (array_key_exists($major, $data)) {

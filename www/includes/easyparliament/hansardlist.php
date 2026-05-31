@@ -2630,7 +2630,7 @@ class SPWRANSLIST extends WRANSLIST {
 /**
  *
  */
-class LORDSDEBATELIST extends DEBATELIST {
+class SENATEDEBATELIST extends DEBATELIST {
     public $major = 101;
     public $listpage = 'lordsdebates';
     public $commentspage = 'lordsdebate';

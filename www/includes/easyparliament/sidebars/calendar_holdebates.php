@@ -34,7 +34,7 @@ if (!$args) {
 
 $PAGE->block_start(['title' => $title]);
 
-$LIST = new LORDSDEBATELIST();
+$LIST = new SENATEDEBATELIST();
 
 $LIST->display('calendar', $args);
 

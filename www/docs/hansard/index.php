@@ -108,7 +108,7 @@ $PAGE->stripe_start();
 ?>
 <h3>Busiest Senate debates from the most recent week</h3>
 <?php
-$DEBATELIST = new LORDSDEBATELIST();
+$DEBATELIST = new SENATEDEBATELIST();
 $DEBATELIST->display('biggest_debates', ['days' => 7, 'num' => $number_of_debates_to_show]);
 
 $MOREURL = new URL('lordsdebatesfront');
