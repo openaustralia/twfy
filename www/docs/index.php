@@ -22,9 +22,8 @@ if ($message != '') {
 
 $HANSARDURL = new URL('hansard');
 $MPURL = new URL('yourmp');
-$PAGE->block_start(['id' => 'intro', 'title' => 'At OpenAustralia.org you can:']);
+$PAGE->block_start(['id' => 'intro', 'title' => 'home']);
 ?>
-<p class="oa-options-lead"><strong>Choose one option to get started:</strong> find your Representative by postcode, search Hansard, or create an email alert.</p>
 <ol>
 
     <?php

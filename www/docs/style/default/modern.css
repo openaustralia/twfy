@@ -895,7 +895,7 @@ ul.hansard-day > li {
     padding: 12px 14px;
     border: 1px solid #e3d7c9;
     border-radius: 12px;
-    background: #fff;
+    background: linear-gradient(180deg, #fffdf9 0%, #fff 100%);
     box-shadow: 0 1px 3px rgba(42, 36, 31, 0.08);
 }
 
@@ -911,6 +911,95 @@ ul.hansard-day ul li {
     margin-top: 8px;
     padding-top: 8px;
     border-top: 1px dashed #e8ddce;
+}
+
+.oa-major-summary-title {
+    display: block;
+    margin-bottom: 4px;
+    color: #4d3928;
+    font-size: 1.02rem;
+    letter-spacing: 0.01em;
+}
+
+.oa-major-summary-daytext {
+    color: #7a6656;
+    font-weight: 600;
+}
+
+.oa-major-summary-major-link {
+    color: #5d2e1e;
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    transition: border-color 140ms ease, color 140ms ease;
+}
+
+.oa-major-summary-major-link:hover {
+    color: #7a3824;
+    border-bottom-color: #d8b194;
+}
+
+.oa-major-summary-colon {
+    color: #8f7863;
+}
+
+.oa-major-summary-items {
+    margin-top: 8px;
+}
+
+.oa-major-summary-item {
+    position: relative;
+    padding-left: 16px;
+}
+
+.oa-major-summary-item::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 16px;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #d3b69f;
+}
+
+.oa-major-summary-link {
+    color: #2f2924;
+    text-decoration: none;
+    line-height: 1.4;
+}
+
+.oa-major-summary-link:hover {
+    color: #4a2e1e;
+    text-decoration: underline;
+    text-decoration-color: #caa688;
+    text-underline-offset: 2px;
+}
+
+.oa-major-summary-link:focus-visible,
+.oa-major-summary-major-link:focus-visible {
+    outline: 3px solid #0f62fe;
+    outline-offset: 2px;
+    border-radius: 3px;
+}
+
+.oa-major-summary-subheading {
+    margin-top: 10px;
+    color: #4f3c2c;
+    font-weight: 700;
+}
+
+.oa-major-summary-items--nested {
+    margin-top: 6px;
+}
+
+.oa-major-summary-items--nested .oa-major-summary-item {
+    padding-left: 14px;
+}
+
+.oa-major-summary-items--nested .oa-major-summary-item::before {
+    width: 6px;
+    height: 6px;
+    background: #e0c9b4;
 }
 
 /* Homepage: show the major debate groups (e.g. House and Senate) as side-by-side cards. */

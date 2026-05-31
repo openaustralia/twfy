@@ -24,7 +24,7 @@ if ($message != '') {
 
 $HANSARDURL = new URL('hansard');
 $MPURL = new URL('yourmp');
-$PAGE->block_start(['id' => 'intro', 'title' => 'At OpenAustralia.org you can:']);
+$PAGE->block_start(['id' => 'intro', 'title' => 'home']);
 ?>
 <ol>
     <?php

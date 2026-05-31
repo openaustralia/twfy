@@ -662,23 +662,113 @@ ul#hansard-day ul {
 	margin: 0.5em 0 0 3em;
 	}
 div#intro ul#hansard-day {
-	list-style-type: disc;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.9em;
+	align-items: stretch;
+	list-style-type: none;
 	margin: 0 0 0 2em;
 	padding: 0;
 }
 div#intro ul#hansard-day li {
-	list-style-type: disc;
-	margin: 0 0 0 0;
+	list-style-type: none;
+	margin: 0;
 	padding: 0;
 }
-div#intro ul#hansard-day ul {
-	padding: 0;
-	margin: 0 0 0.5em 2em;
+div#intro ul#hansard-day > li {
+	flex: 1 1 calc(50% - 0.45em);
+	min-width: 320px;
+	box-sizing: border-box;
+	padding: 0.85em 0.95em 0.8em;
+	border: 1px solid #e4d8ca;
+	border-radius: 12px;
+	background: linear-gradient(180deg, #fffdf9 0%, #fff 100%);
+	box-shadow: 0 1px 3px rgba(42, 36, 31, 0.08);
+	display: flex;
+	flex-direction: column;
+	break-inside: avoid;
+	page-break-inside: avoid;
 }
-div#intro ul#hansard-day ul li {
+div#intro ul#hansard-day > li > strong {
+	display: block;
+	margin-bottom: 0.55em;
+	color: #4d3928;
+	font-size: 0.95em;
+	line-height: 1.4;
 }
-div#intro ul#hansard-day ul ul {
-	margin: 0 0 0 2em;
+div#intro ul#hansard-day > li > strong a {
+	display: inline-block;
+	padding: 0.08em 0.3em;
+	border-radius: 999px;
+	color: #5d2e1e;
+	background: #f7eee5;
+	text-decoration: none;
+	box-shadow: inset 0 -1px 0 rgba(93, 46, 30, 0.2);
+	transition: background-color 140ms ease, color 140ms ease, box-shadow 140ms ease;
+}
+div#intro ul#hansard-day > li > strong a:hover {
+	color: #7a3824;
+	background: #f3e5d7;
+	box-shadow: inset 0 -1px 0 rgba(122, 56, 36, 0.4);
+}
+div#intro ul#hansard-day .oa-major-summary-group {
+	margin-left: 0;
+}
+div#intro ul#hansard-day .oa-major-summary-links {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.35em;
+	margin-top: 0.2em;
+}
+div#intro ul#hansard-day .oa-major-summary-links--nested {
+	margin-top: 0.35em;
+}
+div#intro ul#hansard-day .oa-major-summary-item {
+	display: inline-flex;
+	align-items: center;
+	max-width: 100%;
+	margin: 0;
+	padding: 0.32em 0.6em;
+	border: 1px solid #e5d6c6;
+	border-radius: 999px;
+	background: #fff;
+	box-shadow: 0 1px 2px rgba(42, 36, 31, 0.05);
+	color: #2f2924;
+	text-decoration: none;
+	overflow-wrap: anywhere;
+	transition: color 140ms ease, background-color 140ms ease, box-shadow 140ms ease;
+}
+div#intro ul#hansard-day .oa-major-summary-item:hover {
+	color: #4a2e1e;
+	background: #fff7ef;
+	box-shadow: inset 0 0 0 1px #d8b194;
+}
+div#intro ul#hansard-day .oa-major-summary-item:focus-visible,
+div#intro ul#hansard-day .oa-major-summary-major-link:focus-visible {
+	outline: 3px solid #0f62fe;
+	outline-offset: 2px;
+	border-radius: 999px;
+}
+div#intro ul#hansard-day .oa-major-summary-link {
+	color: inherit;
+	text-decoration: none;
+}
+div#intro ul#hansard-day .oa-major-summary-subheading {
+	margin: 0.65em 0 0.35em;
+	font-weight: 700;
+	color: #4f3c2c;
+}
+
+@media (max-width: 760px) {
+	div#intro ul#hansard-day {
+		display: block;
+		margin-left: 0;
+	}
+
+	div#intro ul#hansard-day > li {
+		min-width: 0;
+		margin-bottom: 1em;
+	}
 }
 
 div.comment {
