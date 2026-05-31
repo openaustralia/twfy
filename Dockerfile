@@ -12,6 +12,10 @@ LABEL org.openaustralia.image.build.date=$BUILD_DATE \
 RUN apt-get update && \
     apt-get install -y apache2 libapache2-mod-php
 
+# Install Perl modules needed by search/index.pl (Xapian indexing).
+RUN apt-get update && \
+    apt-get install -y perl libdbi-perl libdbd-mysql-perl libsearch-xapian-perl libhtml-parser-perl liberror-perl
+
 # Install necessary php extensions
 RUN apt-get install -y libpq-dev php8.3-mysql php8.3-pgsql php8.3-xml php8.3-curl php8.3-mbstring php8.3-zip php8.3-xdebug
 
