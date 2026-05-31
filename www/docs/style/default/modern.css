@@ -942,24 +942,21 @@ ul.hansard-day ul li {
     color: #8f7863;
 }
 
-.oa-major-summary-items {
-    margin-top: 8px;
+.oa-major-summary-items,
+.oa-major-summary-links {
+    margin: 8px 0 0;
+    padding: 0;
+    list-style: none;
 }
 
-.oa-major-summary-item {
-    position: relative;
-    padding-left: 16px;
-}
-
-.oa-major-summary-item::before {
-    content: "";
-    position: absolute;
-    left: 0;
-    top: 16px;
-    width: 7px;
-    height: 7px;
-    border-radius: 50%;
-    background: #d3b69f;
+ul#hansard-day .oa-major-summary-item,
+ul.hansard-day .oa-major-summary-item,
+div#intro ul#hansard-day .oa-major-summary-item {
+    list-style: none;
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    border: 0;
 }
 
 .oa-major-summary-link {
@@ -983,23 +980,14 @@ ul.hansard-day ul li {
 }
 
 .oa-major-summary-subheading {
-    margin-top: 10px;
+    margin: 10px 0 4px;
     color: #4f3c2c;
     font-weight: 700;
 }
 
-.oa-major-summary-items--nested {
+.oa-major-summary-items--nested,
+.oa-major-summary-links--nested {
     margin-top: 6px;
-}
-
-.oa-major-summary-items--nested .oa-major-summary-item {
-    padding-left: 14px;
-}
-
-.oa-major-summary-items--nested .oa-major-summary-item::before {
-    width: 6px;
-    height: 6px;
-    background: #e0c9b4;
 }
 
 /* Homepage: show the major debate groups (e.g. House and Senate) as side-by-side cards. */

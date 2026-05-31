@@ -1046,11 +1046,12 @@ function major_summary($data, $limit = "") {
                 sort($printed_majors);
             }
             $LISTURL->insert(['id' => $gid]);
-            print '<a class="oa-major-summary-link oa-major-summary-item" href="' . $LISTURL->generate() . '">';
-            print $body . '</a>';
+            print '<li class="oa-major-summary-item">';
+            print '<a class="oa-major-summary-link" href="' . $LISTURL->generate() . '">';
+            print $body . '</a></li>';
         }
         if ($current_major) {
-            print '</div></li>';
+            print '</ul></li>';
         }
         if ($one_date) {
             $printed_majors = [];
@@ -1068,30 +1069,25 @@ function major_summary($data, $limit = "") {
         if ($q->rows()) {
             $LISTURL = new URL($hansardmajors[4]['page_all']);
             _major_summary_title(4, $data, $LISTURL, $daytext);
-            $current_sid = 0;
-            $in_subsection = false;
+            $first_subheading = true;
             for ($i = 0; $i < $q->rows(); $i++) {
                 $gid = fix_gid_from_db($q->field($i, 'gid'));
                 $body = $q->field($i, 'body');
                 $section_id = $q->field($i, 'section_id');
                 if (!$section_id) {
-                    if ($current_sid++) {
-                        print '</div>';
-                    }
-                    print '<div class="oa-major-summary-subheading">' . $body . '</div>';
-                    print '<div class="oa-major-summary-links oa-major-summary-links--nested">';
-                    $in_subsection = true;
-
+                    // Close previous subsection list (or the initial empty list opened by the title helper).
+                    print '</ul>';
+                    print '<h4 class="oa-major-summary-subheading">' . $body . '</h4>';
+                    print '<ul class="oa-major-summary-links oa-major-summary-links--nested">';
+                    $first_subheading = false;
                 } else {
                     $LISTURL->insert(['id' => $gid]);
-                    print '<a class="oa-major-summary-link oa-major-summary-item" href="' . $LISTURL->generate() . '">';
-                    print $body . '</a>';
+                    print '<li class="oa-major-summary-item">';
+                    print '<a class="oa-major-summary-link" href="' . $LISTURL->generate() . '">';
+                    print $body . '</a></li>';
                 }
             }
-            if ($in_subsection) {
-                print '</div>';
-            }
-            print '</div></li>';
+            print '</ul></li>';
         }
     }
     print '</ul>';
@@ -1116,5 +1112,5 @@ function _major_summary_title($major, $data, $LISTURL, $daytext) {
     if (isset($daytext[$major])) {
         print '<span class="oa-major-summary-colon">:</span>';
     }
-    print '</strong> <div class="oa-major-summary-links">';
+    print '</strong> <ul class="oa-major-summary-links">';
 }
