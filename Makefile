@@ -21,6 +21,7 @@ help:
 	@echo "  docker-run                          Run the Docker container for the application"
 	@echo "  docker-db-migrate                   Run pending Phinx migrations against the docker mysql"
 	@echo "  docker-db-migrate-down [MIGRATION_TARGET=<version>]  Roll back last migration (or to version)"
+	@echo "  docker-db-seed [SEEDER=<Name>]      Run Phinx seeders against the docker mysql (all, or a specific one)"
 	@echo "  docker-dump-schema                  Dump docker mysql schema (no data) to db/schema.sql"
 	@echo "  xapian-index-docker                Run Xapian indexing in Docker"
 	@echo "  help                                Output this help"
@@ -86,6 +87,14 @@ docker-db-migrate-down: vendor/autoload.php
 		-e DB_HOST=mysql -e DB_USER=$(TEST_DB_USER) -e DB_PASSWORD=$(TEST_DB_PASSWORD) -e DB_NAME=$(TEST_DB_NAME) \
 		-v $(CURDIR):/app -w /app webhost ./vendor/bin/phinx rollback -c phinx.php $(if $(MIGRATION_TARGET),-t $(MIGRATION_TARGET))
 	$(MAKE) docker-dump-schema
+
+# Run Phinx seeders against the docker mysql. Pass SEEDER=<Name> to run just one,
+# e.g. `make docker-db-seed SEEDER=MemberSeeder`. With no SEEDER, all seeders run.
+docker-db-seed: vendor/autoload.php
+	docker compose up -d mysql
+	docker compose run --rm \
+		-e DB_HOST=mysql -e DB_USER=$(TEST_DB_USER) -e DB_PASSWORD=$(TEST_DB_PASSWORD) -e DB_NAME=$(TEST_DB_NAME) \
+		-v $(CURDIR):/app -w /app webhost ./vendor/bin/phinx seed:run -c phinx.php $(if $(SEEDER),-s $(SEEDER))
 
 # Dump the current docker mysql schema (no data) to db/schema.sql.
 docker-dump-schema:
