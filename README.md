@@ -23,8 +23,8 @@ TheyVoteForYou.org.au is one of the users of this data.
 ### Installing php
 
 We use [mise](https://mise.jdx.dev/) to manage the PHP toolchain. The
-required version is pinned in [`mise.toml`](mise.toml). Once mise is
-installed, run:
+required version is pinned in [`.php-version`](.php-version) (which mise
+auto-detects). Once mise is installed, run:
 
 ```bash
 mise install

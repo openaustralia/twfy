@@ -32,7 +32,7 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version-file: composer.json
+          php-version-file: .php-version
           extensions: mbstring, pdo, sqlite
           coverage: none
           tools: composer
