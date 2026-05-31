@@ -150,7 +150,7 @@ jobs:
         uses: marocchino/sticky-pull-request-comment@v2
         with:
           header: schema-drift
-          recreate: true
+          only_update: true  # edit the existing comment in place; never create a new one
           message: |
             ## ⏳ Schema check running…
 
