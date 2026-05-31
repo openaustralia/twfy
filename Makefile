@@ -70,18 +70,22 @@ docker: docker-build docker-run
 	@echo "Site should now be available at http://localhost:$(TWFY_HTTP_PORT) and MySQL at http://localhost:$(TWFY_MYSQL_PORT)"
 
 # Run pending Phinx migrations against the docker mysql service via the webhost container.
+# Always dumps the resulting schema to db/schema.sql so it can be committed alongside the migration.
 docker-db-migrate: vendor/autoload.php
 	docker compose up -d mysql
 	docker compose run --rm \
 		-e DB_HOST=mysql -e DB_USER=$(TEST_DB_USER) -e DB_PASSWORD=$(TEST_DB_PASSWORD) -e DB_NAME=$(TEST_DB_NAME) \
 		-v $(CURDIR):/app -w /app webhost ./vendor/bin/phinx migrate -c phinx.php
+	$(MAKE) docker-dump-schema
 
 # Roll back the last Phinx migration (or pass MIGRATION_TARGET=<version> to roll back to a specific version).
+# Always dumps the resulting schema to db/schema.sql.
 docker-db-migrate-down: vendor/autoload.php
 	docker compose up -d mysql
 	docker compose run --rm \
 		-e DB_HOST=mysql -e DB_USER=$(TEST_DB_USER) -e DB_PASSWORD=$(TEST_DB_PASSWORD) -e DB_NAME=$(TEST_DB_NAME) \
 		-v $(CURDIR):/app -w /app webhost ./vendor/bin/phinx rollback -c phinx.php $(if $(MIGRATION_TARGET),-t $(MIGRATION_TARGET))
+	$(MAKE) docker-dump-schema
 
 # Dump the current docker mysql schema (no data) to db/schema.sql.
 docker-dump-schema:
