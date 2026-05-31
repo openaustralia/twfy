@@ -9,7 +9,7 @@
 
 ini_set('memory_limit', -1);
 
-include '/data/vhost/staging.openaustralia.org/includes/easyparliament/init.php';
+include dirname(__FILE__) . '/../www/includes/easyparliament/init.php';
 include INCLUDESPATH . 'easyparliament/member.php';
 
 $nomail = 1;
