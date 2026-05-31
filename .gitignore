@@ -30,6 +30,7 @@ conf/general
 
 # docker volumes
 _mysqldata/*
+_xapiandb/*
 
 # test and coverage reports
 phpcs-report.json

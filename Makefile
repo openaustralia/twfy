@@ -9,8 +9,10 @@ TEST_DB_USER ?= twfyuser
 TEST_DB_PASSWORD ?= twfypass
 TEST_DB_NAME ?= twfy
 SONAR_SCANNER ?= sonar-scanner
+XAPIANDB ?= /app/shared/search/searchdb
+XAPIANDB_LASTUPDATED ?= $(XAPIANDB)/../searchdb-lastupdated
 
-.PHONY: help docker-build docker-run docker lint lint-perl lint-perl-ci lint-php lint-php-ci phpcs phpcs-ci phpcs-verbose phpcs-sonar sonar-ci install setup test test-all install-xdebug test-coverage test-coverage-docker
+.PHONY: help docker-build docker-run docker xapian-index-docker lint lint-perl lint-perl-ci lint-php lint-php-ci phpcs phpcs-ci phpcs-verbose phpcs-sonar sonar-ci install setup test test-all install-xdebug test-coverage test-coverage-docker
 
 help:
 	@echo "Available targets:"
@@ -18,6 +20,7 @@ help:
 	@echo "  docker-build                        Build the Docker image for the application"
 	@echo "  docker-run                          Run the Docker container for the application"
 	@echo "  docker-migrate                      Run pending Phinx migrations against the docker mysql"
+	@echo "  xapian-index-docker                Run Xapian indexing in Docker"
 	@echo "  help                                Output this help"
 	@echo "  lint                                Run lint-php and lint-perl on the www and scripts directories"
 	@echo "  install                             Install Composer and script dependencies"
@@ -44,6 +47,7 @@ help:
 	@echo "                   --report=full          show each violation in context"
 	@echo "                   www/path/to/file.php   check a specific file"
 	@echo " TWFY_HTTP_PORT, TWFY_MYSQL_PORT - override default host ports used in docker-compose.yml (80 and 3306)"
+	@echo "  XAPIANDB, XAPIANDB_LASTUPDATED - override index and timestamp paths for xapian-index-docker"
 
 docker-build:
 	docker buildx build \
@@ -67,6 +71,11 @@ docker-migrate: vendor/autoload.php
 	docker compose run --rm \
 		-e DB_HOST=mysql -e DB_USER=$(TEST_DB_USER) -e DB_PASSWORD=$(TEST_DB_PASSWORD) -e DB_NAME=$(TEST_DB_NAME) \
 		-v $(CURDIR):/app -w /app webhost ./vendor/bin/phinx migrate -c phinx.php
+xapian-index-docker:
+	docker compose up -d
+	docker compose run --rm \
+		-v $(CURDIR)/..:/work \
+		webhost bash -lc "mkdir -p /app/shared/search && cd /work/twfy/scripts && ../search/index.pl $(XAPIANDB) sincefile $(XAPIANDB_LASTUPDATED)"
 
 lint: lint-php lint-perl
 
