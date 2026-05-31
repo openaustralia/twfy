@@ -49,12 +49,12 @@ sudo apt-get install libgd-dev
 The PHP version is declared in a few places. To bump it, update all of
 the following so they stay in sync:
 
-1. [`composer.json`](composer.json) — `require.php` (the supported range,
-   e.g. `^8.4.0`) and `config.platform.php` (the exact version Composer
-   resolves dependencies against, e.g. `8.4.1`). This is the source of
-   truth that GitHub Actions reads via `php-version-file: composer.json`.
-2. [`mise.toml`](mise.toml) — the version local developers install with
-   `mise install`.
+1. [`.php-version`](.php-version) — the pinned version (e.g. `8.4`). This
+   is read by both `mise` (for local installs) and GitHub Actions
+   (via `shivammathur/setup-php`'s `php-version-file`).
+2. [`composer.json`](composer.json) — `require.php` (the supported range,
+   e.g. `^8.4.0`) and `config.platform.php` (the exact patch version
+   Composer resolves dependencies against, e.g. `8.4.1`).
 3. [`Dockerfile`](Dockerfile) — the `ARG PHP_VERSION=8.3` default near the
    top. This controls the Ubuntu `php<version>-*` package names. You can
    also override it at build time with
