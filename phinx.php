@@ -9,6 +9,10 @@
  * test suite already passes them in via the Makefile.
  */
 
+// Shared helpers used by seeders. Loaded here so they're available regardless
+// of which seeder Phinx requires first.
+require_once __DIR__ . '/db/seeds/lib/CsvSeederTrait.php';
+
 // Load DB_* constants from conf/general if present (DB_* env variables will override regardless)
 $confFile = __DIR__ . '/conf/general';
 if (is_readable($confFile)) {
