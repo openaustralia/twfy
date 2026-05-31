@@ -913,6 +913,25 @@ ul.hansard-day ul li {
     border-top: 1px dashed #e8ddce;
 }
 
+/* Homepage: show the major debate groups (e.g. House and Senate) as side-by-side cards. */
+#home-page #intro ul#hansard-day {
+    margin: 10px 0 0;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+}
+
+#home-page #intro ul#hansard-day > li {
+    margin: 0;
+    height: 100%;
+}
+
+@media (max-width: 760px) {
+    #home-page #intro ul#hansard-day {
+        grid-template-columns: 1fr;
+    }
+}
+
 .excerpt-debates {
     display: inline-block;
     margin-top: 4px;
