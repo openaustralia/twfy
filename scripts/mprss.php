@@ -24,7 +24,6 @@ if ($q->rows() <= 0) {
     exit;
 }
 
-$starttime = time();
 for ($personrow = 0; $personrow < $q->rows(); $personrow++) {
     $person_id = $q->field($personrow, 'person_id');
     $member_ids = $q->field($personrow, 'member_ids');
@@ -47,7 +46,7 @@ for ($personrow = 0; $personrow < $q->rows(); $personrow++) {
     $entries = '';
     if (isset($speeches['rows']) && count($speeches['rows']) > 0) {
 
-        foreach ($speeches['rows'] as $n => $row) {
+        foreach ($speeches['rows'] as $row) {
 
             // While we're linking to individual speeches,
             // the text is the body of the parent, ie (sub)section.
