@@ -13,7 +13,7 @@ define ("DB_NAME", "twfy");
 // Domains.
 // Set this to the domain you are hosting on. If you're running locally, this will be "localhost"
 define ("DOMAIN", "openaustralia.localhost");
-define ("COOKIEDOMAIN", "openaustralia.localhost");
+define ("COOKIEDOMAIN", "localhost");
 
 // General 'Contact us' type email address. Point this at a real address if you
 // want the site generated email to come to you. Can be overridden for other mails below.
