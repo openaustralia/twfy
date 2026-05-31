@@ -276,6 +276,7 @@ div.blockbody {
 
 .oa-debates-piece-speech {
     border-left: 4px solid #b45a3a;
+    min-height: 86px;
 }
 
 .oa-debates-piece-speaker {
