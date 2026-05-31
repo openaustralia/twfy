@@ -1758,36 +1758,51 @@ class PAGE {
             // benefit unfortunately.
 
             twfy_debug_timestamp();
-            $HANSARDLIST = new HANSARDLIST();
+            $search_available = class_exists('XapianStem');
+            if ($search_available) {
+                try {
+                    $HANSARDLIST = new HANSARDLIST();
 
-            $searchstring = "speaker:$member[person_id]";
-            global $SEARCHENGINE;
-            $SEARCHENGINE = new SEARCHENGINE($searchstring);
-            $args = [
-                's' => $searchstring,
-                'p' => 1,
-                'num' => 3,
-                'pop' => 1,
-                'o' => 'd',
-            ];
-            $HANSARDLIST->display('search_min', $args);
+                    $searchstring = "speaker:$member[person_id]";
+                    global $SEARCHENGINE;
+                    $SEARCHENGINE = new SEARCHENGINE($searchstring);
+                    $args = [
+                        's' => $searchstring,
+                        'p' => 1,
+                        'num' => 3,
+                        'pop' => 1,
+                        'o' => 'd',
+                    ];
+                    $HANSARDLIST->display('search_min', $args);
+                } catch (Exception $e) {
+                    $search_available = false;
+                } catch (Error $e) {
+                    $search_available = false;
+                }
+            }
+            if (!$search_available) {
+                print '<p><em>Recent appearances are temporarily unavailable.</em></p>';
+            }
             twfy_debug_timestamp();
 
-            $MOREURL = new URL('search');
-            $MOREURL->insert(['pid' => $member['person_id'], 'pop' => 1]);
-            ?>
-            <p id="moreappear"><a href="<?php echo $MOREURL->generate(); ?>#n4">More of
-                    <?php echo ucfirst($member_full_name_safe); ?>'s recent appearances</a></p>
-
-            <?php
-            if ($rssurl = $DATA->page_metadata($this_page, 'rss')) {
-                // If we set an RSS feed for this page.
-                $HELPURL = new URL('help');
+            if ($search_available) {
+                $MOREURL = new URL('search');
+                $MOREURL->insert(['pid' => $member['person_id'], 'pop' => 1]);
                 ?>
-                <p class="unneededprintlinks"><a href="<?php echo WEBPATH . $rssurl; ?>"
-                        title="XML version of this person's recent appearances">RSS feed</a> (<a
-                        href="<?php echo $HELPURL->generate(); ?>#rss" title="An explanation of what RSS feeds are for">?</a>)</p>
+                <p id="moreappear"><a href="<?php echo $MOREURL->generate(); ?>#n4">More of
+                        <?php echo ucfirst($member_full_name_safe); ?>'s recent appearances</a></p>
+
+                ?>
                 <?php
+                if ($rssurl = $DATA->page_metadata($this_page, 'rss')) {
+                    // If we set an RSS feed for this page.
+                    $HELPURL = new URL('help');
+                    ?>
+                    <p class="unneededprintlinks"><a href="<?php echo WEBPATH . $rssurl; ?>"
+                            title="XML version of this person's recent appearances">RSS feed</a> (<a
+                            href="<?php echo $HELPURL->generate(); ?>#rss" title="An explanation of what RSS feeds are for">?</a>)</p>
+                    <?php
+                }
             }
 
             $this->block_end();
