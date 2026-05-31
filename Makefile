@@ -102,7 +102,7 @@ docker-dump-schema:
 	docker compose exec -T mysql mysqldump \
 		--user=$(TEST_DB_USER) --password=$(TEST_DB_PASSWORD) \
 		--no-data --skip-comments --skip-add-drop-table --skip-set-charset \
-		--routines --triggers --events \
+		--routines --triggers --events --no-tablespaces \
 		$(TEST_DB_NAME) > db/schema.sql
 	@echo "Wrote db/schema.sql"
 xapian-index-docker:
