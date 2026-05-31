@@ -22,7 +22,16 @@ TheyVoteForYou.org.au is one of the users of this data.
 
 ### Installing php
 
-Use `mise install` to install php. 
+We use [mise](https://mise.jdx.dev/) to manage the PHP toolchain. The
+required version is pinned in [`mise.toml`](mise.toml). Once mise is
+installed, run:
+
+```bash
+mise install
+```
+
+from the repo root, which will install the version of PHP this project
+expects.
 
 You may need to:
 ```bash
@@ -34,6 +43,25 @@ sudo apt install plocate
 sudo apt install re2c bison autoconf build-essential libxml2-dev libssl-dev libcurl4-openssl-dev libpng-dev libjpeg-dev libonig-dev libzip-dev
 sudo apt-get install libgd-dev
 ```
+
+### Bumping the PHP version
+
+The PHP version is declared in a few places. To bump it, update all of
+the following so they stay in sync:
+
+1. [`composer.json`](composer.json) — `require.php` (the supported range,
+   e.g. `^8.4.0`) and `config.platform.php` (the exact version Composer
+   resolves dependencies against, e.g. `8.4.1`). This is the source of
+   truth that GitHub Actions reads via `php-version-file: composer.json`.
+2. [`mise.toml`](mise.toml) — the version local developers install with
+   `mise install`.
+3. [`Dockerfile`](Dockerfile) — the `ARG PHP_VERSION=8.3` default near the
+   top. This controls the Ubuntu `php<version>-*` package names. You can
+   also override it at build time with
+   `docker build --build-arg PHP_VERSION=8.4 .`.
+
+After bumping, run `composer update` to refresh `composer.lock`, rebuild
+the Docker image (`make docker`), and run the test suite.
 
 ### Installing composer managed and script dependencies
 

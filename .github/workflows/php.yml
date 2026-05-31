@@ -14,10 +14,10 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-      - name: Setup PHP 8.3
+      - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.3'
+          php-version-file: composer.json
           extensions: mbstring, pdo, sqlite
           coverage: none # Use 'xdebug' or 'pcov' for code coverage
           tools: composer
@@ -67,10 +67,10 @@ jobs:
         working-directory: phplib-checkout
       - name: Link phplib as sibling
         run: ln -s ${{ github.workspace }}/phplib-checkout ../phplib
-      - name: Setup PHP 8.3
+      - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.3'
+          php-version-file: composer.json
           extensions: mbstring, mysqli
           coverage: xdebug
           tools: composer
