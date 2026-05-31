@@ -32,8 +32,6 @@ if (
 ) {
     $GLOSSARY->query = "";
     $args['blankform'] = 1;
-    $URL = new URL('help_us_out');
-    $backlink = $URL->generate();
     $error_message = "Sorry, that phrase appears too many times to be a useful as a link within the parliamentary record.";
 }
 
