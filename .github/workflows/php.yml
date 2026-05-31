@@ -19,7 +19,7 @@ jobs:
         with:
           php-version: '8.3'
           extensions: mbstring, pdo, sqlite
-          coverage: none # Use 'xdebug' or 'pcov' for code coverage
+          e: none # Use 'xdebug' or 'pcov' for code coverage
           tools: composer
       - name: validate configuration
         run: composer validate
@@ -96,27 +96,6 @@ jobs:
           DB_USER: root
           DB_PASSWORD: root
           DB_NAME: test_twfy
-      - name: Build coverage summary
-        run: |
-          {
-            echo "## Code Coverage"
-            echo
-            echo '```text'
-            if grep -q '^Code Coverage Report:' phpunit-coverage.out; then
-              sed -n '/^Code Coverage Report:/,$p' phpunit-coverage.out
-            else
-              echo "Coverage summary not found in phpunit output."
-            fi
-            echo '```'
-          } > code-coverage-results.md
-      - name: Add coverage to job summary
-        run: cat code-coverage-results.md >> "$GITHUB_STEP_SUMMARY"
-      - name: Post coverage comment on PR
-        if: github.event_name == 'pull_request'
-        uses: marocchino/sticky-pull-request-comment@v2
-        with:
-          recreate: true
-          path: code-coverage-results.md
       - name: SonarQube Scan
         uses: SonarSource/sonarqube-scan-action@v8.1.0
         env:
