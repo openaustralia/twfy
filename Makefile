@@ -20,6 +20,8 @@ help:
 	@echo "  docker-build                        Build the Docker image for the application"
 	@echo "  docker-run                          Run the Docker container for the application"
 	@echo "  docker-migrate                      Run pending Phinx migrations against the docker mysql"
+	@echo "  docker-migrate-down [MIGRATION_TARGET=<version>]  Roll back last migration (or to version)"
+	@echo "  docker-dump-schema                  Dump docker mysql schema (no data) to db/schema.sql"
 	@echo "  xapian-index-docker                Run Xapian indexing in Docker"
 	@echo "  help                                Output this help"
 	@echo "  lint                                Run lint-php and lint-perl on the www and scripts directories"
@@ -72,6 +74,23 @@ docker-migrate: vendor/autoload.php
 	docker compose run --rm \
 		-e DB_HOST=mysql -e DB_USER=$(TEST_DB_USER) -e DB_PASSWORD=$(TEST_DB_PASSWORD) -e DB_NAME=$(TEST_DB_NAME) \
 		-v $(CURDIR):/app -w /app webhost ./vendor/bin/phinx migrate -c phinx.php
+
+# Roll back the last Phinx migration (or pass MIGRATION_TARGET=<version> to roll back to a specific version).
+docker-migrate-down: vendor/autoload.php
+	docker compose up -d mysql
+	docker compose run --rm \
+		-e DB_HOST=mysql -e DB_USER=$(TEST_DB_USER) -e DB_PASSWORD=$(TEST_DB_PASSWORD) -e DB_NAME=$(TEST_DB_NAME) \
+		-v $(CURDIR):/app -w /app webhost ./vendor/bin/phinx rollback -c phinx.php $(if $(MIGRATION_TARGET),-t $(MIGRATION_TARGET))
+
+# Dump the current docker mysql schema (no data) to db/schema.sql.
+docker-dump-schema:
+	docker compose up -d mysql
+	docker compose exec -T mysql mysqldump \
+		--user=$(TEST_DB_USER) --password=$(TEST_DB_PASSWORD) \
+		--no-data --skip-comments --skip-add-drop-table --skip-set-charset \
+		--routines --triggers --events \
+		$(TEST_DB_NAME) > db/schema.sql
+	@echo "Wrote db/schema.sql"
 xapian-index-docker:
 	docker compose up -d
 	docker compose run --rm \
