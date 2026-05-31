@@ -26,4 +26,3 @@ $PAGE->stripe_start();
     print '</table>';
     print '<p></p>';
     print $PAGE->page_links($data['info']);
-    ?>

@@ -1385,10 +1385,11 @@ class PAGE {
      */
     public function display_member($member, $extra_info) {
         global $THEUSER, $DATA, $this_page;
+        $member_full_name_safe = htmlentities($member['full_name']);
 
         // If current Senator show their name as "Senator John Smith". Current Representative show their name as "John Smith MP".
         $title = $member['current_member'][2] ? 'Senator ' : '';
-        $title .= ucfirst($member['full_name']);
+        $title .= ucfirst($member_full_name_safe);
         // Show current titles first.
         foreach ($member['houses'] as $house) {
             if ($member['current_member'][$house]) {
@@ -1418,7 +1419,7 @@ class PAGE {
         $this->block_start(['id' => 'mp', 'title' => $title]);
         [$image, $sz] = find_rep_image($member['person_id']);
         if ($image) {
-            echo '<img class="portrait" alt="Photo of ', $member['full_name'], '" src="', $image, '"';
+            echo '<img class="portrait" alt="Photo of ', $member_full_name_safe, '" loading="lazy" src="', htmlentities($image), '"';
             if ($sz == 'S') {
                 echo ' height="118"';
             }
@@ -1441,7 +1442,7 @@ class PAGE {
                 $desc .= ', and ';
                 // XXX: Will go horribly wrong if something odd happens.
                 $last = end($member['other_parties']);
-                $desc .= $last['from'] . ' ';
+                $desc .= htmlentities($last['from']) . ' ';
             }
             $desc .= ' ';
             if ($house == 1) {
@@ -1456,7 +1457,7 @@ class PAGE {
             if ($house == 4) {
                 $desc .= 'MSP';
             }
-            $desc .= ' for ' . $member['left_house'][$house]['constituency'];
+            $desc .= ' for ' . htmlentities($member['left_house'][$house]['constituency']);
             $desc .= '</strong></li>';
         }
         print $desc;
@@ -1464,7 +1465,7 @@ class PAGE {
             print "<li>Changed party ";
             $out = [];
             foreach ($member['other_parties'] as $r) {
-                $out[] = 'from ' . $r['from'] . ' on ' . format_date($r['date'], SHORTDATEFORMAT);
+                $out[] = 'from ' . htmlentities($r['from']) . ' on ' . htmlentities(format_date($r['date'], SHORTDATEFORMAT));
             }
             print implode('; ', $out);
             print '</li>';
@@ -1481,6 +1482,7 @@ class PAGE {
                 }
             }
             if ($mins) {
+                $mins = array_map('htmlentities', $mins);
                 print '<li>' . implode('<br>', $mins) . '</li>';
             }
         }
@@ -1615,7 +1617,7 @@ class PAGE {
         // If they're currently an MLA, a Lord or a non-Sinn Fein MP.
         if ($member['current_member'][0] || $member['current_member'][2] || $member['current_member'][3] || ($member['current_member'][1] && $member['party'] != 'Sinn Fein')) {
             if (!isset($_SERVER['DEVICE_TYPE']) || $_SERVER['DEVICE_TYPE'] != "mobile") {
-                print '<li><a href="' . WEBPATH . 'alert/?only=1&amp;pid=' . $member['person_id'] . '"><strong>Email me whenever ' . $member['full_name'] . ' speaks</strong></a> (no more than once per day)</li>';
+                print '<li><a href="' . WEBPATH . 'alert/?only=1&amp;pid=' . $member['person_id'] . '"><strong>Email me whenever ' . $member_full_name_safe . ' speaks</strong></a> (no more than once per day)</li>';
             }
         }
 
@@ -1637,7 +1639,7 @@ class PAGE {
 
             if (isset($extra_info['edm_ais_url'])) {
                 ?>
-                <li><a href="<?php echo $extra_info['edm_ais_url']; ?>">Early Day Motions signed by this MP</a> <small>(From
+                <li><a href="<?php echo htmlentities($extra_info['edm_ais_url']); ?>">Early Day Motions signed by this MP</a> <small>(From
                         edm.ais.co.uk)</small></li>
                 <?php
             }
@@ -1650,8 +1652,7 @@ class PAGE {
             // Voting Record.
             ?> <a name="votingrecord"></a>
             <?php
-            $this->block_start(['id' => 'votingrecord', 'title' => 'See how <a href="https://theyvoteforyou.org.au/mp.php?id=uk.org.publicwhip/member/' . $member['member_id'] . '">' . $member['full_name'] . ' voted on key issues at They Vote For You</a>']);
-            $this->block_end();
+            echo '<p class="oa-votingrecord-minimal">See how ' . $member_full_name_safe . ' voted on key issues at <a href="https://theyvoteforyou.org.au/mp.php?id=uk.org.publicwhip/member/' . htmlentities($member['member_id']) . '">They Vote For You</a>.</p>';
         } // End DISPLAY_VOTING_DATA feature flag
 
         // Topics of interest only for MPs at the moment
@@ -1776,7 +1777,7 @@ class PAGE {
             $MOREURL->insert(['pid' => $member['person_id'], 'pop' => 1]);
             ?>
             <p id="moreappear"><a href="<?php echo $MOREURL->generate(); ?>#n4">More of
-                    <?php echo ucfirst($member['full_name']); ?>'s recent appearances</a></p>
+                    <?php echo ucfirst($member_full_name_safe); ?>'s recent appearances</a></p>
 
             <?php
             if ($rssurl = $DATA->page_metadata($this_page, 'rss')) {
@@ -1832,12 +1833,12 @@ class PAGE {
             }
 
             if (isset($extra_info['select_committees'])) {
-                print "<li>Is a member of <strong>$extra_info[select_committees]</strong> select committee";
+                print '<li>Is a member of <strong>' . htmlentities($extra_info['select_committees']) . '</strong> select committee';
                 if ($extra_info['select_committees'] > 1) {
                     print "s";
                 }
                 if (isset($extra_info['select_committees_chair'])) {
-                    print " ($extra_info[select_committees_chair] as chair)";
+                    print ' (' . htmlentities($extra_info['select_committees_chair']) . ' as chair)';
                 }
                 print '.</li>';
             }
@@ -1866,12 +1867,12 @@ class PAGE {
                               } elseif ($member['house_disp'] == 4) {
                                   print 'this MSP';
                               } elseif ($member['house_disp'] == 0) {
-                                  print $member['full_name'];
+                                  print $member_full_name_safe;
                               } ?> speaks
                     <?php
                     if ($member['current_member'][0] || $member['current_member'][2] || $member['current_member'][3] || ($member['current_member'][1] && $member['party'] != 'Sinn Fein')) {
                         if (!isset($_SERVER['DEVICE_TYPE']) || $_SERVER['DEVICE_TYPE'] != "mobile") {
-                            print ' &mdash; <a href="' . WEBPATH . 'alert/?only=1&amp;pid=' . $member['person_id'] . '">email me whenever ' . $member['full_name'] . ' speaks</a>';
+                            print ' &mdash; <a href="' . WEBPATH . 'alert/?only=1&amp;pid=' . $member['person_id'] . '">email me whenever ' . $member_full_name_safe . ' speaks</a>';
                         }
                     }
                     print '.</li>';
@@ -1903,7 +1904,7 @@ class PAGE {
 
             $regpath = REGMEMPDFPATH . 'register_interests_' . $member['person_id'] . '.pdf';
             if (isset($extra_info['aph_interests_url'])) {
-                echo '<p><a href="' . $extra_info['aph_interests_url'] . '">' . $member['full_name'] . '\'s latest interest statement<img alt="PDF" src="/images/pdficon_small.gif"></a>';
+                echo '<p><a href="' . htmlentities($extra_info['aph_interests_url']) . '">' . $member_full_name_safe . '\'s latest interest statement<img alt="PDF" src="/images/pdficon_small.gif"></a>';
                 if (isset($extra_info['aph_interests_last_updated'])) {
                     echo '<small>Last updated: ';
                     echo format_date($extra_info['aph_interests_last_updated'], SHORTDATEFORMAT);
@@ -1912,7 +1913,7 @@ class PAGE {
                 echo '</p>';
             }
             if (!isset($extra_info['aph_interests_url'])) {
-                echo 'Scan of ' . $member['full_name'] . '\'s entry is not yet available';
+                echo 'Scan of ' . $member_full_name_safe . '\'s entry is not yet available';
             }
             if (isset($extra_info['register_member_interests_date'])) {
                 echo '<p class="italic">';

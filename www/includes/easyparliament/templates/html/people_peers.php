@@ -19,7 +19,7 @@ $data = array (
 
 global $this_page;
 
-twfy_debug("TEMPLATE", "people_mps.php");
+twfy_debug("TEMPLATE", "people_peers.php");
 
 $order = $data['info']['order'];
 
@@ -51,16 +51,17 @@ if ($order == 'constituency')
     $th_state = 'State';
 
 ?>
-<table border="0" cellpadding="4" cellspacing="0" width="90%" class="people">
+<table border="0" cellpadding="4" cellspacing="0" width="90%" class="people oa-people-table">
+    <caption class="oa-sr-only">List of peers, including party, state, and positions</caption>
     <thead>
         <tr>
-            <th>Photo</th>
-            <th><?php echo $th_name; ?></th>
-            <th><?php echo $th_party; ?></th>
-            <th><?php echo $th_state; ?></th>
-            <th>Positions</th>
+            <th scope="col">Photo</th>
+            <th scope="col"><?php echo $th_name; ?></th>
+            <th scope="col"><?php echo $th_party; ?></th>
+            <th scope="col"><?php echo $th_state; ?></th>
+            <th scope="col">Positions</th>
             <?php if ($order == 'debates') { ?>
-                <th>Debates spoken in the last year</th>
+                <th scope="col">Debates spoken in the last year</th>
             <?php } ?>
         </tr>
     </thead>
@@ -92,6 +93,7 @@ function render_peers_row($peer, &$style, $order, $URL)
     $style = $style == '1' ? '2' : '1';
 
     $name = member_full_name(2, $peer['title'], $peer['first_name'], $peer['last_name'], $peer['constituency']);
+    $name_title = ucfirst($name);
     if (array_key_exists($peer['party'], $parties))
         $party = $parties[$peer['party']];
     else
@@ -99,29 +101,36 @@ function render_peers_row($peer, &$style, $order, $URL)
 
     #	$MPURL->insert(array('pid'=>$peer['person_id']));
     $url = $URL->generate() . make_member_url($name, $peer['constituency'], 2);
+    $url_safe = htmlentities($url);
+    $name_safe = htmlentities($name_title);
+    $party_safe = htmlentities($party);
+    $state_safe = htmlentities($peer['constituency']);
+    $photo_alt = htmlentities('Photo of ' . $name_title);
     ?>
     <tr>
         <td class="row">
             <?php
             list($image, $sz) = find_rep_image($peer['person_id'], true);
             if ($image) {
-                echo '<a href="', $url, '">';
-                echo '<img class="portrait" alt="" src="', $image, '"/>';
+                echo '<a href="', $url_safe, '">';
+                echo '<img class="portrait" alt="', $photo_alt, '" loading="lazy" src="', htmlentities($image), '"/>';
                 echo '</a>';
             }
             ?>
         </td>
         <td class="row-<?php echo $style; ?>">
-            <a href="<?php echo $url; ?>"><?php echo ucfirst($name); ?></a>
+            <a href="<?php echo $url_safe; ?>"><?php echo $name_safe; ?></a>
         </td>
-        <td class="row-<?php echo $style; ?>"><?php echo $party; ?></td>
-        <td class="row-<?php echo $style; ?>"><?php echo $peer['constituency'] ?></td>
+        <td class="row-<?php echo $style; ?>"><?php echo $party_safe; ?></td>
+        <td class="row-<?php echo $style; ?>"><?php echo $state_safe ?></td>
         <td class="row-<?php echo $style; ?>">
             <?php
             if (is_array($peer['dept'])) {
-                print implode('<br>', array_map('manymins', $peer['pos'], $peer['dept']));
+                $positions = array_map('manymins', $peer['pos'], $peer['dept']);
+                $positions = array_map('htmlentities', $positions);
+                print implode('<br>', $positions);
             } elseif ($peer['dept']) {
-                print prettify_office($peer['pos'], $peer['dept']);
+                print htmlentities(prettify_office($peer['pos'], $peer['dept']));
             } else {
                 print '&nbsp;';
             }
