@@ -57,6 +57,72 @@ Use `phpcbf` to fix formatting that GitHub Actions complains about, eg:
 ./vendor/bin/phpcbf www/includes/easyparliament/alert.php www/includes/easyparliament/user.php
 ```
 
+## Running the app locally
+
+The easiest way to run the whole stack (Apache + PHP + MySQL) is via Docker:
+
+```bash
+make docker          # build the image then start the containers
+# or, if the image is already built:
+make docker-run
+```
+
+The site will be available at <http://localhost> (override the port with
+`TWFY_HTTP_PORT=8080 make docker-run`), and MySQL on `127.0.0.1:3306`
+(override with `TWFY_MYSQL_PORT`).
+
+On first start, load the schema and apply any migrations:
+
+```bash
+make docker-migrate              # apply pending Phinx migrations
+```
+
+To populate the Xapian search index (required for the search box to return
+results), run:
+
+```bash
+make xapian-index-docker         # incremental index using the timestamp file
+```
+
+Stop everything with `docker compose down`.
+
+## Database migrations
+
+We use [Phinx](https://book.cakephp.org/phinx/0/en/index.html) to manage
+schema changes. Migration files live in `db/migrations/` and the canonical
+schema is checked in at `db/schema.sql`.
+
+### Adding a new migration
+
+Create a new migration file (timestamped) and edit it:
+
+```bash
+docker compose run --rm -v $(pwd):/app -w /app webhost \
+    ./vendor/bin/phinx create AddSomethingDescriptive -c phinx.php
+```
+
+Implement `change()` (or `up()`/`down()`) in the generated file under
+`db/migrations/`.
+
+### Running migrations
+
+```bash
+make docker-migrate                       # apply all pending migrations
+make docker-migrate-down                  # roll back the most recent migration
+make docker-migrate-down MIGRATION_TARGET=20260530000000   # roll back to a specific version
+```
+
+### Updating the checked-in schema
+
+After adding (or rolling back) a migration, dump the resulting schema and
+commit it alongside the migration file so reviewers can see the net effect
+and fresh checkouts don't need to replay history:
+
+```bash
+make docker-dump-schema          # writes db/schema.sql
+git add db/migrations/<your_new_migration>.php db/schema.sql
+```
+
 ## Testing
 
 ### Running the tests
