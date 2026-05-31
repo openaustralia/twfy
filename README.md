@@ -33,15 +33,12 @@ mise install
 from the repo root, which will install the version of PHP this project
 expects.
 
-You may need to:
+If `mise install` fails while compiling PHP from source, you may be
+missing build dependencies. On Ubuntu:
+
 ```bash
 sudo apt update
-sudo apt install plocate
-# If you have many millions of files, the indexer may take a while.
-# You can either wait or kill the indexer holding up apt install (which will complete the install),
-# add exclusions to /etc/updatedb.conf and rerun.
-sudo apt install re2c bison autoconf build-essential libxml2-dev libssl-dev libcurl4-openssl-dev libpng-dev libjpeg-dev libonig-dev libzip-dev
-sudo apt-get install libgd-dev
+sudo apt install re2c bison autoconf build-essential libxml2-dev libssl-dev libcurl4-openssl-dev libpng-dev libjpeg-dev libonig-dev libzip-dev libgd-dev
 ```
 
 ### Bumping the PHP version
