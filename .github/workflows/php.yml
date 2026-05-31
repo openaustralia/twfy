@@ -145,6 +145,20 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+      - name: Post in-progress schema check comment on PR
+        if: github.event_name == 'pull_request'
+        uses: marocchino/sticky-pull-request-comment@v2
+        with:
+          header: schema-drift
+          recreate: true
+          message: |
+            ## ⏳ Schema check running…
+
+            Applying Phinx migrations to a fresh database and comparing
+            against `db/schema.sql`. This comment will update with the
+            result when the job finishes.
+
+            See the [job run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}) for live progress.
       - name: Setup PHP 8.3
         uses: shivammathur/setup-php@v2
         with:
