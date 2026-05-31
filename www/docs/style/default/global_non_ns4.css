@@ -694,27 +694,35 @@ div#intro ul#hansard-day > li {
 	break-inside: avoid;
 	page-break-inside: avoid;
 }
-div#intro ul#hansard-day > li > strong {
+div#intro ul#hansard-day .oa-major-summary-title {
 	display: block;
-	margin-bottom: 0.55em;
-	color: #4d3928;
-	font-size: 0.95em;
-	line-height: 1.4;
+	margin: 0 0 0.6em;
+	padding-bottom: 0.55em;
+	border-bottom: 1px solid #ece0d1;
+	color: #1f1b16;
+	font-size: 1.05em;
+	font-weight: 600;
+	line-height: 1.35;
+	letter-spacing: 0.01em;
 }
-div#intro ul#hansard-day > li > strong a {
-	display: inline-block;
-	padding: 0.08em 0.3em;
-	border-radius: 999px;
-	color: #5d2e1e;
-	background: #f7eee5;
+div#intro ul#hansard-day .oa-major-summary-major-link {
+	color: inherit;
+	font: inherit;
 	text-decoration: none;
-	box-shadow: inset 0 -1px 0 rgba(93, 46, 30, 0.2);
-	transition: background-color 140ms ease, color 140ms ease, box-shadow 140ms ease;
+	transition: color 140ms ease;
 }
-div#intro ul#hansard-day > li > strong a:hover {
+div#intro ul#hansard-day .oa-major-summary-major-link:hover {
 	color: #7a3824;
-	background: #f3e5d7;
-	box-shadow: inset 0 -1px 0 rgba(122, 56, 36, 0.4);
+	background: transparent;
+	box-shadow: none;
+	text-decoration: underline;
+}
+div#intro ul#hansard-day .oa-major-summary-daytext {
+	color: inherit;
+	font: inherit;
+}
+div#intro ul#hansard-day .oa-major-summary-colon {
+	display: none;
 }
 div#intro ul#hansard-day .oa-major-summary-group {
 	margin-left: 0;

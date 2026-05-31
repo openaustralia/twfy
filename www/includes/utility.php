@@ -1098,7 +1098,7 @@ function major_summary($data, $limit = "") {
  */
 function _major_summary_title($major, $data, $LISTURL, $daytext) {
     global $hansardmajors;
-    print '<li class="oa-major-summary-group"><strong class="oa-major-summary-title">';
+    print '<li class="oa-major-summary-group"><h4 class="oa-major-summary-title">';
     if (isset($daytext[$major])) {
         print '<span class="oa-major-summary-daytext">' . $daytext[$major] . '</span> ';
     }
@@ -1112,5 +1112,5 @@ function _major_summary_title($major, $data, $LISTURL, $daytext) {
     if (isset($daytext[$major])) {
         print '<span class="oa-major-summary-colon">:</span>';
     }
-    print '</strong> <ul class="oa-major-summary-links">';
+    print '</h4> <ul class="oa-major-summary-links">';
 }

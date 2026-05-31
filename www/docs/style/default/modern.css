@@ -915,31 +915,35 @@ ul.hansard-day ul li {
 
 .oa-major-summary-title {
     display: block;
-    margin-bottom: 4px;
-    color: #4d3928;
-    font-size: 1.02rem;
+    margin: 0 0 10px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #ece0d1;
+    color: #1f1b16;
+    font-size: 1.05rem;
+    font-weight: 600;
+    line-height: 1.35;
     letter-spacing: 0.01em;
 }
 
-.oa-major-summary-daytext {
-    color: #7a6656;
-    font-weight: 600;
-}
-
 .oa-major-summary-major-link {
-    color: #5d2e1e;
+    color: inherit;
+    font: inherit;
     text-decoration: none;
-    border-bottom: 1px solid transparent;
-    transition: border-color 140ms ease, color 140ms ease;
+    transition: color 140ms ease;
 }
 
 .oa-major-summary-major-link:hover {
     color: #7a3824;
-    border-bottom-color: #d8b194;
+    text-decoration: underline;
+}
+
+.oa-major-summary-daytext {
+    color: inherit;
+    font: inherit;
 }
 
 .oa-major-summary-colon {
-    color: #8f7863;
+    display: none;
 }
 
 .oa-major-summary-items,
