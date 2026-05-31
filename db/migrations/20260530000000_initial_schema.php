@@ -34,6 +34,7 @@ final class InitialSchema extends AbstractMigration {
 
         // Split on semicolons at end of line and execute each non-empty statement.
         // Comments (-- ...) are fine for the MySQL adapter to receive.
+        // Note: NOT suitable for BEGIN stmt; stmt; ... END blocks, so be careful if you copy this elsewhere
         $statements = preg_split('/;\s*\R/', $schema);
         foreach ($statements as $sql) {
             $sql = trim($sql);
