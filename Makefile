@@ -12,20 +12,21 @@ SONAR_SCANNER ?= sonar-scanner
 XAPIANDB ?= /app/shared/search/searchdb
 XAPIANDB_LASTUPDATED ?= $(XAPIANDB)/../searchdb-lastupdated
 
-.PHONY: help docker-build docker-run docker xapian-index-docker lint lint-perl lint-perl-ci lint-php lint-php-ci phpcs phpcs-ci phpcs-verbose phpcs-sonar sonar-ci install setup test test-all install-xdebug test-coverage test-coverage-docker
+.PHONY: help docker-build docker-run docker xapian-index-docker lint lint-perl lint-perl-ci lint-php lint-php-ci phpcs phpcs-ci phpcs-verbose phpcs-sonar sonar-ci dependencies install setup test test-all install-xdebug test-coverage test-coverage-docker
 
 help:
 	@echo "Available targets:"
 	@echo "  docker                              Build docker image then run docker container"
 	@echo "  docker-build                        Build the Docker image for the application"
 	@echo "  docker-run                          Run the Docker container for the application"
-	@echo "  docker-migrate                      Run pending Phinx migrations against the docker mysql"
-	@echo "  docker-migrate-down [MIGRATION_TARGET=<version>]  Roll back last migration (or to version)"
+	@echo "  docker-db-migrate                   Run pending Phinx migrations against the docker mysql"
+	@echo "  docker-db-migrate-down [MIGRATION_TARGET=<version>]  Roll back last migration (or to version)"
 	@echo "  docker-dump-schema                  Dump docker mysql schema (no data) to db/schema.sql"
 	@echo "  xapian-index-docker                Run Xapian indexing in Docker"
 	@echo "  help                                Output this help"
 	@echo "  lint                                Run lint-php and lint-perl on the www and scripts directories"
-	@echo "  install                             Install Composer and script dependencies"
+	@echo "  dependencies                        Install PHP (Composer) dependencies into ./vendor"
+	@echo "  install                             Install Composer and script dependencies (alias of dependencies + run-with-lockfile)"
 	@echo "  setup                               Install ubuntu packages required for development"
 	@echo "  test [TEST_ARGS=...]                Run PHPUnit tests"
 	@echo "  test-all [TEST_ARGS=...]            Run all PHPUnit tests including DB integration"
@@ -69,14 +70,14 @@ docker: docker-build docker-run
 	@echo "Site should now be available at http://localhost:$(TWFY_HTTP_PORT) and MySQL at http://localhost:$(TWFY_MYSQL_PORT)"
 
 # Run pending Phinx migrations against the docker mysql service via the webhost container.
-docker-migrate: vendor/autoload.php
+docker-db-migrate: vendor/autoload.php
 	docker compose up -d mysql
 	docker compose run --rm \
 		-e DB_HOST=mysql -e DB_USER=$(TEST_DB_USER) -e DB_PASSWORD=$(TEST_DB_PASSWORD) -e DB_NAME=$(TEST_DB_NAME) \
 		-v $(CURDIR):/app -w /app webhost ./vendor/bin/phinx migrate -c phinx.php
 
 # Roll back the last Phinx migration (or pass MIGRATION_TARGET=<version> to roll back to a specific version).
-docker-migrate-down: vendor/autoload.php
+docker-db-migrate-down: vendor/autoload.php
 	docker compose up -d mysql
 	docker compose run --rm \
 		-e DB_HOST=mysql -e DB_USER=$(TEST_DB_USER) -e DB_PASSWORD=$(TEST_DB_PASSWORD) -e DB_NAME=$(TEST_DB_NAME) \
@@ -119,8 +120,12 @@ sonar-ci: test-coverage phpcs-sonar
 	@command -v $(SONAR_SCANNER) >/dev/null 2>&1 || { echo "$(SONAR_SCANNER) not found on PATH"; exit 1; }
 	$(SONAR_SCANNER)
 
-install: scripts/run-with-lockfile
+# Install PHP (Composer) dependencies into ./vendor. Required before running
+# migrations, tests, lint, etc. Re-run after pulling changes to composer.json/lock.
+dependencies vendor/autoload.php:
 	composer install --no-interaction --prefer-dist
+
+install: dependencies scripts/run-with-lockfile
 
 # Gleaned from infrastructure: roles/internal/openaustralia/tasks/main.yml
 setup:

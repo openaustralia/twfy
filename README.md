@@ -37,9 +37,17 @@ sudo apt-get install libgd-dev
 
 ### Installing composer managed and script dependencies
 
+PHP (Composer) dependencies are installed into `./vendor`. Most other
+targets (tests, migrations, lint) depend on this having been done:
+
 ```bash
-make install
+make dependencies      # composer install only
+# or
+make install           # composer install + compile scripts/run-with-lockfile
 ```
+
+Re-run `make dependencies` after pulling changes that touch `composer.json`
+or `composer.lock`.
 
 ### Running the checks git does
 
@@ -74,7 +82,7 @@ The site will be available at <http://localhost> (override the port with
 On first start, load the schema and apply any migrations:
 
 ```bash
-make docker-migrate              # apply pending Phinx migrations
+make docker-db-migrate              # apply pending Phinx migrations
 ```
 
 To populate the Xapian search index (required for the search box to return
@@ -107,9 +115,9 @@ Implement `change()` (or `up()`/`down()`) in the generated file under
 ### Running migrations
 
 ```bash
-make docker-migrate                       # apply all pending migrations
-make docker-migrate-down                  # roll back the most recent migration
-make docker-migrate-down MIGRATION_TARGET=20260530000000   # roll back to a specific version
+make docker-db-migrate                       # apply all pending migrations
+make docker-db-migrate-down                  # roll back the most recent migration
+make docker-db-migrate-down MIGRATION_TARGET=20260530000000   # roll back to a specific version
 ```
 
 ### Updating the checked-in schema
@@ -216,7 +224,7 @@ cp conf/general-example.local-dev conf/general
 
 cd ../openaustralia-parser # if not already there
 cd ../twfy
-make docker-migrate                # or: ./vendor/bin/phinx migrate -c phinx.php
+make docker-db-migrate                # or: ./vendor/bin/phinx migrate -c phinx.php
 cd ../openaustralia-parser
 bundle exec rake db:fixtures:load   # for a limited set of fixtures
 bundle exec rake db:stats # to show which tables have data
