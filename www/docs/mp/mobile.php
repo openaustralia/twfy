@@ -105,7 +105,7 @@ if (get_http_var('recent')) {
     if ($pid) {
         $URL = new URL('search');
         $URL->insert(['pid' => $pid, 'pop' => 1]);
-        header('Location: https://' . DOMAIN . $URL->generate('none'));
+        header('Location: //' . DOMAIN . $URL->generate('none'));
         exit;
     }
 }

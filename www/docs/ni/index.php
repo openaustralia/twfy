@@ -48,7 +48,7 @@ if (get_http_var("d") != "") {
     if (is_string($result)) {
         $URL = new URL('nidebates');
         $URL->insert(['id' => $result]);
-        header('Location: https://' . DOMAIN . $URL->generate('none'), true, 301);
+        header('Location: //' . DOMAIN . $URL->generate('none'), true, 301);
         exit;
     }
 
@@ -92,7 +92,7 @@ if (get_http_var("d") != "") {
     if (is_string($result)) {
         $URL = new URL('nidebate');
         $URL->insert(['gid' => $result]);
-        header('Location: https://' . DOMAIN . $URL->generate('none'));
+        header('Location: //' . DOMAIN . $URL->generate('none'));
         exit;
     }
     if ($NILIST->htype() == '12' || $NILIST->htype() == '13') {
