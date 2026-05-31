@@ -131,14 +131,6 @@ define('OPTION_PHP_DEBUG_LEVEL', 0);
 // *******************************************************************************
 // XML Sitemaps
 
-// Using pingmymap.com for simultaneously notifying many search engines of new xml sitemaps
-// Sign up for an account to get an API key
-define('PINGMYMAP_API_KEY', '0123456789abcdef0123456789abcdef');
-
-// *******************************************************************************
-// AddThis.com Sharing Analytics
-define('ADDTHIS_USERNAME', '');
-
 // Host to use when loading They Vote For You data
 define('PUBLICWHIP_HOST', 'https://theyvoteforyou.org.au');
 // define('DISPLAY_VOTING_DATA', false);

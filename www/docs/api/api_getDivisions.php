@@ -58,6 +58,6 @@ function api_getDivisions_date($date) {
 /**
  *
  */
-function api_getDivisions($date = 'now()') {
+function api_getDivisions($date = null) {
     api_getConstituencies($date);
 }

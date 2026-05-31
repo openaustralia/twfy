@@ -307,7 +307,7 @@ class MySQLQuery {
                         // Don't want to risk this data being displayed on any page.
                         $html .= "<td>**MASKED**</td>";
                     } else {
-                        $html .= "<td>" . htmlentities($field) . "</td>";
+                        $html .= "<td>" . htmlentities((string) ($field ?? '')) . "</td>";
                     }
                 }
                 $html .= "</tr>\n";

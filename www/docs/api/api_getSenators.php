@@ -44,6 +44,6 @@ function api_getSenators_date($date) {
 /**
  *
  */
-function api_getSenators($date = 'now()') {
+function api_getSenators($date = null) {
     api_getLords($date);
 }

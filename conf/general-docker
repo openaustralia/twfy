@@ -38,7 +38,7 @@ define ("WEBPATH", "/");
 // Put variables that are consistent across development and live servers in init.php.
 
 // If true, php errors will be displayed, not emailed to the bugs list.
-define ("DEVSITE", false);
+define ("DEVSITE", true);
 
 // Add this and a number to the URL (eg '?debug=1') to view debug info.
 define ("DEBUGTAG", 'debug');
@@ -132,10 +132,6 @@ define('OPTION_GAZE_URL', '');
 
 // mySociety debug level thing. Probably leave as 0.
 define('OPTION_PHP_DEBUG_LEVEL', 0);
-
-// *******************************************************************************
-// AddThis.com Sharing Analytics. Leave blank or comment out to disable addthis analytics.
-define('ADDTHIS_USERNAME', 'openaustralia');
 
 // Host to use when loading They Vote For You data
 define('PUBLICWHIP_HOST', 'https://theyvoteforyou.org.au');
