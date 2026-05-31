@@ -196,6 +196,119 @@ div.blockbody {
     padding-top: 12px;
 }
 
+/* Debates-only stripe refresh: scoped so other pages keep existing stripe look. */
+#content .oa-debates-stripe {
+    margin: 0 12px 12px;
+    border: 1px solid #decfbd;
+    border-radius: 14px;
+    overflow: hidden;
+    background: #fdf8f2;
+    box-shadow: 0 2px 6px rgba(42, 36, 31, 0.08);
+}
+
+#content .oa-debates-stripe > .main {
+    background: #fff;
+    border-right: 1px solid #ecdfd2;
+}
+
+#content .oa-debates-stripe > .sidebar {
+    background: #f8f2ea;
+}
+
+#content .stripe-head-1.oa-debates-stripe,
+#content .stripe-head-2.oa-debates-stripe {
+    border-color: #d8ccb9;
+    background: linear-gradient(180deg, #f6eee3 0%, #efe4d4 100%);
+}
+
+#content .stripe-head-1.oa-debates-stripe > .main,
+#content .stripe-head-2.oa-debates-stripe > .main {
+    background: transparent;
+}
+
+#content .stripe-1.oa-debates-stripe,
+#content .stripe-time-1.oa-debates-stripe,
+#content .stripe-procedural-1.oa-debates-stripe {
+    background: linear-gradient(180deg, #fff 0%, #f9f4ed 100%);
+}
+
+#content .stripe-2.oa-debates-stripe,
+#content .stripe-time-2.oa-debates-stripe,
+#content .stripe-procedural-2.oa-debates-stripe {
+    background: linear-gradient(180deg, #fdf8f2 0%, #f6eee3 100%);
+}
+
+#content .stripe-time-1.oa-debates-stripe,
+#content .stripe-time-2.oa-debates-stripe,
+#content .stripe-procedural-1.oa-debates-stripe,
+#content .stripe-procedural-2.oa-debates-stripe {
+    border-left: 4px solid #d5b089;
+}
+
+#content .stripe-1-on.oa-debates-stripe,
+#content .stripe-2-on.oa-debates-stripe {
+    border-left: 4px solid #a33e1c;
+}
+
+#content .stripe-foot.oa-debates-stripe {
+    border-color: #d8ccb9;
+    background: #f7efe4;
+}
+
+#content .stripe-side.oa-debates-stripe {
+    background: #f7efe4;
+}
+
+/* Debates-only inner wrappers: keep legacy stripes, modernize content cards inside them. */
+.oa-debates-piece {
+    margin: 10px 12px;
+    padding: 12px 14px;
+    border: 1px solid #e2d6c8;
+    border-radius: 12px;
+    background: #fff;
+    box-shadow: 0 1px 4px rgba(42, 36, 31, 0.08);
+}
+
+.oa-debates-piece-procedural {
+    border-left: 4px solid #c58d58;
+    background: linear-gradient(180deg, #fff 0%, #fffaf4 100%);
+}
+
+.oa-debates-piece-speech {
+    border-left: 4px solid #b45a3a;
+}
+
+.oa-debates-piece-speaker {
+    margin: 0 0 10px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #eee3d6;
+}
+
+.oa-debates-piece-body {
+    line-height: 1.6;
+}
+
+.oa-debates-piece-body > p:first-child {
+    margin-top: 0;
+}
+
+.oa-debates-piece-body > p:last-child {
+    margin-bottom: 0;
+}
+
+.oa-debates-time-chip {
+    display: inline-block;
+    margin: 6px 12px;
+    padding: 4px 10px;
+    border: 1px solid #ddc8b3;
+    border-radius: 999px;
+    background: #fff7eb;
+    color: #6f4a2f;
+    font-size: 0.82rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+}
+
 /* Normalize the homepage intro actions across variants (desktop/mobile/election). */
 #intro .blockbody {
     padding: 14px 16px 16px;
@@ -816,11 +929,74 @@ ul.hansard-day ul li {
 }
 
 .oa-subrows-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+}
+
+.oa-subrows-avatar-wrap {
+    width: 38px;
+    flex: 0 0 38px;
+    margin-top: 2px;
+}
+
+.oa-subrows-avatar {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    border: 1px solid #dfd3c5;
+    background: #fff;
+    box-shadow: 0 1px 4px rgba(42, 36, 31, 0.12);
+    display: block;
+}
+
+.oa-subrows-avatar-fallback {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: #5d2e1e;
+    font-weight: 700;
+    font-size: 0.92rem;
+    background: #f7ece1;
+}
+
+.oa-subrows-bubble {
+    position: relative;
+    flex: 1;
     border: 1px solid #e5d9cc;
     border-radius: 12px;
     background: linear-gradient(180deg, #fff 0%, #fdf8f3 100%);
     box-shadow: 0 1px 3px rgba(42, 36, 31, 0.08);
     padding: 10px 12px;
+}
+
+.oa-subrows-item-with-avatar .oa-subrows-bubble::before {
+    content: "";
+    position: absolute;
+    left: -8px;
+    top: 12px;
+    width: 12px;
+    height: 12px;
+    border-left: 1px solid #e5d9cc;
+    border-bottom: 1px solid #e5d9cc;
+    background: #fefbf7;
+    transform: rotate(45deg);
+}
+
+.oa-subrows-speaker {
+    margin: 0 0 6px;
+    color: #7a6455;
+    font-size: 0.84rem;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+    text-transform: uppercase;
+}
+
+.oa-subrows-main {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
 }
 
 .oa-subrows-link {
@@ -832,18 +1008,56 @@ ul.hansard-day ul li {
     text-decoration: underline;
 }
 
+.oa-subrows-link:focus-visible {
+    outline: 3px solid #0f62fe;
+    outline-offset: 2px;
+    border-radius: 4px;
+}
+
+.oa-subrows-title {
+    font-size: 1rem;
+    line-height: 1.35;
+}
+
 .oa-subrows-heading {
     color: #5a261a;
 }
 
 .oa-subrows-meta {
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: 6px;
     color: #7a6455;
     font-weight: 600;
-    margin-left: 4px;
+}
+
+.oa-subrows-chip {
+    display: inline-block;
+    border: 1px solid #e0d2c2;
+    border-radius: 999px;
+    background: #fff;
+    padding: 2px 8px;
+    font-size: 0.84rem;
+    line-height: 1.25;
 }
 
 .oa-subrows-excerpt {
-    margin-top: 6px;
+    display: block;
+    margin: 8px 0 0;
+    padding-top: 8px;
+    border-top: 1px dashed #e8ddcf;
+}
+
+@media (max-width: 640px) {
+    .oa-subrows-avatar-wrap {
+        width: 32px;
+        flex-basis: 32px;
+    }
+
+    .oa-subrows-avatar {
+        width: 32px;
+        height: 32px;
+    }
 }
 
 .hansard .dates,

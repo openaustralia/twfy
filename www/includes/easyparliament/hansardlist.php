@@ -2436,7 +2436,8 @@ class HANSARDLIST {
                         'amount' => [
                             'body' => true,
                             'comment' => true,
-                            'excerpt' => true
+                            'excerpt' => true,
+                            'speaker' => true
                         ],
                         'where' => [
                             'section_id=' => $sectionrow['epobject_id'],

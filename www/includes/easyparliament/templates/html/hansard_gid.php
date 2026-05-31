@@ -29,6 +29,8 @@ if (!isset($data['info'])) {
 
 $PAGE->page_start();
 
+$debates_inner_mode = ($this_page == 'debates' || $this_page == 'debate');
+
 $PAGE->stripe_start('head-1');
 
 $sidebar = $hansardmajors[$data['info']['major']]['sidebar_short'];
@@ -141,9 +143,17 @@ if (isset($data['rows'])) {
 
             $PAGE->stripe_start('procedural-' . $style);
 
+            if ($debates_inner_mode) {
+                print '<div class="oa-debates-piece oa-debates-piece-procedural">';
+            }
+
             echo $row['body'];
 
             context_link($row);
+
+            if ($debates_inner_mode) {
+                print '</div>';
+            }
 
             $sidebarhtml = generate_commentteaser($row, $data['info']['major']);
 
@@ -178,7 +188,11 @@ if (isset($data['rows'])) {
 
                 $PAGE->stripe_start('time-' . $style);
 
-                echo "\t\t\t\t<p>" . format_time($row['htime'], TIMEFORMAT) . "</p>\n";
+                if ($debates_inner_mode) {
+                    echo "\t\t\t\t<p class=\"oa-debates-time-chip\">" . format_time($row['htime'], TIMEFORMAT) . "</p>\n";
+                } else {
+                    echo "\t\t\t\t<p>" . format_time($row['htime'], TIMEFORMAT) . "</p>\n";
+                }
 
                 $PAGE->stripe_end();
 
@@ -203,12 +217,17 @@ if (isset($data['rows'])) {
             <a name="<?php echo $id; ?>"></a>
             <?php
 
+            if ($debates_inner_mode) {
+                print '<article class="oa-debates-piece oa-debates-piece-speech">';
+            }
+
             if (isset($row['speaker']) && count($row['speaker']) > 0) {
                 // We have a speaker to print.
 
                 $speaker = $row['speaker'];
                 $speakername = ucfirst(member_full_name($speaker['house'], $speaker['title'], $speaker['first_name'], $speaker['last_name'], $speaker['constituency']));
-                echo '<p class="speaker"><a href="', $speaker['url'], '" title="See more information about ', $speakername, '">';
+                $speaker_classes = $debates_inner_mode ? 'speaker oa-debates-piece-speaker' : 'speaker';
+                echo '<p class="', $speaker_classes, '"><a href="', $speaker['url'], '" title="See more information about ', $speakername, '">';
                 list($image, $sz) = find_rep_image($speaker['person_id'], true);
                 if ($image) {
                     echo '<img src="', $image, '" class="portrait" alt="Photo of ', $speakername, '"';
@@ -261,9 +280,19 @@ if (isset($data['rows'])) {
 
             $body = str_replace('pwmotiontext="moved"', 'class="moved"', $body);
             $body = str_replace('<a href="h', '<a rel="nofollow" href="h', $body); # As even sites in Hansard lapse and become spam-sites
+            if ($debates_inner_mode) {
+                print '<div class="oa-debates-piece-body">';
+            }
             echo str_replace('</p><p', '</p> <p', $body); # NN4 font size bug
+            if ($debates_inner_mode) {
+                print '</div>';
+            }
 
             context_link($row);
+
+            if ($debates_inner_mode) {
+                print '</article>';
+            }
 
             $sidebarhtml = '';
             $extrahtml = '';
@@ -316,7 +345,33 @@ if (isset($data['rows'])) {
         $PAGE->stripe_start();
         print '<ul class="oa-subrows-list">';
         foreach ($data['subrows'] as $row) {
-            print '<li class="oa-subrows-item">';
+            $has_speaker = isset($row['speaker']) && isset($row['speaker']['person_id']) && $row['speaker']['person_id'];
+            $speaker_name = '';
+            if ($has_speaker) {
+                $speaker_name = trim(($row['speaker']['first_name'] ?? '') . ' ' . ($row['speaker']['last_name'] ?? ''));
+                if ($speaker_name == '') {
+                    $speaker_name = 'Speaker';
+                }
+            }
+
+            print '<li class="oa-subrows-item' . ($has_speaker ? ' oa-subrows-item-with-avatar' : '') . '">';
+            if ($has_speaker) {
+                [$speaker_image, $speaker_image_size] = find_rep_image($row['speaker']['person_id'], true);
+                print '<div class="oa-subrows-avatar-wrap" aria-hidden="true">';
+                if ($speaker_image) {
+                    print '<img class="oa-subrows-avatar" src="' . htmlentities($speaker_image) . '" alt="">';
+                } else {
+                    $speaker_initial = strtoupper(substr($speaker_name, 0, 1));
+                    print '<span class="oa-subrows-avatar oa-subrows-avatar-fallback">' . htmlentities($speaker_initial) . '</span>';
+                }
+                print '</div>';
+            }
+
+            print '<div class="oa-subrows-bubble">';
+            if ($has_speaker) {
+                print '<p class="oa-subrows-speaker">' . htmlentities($speaker_name) . '</p>';
+            }
+            print '<div class="oa-subrows-main">';
             if (isset($row['contentcount']) && $row['contentcount'] > 0) {
                 $has_content = true;
             } elseif ($row['htype'] == '11' && $hansardmajors[$row['major']]['type'] == 'other') {
@@ -325,7 +380,7 @@ if (isset($data['rows'])) {
                 $has_content = false;
             }
             if ($has_content) {
-                print '<a class="oa-subrows-link" href="' . $row['listurl'] . '"><strong>' . $row['body'] . '</strong></a> ';
+                print '<a class="oa-subrows-link" href="' . $row['listurl'] . '"><strong class="oa-subrows-title">' . $row['body'] . '</strong></a>';
                 // For the "x speeches, x comments" text.
                 $moreinfo = array();
                 if ($hansardmajors[$row['major']]['type'] != 'other') {
@@ -339,15 +394,22 @@ if (isset($data['rows'])) {
                     $moreinfo[] = $row['totalcomments'] . " $plural";
                 }
                 if (count($moreinfo) > 0) {
-                    print "<small class=\"oa-subrows-meta\">(" . implode(', ', $moreinfo) . ") </small>";
+                    print '<small class="oa-subrows-meta" aria-label="Summary">';
+                    foreach ($moreinfo as $meta_item) {
+                        print '<span class="oa-subrows-chip">' . htmlentities($meta_item) . '</span>';
+                    }
+                    print '</small>';
                 }
             } else {
                 // Nothing in this item, so no link.
-                print '<strong class="oa-subrows-heading">' . $row['body'] . '</strong>';
+                print '<strong class="oa-subrows-heading oa-subrows-title">' . $row['body'] . '</strong>';
             }
+            print '</div>';
             if (isset($row['excerpt'])) {
-                print "<br>\n\t\t\t\t\t<span class=\"excerpt-debates oa-subrows-excerpt\">" . trim_characters($row['excerpt'], 0, 200) . "</span>";
+                print '<p class="excerpt-debates oa-subrows-excerpt">' . trim_characters($row['excerpt'], 0, 200) . '</p>';
             }
+            print '</div>';
+            print '</li>';
         }
         print '</ul>';
         $PAGE->stripe_end();
