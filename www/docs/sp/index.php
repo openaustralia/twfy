@@ -10,7 +10,7 @@ include_once __DIR__ . "/../../includes/easyparliament/glossary.php";
 // For displaying all the SP debates on a day, or a single debate.
 
 if (get_http_var("d") != "") {
-    $this_page = "spdebatesday";
+    $GLOBALS['this_page'] = "spdebatesday";
     $args = [
         'date' => get_http_var('d')
     ];
@@ -18,7 +18,7 @@ if (get_http_var("d") != "") {
     $LIST->display('date', $args);
 
 } elseif (get_http_var('id') != "") {
-    $this_page = "spdebates";
+    $GLOBALS['this_page'] = "spdebates";
     $args = [
         'gid' => get_http_var('id'),
         // Search terms to be highlighted.
@@ -54,7 +54,7 @@ if (get_http_var("d") != "") {
 
 } elseif (get_http_var('y') != '') {
 
-    $this_page = 'spdebatesyear';
+    $GLOBALS['this_page'] = 'spdebatesyear';
 
     if (is_numeric(get_http_var('y'))) {
         $pagetitle = $DATA->page_metadata($this_page, 'title');
@@ -84,7 +84,7 @@ if (get_http_var("d") != "") {
     ]);
 
 } elseif (get_http_var('gid') != '') {
-    $this_page = 'spdebate';
+    $GLOBALS['this_page'] = 'spdebate';
     $args = ['gid' => get_http_var('gid')];
     $LIST = new SPLIST();
     $result = $LIST->display('gid', $args);
@@ -104,7 +104,7 @@ if (get_http_var("d") != "") {
         $PAGE->stripe_end();
     }
 } else {
-    $this_page = "spdebatesfront";
+    $GLOBALS['this_page'] = "spdebatesfront";
     $PAGE->page_start();
     $PAGE->stripe_start();
     ?>

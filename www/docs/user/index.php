@@ -44,7 +44,7 @@ switch (get_http_var("pg")) {
 
     // A new user signing up.
     case "join":
-        $this_page = "userjoin";
+        $GLOBALS['this_page'] = "userjoin";
       break;
 
     // Editing someone else's info.
@@ -55,11 +55,11 @@ switch (get_http_var("pg")) {
 
         if (is_numeric(get_http_var("u")) && $THEUSER->is_able_to("edituser")) {
 
-            $this_page = "otheruseredit";
+            $GLOBALS['this_page'] = "otheruseredit";
 
         } else {
             // Revert to editing THEUSER's own info.
-            $this_page = "useredit";
+            $GLOBALS['this_page'] = "useredit";
 
         }
 
@@ -69,12 +69,12 @@ switch (get_http_var("pg")) {
     case "edit":
 
         if ($THEUSER->isloggedin()) {
-            $this_page = "useredit";
+            $GLOBALS['this_page'] = "useredit";
 
         } else {
             // Unlikely to get to this page without being logged in,
             // but just in case, show them the blank form.
-            $this_page = "userjoin";
+            $GLOBALS['this_page'] = "userjoin";
 
         }
       break;
@@ -86,10 +86,10 @@ switch (get_http_var("pg")) {
             (get_http_var('u') == '' || get_http_var('u') == $THEUSER->user_id())
         ) {
             // Logged in user viewing their own details.
-            $this_page = 'userviewself';
+            $GLOBALS['this_page'] = 'userviewself';
         } else {
             // Viewing someone else's details.
-            $this_page = "userview";
+            $GLOBALS['this_page'] = "userview";
         }
 }
 
@@ -364,7 +364,7 @@ function add_user($details) {
     if ($success) {
         // No validation errors.
 
-        $this_page = 'userwelcome';
+        $GLOBALS['this_page'] = 'userwelcome';
 
         $PAGE->page_start();
 
@@ -429,7 +429,7 @@ function add_user($details) {
 
         // Something went wrong, so display the form (with error messages).
 
-        $this_page = 'userjoin';
+        $GLOBALS['this_page'] = 'userjoin';
 
         $PAGE->page_start();
 
@@ -473,9 +473,9 @@ function update_user($details) {
         // No errors, all updated, show results.
 
         if ($this_page == 'otheruseredit') {
-            $this_page = "userview";
+            $GLOBALS['this_page'] = "userview";
         } else {
-            $this_page = "userviewself";
+            $GLOBALS['this_page'] = "userviewself";
         }
 
         display_user($user_id);

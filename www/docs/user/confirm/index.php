@@ -24,7 +24,7 @@ if (get_http_var('welcome') == 't') {
     // then been redirected here.
     // So welcome them!
 
-    $this_page = 'userconfirmed';
+    $GLOBALS['this_page'] = 'userconfirmed';
 
     $PAGE->page_start();
 
@@ -84,7 +84,7 @@ function confirm_error() {
     // Friendly error, not a normal one!
     global $PAGE, $this_page;
 
-    $this_page = 'userconfirmfailed';
+    $GLOBALS['this_page'] = 'userconfirmfailed';
 
     $PAGE->page_start();
 

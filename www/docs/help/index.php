@@ -6,7 +6,7 @@
 
 include_once __DIR__ . '/../../includes/easyparliament/init.php';
 
-$this_page = "help";
+$GLOBALS['this_page'] = "help";
 
 $PAGE->page_start();
 

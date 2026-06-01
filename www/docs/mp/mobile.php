@@ -114,19 +114,19 @@ if (get_http_var('recent')) {
 // CHECK SUBMITTED MEMBER (term of office) ID.
 
 if (get_http_var('c4')) {
-    $this_page = 'c4_mp';
+    $GLOBALS['this_page'] = 'c4_mp';
 } elseif (get_http_var('c4x')) {
-    $this_page = 'c4x_mp';
+    $GLOBALS['this_page'] = 'c4x_mp';
 } elseif (get_http_var('peer')) {
-    $this_page = 'peer';
+    $GLOBALS['this_page'] = 'peer';
 } elseif (get_http_var('royal')) {
-    $this_page = 'royal';
+    $GLOBALS['this_page'] = 'royal';
 } elseif (get_http_var('mla')) {
-    $this_page = 'mla';
+    $GLOBALS['this_page'] = 'mla';
 } elseif (get_http_var('msp')) {
-    $this_page = 'msp';
+    $GLOBALS['this_page'] = 'msp';
 } else {
-    $this_page = 'mp';
+    $GLOBALS['this_page'] = 'mp';
 }
 
 if (is_numeric(get_http_var('m'))) {
@@ -223,7 +223,7 @@ if (is_numeric(get_http_var('m'))) {
         member_redirect($MEMBER);
     }
     if ($MEMBER->the_users_mp) {
-        $this_page = 'yourmp';
+        $GLOBALS['this_page'] = 'yourmp';
     }
     twfy_debug('MP', 'Displaying MP by name');
 } elseif ($name) {

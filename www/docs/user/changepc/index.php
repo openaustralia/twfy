@@ -7,7 +7,7 @@
 
 include_once __DIR__ . "/../../../includes/easyparliament/init.php";
 
-$this_page = "userchangepc";
+$GLOBALS['this_page'] = "userchangepc";
 
 if (get_http_var('forget') == 't') {
     // The user clicked the 'Forget' link.

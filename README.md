@@ -6,9 +6,9 @@ This is a fork of a 2001-ish era PHP app from MySociety in the UK, repurposed fo
 
 OpenAustralia.org.au is a website run by the non-partisan charity, OpenAustralia Foundation, which makes Australian government and parliamentary information easily accessible to the public through tools such as searching Hansard (parliamentary debates) and tracking politicians' voting records. The site aims to increase transparency and civic engagement in Australian democracy. It provides platforms to easily follow what MPs and Senators say and do, and tracks their registers of interests.
 
- ## What is this data?
+## What is this data?
 
-Everything elected politicians say in Australia's Senate and Parliament is recorded in Australia's Official Hansard. This documentation is obtained using scapers (see https://github.com/openaustralia/openaustralia-parser/ )
+Everything elected politicians say in Australia's Senate and Parliament is recorded in Australia's Official Hansard. This documentation is obtained using scrapers (see https://github.com/openaustralia/openaustralia-parser/ )
 and displayed on openaustralia.org.au. 
 
 ## data feeds
@@ -22,18 +22,51 @@ TheyVoteForYou.org.au is one of the users of this data.
 
 ### Installing php
 
-Use `mise install` to install php. 
+We use [mise](https://mise.jdx.dev/) to manage the PHP toolchain. The
+required version is pinned in [`.php-version`](.php-version) (which mise
+auto-detects). Once mise is installed, run:
 
-You may need to:
+```bash
+mise install
+```
+
+from the repo root, which will install the version of PHP this project
+expects.
+
+If `mise install` fails while compiling PHP from source, you may be
+missing build dependencies.
+
+On Ubuntu:
+
 ```bash
 sudo apt update
-sudo apt install plocate
-# If you have many millions of files, the indexer may take a while.
-# You can either wait or kill the indexer holding up apt install (which will complete the install),
-# add exclusions to /etc/updatedb.conf and rerun.
-sudo apt install re2c bison autoconf build-essential libxml2-dev libssl-dev libcurl4-openssl-dev libpng-dev libjpeg-dev libonig-dev libzip-dev
-sudo apt-get install libgd-dev
+sudo apt install re2c bison autoconf build-essential libxml2-dev libssl-dev libcurl4-openssl-dev libpng-dev libjpeg-dev libonig-dev libzip-dev libgd-dev
 ```
+
+On macOS (with [Homebrew](https://brew.sh/)):
+
+```bash
+brew install autoconf bison re2c pkg-config libxml2 openssl@3 curl libpng jpeg oniguruma libzip gd
+```
+
+### Bumping the PHP version
+
+The PHP version is declared in a few places. To bump it, update all of
+the following so they stay in sync:
+
+1. [`.php-version`](.php-version) — the pinned version (e.g. `8.4`). This
+   is read by both `mise` (for local installs) and GitHub Actions
+   (via `shivammathur/setup-php`'s `php-version-file`).
+2. [`composer.json`](composer.json) — `require.php` (the supported range,
+   e.g. `^8.4.0`) and `config.platform.php` (the exact patch version
+   Composer resolves dependencies against, e.g. `8.4.1`).
+3. [`Dockerfile`](Dockerfile) — the `ARG PHP_VERSION=8.3` default near the
+   top. This controls the Ubuntu `php<version>-*` package names. You can
+   also override it at build time with
+   `docker build --build-arg PHP_VERSION=8.4 .`.
+
+After bumping, run `composer update` to refresh `composer.lock`, rebuild
+the Docker image (`make docker`), and run the test suite.
 
 ### Installing composer managed and script dependencies
 
@@ -49,11 +82,11 @@ make install           # composer install + compile scripts/run-with-lockfile
 Re-run `make dependencies` after pulling changes that touch `composer.json`
 or `composer.lock`.
 
-### Running the checks git does
+### Running the checks CI does
 
 ```bash
-make lint-ci | grep -v "No syntax errors detected in" # ignore all the "its ok" messages
-make phpcs-ci 
+make lint-php-ci | grep -v "No syntax errors detected in" # ignore all the "its ok" messages
+make phpcs-ci
 composer validate
 ```
 
@@ -135,39 +168,25 @@ git add db/migrations/<your_new_migration>.php db/schema.sql
 
 ### Running the tests
 
-Unit tests run without a database:
+`make test` runs the whole phpunit suite. Integration tests skip
+themselves automatically if no database is reachable, so you can run
+this without MySQL:
 
 ```bash
 make test
-./vendor/bin/phpunit tests/
 ```
 
-To run tests with database integration, start MySQL first:
+To include the integration tests, start MySQL first:
 
 ```bash
 make docker-run
 ```
 
-This starts both the webserver and MySQL container. Wait a few seconds for MySQL to be ready, then run:
+Wait a few seconds for MySQL to be ready, then run:
 
 ```bash
 make test-all
 ```
-
-### Running tests in Docker (simplest method)
-
-To run all tests inside Docker with automatic database setup:
-
-```bash
-make test-docker
-```
-
-This will:
-- Start the MySQL container
-- Load the database schema
-- Run all tests with database integration
-
-No need to manually start containers or set environment variables.
 
 ### Running tests with coverage
 
@@ -216,15 +235,13 @@ docker compose down
 ### Sharing database with openaustralia-parser for development
 
 You can setup local development for both repos by:
- 
+
 ```bash
 # DO NOT DO THIS ON PRODUCTION!!!!
 cd ../twfy
 cp conf/general-example.local-dev conf/general
-
-cd ../openaustralia-parser # if not already there
-cd ../twfy
 make docker-db-migrate                # or: ./vendor/bin/phinx migrate -c phinx.php
+
 cd ../openaustralia-parser
 bundle exec rake db:fixtures:load   # for a limited set of fixtures
 bundle exec rake db:stats # to show which tables have data

@@ -9,8 +9,8 @@ include_once __DIR__ . "/../../includes/easyparliament/glossary.php";
 include_once __DIR__ . "/../../includes/easyparliament/glossarylist.php";
 
 
-// $this_page = "glossary_addterm";
-$this_page = "help_us_out";
+// $GLOBALS['this_page'] = "glossary_addterm";
+$GLOBALS['this_page'] = "help_us_out";
 
 $args = ['action' => $this_page];
 
@@ -32,8 +32,6 @@ if (
 ) {
     $GLOSSARY->query = "";
     $args['blankform'] = 1;
-    $URL = new URL('help_us_out');
-    $backlink = $URL->generate();
     $error_message = "Sorry, that phrase appears too many times to be a useful as a link within the parliamentary record.";
 }
 

@@ -28,7 +28,7 @@
         etc.
     );
 */
-global $PAGE, $this_page, $DATA;
+global $PAGE, $DATA;
 
 twfy_debug("TEMPLATE", "trackbacks.php");
 

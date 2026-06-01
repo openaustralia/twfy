@@ -4,7 +4,7 @@
  * @file
  */
 
-$this_page = '404';
+$GLOBALS['this_page'] = '404';
 include_once __DIR__ . '/../includes/easyparliament/init.php';
 include_once __DIR__ . '/../includes/easyparliament/member.php';
 

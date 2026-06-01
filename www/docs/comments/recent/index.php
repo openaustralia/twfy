@@ -4,7 +4,7 @@
  * @file
  */
 
-$this_page = "comments_recent";
+$GLOBALS['this_page'] = "comments_recent";
 include_once __DIR__ . "/../../../includes/easyparliament/init.php";
 $PAGE->page_start();
 $PAGE->stripe_start();

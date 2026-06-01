@@ -5,9 +5,9 @@
  */
 
 if ($term) {
-    $this_page = 'glossary_item';
+    $GLOBALS['this_page'] = 'glossary_item';
 } else {
-    $this_page = "glossary";
+    $GLOBALS['this_page'] = "glossary";
 }
 
 include_once __DIR__ . "/../../includes/easyparliament/init.php";
@@ -21,7 +21,7 @@ $args = [
 
 if (get_http_var('gl')) {
     // We've already got something, so display it.
-    $this_page = 'glossary';
+    $GLOBALS['this_page'] = 'glossary';
     if (is_numeric(get_http_var('gl'))) {
         $args['glossary_id'] = filter_user_input(get_http_var('gl'), 'strict');
     }

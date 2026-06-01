@@ -52,7 +52,7 @@ if ($success) {
  */
 function confirm_success($ALERT) {
     global $PAGE, $this_page, $THEUSER;
-    $this_page = 'alertconfirmsucceeded';
+    $GLOBALS['this_page'] = 'alertconfirmsucceeded';
     $criteria = $ALERT->criteria_pretty(true);
     $email = $ALERT->email();
     $extra = null;
@@ -79,7 +79,7 @@ function confirm_success($ALERT) {
 function confirm_error() {
     // Friendly error, not a normal one!
     global $PAGE, $this_page;
-    $this_page = 'alertconfirmfailed';
+    $GLOBALS['this_page'] = 'alertconfirmfailed';
     $PAGE->page_start();
     $PAGE->stripe_start();
     ?>

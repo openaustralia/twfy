@@ -43,7 +43,7 @@ if ($success) {
  */
 function undelete_success() {
     global $PAGE, $this_page;
-    $this_page = 'alertundeletesucceeded';
+    $GLOBALS['this_page'] = 'alertundeletesucceeded';
     $PAGE->page_start();
     $PAGE->stripe_start();
     ?>
@@ -60,7 +60,7 @@ function undelete_success() {
 function undelete_error() {
     // Friendly error, not a normal one!
     global $PAGE, $this_page;
-    $this_page = 'alertundeletefailed';
+    $GLOBALS['this_page'] = 'alertundeletefailed';
     $PAGE->page_start();
     $PAGE->stripe_start();
     ?>

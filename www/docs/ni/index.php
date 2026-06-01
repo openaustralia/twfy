@@ -10,7 +10,7 @@ include_once __DIR__ . "/../../includes/easyparliament/glossary.php";
 // For displaying all the NIA debates on a day, or a single debate.
 
 if (get_http_var("d") != "") {
-    $this_page = "nidebatesday";
+    $GLOBALS['this_page'] = "nidebatesday";
     $args = [
         'date' => get_http_var('d')
     ];
@@ -18,7 +18,7 @@ if (get_http_var("d") != "") {
     $LIST->display('date', $args);
 
 } elseif (get_http_var('id') != "") {
-    $this_page = "nidebates";
+    $GLOBALS['this_page'] = "nidebates";
     $args = [
         'gid' => get_http_var('id'),
         // Search terms to be highlighted.
@@ -54,7 +54,7 @@ if (get_http_var("d") != "") {
 
 } elseif (get_http_var('y') != '') {
 
-    $this_page = 'nidebatesyear';
+    $GLOBALS['this_page'] = 'nidebatesyear';
 
     if (is_numeric(get_http_var('y'))) {
         $pagetitle = $DATA->page_metadata($this_page, 'title');
@@ -84,7 +84,7 @@ if (get_http_var("d") != "") {
     ]);
 
 } elseif (get_http_var('gid') != '') {
-    $this_page = 'nidebate';
+    $GLOBALS['this_page'] = 'nidebate';
     $args = ['gid' => get_http_var('gid')];
     $NILIST = new NILIST();
     $result = $NILIST->display('gid', $args);
@@ -104,7 +104,7 @@ if (get_http_var("d") != "") {
         $PAGE->stripe_end();
     }
 } else {
-    $this_page = "nidebatesfront";
+    $GLOBALS['this_page'] = "nidebatesfront";
     $PAGE->page_start();
     $PAGE->stripe_start();
     ?>

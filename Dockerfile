@@ -3,6 +3,7 @@ FROM ubuntu:noble
 ARG VCS_REF
 ARG VCS_URL
 ARG BUILD_DATE
+ARG PHP_VERSION=8.3
 
 LABEL org.openaustralia.image.build.date=$BUILD_DATE \
       org.openaustralia.image.build.vcs-url=$VCS_URL \
@@ -25,14 +26,14 @@ RUN apt-get install -y \
     libpq-dev \
     libxapian-dev \
     libtool \
-    php8.3-curl \
-    php8.3-dev \
-    php8.3-mbstring \
-    php8.3-mysql \
-    php8.3-pgsql \
-    php8.3-xml \
-    php8.3-xdebug \
-    php8.3-zip \
+    php${PHP_VERSION}-curl \
+    php${PHP_VERSION}-dev \
+    php${PHP_VERSION}-mbstring \
+    php${PHP_VERSION}-mysql \
+    php${PHP_VERSION}-pgsql \
+    php${PHP_VERSION}-xml \
+    php${PHP_VERSION}-xdebug \
+    php${PHP_VERSION}-zip \
     pkg-config \
     wget \
     xapian-tools \
@@ -48,7 +49,7 @@ RUN set -eux; \
     ./configure --with-php; \
     make -j"$(nproc)"; \
     make install; \
-    printf 'extension=xapian.so\n' > /etc/php/8.3/mods-available/xapian.ini; \
+    printf 'extension=xapian.so\n' > /etc/php/${PHP_VERSION}/mods-available/xapian.ini; \
     phpenmod xapian; \
     rm -rf /tmp/xapian-bindings-* /tmp/*.tar.xz
 
@@ -59,7 +60,7 @@ RUN phpenmod xdebug
 # Enable apache modules.
 RUN a2enmod rewrite
 
-RUN a2enmod php8.3
+RUN a2enmod php${PHP_VERSION}
 
 # Create dirs for our app.
 RUN mkdir -p /app/sharedbackup /app/shared/pwdata/members

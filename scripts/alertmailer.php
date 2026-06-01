@@ -137,7 +137,6 @@ foreach ($alertdata as $alertitem) {
         mlog("\nEMAIL: $email, uid $user_id; memory usage : " . memory_get_usage() . "\n");
     }
 
-    $data = null;
     if (!isset($results[$criteria_batch])) {
         mlog("  ALERT $active/$outof QUERY $queries : Xapian query '$criteria_batch'");
         $start = getmicrotime();

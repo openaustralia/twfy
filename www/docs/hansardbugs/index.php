@@ -4,7 +4,7 @@
  * @file
  */
 
-$this_page = 'hansard_bugs';
+$GLOBALS['this_page'] = 'hansard_bugs';
 include_once __DIR__ . "/../../includes/easyparliament/init.php";
 $DATA->set_page_metadata($this_page, 'heading', 'Official Hansard problems');
 

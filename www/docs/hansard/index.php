@@ -14,7 +14,7 @@ $number_of_wrans_to_show = 5;
 $nextprevdata = [];
 
 if (($date = get_http_var('d')) && preg_match('#^\d\d\d\d-\d\d-\d\d$#', $date)) {
-    $this_page = 'hansard_date';
+    $GLOBALS['this_page'] = 'hansard_date';
     $PAGE->set_hansard_headings(['date' => $date]);
     $URL = new URL($this_page);
 
@@ -71,7 +71,7 @@ if (($date = get_http_var('d')) && preg_match('#^\d\d\d\d-\d\d-\d\d$#', $date)) 
     exit;
 }
 
-$this_page = 'hansard';
+$GLOBALS['this_page'] = 'hansard';
 $PAGE->page_start();
 // Page title will appear here.
 $PAGE->stripe_start('head-1');

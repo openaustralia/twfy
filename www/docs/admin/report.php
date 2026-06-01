@@ -12,7 +12,7 @@
 include_once __DIR__ . "/../../includes/easyparliament/init.php";
 include_once __DIR__ . "/../../includes/easyparliament/commentreport.php";
 
-$this_page = "admin_commentreport";
+$GLOBALS['this_page'] = "admin_commentreport";
 
 $PAGE->page_start();
 
@@ -180,8 +180,6 @@ function prepare_emails_for_deleting($REPORT, $COMMENT, $FORMURL) {
     // From the view() function, the user has chosen to delete the comment.
     // Now they can prepare the appropriate emails, or choose not to send them.
 
-    global $this_page;
-
     // $commentermail = preg_replace("/\n/", "<br>\n", get_template_contents('comment_deleted') );
     $commentermail = preg_replace('/^Subject:.*\n/', '', get_template_contents('comment_deleted'));
     $reportermail = preg_replace("/\n/", "<br>\n", get_template_contents('report_upheld'));
@@ -217,8 +215,6 @@ function prepare_emails_for_deleting($REPORT, $COMMENT, $FORMURL) {
 function prepare_emails_for_not_deleting($REPORT, $COMMENT, $FORMURL) {
     // From the view() function, the user has chosen NOT to delete the comment.
     // Now they can prepare the appropriate emails, or choose not to send them.
-
-    global $this_page;
 
     $reportermail = preg_replace("/\n/", "<br>\n", get_template_contents('report_declined'));
 

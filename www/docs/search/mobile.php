@@ -12,7 +12,7 @@ include_once __DIR__ . '/../../includes/postcode.php';
 if (get_http_var('s') != '' || get_http_var('pid') != '') {
     // We're searching for something.
 
-    $this_page = 'search';
+    $GLOBALS['this_page'] = 'search';
 
     $searchstring = trim(get_http_var('s'));
     $searchstring = filter_user_input($searchstring, 'strict');
@@ -179,7 +179,7 @@ if (get_http_var('s') != '' || get_http_var('pid') != '') {
     }
 } else {
     // No search term. Display help.
-    $this_page = 'search_help';
+    $GLOBALS['this_page'] = 'search_help';
     $PAGE->page_start_mobile();
     $PAGE->stripe_start();
     include __DIR__ . '/../../includes/easyparliament/staticpages/search_help.php';

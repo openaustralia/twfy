@@ -1,5 +1,5 @@
 <?php
-global $PAGE, $DATA, $this_page;
+global $PAGE, $DATA;
 
 twfy_debug("TEMPLATE", "hansard_mp.php");
 $PAGE->page_start();

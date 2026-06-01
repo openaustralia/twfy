@@ -4,7 +4,7 @@
  * @file
  */
 
-$this_page = 'gadget';
+$GLOBALS['this_page'] = 'gadget';
 
 include_once __DIR__ . "/../../includes/easyparliament/init.php";
 

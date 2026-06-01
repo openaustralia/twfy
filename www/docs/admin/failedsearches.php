@@ -7,7 +7,7 @@
 include_once __DIR__ . "/../../includes/easyparliament/init.php";
 include_once __DIR__ . "/../../includes/easyparliament/searchlog.php";
 
-$this_page = "admin_failedsearches";
+$GLOBALS['this_page'] = "admin_failedsearches";
 
 $PAGE->page_start();
 

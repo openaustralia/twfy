@@ -18,7 +18,7 @@ if (!array_key_exists($ip, $site)) {
     $ip = '194.60.38.10';
 }
 
-$this_page = 'wikipedia';
+$GLOBALS['this_page'] = 'wikipedia';
 $DATA->set_page_metadata($this_page, 'title', 'Latest 100 changes to Wikipedia by non-logged-in computers in ' . $site[$ip]);
 $PAGE->page_start();
 $PAGE->stripe_start();

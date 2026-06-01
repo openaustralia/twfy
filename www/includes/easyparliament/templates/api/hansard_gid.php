@@ -11,7 +11,7 @@
 // Remember, we are currently within the DEBATELIST or WRANSLISTS class,
 // in the render() function.
 
-global $this_page, $hansardmajors;
+global $hansardmajors;
 
 if (!isset($data['info'])) {
     header("HTTP/1.0 404 Not Found");

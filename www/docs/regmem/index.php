@@ -81,7 +81,7 @@ if ($f) {
 } elseif ($d) {
     show_register($d);
 } else {
-    $this_page = 'regmem';
+    $GLOBALS['this_page'] = 'regmem';
     $PAGE->stripe_start();
     front_page();
 }
@@ -93,7 +93,7 @@ $PAGE->page_end();
  */
 function person_history($p) {
     global $files, $dir, $DATA, $PAGE, $this_page, $link, $cats;
-    $this_page = 'regmem_mp';
+    $GLOBALS['this_page'] = 'regmem_mp';
     $name = '';
     $nil = [];
     $earliest = $files[0];
@@ -182,7 +182,7 @@ function person_history($p) {
  */
 function register_history($f) {
     global $dir, $files, $cats, $names, $DATA, $PAGE, $link, $this_page;
-    $this_page = 'regmem_diff';
+    $GLOBALS['this_page'] = 'regmem_diff';
     $new = 0;
     if ($f) {
         $f = "$dir/regmem$f.xml";
@@ -367,7 +367,7 @@ function show_register($d) {
     $d = file_get_contents($d);
     $data = [];
     parse_file($d, 'only', $data);
-    $this_page = 'regmem_date';
+    $GLOBALS['this_page'] = 'regmem_date';
     $DATA->set_page_metadata($this_page, 'heading', "The Register of Members' Interests, $d_pretty");
     ;
     $PAGE->stripe_start();

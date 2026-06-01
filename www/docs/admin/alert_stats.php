@@ -7,7 +7,7 @@
 include_once __DIR__ . "/../../includes/easyparliament/init.php";
 include_once __DIR__ . "/../../includes/easyparliament/member.php";
 
-$this_page = "alert_stats";
+$GLOBALS['this_page'] = "alert_stats";
 
 $PAGE->page_start();
 $PAGE->stripe_start();

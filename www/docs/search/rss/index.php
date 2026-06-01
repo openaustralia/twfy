@@ -12,7 +12,7 @@ if (get_http_var('s') != '' or get_http_var('maj') != '' or get_http_var('pid') 
 
     // We're searching for something.
 
-    $this_page = 'search';
+    $GLOBALS['this_page'] = 'search';
 
     $searchstring = trim(get_http_var('s'));
     // Get rid of any HTML.

@@ -53,7 +53,7 @@ function delete_success() {
 
     global $PAGE, $this_page;
 
-    $this_page = 'alertdeletesucceeded';
+    $GLOBALS['this_page'] = 'alertdeletesucceeded';
 
     $PAGE->page_start();
 
@@ -85,7 +85,7 @@ function delete_error() {
 
     global $PAGE, $this_page;
 
-    $this_page = 'alertdeletefailed';
+    $GLOBALS['this_page'] = 'alertdeletefailed';
 
     $PAGE->page_start();
 

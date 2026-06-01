@@ -14,7 +14,7 @@ If input isn't OK (or the email doesn't work) we display the form with error mes
 
 include_once __DIR__ . "/../../../includes/easyparliament/init.php";
 
-$this_page = "userpassword";
+$GLOBALS['this_page'] = "userpassword";
 
 
 $PAGE->page_start();

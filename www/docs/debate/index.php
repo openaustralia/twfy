@@ -7,7 +7,7 @@
 include_once __DIR__ . "/../../includes/easyparliament/init.php";
 include_once __DIR__ . "/../../includes/easyparliament/glossary.php";
 
-$this_page = "debate";
+$GLOBALS['this_page'] = "debate";
 
 // For displaying a SINGLE speech from a debate, with comments and
 // an 'Add comment' form.

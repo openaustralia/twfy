@@ -9,7 +9,7 @@ include_once __DIR__ . "/../../includes/easyparliament/glossary.php";
 include_once __DIR__ . "/../../includes/easyparliament/glossarylist.php";
 
 
-$this_page = "glossary_addlink";
+$GLOBALS['this_page'] = "glossary_addlink";
 
 $args = ['action' => $this_page];
 
@@ -81,12 +81,13 @@ if (get_http_var("submitterm") != '') {
         $PAGE->glossary_display_match_list($GLOSSARY);
     } else {
         // Eek! no results at all? Excellent...
-        // Ok, so now we can see of the word(s) appear in Hansard at all.
+        // Ok, so now we can see if the word(s) appear in Hansard at all.
         // The following query was modified from the hansardlist search.
         // However, no point checking, if the user can't add terms.
         if ($THEUSER->is_able_to('addterm')) {
 
-            $args['count'] = $GLOSSARY->hansard_count($args);
+            $SEARCHENGINE = new SEARCHENGINE('"' . $args['s'] . '"');
+            $args['count'] = $SEARCHENGINE->run_count();
             if ($args['count']) {
                 // Display the Add definition form.
                 $PAGE->glossary_add_link_form($args);

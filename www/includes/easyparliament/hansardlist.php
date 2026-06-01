@@ -2335,7 +2335,7 @@ class HANSARDLIST {
                 $this->htype = $itemdata['htype'];
                 // XXX: Can't tell difference between clause and speech at front-end code level :-/.
                 if ($this->major == 6 && $this->htype >= 12) {
-                    $this_page = 'pbc_speech';
+                    $GLOBALS['this_page'] = 'pbc_speech';
                 }
             }
             if (isset($itemdata['epobject_id'])) {
@@ -2496,8 +2496,6 @@ class HANSARDLIST {
      *
      */
     public function _get_data_by_column($args) {
-        global $this_page;
-
         twfy_debug(get_class($this), "getting data by column");
 
         $input = [

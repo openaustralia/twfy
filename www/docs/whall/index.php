@@ -14,7 +14,7 @@ include_once __DIR__ . "/../../includes/easyparliament/glossary.php";
 if (get_http_var("d") != "") {
     // We have a date. so show all WH debates on this day.
 
-    $this_page = "whallday";
+    $GLOBALS['this_page'] = "whallday";
 
     $args = [
         'date' => get_http_var('d')
@@ -31,7 +31,7 @@ if (get_http_var("d") != "") {
     // or a subsection id (so we'd get the whole debate),
     // or an item id within a debate in which case we just get that item and some headings.
 
-    $this_page = 'whalls';
+    $GLOBALS['this_page'] = 'whalls';
 
     $args = [
         'gid' => get_http_var('id'),
@@ -83,7 +83,7 @@ if (get_http_var("d") != "") {
 
     // Show a calendar for a particular year's WH debates.
 
-    $this_page = 'whallyear';
+    $GLOBALS['this_page'] = 'whallyear';
 
     if (is_numeric(get_http_var('y'))) {
         $pagetitle = $DATA->page_metadata($this_page, 'title');
@@ -113,7 +113,7 @@ if (get_http_var("d") != "") {
         ]
     ]);
 } elseif (get_http_var('gid') != '') {
-    $this_page = 'whall';
+    $GLOBALS['this_page'] = 'whall';
     $args = ['gid' => get_http_var('gid')];
     $WHALLLIST = new WHALLLIST();
     $result = $WHALLLIST->display('gid', $args);
@@ -137,7 +137,7 @@ if (get_http_var("d") != "") {
 } else {
     // No date or debate id. Show recent years with debates on.
 
-    $this_page = "whallfront";
+    $GLOBALS['this_page'] = "whallfront";
 
     $PAGE->page_start();
 
