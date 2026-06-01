@@ -26,13 +26,6 @@
 /**
  *
  */
-function lensort($a, $b) {
-    return strlen($a) < strlen($b);
-}
-
-/**
- *
- */
 function wikipedize($source) {
     $was_array = false;
     if (is_array($source)) {
@@ -68,7 +61,7 @@ function wikipedize($source) {
     // We don't want no steenking duplicates.
     $phrases = array_unique(array_merge($propernounphrases1[0], $propernounphrases2[0], $propernounphrases3[1], $acronyms[0]));
     // Sort into order, largest first.
-    usort($phrases, "lensort");
+    usort($phrases, fn($a, $b) => strlen($b) <=> strlen($a));
 
     foreach ($phrases as $i => $phrase) {
         $phrases[$i] = str_replace(' ', '_', trim($phrase));
