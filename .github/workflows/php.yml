@@ -19,7 +19,7 @@ jobs:
         with:
           php-version: '8.3'
           extensions: mbstring, pdo, sqlite
-          coverage: none # Use 'xdebug' or 'pcov' for code coverage
+          e: none # Use 'xdebug' or 'pcov' for code coverage
           tools: composer
       - name: validate configuration
         run: composer validate
