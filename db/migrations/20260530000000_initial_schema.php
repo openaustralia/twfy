@@ -6,10 +6,11 @@ use Phinx\Migration\AbstractMigration;
 use Phinx\Migration\IrreversibleMigrationException;
 
 /**
- * Initial schema — loads db/schema.sql verbatim.
+ * Initial schema — loads db/migrations/legacy-schema.sql verbatim.
  *
  * This captures the existing pre-migration schema as it stood when Phinx was
- * introduced. All subsequent schema changes should be made as new migrations.
+ * introduced. The legacy-schema.sql file is a frozen copy and must not change;
+ * all subsequent schema changes should be made as new migrations.
  */
 final class InitialSchema extends AbstractMigration {
     function shouldRun(): bool {
@@ -27,9 +28,9 @@ final class InitialSchema extends AbstractMigration {
         }
 
 
-        $schema = file_get_contents(__DIR__ . '/../schema.sql');
+        $schema = file_get_contents(__DIR__ . '/legacy-schema.sql');
         if ($schema === false) {
-            throw new RuntimeException('Could not read db/schema.sql');
+            throw new RuntimeException('Could not read db/migrations/legacy-schema.sql');
         }
 
         // Split on semicolons at end of line and execute each non-empty statement.
@@ -47,7 +48,7 @@ final class InitialSchema extends AbstractMigration {
 
     public function down(): void {
         throw new IrreversibleMigrationException(
-            'InitialSchema is irreversible: it loads the entire baseline schema from db/schema.sql.'
+            'InitialSchema is irreversible: it loads the entire baseline schema from db/migrations/legacy-schema.sql.'
         );
     }
 }

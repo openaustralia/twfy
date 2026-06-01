@@ -67,18 +67,6 @@ if (get_http_var("d") != "") {
         exit;
     }
 
-
-    // We show trackbacks on this page.
-
-    $args = [
-        'epobject_id' => $LIST->epobject_id()
-    ];
-
-    // $TRACKBACK = new TRACKBACK;
-
-    // $TRACKBACK->display('epobject_id', $args);
-
-
 } elseif (get_http_var('y') != '') {
 
     // Show a calendar for a particular year's WH debates.
@@ -131,8 +119,6 @@ if (get_http_var("d") != "") {
         $args['epobject_id'] = $WHALLLIST->epobject_id();
         $COMMENTLIST->display('ep', $args);
         $PAGE->stripe_end();
-        $TRACKBACK = new TRACKBACK();
-        $TRACKBACK->display('epobject_id', $commendata);
     }
 } else {
     // No date or debate id. Show recent years with debates on.

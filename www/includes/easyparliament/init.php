@@ -16,7 +16,6 @@ ini_set('memory_limit', 32 * 1024 * 1024);
 
 // In case we need to switch these off globally at some point...
 define("ALLOWCOMMENTS", true);
-define("ALLOWTRACKBACKS", true);
 
 // These variables are so we can keep date/time formats consistent across the site
 // and change them easily.
@@ -118,7 +117,6 @@ include_once __DIR__ . '/../easyparliament/commentlist.php';
 global $SEARCHLOG;
 $SEARCHLOG = new SEARCHLOG();
 include_once __DIR__ . '/../easyparliament/comment.php';
-include_once __DIR__ . '/../easyparliament/trackback.php';
 
 // Added in as new module by Richard Allan MP.
 include_once __DIR__ . '/../easyparliament/alert.php';

@@ -54,10 +54,6 @@ if (get_http_var('id') != '') {
         $COMMENTLIST->display('ep', $args);
 
         $PAGE->stripe_end();
-
-
-        // $TRACKBACK = new TRACKBACK;
-        // $TRACKBACK->display('epobject_id', $commendata);
     }
 
 
