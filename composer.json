@@ -30,7 +30,9 @@
             "php": "8.3.16"
         },
         "allow-plugins": {
-            "dealerdirect/phpcodesniffer-composer-installer": true
+            "dealerdirect/phpcodesniffer-composer-installer": true,
+            "php-http/discovery": true,
+            "tbachert/spi": true
         }
     },
     "require-dev": {
