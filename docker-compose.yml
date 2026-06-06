@@ -10,6 +10,7 @@ services:
       - "${TWFY_HTTP_PORT:-80}:80"
     volumes:
       - ./www:/var/www #not sure yet why it needs to be here, i got 403s when it /app instead
+      - ./vendor:/var/vendor
       - ./conf/general-docker:/var/conf/general
       - ./conf/httpd-docker.conf:/etc/apache2/sites-available/000-default.conf
       - ../phplib:/phplib
