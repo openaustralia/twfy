@@ -2,6 +2,8 @@
 
 require_once __DIR__ . '/../request.php';
 
+use OpenAustralia\TWFY\Models\Member;
+
 /**
  * For doing stuff with searchlogs.
  *
@@ -85,9 +87,10 @@ class SEARCHLOG {
         $url = $this->SEARCHURL->generate();
         $htmlescape = 1;
         if ($pos = strpos($query, ':')) {
-            $qq = parlDBQuery('SELECT first_name, last_name FROM member WHERE person_id = ? LIMIT 1', substr($query, $pos + 1));
-            if ($qq->rows()) {
-                $query = $qq->field(0, 'first_name') . ' ' . $qq->field(0, 'last_name');
+            $member = Member::where('person_id', substr($query, $pos + 1))
+                ->first(['first_name', 'last_name']);
+            if ($member) {
+                $query = $member->first_name . ' ' . $member->last_name;
                 $htmlescape = 0;
             }
         }

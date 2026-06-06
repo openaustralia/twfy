@@ -12,6 +12,8 @@ ini_set('memory_limit', -1);
 include '/data/vhost/staging.openaustralia.org/includes/easyparliament/init.php';
 include INCLUDESPATH . 'easyparliament/member.php';
 
+use OpenAustralia\TWFY\Models\Member;
+
 $nomail = 1;
 
 $sentemails = 0;
@@ -45,9 +47,18 @@ foreach ($alertdata as $alertitem) {
     preg_match('#speaker:(\d+)#', $criteria, $m);
     $person_id = $m[1];
     if (!isset($leftd[$person_id])) {
-        $q = parlDBQuery('SELECT first_name, last_name, MAX(left_house) as l FROM member WHERE person_id = ? GROUP BY first_name', $person_id);
-        $leftd[$person_id] = $q->field(0, 'l');
-        $named[$person_id] = $q->field(0, 'first_name') . ' ' . $q->field(0, 'last_name');
+        // Faithful port of the legacy query:
+        //   SELECT first_name, last_name, MAX(left_house) AS l
+        //   FROM member WHERE person_id = ? GROUP BY first_name
+        // The legacy code only ever reads field(0, ...), i.e. the first
+        // group, so a single row is sufficient. selectRaw is needed because
+        // last_name is neither grouped nor aggregated.
+        $row = Member::where('person_id', $person_id)
+            ->groupBy('first_name')
+            ->selectRaw('first_name, last_name, MAX(left_house) AS l')
+            ->first();
+        $leftd[$person_id] = $row->l ?? '';
+        $named[$person_id] = ($row->first_name ?? '') . ' ' . ($row->last_name ?? '');
     }
     $left = $leftd[$person_id];
     $name = $named[$person_id];
