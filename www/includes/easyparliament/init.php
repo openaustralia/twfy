@@ -42,6 +42,8 @@ define('CONSTITUENCY_COOKIE', 'constituency');
  * And now all the files we'll include on every page.
  ********************************************************************************/
 
+require_once __DIR__ . '/../../../vendor/autoload.php';
+
 include_once __DIR__ . '/../../../conf/general';
 include_once __DIR__ . '/../utility.php';
 twfy_debug_timestamp("after including utility.php");
@@ -64,6 +66,7 @@ if (!isset($_SERVER['WINDIR'])) {
 }
 include_once __DIR__ . '/../data.php';
 include_once __DIR__ . '/../mysql.php';
+include_once __DIR__ . '/../eloquent.php';
 
 /**
  *

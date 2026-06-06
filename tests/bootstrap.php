@@ -65,6 +65,7 @@ if (!defined('WEBPATH')) {
 }
 
 require_once __DIR__ . '/../www/includes/mysql.php';
+require_once __DIR__ . '/../www/includes/eloquent.php';
 
 /**
  * Returns the shared ParlDB instance, with test override support.

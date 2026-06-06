@@ -5,7 +5,13 @@
     "license": "BSD-3-Clause",
     "minimum-stability": "stable",
     "require": {
-        "php": "^8.3.0"
+        "php": "^8.3.0",
+        "illuminate/database": "^11.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "OpenAustralia\\TWFY\\": "www/includes/"
+        }
     },
     "scripts": {
       "git-hooks": "test -d .git && git config core.hooksPath git-hooks || exit 0",
