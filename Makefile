@@ -115,6 +115,13 @@ xapian-index-docker:
 		-v $(CURDIR)/..:/work \
 		webhost bash -lc "mkdir -p /app/shared/search && cd /work/twfy/scripts && ../search/index.pl $(XAPIANDB) sincefile $(XAPIANDB_LASTUPDATED)"
 
+# Run pending Phinx migrations against the docker mysql service via the webhost container.
+docker-migrate: vendor/autoload.php
+	docker compose up -d mysql
+	docker compose run --rm \
+		-e DB_HOST=mysql -e DB_USER=$(TEST_DB_USER) -e DB_PASSWORD=$(TEST_DB_PASSWORD) -e DB_NAME=$(TEST_DB_NAME) \
+		-v $(CURDIR):/app -w /app webhost ./vendor/bin/phinx migrate -c phinx.php
+
 lint: lint-php lint-perl
 
 lint-php-ci lint-php:

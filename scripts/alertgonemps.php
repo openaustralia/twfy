@@ -12,6 +12,14 @@ ini_set('memory_limit', -1);
 include '/data/vhost/staging.openaustralia.org/includes/easyparliament/init.php';
 include INCLUDESPATH . 'easyparliament/member.php';
 
+// OpenTelemetry root span for this background job.
+otel_init();
+$__otel_job = otel_start_root_span('job alertgonemps', ['job.name' => 'alertgonemps']);
+register_shutdown_function(static function () {
+    global $__otel_job;
+    if (!empty($__otel_job)) { otel_end_root_span($__otel_job); $__otel_job = null; }
+});
+
 $nomail = 1;
 
 $sentemails = 0;
