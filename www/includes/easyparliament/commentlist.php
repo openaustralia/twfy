@@ -1,5 +1,7 @@
 <?php
 
+use OpenAustralia\TWFY\Models\Member;
+
 /*     The class for displaying one or more comments.
 (There's also a function for adding a new comment to the DB because I wasn't
 sure where else to put it!).
@@ -332,8 +334,16 @@ class COMMENTLIST {
         $data['page'] = $page;
         if (isset($args['pid']) && is_numeric($args['pid'])) {
             $data['pid'] = $args['pid'];
-            $q = parlDBQuery('SELECT title, first_name, last_name, constituency, house FROM member WHERE left_house="9999-12-31" AND person_id = ?', $args['pid']);
-            $data['full_name'] = member_full_name($q->field(0, 'house'), $q->field(0, 'title'), $q->field(0, 'first_name'), $q->field(0, 'last_name'), $q->field(0, 'constituency'));
+            $member = Member::where('left_house', '9999-12-31')
+                ->where('person_id', $args['pid'])
+                ->first(['title', 'first_name', 'last_name', 'constituency', 'house']);
+            $data['full_name'] = member_full_name(
+                $member->house ?? '',
+                $member->title ?? '',
+                $member->first_name ?? '',
+                $member->last_name ?? '',
+                $member->constituency ?? ''
+            );
             $q = parlDBQuery('SELECT COUNT(*) AS count FROM comments, hansard, member
                 WHERE visible=1 AND comments.epobject_id = hansard.epobject_id
                     AND hansard.speaker_id = member.member_id AND person_id = ?',
