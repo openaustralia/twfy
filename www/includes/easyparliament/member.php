@@ -740,7 +740,9 @@ class MEMBER {
         }
         $member_url = make_member_url($this->full_name(true), $this->constituency(), $house);
         if ($absolute) {
-            return 'https://' . DOMAIN . $URL->generate('none') . $member_url;
+            // Scheme-relative URL: the browser preserves the current scheme,
+            // so http dev hosts stay on http and prod stays on https.
+            return '//' . DOMAIN . $URL->generate('none') . $member_url;
         } else {
             return $URL->generate('none') . $member_url;
         }
