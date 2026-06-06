@@ -65,6 +65,6 @@ function api_getMPs_date($date) {
 /**
  *
  */
-function api_getMPs($date = 'now()') {
+function api_getMPs($date = null) {
     api_getMembers(1, $date);
 }

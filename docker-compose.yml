@@ -13,24 +13,9 @@ services:
       - ./conf/general-docker:/var/conf/general
       - ./conf/httpd-docker.conf:/etc/apache2/sites-available/000-default.conf
       - ../phplib:/phplib
-    depends_on:
-      - jaeger
-  # OpenTelemetry trace viewer for local development.
-  # UI:        http://localhost:${TWFY_JAEGER_UI_PORT:-16686}
-  # OTLP/HTTP: http://jaeger:4318  (from inside the compose network)
-  # OTLP/gRPC: jaeger:4317
-  jaeger:
-    image: jaegertracing/all-in-one:1.62.0
-    networks:
-      - twfy
-    environment:
-      COLLECTOR_OTLP_ENABLED: "true"
-    ports:
-      - "${TWFY_JAEGER_UI_PORT:-16686}:16686"
-      - "${TWFY_OTLP_HTTP_PORT:-4318}:4318"
-      - "${TWFY_OTLP_GRPC_PORT:-4317}:4317"
+      - ./_xapiandb:/app/shared/search
   mysql:
-    image: mysql:8.4.7
+    image: mysql:8.0
     ports:
       - "${TWFY_MYSQL_PORT:-3306}:3306"
     networks:

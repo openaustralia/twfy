@@ -17,34 +17,6 @@ function api_getRepresentatives_front() {
 /**
  *
  */
-function api_getDivisions_postcode($pc) {
-    $pc = preg_replace('#[^0-9]#i', '', $pc);
-    $output = [];
-    if (is_postcode($pc)) {
-        $constituency = postcode_to_constituency($pc);
-        if ($constituency == 'CONNECTION_TIMED_OUT') {
-            api_error('Connection timed out');
-        } elseif ($constituency) {
-            if (is_array($constituency)) {
-                $constituencies = $constituency;
-            } else {
-                $constituencies = [$constituency];
-            }
-            foreach ($constituencies as $c) {
-                $output[] = ['name' => html_entity_decode($c)];
-            }
-        } else {
-            api_error('Unknown postcode');
-        }
-    } else {
-        api_error('Invalid postcode');
-    }
-    api_output($output);
-}
-
-/**
- *
- */
 function api_getRepresentatives_postcode($pc) {
     $pc = preg_replace('#[^0-9]#i', '', $pc);
     if (is_postcode($pc)) {
@@ -94,6 +66,6 @@ function api_getRepresentatives_date($date) {
 /**
  *
  */
-function api_getRepresentatives($date = 'now()') {
+function api_getRepresentatives($date = null) {
     api_getMPs($date);
 }

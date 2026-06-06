@@ -1,0 +1,6 @@
+user_id,firstname,lastname,email,password,lastvisit,registrationtime,registrationip,status,emailpublic,optin,deleted,postcode,registrationtoken,confirmed,url,constituency,api_key
+1,Demo,Admin,admin@example.test,$2y$10$pgrU8Lz.4l6V3OTC2u5xWuM8gT4Hg6yX1Yi9c6t2y0nQXp8tEoqg.,2026-05-01 09:00:00,2026-01-01 09:00:00,127.0.0.1,Administrator,0,1,0,2000,demoregtoken000000000001,1,,Sydney,DEMOAPIKEY00000000000001
+2,Sample,User,user@example.test,$2y$10$pgrU8Lz.4l6V3OTC2u5xWuM8gT4Hg6yX1Yi9c6t2y0nQXp8tEoqg.,2026-05-15 12:00:00,2026-02-15 12:00:00,127.0.0.1,User,1,1,0,3000,demoregtoken000000000002,1,https://example.test/sample,Melbourne,
+3,Pending,Joiner,pending@example.test,$2y$10$pgrU8Lz.4l6V3OTC2u5xWuM8gT4Hg6yX1Yi9c6t2y0nQXp8tEoqg.,2026-05-30 10:00:00,2026-05-30 10:00:00,127.0.0.1,Viewer,0,0,0,4000,demoregtoken000000000003,0,,Brisbane,
+4,Mod,Erator,mod@example.test,$2y$10$pgrU8Lz.4l6V3OTC2u5xWuM8gT4Hg6yX1Yi9c6t2y0nQXp8tEoqg.,2026-04-20 11:00:00,2025-12-01 11:00:00,127.0.0.1,Moderator,0,1,0,5000,demoregtoken000000000004,1,,Perth,
+5,Deleted,Account,deleted@example.test,$2y$10$pgrU8Lz.4l6V3OTC2u5xWuM8gT4Hg6yX1Yi9c6t2y0nQXp8tEoqg.,2025-01-01 09:00:00,2024-06-01 09:00:00,127.0.0.1,Viewer,0,0,1,6000,demoregtoken000000000005,1,,Adelaide,

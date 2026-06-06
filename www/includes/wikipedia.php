@@ -26,13 +26,6 @@
 /**
  *
  */
-function lensort($a, $b) {
-    return strlen($a) < strlen($b);
-}
-
-/**
- *
- */
 function wikipedize($source) {
     $was_array = false;
     if (is_array($source)) {
@@ -68,7 +61,7 @@ function wikipedize($source) {
     // We don't want no steenking duplicates.
     $phrases = array_unique(array_merge($propernounphrases1[0], $propernounphrases2[0], $propernounphrases3[1], $acronyms[0]));
     // Sort into order, largest first.
-    usort($phrases, "lensort");
+    usort($phrases, fn($a, $b) => strlen($b) <=> strlen($a));
 
     foreach ($phrases as $i => $phrase) {
         $phrases[$i] = str_replace(' ', '_', trim($phrase));
@@ -79,23 +72,25 @@ function wikipedize($source) {
     $matched = [];
 
     $source = explode('|||', $source);
-    $q = parlDBQuery("SELECT title FROM titles WHERE title IN ?", $phrases);
-    for ($i = 0; $i < $q->rows(); $i++) {
-        $wikistring = $q->field($i, 'title');
-        $phrase = str_replace('_', ' ', $wikistring);
+    if (!empty($phrases)) {
+        $q = parlDBQuery("SELECT title FROM titles WHERE title IN ?", $phrases);
+        for ($i = 0; $i < $q->rows(); $i++) {
+            $wikistring = $q->field($i, 'title');
+            $phrase = str_replace('_', ' ', $wikistring);
 
-        // See if already matched a string this one is contained within.
-        foreach ($matched as $got) {
-            if (strstr($got, $phrase)) {
-                continue 2;
+            // See if already matched a string this one is contained within.
+            foreach ($matched as $got) {
+                if (strstr($got, $phrase)) {
+                    continue 2;
+                }
             }
-        }
 
-        // Go ahead.
-        twfy_debug("WIKIPEDIA", "Matched '$phrase'");
-        // 1 means only replace one match for phrase per paragraph
-        $source = preg_replace("/{$phrase}/", "<a href=\"http://en.wikipedia.org/wiki/{$wikistring}\">{$phrase}</a>", $source, 1);
-        array_push($matched, $phrase);
+            // Go ahead.
+            twfy_debug("WIKIPEDIA", "Matched '$phrase'");
+            // 1 means only replace one match for phrase per paragraph
+            $source = preg_replace("/{$phrase}/", "<a href=\"http://en.wikipedia.org/wiki/{$wikistring}\">{$phrase}</a>", $source, 1);
+            array_push($matched, $phrase);
+        }
     }
 
     if (!$was_array) {

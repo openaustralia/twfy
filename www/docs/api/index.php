@@ -8,6 +8,7 @@ include_once __DIR__ . '/../../includes/easyparliament/init.php';
 include_once __DIR__ . '/../../includes/postcode.php';
 
 include_once 'api_functions.php';
+$methods = api_get_methods();
 
 // @todo: Need to override error handling.
 
@@ -26,8 +27,10 @@ if ($q_method = get_http_var('method')) {
         }
     }
     $match = 0;
+    $matched_method = '';
     foreach ($methods as $method => $data) {
         if (strtolower($q_method) == strtolower($method)) {
+            $matched_method = $method;
             api_log_call($key);
             $match++;
             if (get_http_var('docs')) {
@@ -65,7 +68,7 @@ if ($q_method = get_http_var('method')) {
     } else {
         if (get_http_var('docs')) {
             $explorer = ob_get_clean();
-            api_documentation_front($method, $explorer);
+            api_documentation_front($matched_method, $explorer);
         }
     }
 } else {
@@ -76,7 +79,8 @@ if ($q_method = get_http_var('method')) {
  *
  */
 function api_documentation_front($method, $explorer) {
-    global $PAGE, $this_page, $DATA, $methods;
+    global $PAGE, $this_page, $DATA;
+    $methods = api_get_methods();
     $this_page = 'api_doc_front';
     $DATA->set_page_metadata($this_page, 'title', "$method function");
     $PAGE->page_start();
@@ -140,7 +144,8 @@ function api_documentation_front($method, $explorer) {
  *
  */
 function api_front_page($error = '') {
-    global $PAGE, $methods, $this_page, $THEUSER;
+    global $PAGE, $this_page, $THEUSER;
+    $methods = api_get_methods();
     $this_page = 'api_front';
     $PAGE->page_start();
     $PAGE->stripe_start();
