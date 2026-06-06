@@ -7,6 +7,8 @@
 include_once 'min-init.php';
 include_once __DIR__ . '/../../includes/easyparliament/member.php';
 
+use OpenAustralia\TWFY\Models\Member;
+
 $pc = $_GET['pc'];
 $pc = preg_replace('#[^a-z0-9 ]#i', '', $pc);
 if (validate_postcode($pc)) {
@@ -45,11 +47,8 @@ function get_person_id($c) {
     if ($n) {
         $c = $n;
     }
-    $q = parlDBQuery("SELECT person_id FROM member
-		WHERE constituency = ?
-		AND left_reason = 'still_in_office' AND house=1", $c);
-    if ($q->rows > 0) {
-        return $q->field(0, 'person_id');
-    }
-    return false;
+    return Member::where('constituency', $c)
+      ->where('left_reason', 'still_in_office')
+      ->where('house', 1)
+      ->value('person_id') ?? false;
 }

@@ -9,18 +9,21 @@ include_once 'min-init.php';
 include_once __DIR__ . '/../../includes/easyparliament/member.php';
 include_once '../api/api_functions.php';
 
+use OpenAustralia\TWFY\Models\Member;
+
 $pid = $_GET['pid'];
 
 
-$q = parlDBQuery("SELECT * from member
-	WHERE house=1 AND person_id = ?
-	ORDER BY left_house DESC LIMIT 1", $pid);
-if (!$q->rows()) {
+$member = Member::where('house', 1)
+  ->where('person_id', $pid)
+  ->orderBy('left_house', 'desc')
+  ->first(['person_id', 'house', 'title', 'first_name', 'last_name', 'constituency', 'party']);
+if (!$member) {
     print '<error>Unknown ID</error>';
     exit;
 }
 
-$row = $q->row(0);
+$row = $member->toArray();
 $row['full_name'] = member_full_name(
     $row['house'],
     $row['title'],
