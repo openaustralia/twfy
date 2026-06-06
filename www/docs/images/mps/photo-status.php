@@ -7,19 +7,30 @@
 include_once __DIR__ . "/../../../includes/easyparliament/init.php";
 include_once __DIR__ . "/../../../includes/easyparliament/member.php";
 
+use OpenAustralia\TWFY\Models\Member;
+
 $DATA->set_page_metadata($this_page, 'heading', 'MPs photo status on OpenAustralia');
 $PAGE->page_start();
 $PAGE->stripe_start();
 
-$q = parlDBQuery('SELECT person_id, first_name, last_name, constituency, party
-            FROM member
-            WHERE house=1 AND left_house = (SELECT MAX(left_house) FROM member) ORDER BY last_name, first_name');
+// Faithful port of:
+// SELECT person_id, first_name, last_name, constituency, party
+// FROM member
+// WHERE house=1 AND left_house = (SELECT MAX(left_house) FROM member)
+// ORDER BY last_name, first_name
+// Done as two queries (max + select) rather than a correlated subquery.
+$maxLeftHouse = Member::max('left_house');
+$members = Member::where('house', 1)
+  ->where('left_house', $maxLeftHouse)
+  ->orderBy('last_name')
+  ->orderBy('first_name')
+  ->get(['person_id', 'first_name', 'last_name', 'constituency', 'party']);
 $out = ['both' => '', 'small' => '', 'none' => ''];
-for ($i = 0; $i < $q->rows(); $i++) {
-    $p_id = $q->field($i, 'person_id');
+foreach ($members as $member) {
+    $p_id = $member->person_id;
 
-    $first_name = $q->field($i, 'first_name');
-    $last_name = $q->field($i, 'last_name');
+    $first_name = $member->first_name;
+    $last_name = $member->last_name;
     $full_name = "$first_name $last_name";
 
     [$dummy, $sz] = find_rep_image($p_id);
@@ -33,8 +44,8 @@ for ($i = 0; $i < $q->rows(); $i++) {
           break;
 
         default:
-            $party = $q->field($i, 'party');
-            $constituency = $q->field($i, 'constituency');
+            $party = $member->party;
+            $constituency = $member->constituency;
             $out['none'] .= "<li>$full_name ($party), $constituency</li>";
           break;
     }
