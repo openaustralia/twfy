@@ -90,11 +90,14 @@ docker-db-migrate-down: vendor/autoload.php
 
 # Run Phinx seeders against the docker mysql. Pass SEEDER=<Name> to run just one,
 # e.g. `make docker-db-seed SEEDER=MemberSeeder`. With no SEEDER, all seeders run.
+# Mounts the parent directory so seeders can read fixtures from the sibling
+# openaustralia-parser checkout (used by PostcodeLookupSeeder).
 docker-db-seed: vendor/autoload.php
 	docker compose up -d mysql
 	docker compose run --rm \
 		-e DB_HOST=mysql -e DB_USER=$(TEST_DB_USER) -e DB_PASSWORD=$(TEST_DB_PASSWORD) -e DB_NAME=$(TEST_DB_NAME) \
-		-v $(CURDIR):/app -w /app webhost ./vendor/bin/phinx seed:run -c phinx.php $(if $(SEEDER),-s $(SEEDER))
+		-v $(CURDIR)/..:/work -v $(CURDIR):/app -w /app webhost \
+		./vendor/bin/phinx seed:run -c phinx.php $(if $(SEEDER),-s $(SEEDER))
 
 # Dump the current docker mysql schema (no data) to db/schema.sql.
 docker-dump-schema:
