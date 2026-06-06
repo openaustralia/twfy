@@ -335,8 +335,8 @@ class COMMENTLIST {
         if (isset($args['pid']) && is_numeric($args['pid'])) {
             $data['pid'] = $args['pid'];
             $member = Member::where('left_house', '9999-12-31')
-                ->where('person_id', $args['pid'])
-                ->first(['title', 'first_name', 'last_name', 'constituency', 'house']);
+              ->where('person_id', $args['pid'])
+              ->first(['title', 'first_name', 'last_name', 'constituency', 'house']);
             $data['full_name'] = member_full_name(
                 $member->house ?? '',
                 $member->title ?? '',
