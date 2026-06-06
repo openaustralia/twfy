@@ -270,6 +270,8 @@ CREATE TABLE `member` (
   `person_id` int NOT NULL DEFAULT '0',
   `title` varchar(50) NOT NULL DEFAULT '',
   `lastupdate` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `created_at` datetime DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL,
   PRIMARY KEY (`member_id`),
   UNIQUE KEY `first_name` (`first_name`,`last_name`,`constituency`,`entered_house`,`left_house`),
   KEY `person_id` (`person_id`),
@@ -389,6 +391,8 @@ CREATE TABLE `users` (
   `confirmed` tinyint(1) NOT NULL DEFAULT '0',
   `url` varchar(255) NOT NULL DEFAULT '',
   `api_key` char(24) DEFAULT NULL,
+  `created_at` datetime DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL,
   PRIMARY KEY (`user_id`),
   UNIQUE KEY `api_key` (`api_key`),
   KEY `email` (`email`)
