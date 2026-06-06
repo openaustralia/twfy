@@ -65,6 +65,19 @@ if (!defined('WEBPATH')) {
 }
 
 require_once __DIR__ . '/../www/includes/mysql.php';
+
+// eloquent.php expects DB_* to be defined as constants (as conf/general does
+// in production). Tests pass them in as env vars via phpunit.xml; promote them
+// to constants here. Use empty strings when absent so unit-only `make test`
+// runs (which never touch the DB) can still boot Capsule.
+foreach (['DB_HOST', 'DB_USER', 'DB_PASSWORD', 'DB_NAME'] as $_dbConst) {
+    if (!defined($_dbConst)) {
+        $_dbVal = getenv($_dbConst);
+        define($_dbConst, $_dbVal === false ? '' : $_dbVal);
+    }
+}
+unset($_dbConst, $_dbVal);
+
 require_once __DIR__ . '/../www/includes/eloquent.php';
 
 /**
