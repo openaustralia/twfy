@@ -88,7 +88,7 @@ class SEARCHLOG {
         $htmlescape = 1;
         if ($pos = strpos($query, ':')) {
             $member = Member::where('person_id', substr($query, $pos + 1))
-                ->first(['first_name', 'last_name']);
+              ->first(['first_name', 'last_name']);
             if ($member) {
                 $query = $member->first_name . ' ' . $member->last_name;
                 $htmlescape = 0;
