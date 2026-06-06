@@ -22,10 +22,10 @@ if (!isset($GLOBALS['twfy_eloquent_booted'])) {
 
     $capsule->addConnection([
         'driver'    => 'mysql',
-        'host'      => defined('DB_HOST') ? DB_HOST : '127.0.0.1',
-        'database'  => defined('DB_NAME') ? DB_NAME : '',
-        'username'  => defined('DB_USER') ? DB_USER : '',
-        'password'  => defined('DB_PASSWORD') ? DB_PASSWORD : '',
+        'host'      => DB_HOST,
+        'database'  => DB_NAME,
+        'username'  => DB_USER,
+        'password'  => DB_PASSWORD,
         'charset'   => 'utf8mb4',
         'collation' => 'utf8mb4_0900_ai_ci',
         'prefix'    => '',
