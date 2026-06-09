@@ -230,3 +230,31 @@ class TestDatabase {
     }
 
 }
+
+/**
+ * Base class for integration tests that need a database.
+ *
+ * Each test runs inside a transaction that is rolled back in tearDown, so no
+ * test data ever persists to the database.  The connection must be the same
+ * mysqli handle used throughout the request (getSharedTestConnection()).
+ */
+abstract class TransactionalTestCase extends \PHPUnit\Framework\TestCase {
+
+    protected function setUp(): void {
+        parent::setUp();
+        $conn = getSharedTestConnection();
+        if (!$conn) {
+            $this->fail('Database connection not available (check DB_HOST/DB_USER/DB_PASSWORD/DB_NAME)');
+        }
+        mysqli_begin_transaction($conn);
+    }
+
+    protected function tearDown(): void {
+        $conn = getSharedTestConnection();
+        if ($conn) {
+            mysqli_rollback($conn);
+        }
+        parent::tearDown();
+    }
+
+}
