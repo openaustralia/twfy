@@ -299,9 +299,15 @@ class MEMBER {
             $first_name = getParlDB()->escape($m[1]);
             $middle_name = getParlDB()->escape($m[2]);
             $last_name = getParlDB()->escape($m[3]);
-            $q .= "house = 4 AND (";
-            $q .= "(first_name='$first_name $middle_name' AND last_name='$last_name')";
-            $q .= " OR (first_name='$first_name' AND last_name='$middle_name $last_name') )";
+            // When there's no middle name, avoid concatenating a stray space
+            // that would never match under MySQL 8 NO PAD collations.
+            if ($middle_name !== '') {
+                $q .= "house = 4 AND (";
+                $q .= "(first_name='$first_name $middle_name' AND last_name='$last_name')";
+                $q .= " OR (first_name='$first_name' AND last_name='$middle_name $last_name') )";
+            } else {
+                $q .= "house = 4 AND first_name='$first_name' AND last_name='$last_name'";
+            }
         } elseif ($this_page == 'mla') {
             $success = preg_match('#^(.*?) (.*?) (.*?)$#', $name, $m);
             if (!$success) {
@@ -314,9 +320,15 @@ class MEMBER {
             $first_name = getParlDB()->escape($m[1]);
             $middle_name = getParlDB()->escape($m[2]);
             $last_name = getParlDB()->escape($m[3]);
-            $q .= "house = 3 AND (";
-            $q .= "(first_name='$first_name $middle_name' AND last_name='$last_name')";
-            $q .= " OR (first_name='$first_name' AND last_name='$middle_name $last_name') )";
+            // When there's no middle name, avoid concatenating a stray space
+            // that would never match under MySQL 8 NO PAD collations.
+            if ($middle_name !== '') {
+                $q .= "house = 3 AND (";
+                $q .= "(first_name='$first_name $middle_name' AND last_name='$last_name')";
+                $q .= " OR (first_name='$first_name' AND last_name='$middle_name $last_name') )";
+            } else {
+                $q .= "house = 3 AND first_name='$first_name' AND last_name='$last_name'";
+            }
         } elseif (strstr($this_page, 'mp') || $this_page == 'peer') {
             $success = preg_match('#^(.*?) (.*?) (.*?)$#', $name, $m);
             if (!$success) {
@@ -331,8 +343,14 @@ class MEMBER {
             $last_name = $m[3];
             $house = (strstr($this_page, 'mp')) ? 1 : 2;
             // If ($title) $q .= 'title = \'' . getParlDB()->escape($title) . '\' AND ';.
-            $q .= "house = " . $house . " AND ((first_name='" . getParlDB()->escape($first_name . " " . $middle_name) . "' AND last_name='" . getParlDB()->escape($last_name) . "') OR " .
-                "(first_name='" . getParlDB()->escape($first_name) . "' AND last_name='" . getParlDB()->escape($middle_name . " " . $last_name) . "'))";
+            // When there's no middle name, avoid concatenating a stray space
+            // that would never match under MySQL 8 NO PAD collations.
+            if ($middle_name !== '') {
+                $q .= "house = " . $house . " AND ((first_name='" . getParlDB()->escape($first_name . " " . $middle_name) . "' AND last_name='" . getParlDB()->escape($last_name) . "') OR " .
+                  "(first_name='" . getParlDB()->escape($first_name) . "' AND last_name='" . getParlDB()->escape($middle_name . " " . $last_name) . "'))";
+            } else {
+                $q .= "house = " . $house . " AND first_name='" . getParlDB()->escape($first_name) . "' AND last_name='" . getParlDB()->escape($last_name) . "'";
+            }
             if ($const) {
                 $normalised = normalise_constituency_name($const);
                 if ($normalised && strtolower($normalised) != strtolower($const)) {
