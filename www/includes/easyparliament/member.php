@@ -7,6 +7,8 @@
 include_once __DIR__ . "/../postcode.php";
 include_once __DIR__ . "/glossary.php";
 
+use OpenAustralia\TWFY\Models\Member as MemberModel;
+
 /**
  *
  */
@@ -799,17 +801,17 @@ class MEMBER {
         if (is_null($entered_house)) {
             return '';
         }
-        $q = parlDBQuery('SELECT DISTINCT(person_id), first_name, last_name FROM member WHERE house=1 AND constituency = ? AND person_id != ? AND entered_house < ?', $this->constituency(), $this->person_id(), $entered_house['date']);
-        for ($r = 0; $r < $q->rows(); $r++) {
-            $pid = $q->field($r, 'person_id');
-            $name = $q->field($r, 'first_name') . ' ' . $q->field($r, 'last_name');
+        $members = MemberModel::where('house', 1)
+          ->where('constituency', $this->constituency())
+          ->where('person_id', '!=', $this->person_id())
+          ->where('entered_house', '<', $entered_house['date'])
+          ->distinct()
+          ->orderBy('entered_house', 'desc')
+          ->get(['person_id', 'first_name', 'last_name']);
+        foreach ($members as $member) {
+            $pid = $member->person_id;
+            $name = $member->first_name . ' ' . $member->last_name;
             $previous_people .= '<li><a href="' . WEBPATH . 'mp/?pid=' . $pid . '">' . $name . '</a></li>';
-        }
-        // XXX: This is because George's enter date is before Oona's enter date...
-        // Can't think of an easy fix without another pointless DB lookup
-        // Guess the starting setup of this class should store more information.
-        if ($this->person_id() == 10218) {
-            $previous_people = '<li><a href="' . WEBPATH . 'mp/?pid=10341">Oona King</a></li>';
         }
         return $previous_people;
     }
@@ -823,14 +825,16 @@ class MEMBER {
         if (is_null($entered_house)) {
             return '';
         }
-        $q = parlDBQuery('SELECT DISTINCT(person_id), first_name, last_name FROM member WHERE house=1 AND constituency = ? AND person_id != ? AND entered_house > ?', $this->constituency(), $this->person_id(), $entered_house['date']);
-        if ($this->person_id() == 10218) {
-            return;
-        }
-        for ($r = 0; $r < $q->rows(); $r++) {
-            $pid = $q->field($r, 'person_id');
-            $name = $q->field($r, 'first_name') . ' ' . $q->field($r, 'last_name');
-            $future_people .= '<li><a href="' . WEBPATH . 'mp/?pid=' . $pid . '">' . $name . '</a></li>';
+        $members = MemberModel::where('house', 1)
+          ->where('constituency', $this->constituency())
+          ->where('person_id', '!=', $this->person_id())
+          ->where('entered_house', '>', $entered_house['date'])
+          ->distinct()
+          ->orderBy('entered_house', 'asc')
+          ->get(['person_id', 'first_name', 'last_name']);
+        foreach ($members as $member) {
+            $name = $member->first_name . ' ' . $member->last_name;
+            $future_people .= '<li><a href="' . WEBPATH . 'mp/?pid=' . $member->person_id . '">' . $name . '</a></li>';
         }
         return $future_people;
     }
