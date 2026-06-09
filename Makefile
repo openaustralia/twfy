@@ -7,12 +7,13 @@ TWFY_MYSQL_PORT ?= 3306
 TEST_DB_HOST ?= 127.0.0.1:$(MYSQL_HOST_PORT)
 TEST_DB_USER ?= twfyuser
 TEST_DB_PASSWORD ?= twfypass
-TEST_DB_NAME ?= twfy
+TEST_DB_NAME ?= test_twfy
+DEV_DB_NAME ?= twfy
 SONAR_SCANNER ?= sonar-scanner
 XAPIANDB ?= /app/shared/search/searchdb
 XAPIANDB_LASTUPDATED ?= $(XAPIANDB)/../searchdb-lastupdated
 
-.PHONY: help docker-build docker-run docker xapian-index-docker lint lint-perl lint-perl-ci lint-php lint-php-ci phpcs phpcs-ci phpcs-verbose phpcs-sonar sonar-ci dependencies install setup test test-all install-xdebug test-coverage test-coverage-docker
+.PHONY: help docker-build docker-run docker xapian-index-docker lint lint-perl lint-perl-ci lint-php lint-php-ci phpcs phpcs-ci phpcs-verbose phpcs-sonar sonar-ci dependencies install setup test test-all install-xdebug test-coverage test-coverage-docker docker-test-db-create
 
 help:
 	@echo "Available targets:"
@@ -75,7 +76,7 @@ docker: docker-build docker-run
 docker-db-migrate: vendor/autoload.php
 	docker compose up -d mysql
 	docker compose run --rm \
-		-e DB_HOST=mysql -e DB_USER=$(TEST_DB_USER) -e DB_PASSWORD=$(TEST_DB_PASSWORD) -e DB_NAME=$(TEST_DB_NAME) \
+		-e DB_HOST=mysql -e DB_USER=$(TEST_DB_USER) -e DB_PASSWORD=$(TEST_DB_PASSWORD) -e DB_NAME=$(DEV_DB_NAME) \
 		-v $(CURDIR):/app -w /app webhost ./vendor/bin/phinx migrate -c phinx.php
 	$(MAKE) docker-dump-schema
 
@@ -84,7 +85,7 @@ docker-db-migrate: vendor/autoload.php
 docker-db-migrate-down: vendor/autoload.php
 	docker compose up -d mysql
 	docker compose run --rm \
-		-e DB_HOST=mysql -e DB_USER=$(TEST_DB_USER) -e DB_PASSWORD=$(TEST_DB_PASSWORD) -e DB_NAME=$(TEST_DB_NAME) \
+		-e DB_HOST=mysql -e DB_USER=$(TEST_DB_USER) -e DB_PASSWORD=$(TEST_DB_PASSWORD) -e DB_NAME=$(DEV_DB_NAME) \
 		-v $(CURDIR):/app -w /app webhost ./vendor/bin/phinx rollback -c phinx.php $(if $(MIGRATION_TARGET),-t $(MIGRATION_TARGET))
 	$(MAKE) docker-dump-schema
 
@@ -95,7 +96,7 @@ docker-db-migrate-down: vendor/autoload.php
 docker-db-seed: vendor/autoload.php
 	docker compose up -d mysql
 	docker compose run --rm \
-		-e DB_HOST=mysql -e DB_USER=$(TEST_DB_USER) -e DB_PASSWORD=$(TEST_DB_PASSWORD) -e DB_NAME=$(TEST_DB_NAME) \
+		-e DB_HOST=mysql -e DB_USER=$(TEST_DB_USER) -e DB_PASSWORD=$(TEST_DB_PASSWORD) -e DB_NAME=$(DEV_DB_NAME) \
 		-v $(CURDIR)/..:/work -v $(CURDIR):/app -w /app webhost \
 		./vendor/bin/phinx seed:run -c phinx.php $(if $(SEEDER),-s $(SEEDER))
 
@@ -106,9 +107,19 @@ docker-dump-schema:
 		--user=$(TEST_DB_USER) --password=$(TEST_DB_PASSWORD) \
 		--no-data --skip-comments --skip-add-drop-table --skip-set-charset \
 		--routines --triggers --events --no-tablespaces \
-		--ignore-table=$(TEST_DB_NAME).phinxlog \
-		$(TEST_DB_NAME) > db/schema.sql
+		--ignore-table=$(DEV_DB_NAME).phinxlog \
+		$(DEV_DB_NAME) > db/schema.sql
 	@echo "Wrote db/schema.sql"
+
+# Create the test database in the running Docker MySQL container.
+# Only needed for existing containers where db/test-db-init.sql was not yet
+# present at first-start time.  New containers pick it up automatically via
+# the /docker-entrypoint-initdb.d/ mount in docker-compose.yml.
+docker-test-db-create:
+	docker compose up -d mysql
+	docker compose exec mysql mysql -uroot -pexamplepassword \
+		-e "CREATE DATABASE IF NOT EXISTS test_twfy CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci; GRANT ALL ON test_twfy.* TO 'twfyuser'@'%'; FLUSH PRIVILEGES;"
+	@echo "test_twfy database ready"
 xapian-index-docker:
 	docker compose up -d
 	docker compose run --rm \

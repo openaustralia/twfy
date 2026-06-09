@@ -31,3 +31,6 @@ services:
       - ./_mysqldata:/var/lib/mysql
       # Will be owned by root (uid 0)
       - ./data:/app/data
+      # Creates the test_twfy database on first container initialisation.
+      # For existing containers use: make docker-test-db-create
+      - ./db/test-db-init.sql:/docker-entrypoint-initdb.d/test-db-init.sql:ro

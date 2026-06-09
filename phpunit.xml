@@ -7,7 +7,7 @@
         <env name="DB_HOST" value="127.0.0.1"/>
         <env name="DB_USER" value="twfyuser"/>
         <env name="DB_PASSWORD" value="twfypass"/>
-        <env name="DB_NAME" value="twfy"/>
+        <env name="DB_NAME" value="test_twfy"/>
     </php>
     <testsuites>
         <testsuite name="Unit">

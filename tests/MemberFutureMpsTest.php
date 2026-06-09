@@ -12,22 +12,7 @@ use PHPUnit\Framework\TestCase;
 /**
  * Tests for future MPs functionality.
  */
-class MemberFutureMpsTest extends TestCase {
-
-    protected function setUp(): void {
-        $db = getTestDatabase();
-        if (!$db) {
-            $this->markTestSkipped('Database connection not available');
-        }
-
-        // Clear test data
-        parlDBQuery("DELETE FROM member WHERE person_id >= 99000 AND person_id < 100000");
-    }
-
-    protected function tearDown(): void {
-        // Clean up test data
-        parlDBQuery("DELETE FROM member WHERE person_id >= 99000 AND person_id < 100000");
-    }
+class MemberFutureMpsTest extends TransactionalTestCase {
 
     /**
      * Insert a test member record.
@@ -138,7 +123,7 @@ class MemberFutureMpsTest extends TestCase {
     public function test_future_mps_returns_empty_for_non_house_of_commons() {
         // Insert a member who entered the House of Commons then left
         // This should have no entered_house[1] and thus return empty
-        $this->connection->query(
+        parlDBQuery(
             "INSERT INTO member (member_id, person_id, house, title, first_name, last_name, constituency, party, entered_house, left_house, entered_reason, left_reason)
              VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
             90010,
