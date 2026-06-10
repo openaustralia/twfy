@@ -266,6 +266,9 @@ class UserAddTest extends TransactionalTestCase {
         $timeBefore = gmdate("YmdHis");
         $USER->add($details, false);
         $timeAfter = gmdate("YmdHis");
+        $timeBefore = gmdate("Y-m-d H:i:s");
+        $USER->add($details, false);
+        $timeAfter = gmdate("Y-m-d H:i:s");
 
         $user_id = $USER->user_id();
         $retrievedUser = new USER();
