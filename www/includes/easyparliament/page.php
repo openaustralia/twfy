@@ -1383,7 +1383,7 @@ class PAGE {
         global $THEUSER, $DATA, $this_page;
 
         // If current Senator show their name as "Senator John Smith". Current Representative show their name as "John Smith MP".
-        $title = $member['current_member'][2] ? 'Senator ' : '';
+        $title = $member['current_member'][HOUSE::SENATE] ? 'Senator ' : '';
         $title .= ucfirst($member['full_name']);
         // Show current titles first.
         foreach ($member['houses'] as $house) {
