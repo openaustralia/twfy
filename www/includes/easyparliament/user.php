@@ -183,7 +183,7 @@ class USER {
         // The BOOL variables (eg, optin) will be true or false and will need to be
         // converted to 1/0 for MySQL.
 
-        $registrationtime = gmdate("YmdHis");
+            $registrationtime = gmdate("Y-m-d H:i:s");
 
         // Hash password for storage using bcrypt (PASSWORD_DEFAULT).
         // This is different to legacy md5-crypt hashes from the PHP 5.x era which has `$1$` prefix.
@@ -211,6 +211,7 @@ class USER {
                 'registrationtime' => $registrationtime,
                 'registrationip' => ip_address(),
                 'deleted' => 0,
+                'confirmed' => 0,
             ]);
 
             // Set these so we can log in.
