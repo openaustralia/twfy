@@ -1446,12 +1446,6 @@ class PAGE {
             if ($house == HOUSE::SENATE) {
                 $desc .= 'Senator';
             }
-            if ($house == 3) {
-                $desc .= 'MLA';
-            }
-            if ($house == 4) {
-                $desc .= 'MSP';
-            }
             $desc .= ' for ' . $member['left_house'][$house]['constituency'];
             $desc .= '</strong></li>';
         }
