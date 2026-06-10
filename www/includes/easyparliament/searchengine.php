@@ -645,7 +645,7 @@ function search_by_usage($search, $house = 0) {
                 $speakers[$pid]['office'][$moffice_id] = prettify_office($posn, $dept);
             }
             if (!isset($speakers[$pid]['name'])) {
-                $speakers[$pid]['name'] = ($house == 2 ? 'Senator ' : '') . $full_name . ($house == 1 ? ' MP' : '');
+                $speakers[$pid]['name'] = ($house == HOUSE::SENATE ? 'Senator ' : '') . $full_name . ($house == HOUSE::REPRESENTATIVES ? ' MP' : '');
                 $speakers[$pid]['party'] = $party;
             }
         }
