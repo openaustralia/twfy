@@ -110,6 +110,7 @@ function parlDBQuery($sql, ...$params) {
 
 include_once __DIR__ . '/../url.php';
 include_once __DIR__ . '/../lib_filter.php';
+include_once __DIR__ . '/../easyparliament/house.php';
 include_once __DIR__ . '/../easyparliament/skin.php';
 include_once __DIR__ . '/../easyparliament/user.php';
 include_once __DIR__ . '/../easyparliament/page.php';
