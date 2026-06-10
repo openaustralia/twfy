@@ -56,10 +56,11 @@
  * logout()            Log the user out.
  * confirm()            With the correct token, confirms the user then logs them in.
  * update_self()        Update the user's own data in the DB.
- * check_user_access()    Check a the user is allowed to view this page.
  */
 
 require_once __DIR__ . '/../request.php';
+
+use OpenAustralia\TWFY\Models\User as UserModel;
 
 /**
  *
@@ -128,61 +129,36 @@ class USER {
     /**
      *
      */
-    public function init($user_id) {
+    public function init(int $user_id): bool {
         // Pass it a user id and it will fetch the user's data from the db
         // and put it all in the appropriate variables.
         // Returns true if we've found user_id in the DB, false otherwise.
 
-        // Look for this user_id's details.
-        $q = parlDBQuery("SELECT firstname,
-								lastname,
-								password,
-								email,
-								emailpublic,
-								constituency,
-								url,
-								lastvisit,
-								registrationtime,
-								registrationip,
-								optin,
-								status,
-								deleted,
-								confirmed
-						FROM 	users
-						WHERE 	user_id = ?", $user_id);
+        $user = UserModel::find($user_id);
 
-        if ($q->rows() == 1) {
+        if ($user) {
             // We've got a user, so set them up.
 
             $this->user_id = $user_id;
-            $this->firstname = $q->field(0, "firstname");
-            $this->lastname = $q->field(0, "lastname");
-            $this->password = $q->field(0, "password");
-            $this->email = $q->field(0, "email");
-            $this->emailpublic = $q->field(0, "emailpublic") == 1 ? true : false;
-            $this->constituency = $q->field(0, "constituency");
-            $this->url = $q->field(0, "url");
-            $this->lastvisit = $q->field(0, "lastvisit");
-            $this->registrationtime = $q->field(0, "registrationtime");
-            $this->registrationip = $q->field(0, "registrationip");
-            $this->optin = $q->field(0, "optin") == 1 ? true : false;
-            $this->status = $q->field(0, "status");
-            $this->deleted = $q->field(0, "deleted") == 1 ? true : false;
-            $this->confirmed = $q->field(0, "confirmed") == 1 ? true : false;
+            $this->firstname = $user->firstname;
+            $this->lastname = $user->lastname;
+            $this->password = $user->password;
+            $this->email = $user->email;
+            $this->emailpublic = $user->emailpublic == 1 ? true : false;
+            $this->constituency = $user->constituency;
+            $this->url = $user->url;
+            $this->lastvisit = $user->lastvisit;
+            $this->registrationtime = $user->registrationtime;
+            $this->registrationip = $user->registrationip;
+            $this->optin = $user->optin == 1 ? true : false;
+            $this->status = $user->status;
+            $this->deleted = $user->deleted == 1 ? true : false;
+            $this->confirmed = $user->confirmed == 1 ? true : false;
 
             return true;
 
-        } elseif ($q->rows() > 1) {
-            // And, yes, if we've ended up with more than one row returned
-            // we're going to show an error too, just in case.
-            // *Should* never happen...
-
-            return false;
-            twfy_debug("USER", "There is more than one user with an id of '" . htmlentities($user_id) . "'");
-
         } else {
             return false;
-            twfy_debug("USER", "There is no user with an id of '" . htmlentities($user_id) . "'");
         }
 
     }
@@ -190,7 +166,7 @@ class USER {
     /**
      *
      */
-    public function add($details, $confirmation_required = true) {
+    public function add(array $details, bool $confirmation_required = true): bool {
         // Adds a new user's info into the db.
         // Then optionally (and usually) calls another function to
         // send them a confirmation email.
@@ -221,40 +197,26 @@ class USER {
 
         $emailpublic = !empty($details["emailpublic"]) ? 1 : 0;
 
-        $q = parlDBQuery("INSERT INTO users (
-				firstname,
-				lastname,
-				email,
-				emailpublic,
-				constituency,
-				url,
-				password,
-				optin,
-				status,
-				registrationtime,
-				registrationip,
-				deleted
-			) VALUES (
-				?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, '0')
-		",
-            $details["firstname"],
-            $details["lastname"],
-            $details["email"],
-            $emailpublic,
-            $details["constituency"],
-            $details["url"],
-            $passwordforDB,
-            $optin,
-            $details["status"],
-            $registrationtime,
-            ip_address()
-        );
+        try {
+            $user = UserModel::create([
+                'firstname' => $details["firstname"],
+                'lastname' => $details["lastname"],
+                'email' => $details["email"],
+                'emailpublic' => $emailpublic,
+                'constituency' => $details["constituency"],
+                'url' => $details["url"],
+                'password' => $passwordforDB,
+                'optin' => $optin,
+                'status' => $details["status"],
+                'registrationtime' => $registrationtime,
+                'registrationip' => ip_address(),
+                'deleted' => 0,
+            ]);
 
-        if ($q->success()) {
             // Set these so we can log in.
             // Except we no longer automatically log new users in, we
             // send them an email. So this may not be required.
-            $this->user_id = $q->insert_id();
+            $this->user_id = $user->user_id;
             $this->password = $passwordforDB;
 
             // We have to generate the user's unique registration token.
@@ -272,49 +234,35 @@ class USER {
             $this->registrationtoken = $token;
 
             // Add that to the DB.
-            $r = parlDBQuery("UPDATE users
-							SET	registrationtoken = ?
-							WHERE	user_id = ?
-							",
-                            $this->registrationtoken,
-                            $this->user_id
-                            );
+            $user->update(['registrationtoken' => $this->registrationtoken]);
 
-            if ($r->success()) {
-                // Updated DB OK.
-
-                if ($details['mp_alert'] && $details['constituency']) {
-                    $MEMBER = new MEMBER(['constituency' => $details['constituency']]);
-                    $pid = $MEMBER->person_id();
-                    // No confirmation email, but don't automatically confirm.
-                    $ALERT = new ALERT();
-                    $ALERT->add([
-                        'email' => $details['email'],
-                        'pid' => $pid
-                    ], false, false);
-                }
-
-                if ($confirmation_required) {
-                    // Right, send the email...
-                    $success = $this->send_confirmation_email($details);
-
-                    if ($success) {
-                        // All is good in the world!
-                        return true;
-                    } else {
-                        // Couldn't send the email.
-                        return false;
-                    }
-                } else {
-                    // No confirmation email needed.
-                    return true;
-                }
-            } else {
-                // Couldn't add the registration token to the DB.
-                return false;
+            if ($details['mp_alert'] && $details['constituency']) {
+                $MEMBER = new MEMBER(['constituency' => $details['constituency']]);
+                $pid = $MEMBER->person_id();
+                // No confirmation email, but don't automatically confirm.
+                $ALERT = new ALERT();
+                $ALERT->add([
+                    'email' => $details['email'],
+                    'pid' => $pid
+                ], false, false);
             }
 
-        } else {
+            if ($confirmation_required) {
+                // Right, send the email...
+                $success = $this->send_confirmation_email($details);
+
+                if ($success) {
+                    // All is good in the world!
+                    return true;
+                } else {
+                    // Couldn't send the email.
+                    return false;
+                }
+            } else {
+                // No confirmation email needed.
+                return true;
+            }
+        } catch (\Exception $e) {
             // Couldn't add the user's data to the DB.
             return false;
         }
