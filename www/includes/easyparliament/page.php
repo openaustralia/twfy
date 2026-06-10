@@ -1440,10 +1440,10 @@ class PAGE {
                 $desc .= $last['from'] . ' ';
             }
             $desc .= ' ';
-            if ($house == 1) {
+            if ($house == HOUSE::REPRESENTATIVES) {
                 $desc .= 'Representative';
             }
-            if ($house == 2) {
+            if ($house == HOUSE::SENATE) {
                 $desc .= 'Senator';
             }
             if ($house == 3) {
