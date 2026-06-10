@@ -258,27 +258,47 @@ class TestDatabase {
  */
 abstract class TransactionalTestCase extends \PHPUnit\Framework\TestCase {
 
+    /**
+     * Override in a subclass to disable mysqli transaction wrapping.
+     */
+    protected function useMysqliTransaction(): bool {
+        return true;
+    }
+
+    /**
+     * Override in a subclass to disable Eloquent transaction wrapping.
+     */
+    protected function useEloquentTransaction(): bool {
+        return true;
+    }
+
     protected function setUp(): void {
         parent::setUp();
         $conn = getSharedTestConnection();
         if (!$conn) {
             $this->fail('Database connection not available (check DB_HOST/DB_USER/DB_PASSWORD/DB_NAME)');
         }
-        mysqli_begin_transaction($conn);
+        if ($this->useMysqliTransaction()) {
+            mysqli_begin_transaction($conn);
+        }
 
         // MEMBER and other code paths now use Eloquent for some queries,
         // so start a transaction there too to keep tests isolated.
-        \Illuminate\Database\Capsule\Manager::connection()->beginTransaction();
+        if ($this->useEloquentTransaction()) {
+            \Illuminate\Database\Capsule\Manager::connection()->beginTransaction();
+        }
     }
 
     protected function tearDown(): void {
-        $eloquentConnection = \Illuminate\Database\Capsule\Manager::connection();
-        if ($eloquentConnection->transactionLevel() > 0) {
-            $eloquentConnection->rollBack();
+        if ($this->useEloquentTransaction()) {
+            $eloquentConnection = \Illuminate\Database\Capsule\Manager::connection();
+            if ($eloquentConnection->transactionLevel() > 0) {
+                $eloquentConnection->rollBack();
+            }
         }
 
         $conn = getSharedTestConnection();
-        if ($conn) {
+        if ($conn && $this->useMysqliTransaction()) {
             mysqli_rollback($conn);
         }
         parent::tearDown();

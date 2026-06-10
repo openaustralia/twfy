@@ -122,9 +122,9 @@ class MEMBER {
 
         // Get the data.
         $rows = MemberModel::where('person_id', $person_id)
-            ->orderBy('left_house', 'desc')
-            ->orderBy('house')
-            ->get();
+          ->orderBy('left_house', 'desc')
+          ->orderBy('house')
+          ->get();
 
         if ($rows->isEmpty()) {
             $this->valid = false;
@@ -249,16 +249,16 @@ class MEMBER {
         }
 
         $person_id = MemberModel::where('constituency', $constituency)
-            ->where('left_reason', 'still_in_office')
-            ->value('person_id');
+          ->where('left_reason', 'still_in_office')
+          ->value('person_id');
 
         if ($person_id) {
             return $person_id;
         }
 
         $person_id = MemberModel::where('constituency', $constituency)
-            ->orderBy('left_house', 'desc')
-            ->value('person_id');
+          ->orderBy('left_house', 'desc')
+          ->value('person_id');
 
         return $person_id ?? false;
     }
@@ -783,14 +783,14 @@ class MEMBER {
           ->where('constituency', $this->constituency())
           ->where('person_id', '!=', $this->person_id())
           ->where('entered_house', '<', $entered_house['date'])
-                    ->groupBy('person_id', 'first_name', 'last_name')
-                    ->orderBy('entered_house', 'desc')
-                    ->get([
-                            'person_id',
-                            'first_name',
-                            'last_name',
-                            DB::raw('MAX(entered_house) as entered_house'),
-                    ]);
+          ->groupBy('person_id', 'first_name', 'last_name')
+          ->orderBy('entered_house', 'desc')
+          ->get([
+              'person_id',
+              'first_name',
+              'last_name',
+              DB::raw('MAX(entered_house) as entered_house'),
+          ]);
         foreach ($members as $member) {
             $pid = $member->person_id;
             $name = $member->first_name . ' ' . $member->last_name;
@@ -812,14 +812,14 @@ class MEMBER {
           ->where('constituency', $this->constituency())
           ->where('person_id', '!=', $this->person_id())
           ->where('entered_house', '>', $entered_house['date'])
-                    ->groupBy('person_id', 'first_name', 'last_name')
-                    ->orderBy('entered_house', 'asc')
-                    ->get([
-                            'person_id',
-                            'first_name',
-                            'last_name',
-                            DB::raw('MIN(entered_house) as entered_house'),
-                    ]);
+          ->groupBy('person_id', 'first_name', 'last_name')
+          ->orderBy('entered_house', 'asc')
+          ->get([
+              'person_id',
+              'first_name',
+              'last_name',
+              DB::raw('MIN(entered_house) as entered_house'),
+          ]);
         foreach ($members as $member) {
             $name = $member->first_name . ' ' . $member->last_name;
             $future_people .= '<li><a href="' . WEBPATH . 'mp/?pid=' . $member->person_id . '">' . $name . '</a></li>';
