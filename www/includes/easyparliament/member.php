@@ -7,6 +7,7 @@
 include_once __DIR__ . "/../postcode.php";
 include_once __DIR__ . "/glossary.php";
 
+use Illuminate\Database\Capsule\Manager as DB;
 use OpenAustralia\TWFY\Models\Member as MemberModel;
 
 /**
@@ -120,30 +121,28 @@ class MEMBER {
         $this->valid = true;
 
         // Get the data.
-        $q = parlDBQuery("SELECT member_id, house, title,
-			first_name, last_name, constituency, party,
-			entered_house, left_house, entered_reason, left_reason, person_id
-			FROM member
-			WHERE person_id = ?
-                        ORDER BY left_house DESC, house", $person_id);
+        $rows = MemberModel::where('person_id', $person_id)
+            ->orderBy('left_house', 'desc')
+            ->orderBy('house')
+            ->get();
 
-        if (!$q->rows() > 0) {
+        if ($rows->isEmpty()) {
             $this->valid = false;
             return;
         }
 
         $this->house_disp = 0;
-        for ($row = 0; $row < $q->rows(); $row++) {
-            $house = $q->field($row, 'house');
+        foreach ($rows as $row) {
+            $house = $row->house;
             if (!in_array($house, $this->houses)) {
                 $this->houses[] = $house;
             }
-            $const = $q->field($row, 'constituency');
-            $party = $q->field($row, 'party');
-            $entered_house = $q->field($row, 'entered_house');
-            $left_house = $q->field($row, 'left_house');
-            $entered_reason = $q->field($row, 'entered_reason');
-            $left_reason = $q->field($row, 'left_reason');
+            $const = $row->constituency;
+            $party = $row->party;
+            $entered_house = $row->entered_house;
+            $left_house = $row->left_house;
+            $entered_reason = $row->entered_reason;
+            $left_reason = $row->left_reason;
 
             $entered_time = strtotime($entered_house);
             $left_time = strtotime($left_house);
@@ -193,18 +192,18 @@ class MEMBER {
                     $this->constituency = $const;
                     $this->party = $party;
 
-                    $this->member_id = $q->field($row, 'member_id');
-                    $this->title = $q->field($row, 'title');
-                    $this->first_name = $q->field($row, 'first_name');
-                    $this->last_name = $q->field($row, 'last_name');
-                    $this->person_id = $q->field($row, 'person_id');
+                    $this->member_id = $row->member_id;
+                    $this->title = $row->title;
+                    $this->first_name = $row->first_name;
+                    $this->last_name = $row->last_name;
+                    $this->person_id = $row->person_id;
                 }
             }
 
             if ($left_reason == 'changed_party') {
                 $this->other_parties[] = [
-                    'from' => $this->party_text($q->field($row, 'party')),
-                    'date' => $q->field($row, 'left_house')
+                    'from' => $this->party_text($row->party),
+                    'date' => $row->left_house
                 ];
             }
         }
@@ -221,15 +220,8 @@ class MEMBER {
      *
      */
     public function member_id_to_person_id($member_id) {
-        global $PAGE;
-        $q = parlDBQuery("SELECT person_id FROM member
-					WHERE member_id = ?", $member_id);
-        if ($q->rows > 0) {
-            return $q->field(0, 'person_id');
-        } else {
-            // $PAGE->error_message("Sorry, there is no member with a member ID of '" . htmlentities($member_id) . "'.");
-            return false;
-        }
+        $person_id = MemberModel::where('member_id', $member_id)->value('person_id');
+        return $person_id ?? false;
     }
 
     /**
@@ -251,30 +243,24 @@ class MEMBER {
             return false;
         }
 
-        if ($constituency == 'Orkney ') {
-            $constituency = 'Orkney &amp; Shetland';
-        }
-
         $normalised = normalise_constituency_name($constituency);
         if ($normalised) {
             $constituency = $normalised;
         }
 
-        $q = parlDBQuery("SELECT person_id FROM member
-					WHERE constituency = ?
-					AND left_reason = 'still_in_office'", $constituency);
+        $person_id = MemberModel::where('constituency', $constituency)
+            ->where('left_reason', 'still_in_office')
+            ->value('person_id');
 
-        if ($q->rows > 0) {
-            return $q->field(0, 'person_id');
-        } else {
-            $q = parlDBQuery("SELECT person_id FROM member WHERE constituency = ? ORDER BY left_house DESC LIMIT 1", $constituency);
-            if ($q->rows > 0) {
-                return $q->field(0, 'person_id');
-            } else {
-                // $PAGE->error_message("Sorry, there is no current member for the '" . htmlentities(html_entity_decode($constituency)) . "' constituency.");
-                return false;
-            }
+        if ($person_id) {
+            return $person_id;
         }
+
+        $person_id = MemberModel::where('constituency', $constituency)
+            ->orderBy('left_house', 'desc')
+            ->value('person_id');
+
+        return $person_id ?? false;
     }
 
     /**
@@ -418,32 +404,25 @@ class MEMBER {
      */
     public function load_extra_info() {
 
-        $q = parlDBQuery('SELECT * FROM moffice WHERE person=? ORDER BY from_date DESC', $this->person_id);
-        for ($row = 0; $row < $q->rows(); $row++) {
-            $this->extra_info['office'][] = $q->row($row);
+        $offices = DB::table('moffice')->where('person', $this->person_id)->orderBy('from_date', 'desc')->get();
+        foreach ($offices as $office) {
+            $this->extra_info['office'][] = (array) $office;
         }
 
-        $q = parlDBQuery("SELECT data_key, data_value
-                        FROM 	memberinfo
-                        WHERE	member_id = ?", $this->member_id);
-        for ($row = 0; $row < $q->rows(); $row++) {
-            $this->extra_info[$q->field($row, 'data_key')] = $q->field($row, 'data_value');
+        $memberInfoRows = DB::table('memberinfo')->where('member_id', $this->member_id)->get(['data_key', 'data_value']);
+        foreach ($memberInfoRows as $row) {
+            $this->extra_info[$row->data_key] = $row->data_value;
         }
 
-        $q = parlDBQuery("SELECT data_key, data_value
-                        FROM 	personinfo
-                        WHERE	person_id = ?", $this->person_id);
-        for ($row = 0; $row < $q->rows(); $row++) {
-            $this->extra_info[$q->field($row, 'data_key')] = $q->field($row, 'data_value');
+        $personInfoRows = DB::table('personinfo')->where('person_id', $this->person_id)->get(['data_key', 'data_value']);
+        foreach ($personInfoRows as $row) {
+            $this->extra_info[$row->data_key] = $row->data_value;
         }
 
         // Info specific to constituency (e.g. election results page on Guardian website)
-        $q = getParlDB()->query("SELECT	data_key,
-                                data_value
-                        FROM 	consinfo
-                        WHERE	constituency = ?", $this->constituency);
-        for ($row = 0; $row < $q->rows(); $row++) {
-            $this->extra_info[$q->field($row, 'data_key')] = $q->field($row, 'data_value');
+        $consInfoRows = DB::table('consinfo')->where('constituency', $this->constituency)->get(['data_key', 'data_value']);
+        foreach ($consInfoRows as $row) {
+            $this->extra_info[$row->data_key] = $row->data_value;
         }
 
         if (array_key_exists('guardian_mp_summary', $this->extra_info)) {
@@ -634,7 +613,7 @@ class MEMBER {
         [$year, $month, $day] = explode('-', $entered_house);
         if ($month == 1 && $day == 1 && $this->house(2)) {
             return $year;
-        } elseif (checkdate($month, $day, $year) && $year != '9999') {
+        } elseif (checkdate((int) $month, (int) $day, (int) $year) && $year != '9999') {
             return format_date($entered_house, LONGDATEFORMAT);
         } else {
             return "n/a";
@@ -659,7 +638,7 @@ class MEMBER {
             return '';
         }
         [$year, $month, $day] = explode('-', $left_house);
-        if (checkdate($month, $day, $year) && $year != '9999') {
+        if (checkdate((int) $month, (int) $day, (int) $year) && $year != '9999') {
             return format_date($left_house, LONGDATEFORMAT);
         } else {
             return "n/a";
@@ -698,8 +677,7 @@ class MEMBER {
         if (isset($this->reasons[$left_reason])) {
             $left_reason = $this->reasons[$left_reason];
             if (is_array($left_reason)) {
-                $q = parlDBQuery("SELECT MAX(left_house) AS max FROM member");
-                $max = $q->field(0, 'max');
+                $max = MemberModel::max('left_house');
                 if ((!$mponly && $max == $this->left_house) || ($mponly && $max == $this->mp_left_house)) {
                     return $left_reason[0];
                 } else {
@@ -805,9 +783,14 @@ class MEMBER {
           ->where('constituency', $this->constituency())
           ->where('person_id', '!=', $this->person_id())
           ->where('entered_house', '<', $entered_house['date'])
-          ->distinct()
-          ->orderBy('entered_house', 'desc')
-          ->get(['person_id', 'first_name', 'last_name']);
+                    ->groupBy('person_id', 'first_name', 'last_name')
+                    ->orderBy('entered_house', 'desc')
+                    ->get([
+                            'person_id',
+                            'first_name',
+                            'last_name',
+                            DB::raw('MAX(entered_house) as entered_house'),
+                    ]);
         foreach ($members as $member) {
             $pid = $member->person_id;
             $name = $member->first_name . ' ' . $member->last_name;
@@ -829,9 +812,14 @@ class MEMBER {
           ->where('constituency', $this->constituency())
           ->where('person_id', '!=', $this->person_id())
           ->where('entered_house', '>', $entered_house['date'])
-          ->distinct()
-          ->orderBy('entered_house', 'asc')
-          ->get(['person_id', 'first_name', 'last_name']);
+                    ->groupBy('person_id', 'first_name', 'last_name')
+                    ->orderBy('entered_house', 'asc')
+                    ->get([
+                            'person_id',
+                            'first_name',
+                            'last_name',
+                            DB::raw('MIN(entered_house) as entered_house'),
+                    ]);
         foreach ($members as $member) {
             $name = $member->first_name . ' ' . $member->last_name;
             $future_people .= '<li><a href="' . WEBPATH . 'mp/?pid=' . $member->person_id . '">' . $name . '</a></li>';

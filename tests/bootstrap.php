@@ -52,6 +52,10 @@ if (!defined('EASYPARLIAMENTPATH')) {
     define('EASYPARLIAMENTPATH', __DIR__ . '/../www/includes/easyparliament/');
 }
 
+if (!defined('METADATAPATH')) {
+    define('METADATAPATH', __DIR__ . '/../www/includes/easyparliament/metadata.php');
+}
+
 if (!defined('FILEIMAGEPATH')) {
     define('FILEIMAGEPATH', __DIR__ . '/../www/docs/images/');
 }
@@ -62,6 +66,20 @@ if (!defined('IMAGEPATH')) {
 
 if (!defined('WEBPATH')) {
     define('WEBPATH', '/');
+}
+
+if (!defined('LONGDATEFORMAT')) {
+    define('LONGDATEFORMAT', 'j F Y');
+}
+
+if (!function_exists('format_date')) {
+    function format_date($date, $format) {
+        $timestamp = strtotime((string) $date);
+        if ($timestamp === false) {
+            return '';
+        }
+        return date((string) $format, $timestamp);
+    }
 }
 
 require_once __DIR__ . '/../www/includes/mysql.php';
@@ -247,9 +265,18 @@ abstract class TransactionalTestCase extends \PHPUnit\Framework\TestCase {
             $this->fail('Database connection not available (check DB_HOST/DB_USER/DB_PASSWORD/DB_NAME)');
         }
         mysqli_begin_transaction($conn);
+
+        // MEMBER and other code paths now use Eloquent for some queries,
+        // so start a transaction there too to keep tests isolated.
+        \Illuminate\Database\Capsule\Manager::connection()->beginTransaction();
     }
 
     protected function tearDown(): void {
+        $eloquentConnection = \Illuminate\Database\Capsule\Manager::connection();
+        if ($eloquentConnection->transactionLevel() > 0) {
+            $eloquentConnection->rollBack();
+        }
+
         $conn = getSharedTestConnection();
         if ($conn) {
             mysqli_rollback($conn);
