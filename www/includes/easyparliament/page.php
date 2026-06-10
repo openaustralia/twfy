@@ -1685,7 +1685,6 @@ class PAGE {
         }
 
         if (!in_array(HOUSE::REPRESENTATIVES, $member['houses'])) {
-
             ?> <a name="hansard"></a>
             <?php
             $title = 'Most recent appearances in parliament';
@@ -1733,8 +1732,7 @@ class PAGE {
             }
 
             $this->block_end();
-
-        } // End Sinn Fein
+        }
 
         ?> <a name="numbers"></a>
         <?php
@@ -1785,11 +1783,9 @@ class PAGE {
             if ($member['party'] == 'Scottish National Party') {
                 $after_stuff .= '<br><em>Note SNP MPs do not vote on legislation not affecting Scotland.</em>';
             }
-            if ($member['party'] != 'Sinn Fein') {
-                // $displayed_stuff |= display_stats_line('public_whip_division_attendance', 'Has voted in <a href=" . PUBLICWHIP_HOST . "/mp.php?id=uk.org.publicwhip/member/' . $member['member_id'] . '&amp;showall=yes#divisions" title="See more details at Public Whip">', 'of vote', '</a> in parliament', $after_stuff, $extra_info);
-                $displayed_stuff |= display_stats_line('comments_on_speeches', 'People have made <a href="' . WEBPATH . 'comments/recent/?pid=' . $member['person_id'] . '">', 'comment', "</a> on this Representative's speeches", '', $extra_info);
-                $displayed_stuff |= display_stats_line('reading_age', 'This Representative\'s speeches are understandable to an average ', '', ' year old, going by the <a href="http://en.wikipedia.org/wiki/Flesch-Kincaid_Readability_Test">Flesch-Kincaid Grade Level</a> score', '', $extra_info);
-            }
+
+            $displayed_stuff |= display_stats_line('comments_on_speeches', 'People have made <a href="' . WEBPATH . 'comments/recent/?pid=' . $member['person_id'] . '">', 'comment', "</a> on this Representative's speeches", '', $extra_info);
+            $displayed_stuff |= display_stats_line('reading_age', 'This Representative\'s speeches are understandable to an average ', '', ' year old, going by the <a href="http://en.wikipedia.org/wiki/Flesch-Kincaid_Readability_Test">Flesch-Kincaid Grade Level</a> score', '', $extra_info);
 
             if (isset($extra_info['number_of_alerts'])) {
                 $displayed_stuff = 1;
