@@ -978,7 +978,7 @@ class THEUSER extends USER {
     /**
      *
      */
-    public function isvalid($email, $userenteredpassword) {
+    public function isvalid(string $email, string $userenteredpassword) {
         // Returns true if this email and plaintext password match a user in the db.
         // If false returns an array of form error messages.
 
@@ -986,12 +986,13 @@ class THEUSER extends USER {
         // are correct. We can then continue with logging the user in (taking into
         // account their cookie remembering settings etc) with $this->login().
 
-        $q = parlDBQuery("SELECT user_id, password, deleted, confirmed FROM users WHERE email = ?", $email);
+        $user = UserModel::where('email', $email)
+            ->first(['user_id', 'password', 'deleted', 'confirmed']);
 
-        if ($q->rows() == 1) {
+        if ($user) {
             // OK.
             // The password in the DB is crypted.
-            $dbpassword = $q->field(0, "password");
+            $dbpassword = $user->password;
             if (str_starts_with($dbpassword, '$1$')) {
                 // Legacy md5-crypt hash from PHP 5.x era
                 // FIXME: remove once count is zero: `select count(*) from users where password like '$1$%';`.
@@ -1000,7 +1001,7 @@ class THEUSER extends USER {
                 if ($valid_password) {
                     // Upgrade to the more secure Bcrypt hash.
                     $newHash = password_hash($userenteredpassword, PASSWORD_DEFAULT);
-                    $q_update = parlDBQuery("UPDATE users SET password = ? WHERE email=?", $newHash, $email);
+                    $user->update(['password' => $newHash]);
                     $dbpassword = $newHash;
                 }
             } else {
@@ -1008,11 +1009,11 @@ class THEUSER extends USER {
                 $valid_password = password_verify($userenteredpassword, $dbpassword);
             }
             if ($valid_password) {
-                $this->user_id = $q->field(0, "user_id");
+                $this->user_id = $user->user_id;
                 $this->password = $dbpassword;
                 // We'll need these when we're going to log in.
-                $this->deleted = $q->field(0, "deleted") == 1 ? true : false;
-                $this->confirmed = $q->field(0, "confirmed") == 1 ? true : false;
+                $this->deleted = $user->deleted == 1 ? true : false;
+                $this->confirmed = $user->confirmed == 1 ? true : false;
                 return true;
 
             } else {
