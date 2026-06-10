@@ -1573,7 +1573,7 @@ class PAGE {
                 <li><a href="#votingrecord">Voting record</a></li>
             <?php } ?>
             <li><a href="#numbers">Numbers</a></li>
-            <?php if ($member['current_member'][1] || $member['current_member'][2]) { ?>
+            <?php if ($member['current_member'][HOUSE::REPRESENTATIVES] || $member['current_member'][HOUSE::SENATE]) { ?>
                 <li><a href="#register">Register of Interests</a></li>
             <?php }
             if (isset($extra_info['expenses2004_col1']) || isset($extra_info['expenses2006_col1']) || isset($extra_info['expenses2007_col1'])) { ?>
