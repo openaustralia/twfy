@@ -18,6 +18,7 @@ use PHPUnit\Framework\TestCase;
 abstract class PageRenderingIntegrationTestCase extends TestCase {
 
     private static bool $createdConfGeneral = false;
+    private static ?string $originalConfGeneral = null;
 
     /**
      *
@@ -44,12 +45,15 @@ abstract class PageRenderingIntegrationTestCase extends TestCase {
      *
      */
     public static function tearDownAfterClass(): void {
+        $path = __DIR__ . '/../conf/general';
         if (self::$createdConfGeneral) {
-            $path = __DIR__ . '/../conf/general';
-            if (file_exists($path)) {
+            if (self::$originalConfGeneral !== null) {
+                file_put_contents($path, self::$originalConfGeneral);
+            } elseif (file_exists($path)) {
                 unlink($path);
             }
             self::$createdConfGeneral = false;
+            self::$originalConfGeneral = null;
         }
     }
 
@@ -108,7 +112,7 @@ abstract class PageRenderingIntegrationTestCase extends TestCase {
     private static function ensureConfGeneral(): void {
         $path = __DIR__ . '/../conf/general';
         if (file_exists($path)) {
-            return;
+            self::$originalConfGeneral = file_get_contents($path);
         }
 
         $config = getTestDbConfig();
