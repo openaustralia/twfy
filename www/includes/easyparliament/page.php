@@ -1853,19 +1853,15 @@ class PAGE {
                 ?>
                 <li><strong><?php echo htmlentities($extra_info['number_of_alerts']) ?></strong>
                     <?php echo ($extra_info['number_of_alerts'] == 1 ? 'person is' : 'people are') ?> tracking whenever <?php
-                              if ($member['house_disp'] == 1) {
+                              if ($member['house_disp'] == HOUSE::REPRESENTATIVES) {
                                   print 'this Representative';
-                              } elseif ($member['house_disp'] == 2) {
+                              } elseif ($member['house_disp'] == HOUSE::SENATE) {
                                   print 'this Senator';
-                              } elseif ($member['house_disp'] == 3) {
-                                  print 'this MLA';
-                              } elseif ($member['house_disp'] == 4) {
-                                  print 'this MSP';
-                              } elseif ($member['house_disp'] == 0) {
+                              } else {
                                   print $member['full_name'];
                               } ?> speaks
                     <?php
-                    if ($member['current_member'][0] || $member['current_member'][2] || $member['current_member'][3] || ($member['current_member'][1] && $member['party'] != 'Sinn Fein')) {
+                    if ($member['current_member'][HOUSE::SENATE] || ($member['current_member'][HOUSE::REPRESENTATIVES] && $member['party'] != 'Sinn Fein')) {
                         if (!isset($_SERVER['DEVICE_TYPE']) || $_SERVER['DEVICE_TYPE'] != "mobile") {
                             print ' &mdash; <a href="' . WEBPATH . 'alert/?only=1&amp;pid=' . $member['person_id'] . '">email me whenever ' . $member['full_name'] . ' speaks</a>';
                         }
@@ -1880,9 +1876,6 @@ class PAGE {
                 }
 
             }
-            // $displayed_stuff |= display_stats_line('ending_with_a_preposition', "Has ended a sentence with 'with' ", 'time', ' in debates', '', $extra_info);
-            // $displayed_stuff |= display_stats_line('only_asked_why', "Has made a speech consisting solely of 'Why?' ", 'time', ' in debates', '', $extra_info);
-
             ?>
         </ul>
         <?php
