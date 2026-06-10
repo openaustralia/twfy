@@ -987,7 +987,7 @@ class THEUSER extends USER {
         // account their cookie remembering settings etc) with $this->login().
 
         $user = UserModel::where('email', $email)
-            ->first(['user_id', 'password', 'deleted', 'confirmed']);
+          ->first(['user_id', 'password', 'deleted', 'confirmed']);
 
         if ($user) {
             // OK.

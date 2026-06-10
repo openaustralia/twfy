@@ -9,10 +9,31 @@ use OpenAustralia\TWFY\Models\User as UserModel;
  */
 class UserIntegrationTest extends TransactionalTestCase {
 
+    /** @var string[] */
+    private array $createdEmails = [];
+
+    protected function useMysqliTransaction(): bool {
+        return false;
+    }
+
+    protected function useEloquentTransaction(): bool {
+        return false;
+    }
+
+    protected function tearDown(): void {
+        if ($this->createdEmails !== []) {
+            UserModel::whereIn('email', $this->createdEmails)->delete();
+        }
+        $this->createdEmails = [];
+        parent::tearDown();
+    }
+
     /**
      * Insert a test user into the database.
      */
     private function insertTestUser(string $email, string $firstname = 'Test'): int {
+        $this->createdEmails[] = $email;
+
         UserModel::query()->insert([
             'firstname' => $firstname,
             'lastname' => 'User',
