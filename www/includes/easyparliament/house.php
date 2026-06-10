@@ -4,6 +4,9 @@
  * @file
  */
 
+/**
+ * The houses we support
+ */
 class HOUSE {
 
     public const REPRESENTATIVES = 1;

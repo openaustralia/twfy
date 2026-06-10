@@ -39,8 +39,6 @@ class MEMBER {
      */
     public $house_disp = 0;
 
-
-
     /**
      * Mapping member table reasons to text.
      */
@@ -672,10 +670,11 @@ class MEMBER {
         $house = $this->house_disp;
         if ($house == HOUSE::REPRESENTATIVES) {
             $URL = new URL('mp');
-        } elseif ($house == HOUSE::SENATE){
-            $URL = new URL('peer'); // todo change the URLs to senate
+        } elseif ($house == HOUSE::SENATE) {
+            // TODO: Change the URLs to senate.
+            $URL = new URL('peer');
         } else {
-            // uhoh what? we have more houses now?
+            // Unexpected house identifier.
             return 'unknown';
         }
 
