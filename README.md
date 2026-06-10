@@ -67,17 +67,48 @@ Use `phpcbf` to fix formatting that GitHub Actions complains about, eg:
 
 ## Running the app locally
 
-The easiest way to run the whole stack (Apache + PHP + MySQL) is via Docker:
+The easiest way to run the whole stack (Apache + PHP + MySQL) is via Docker.
+
+### First-time setup
+
+From a fresh checkout:
 
 ```bash
-make docker          # build the image then start the containers
-# or, if the image is already built:
-make docker-run
+cp conf/general-example.local-dev conf/general   # local dev config
+make dependencies                                # composer install (needed by db targets)
+make docker                                      # build image + start webhost & mysql containers
+make docker-db-migrate                           # create schema via Phinx migrations
+make docker-db-seed                              # load sample dev data (members, hansard, postcodes, ...)
+make xapian-index-docker                         # build the Xapian search index
 ```
 
-The site will be available at <http://localhost> (override the port with
-`TWFY_HTTP_PORT=8080 make docker-run`), and MySQL on `127.0.0.1:3306`
-(override with `TWFY_MYSQL_PORT`).
+The site is then available at <http://localhost> and MySQL at
+`127.0.0.1:3306`. Override the host ports with `TWFY_HTTP_PORT` and
+`TWFY_MYSQL_PORT`, e.g. `TWFY_HTTP_PORT=8080 make docker-run`.
+
+`make docker-db-seed` runs every seeder in `db/seeds/`. To load just one,
+pass `SEEDER=<Name>`, e.g. `make docker-db-seed SEEDER=PostcodeLookupSeeder`.
+Seeders are idempotent — they skip any table that already has rows — so
+re-running is safe. `PostcodeLookupSeeder` reads a fixture from the
+sibling `../openaustralia-parser` checkout, so make sure that repo is
+cloned next to this one.
+
+### Day-to-day
+
+Once the image is built and the database has been seeded, restart the
+stack with:
+
+```bash
+make docker-run                  # start containers in the background
+```
+
+Apply any new migrations after pulling:
+
+```bash
+make docker-db-migrate           # apply pending Phinx migrations
+```
+
+Stop everything with `docker compose down`.
 
 ### MySQL version
 
@@ -88,21 +119,6 @@ development, CI and production stay aligned. Schema dumps from
 `mysqldump` are sensitive to the server version, so keep these in sync —
 bumping one without the others will cause spurious `db/schema.sql` diffs
 in the `schema-check` CI job.
-
-On first start, load the schema and apply any migrations:
-
-```bash
-make docker-db-migrate              # apply pending Phinx migrations
-```
-
-To populate the Xapian search index (required for the search box to return
-results), run:
-
-```bash
-make xapian-index-docker         # incremental index using the timestamp file
-```
-
-Stop everything with `docker compose down`.
 
 ## Database migrations
 
