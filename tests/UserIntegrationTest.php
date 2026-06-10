@@ -1,58 +1,37 @@
 <?php
 
-require_once __DIR__ . '/DatabaseIntegrationTestCase.php';
+require_once __DIR__ . '/bootstrap.php';
+
+use OpenAustralia\TWFY\Models\User as UserModel;
 
 /**
- * Integration tests for the USER class methods.
- * These tests require DB_HOST, DB_USER, DB_PASSWORD, DB_NAME environment variables.
+ * Integration tests for USER/THEUSER methods.
  */
-class UserIntegrationTest extends DatabaseIntegrationTestCase
-{
-    /**
-     * Create a temporary users table matching the schema used by the USER class.
-     */
-    protected function createTemporaryTables(): void
-    {
-        $sql = "CREATE TEMPORARY TABLE users (
-            user_id INT AUTO_INCREMENT PRIMARY KEY,
-            firstname VARCHAR(100),
-            lastname VARCHAR(100),
-            email VARCHAR(100) UNIQUE,
-            password VARCHAR(255),
-            emailpublic TINYINT DEFAULT 0,
-            constituency VARCHAR(100),
-            url VARCHAR(255),
-            lastvisit DATETIME,
-            registrationtime VARCHAR(14),
-            registrationip VARCHAR(15),
-            optin TINYINT DEFAULT 0,
-            status VARCHAR(50) DEFAULT 'User',
-            deleted TINYINT DEFAULT 0,
-            confirmed TINYINT DEFAULT 0,
-            registrationtoken VARCHAR(34)
-        )";
-        $this->db->query($sql);
-    }
-
-    protected function dropTemporaryTables(): void
-    {
-        $this->db->query("DROP TEMPORARY TABLE IF EXISTS users");
-    }
+class UserIntegrationTest extends TransactionalTestCase {
 
     /**
      * Insert a test user into the database.
      */
-    private function insertTestUser(string $email, string $firstname = 'Test'): int
-    {
-        $q = $this->db->query(
-            "INSERT INTO users (firstname, lastname, email, password, confirmed) VALUES (?, ?, ?, ?, ?)",
-            $firstname,
-            'User',
-            $email,
-            password_hash('oldpassword123', PASSWORD_DEFAULT),
-            1  // confirmed
-        );
-        return $q->insert_id();
+    private function insertTestUser(string $email, string $firstname = 'Test'): int {
+        UserModel::query()->insert([
+            'firstname' => $firstname,
+            'lastname' => 'User',
+            'email' => $email,
+            'emailpublic' => 0,
+            'constituency' => '',
+            'url' => '',
+            'password' => password_hash('oldpassword123', PASSWORD_DEFAULT),
+            'optin' => 0,
+            'status' => 'User',
+            'registrationtime' => gmdate('YmdHis'),
+            'registrationip' => '127.0.0.1',
+            'deleted' => 0,
+            'confirmed' => 1,
+            'registrationtoken' => '',
+            'lastvisit' => gmdate('Y-m-d H:i:s'),
+        ]);
+
+        return (int) UserModel::where('email', $email)->value('user_id');
     }
 
     // =========================================================================
@@ -90,12 +69,8 @@ class UserIntegrationTest extends DatabaseIntegrationTestCase
         $newpwd = $USER->change_password($email);
 
         // Verify the hashed password was stored
-        $verify_q = $this->db->query(
-            "SELECT password FROM users WHERE email = ?",
-            $email
-        );
-        $this->assertSame(1, $verify_q->rows());
-        $hashedPassword = $verify_q->field(0, 'password');
+        $hashedPassword = UserModel::where('email', $email)->value('password');
+        $this->assertIsString($hashedPassword);
 
         // Verify it's actually hashed (not plaintext)
         $this->assertNotSame($newpwd, $hashedPassword);
@@ -171,11 +146,7 @@ class UserIntegrationTest extends DatabaseIntegrationTestCase
         $this->assertNotEmpty($newpwd);
 
         // Verify it was actually stored
-        $verify_q = $this->db->query(
-            "SELECT password FROM users WHERE email = ?",
-            $email
-        );
-        $this->assertSame(1, $verify_q->rows());
+        $this->assertTrue(UserModel::where('email', $email)->exists());
     }
 
     public function test_change_password_can_log_in_with_new_password(): void
@@ -212,4 +183,5 @@ class UserIntegrationTest extends DatabaseIntegrationTestCase
         // Should fail
         $this->assertNotTrue($result);
     }
+
 }
