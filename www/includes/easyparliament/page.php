@@ -1556,21 +1556,6 @@ class PAGE {
             print '<li>Sinn F&eacute;in MPs do not take their seats in Parliament</li>';
         }
 
-        if ($member['the_users_mp']) {
-        ?>
-        <?php
-        } elseif ($member['current_member'][1]) {
-        ?>
-        <?php
-        } elseif ($member['current_member'][3]) {
-            ?>
-            <li><a href="https://www.writetothem.com/"><strong>Send a message to your MLA</strong></a> <small>(via
-                    WriteToThem.com)</small></li>
-        <?php } elseif ($member['current_member'][2]) {
-        ?>
-        <?php
-
-        }
 
         // If they're currently a Senator or a non-Sinn Fein Representative.
         if ($member['current_member'][HOUSE::SENATE] || ($member['current_member'][HOUSE::REPRESENTATIVES] && $member['party'] != 'Sinn Fein')) {
