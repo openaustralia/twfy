@@ -271,50 +271,7 @@ class MEMBER {
         }
 
         $q = "SELECT DISTINCT person_id,constituency,left_house FROM member WHERE ";
-        if ($this_page == 'msp') {
-            $success = preg_match('#^(.*?) (.*?) (.*?)$#', $name, $m);
-            if (!$success) {
-                $success = preg_match('#^(.*?)() (.*)$#', $name, $m);
-            }
-            if (!$success) {
-                $PAGE->error_message('Sorry, that name was not recognised.');
-                return false;
-            }
-            // FIXME.
-            $first_name = getParlDB()->escape($m[1]);
-            $middle_name = getParlDB()->escape($m[2]);
-            $last_name = getParlDB()->escape($m[3]);
-            // When there's no middle name, avoid concatenating a stray space
-            // that would never match under MySQL 8 NO PAD collations.
-            if ($middle_name !== '') {
-                $q .= "house = 4 AND (";
-                $q .= "(first_name='$first_name $middle_name' AND last_name='$last_name')";
-                $q .= " OR (first_name='$first_name' AND last_name='$middle_name $last_name') )";
-            } else {
-                $q .= "house = 4 AND first_name='$first_name' AND last_name='$last_name'";
-            }
-        } elseif ($this_page == 'mla') {
-            $success = preg_match('#^(.*?) (.*?) (.*?)$#', $name, $m);
-            if (!$success) {
-                $success = preg_match('#^(.*?)() (.*)$#', $name, $m);
-            }
-            if (!$success) {
-                $PAGE->error_message('Sorry, that name was not recognised.');
-                return false;
-            }
-            $first_name = getParlDB()->escape($m[1]);
-            $middle_name = getParlDB()->escape($m[2]);
-            $last_name = getParlDB()->escape($m[3]);
-            // When there's no middle name, avoid concatenating a stray space
-            // that would never match under MySQL 8 NO PAD collations.
-            if ($middle_name !== '') {
-                $q .= "house = 3 AND (";
-                $q .= "(first_name='$first_name $middle_name' AND last_name='$last_name')";
-                $q .= " OR (first_name='$first_name' AND last_name='$middle_name $last_name') )";
-            } else {
-                $q .= "house = 3 AND first_name='$first_name' AND last_name='$last_name'";
-            }
-        } elseif (strstr($this_page, 'mp') || $this_page == 'peer') {
+        if (strstr($this_page, 'mp') || $this_page == 'peer') {
             $success = preg_match('#^(.*?) (.*?) (.*?)$#', $name, $m);
             if (!$success) {
                 $success = preg_match('#^(.*?)() (.*)$#', $name, $m);
