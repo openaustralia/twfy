@@ -195,6 +195,30 @@ class UserAddTest extends TransactionalTestCase {
         // Should fail due to unique constraint
         $this->assertFalse($result);
     }
+    /**
+     * Test registration IP is stored.
+     */
+    public function test_add_stores_registration_ip() {
+        $USER = new USER();
+
+        $details = [
+            'firstname' => 'IP',
+            'lastname' => 'Test',
+            'email' => 'iptest@test.com',
+            'constituency' => 'Test',
+            'url' => '',
+            'password' => 'pass',
+        ];
+
+        $USER->add($details, false);
+        $user_id = $USER->user_id();
+
+        $retrievedUser = new USER();
+        $retrievedUser->init($user_id);
+
+        // IP should be set to something
+        $this->assertNotEmpty($retrievedUser->registrationip());
+    }
 
     /**
      * Test password is hashed with bcrypt.
@@ -248,6 +272,10 @@ class UserAddTest extends TransactionalTestCase {
         $retrievedUser->init($user_id);
 
         $regTime = $retrievedUser->registrationtime();
+        // Convert Carbon object to string if needed
+        if (is_object($regTime)) {
+            $regTime = $regTime->format('Y-m-d H:i:s');
+        }
         $this->assertGreaterThanOrEqual($timeBefore, $regTime);
         $this->assertLessThanOrEqual($timeAfter, $regTime);
     }
