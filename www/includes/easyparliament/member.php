@@ -43,11 +43,8 @@ class MEMBER {
      * Mapping member table 'house' numbers to text.
      */
     public $houses_pretty = [
-        0 => 'Royal Family',
-        1 => 'House of Commons',
-        2 => 'House of Lords',
-        3 => 'Northern Ireland Assembly',
-        4 => 'Scottish Parliament',
+        1 => 'Representatives',
+        2 => 'Senators',
     ];
 
     /**
