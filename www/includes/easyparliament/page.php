@@ -1525,7 +1525,8 @@ class PAGE {
             }
             print '</li>';
         }
-        if (isset($extra_info['lordbio'])) { //TODO rename to something that's not lord
+        // TODO: Rename to something that's not lord.
+        if (isset($extra_info['lordbio'])) {
             echo '<li><strong>Positions held:</strong> ', $extra_info['lordbio'],
                 ' <small>(from <a href="',
                 $extra_info['lordbio_from'], '">Number 10 press release</a>)</small></li>';
@@ -1557,17 +1558,14 @@ class PAGE {
         }
 
 
-        // If they're currently a Senator or a non-Sinn Fein Representative.
-        if ($member['current_member'][HOUSE::SENATE] || ($member['current_member'][HOUSE::REPRESENTATIVES] && $member['party'] != 'Sinn Fein')) {
+        // If they're currently a member
+        if ($member['current_member'][HOUSE::SENATE] || $member['current_member'][HOUSE::REPRESENTATIVES] ) {
             if (!isset($_SERVER['DEVICE_TYPE']) || $_SERVER['DEVICE_TYPE'] != "mobile") {
                 print '<li><a href="' . WEBPATH . 'alert/?only=1&amp;pid=' . $member['person_id'] . '"><strong>Email me whenever ' . $member['full_name'] . ' speaks</strong></a> (no more than once per day)</li>';
             }
         }
-
         ?>
         </ul>
-
-
         <ul class="jumpers">
             <?php if (defined('DISPLAY_VOTING_DATA') && DISPLAY_VOTING_DATA) { ?>
                 <li><a href="#votingrecord">Voting record</a></li>
@@ -1686,7 +1684,7 @@ class PAGE {
 
         }
 
-        if (!in_array(1, $member['houses']) || $member['party'] != 'Sinn Fein') {
+        if (!in_array(HOUSE::REPRESENTATIVES, $member['houses'])) {
 
             ?> <a name="hansard"></a>
             <?php
@@ -1797,14 +1795,16 @@ class PAGE {
                 $displayed_stuff = 1;
                 ?>
                 <li><strong><?php echo htmlentities($extra_info['number_of_alerts']) ?></strong>
-                    <?php echo ($extra_info['number_of_alerts'] == 1 ? 'person is' : 'people are') ?> tracking whenever <?php
-                              if ($member['house_disp'] == HOUSE::REPRESENTATIVES) {
-                                  print 'this Representative';
-                              } elseif ($member['house_disp'] == HOUSE::SENATE) {
-                                  print 'this Senator';
-                              } else {
-                                  print $member['full_name'];
-                              } ?> speaks
+                    <?php echo ($extra_info['number_of_alerts'] == 1 ? 'person is' : 'people are') ?>
+                    tracking whenever
+                    <?php
+                    $role_name = HOUSE::pretty_name($member['house_disp']);
+                    if ($role_name != '') {
+                        print 'this ' . rtrim($role_name, 's');
+                    } else {
+                        print $member['full_name'];
+                    }
+                    ?> speaks
                     <?php
                     if ($member['current_member'][HOUSE::SENATE] || ($member['current_member'][HOUSE::REPRESENTATIVES] && $member['party'] != 'Sinn Fein')) {
                         if (!isset($_SERVER['DEVICE_TYPE']) || $_SERVER['DEVICE_TYPE'] != "mobile") {
@@ -1814,12 +1814,9 @@ class PAGE {
                     print '.</li>';
             }
 
-            if ($member['party'] != 'Sinn Fein') {
-                $displayed_stuff |= display_stats_line('three_word_alliterations', 'Has used three-word alliterative phrases (e.g. "she sells seashells") ', 'time', ' in debates', ' <small>(<a href="' . WEBPATH . 'help/#numbers">Why is this here?</a>)</small>', $extra_info);
-                if (isset($extra_info['three_word_alliteration_content'])) {
-                    print "\n<!-- " . $extra_info['three_word_alliteration_content'] . " -->\n";
-                }
-
+            $displayed_stuff |= display_stats_line('three_word_alliterations', 'Has used three-word alliterative phrases (e.g. "she sells seashells") ', 'time', ' in debates', ' <small>(<a href="' . WEBPATH . 'help/#numbers">Why is this here?</a>)</small>', $extra_info);
+            if (isset($extra_info['three_word_alliteration_content'])) {
+                print "\n<!-- " . $extra_info['three_word_alliteration_content'] . " -->\n";
             }
             ?>
         </ul>
