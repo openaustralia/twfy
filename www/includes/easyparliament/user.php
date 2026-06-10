@@ -430,38 +430,20 @@ class USER {
     /**
      *
      */
-    public function id_exists($user_id) {
+    public function id_exists(int $user_id): bool {
         // Returns true if there's a user with this user_id.
 
-        if (is_numeric($user_id)) {
-            $q = parlDBQuery("SELECT user_id FROM users WHERE user_id = ?", $user_id);
-            if ($q->rows() > 0) {
-                return true;
-            } else {
-                return false;
-            }
-        } else {
-            return false;
-        }
+        return UserModel::where('user_id', $user_id)->exists();
 
     }
 
     /**
      *
      */
-    public function email_exists($email) {
+    public function email_exists(string $email): bool {
         // Returns true if there's a user with this email address.
 
-        if ($email != "") {
-            $q = parlDBQuery("SELECT user_id FROM users WHERE email = ?", $email);
-            if ($q->rows() > 0) {
-                return true;
-            } else {
-                return false;
-            }
-        } else {
-            return false;
-        }
+        return $email !== '' && UserModel::where('email', $email)->exists();
 
     }
 
