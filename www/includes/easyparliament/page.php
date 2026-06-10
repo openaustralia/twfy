@@ -1553,11 +1553,6 @@ class PAGE {
             <?php
         }
 
-        if ($member['party'] == 'Sinn Fein' && in_array(1, $member['houses'])) {
-            print '<li>Sinn F&eacute;in MPs do not take their seats in Parliament</li>';
-        }
-
-
         // If they're currently a member
         if ($member['current_member'][HOUSE::SENATE] || $member['current_member'][HOUSE::REPRESENTATIVES] ) {
             if (!isset($_SERVER['DEVICE_TYPE']) || $_SERVER['DEVICE_TYPE'] != "mobile") {
@@ -1752,21 +1747,19 @@ class PAGE {
 
             $MOREURL = new URL('search');
             $MOREURL->insert(['pid' => $member['person_id'], 'pop' => 1]);
-            if ($member['party'] != 'Sinn Fein') {
-                $displayed_stuff |= display_stats_line('debate_sectionsspoken_inlastyear', 'Has spoken in <a href="' . $MOREURL->generate() . '">', 'debate', '</a> ' . $since_text, '', $extra_info);
+            $displayed_stuff |= display_stats_line('debate_sectionsspoken_inlastyear', 'Has spoken in <a href="' . $MOREURL->generate() . '">', 'debate', '</a> ' . $since_text, '', $extra_info);
 
-                $MOREURL->insert(['pid' => $member['person_id'], 's' => 'section:wrans', 'pop' => 1]);
-                // We assume that if they've answered a question, they're a minister.
-                $minister = false;
-                $Lminister = false;
-                if (isset($extra_info['wrans_answered_inlastyear']) && $extra_info['wrans_answered_inlastyear'] > 0 && $extra_info['wrans_asked_inlastyear'] == 0) {
-                    $minister = true;
-                }
-                if (isset($extra_info['Lwrans_answered_inlastyear']) && $extra_info['Lwrans_answered_inlastyear'] > 0 && $extra_info['Lwrans_asked_inlastyear'] == 0) {
-                    $Lminister = true;
-                }
-                // $displayed_stuff |= display_stats_line('wrans_asked_inlastyear', 'Has received answers to <a href="' . $MOREURL->generate() . '">', 'written question', '</a> ' . $since_text, '', $extra_info, $minister, $Lminister);
+            $MOREURL->insert(['pid' => $member['person_id'], 's' => 'section:wrans', 'pop' => 1]);
+            // We assume that if they've answered a question, they're a minister.
+            $minister = false;
+            $Lminister = false;
+            if (isset($extra_info['wrans_answered_inlastyear']) && $extra_info['wrans_answered_inlastyear'] > 0 && $extra_info['wrans_asked_inlastyear'] == 0) {
+                $minister = true;
             }
+            if (isset($extra_info['Lwrans_answered_inlastyear']) && $extra_info['Lwrans_answered_inlastyear'] > 0 && $extra_info['Lwrans_asked_inlastyear'] == 0) {
+                $Lminister = true;
+            }
+            // $displayed_stuff |= display_stats_line('wrans_asked_inlastyear', 'Has received answers to <a href="' . $MOREURL->generate() . '">', 'written question', '</a> ' . $since_text, '', $extra_info, $minister, $Lminister);
 
             if (isset($extra_info['select_committees'])) {
                 print "<li>Is a member of <strong>$extra_info[select_committees]</strong> select committee";
