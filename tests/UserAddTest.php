@@ -196,6 +196,29 @@ class UserAddTest extends TransactionalTestCase {
         $this->assertFalse($result);
     }
     /**
+     * Test user is not confirmed by default.
+     */
+    public function test_add_sets_confirmed_to_false() {
+        $USER = new USER();
+
+        $details = [
+            'firstname' => 'Confirm',
+            'lastname' => 'Test',
+            'email' => 'confirm@test.com',
+            'constituency' => 'Test',
+            'url' => '',
+            'password' => 'pass',
+        ];
+
+        $USER->add($details, false);
+        $user_id = $USER->user_id();
+
+        $retrievedUser = new USER();
+        $retrievedUser->init($user_id);
+
+        $this->assertFalse($retrievedUser->confirmed());
+    }
+    /**
      * Test registration IP is stored.
      */
     public function test_add_stores_registration_ip() {
@@ -263,9 +286,6 @@ class UserAddTest extends TransactionalTestCase {
             'password' => 'pass',
         ];
 
-        $timeBefore = gmdate("YmdHis");
-        $USER->add($details, false);
-        $timeAfter = gmdate("YmdHis");
         $timeBefore = gmdate("Y-m-d H:i:s");
         $USER->add($details, false);
         $timeAfter = gmdate("Y-m-d H:i:s");
