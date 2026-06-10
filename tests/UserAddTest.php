@@ -195,6 +195,39 @@ class UserAddTest extends TransactionalTestCase {
         // Should fail due to unique constraint
         $this->assertFalse($result);
     }
+
+        /**
+         * Test multiple users can be created without issue.
+         */
+        public function test_add_multiple_users_successfully() {
+            $USER1 = new USER();
+            $details1 = [
+                'firstname' => 'User',
+                'lastname' => 'One',
+                'email' => 'user1@test.com',
+                'constituency' => 'Test',
+                'url' => '',
+                'password' => 'pass',
+            ];
+            $result1 = $USER1->add($details1, false);
+            $this->assertTrue($result1);
+            $this->assertNotEmpty($USER1->user_id());
+
+            $USER2 = new USER();
+            $details2 = [
+                'firstname' => 'User',
+                'lastname' => 'Two',
+                'email' => 'user2@test.com',
+                'constituency' => 'Test',
+                'url' => '',
+                'password' => 'pass',
+            ];
+            $result2 = $USER2->add($details2, false);
+            $this->assertTrue($result2);
+            $this->assertNotEmpty($USER2->user_id());
+            // Verify they have different IDs
+            $this->assertNotEquals($USER1->user_id(), $USER2->user_id());
+        }
     /**
      * Test user is not confirmed by default.
      */
