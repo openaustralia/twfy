@@ -1389,7 +1389,7 @@ class PAGE {
         foreach ($member['houses'] as $house) {
             if ($member['current_member'][$house]) {
                 $title .= ' ';
-                if ($house == 1) {
+                if ($house == HOUSE::REPRESENTATIVES) {
                     $title .= 'MP';
                 }
             }
@@ -1398,10 +1398,10 @@ class PAGE {
         foreach ($member['houses'] as $house) {
             if (!$member['current_member'][$house]) {
                 $title .= ', former ';
-                if ($house == 1) {
+                if ($house == HOUSE::REPRESENTATIVES) {
                     $title .= 'Representative';
                 }
-                if ($house == 2) {
+                if ($house == HOUSE::SENATE) {
                     $title .= 'Senator';
                 }
             }
