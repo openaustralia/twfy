@@ -2061,18 +2061,14 @@ class HANSARDLIST {
                 if ($q->rows() > 0) {
                     // *SHOULD* only get one row back here...
                     $house = $q->field(0, 'house');
-                    if ($house == 1) {
+                    if ($house == HOUSE::REPRESENTATIVES) {
                         $URL = new URL('mp');
-                    } elseif ($house == 2) {
+                    } elseif ($house == HOUSE::SENATE) {
                         $URL = new URL('peer');
-                    } elseif ($house == 3) {
-                        $URL = new URL('mla');
-                    } elseif ($house == 3) {
-                        $URL = new URL('mla');
-                    } elseif ($house == 4) {
-                        $URL = new URL('msp');
-                    } elseif ($house == 0) {
-                        $URL = new URL('royal');
+                    } else {
+                        // UNKNOWN HOUSE!!
+                        // this shouldn't happen
+                        $URL = new URL('unknown');
                     }
                     $URL->insert(['m' => $speaker_id]);
                     $speaker = [
