@@ -1773,10 +1773,6 @@ class PAGE {
             }
 
             $after_stuff = ' <small>(From Public Whip)</small>';
-            if ($member['party'] == 'Scottish National Party') {
-                $after_stuff .= '<br><em>Note SNP MPs do not vote on legislation not affecting Scotland.</em>';
-            }
-
             $displayed_stuff |= display_stats_line('comments_on_speeches', 'People have made <a href="' . WEBPATH . 'comments/recent/?pid=' . $member['person_id'] . '">', 'comment', "</a> on this Representative's speeches", '', $extra_info);
             $displayed_stuff |= display_stats_line('reading_age', 'This Representative\'s speeches are understandable to an average ', '', ' year old, going by the <a href="http://en.wikipedia.org/wiki/Flesch-Kincaid_Readability_Test">Flesch-Kincaid Grade Level</a> score', '', $extra_info);
 
