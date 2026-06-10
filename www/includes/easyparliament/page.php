@@ -1806,7 +1806,7 @@ class PAGE {
                     }
                     ?> speaks
                     <?php
-                    if ($member['current_member'][HOUSE::SENATE] || ($member['current_member'][HOUSE::REPRESENTATIVES] && $member['party'] != 'Sinn Fein')) {
+                    if ($member['current_member'][HOUSE::SENATE] || $member['current_member'][HOUSE::REPRESENTATIVES]) {
                         if (!isset($_SERVER['DEVICE_TYPE']) || $_SERVER['DEVICE_TYPE'] != "mobile") {
                             print ' &mdash; <a href="' . WEBPATH . 'alert/?only=1&amp;pid=' . $member['person_id'] . '">email me whenever ' . $member['full_name'] . ' speaks</a>';
                         }
