@@ -943,9 +943,9 @@ class THEUSER extends USER {
         if ($this->isloggedin()) {
             // Set last_visit to now.
             $date_now = gmdate("Y-m-d H:i:s");
-            $q = parlDBQuery("UPDATE users
-							SET 	lastvisit = '$date_now'
-							WHERE 	user_id = '" . $this->user_id() . "'");
+            UserModel::where('user_id', $this->user_id())->update([
+                'lastvisit' => $date_now,
+            ]);
 
             $this->lastvisit = $date_now;
         }
