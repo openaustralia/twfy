@@ -1983,9 +1983,6 @@ class PAGE {
         if (isset($links['mp_website'])) {
             $html .= '<li><a href="' . $links['mp_website'] . '">' . $member->full_name() . '\'s personal website</a></li>';
         }
-        if (isset($links['sp_url'])) {
-            $html .= '<li><a href="' . $links['sp_url'] . '">' . $member->full_name() . '\'s page on the Scottish Parliament website</a></li>';
-        }
         if (isset($links['aph_url'])) {
             $html .= '<li><a href="' . $links['aph_url'] . '">Parliament House web page for ' . $member->full_name() . '</a></li>';
         }
@@ -2008,7 +2005,6 @@ class PAGE {
             $html .= '	<li><a href="' . $links['journa_list_link'] . '">Newspaper articles written by this MP</a> <small>(From Journa-list)</small></li>';
 
         }
-
         if (isset($links['guardian_parliament_history'])) {
             $html .= '	<li><a href="' . $links['guardian_parliament_history'] . '">Parliamentary career</a> <small>(From The Guardian)</small></li>';
         }
