@@ -7,7 +7,7 @@
 
 require_once __DIR__ . '/bootstrap.php';
 
-use PHPUnit\Framework\TestCase;
+use OpenAustralia\TWFY\Models\Member as MemberModel;
 
 /**
  * Tests for future MPs functionality.
@@ -24,22 +24,20 @@ class MemberFutureMpsTest extends TransactionalTestCase {
             $member_id = $auto_member_id++;
         }
 
-        parlDBQuery(
-            "INSERT INTO member (member_id, person_id, house, title, first_name, last_name, constituency, party, entered_house, left_house, entered_reason, left_reason)
-             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-            $member_id,
-            $person_id,
-            1, // House of Commons
-            '',
-            $first_name,
-            $last_name,
-            $constituency,
-            'Test Party',
-            $entered_house,
-            $left_house,
-            'general_election',
-            'still_in_office'
-        );
+        MemberModel::query()->insert([
+            'member_id' => $member_id,
+            'person_id' => $person_id,
+            'house' => 1,
+            'title' => '',
+            'first_name' => $first_name,
+            'last_name' => $last_name,
+            'constituency' => $constituency,
+            'party' => 'Test Party',
+            'entered_house' => $entered_house,
+            'left_house' => $left_house,
+            'entered_reason' => 'general_election',
+            'left_reason' => 'still_in_office',
+        ]);
     }
 
     /**
@@ -123,22 +121,20 @@ class MemberFutureMpsTest extends TransactionalTestCase {
     public function test_future_mps_returns_empty_for_non_house_of_commons() {
         // Insert a member who entered the House of Commons then left
         // This should have no entered_house[1] and thus return empty
-        parlDBQuery(
-            "INSERT INTO member (member_id, person_id, house, title, first_name, last_name, constituency, party, entered_house, left_house, entered_reason, left_reason)
-             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-            90010,
-            99030,
-            2, // House of Lords
-            '',
-            'Lord',
-            'TestLord',
-            '',
-            'Test Party',
-            '2010-01-01',
-            '9999-12-31',
-            'became_peer',
-            'still_in_office'
-        );
+        MemberModel::query()->insert([
+            'member_id' => 90010,
+            'person_id' => 99030,
+            'house' => 2,
+            'title' => '',
+            'first_name' => 'Lord',
+            'last_name' => 'TestLord',
+            'constituency' => '',
+            'party' => 'Test Party',
+            'entered_house' => '2010-01-01',
+            'left_house' => '9999-12-31',
+            'entered_reason' => 'appointed',
+            'left_reason' => 'still_in_office',
+        ]);
 
         $member = new MEMBER(['person_id' => 99030]);
         $this->assertTrue($member->valid);
