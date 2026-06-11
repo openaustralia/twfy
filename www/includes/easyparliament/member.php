@@ -395,8 +395,7 @@ class MEMBER {
                 str_replace("/person/", "/person/parliamentrmi/", $guardian_url);
             $this->extra_info['guardian_parliament_history'] =
                 str_replace("/person/", "/person/parliament/", $guardian_url);
-            $this->extra_info['guardian_biography'] =
-                $guardian_url;
+            $this->extra_info['guardian_biography'] = $guardian_url;
             $this->extra_info['guardian_candidacies'] =
                 str_replace("/person/", "/person/candidacies/", $guardian_url);
             $this->extra_info['guardian_howtheyvoted'] =
