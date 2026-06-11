@@ -321,6 +321,7 @@ class MEMBER {
         if ($rows->count() > 1) {
             // Hacky as a very hacky thing that's graduated in hacking from the University of Hacksville
             // Anyone who wants to do it properly, feel free.
+            // note the above comment was imported from SVN into git in about 2002, and look it's still here.
 
             $person_ids = [];
             $consts = [];
