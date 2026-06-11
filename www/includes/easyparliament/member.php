@@ -285,18 +285,25 @@ class MEMBER {
                 $PAGE->error_message('Sorry, that name was not recognised.');
                 return false;
             }
-            // FIXME.
-            $first_name = getParlDB()->escape($m[1]);
-            $middle_name = getParlDB()->escape($m[2]);
-            $last_name = getParlDB()->escape($m[3]);
+            $first_name = $m[1];
+            $middle_name = $m[2];
+            $last_name = $m[3];
             // When there's no middle name, avoid concatenating a stray space
             // that would never match under MySQL 8 NO PAD collations.
+            $query->where('house', 4);
             if ($middle_name !== '') {
-                $q .= "house = 4 AND (";
-                $q .= "(first_name='$first_name $middle_name' AND last_name='$last_name')";
-                $q .= " OR (first_name='$first_name' AND last_name='$middle_name $last_name') )";
+                $query->where(function ($q) use ($first_name, $middle_name, $last_name) {
+                    $q->where(function ($qq) use ($first_name, $middle_name, $last_name) {
+                        $qq->where('first_name', $first_name . ' ' . $middle_name)
+                          ->where('last_name', $last_name);
+                    })->orWhere(function ($qq) use ($first_name, $middle_name, $last_name) {
+                        $qq->where('first_name', $first_name)
+                          ->where('last_name', $middle_name . ' ' . $last_name);
+                    });
+                });
             } else {
-                $q .= "house = 4 AND first_name='$first_name' AND last_name='$last_name'";
+                $query->where('first_name', $first_name)
+                  ->where('last_name', $last_name);
             }
         } elseif ($this_page == 'mla') {
             $success = preg_match('#^(.*?) (.*?) (.*?)$#', $name, $m);
@@ -307,17 +314,25 @@ class MEMBER {
                 $PAGE->error_message('Sorry, that name was not recognised.');
                 return false;
             }
-            $first_name = getParlDB()->escape($m[1]);
-            $middle_name = getParlDB()->escape($m[2]);
-            $last_name = getParlDB()->escape($m[3]);
+            $first_name = $m[1];
+            $middle_name = $m[2];
+            $last_name = $m[3];
             // When there's no middle name, avoid concatenating a stray space
             // that would never match under MySQL 8 NO PAD collations.
+            $query->where('house', 3);
             if ($middle_name !== '') {
-                $q .= "house = 3 AND (";
-                $q .= "(first_name='$first_name $middle_name' AND last_name='$last_name')";
-                $q .= " OR (first_name='$first_name' AND last_name='$middle_name $last_name') )";
+                $query->where(function ($q) use ($first_name, $middle_name, $last_name) {
+                    $q->where(function ($qq) use ($first_name, $middle_name, $last_name) {
+                        $qq->where('first_name', $first_name . ' ' . $middle_name)
+                          ->where('last_name', $last_name);
+                    })->orWhere(function ($qq) use ($first_name, $middle_name, $last_name) {
+                        $qq->where('first_name', $first_name)
+                          ->where('last_name', $middle_name . ' ' . $last_name);
+                    });
+                });
             } else {
-                $q .= "house = 3 AND first_name='$first_name' AND last_name='$last_name'";
+                $query->where('first_name', $first_name)
+                  ->where('last_name', $last_name);
             }
         } elseif (strstr($this_page, 'mp') || $this_page == 'peer') {
             $success = preg_match('#^(.*?) (.*?) (.*?)$#', $name, $m);
@@ -332,14 +347,22 @@ class MEMBER {
             $middle_name = $m[2];
             $last_name = $m[3];
             $house = (strstr($this_page, 'mp')) ? 1 : 2;
-            // If ($title) $q .= 'title = \'' . getParlDB()->escape($title) . '\' AND ';.
+            $query->where('house', $house);
             // When there's no middle name, avoid concatenating a stray space
             // that would never match under MySQL 8 NO PAD collations.
             if ($middle_name !== '') {
-                $q .= "house = " . $house . " AND ((first_name='" . getParlDB()->escape($first_name . " " . $middle_name) . "' AND last_name='" . getParlDB()->escape($last_name) . "') OR " .
-                  "(first_name='" . getParlDB()->escape($first_name) . "' AND last_name='" . getParlDB()->escape($middle_name . " " . $last_name) . "'))";
+                $query->where(function ($q) use ($first_name, $middle_name, $last_name) {
+                    $q->where(function ($qq) use ($first_name, $middle_name, $last_name) {
+                        $qq->where('first_name', $first_name . ' ' . $middle_name)
+                          ->where('last_name', $last_name);
+                    })->orWhere(function ($qq) use ($first_name, $middle_name, $last_name) {
+                        $qq->where('first_name', $first_name)
+                          ->where('last_name', $middle_name . ' ' . $last_name);
+                    });
+                });
             } else {
-                $q .= "house = " . $house . " AND first_name='" . getParlDB()->escape($first_name) . "' AND last_name='" . getParlDB()->escape($last_name) . "'";
+                $query->where('first_name', $first_name)
+                  ->where('last_name', $last_name);
             }
             if ($const) {
                 $normalised = normalise_constituency_name($const);
@@ -349,25 +372,24 @@ class MEMBER {
                 }
             }
         } elseif ($this_page == 'royal') {
-            $q .= ' house = 0';
+            $query->where('house', 0);
         }
 
         if ($const) {
-            $q .= ' AND constituency=\'' . getParlDB()->escape($const) . "'";
+            $query->where('constituency', $const);
         }
-        $q .= ' ORDER BY left_house DESC';
-        $q = parlDBQuery($q);
-        if ($q->rows > 1) {
+        $rows = $query->orderBy('left_house', 'desc')->get();
+        if ($rows->count() > 1) {
             // Hacky as a very hacky thing that's graduated in hacking from the University of Hacksville
             // Anyone who wants to do it properly, feel free.
 
             $person_ids = [];
             $consts = [];
-            for ($i = 0; $i < $q->rows(); ++$i) {
-                $pid = $q->field($i, 'person_id');
+            foreach ($rows as $row) {
+                $pid = $row->person_id;
                 if (!in_array($pid, $person_ids)) {
                     $person_ids[] = $pid;
-                    $consts[] = $q->field($i, 'constituency');
+                    $consts[] = $row->constituency;
                 }
             }
             if (count($person_ids) == 1) {
@@ -375,8 +397,8 @@ class MEMBER {
             }
             $this->constituency = $consts;
             return $person_ids;
-        } elseif ($q->rows > 0) {
-            return $q->field(0, 'person_id');
+        } elseif ($rows->count() > 0) {
+            return $rows->first()->person_id;
         } elseif ($const && $this_page != 'peer') {
             $this->canonical = false;
             return $this->name_to_person_id($name);
