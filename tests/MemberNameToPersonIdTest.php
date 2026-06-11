@@ -91,4 +91,22 @@ class MemberNameToPersonIdTest extends TransactionalTestCase {
         $result = $member->name_to_person_id('Mary Jane Watson');
         $this->assertSame(88420, $result);
     }
+
+    public function test_name_to_person_id_filters_by_passed_constituency(): void {
+        $GLOBALS['this_page'] = 'mp';
+        $GLOBALS['PAGE'] = new class {
+            public function error_message($msg) {
+            }
+        };
+
+        $this->insertTestMember(99430, 88430, 'Chris', 'Jordan', 'TxNameSeatH');
+        $this->insertTestMember(99431, 88431, 'Chris', 'Jordan', 'TxNameSeatI');
+        $this->insertTestMember(99432, 88432, 'Helper', 'Member', 'TxNameSeatJ');
+
+        $member = new MEMBER(['person_id' => 88432]);
+        $this->assertTrue($member->valid);
+
+        $result = $member->name_to_person_id('Chris Jordan', 'TxNameSeatI');
+        $this->assertSame(88431, $result);
+    }
 }
