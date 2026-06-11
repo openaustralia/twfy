@@ -72,4 +72,23 @@ class MemberNameToPersonIdTest extends TransactionalTestCase {
         $this->assertContains(88411, $result);
         $this->assertSame(['TxNameSeatC', 'TxNameSeatD'], $member->constituency);
     }
+
+    public function test_name_to_person_id_matches_name_with_middle_name(): void {
+        $GLOBALS['this_page'] = 'mp';
+        $GLOBALS['PAGE'] = new class {
+            public function error_message($msg) {
+            }
+        };
+
+        // Exercise the middle-name branch where first_name contains
+        // first+middle and last_name contains the surname.
+        $this->insertTestMember(99420, 88420, 'Mary Jane', 'Watson', 'TxNameSeatF');
+        $this->insertTestMember(99421, 88421, 'Helper', 'Member', 'TxNameSeatG');
+
+        $member = new MEMBER(['person_id' => 88421]);
+        $this->assertTrue($member->valid);
+
+        $result = $member->name_to_person_id('Mary Jane Watson');
+        $this->assertSame(88420, $result);
+    }
 }
