@@ -273,7 +273,9 @@ class MEMBER {
             return false;
         }
 
-        $q = "SELECT DISTINCT person_id,constituency,left_house FROM member WHERE ";
+        $query = MemberModel::query()
+          ->select('person_id', 'constituency', 'left_house')
+           ->distinct();
         if ($this_page == 'msp') {
             $success = preg_match('#^(.*?) (.*?) (.*?)$#', $name, $m);
             if (!$success) {
