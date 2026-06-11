@@ -276,103 +276,42 @@ class MEMBER {
         $query = MemberModel::query()
           ->select('person_id', 'constituency', 'left_house')
           ->distinct();
-        if ($this_page == 'msp') {
-            $success = preg_match('#^(.*?) (.*?) (.*?)$#', $name, $m);
-            if (!$success) {
-                $success = preg_match('#^(.*?)() (.*)$#', $name, $m);
-            }
-            if (!$success) {
-                $PAGE->error_message('Sorry, that name was not recognised.');
-                return false;
-            }
-            $first_name = $m[1];
-            $middle_name = $m[2];
-            $last_name = $m[3];
-            // When there's no middle name, avoid concatenating a stray space
-            // that would never match under MySQL 8 NO PAD collations.
-            $query->where('house', 4);
-            if ($middle_name !== '') {
-                $query->where(function ($q) use ($first_name, $middle_name, $last_name) {
-                    $q->where(function ($qq) use ($first_name, $middle_name, $last_name) {
-                        $qq->where('first_name', $first_name . ' ' . $middle_name)
-                          ->where('last_name', $last_name);
-                    })->orWhere(function ($qq) use ($first_name, $middle_name, $last_name) {
-                        $qq->where('first_name', $first_name)
-                          ->where('last_name', $middle_name . ' ' . $last_name);
-                    });
+
+        $success = preg_match('#^(.*?) (.*?) (.*?)$#', $name, $m);
+        if (!$success) {
+            $success = preg_match('#^(.*?)() (.*)$#', $name, $m);
+        }
+        if (!$success) {
+            $PAGE->error_message('Sorry, that name was not recognised.');
+            return false;
+        }
+        $first_name = $m[1];
+        $middle_name = $m[2];
+        $last_name = $m[3];
+        $house = (strstr($this_page, 'mp')) ? 1 : 2;
+        $query->where('house', $house);
+        // When there's no middle name, avoid concatenating a stray space
+        // that would never match under MySQL 8 NO PAD collations.
+        if ($middle_name !== '') {
+            $query->where(function ($q) use ($first_name, $middle_name, $last_name) {
+                $q->where(function ($qq) use ($first_name, $middle_name, $last_name) {
+                    $qq->where('first_name', $first_name . ' ' . $middle_name)
+                        ->where('last_name', $last_name);
+                })->orWhere(function ($qq) use ($first_name, $middle_name, $last_name) {
+                    $qq->where('first_name', $first_name)
+                        ->where('last_name', $middle_name . ' ' . $last_name);
                 });
-            } else {
-                $query->where('first_name', $first_name)
-                  ->where('last_name', $last_name);
+            });
+        } else {
+            $query->where('first_name', $first_name)
+              ->where('last_name', $last_name);
+        }
+        if ($const) {
+            $normalised = normalise_constituency_name($const);
+            if ($normalised && strtolower($normalised) != strtolower($const)) {
+                $this->canonical = false;
+                $const = $normalised;
             }
-        } elseif ($this_page == 'mla') {
-            $success = preg_match('#^(.*?) (.*?) (.*?)$#', $name, $m);
-            if (!$success) {
-                $success = preg_match('#^(.*?)() (.*)$#', $name, $m);
-            }
-            if (!$success) {
-                $PAGE->error_message('Sorry, that name was not recognised.');
-                return false;
-            }
-            $first_name = $m[1];
-            $middle_name = $m[2];
-            $last_name = $m[3];
-            // When there's no middle name, avoid concatenating a stray space
-            // that would never match under MySQL 8 NO PAD collations.
-            $query->where('house', 3);
-            if ($middle_name !== '') {
-                $query->where(function ($q) use ($first_name, $middle_name, $last_name) {
-                    $q->where(function ($qq) use ($first_name, $middle_name, $last_name) {
-                        $qq->where('first_name', $first_name . ' ' . $middle_name)
-                          ->where('last_name', $last_name);
-                    })->orWhere(function ($qq) use ($first_name, $middle_name, $last_name) {
-                        $qq->where('first_name', $first_name)
-                          ->where('last_name', $middle_name . ' ' . $last_name);
-                    });
-                });
-            } else {
-                $query->where('first_name', $first_name)
-                  ->where('last_name', $last_name);
-            }
-        } elseif (strstr($this_page, 'mp') || $this_page == 'peer') {
-            $success = preg_match('#^(.*?) (.*?) (.*?)$#', $name, $m);
-            if (!$success) {
-                $success = preg_match('#^(.*?)() (.*)$#', $name, $m);
-            }
-            if (!$success) {
-                $PAGE->error_message('Sorry, that name was not recognised.');
-                return false;
-            }
-            $first_name = $m[1];
-            $middle_name = $m[2];
-            $last_name = $m[3];
-            $house = (strstr($this_page, 'mp')) ? 1 : 2;
-            $query->where('house', $house);
-            // When there's no middle name, avoid concatenating a stray space
-            // that would never match under MySQL 8 NO PAD collations.
-            if ($middle_name !== '') {
-                $query->where(function ($q) use ($first_name, $middle_name, $last_name) {
-                    $q->where(function ($qq) use ($first_name, $middle_name, $last_name) {
-                        $qq->where('first_name', $first_name . ' ' . $middle_name)
-                          ->where('last_name', $last_name);
-                    })->orWhere(function ($qq) use ($first_name, $middle_name, $last_name) {
-                        $qq->where('first_name', $first_name)
-                          ->where('last_name', $middle_name . ' ' . $last_name);
-                    });
-                });
-            } else {
-                $query->where('first_name', $first_name)
-                  ->where('last_name', $last_name);
-            }
-            if ($const) {
-                $normalised = normalise_constituency_name($const);
-                if ($normalised && strtolower($normalised) != strtolower($const)) {
-                    $this->canonical = false;
-                    $const = $normalised;
-                }
-            }
-        } elseif ($this_page == 'royal') {
-            $query->where('house', 0);
         }
 
         if ($const) {
