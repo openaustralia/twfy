@@ -275,7 +275,7 @@ class MEMBER {
 
         $query = MemberModel::query()
           ->select('person_id', 'constituency', 'left_house')
-           ->distinct();
+          ->distinct();
         if ($this_page == 'msp') {
             $success = preg_match('#^(.*?) (.*?) (.*?)$#', $name, $m);
             if (!$success) {
