@@ -754,10 +754,7 @@ class USER {
             parlDBQuery('UPDATE alerts SET email = ? WHERE email = ?', $details['email'], $this->email);
         }
 
-        // These are used to put optional fragments of SQL in, depending
-        // on whether we're changing those things or not.
-        $extra_sql = '';
-        $extra_params = [];
+        $update_data = [];
 
         if (isset($details["password"]) && $details["password"] != "") {
             // The password is being updated.
@@ -768,69 +765,52 @@ class USER {
             // Different to legacy md5-crypt hashes from the PHP 5.x era which has `$1$` prefix.
             $passwordforDB = password_hash($details["password"], PASSWORD_DEFAULT);
 
-            $extra_sql .= "password = ?, ";
-            $extra_params[] = $passwordforDB;
+            $update_data['password'] = $passwordforDB;
         }
 
         if (isset($details["deleted"])) {
             // 'deleted' won't always be an option (ie, if the user is updating
             // their own info).
-            $extra_sql .= "deleted = ?, ";
-            $extra_params[] = $details['deleted'] ? '1' : '0';
+            $update_data['deleted'] = $details['deleted'] ? 1 : 0;
         }
 
         if (isset($details["confirmed"])) {
             // 'confirmed' won't always be an option (ie, if the user is updating
             // their own info).
-            $extra_sql .= "confirmed = ?, ";
-            $extra_params[] = $details['confirmed'] ? '1' : '0';
+            $update_data['confirmed'] = $details['confirmed'] ? 1 : 0;
         }
 
         if (isset($details["status"]) && $details["status"] != "") {
             // 'status' won't always be an option (ie, if the user is updating
             // their own info.
-            $extra_sql .= "status = ?, ";
-            $extra_params[] = $details["status"];
+            $update_data['status'] = $details["status"];
         }
 
         // Convert internal true/false variables to MySQL BOOL 1/0 variables.
         $emailpublic = !empty($details["emailpublic"]) ? 1 : 0;
         $optin = !empty($details["optin"]) ? 1 : 0;
 
-        $q = parlDBQuery("UPDATE users
-						SET		firstname    = ?,
-								lastname     = ?,
-								email        = ?,
-								emailpublic  = ?,
-								constituency = ?,
-								url          = ?,
-								$extra_sql
-								optin        = ?
-						WHERE 	user_id      = ?",
-            $details["firstname"],
-            $details["lastname"],
-            $details["email"],
-            $emailpublic,
-            $details["constituency"],
-            $details["url"],
-            ...$extra_params,
-            ...[$optin, $details["user_id"]]
-        );
+        $update_data += [
+            'firstname' => $details["firstname"],
+            'lastname' => $details["lastname"],
+            'email' => $details["email"],
+            'emailpublic' => $emailpublic,
+            'constituency' => $details["constituency"],
+            'url' => $details["url"],
+            'optin' => $optin,
+        ];
 
         // If we're returning to
         // $this->update_self() then $THEUSER will have its variables
         // updated if everything went well.
-        if ($q->success()) {
-
+        try {
+            UserModel::where('user_id', $details["user_id"])->update($update_data);
             return $details;
-
-        } else {
+        } catch (\Exception $e) {
             $PAGE->error_message("Sorry, we were unable to update user id '" . htmlentities($details["user_id"]) . "'");
             return false;
         }
-
     }
-
 }
 /**
  * End USER class.
