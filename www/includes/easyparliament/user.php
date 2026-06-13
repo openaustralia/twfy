@@ -1126,7 +1126,6 @@ class THEUSER extends USER {
      */
     public function confirm(string $token) {
 
-
         // Split the token into its parts.
         $arg = '';
         if (strstr($token, '::')) {
@@ -1141,7 +1140,7 @@ class THEUSER extends USER {
             return false;
         }
 
-        $user = UserModel::where('user_id', $user_id)->where('registrationtoken', $registrationtoken)->first(['email', 'password', 'constituency']);
+        $user = UserModel::where('user_id', $user_id)->where('registrationtoken', $registrationtoken)->first(['user_id', 'email', 'password', 'constituency']);
 
         if (!$user) {
                 // Couldn't find this user in the DB. Maybe the token was
