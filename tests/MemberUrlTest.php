@@ -10,6 +10,10 @@
 
 require_once __DIR__ . '/bootstrap.php';
 
+if (!defined('DOMAIN')) {
+    define('DOMAIN', 'example.org');
+}
+
 if (!function_exists('make_member_url')) {
     function make_member_url(string $name, string $const = '', int $house = 1): string {
         $s = [' ', '&amp;', '&ocirc;', '&ouml;', '&acirc;', '&iacute;', '&aacute;', '&uacute;'];
