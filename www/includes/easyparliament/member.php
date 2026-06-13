@@ -296,10 +296,10 @@ class MEMBER {
             $query->where(function ($q) use ($first_name, $middle_name, $last_name) {
                 $q->where(function ($qq) use ($first_name, $middle_name, $last_name) {
                     $qq->where('first_name', $first_name . ' ' . $middle_name)
-                        ->where('last_name', $last_name);
+                      ->where('last_name', $last_name);
                 })->orWhere(function ($qq) use ($first_name, $middle_name, $last_name) {
                     $qq->where('first_name', $first_name)
-                        ->where('last_name', $middle_name . ' ' . $last_name);
+                      ->where('last_name', $middle_name . ' ' . $last_name);
                 });
             });
         } else {
