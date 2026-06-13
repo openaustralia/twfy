@@ -362,35 +362,33 @@ class USER {
         // If all goes OK it will return the plaintext version of the password.
         // Otherwise it returns false.
 
-        if ($this->email_exists($email)) {
-
-            $this->email = $email;
-            // Generates an unambiguous 14-character cryptographically secure random password (up from 6 uppercase).
-            // FIXME: Replace with a token based password replacement with expiry.
-            $unambiguous_alphabet = 'abcdefghjkmnpqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ23456789';
-            $last_index = strlen($unambiguous_alphabet) - 1;
-            $pwd = '';
-            for ($i = 0; $i < 14; $i++) {
-                $pwd .= $unambiguous_alphabet[random_int(0, $last_index)];
-            }
-        } else {
+        if (!$this->email_exists($email)) {
             // Email didn't exist.
             return false;
+        }
 
+        $this->email = $email;
+        // Generates an unambiguous 14-character cryptographically secure random password (up from 6 uppercase).
+        // FIXME: Replace with a token based password replacement with expiry.
+        $unambiguous_alphabet = 'abcdefghjkmnpqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ23456789';
+        $last_index = strlen($unambiguous_alphabet) - 1;
+        $pwd = '';
+        for ($i = 0; $i < 14; $i++) {
+            $pwd .= $unambiguous_alphabet[random_int(0, $last_index)];
         }
 
         $passwordforDB = password_hash($pwd, PASSWORD_DEFAULT);
 
-        $q = parlDBQuery("UPDATE users SET password = ? WHERE email = ?", $passwordforDB, $email);
+        $updated = UserModel::where('email', $email)->update([
+            'password' => $passwordforDB,
+        ]);
 
-        if ($q->success()) {
-            $this->password = $pwd;
-            return $pwd;
-
-        } else {
-
+        if ($updated <= 0) {
             return false;
         }
+
+        $this->password = $pwd;
+        return $pwd;
 
     }
 
