@@ -210,7 +210,8 @@ protected function tearDown(): void {
      * Return captured headers in CLI tests.
      * Prefer xdebug_get_headers as headers_list is empty on CLI.
      *
-     * @return string[]
+        * @return string[]
+        *   Captured headers emitted during the test.
      */
     private function getSentHeadersForTest(): array {
         if (function_exists('xdebug_get_headers')) {
