@@ -362,7 +362,9 @@ class USER {
         // If all goes OK it will return the plaintext version of the password.
         // Otherwise it returns false.
 
-        if (!$this->email_exists($email)) {
+        $user = UserModel::where('email', $email)->first(['user_id']);
+
+        if (!$user) {
             // Email didn't exist.
             return false;
         }
@@ -379,11 +381,11 @@ class USER {
 
         $passwordforDB = password_hash($pwd, PASSWORD_DEFAULT);
 
-        $updated = UserModel::where('email', $email)->update([
+        $updated = $user->update([
             'password' => $passwordforDB,
         ]);
 
-        if ($updated <= 0) {
+        if ($updated === false) {
             return false;
         }
 
