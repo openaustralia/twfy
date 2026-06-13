@@ -810,7 +810,9 @@ class USER {
             $PAGE->error_message("Sorry, we were unable to update user id '" . htmlentities($details["user_id"]) . "'");
             return false;
         }
+
     }
+
 }
 /**
  * End USER class.
