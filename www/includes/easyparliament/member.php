@@ -258,57 +258,63 @@ class MEMBER {
             return false;
         }
 
-        $q = "SELECT DISTINCT person_id,constituency,left_house FROM member WHERE ";
-        if (strstr($this_page, 'mp') || $this_page == 'peer') {
-            $success = preg_match('#^(.*?) (.*?) (.*?)$#', $name, $m);
-            if (!$success) {
-                $success = preg_match('#^(.*?)() (.*)$#', $name, $m);
-            }
-            if (!$success) {
-                $PAGE->error_message('Sorry, that name was not recognised.');
-                return false;
-            }
-            $first_name = $m[1];
-            $middle_name = $m[2];
-            $last_name = $m[3];
-            $house = (strstr($this_page, 'mp')) ? HOUSE::REPRESENTATIVES : HOUSE::SENATE;
-            // If ($title) $q .= 'title = \'' . getParlDB()->escape($title) . '\' AND ';.
-            // When there's no middle name, avoid concatenating a stray space
-            // that would never match under MySQL 8 NO PAD collations.
-            if ($middle_name !== '') {
-                $q .= "house = " . $house . " AND ((first_name='" . getParlDB()->escape($first_name . " " . $middle_name) . "' AND last_name='" . getParlDB()->escape($last_name) . "') OR " .
-                  "(first_name='" . getParlDB()->escape($first_name) . "' AND last_name='" . getParlDB()->escape($middle_name . " " . $last_name) . "'))";
-            } else {
-                $q .= "house = " . $house . " AND first_name='" . getParlDB()->escape($first_name) . "' AND last_name='" . getParlDB()->escape($last_name) . "'";
-            }
-            if ($const) {
-                $normalised = normalise_constituency_name($const);
-                if ($normalised && strtolower($normalised) != strtolower($const)) {
-                    $this->canonical = false;
-                    $const = $normalised;
-                }
-            }
-        } else {
+        $query = MemberModel::query()
+          ->select('person_id', 'constituency', 'left_house')
+          ->distinct();
+
+        $success = preg_match('#^(.*?) (.*?) (.*?)$#', $name, $m);
+        if (!$success) {
+            $success = preg_match('#^(.*?)() (.*)$#', $name, $m);
+        }
+        if (!$success) {
             $PAGE->error_message('Sorry, that name was not recognised.');
             return false;
         }
+        $first_name = $m[1];
+        $middle_name = $m[2];
+        $last_name = $m[3];
+        $house = (strstr($this_page, 'mp')) ? 1 : 2;
+        $query->where('house', $house);
+        // When there's no middle name, avoid concatenating a stray space
+        // that would never match under MySQL 8 NO PAD collations.
+        if ($middle_name !== '') {
+            $query->where(function ($q) use ($first_name, $middle_name, $last_name) {
+                $q->where(function ($qq) use ($first_name, $middle_name, $last_name) {
+                    $qq->where('first_name', $first_name . ' ' . $middle_name)
+                      ->where('last_name', $last_name);
+                })->orWhere(function ($qq) use ($first_name, $middle_name, $last_name) {
+                    $qq->where('first_name', $first_name)
+                      ->where('last_name', $middle_name . ' ' . $last_name);
+                });
+            });
+        } else {
+            $query->where('first_name', $first_name)
+              ->where('last_name', $last_name);
+        }
+        if ($const) {
+            $normalised = normalise_constituency_name($const);
+            if ($normalised && strtolower($normalised) != strtolower($const)) {
+                $this->canonical = false;
+                $const = $normalised;
+            }
+        }
 
         if ($const) {
-            $q .= ' AND constituency=\'' . getParlDB()->escape($const) . "'";
+            $query->where('constituency', $const);
         }
-        $q .= ' ORDER BY left_house DESC';
-        $q = parlDBQuery($q);
-        if ($q->rows > 1) {
+        $rows = $query->orderBy('left_house', 'desc')->get();
+        if ($rows->count() > 1) {
             // Hacky as a very hacky thing that's graduated in hacking from the University of Hacksville
             // Anyone who wants to do it properly, feel free.
+            // note the above comment was imported from SVN into git in about 2002, and look it's still here.
 
             $person_ids = [];
             $consts = [];
-            for ($i = 0; $i < $q->rows(); ++$i) {
-                $pid = $q->field($i, 'person_id');
+            foreach ($rows as $row) {
+                $pid = $row->person_id;
                 if (!in_array($pid, $person_ids)) {
                     $person_ids[] = $pid;
-                    $consts[] = $q->field($i, 'constituency');
+                    $consts[] = $row->constituency;
                 }
             }
             if (count($person_ids) == 1) {
@@ -316,8 +322,8 @@ class MEMBER {
             }
             $this->constituency = $consts;
             return $person_ids;
-        } elseif ($q->rows > 0) {
-            return $q->field(0, 'person_id');
+        } elseif ($rows->count() > 0) {
+            return $rows->first()->person_id;
         } elseif ($const && $this_page != 'peer') {
             $this->canonical = false;
             return $this->name_to_person_id($name);
@@ -374,8 +380,7 @@ class MEMBER {
                 str_replace("/person/", "/person/parliamentrmi/", $guardian_url);
             $this->extra_info['guardian_parliament_history'] =
                 str_replace("/person/", "/person/parliament/", $guardian_url);
-            $this->extra_info['guardian_biography'] =
-                $guardian_url;
+            $this->extra_info['guardian_biography'] = $guardian_url;
             $this->extra_info['guardian_candidacies'] =
                 str_replace("/person/", "/person/candidacies/", $guardian_url);
             $this->extra_info['guardian_howtheyvoted'] =

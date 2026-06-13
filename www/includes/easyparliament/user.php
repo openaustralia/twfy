@@ -355,42 +355,42 @@ class USER {
     /**
      *
      */
-    public function change_password($email) {
+    public function change_password(string $email) {
 
         // This function is called from the Change Password page.
         // It will create a new password for the user with $email address.
         // If all goes OK it will return the plaintext version of the password.
         // Otherwise it returns false.
 
-        if ($this->email_exists($email)) {
+        $user = UserModel::where('email', $email)->first(['user_id']);
 
-            $this->email = $email;
-            // Generates an unambiguous 14-character cryptographically secure random password (up from 6 uppercase).
-            // FIXME: Replace with a token based password replacement with expiry.
-            $unambiguous_alphabet = 'abcdefghjkmnpqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ23456789';
-            $last_index = strlen($unambiguous_alphabet) - 1;
-            $pwd = '';
-            for ($i = 0; $i < 14; $i++) {
-                $pwd .= $unambiguous_alphabet[random_int(0, $last_index)];
-            }
-        } else {
+        if (!$user) {
             // Email didn't exist.
             return false;
+        }
 
+        $this->email = $email;
+        // Generates an unambiguous 14-character cryptographically secure random password (up from 6 uppercase).
+        // FIXME: Replace with a token based password replacement with expiry.
+        $unambiguous_alphabet = 'abcdefghjkmnpqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ23456789';
+        $last_index = strlen($unambiguous_alphabet) - 1;
+        $pwd = '';
+        for ($i = 0; $i < 14; $i++) {
+            $pwd .= $unambiguous_alphabet[random_int(0, $last_index)];
         }
 
         $passwordforDB = password_hash($pwd, PASSWORD_DEFAULT);
 
-        $q = parlDBQuery("UPDATE users SET password = ? WHERE email = ?", $passwordforDB, $email);
+        $updated = $user->update([
+            'password' => $passwordforDB,
+        ]);
 
-        if ($q->success()) {
-            $this->password = $pwd;
-            return $pwd;
-
-        } else {
-
+        if ($updated === false) {
             return false;
         }
+
+        $this->password = $pwd;
+        return $pwd;
 
     }
 
@@ -754,10 +754,7 @@ class USER {
             parlDBQuery('UPDATE alerts SET email = ? WHERE email = ?', $details['email'], $this->email);
         }
 
-        // These are used to put optional fragments of SQL in, depending
-        // on whether we're changing those things or not.
-        $extra_sql = '';
-        $extra_params = [];
+        $update_data = [];
 
         if (isset($details["password"]) && $details["password"] != "") {
             // The password is being updated.
@@ -768,63 +765,48 @@ class USER {
             // Different to legacy md5-crypt hashes from the PHP 5.x era which has `$1$` prefix.
             $passwordforDB = password_hash($details["password"], PASSWORD_DEFAULT);
 
-            $extra_sql .= "password = ?, ";
-            $extra_params[] = $passwordforDB;
+            $update_data['password'] = $passwordforDB;
         }
 
         if (isset($details["deleted"])) {
             // 'deleted' won't always be an option (ie, if the user is updating
             // their own info).
-            $extra_sql .= "deleted = ?, ";
-            $extra_params[] = $details['deleted'] ? '1' : '0';
+            $update_data['deleted'] = $details['deleted'] ? 1 : 0;
         }
 
         if (isset($details["confirmed"])) {
             // 'confirmed' won't always be an option (ie, if the user is updating
             // their own info).
-            $extra_sql .= "confirmed = ?, ";
-            $extra_params[] = $details['confirmed'] ? '1' : '0';
+            $update_data['confirmed'] = $details['confirmed'] ? 1 : 0;
         }
 
         if (isset($details["status"]) && $details["status"] != "") {
             // 'status' won't always be an option (ie, if the user is updating
             // their own info.
-            $extra_sql .= "status = ?, ";
-            $extra_params[] = $details["status"];
+            $update_data['status'] = $details["status"];
         }
 
         // Convert internal true/false variables to MySQL BOOL 1/0 variables.
         $emailpublic = !empty($details["emailpublic"]) ? 1 : 0;
         $optin = !empty($details["optin"]) ? 1 : 0;
 
-        $q = parlDBQuery("UPDATE users
-						SET		firstname    = ?,
-								lastname     = ?,
-								email        = ?,
-								emailpublic  = ?,
-								constituency = ?,
-								url          = ?,
-								$extra_sql
-								optin        = ?
-						WHERE 	user_id      = ?",
-            $details["firstname"],
-            $details["lastname"],
-            $details["email"],
-            $emailpublic,
-            $details["constituency"],
-            $details["url"],
-            ...$extra_params,
-            ...[$optin, $details["user_id"]]
-        );
+        $update_data += [
+            'firstname' => $details["firstname"],
+            'lastname' => $details["lastname"],
+            'email' => $details["email"],
+            'emailpublic' => $emailpublic,
+            'constituency' => $details["constituency"],
+            'url' => $details["url"],
+            'optin' => $optin,
+        ];
 
         // If we're returning to
         // $this->update_self() then $THEUSER will have its variables
         // updated if everything went well.
-        if ($q->success()) {
-
+        try {
+            UserModel::where('user_id', $details["user_id"])->update($update_data);
             return $details;
-
-        } else {
+        } catch (\Exception $e) {
             $PAGE->error_message("Sorry, we were unable to update user id '" . htmlentities($details["user_id"]) . "'");
             return false;
         }
@@ -1049,21 +1031,20 @@ class THEUSER extends USER {
     }
 
     /**
+     * This is used to log the user in. Duh.
+     * You should already have checked the user's email and password using
+     * $this->isvalid()
+     * That will have set $this->user_id and $this->password, allowing the
+     * login to proceed...
      *
+     * $expire is either 'session' or 'never' - for the cookie.
+     *
+     * $returl is the URL to redirect the user to after log in, generally the
+     * page they were on before. But if it doesn't exist, they'll just go to
+     * the front page.
      */
-    public function login($returl = "", $expire = "session") {
+    public function login(string $returl = "", $expire = "session") {
 
-        // This is used to log the user in. Duh.
-        // You should already have checked the user's email and password using
-        // $this->isvalid()
-        // That will have set $this->user_id and $this->password, allowing the
-        // login to proceed...
-
-        // $expire is either 'session' or 'never' - for the cookie.
-
-        // $returl is the URL to redirect the user to after log in, generally the
-        // page they were on before. But if it doesn't exist, they'll just go to
-        // the front page.
         global $PAGE;
 
         if ($returl == "" || !$this->is_safe_redirect_url($returl)) {
@@ -1103,7 +1084,7 @@ class THEUSER extends USER {
     /**
      *
      */
-    public function logout($returl) {
+    public function logout(string $returl) {
 
         // $returl is the URL to redirect the user to after log in, generally the
         // page they were on before. But if it doesn't exist, they'll just go to
@@ -1123,12 +1104,11 @@ class THEUSER extends USER {
     }
 
     /**
-     *
+     * The user has clicked the link in their confirmation email
+     * and the confirm page has passed the token from the URL to here.
+     * If all goes well they'll be confirmed and then logged in.
      */
-    public function confirm($token) {
-        // The user has clicked the link in their confirmation email
-        // and the confirm page has passed the token from the URL to here.
-        // If all goes well they'll be confirmed and then logged in.
+    public function confirm(string $token) {
 
         // Split the token into its parts.
         $arg = '';
@@ -1144,55 +1124,45 @@ class THEUSER extends USER {
             return false;
         }
 
-        $q = parlDBQuery("SELECT email, password, constituency
-						FROM	users
-						WHERE	user_id = ?
-						AND		registrationtoken = ?
-						", $user_id, $registrationtoken);
+        $user = UserModel::where('user_id', $user_id)->where('registrationtoken', $registrationtoken)->first(['user_id', 'email', 'password', 'constituency']);
 
-        if ($q->rows() == 1) {
-
-            // We'll need these to be set before logging the user in.
-            $this->user_id = $user_id;
-            $this->email = $q->field(0, 'email');
-            $this->password = $q->field(0, 'password');
-
-            // Set that they're confirmed in the DB.
-            $r = parlDBQuery("UPDATE users
-							SET		confirmed = '1'
-							WHERE	user_id = ?
-							", $user_id);
-
-            if ($q->field(0, 'constituency')) {
-                $MEMBER = new MEMBER(['constituency' => $q->field(0, 'constituency')]);
-                $pid = $MEMBER->person_id();
-                // This should probably be in the ALERT class.
-                parlDBQuery('UPDATE alerts SET confirmed = 1 WHERE email = ? AND criteria = ?',
-                    $this->email, 'speaker:' . $pid);
-            }
-
-            if ($r->success()) {
-
-                $this->confirmed = true;
-
-                // Log the user in, redirecting them to the confirm page
-                // where they should get a nice welcome message.
-                $URL = new URL('userconfirmed');
-                $URL->insert(['welcome' => 't']);
-                $redirecturl = $URL->generate();
-
-                $this->login($redirecturl, 'session');
-
-            } else {
-                // Couldn't set them as confirmed in the DB.
+        if (!$user) {
+                // Couldn't find this user in the DB. Maybe the token was
+                // wrong or incomplete?
                 return false;
-            }
+        }
 
-        } else {
-            // Couldn't find this user in the DB. Maybe the token was
-            // wrong or incomplete?
+        // We'll need these to be set before logging the user in.
+        $this->user_id = $user_id;
+        $this->email = $user->email;
+        $this->password = $user->password;
+
+        // Set that they're confirmed in the DB.
+        if ($user->update(['confirmed' => 1]) === false) {
+            // Couldn't set them as confirmed in the DB.
+            twfy_debug('THEUSER confirm FAILED', "Could not set confirmed for user_id $user_id");
+
             return false;
         }
+
+        if ($user->constituency) {
+            $MEMBER = new MEMBER(['constituency' => $user->constituency]);
+            $pid = $MEMBER->person_id();
+            // This should probably be in the ALERT class.
+            parlDBQuery('UPDATE alerts SET confirmed = 1 WHERE email = ? AND criteria = ?',
+                $this->email, 'speaker:' . $pid);
+        }
+
+        $this->confirmed = true;
+
+        // Log the user in, redirecting them to the confirm page
+        // where they should get a nice welcome message.
+        $URL = new URL('userconfirmed');
+        $URL->insert(['welcome' => 't']);
+        $redirecturl = $URL->generate();
+
+        $this->login($redirecturl, 'session');
+
     }
 
     /**
