@@ -98,12 +98,6 @@
  * $q->field(n,col) returns "".
  * $q->insert_id() returns NULL.
  * $q->affected_rows() returns NULL.
- *
- *
- * Versions
- * ========
- * v1.2    2003-11-25
- * Changed to using named constants, rather than global variables.
  */
 
 // We'll add up the times of each query so we can output the page total at the end.
