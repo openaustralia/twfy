@@ -333,7 +333,7 @@ class UserIntegrationTest extends TransactionalTestCase {
     {
         $uniq = (string) microtime(true);
         $email = 'confirm.unconfirmed.' . $uniq . '@example.com';
-        $token = 'tokenunconfirmed' . str_replace('.', '', $uniq);
+        $token = substr(sha1('unconfirmed-' . $uniq), 0, 16);
         $userId = $this->insertConfirmUser($email, $token, 0);
 
         $THEUSER = $this->makeTestableTheUser();
@@ -349,7 +349,7 @@ class UserIntegrationTest extends TransactionalTestCase {
     {
         $uniq = (string) microtime(true);
         $email = 'confirm.already.' . $uniq . '@example.com';
-        $token = 'tokenalready' . str_replace('.', '', $uniq);
+        $token = substr(sha1('already-' . $uniq), 0, 16);
         $userId = $this->insertConfirmUser($email, $token, 1);
 
         $THEUSER = $this->makeTestableTheUser();
@@ -365,7 +365,7 @@ class UserIntegrationTest extends TransactionalTestCase {
     {
         $uniq = (string) microtime(true);
         $email = 'confirm.constituency.' . $uniq . '@example.com';
-        $token = 'tokenwithconst' . str_replace('.', '', $uniq);
+        $token = substr(sha1('constituency-' . $uniq), 0, 16);
         $constituency = 'Test Constituency Confirm ' . $uniq;
         $personId = 98765;
 
@@ -390,7 +390,7 @@ class UserIntegrationTest extends TransactionalTestCase {
     {
         $uniq = (string) microtime(true);
         $email = 'confirm.noconstituency.' . $uniq . '@example.com';
-        $token = 'tokennoconst' . str_replace('.', '', $uniq);
+        $token = substr(sha1('noconstituency-' . $uniq), 0, 16);
         $userId = $this->insertConfirmUser($email, $token, 0, '');
 
         parlDBQuery(
