@@ -69,15 +69,15 @@ if (!class_exists('URL')) {
         /**
          *
          */
-public function insert(array $params): void {
-}
+        public function insert(array $params): void {
+        }
 
         /**
          *
          */
-public function generate(string $type = ''): string {
+        public function generate(string $type = ''): string {
             return '/' . $this->page . '/';
-}
+        }
 
     }
 }

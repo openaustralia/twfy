@@ -7,6 +7,36 @@ use PHPUnit\Framework\TestCase;
  */
 class MemberPartyTest extends TestCase {
 
+    /** @var string[] */
+    private array $createdImagePaths = [];
+
+    /**
+     * Track temporary image files created by tests.
+     */
+    private function createImageFixture(string $relativePath): void {
+        $fullPath = FILEIMAGEPATH . $relativePath;
+        $dir = dirname($fullPath);
+        if (!is_dir($dir)) {
+            mkdir($dir, 0777, true);
+        }
+        file_put_contents($fullPath, 'fixture');
+        $this->createdImagePaths[] = $fullPath;
+    }
+
+    /**
+     * Remove temporary image fixtures created during tests.
+     */
+    protected function tearDown(): void {
+        foreach ($this->createdImagePaths as $path) {
+            if (is_file($path)) {
+                unlink($path);
+            }
+        }
+        $this->createdImagePaths = [];
+
+        parent::tearDown();
+    }
+
     /**
      * Test party to colour mapping
      */
@@ -159,6 +189,86 @@ class MemberPartyTest extends TestCase {
         // Default = false, should check large images first.
         $result = find_rep_image('12345', false);
         $this->assertIsArray($result);
+    }
+
+    /**
+     * Covers branch: first large image check (.jpg).
+     */
+    public function test_find_rep_image_prefers_large_jpg_first(): void {
+        $pid = 'tx_findrep_ljpg';
+        $this->createImageFixture('mpsL/' . $pid . '.jpg');
+        $this->createImageFixture('mps/' . $pid . '.jpg');
+
+        $this->assertSame([IMAGEPATH . 'mpsL/' . $pid . '.jpg', 'L'], find_rep_image($pid));
+    }
+
+    /**
+     * Covers branch: second large image check (.jpeg).
+     */
+    public function test_find_rep_image_uses_large_jpeg_when_large_jpg_missing(): void {
+        $pid = 'tx_findrep_ljpeg';
+        $this->createImageFixture('mpsL/' . $pid . '.jpeg');
+
+        $this->assertSame([IMAGEPATH . 'mpsL/' . $pid . '.jpeg', 'L'], find_rep_image($pid));
+    }
+
+    /**
+     * Covers branch: third large image check (.png).
+     */
+    public function test_find_rep_image_uses_large_png_when_large_jpg_and_jpeg_missing(): void {
+        $pid = 'tx_findrep_lpng';
+        $this->createImageFixture('mpsL/' . $pid . '.png');
+
+        $this->assertSame([IMAGEPATH . 'mpsL/' . $pid . '.png', 'L'], find_rep_image($pid));
+    }
+
+    /**
+     * Covers branch: first small image check (.jpg).
+     */
+    public function test_find_rep_image_uses_small_jpg_when_no_large_image_exists(): void {
+        $pid = 'tx_findrep_sjpg';
+        $this->createImageFixture('mps/' . $pid . '.jpg');
+
+        $this->assertSame([IMAGEPATH . 'mps/' . $pid . '.jpg', 'S'], find_rep_image($pid));
+    }
+
+    /**
+     * Covers branch: second small image check (.jpeg).
+     */
+    public function test_find_rep_image_uses_small_jpeg_when_small_jpg_missing(): void {
+        $pid = 'tx_findrep_sjpeg';
+        $this->createImageFixture('mps/' . $pid . '.jpeg');
+
+        $this->assertSame([IMAGEPATH . 'mps/' . $pid . '.jpeg', 'S'], find_rep_image($pid));
+    }
+
+    /**
+     * Covers branch: third small image check (.png).
+     */
+    public function test_find_rep_image_uses_small_png_when_small_jpg_and_jpeg_missing(): void {
+        $pid = 'tx_findrep_spng';
+        $this->createImageFixture('mps/' . $pid . '.png');
+
+        $this->assertSame([IMAGEPATH . 'mps/' . $pid . '.png', 'S'], find_rep_image($pid));
+    }
+
+    /**
+     * Covers smallonly=true branch that skips all large image checks.
+     */
+    public function test_find_rep_image_smallonly_skips_large_and_uses_small(): void {
+        $pid = 'tx_findrep_smallonly';
+        $this->createImageFixture('mpsL/' . $pid . '.jpg');
+        $this->createImageFixture('mps/' . $pid . '.png');
+
+        $this->assertSame([IMAGEPATH . 'mps/' . $pid . '.png', 'S'], find_rep_image($pid, true));
+    }
+
+    /**
+     * Covers final return branch when no image file matches.
+     */
+    public function test_find_rep_image_returns_nulls_when_no_matching_files_exist(): void {
+        $pid = 'tx_findrep_none';
+        $this->assertSame([null, null], find_rep_image($pid));
     }
 
     /**
