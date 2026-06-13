@@ -198,6 +198,28 @@ protected function tearDown(): void {
         return new MockTheUser();
     }
 
+    /**
+     * Build a THEUSER instance without running constructor side effects.
+     */
+    private function makeTheUserWithoutConstructor(): THEUSER {
+        $reflection = new \ReflectionClass(THEUSER::class);
+        return $reflection->newInstanceWithoutConstructor();
+    }
+
+    /**
+     * Return captured headers in CLI tests.
+     * Prefer xdebug_get_headers as headers_list is empty on CLI.
+     *
+     * @return string[]
+     */
+    private function getSentHeadersForTest(): array {
+        if (function_exists('xdebug_get_headers')) {
+            return xdebug_get_headers();
+        }
+
+        return headers_list();
+    }
+
     // =========================================================================
     // change_password() tests
 
@@ -466,6 +488,98 @@ public function test_confirm_without_constituency_does_not_confirm_speaker_alert
 
         $this->assertNotFalse($result);
         $this->assertSame(0, (int) parlDBQuery('SELECT confirmed FROM alerts WHERE email = ? AND criteria = ?', $email, 'speaker:12345')->field(0, 'confirmed'));
+}
+
+    // =========================================================================
+    // logout() tests
+
+    /**
+     * =========================================================================
+     */
+    public function test_logout_with_no_cookie_sets_no_logout_headers(): void {
+        $originalCookie = $_COOKIE;
+        if (function_exists('header_remove')) {
+            header_remove();
+        }
+
+        try {
+            $_COOKIE = [];
+            $THEUSER = $this->makeTheUserWithoutConstructor();
+            $THEUSER->logout('/safe-path');
+
+            $headers = $this->getSentHeadersForTest();
+            $logoutHeaders = array_filter($headers, static function ($header) {
+                return stripos($header, 'Location: ') === 0 || stripos($header, 'Set-Cookie: epuser_id=') === 0;
+            });
+
+            $this->assertSame([], array_values($logoutHeaders));
+        } finally {
+            $_COOKIE = $originalCookie;
+            if (function_exists('header_remove')) {
+                header_remove();
+            }
+        }
+    }
+
+    /**
+     *
+     */
+public function test_logout_with_cookie_uses_safe_returl_and_clears_cookie(): void {
+        $originalCookie = $_COOKIE;
+        if (function_exists('header_remove')) {
+            header_remove();
+        }
+
+        try {
+            $_COOKIE = ['epuser_id' => '123.fakehash'];
+            $THEUSER = $this->makeTheUserWithoutConstructor();
+            $THEUSER->logout('/safe-path');
+
+            $headers = $this->getSentHeadersForTest();
+
+            $locationHeaders = array_values(array_filter($headers, static function ($header) {
+                return stripos($header, 'Location: ') === 0;
+            }));
+            $cookieHeaders = array_values(array_filter($headers, static function ($header) {
+                return stripos($header, 'Set-Cookie: epuser_id=') === 0;
+            }));
+
+            $this->assertSame('Location: /safe-path', $locationHeaders[0] ?? null);
+            $this->assertNotSame([], $cookieHeaders);
+        } finally {
+            $_COOKIE = $originalCookie;
+            if (function_exists('header_remove')) {
+                header_remove();
+            }
+        }
+}
+
+    /**
+     *
+     */
+public function test_logout_with_cookie_and_unsafe_returl_falls_back_to_home(): void {
+        $originalCookie = $_COOKIE;
+        if (function_exists('header_remove')) {
+            header_remove();
+        }
+
+        try {
+            $_COOKIE = ['epuser_id' => '123.fakehash'];
+            $THEUSER = $this->makeTheUserWithoutConstructor();
+            $THEUSER->logout('https://example.org/evil');
+
+            $headers = $this->getSentHeadersForTest();
+            $locationHeaders = array_values(array_filter($headers, static function ($header) {
+                return stripos($header, 'Location: ') === 0;
+            }));
+
+            $this->assertSame('Location: /home', $locationHeaders[0] ?? null);
+        } finally {
+            $_COOKIE = $originalCookie;
+            if (function_exists('header_remove')) {
+                header_remove();
+            }
+        }
 }
 
 }
