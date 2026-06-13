@@ -1049,21 +1049,20 @@ class THEUSER extends USER {
     }
 
     /**
+     * This is used to log the user in. Duh.
+     * You should already have checked the user's email and password using
+     * $this->isvalid()
+     * That will have set $this->user_id and $this->password, allowing the
+     * login to proceed...
      *
+     * $expire is either 'session' or 'never' - for the cookie.
+     *
+     * $returl is the URL to redirect the user to after log in, generally the
+     * page they were on before. But if it doesn't exist, they'll just go to
+     * the front page.
      */
-    public function login($returl = "", $expire = "session") {
+    public function login(string $returl = "", $expire = "session") {
 
-        // This is used to log the user in. Duh.
-        // You should already have checked the user's email and password using
-        // $this->isvalid()
-        // That will have set $this->user_id and $this->password, allowing the
-        // login to proceed...
-
-        // $expire is either 'session' or 'never' - for the cookie.
-
-        // $returl is the URL to redirect the user to after log in, generally the
-        // page they were on before. But if it doesn't exist, they'll just go to
-        // the front page.
         global $PAGE;
 
         if ($returl == "" || !$this->is_safe_redirect_url($returl)) {
