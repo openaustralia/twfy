@@ -1015,15 +1015,13 @@ class THEUSER extends USER {
     /**
      * Validate that a redirect URL is safe.
      *
-     * Only site-relative URLs are allowed.
+     * Only site-relative URLs are allowed. Protocol-relative URLs (e.g.
+     * //evil.com) are rejected because browsers treat them as absolute.
      */
     private function is_safe_redirect_url($url) {
-        // Relative URLs (starting with /) are safe.
-        if (strpos($url, '/') === 0) {
-            return true;
-        }
-
-        return false;
+        // Must start with exactly one slash (site-relative).
+        // Reject // which is a protocol-relative URL and an open-redirect vector.
+        return strpos($url, '/') === 0 && strpos($url, '//') !== 0;
     }
 
     /**
