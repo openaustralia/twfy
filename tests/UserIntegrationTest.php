@@ -47,7 +47,7 @@ use OpenAustralia\TWFY\Models\User as UserModel;
 /**
  * Test helper that suppresses side effects from THEUSER::login while capturing call count.
  */
-class TestableTheUser extends THEUSER {
+class MockTheUser extends THEUSER {
 
     private int $loginCallCount = 0;
 
@@ -194,8 +194,8 @@ protected function tearDown(): void {
     /**
      * Build a THEUSER test double that avoids real redirect/cookie side effects.
      */
-    private function makeTestableTheUser(): TestableTheUser {
-        return new TestableTheUser();
+    private function makeMockTheUser(): MockTheUser {
+        return new MockTheUser();
     }
 
     // =========================================================================
@@ -374,7 +374,7 @@ public function test_change_password_old_password_no_longer_works(): void {
      * =========================================================================
      */
     public function test_confirm_returns_false_when_user_does_not_exist(): void {
-        $THEUSER = $this->makeTestableTheUser();
+        $THEUSER = $this->makeMockTheUser();
 
         $result = $THEUSER->confirm('999999-token-does-not-exist');
 
@@ -391,7 +391,7 @@ public function test_confirm_succeeds_for_existing_unconfirmed_user(): void {
         $token = substr(sha1('unconfirmed-' . $uniq), 0, 16);
         $userId = $this->insertConfirmUser($email, $token, 0);
 
-        $THEUSER = $this->makeTestableTheUser();
+        $THEUSER = $this->makeMockTheUser();
         $result = $THEUSER->confirm($userId . '-' . $token);
 
         $this->assertNotFalse($result);
@@ -409,7 +409,7 @@ public function test_confirm_succeeds_for_existing_already_confirmed_user(): voi
         $token = substr(sha1('already-' . $uniq), 0, 16);
         $userId = $this->insertConfirmUser($email, $token, 1);
 
-        $THEUSER = $this->makeTestableTheUser();
+        $THEUSER = $this->makeMockTheUser();
         $result = $THEUSER->confirm($userId . '-' . $token);
 
         $this->assertNotFalse($result);
@@ -438,7 +438,7 @@ public function test_confirm_with_constituency_confirms_matching_speaker_alert()
             'alert-token-1'
         );
 
-        $THEUSER = $this->makeTestableTheUser();
+        $THEUSER = $this->makeMockTheUser();
         $result = $THEUSER->confirm($userId . '-' . $token);
 
         $this->assertNotFalse($result);
@@ -461,7 +461,7 @@ public function test_confirm_without_constituency_does_not_confirm_speaker_alert
             'alert-token-2'
         );
 
-        $THEUSER = $this->makeTestableTheUser();
+        $THEUSER = $this->makeMockTheUser();
         $result = $THEUSER->confirm($userId . '-' . $token);
 
         $this->assertNotFalse($result);
