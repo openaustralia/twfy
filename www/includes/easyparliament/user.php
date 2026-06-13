@@ -355,7 +355,7 @@ class USER {
     /**
      *
      */
-    public function change_password($email) {
+    public function change_password(string $email) {
 
         // This function is called from the Change Password page.
         // It will create a new password for the user with $email address.
