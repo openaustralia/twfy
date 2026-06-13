@@ -632,22 +632,9 @@ class MEMBER {
     /**
      *
      */
-    public function left_reason_text($left_reason, $mponly = 0) {
-        if (isset($this->reasons[$left_reason])) {
-            $left_reason = $this->reasons[$left_reason];
-            if (is_array($left_reason)) {
-                $max = MemberModel::max('left_house');
-                if ((!$mponly && $max == $this->left_house) || ($mponly && $max == $this->mp_left_house)) {
-                    return $left_reason[0];
-                } else {
-                    return $left_reason[1];
-                }
-            } else {
-                return $left_reason;
-            }
-        } else {
-            return $left_reason;
-        }
+    public function left_reason_text($left_reason) {
+        $text = $this->reasons[$left_reason] ?? $left_reason;
+        return is_array($text) ? $text[1] : $text;
     }
 
     /**
