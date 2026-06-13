@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * @file
+ */
+
 require_once __DIR__ . '/bootstrap.php';
 
 if (!class_exists('URL')) {
@@ -20,13 +24,20 @@ if (!class_exists('URL')) {
             $this->page = $page;
         }
 
-        public function insert(array $params): void {
+        /**
+         *
+         */
+public function insert(array $params): void {
             $this->params = array_merge($this->params, $params);
-        }
+}
 
-        public function generate(): string {
+        /**
+         *
+         */
+public function generate(): string {
             return '/' . $this->page;
-        }
+}
+
     }
 }
 
@@ -43,15 +54,24 @@ class UserIntegrationTest extends TransactionalTestCase {
     /** @var int[] */
     private array $createdMemberIds = [];
 
-    protected function useMysqliTransaction(): bool {
+    /**
+     *
+     */
+protected function useMysqliTransaction(): bool {
         return false;
-    }
+}
 
-    protected function useEloquentTransaction(): bool {
+    /**
+     *
+     */
+protected function useEloquentTransaction(): bool {
         return false;
-    }
+}
 
-    protected function tearDown(): void {
+    /**
+     *
+     */
+protected function tearDown(): void {
         if ($this->createdEmails !== []) {
             parlDBQuery('DELETE FROM alerts WHERE email IN (' . implode(',', array_fill(0, count($this->createdEmails), '?')) . ')', ...$this->createdEmails);
             UserModel::whereIn('email', $this->createdEmails)->delete();
@@ -62,7 +82,7 @@ class UserIntegrationTest extends TransactionalTestCase {
         $this->createdEmails = [];
         $this->createdMemberIds = [];
         parent::tearDown();
-    }
+}
 
     /**
      * Insert a test user into the database.
@@ -95,10 +115,10 @@ class UserIntegrationTest extends TransactionalTestCase {
      * Insert a user suitable for THEUSER::confirm() tests.
      */
     private function insertConfirmUser(
-        string $email,
-        string $registrationtoken,
-        int $confirmed = 0,
-        string $constituency = ''
+      string $email,
+      string $registrationtoken,
+      int $confirmed = 0,
+      string $constituency = '',
     ): int {
         $this->createdEmails[] = $email;
 
@@ -156,21 +176,26 @@ class UserIntegrationTest extends TransactionalTestCase {
             /** @var array<int,array{returl:string,expire:string}> */
             public array $loginCalls = [];
 
-            public function login(string $returl = '', $expire = 'session') {
+            /**
+             *
+             */
+public function login(string $returl = '', $expire = 'session') {
                 $this->loginCalls[] = [
                     'returl' => $returl,
                     'expire' => (string) $expire,
                 ];
-            }
+}
+
         };
     }
 
     // =========================================================================
     // change_password() tests
-    // =========================================================================
 
-    public function test_change_password_returns_new_password_string(): void
-    {
+    /**
+     * =========================================================================
+     */
+    public function test_change_password_returns_new_password_string(): void {
         $email = 'testuser@example.com';
         $this->insertTestUser($email, 'Alice');
 
@@ -183,35 +208,41 @@ class UserIntegrationTest extends TransactionalTestCase {
         $this->assertNotSame('oldpassword123', $newpwd);
     }
 
-    public function test_change_password_returns_false_for_nonexistent_email(): void
-    {
+    /**
+     *
+     */
+public function test_change_password_returns_false_for_nonexistent_email(): void {
         $USER = new USER();
         $result = $USER->change_password('nonexistent@example.com');
 
         $this->assertFalse($result);
-    }
+}
 
-    public function test_change_password_stores_hashed_password_in_database(): void
-    {
+    /**
+     *
+     */
+public function test_change_password_stores_hashed_password_in_database(): void {
         $email = 'bob@example.com';
         $this->insertTestUser($email, 'Bob');
 
         $USER = new USER();
         $newpwd = $USER->change_password($email);
 
-        // Verify the hashed password was stored
+        // Verify the hashed password was stored.
         $hashedPassword = UserModel::where('email', $email)->value('password');
         $this->assertIsString($hashedPassword);
 
         // Verify it's actually hashed (not plaintext)
         $this->assertNotSame($newpwd, $hashedPassword);
 
-        // Verify the new password matches the hash
+        // Verify the new password matches the hash.
         $this->assertTrue(password_verify($newpwd, $hashedPassword));
-    }
+}
 
-    public function test_change_password_generated_password_is_14_characters(): void
-    {
+    /**
+     *
+     */
+public function test_change_password_generated_password_is_14_characters(): void {
         $email = 'charlie@example.com';
         $this->insertTestUser($email, 'Charlie');
 
@@ -219,39 +250,45 @@ class UserIntegrationTest extends TransactionalTestCase {
         $newpwd = $USER->change_password($email);
 
         $this->assertSame(14, strlen($newpwd));
-    }
+}
 
-    public function test_change_password_generated_password_uses_unambiguous_alphabet(): void
-    {
+    /**
+     *
+     */
+public function test_change_password_generated_password_uses_unambiguous_alphabet(): void {
         $email = 'diana@example.com';
         $this->insertTestUser($email, 'Diana');
 
         $USER = new USER();
         $newpwd = $USER->change_password($email);
 
-        // The unambiguous alphabet excludes i, l, o, u, I, L, O, U, 0, 1
+        // The unambiguous alphabet excludes i, l, o, u, I, L, O, U, 0, 1.
         $unambiguous_alphabet = 'abcdefghjkmnpqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ23456789';
 
         for ($i = 0; $i < strlen($newpwd); $i++) {
             $this->assertStringContainsString($newpwd[$i], $unambiguous_alphabet,
                 "Character '{$newpwd[$i]}' at position $i is not in unambiguous alphabet");
         }
-    }
+}
 
-    public function test_change_password_updates_user_object_password_field(): void
-    {
+    /**
+     *
+     */
+public function test_change_password_updates_user_object_password_field(): void {
         $email = 'eve@example.com';
         $this->insertTestUser($email, 'Eve');
 
         $USER = new USER();
         $newpwd = $USER->change_password($email);
 
-        // The USER object's password field should now be set to the plaintext password
+        // The USER object's password field should now be set to the plaintext password.
         $this->assertSame($newpwd, $USER->password());
-    }
+}
 
-    public function test_change_password_multiple_calls_generate_different_passwords(): void
-    {
+    /**
+     *
+     */
+public function test_change_password_multiple_calls_generate_different_passwords(): void {
         $email1 = 'frank@example.com';
         $email2 = 'grace@example.com';
         $this->insertTestUser($email1, 'Frank');
@@ -263,10 +300,12 @@ class UserIntegrationTest extends TransactionalTestCase {
 
         // Two different passwords should be generated (extremely unlikely to collide)
         $this->assertNotSame($pwd1, $pwd2);
-    }
+}
 
-    public function test_change_password_with_special_chars_in_email(): void
-    {
+    /**
+     *
+     */
+public function test_change_password_with_special_chars_in_email(): void {
         $email = 'user+tag@example.com';
         $this->insertTestUser($email);
 
@@ -276,51 +315,56 @@ class UserIntegrationTest extends TransactionalTestCase {
         $this->assertIsString($newpwd);
         $this->assertNotEmpty($newpwd);
 
-        // Verify it was actually stored
+        // Verify it was actually stored.
         $this->assertTrue(UserModel::where('email', $email)->exists());
-    }
+}
 
-    public function test_change_password_can_log_in_with_new_password(): void
-    {
+    /**
+     *
+     */
+public function test_change_password_can_log_in_with_new_password(): void {
         $email = 'hank@example.com';
         $this->insertTestUser($email, 'Hank');
 
-        // Get new password
+        // Get new password.
         $USER = new USER();
         $newpwd = $USER->change_password($email);
 
-        // Create a new USER object and attempt to log in with the new password
+        // Create a new USER object and attempt to log in with the new password.
         $THEUSER = new THEUSER();
         $result = $THEUSER->isvalid($email, $newpwd);
 
-        // isvalid() should return TRUE on successful password match
+        // isvalid() should return TRUE on successful password match.
         $this->assertTrue($result);
-    }
+}
 
-    public function test_change_password_old_password_no_longer_works(): void
-    {
+    /**
+     *
+     */
+public function test_change_password_old_password_no_longer_works(): void {
         $email = 'iris@example.com';
         $oldpwd = 'oldpassword123';
         $this->insertTestUser($email, 'Iris');
 
-        // Change the password
+        // Change the password.
         $USER = new USER();
         $newpwd = $USER->change_password($email);
 
-        // Try to log in with the old password
+        // Try to log in with the old password.
         $THEUSER = new THEUSER();
         $result = $THEUSER->isvalid($email, $oldpwd);
 
-        // Should fail
+        // Should fail.
         $this->assertNotTrue($result);
-    }
+}
 
     // =========================================================================
     // confirm() tests
-    // =========================================================================
 
-    public function test_confirm_returns_false_when_user_does_not_exist(): void
-    {
+    /**
+     * =========================================================================
+     */
+    public function test_confirm_returns_false_when_user_does_not_exist(): void {
         $THEUSER = $this->makeTestableTheUser();
 
         $result = $THEUSER->confirm('999999-token-does-not-exist');
@@ -329,8 +373,10 @@ class UserIntegrationTest extends TransactionalTestCase {
         $this->assertSame([], $THEUSER->loginCalls);
     }
 
-    public function test_confirm_succeeds_for_existing_unconfirmed_user(): void
-    {
+    /**
+     *
+     */
+public function test_confirm_succeeds_for_existing_unconfirmed_user(): void {
         $uniq = (string) microtime(true);
         $email = 'confirm.unconfirmed.' . $uniq . '@example.com';
         $token = substr(sha1('unconfirmed-' . $uniq), 0, 16);
@@ -343,10 +389,12 @@ class UserIntegrationTest extends TransactionalTestCase {
         $this->assertSame(1, (int) UserModel::where('user_id', $userId)->value('confirmed'));
         $this->assertTrue($THEUSER->confirmed());
         $this->assertCount(1, $THEUSER->loginCalls);
-    }
+}
 
-    public function test_confirm_succeeds_for_existing_already_confirmed_user(): void
-    {
+    /**
+     *
+     */
+public function test_confirm_succeeds_for_existing_already_confirmed_user(): void {
         $uniq = (string) microtime(true);
         $email = 'confirm.already.' . $uniq . '@example.com';
         $token = substr(sha1('already-' . $uniq), 0, 16);
@@ -359,10 +407,12 @@ class UserIntegrationTest extends TransactionalTestCase {
         $this->assertSame(1, (int) UserModel::where('user_id', $userId)->value('confirmed'));
         $this->assertTrue($THEUSER->confirmed());
         $this->assertCount(1, $THEUSER->loginCalls);
-    }
+}
 
-    public function test_confirm_with_constituency_confirms_matching_speaker_alert(): void
-    {
+    /**
+     *
+     */
+public function test_confirm_with_constituency_confirms_matching_speaker_alert(): void {
         $uniq = (string) microtime(true);
         $email = 'confirm.constituency.' . $uniq . '@example.com';
         $token = substr(sha1('constituency-' . $uniq), 0, 16);
@@ -384,10 +434,12 @@ class UserIntegrationTest extends TransactionalTestCase {
 
         $this->assertNotFalse($result);
         $this->assertSame(1, (int) parlDBQuery('SELECT confirmed FROM alerts WHERE email = ? AND criteria = ?', $email, 'speaker:' . $personId)->field(0, 'confirmed'));
-    }
+}
 
-    public function test_confirm_without_constituency_does_not_confirm_speaker_alerts(): void
-    {
+    /**
+     *
+     */
+public function test_confirm_without_constituency_does_not_confirm_speaker_alerts(): void {
         $uniq = (string) microtime(true);
         $email = 'confirm.noconstituency.' . $uniq . '@example.com';
         $token = substr(sha1('noconstituency-' . $uniq), 0, 16);
@@ -405,6 +457,6 @@ class UserIntegrationTest extends TransactionalTestCase {
 
         $this->assertNotFalse($result);
         $this->assertSame(0, (int) parlDBQuery('SELECT confirmed FROM alerts WHERE email = ? AND criteria = ?', $email, 'speaker:12345')->field(0, 'confirmed'));
-    }
+}
 
 }
