@@ -124,10 +124,10 @@ class SEARCHLOG {
      */
     public function admin_popular_searches($count) {
 
-        $q = parlDBQuery("SELECT *, count(*) AS c FROM search_query_log
+        $q = parlDBQuery("SELECT query_string, count(*) AS c FROM search_query_log
                 WHERE count_hits != 0 AND query_string NOT LIKE '%speaker:%'
                 AND query_time > date_sub(NOW(), INTERVAL 30 DAY)
-                GROUP BY query_string ORDER BY c desc LIMIT $count;");
+                GROUP BY query_string ORDER BY c desc LIMIT ?", $count);
 
         $popular_searches = [];
         for ($row = 0; $row < $q->rows(); $row++) {
@@ -141,10 +141,11 @@ class SEARCHLOG {
      */
     public function admin_failed_searches() {
 
-        $q = parlDBQuery("SELECT query_string, page_number, count_hits, ip_address, query_time,
+        $q = parlDBQuery("SELECT query_string,
                 COUNT(*) AS group_count, MIN(query_time) AS min_time, MAX(query_time) AS max_time,
-                COUNT(distinct ip_address) as count_ips
-                FROM search_query_log GROUP BY query_string HAVING count_hits = 0
+                COUNT(DISTINCT ip_address) AS count_ips
+                FROM search_query_log WHERE count_hits = 0
+                GROUP BY query_string
                 ORDER BY count_ips DESC, max_time DESC");
         $searches_array = [];
         for ($row = 0; $row < $q->rows(); $row++) {
