@@ -59,25 +59,16 @@ protected function setUp(): void {
         return new class() {
             private $session_vars = [];
 
-            /**
-             *
-             */
             public function reset() {
                 $this->session_vars = [];
             }
 
-            /**
-             *
-             */
             public function insert($arr) {
                 foreach ($arr as $k => $v) {
                     $this->session_vars[$k] = $v;
                 }
             }
 
-            /**
-             *
-             */
             public function generate($encode = 'html', $overrideVars = []) {
                 $args = [];
                 foreach (array_merge($this->session_vars, $overrideVars) as $k => $v) {
