@@ -45,6 +45,29 @@ use OpenAustralia\TWFY\Models\Member as MemberModel;
 use OpenAustralia\TWFY\Models\User as UserModel;
 
 /**
+ * Test helper that suppresses side effects from THEUSER::login while capturing call count.
+ */
+class TestableTheUser extends THEUSER {
+
+    private int $loginCallCount = 0;
+
+    /**
+     *
+     */
+public function login(string $returl = '', $expire = 'session') {
+    $this->loginCallCount++;
+}
+
+    /**
+     *
+     */
+public function loginCallCount(): int {
+    return $this->loginCallCount;
+}
+
+}
+
+/**
  * Integration tests for USER/THEUSER methods.
  */
 class UserIntegrationTest extends TransactionalTestCase {
@@ -171,22 +194,8 @@ protected function tearDown(): void {
     /**
      * Build a THEUSER test double that avoids real redirect/cookie side effects.
      */
-    private function makeTestableTheUser(): THEUSER {
-        return new class extends THEUSER {
-            /** @var array<int,array{returl:string,expire:string}> */
-            public array $loginCalls = [];
-
-            /**
-             *
-             */
-public function login(string $returl = '', $expire = 'session') {
-                $this->loginCalls[] = [
-                    'returl' => $returl,
-                    'expire' => (string) $expire,
-                ];
-}
-
-        };
+    private function makeTestableTheUser(): TestableTheUser {
+        return new TestableTheUser();
     }
 
     // =========================================================================
@@ -370,7 +379,7 @@ public function test_change_password_old_password_no_longer_works(): void {
         $result = $THEUSER->confirm('999999-token-does-not-exist');
 
         $this->assertFalse($result);
-        $this->assertSame([], $THEUSER->loginCalls);
+        $this->assertSame(0, $THEUSER->loginCallCount());
     }
 
     /**
@@ -388,7 +397,7 @@ public function test_confirm_succeeds_for_existing_unconfirmed_user(): void {
         $this->assertNotFalse($result);
         $this->assertSame(1, (int) UserModel::where('user_id', $userId)->value('confirmed'));
         $this->assertTrue($THEUSER->confirmed());
-        $this->assertCount(1, $THEUSER->loginCalls);
+        $this->assertSame(1, $THEUSER->loginCallCount());
 }
 
     /**
@@ -406,7 +415,7 @@ public function test_confirm_succeeds_for_existing_already_confirmed_user(): voi
         $this->assertNotFalse($result);
         $this->assertSame(1, (int) UserModel::where('user_id', $userId)->value('confirmed'));
         $this->assertTrue($THEUSER->confirmed());
-        $this->assertCount(1, $THEUSER->loginCalls);
+        $this->assertSame(1, $THEUSER->loginCallCount());
 }
 
     /**
