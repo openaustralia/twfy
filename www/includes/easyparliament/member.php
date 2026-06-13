@@ -17,14 +17,14 @@ use OpenAustralia\TWFY\Models\Member as MemberModel;
 class MEMBER {
 
     public $valid = false;
-    public $member_id;
-    public $person_id;
-    public $first_name;
-    public $title;
-    public $last_name;
-    public $constituency;
-    public $party;
-    public $other_parties;
+    public ?int $member_id = null;
+    public mixed $person_id = null;
+    public ?string $first_name = null;
+    public ?string $title = null;
+    public ?string $last_name = null;
+    public mixed $constituency = null;
+    public ?string $party = null;
+    public ?array $other_parties = null;
     public $houses = [];
     public $entered_house = [];
     public $left_house = [];
@@ -426,8 +426,7 @@ class MEMBER {
                 $GLOSSARY->glossarise($this->extra_info['register_member_interests_html']);
         }
 
-        $q = parlDBQuery('SELECT COUNT(*) AS c from alerts WHERE criteria LIKE "%speaker:' . $this->person_id . '%" AND confirmed AND NOT deleted');
-        $this->extra_info['number_of_alerts'] = $q->field(0, 'c');
+        $this->extra_info['number_of_alerts'] = DB::table('alerts')->where('criteria', 'like', '%speaker:' . $this->person_id . '%')->where('confirmed', 1)->where('deleted', 0)->count();
 
         if (isset($this->extra_info['reading_ease'])) {
             $this->extra_info['reading_ease'] = round($this->extra_info['reading_ease'], 2);
@@ -437,20 +436,24 @@ class MEMBER {
         }
 
         // Public Bill Committees.
-        $q = parlDBQuery('SELECT bill_id,session,title, SUM(attending) AS a,SUM(chairman) AS c
-		from pbc_members, bills
-		WHERE bill_id = bills.id AND member_id = ? GROUP BY bill_id', $this->member_id());
+        $pbcRows = DB::table('pbc_members')
+          ->join('bills', 'pbc_members.bill_id', '=', 'bills.id')
+          ->where('member_id', $this->member_id())
+          ->groupBy('pbc_members.bill_id', 'bills.session', 'bills.title')
+          ->select('pbc_members.bill_id', 'bills.session', 'bills.title')
+          ->selectRaw('SUM(attending) AS a')
+          ->selectRaw('SUM(chairman) AS c')
+          ->get();
         $this->extra_info['pbc'] = [];
-        for ($i = 0; $i < $q->rows(); $i++) {
-            $bill_id = $q->field($i, 'bill_id');
-            $c = parlDBQuery('SELECT COUNT(*) AS c from hansard WHERE major=6 AND minor=? AND htype=10', $bill_id);
-            $c = $c->field(0, 'c');
-            $title = $q->field($i, 'title');
-            $attending = $q->field($i, 'a');
-            $chairman = $q->field($i, 'c');
+        foreach ($pbcRows as $row) {
+            $bill_id = $row->bill_id;
+            $c = DB::table('hansard')->where('major', 6)->where('minor', $bill_id)->where('htype', 10)->count();
+            $title = $row->title;
+            $attending = $row->a;
+            $chairman = $row->c;
             $this->extra_info['pbc'][$bill_id] = [
                 'title' => $title,
-                'session' => $q->field($i, 'session'),
+                'session' => $row->session,
                 'attending' => $attending,
                 'chairman' => ($chairman > 0),
                 'outof' => $c
@@ -614,29 +617,9 @@ class MEMBER {
     /**
      *
      */
-    public function left_reason() {
-        return $this->left_reason;
-    }
-
-    /**
-     *
-     */
-    public function left_reason_text($left_reason, $mponly = 0) {
-        if (isset($this->reasons[$left_reason])) {
-            $left_reason = $this->reasons[$left_reason];
-            if (is_array($left_reason)) {
-                $max = MemberModel::max('left_house');
-                if ((!$mponly && $max == $this->left_house) || ($mponly && $max == $this->mp_left_house)) {
-                    return $left_reason[0];
-                } else {
-                    return $left_reason[1];
-                }
-            } else {
-                return $left_reason;
-            }
-        } else {
-            return $left_reason;
-        }
+    public function left_reason_text($left_reason) {
+        $text = $this->reasons[$left_reason] ?? $left_reason;
+        return is_array($text) ? $text[1] : $text;
     }
 
     /**

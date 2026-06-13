@@ -60,6 +60,7 @@
 
 require_once __DIR__ . '/../request.php';
 
+use Illuminate\Database\Capsule\Manager as DB;
 use OpenAustralia\TWFY\Models\User as UserModel;
 
 /**
@@ -751,7 +752,7 @@ class USER {
 
         // Update email alerts if email address changed.
         if ($this->email != $details['email']) {
-            parlDBQuery('UPDATE alerts SET email = ? WHERE email = ?', $details['email'], $this->email);
+            DB::table('alerts')->where('email', $this->email)->update(['email' => $details['email']]);
         }
 
         $update_data = [];
@@ -1012,22 +1013,15 @@ class THEUSER extends USER {
     }
 
     /**
-     * Validate that a redirect URL is safe (relative or same domain).
+     * Validate that a redirect URL is safe.
+     *
+     * Only site-relative URLs are allowed. Protocol-relative URLs (e.g.
+     * //evil.com) are rejected because browsers treat them as absolute.
      */
     private function is_safe_redirect_url($url) {
-        // Relative URLs (starting with /) are safe.
-        if (strpos($url, '/') === 0) {
-            return true;
-        }
-
-        // Absolute URLs must be on the same domain.
-        $safe_base_http = 'http://' . DOMAIN;
-        $safe_base_https = 'https://' . DOMAIN;
-        if (strpos($url, $safe_base_http) === 0 || strpos($url, $safe_base_https) === 0) {
-            return true;
-        }
-
-        return false;
+        // Must start with exactly one slash (site-relative).
+        // Reject // which is a protocol-relative URL and an open-redirect vector.
+        return strpos($url, '/') === 0 && strpos($url, '//') !== 0;
     }
 
     /**
@@ -1149,8 +1143,10 @@ class THEUSER extends USER {
             $MEMBER = new MEMBER(['constituency' => $user->constituency]);
             $pid = $MEMBER->person_id();
             // This should probably be in the ALERT class.
-            parlDBQuery('UPDATE alerts SET confirmed = 1 WHERE email = ? AND criteria = ?',
-                $this->email, 'speaker:' . $pid);
+            DB::table('alerts')
+              ->where('email', $this->email)
+              ->where('criteria', 'speaker:' . $pid)
+              ->update(['confirmed' => 1]);
         }
 
         $this->confirmed = true;
