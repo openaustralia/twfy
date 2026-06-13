@@ -1013,18 +1013,13 @@ class THEUSER extends USER {
     }
 
     /**
-     * Validate that a redirect URL is safe (relative or same domain).
+     * Validate that a redirect URL is safe.
+     *
+     * Only site-relative URLs are allowed.
      */
     private function is_safe_redirect_url($url) {
         // Relative URLs (starting with /) are safe.
         if (strpos($url, '/') === 0) {
-            return true;
-        }
-
-        // Absolute URLs must be on the same domain.
-        $safe_base_http = 'http://' . DOMAIN;
-        $safe_base_https = 'https://' . DOMAIN;
-        if (strpos($url, $safe_base_http) === 0 || strpos($url, $safe_base_https) === 0) {
             return true;
         }
 
