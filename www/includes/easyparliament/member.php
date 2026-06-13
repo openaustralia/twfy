@@ -17,14 +17,14 @@ class MEMBER {
 
 
     public $valid = false;
-    public $member_id;
-    public $person_id;
-    public $first_name;
-    public $title;
-    public $last_name;
-    public $constituency;
-    public $party;
-    public $other_parties;
+    public ?int $member_id = null;
+    public mixed $person_id = null;
+    public ?string $first_name = null;
+    public ?string $title = null;
+    public ?string $last_name = null;
+    public mixed $constituency = null;
+    public ?string $party = null;
+    public ?array $other_parties = null;
     public $houses = [];
     public $entered_house = [];
     public $left_house = [];
