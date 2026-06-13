@@ -21,6 +21,12 @@
  *
  * $q is then a MySQLQuery object.
  *
+ * IMPORTANT (DEPRECATED FOR NEW CODE):
+ * This legacy wrapper and parlDBQuery() are deprecated for new application
+ * code. Prefer the ORM (Eloquent) via models and query builder calls such as
+ * MemberModel::query() and DB::table(...). Only use parlDBQuery() when working
+ * in legacy paths that have not yet been migrated.
+ *
  * If other databases are needed, we just need to create a class for each, each one
  * extending MySQL.
  *
