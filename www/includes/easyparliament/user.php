@@ -1100,7 +1100,7 @@ class THEUSER extends USER {
     /**
      *
      */
-    public function logout($returl) {
+    public function logout(string $returl) {
 
         // $returl is the URL to redirect the user to after log in, generally the
         // page they were on before. But if it doesn't exist, they'll just go to
