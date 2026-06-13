@@ -632,13 +632,6 @@ class MEMBER {
     /**
      *
      */
-    public function left_reason() {
-        return $this->left_reason;
-    }
-
-    /**
-     *
-     */
     public function left_reason_text($left_reason, $mponly = 0) {
         if (isset($this->reasons[$left_reason])) {
             $left_reason = $this->reasons[$left_reason];
