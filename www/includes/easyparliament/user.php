@@ -60,6 +60,7 @@
 
 require_once __DIR__ . '/../request.php';
 
+use Illuminate\Database\Capsule\Manager as DB;
 use OpenAustralia\TWFY\Models\User as UserModel;
 
 /**
@@ -751,7 +752,7 @@ class USER {
 
         // Update email alerts if email address changed.
         if ($this->email != $details['email']) {
-            parlDBQuery('UPDATE alerts SET email = ? WHERE email = ?', $details['email'], $this->email);
+            DB::table('alerts')->where('email', $this->email)->update(['email' => $details['email']]);
         }
 
         $update_data = [];
@@ -1149,8 +1150,10 @@ class THEUSER extends USER {
             $MEMBER = new MEMBER(['constituency' => $user->constituency]);
             $pid = $MEMBER->person_id();
             // This should probably be in the ALERT class.
-            parlDBQuery('UPDATE alerts SET confirmed = 1 WHERE email = ? AND criteria = ?',
-                $this->email, 'speaker:' . $pid);
+            DB::table('alerts')
+              ->where('email', $this->email)
+              ->where('criteria', 'speaker:' . $pid)
+              ->update(['confirmed' => 1]);
         }
 
         $this->confirmed = true;

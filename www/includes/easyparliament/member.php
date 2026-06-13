@@ -441,8 +441,7 @@ class MEMBER {
                 $GLOSSARY->glossarise($this->extra_info['register_member_interests_html']);
         }
 
-        $q = parlDBQuery('SELECT COUNT(*) AS c from alerts WHERE criteria LIKE "%speaker:' . $this->person_id . '%" AND confirmed AND NOT deleted');
-        $this->extra_info['number_of_alerts'] = $q->field(0, 'c');
+        $this->extra_info['number_of_alerts'] = DB::table('alerts')->where('criteria', 'like', '%speaker:' . $this->person_id . '%')->where('confirmed', 1)->where('deleted', 0)->count();
 
         if (isset($this->extra_info['reading_ease'])) {
             $this->extra_info['reading_ease'] = round($this->extra_info['reading_ease'], 2);
@@ -452,23 +451,24 @@ class MEMBER {
         }
 
         // Public Bill Committees.
-        $q = parlDBQuery('SELECT bill_id,session,title, SUM(attending) AS a,SUM(chairman) AS c
-		from pbc_members, bills
-		WHERE bill_id = bills.id AND member_id = ? GROUP BY bill_id', $this->member_id());
+        $pbcRows = DB::table('pbc_members')
+          ->join('bills', 'pbc_members.bill_id', '=', 'bills.id')
+          ->where('member_id', $this->member_id())
+          ->groupBy('pbc_members.bill_id', 'bills.session', 'bills.title')
+          ->select('pbc_members.bill_id', 'bills.session', 'bills.title')
+          ->selectRaw('SUM(attending) AS a')
+          ->selectRaw('SUM(chairman) AS c')
+          ->get();
         $this->extra_info['pbc'] = [];
-        for ($i = 0; $i < $q->rows(); $i++) {
-            $bill_id = $q->field($i, 'bill_id');
-                        $c = DB::table('hansard')
-                            ->where('major', 6)
-                            ->where('minor', $bill_id)
-                                                    ->where('htype', 10)
-                            ->count();
-            $title = $q->field($i, 'title');
-            $attending = $q->field($i, 'a');
-            $chairman = $q->field($i, 'c');
+        foreach ($pbcRows as $row) {
+            $bill_id = $row->bill_id;
+            $c = DB::table('hansard')->where('major', 6)->where('minor', $bill_id)->where('htype', 10)->count();
+            $title = $row->title;
+            $attending = $row->a;
+            $chairman = $row->c;
             $this->extra_info['pbc'][$bill_id] = [
                 'title' => $title,
-                'session' => $q->field($i, 'session'),
+                'session' => $row->session,
                 'attending' => $attending,
                 'chairman' => ($chairman > 0),
                 'outof' => $c
