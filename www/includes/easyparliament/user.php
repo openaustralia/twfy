@@ -1123,12 +1123,12 @@ class THEUSER extends USER {
     }
 
     /**
-     *
+     * The user has clicked the link in their confirmation email
+     * and the confirm page has passed the token from the URL to here.
+     * If all goes well they'll be confirmed and then logged in.
      */
-    public function confirm($token) {
-        // The user has clicked the link in their confirmation email
-        // and the confirm page has passed the token from the URL to here.
-        // If all goes well they'll be confirmed and then logged in.
+    public function confirm(string $token) {
+
 
         // Split the token into its parts.
         $arg = '';
@@ -1144,55 +1144,45 @@ class THEUSER extends USER {
             return false;
         }
 
-        $q = parlDBQuery("SELECT email, password, constituency
-						FROM	users
-						WHERE	user_id = ?
-						AND		registrationtoken = ?
-						", $user_id, $registrationtoken);
+        $user = UserModel::where('user_id', $user_id)->where('registrationtoken', $registrationtoken)->first(['email', 'password', 'constituency']);
 
-        if ($q->rows() == 1) {
-
-            // We'll need these to be set before logging the user in.
-            $this->user_id = $user_id;
-            $this->email = $q->field(0, 'email');
-            $this->password = $q->field(0, 'password');
-
-            // Set that they're confirmed in the DB.
-            $r = parlDBQuery("UPDATE users
-							SET		confirmed = '1'
-							WHERE	user_id = ?
-							", $user_id);
-
-            if ($q->field(0, 'constituency')) {
-                $MEMBER = new MEMBER(['constituency' => $q->field(0, 'constituency')]);
-                $pid = $MEMBER->person_id();
-                // This should probably be in the ALERT class.
-                parlDBQuery('UPDATE alerts SET confirmed = 1 WHERE email = ? AND criteria = ?',
-                    $this->email, 'speaker:' . $pid);
-            }
-
-            if ($r->success()) {
-
-                $this->confirmed = true;
-
-                // Log the user in, redirecting them to the confirm page
-                // where they should get a nice welcome message.
-                $URL = new URL('userconfirmed');
-                $URL->insert(['welcome' => 't']);
-                $redirecturl = $URL->generate();
-
-                $this->login($redirecturl, 'session');
-
-            } else {
-                // Couldn't set them as confirmed in the DB.
+        if (!$user) {
+                // Couldn't find this user in the DB. Maybe the token was
+                // wrong or incomplete?
                 return false;
-            }
+        }
 
-        } else {
-            // Couldn't find this user in the DB. Maybe the token was
-            // wrong or incomplete?
+        // We'll need these to be set before logging the user in.
+        $this->user_id = $user_id;
+        $this->email = $user->email;
+        $this->password = $user->password;
+
+        // Set that they're confirmed in the DB.
+        if ($user->update(['confirmed' => 1]) === false) {
+            // Couldn't set them as confirmed in the DB.
+            twfy_debug('THEUSER confirm FAILED', "Could not set confirmed for user_id $user_id");
+
             return false;
         }
+
+        if ($user->constituency) {
+            $MEMBER = new MEMBER(['constituency' => $user->constituency]);
+            $pid = $MEMBER->person_id();
+            // This should probably be in the ALERT class.
+            parlDBQuery('UPDATE alerts SET confirmed = 1 WHERE email = ? AND criteria = ?',
+                $this->email, 'speaker:' . $pid);
+        }
+
+        $this->confirmed = true;
+
+        // Log the user in, redirecting them to the confirm page
+        // where they should get a nice welcome message.
+        $URL = new URL('userconfirmed');
+        $URL->insert(['welcome' => 't']);
+        $redirecturl = $URL->generate();
+
+        $this->login($redirecturl, 'session');
+
     }
 
     /**
