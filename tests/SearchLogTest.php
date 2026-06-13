@@ -189,7 +189,8 @@ protected function setUp(): void {
         $this->insertSearchLog('xyzzy', 0, '10.0.0.1');
         $this->insertSearchLog('xyzzy', 0, '10.0.0.2');
         $this->insertSearchLog('frobulence', 0, '10.0.0.1');
-// Should not appear.
+
+        // Should not appear.
         $this->insertSearchLog('housing', 3, '10.0.0.1');
 
         $searchlog = $this->createSearchLog();
@@ -213,9 +214,11 @@ protected function setUp(): void {
         $this->insertSearchLog('climate change', 12);
         $this->insertSearchLog('climate change', 8);
         $this->insertSearchLog('housing affordability', 5);
-// Should not appear.
+
+        // Should not appear.
         $this->insertSearchLog('speaker:10749', 20);
-// Should not appear.
+
+        // Should not appear.
         $this->insertSearchLog('zero hits query', 0);
 
         $searchlog = $this->createSearchLog();
