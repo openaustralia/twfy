@@ -11,7 +11,31 @@
 require_once __DIR__ . '/bootstrap.php';
 
 if (!function_exists('make_member_url')) {
-    require_once __DIR__ . '/../www/includes/utility.php';
+    function make_member_url(string $name, string $const = '', int $house = 1): string {
+        $s = [' ', '&amp;', '&ocirc;', '&ouml;', '&acirc;', '&iacute;', '&aacute;', '&uacute;'];
+        $r = ['_', 'and', 'o', 'o', 'a', 'i', 'a', 'u'];
+        $name = preg_replace('#^the #', '', strtolower($name));
+        $out = urlencode(str_replace($s, $r, $name));
+        if ($const && ($house == 1 || $house == 2)) {
+            $out .= '/' . urlencode(str_replace($s, $r, strtolower($const)));
+        } elseif ($house == 0) {
+            $out = 'elizabeth_the_second';
+        }
+        return $out;
+    }
+}
+
+if (!function_exists('member_full_name')) {
+    function member_full_name(int $house, string $title, string $first_name, string $last_name, string $constituency): string {
+        if ($house >= 1 && $house <= 4) {
+            $s = $first_name . ' ' . $last_name;
+            if ($title) {
+                $s = $title . ' ' . $s;
+            }
+            return $s;
+        }
+        return '';
+    }
 }
 
 if (!class_exists('URL')) {
