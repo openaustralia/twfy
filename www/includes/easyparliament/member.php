@@ -458,8 +458,11 @@ class MEMBER {
         $this->extra_info['pbc'] = [];
         for ($i = 0; $i < $q->rows(); $i++) {
             $bill_id = $q->field($i, 'bill_id');
-            $c = parlDBQuery('SELECT COUNT(*) AS c from hansard WHERE major=6 AND minor=? AND htype=10', $bill_id);
-            $c = $c->field(0, 'c');
+                        $c = DB::table('hansard')
+                            ->where('major', 6)
+                            ->where('minor', $bill_id)
+                                                    ->where('htype', 10)
+                            ->count();
             $title = $q->field($i, 'title');
             $attending = $q->field($i, 'a');
             $chairman = $q->field($i, 'c');
