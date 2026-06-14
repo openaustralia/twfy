@@ -14,6 +14,9 @@ use OpenAustralia\TWFY\Models\User;
 use OpenAustralia\TWFY\Models\Uservotes;
 use OpenAustralia\TWFY\Models\PostcodeLookup;
 
+/**
+ *
+ */
 class ModelsTest extends TestCase {
 
     // --- Bills ---

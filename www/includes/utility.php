@@ -269,9 +269,7 @@ function validate_email($string) {
     }
 }
 
-/**
- *
- */
+
 /**
  *
  */
