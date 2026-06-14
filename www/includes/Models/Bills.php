@@ -29,7 +29,7 @@ class Bills extends Model {
 
     protected $primaryKey = 'id';
 
-    public $timestamps = false;
+    public $timestamps = true;
 
     // Cast boolean fields
     protected $casts = [
