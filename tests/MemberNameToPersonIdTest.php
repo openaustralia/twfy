@@ -17,7 +17,7 @@ class MemberNameToPersonIdTest extends TransactionalTestCase {
         string $firstName,
         string $lastName,
         string $constituency,
-        int $house = 1
+        int $house = HOUSE::REPRESENTATIVES
     ): void {
         MemberModel::query()->insert([
             'member_id' => $memberId,

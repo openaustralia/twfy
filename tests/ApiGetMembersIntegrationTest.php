@@ -41,7 +41,7 @@ class ApiGetMembersIntegrationTest extends TestCase {
      * Test querying members table by house.
      */
     public function test_query_members_by_house(): void {
-        $q = parlDBQuery('SELECT * FROM member WHERE house = ? LIMIT 1', 1);
+        $q = parlDBQuery('SELECT * FROM member WHERE house = ? LIMIT 1', HOUSE::REPRESENTATIVES);
         $this->assertIsObject($q);
     }
 
@@ -49,7 +49,7 @@ class ApiGetMembersIntegrationTest extends TestCase {
      * Test querying members by house and party like.
      */
     public function test_query_members_by_party(): void {
-        $house = 1;
+        $house = HOUSE::REPRESENTATIVES;
         $party = 'ALP';
         $q = parlDBQuery('SELECT * FROM member WHERE house = ? AND party LIKE ?', $house, "%$party%");
         $this->assertIsObject($q);
@@ -59,7 +59,7 @@ class ApiGetMembersIntegrationTest extends TestCase {
      * Test querying members by house and constituency like.
      */
     public function test_query_members_by_constituency(): void {
-        $house = 1;
+        $house = HOUSE::REPRESENTATIVES;
         $state = 'NSW';
         $q = parlDBQuery('SELECT * FROM member WHERE house = ? AND constituency LIKE ?', $house, "%$state%");
         $this->assertIsObject($q);
@@ -69,7 +69,7 @@ class ApiGetMembersIntegrationTest extends TestCase {
      * Test date range filtering for members.
      */
     public function test_query_members_with_date_range(): void {
-        $house = 1;
+        $house = HOUSE::REPRESENTATIVES;
         $q = parlDBQuery('SELECT * FROM member WHERE house = ? AND entered_house <= NOW() AND NOW() <= left_house', $house);
         $this->assertIsObject($q);
     }
@@ -78,7 +78,7 @@ class ApiGetMembersIntegrationTest extends TestCase {
      * Test member search by first name.
      */
     public function test_query_members_search_first_name(): void {
-        $house = 1;
+        $house = HOUSE::REPRESENTATIVES;
         $search = '%Smith%';
         $q = parlDBQuery('SELECT * FROM member WHERE house = ? AND first_name LIKE ?', $house, $search);
         $this->assertIsObject($q);
@@ -88,7 +88,7 @@ class ApiGetMembersIntegrationTest extends TestCase {
      * Test member search by last name.
      */
     public function test_query_members_search_last_name(): void {
-        $house = 1;
+        $house = HOUSE::REPRESENTATIVES;
         $search = '%John%';
         $q = parlDBQuery('SELECT * FROM member WHERE house = ? AND last_name LIKE ?', $house, $search);
         $this->assertIsObject($q);
@@ -98,7 +98,7 @@ class ApiGetMembersIntegrationTest extends TestCase {
      * Test member search by full name concatenation.
      */
     public function test_query_members_search_full_name(): void {
-        $house = 1;
+        $house = HOUSE::REPRESENTATIVES;
         $search = '%John Smith%';
         $q = parlDBQuery('SELECT * FROM member WHERE house = ? AND CONCAT(first_name, \' \', last_name) LIKE ?', $house, $search);
         $this->assertIsObject($q);
@@ -133,7 +133,7 @@ class ApiGetMembersIntegrationTest extends TestCase {
      * Test Senate query (house = 2) with different search logic.
      */
     public function test_senate_search_includes_constituency(): void {
-        $house = 2;
+        $house = HOUSE::SENATE;
         $search = '%NSW%';
         $q = parlDBQuery('SELECT * FROM member WHERE house = ? AND constituency LIKE ?', $house, $search);
         $this->assertIsObject($q);
@@ -143,7 +143,7 @@ class ApiGetMembersIntegrationTest extends TestCase {
      * Test state search for House members.
      */
     public function test_state_search_house(): void {
-        $house = 1;
+        $house = HOUSE::REPRESENTATIVES;
         $state = 'NSW';
         $q = parlDBQuery('SELECT * FROM member WHERE house = ? AND constituency LIKE ? AND entered_house <= NOW() AND NOW() <= left_house', $house, "%$state%");
         $this->assertIsObject($q);
@@ -153,7 +153,7 @@ class ApiGetMembersIntegrationTest extends TestCase {
      * Test state search for Senate members.
      */
     public function test_state_search_senate(): void {
-        $house = 2;
+        $house = HOUSE::SENATE;
         $state = 'VIC';
         $q = parlDBQuery('SELECT * FROM member WHERE house = ? AND constituency LIKE ? AND entered_house <= NOW() AND NOW() <= left_house', $house, "%$state%");
         $this->assertIsObject($q);
@@ -179,7 +179,7 @@ class ApiGetMembersIntegrationTest extends TestCase {
      * Test search by first name for House members.
      */
     public function test_search_first_name_house(): void {
-        $house = 1;
+        $house = HOUSE::REPRESENTATIVES;
         $search = '%John%';
         $q = parlDBQuery('SELECT * FROM member WHERE house = ? AND first_name LIKE ?', $house, $search);
         $this->assertIsObject($q);
@@ -189,7 +189,7 @@ class ApiGetMembersIntegrationTest extends TestCase {
      * Test search by last name for House members.
      */
     public function test_search_last_name_house(): void {
-        $house = 1;
+        $house = HOUSE::REPRESENTATIVES;
         $search = '%Smith%';
         $q = parlDBQuery('SELECT * FROM member WHERE house = ? AND last_name LIKE ?', $house, $search);
         $this->assertIsObject($q);
@@ -199,7 +199,7 @@ class ApiGetMembersIntegrationTest extends TestCase {
      * Test search by full name for House members.
      */
     public function test_search_full_name_house(): void {
-        $house = 1;
+        $house = HOUSE::REPRESENTATIVES;
         $search = '%John Smith%';
         $q = parlDBQuery('SELECT * FROM member WHERE house = ? AND CONCAT(first_name, \' \', last_name) LIKE ?', $house, $search);
         $this->assertIsObject($q);
@@ -209,7 +209,7 @@ class ApiGetMembersIntegrationTest extends TestCase {
      * Test search for House does not search constituency.
      */
     public function test_search_house_no_constituency(): void {
-        $house = 1;
+        $house = HOUSE::REPRESENTATIVES;
         // House query should have 3 LIKE conditions, not including constituency.
         $q = parlDBQuery('SELECT * FROM member WHERE house = ? AND (first_name LIKE ? OR last_name LIKE ? OR CONCAT(first_name, \' \', last_name) LIKE ?)', $house, '%test%', '%test%', '%test%');
         $this->assertIsObject($q);
@@ -219,7 +219,7 @@ class ApiGetMembersIntegrationTest extends TestCase {
      * Test search by first name for Senate members.
      */
     public function test_search_first_name_senate(): void {
-        $house = 2;
+        $house = HOUSE::SENATE;
         $search = '%John%';
         $q = parlDBQuery('SELECT * FROM member WHERE house = ? AND first_name LIKE ?', $house, $search);
         $this->assertIsObject($q);
@@ -229,7 +229,7 @@ class ApiGetMembersIntegrationTest extends TestCase {
      * Test search by last name for Senate members.
      */
     public function test_search_last_name_senate(): void {
-        $house = 2;
+        $house = HOUSE::SENATE;
         $search = '%Labor%';
         $q = parlDBQuery('SELECT * FROM member WHERE house = ? AND last_name LIKE ?', $house, $search);
         $this->assertIsObject($q);
@@ -239,7 +239,7 @@ class ApiGetMembersIntegrationTest extends TestCase {
      * Test search by constituency for Senate members.
      */
     public function test_search_constituency_senate(): void {
-        $house = 2;
+        $house = HOUSE::SENATE;
         $search = '%NSW%';
         $q = parlDBQuery('SELECT * FROM member WHERE house = ? AND constituency LIKE ?', $house, $search);
         $this->assertIsObject($q);
@@ -249,7 +249,7 @@ class ApiGetMembersIntegrationTest extends TestCase {
      * Test search for Senate includes constituency.
      */
     public function test_search_senate_with_constituency(): void {
-        $house = 2;
+        $house = HOUSE::SENATE;
         // Senate query should have 4 LIKE conditions including constituency.
         $q = parlDBQuery('SELECT * FROM member WHERE house = ? AND (first_name LIKE ? OR last_name LIKE ? OR CONCAT(first_name, \' \', last_name) LIKE ? OR constituency LIKE ?)', $house, '%test%', '%test%', '%test%', '%test%');
         $this->assertIsObject($q);
