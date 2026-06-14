@@ -9,6 +9,7 @@ include_once __DIR__ . "/searchlog.php";
 
 use OpenAustralia\TWFY\Models\Member as MemberModel;
 use OpenAustralia\TWFY\Models\Moffice as MofficeModel;
+use OpenAustralia\TWFY\Models\Bills as BillsModel;
 
 /**
  * The HANSARDLIST class and its children, DEBATELIST and WRANSLIST, display data about
@@ -3143,10 +3144,10 @@ class StandingCommittee extends DEBATELIST {
     public function _get_data_by_session($args) {
         global $DATA, $this_page;
         $session = $args['session'];
-        $q = parlDBQuery('SELECT id, title from bills WHERE session=? ORDER BY title', $session);
+        $billRecords = BillsModel::where('session', $session)->orderBy('title')->get();
         $bills = [];
-        for ($i = 0; $i < $q->rows(); $i++) {
-            $bills[$q->field($i, 'id')] = $q->field($i, 'title');
+        foreach ($billRecords as $record) {
+            $bills[$record->id] = $record->title;
         }
         $q = parlDBQuery('SELECT minor, COUNT(*) AS c from hansard WHERE major=6 AND htype=12
 			AND minor IN ?
@@ -3169,10 +3170,10 @@ class StandingCommittee extends DEBATELIST {
         $nextprev = [];
         $nextprev['prev'] = ['body' => 'Previous session', 'title' => ''];
         $nextprev['next'] = ['body' => 'Next session', 'title' => ''];
-        $q = parlDBQuery("SELECT session FROM bills WHERE session < ? ORDER BY session DESC LIMIT 1", $session);
-        $prevyear = $q->field(0, 'session');
-        $q = parlDBQuery("SELECT session FROM bills WHERE session > ? ORDER BY session ASC LIMIT 1", $session);
-        $nextyear = $q->field(0, 'session');
+        $prevRecord = BillsModel::where('session', '<', $session)->orderBy('session', 'desc')->first();
+        $prevyear = $prevRecord ? $prevRecord->session : null;
+        $nextRecord = BillsModel::where('session', '>', $session)->orderBy('session', 'asc')->first();
+        $nextyear = $nextRecord ? $nextRecord->session : null;
         if ($prevyear) {
             $nextprev['prev']['url'] = $YEARURL->generate() . $prevyear . '/';
         }
