@@ -8,7 +8,7 @@
  * avoiding symbol conflicts between the test bootstrap and the application.
  */
 
-require_once __DIR__ . '/bootstrap.php';
+require_once __DIR__ . '/../../bootstrap.php';
 
 use PHPUnit\Framework\TestCase;
 

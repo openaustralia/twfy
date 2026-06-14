@@ -5,7 +5,7 @@
  * Unit tests for MEMBER::current_member().
  */
 
-require_once __DIR__ . '/bootstrap.php';
+require_once __DIR__ . '/../../bootstrap.php';
 
 use PHPUnit\Framework\TestCase;
 
