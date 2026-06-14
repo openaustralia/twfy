@@ -13,47 +13,50 @@ use OpenAustralia\TWFY\Models\Hansard;
 /**
  *
  */
-function twfy_debug($header, $text = "") {
-    // Pass it a brief header word and some debug text and it'll be output.
+if (!function_exists('twfy_debug')) {
+    function twfy_debug($header, $text = "")
+    {
+        // Pass it a brief header word and some debug text and it'll be output.
 
-    // We set ?DEBUGTAG=n in the URL.
-    // (DEBUGTAG is set in config.php).
-    // n is a number from (currently) 1 to 4.
-    // This sets what amount of debug information is shown.
-    // For level '1' we show anything that is passed to this function
-    // with a $header in $levels[1].
-    // For level '2', anything with a $header in $levels[1] AND $levels[2].
-    // Level '4' shows everything.
+        // We set ?DEBUGTAG=n in the URL.
+        // (DEBUGTAG is set in config.php).
+        // n is a number from (currently) 1 to 4.
+        // This sets what amount of debug information is shown.
+        // For level '1' we show anything that is passed to this function
+        // with a $header in $levels[1].
+        // For level '2', anything with a $header in $levels[1] AND $levels[2].
+        // Level '4' shows everything.
 
-    $debug_level = get_http_var(DEBUGTAG);
-    // $debug_level = 1;
+        $debug_level = get_http_var(DEBUGTAG);
+        // $debug_level = 1;
 
-    if ($debug_level != '') {
+        if ($debug_level != '') {
 
-        // Set which level shows which types of debug info.
-        $levels = [
-            1 => ['SKIN', 'THEUSER', 'TIME', 'SQLERROR', 'PAGE', 'TEMPLATE', 'SEARCH', 'ALERTS', 'MP'],
-            2 => ['SQL', 'EMAIL', 'WIKIPEDIA', 'hansardlist', 'debatelist', 'wranslist', 'whalllist'],
-            3 => ['SQLRESULT']
-            // Higher than this: 'DATA', etc.
-        ];
+            // Set which level shows which types of debug info.
+            $levels = [
+                1 => ['SKIN', 'THEUSER', 'TIME', 'SQLERROR', 'PAGE', 'TEMPLATE', 'SEARCH', 'ALERTS', 'MP'],
+                2 => ['SQL', 'EMAIL', 'WIKIPEDIA', 'hansardlist', 'debatelist', 'wranslist', 'whalllist'],
+                3 => ['SQLRESULT']
+                // Higher than this: 'DATA', etc.
+            ];
 
-        // Store which headers we are allowed to show.
-        $allowed_headers = [];
+            // Store which headers we are allowed to show.
+            $allowed_headers = [];
 
-        if ($debug_level > count($levels)) {
-            $max_level_to_show = count($levels);
-        } else {
-            $max_level_to_show = $debug_level;
-        }
+            if ($debug_level > count($levels)) {
+                $max_level_to_show = count($levels);
+            } else {
+                $max_level_to_show = $debug_level;
+            }
 
-        for ($n = 1; $n <= $max_level_to_show; $n++) {
-            $allowed_headers = array_merge($allowed_headers, $levels[$n]);
-        }
+            for ($n = 1; $n <= $max_level_to_show; $n++) {
+                $allowed_headers = array_merge($allowed_headers, $levels[$n]);
+            }
 
-        // If we can show this header, then, er, show it.
-        if (in_array($header, $allowed_headers) || $debug_level >= 4) {
-            print "<p><span style=\"color:#039;\"><strong>" . htmlspecialchars($header, ENT_QUOTES, 'UTF-8') . "</strong></span> " . htmlspecialchars($text, ENT_QUOTES, 'UTF-8') . "</p>\n";
+            // If we can show this header, then, er, show it.
+            if (in_array($header, $allowed_headers) || $debug_level >= 4) {
+                print "<p><span style=\"color:#039;\"><strong>" . htmlspecialchars($header, ENT_QUOTES, 'UTF-8') . "</strong></span> " . htmlspecialchars($text, ENT_QUOTES, 'UTF-8') . "</p>\n";
+            }
         }
     }
 }
@@ -61,7 +64,8 @@ function twfy_debug($header, $text = "") {
 /**
  * This is set as the default error handler. Your code tools may try to convince you it isn't used, but it is.
  */
-function error_handler(string $errno, string $errmsg, string $filename, int $linenum, ?array $vars = []) {
+function error_handler(string $errno, string $errmsg, string $filename, int $linenum, ?array $vars = [])
+{
     // Custom error-handling function.
     // Sends an email to BUGSLIST.
     global $PAGE;
@@ -190,7 +194,8 @@ function error_handler(string $errno, string $errmsg, string $filename, int $lin
 /**
  * Replacement for var_dump()
  */
-function vardump($blah) {
+function vardump($blah)
+{
     print "<pre>\n";
     var_dump($blah);
     print "</pre>\n";
@@ -199,7 +204,8 @@ function vardump($blah) {
 /**
  * Pretty prints the backtrace, copied from https://uk.php.net/manual/en/function.debug-backtrace.php.
  */
-function adodb_backtrace($print = true) {
+function adodb_backtrace($print = true)
+{
     $s = '';
     if (phpversion() >= 4.3) {
 
@@ -252,7 +258,8 @@ function adodb_backtrace($print = true) {
 /**
  * Far from foolproof, but better than nothing.
  */
-function validate_email($string) {
+function validate_email($string)
+{
     if (
         !preg_match('/^[-!#$%&\'*+\\.\\0-9=?A-Z^_`a-z{|}~]+' .
             '@' .
@@ -268,7 +275,8 @@ function validate_email($string) {
 /**
  *
  */
-function validate_postcode($postcode) {
+function validate_postcode($postcode)
+{
     $postcode = trim($postcode);
 
     $num = '0123456789';
@@ -282,12 +290,15 @@ function validate_postcode($postcode) {
 /**
  * Returns the unixtime in microseconds.
  */
-function getmicrotime() {
-    $mtime = microtime();
-    $mtime = explode(" ", $mtime);
-    $mtime = $mtime[1] + $mtime[0];
+if (!function_exists('getmicrotime')) {
+    function getmicrotime()
+    {
+        $mtime = microtime();
+        $mtime = explode(" ", $mtime);
+        $mtime = $mtime[1] + $mtime[0];
 
-    return $mtime;
+        return $mtime;
+    }
 }
 
 /* twfy_debug_timestamp
@@ -297,7 +308,8 @@ $timestamp_last = $timestamp_start = getmicrotime();
 /**
  *
  */
-function twfy_debug_timestamp($label = "") {
+function twfy_debug_timestamp($label = "")
+{
     global $timestamp_last, $timestamp_start;
     $t = getmicrotime();
     twfy_debug("TIME", sprintf(
@@ -312,25 +324,29 @@ function twfy_debug_timestamp($label = "") {
 /**
  *
  */
-function format_date($date, $format) {
-    // Pass it a date (YYYY-MM-DD) and a
-    // PHP date format string (eg, "Y-m-d H:i:s")
-    // and it returns a nicely formatted string according to requirements.
+if (!function_exists('format_date')) {
+    function format_date($date, $format)
+    {
+        // Pass it a date (YYYY-MM-DD) and a
+        // PHP date format string (eg, "Y-m-d H:i:s")
+        // and it returns a nicely formatted string according to requirements.
 
-    if (preg_match("/^(\d\d\d\d)-(\d\d?)-(\d\d?)$/", $date, $matches)) {
-        [$string, $year, $month, $day] = $matches;
+        if (preg_match("/^(\d\d\d\d)-(\d\d?)-(\d\d?)$/", $date, $matches)) {
+            [$string, $year, $month, $day] = $matches;
 
-        return gmdate($format, gmmktime(0, 0, 0, $month, $day, $year));
-    } else {
-        return "";
+            return gmdate($format, gmmktime(0, 0, 0, $month, $day, $year));
+        } else {
+            return "";
+        }
+
     }
-
 }
 
 /**
  *
  */
-function format_time($time, $format) {
+function format_time($time, $format)
+{
     // Pass it a time (HH:MM:SS) and a
     // PHP date format string (eg, "H:i")
     // and it returns a nicely formatted string according to requirements.
@@ -347,7 +363,8 @@ function format_time($time, $format) {
 /**
  *
  */
-function relative_time($datetime) {
+function relative_time($datetime)
+{
     // Pass it a 'YYYY-MM-DD HH:MM:SS' and it will return something
     // like "Two hours ago", "Last week", etc.
 
@@ -409,7 +426,8 @@ function relative_time($datetime) {
 /**
  *
  */
-function parse_date($date) {
+function parse_date($date)
+{
     $now = time();
     $date = preg_replace('#\b([a-z]|on|an|of|in|the|year of our lord)\b#i', '', $date);
     $date = preg_replace('#[\x80-\xff]#', '', $date);
@@ -482,7 +500,8 @@ function parse_date($date) {
  * Return a copy of TEXT in which certain block-level HTML tags have been
  * replaced by single spaces, and other HTML tags have been removed.
  */
-function strip_tags_tospaces($text) {
+function strip_tags_tospaces($text)
+{
     $text = preg_replace("#\<(p|br|div|td|tr|th|table)[^>]*\>#i", " ", $text);
     return strip_tags(trim($text));
 }
@@ -490,7 +509,8 @@ function strip_tags_tospaces($text) {
 /**
  *
  */
-function trim_characters($text, $start, $length) {
+function trim_characters($text, $start, $length)
+{
     // Pass it a string, a numeric start position and a numeric length.
     // If the start position is > 0, the string will be trimmed to start at the
     // nearest word boundary after (or at) that position.
@@ -546,7 +566,8 @@ function trim_characters($text, $start, $length) {
 /**
  *
  */
-function filter_user_input($text, $filter_type) {
+function filter_user_input($text, $filter_type)
+{
     /*
     We use this to filter any major user input, especially comments.
     Gets rid of bad HTML, basically.
@@ -586,7 +607,8 @@ function filter_user_input($text, $filter_type) {
 /**
  *
  */
-function prepare_comment_for_display($text) {
+function prepare_comment_for_display($text)
+{
     // Makes any URLs into HTML links.
     // Turns \n's into <br>.
 
@@ -614,7 +636,8 @@ function prepare_comment_for_display($text) {
 /**
  *
  */
-function htmlentities_notags($text) {
+function htmlentities_notags($text)
+{
     // If you want to do htmlentities() on some text that has HTML tags
     // in it, then you need this function.
 
@@ -647,7 +670,8 @@ function htmlentities_notags($text) {
 /**
  *
  */
-function fix_gid_from_db($gid, $keepmajor = false) {
+function fix_gid_from_db($gid, $keepmajor = false)
+{
     // The gids in the database are longer than we use in the site.
     // Feed this a gid from the db and it will be returned truncated.
 
@@ -670,7 +694,8 @@ function fix_gid_from_db($gid, $keepmajor = false) {
 /**
  *
  */
-function gid_to_anchor($gid) {
+function gid_to_anchor($gid)
+{
     // For trimming gids to be used as #anchors in pages.
     // Extracted here so we keep it consistent.
     // The gid should already be truncated using fix_gid_from_db(), so it
@@ -683,7 +708,8 @@ function gid_to_anchor($gid) {
 /**
  *
  */
-function send_template_email($data, $merge, $bulk = false) {
+function send_template_email($data, $merge, $bulk = false)
+{
     /*
     We should have some email templates in INCLUDESPATH/easyparliament/templates/emails/.
 
@@ -775,7 +801,8 @@ function send_template_email($data, $merge, $bulk = false) {
 /**
  *
  */
-function send_email($to, $subject, $message, $bulk = false) {
+function send_email($to, $subject, $message, $bulk = false)
+{
     // Use this rather than PHP's mail() direct, so we can make alterations
     // easily to all the emails we send out from the site.
 
@@ -809,7 +836,8 @@ function send_email($to, $subject, $message, $bulk = false) {
 /**
  * Call this with a key name to get a GET or POST variable.
  */
-function get_http_var($name, $default = '') {
+function get_http_var($name, $default = '')
+{
     if (array_key_exists($name, $_GET)) {
         return clean_var($_GET[$name]);
     }
@@ -822,14 +850,16 @@ function get_http_var($name, $default = '') {
 /**
  *
  */
-function clean_var($a) {
+function clean_var($a)
+{
     return $a;
 }
 
 /**
  *
  */
-function recursive_strip($a) {
+function recursive_strip($a)
+{
     if (is_array($a)) {
         foreach ($a as $key => $val) {
             $a[$key] = recursive_strip($val);
@@ -843,11 +873,14 @@ function recursive_strip($a) {
 /**
  * Call this with a key name to get a COOKIE variable.
  */
-function get_cookie_var($name, $default = '') {
-    if (array_key_exists($name, $_COOKIE)) {
-        return clean_var($_COOKIE[$name]);
+if (!function_exists('get_cookie_var')) {
+    function get_cookie_var($name, $default = '')
+    {
+        if (array_key_exists($name, $_COOKIE)) {
+            return clean_var($_COOKIE[$name]);
+        }
+        return $default;
     }
-    return $default;
 }
 
 /**
@@ -855,7 +888,8 @@ function get_cookie_var($name, $default = '') {
  * hidden form variables. It then outputs hidden form variables
  * based on the session_vars for this page.
  */
-function hidden_form_vars($omit = []) {
+function hidden_form_vars($omit = [])
+{
     global $DATA, $this_page;
 
     $session_vars = $DATA->page_metadata($this_page, "session_vars");
@@ -870,7 +904,8 @@ function hidden_form_vars($omit = []) {
 /**
  *
  */
-function make_ranking($rank) {
+function make_ranking($rank)
+{
     // 11th, 12th, 13th use "th" not "st", "nd", "rd"
     if (floor(($rank % 100) / 10) == 1) {
         return $rank . "th";
@@ -894,7 +929,8 @@ function make_ranking($rank) {
 /**
  *
  */
-function make_plural($word, $number) {
+function make_plural($word, $number)
+{
     if ($number == 1) {
         return $word;
     }
@@ -905,7 +941,8 @@ function make_plural($word, $number) {
  * Can't have the entities in XML so replace all theones we currently have with numerical entities
  * This is yucky. XXX.
  */
-function entities_to_numbers($string) {
+function entities_to_numbers($string)
+{
     $string = str_replace(
         ['&Ouml;', '&acirc;', '&uacute;', '&aacute;', '&iacute;', '&ocirc;'],
         ['&#214;', '&#226;', '&#250;', '&#225;', '&#237;', '&#244;'],
@@ -917,35 +954,42 @@ function entities_to_numbers($string) {
 /**
  *
  */
-function make_member_url($name, $const = '', $house = HOUSE::REPRESENTATIVES) {
-    $s = [' ', '&amp;', '&ocirc;', '&ouml;', '&acirc;', '&iacute;', '&aacute;', '&uacute;'];
-    $r = ['_', 'and', 'o', 'o', 'a', 'i', 'a', 'u'];
-    $name = preg_replace('#^the #', '', strtolower($name));
-    $out = urlencode(str_replace($s, $r, $name));
-    if ($const && ($house == HOUSE::REPRESENTATIVES || $house == HOUSE::SENATE)) {
-        $out .= '/' . urlencode(str_replace($s, $r, strtolower($const)));
-    }
-    return $out;
-}
-
-/**
- *
- */
-function member_full_name($house, $title, $first_name, $last_name, $constituency) {
-    $s = $first_name . ' ' . $last_name;
-    if ($house == HOUSE::REPRESENTATIVES || $house == HOUSE::SENATE) {
-        $s = $first_name . ' ' . $last_name;
-        if ($title) {
-            $s = $title . ' ' . $s;
+if (!function_exists('make_member_url')) {
+    function make_member_url($name, $const = '', $house = HOUSE::REPRESENTATIVES)
+    {
+        $s = [' ', '&amp;', '&ocirc;', '&ouml;', '&acirc;', '&iacute;', '&aacute;', '&uacute;'];
+        $r = ['_', 'and', 'o', 'o', 'a', 'i', 'a', 'u'];
+        $name = preg_replace('#^the #', '', strtolower($name));
+        $out = urlencode(str_replace($s, $r, $name));
+        if ($const && ($house == HOUSE::REPRESENTATIVES || $house == HOUSE::SENATE)) {
+            $out .= '/' . urlencode(str_replace($s, $r, strtolower($const)));
         }
+        return $out;
     }
-    return $s;
 }
 
 /**
  *
  */
-function prettify_office($pos, $dept) {
+if (!function_exists('member_full_name')) {
+    function member_full_name($house, $title, $first_name, $last_name, $constituency)
+    {
+        $s = $first_name . ' ' . $last_name;
+        if ($house == HOUSE::REPRESENTATIVES || $house == HOUSE::SENATE) {
+            $s = $first_name . ' ' . $last_name;
+            if ($title) {
+                $s = $title . ' ' . $s;
+            }
+        }
+        return $s;
+    }
+}
+
+/**
+ *
+ */
+function prettify_office($pos, $dept)
+{
     $lookup = [
         'Prime Minister, HM Treasury' => 'Prime Minister',
         'Secretary of State, Foreign & Commonwealth Office' => 'Foreign Secretary',
@@ -976,7 +1020,8 @@ function prettify_office($pos, $dept) {
 /**
  *
  */
-function major_summary($data, $limit = "") {
+function major_summary($data, $limit = "")
+{
     global $hansardmajors;
 
     $one_date = false;
@@ -1016,13 +1061,13 @@ function major_summary($data, $limit = "") {
             $date = $data[$printed_majors[0]]['hdate'];
         }
         $rows = Hansard::join('epobject', 'hansard.epobject_id', '=', 'epobject.epobject_id')
-          ->where('section_id', 0)
-          ->where('hdate', $date)
-          ->whereIn('major', $printed_majors)
-          ->orderByDesc('major')
-          ->orderBy('hpos')
-          ->when($limit, fn ($q) => $q->limit($limit))
-          ->get(['major', 'epobject.body', 'gid']);
+            ->where('section_id', 0)
+            ->where('hdate', $date)
+            ->whereIn('major', $printed_majors)
+            ->orderByDesc('major')
+            ->orderBy('hpos')
+            ->when($limit, fn($q) => $q->limit($limit))
+            ->get(['major', 'epobject.body', 'gid']);
         $current_major = 0;
         foreach ($rows as $row) {
             $gid = fix_gid_from_db($row->gid);
@@ -1056,13 +1101,13 @@ function major_summary($data, $limit = "") {
             $date = $data[4]['hdate'];
         }
         $rows = Hansard::join('epobject', 'hansard.epobject_id', '=', 'epobject.epobject_id')
-          ->where('major', 4)
-          ->where('hdate', $date)
-          ->where('subsection_id', 0)
-          ->orderBy('major')
-          ->orderBy('hpos')
-          ->when($limit, fn ($q) => $q->limit($limit))
-          ->get(['section_id', 'epobject.body', 'gid']);
+            ->where('major', 4)
+            ->where('hdate', $date)
+            ->where('subsection_id', 0)
+            ->orderBy('major')
+            ->orderBy('hpos')
+            ->when($limit, fn($q) => $q->limit($limit))
+            ->get(['section_id', 'epobject.body', 'gid']);
         if ($rows->count()) {
             $LISTURL = new URL($hansardmajors[4]['page_all']);
             _major_summary_title(4, $data, $LISTURL, $daytext);
@@ -1092,7 +1137,8 @@ function major_summary($data, $limit = "") {
 /**
  *
  */
-function _major_summary_title($major, $data, $LISTURL, $daytext) {
+function _major_summary_title($major, $data, $LISTURL, $daytext)
+{
     global $hansardmajors;
     print '<li><strong>';
     if (isset($daytext[$major])) {

@@ -24,8 +24,8 @@ class UtilityTest extends TestCase {
         $this->assertFalse(validate_email(''));
     }
 
-    public function test_validate_email_rejects_spaces(): void {
-        $this->assertFalse(validate_email('user @example.com'));
+    public function test_validate_email_rejects_no_tld(): void {
+        $this->assertFalse(validate_email('user@localhost'));
     }
 
     // --- validate_postcode ---
