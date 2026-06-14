@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Eloquent model for commentreports table.
- */
-
 namespace OpenAustralia\TWFY\Models;
 
 use Illuminate\Database\Eloquent\Model;
@@ -33,4 +28,5 @@ class Commentreport extends Model {
     protected $primaryKey = 'report_id';
 
     public $timestamps = false;
+
 }
