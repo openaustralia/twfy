@@ -6,18 +6,20 @@
 
 include_once 'api_getRepresentative.php';
 
+use OpenAustralia\TWFY\Models\Member as MemberModel;
+
 /**
  * Shared API functions for get<Members>
  */
 function _api_getMembers_output($sql, ...$params) {
 
-    $q = parlDBQuery($sql, ...$params);
+    $rows = MemberModel::fromQuery($sql, $params);
     $output = [];
     $last_mod = 0;
-    for ($i = 0; $i < $q->rows(); $i++) {
-        $out = _api_getRepresentative_row($q->row($i));
+    foreach ($rows as $row) {
+        $out = _api_getRepresentative_row($row->toArray());
         $output[] = $out;
-        $time = strtotime($q->field($i, 'lastupdate'));
+        $time = strtotime($row->lastupdate);
         if ($time > $last_mod) {
             $last_mod = $time;
         }
