@@ -12,6 +12,7 @@ use OpenAustralia\TWFY\Models\Moffice;
 use OpenAustralia\TWFY\Models\SearchQueryLog;
 use OpenAustralia\TWFY\Models\User;
 use OpenAustralia\TWFY\Models\Uservotes;
+use OpenAustralia\TWFY\Models\PostcodeLookup;
 
 class ModelsTest extends TestCase {
 
@@ -299,6 +300,29 @@ class ModelsTest extends TestCase {
         $model = new Uservotes();
         $casts = $model->getCasts();
         $this->assertSame('int', $casts['vote']);
+    }
+
+    // --- PostcodeLookup ---
+
+    public function test_postcode_lookup_table_name(): void {
+        $model = new PostcodeLookup();
+        $this->assertSame('postcode_lookup', $model->getTable());
+    }
+
+    public function test_postcode_lookup_has_no_timestamps(): void {
+        $model = new PostcodeLookup();
+        $this->assertFalse($model->usesTimestamps());
+    }
+
+    public function test_postcode_lookup_is_not_incrementing(): void {
+        $model = new PostcodeLookup();
+        $this->assertFalse($model->getIncrementing());
+    }
+
+    public function test_postcode_lookup_fillable(): void {
+        $model = new PostcodeLookup();
+        $this->assertContains('postcode', $model->getFillable());
+        $this->assertContains('name', $model->getFillable());
     }
 
 }
