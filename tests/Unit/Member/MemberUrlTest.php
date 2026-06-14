@@ -85,7 +85,7 @@ public function test_url_peer_absolute(): void {
     $member = $this->makeMember(HOUSE::SENATE, 'John', 'Doe', 'Some Shire');
         $url = $member->url(true);
         $this->assertStringStartsWith('//' . DOMAIN, $url);
-        $this->assertStringContainsString('/peer/', $url);
+        $this->assertStringContainsString('/senator/', $url);
         $this->assertStringContainsString('john_doe', $url);
 }
 
@@ -109,7 +109,7 @@ public function test_url_peer_relative(): void {
     $member = $this->makeMember(HOUSE::SENATE, 'John', 'Doe', 'Some Shire');
         $url = $member->url(false);
         $this->assertStringNotContainsString('//' . DOMAIN, $url);
-        $this->assertStringContainsString('/peer/', $url);
+        $this->assertStringContainsString('/senator/', $url);
 }
 
     // =========================================================================
