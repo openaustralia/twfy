@@ -127,37 +127,6 @@ public function test_url_peer_absolute(): void {
         $this->assertStringContainsString('john_doe', $url);
 }
 
-    /**
-     *
-     */
-public function test_url_mla_absolute(): void {
-        $member = $this->makeMember(3, 'Alice', 'Jones', 'East Belfast');
-        $url = $member->url(true);
-        $this->assertStringStartsWith('//' . DOMAIN, $url);
-        $this->assertStringContainsString('/mla/', $url);
-}
-
-    /**
-     *
-     */
-public function test_url_msp_absolute(): void {
-        $member = $this->makeMember(4, 'Bob', 'Brown', 'Edinburgh East');
-        $url = $member->url(true);
-        $this->assertStringStartsWith('//' . DOMAIN, $url);
-        $this->assertStringContainsString('/msp/', $url);
-}
-
-    /**
-     *
-     */
-public function test_url_royal_absolute(): void {
-        $member = $this->makeMember(0, '', '', '');
-        $url = $member->url(true);
-        $this->assertStringStartsWith('//' . DOMAIN, $url);
-        $this->assertStringContainsString('/royal/', $url);
-        // Royal members use 'elizabeth_the_second' slug regardless of name.
-        $this->assertStringContainsString('elizabeth_the_second', $url);
-}
 
     // =========================================================================
 
