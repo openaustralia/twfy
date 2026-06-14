@@ -33,7 +33,7 @@ class Hansard extends Model {
     // Primary key is not auto-increment.
     public $incrementing = false;
 
-    public $timestamps = false;
+    public $timestamps = true;
 
     // Cast date fields.
     protected $casts = [

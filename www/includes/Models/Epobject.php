@@ -20,7 +20,7 @@ class Epobject extends Model {
 
     protected $primaryKey = 'epobject_id';
 
-    public $timestamps = false;
+    public $timestamps = true;
 
     protected $fillable = [
         'epobject_id',

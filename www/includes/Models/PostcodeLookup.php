@@ -16,8 +16,6 @@ class PostcodeLookup extends Model {
 
     protected $table = 'postcode_lookup';
 
-    public $timestamps = false;
-
     public $incrementing = false;
 
     protected $primaryKey = null;

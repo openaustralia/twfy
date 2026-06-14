@@ -27,6 +27,6 @@ class Commentreport extends Model {
 
     protected $primaryKey = 'report_id';
 
-    public $timestamps = false;
+    public $timestamps = true;
 
 }

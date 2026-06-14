@@ -18,7 +18,7 @@ class SearchQueryLog extends Model {
 
     protected $table = 'search_query_log';
 
-    public $timestamps = false;
+    public $timestamps = true;
 
     protected $fillable = [
         'query_string',
