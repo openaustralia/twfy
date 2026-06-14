@@ -5,6 +5,8 @@
  * Tests for MEMBER::postcode_to_person_id().
  */
 
+use OpenAustralia\TWFY\Models\PostcodeLookup;
+
 if (!function_exists('twfy_debug_timestamp')) {
 
     /**
@@ -68,7 +70,8 @@ class MemberPostcodeToPersonIdTest extends TransactionalTestCase {
      * Method should lowercase postcode-derived constituency before delegating.
      */
     public function test_postcode_to_person_id_lowercases_constituency_before_lookup(): void {
-        $postcode = 'ZZ1 1ZZ';
+        $postcode = '2000';
+        PostcodeLookup::where('postcode', $postcode)->delete();
         parlDBQuery('DELETE FROM postcode_lookup WHERE postcode = ?', $postcode);
         parlDBQuery(
             'INSERT INTO postcode_lookup (postcode, name) VALUES (?, ?)',
@@ -81,7 +84,7 @@ class MemberPostcodeToPersonIdTest extends TransactionalTestCase {
 
         $member = $this->makeMemberDouble();
 
-        $result = $member->postcode_to_person_id('zz11zz');
+        $result = $member->postcode_to_person_id('2000');
 
         $this->assertSame(12345, $result);
         $this->assertSame(['mixed case constituency'], $member->seenConstituencies);
