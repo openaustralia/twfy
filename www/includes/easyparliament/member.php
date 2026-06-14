@@ -11,6 +11,9 @@ include_once __DIR__ . "/house.php";
 use Illuminate\Database\Capsule\Manager as DB;
 use OpenAustralia\TWFY\Models\Member as MemberModel;
 
+use Illuminate\Database\Capsule\Manager as DB;
+use OpenAustralia\TWFY\Models\Member as MemberModel;
+
 /**
  *
  */
@@ -79,7 +82,7 @@ class MEMBER {
 
         $person_id = '';
         if (isset($args['member_id']) && is_numeric($args['member_id'])) {
-            $person_id = $this->member_id_to_person_id($args['member_id']);
+            $person_id = $this->member_id_to_person_id((int) $args['member_id']);
         } elseif (isset($args['name'])) {
             $con = $args['constituency'] ?? '';
             $person_id = $this->name_to_person_id($args['name'], $con);
@@ -204,9 +207,9 @@ class MEMBER {
     /**
      *
      */
-    public function member_id_to_person_id($member_id) {
+    public function member_id_to_person_id(int $member_id): int|false {
         $person_id = MemberModel::where('member_id', $member_id)->value('person_id');
-        return $person_id ?? false;
+        return $person_id ? (int) $person_id : false;
     }
 
     /**
@@ -465,7 +468,7 @@ class MEMBER {
     /**
      * Functions for accessing things about this Member.
      */
-    public function member_id() {
+    public function member_id(): ?int {
         return $this->member_id;
     }
 
@@ -594,13 +597,6 @@ class MEMBER {
         } else {
             return "n/a";
         }
-    }
-
-    /**
-     *
-     */
-    public function entered_reason() {
-        return $this->entered_reason;
     }
 
     /**
@@ -791,11 +787,11 @@ $party_colours = [
  */
 function party_to_colour($party) {
     global $party_colours;
-    if (isset($party_colours[$party])) {
-        return $party_colours[$party];
-    } else {
+    if (!isset($party_colours[$party])) {
         return "#eeeeee";
     }
+
+    return $party_colours[$party];
 }
 
 /**

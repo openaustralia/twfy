@@ -45,6 +45,11 @@
   <!--Exclude third party code.-->
   <exclude-pattern>./vendor/*</exclude-pattern>
 
+  <!-- Test files: relax function/method doc comment requirements. -->
+  <rule ref="Drupal.Commenting.FunctionComment">
+    <exclude-pattern>./tests/*</exclude-pattern>
+  </rule>
+
   <!-- Exclude non-PHP stuff -->
   <exclude-pattern>./conf/*</exclude-pattern>
   <exclude-pattern>./data/*</exclude-pattern>

@@ -21,6 +21,12 @@
  *
  * $q is then a MySQLQuery object.
  *
+ * IMPORTANT (DEPRECATED FOR NEW CODE):
+ * This legacy wrapper and parlDBQuery() are deprecated for new application
+ * code. Prefer the ORM (Eloquent) via models and query builder calls such as
+ * MemberModel::query() and DB::table(...). Only use parlDBQuery() when working
+ * in legacy paths that have not yet been migrated.
+ *
  * If other databases are needed, we just need to create a class for each, each one
  * extending MySQL.
  *
@@ -92,12 +98,6 @@
  * $q->field(n,col) returns "".
  * $q->insert_id() returns NULL.
  * $q->affected_rows() returns NULL.
- *
- *
- * Versions
- * ========
- * v1.2    2003-11-25
- * Changed to using named constants, rather than global variables.
  */
 
 // We'll add up the times of each query so we can output the page total at the end.

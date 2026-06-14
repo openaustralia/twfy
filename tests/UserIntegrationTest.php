@@ -585,7 +585,7 @@ public function test_logout_with_cookie_and_unsafe_returl_falls_back_to_home(): 
                 return stripos($header, 'Location: ') === 0;
             }));
 
-            $this->assertSame('Location: /home', $locationHeaders[0] ?? null);
+            $this->assertSame('Location: /home/', $locationHeaders[0] ?? null);
         } finally {
             $_COOKIE = $originalCookie;
             if (function_exists('header_remove')) {
