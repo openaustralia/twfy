@@ -5,7 +5,6 @@
  * Unit tests for USER permission checks and role validation.
  */
 
-require_once __DIR__ . '/../bootstrap.php';
 require_once EASYPARLIAMENTPATH . 'user.php';
 
 use PHPUnit\Framework\TestCase;

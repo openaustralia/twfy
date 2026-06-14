@@ -16,7 +16,7 @@ class MobilePageIntegrationTest extends PageRenderingIntegrationTestCase {
      * Test that the mobile page renders without errors.
      */
     public function test_mobile_page_renders(): void {
-        $this->assertPageRenders(__DIR__ . '/../www/docs/mobile.php', 'mobile');
+        $this->assertPageRenders(BASEDIR . '/docs/mobile.php', 'mobile');
     }
 
 }
