@@ -1553,8 +1553,8 @@ class PAGE {
             <?php
         }
 
-        // If they're currently a member
-        if ($member['current_member'][HOUSE::SENATE] || $member['current_member'][HOUSE::REPRESENTATIVES] ) {
+        // If they're currently a member.
+        if ($member['current_member'][HOUSE::SENATE] || $member['current_member'][HOUSE::REPRESENTATIVES]) {
             if (!isset($_SERVER['DEVICE_TYPE']) || $_SERVER['DEVICE_TYPE'] != "mobile") {
                 print '<li><a href="' . WEBPATH . 'alert/?only=1&amp;pid=' . $member['person_id'] . '"><strong>Email me whenever ' . $member['full_name'] . ' speaks</strong></a> (no more than once per day)</li>';
             }
