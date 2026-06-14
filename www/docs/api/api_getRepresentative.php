@@ -7,6 +7,7 @@
 include_once __DIR__ . '/../../includes/easyparliament/member.php';
 include_once __DIR__ . '/../../includes/Models/Moffice.php';
 
+use OpenAustralia\TWFY\Models\Member as MemberModel;
 use OpenAustralia\TWFY\Models\Moffice as MofficeModel;
 
 /**
@@ -71,17 +72,18 @@ function api_getRepresentative_front() {
  */
 function api_getRepresentative_id($id) {
 
-    $q = parlDBQuery("SELECT * from member
-        WHERE house = ? AND person_id = ?
-        ORDER BY left_house DESC", HOUSE::REPRESENTATIVES, $id);
-    if ($q->rows()) {
+    $rows = MemberModel::where('house', HOUSE::REPRESENTATIVES)
+      ->where('person_id', $id)
+      ->orderByDesc('left_house')
+      ->get();
+    if ($rows->isNotEmpty()) {
         $output = [];
         $last_mod = 0;
 
-        for ($i = 0; $i < $q->rows(); $i++) {
-            $out = _api_getRepresentative_row($q->row($i));
+        foreach ($rows as $row) {
+            $out = _api_getRepresentative_row($row->toArray());
             $output[] = $out;
-            $time = strtotime($q->field($i, 'lastupdate'));
+            $time = strtotime($row->lastupdate);
             if ($time > $last_mod) {
                 $last_mod = $time;
             }
@@ -165,19 +167,21 @@ function _api_getRepresentative_constituency($constituency) {
         $constituency = $normalised;
     }
 
-    $q = parlDBQuery("SELECT * FROM member
-        WHERE constituency = ?
-        AND left_reason = 'still_in_office' AND house = ?", $constituency, HOUSE::REPRESENTATIVES);
-    if ($q->rows > 0) {
-        return _api_getRepresentative_row($q->row(0));
+    $row = MemberModel::where('constituency', $constituency)
+      ->where('left_reason', 'still_in_office')
+      ->where('house', HOUSE::REPRESENTATIVES)
+      ->first();
+    if ($row) {
+        return _api_getRepresentative_row($row->toArray());
     }
 
     if (get_http_var('always_return')) {
-        $q = parlDBQuery("SELECT * FROM member
-            WHERE house = ? AND constituency = ?
-            ORDER BY left_house DESC LIMIT 1", HOUSE::REPRESENTATIVES, $constituency);
-        if ($q->rows > 0) {
-            return _api_getRepresentative_row($q->row(0));
+        $row = MemberModel::where('house', HOUSE::REPRESENTATIVES)
+          ->where('constituency', $constituency)
+          ->orderByDesc('left_house')
+          ->first();
+        if ($row) {
+            return _api_getRepresentative_row($row->toArray());
         }
     }
 
