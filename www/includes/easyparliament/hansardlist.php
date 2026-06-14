@@ -7,6 +7,8 @@
 include_once __DIR__ . "/searchengine.php";
 include_once __DIR__ . "/searchlog.php";
 
+use OpenAustralia\TWFY\Models\Moffice as MofficeModel;
+
 /**
  * The HANSARDLIST class and its children, DEBATELIST and WRANSLIST, display data about
  * Hansard objects. You call display things by doing something like:
@@ -2089,19 +2091,19 @@ class HANSARDLIST {
                         $speaker['party'] = $parties[$speaker['party']];
                     }
 
-                    $q = parlDBQuery("SELECT dept, position FROM moffice WHERE person = ?
-								AND to_date >= ? AND from_date <= ?", $speaker['person_id'], $hdate, $hdate);
-                    if ($q->rows() > 0) {
-                        for ($row = 0; $row < $q->rows(); $row++) {
-                            $dept = $q->field($row, 'dept');
-                            $pos = $q->field($row, 'position');
-                            if ($pos && $pos != 'Chairman') {
-                                $speaker['office'][] = [
-                                    'dept' => $dept,
-                                    'position' => $pos,
-                                    'pretty' => prettify_office($pos, $dept)
-                                ];
-                            }
+                    $offices = MofficeModel::where('person', $speaker['person_id'])
+                      ->where('to_date', '>=', $hdate)
+                      ->where('from_date', '<=', $hdate)
+                      ->get(['dept', 'position']);
+                    foreach ($offices as $office) {
+                        $dept = $office->dept;
+                        $pos = $office->position;
+                        if ($pos && $pos != 'Chairman') {
+                            $speaker['office'][] = [
+                                'dept' => $dept,
+                                'position' => $pos,
+                                'pretty' => prettify_office($pos, $dept)
+                            ];
                         }
                     }
                     $this->speakers[$speaker_id] = $speaker;

@@ -10,6 +10,7 @@ include_once __DIR__ . '/../../includes/easyparliament/member.php';
 include_once '../api/api_functions.php';
 
 use OpenAustralia\TWFY\Models\Member;
+use OpenAustralia\TWFY\Models\Moffice as MofficeModel;
 
 $pid = $_GET['pid'];
 
@@ -31,6 +32,7 @@ $row['full_name'] = member_full_name(
     $row['last_name'],
     $row['constituency']
 );
+global $parties;
 if (isset($parties[$row['party']])) {
     $row['party'] = $parties[$row['party']];
 }
@@ -39,11 +41,13 @@ if ($image) {
     $row['image'] = $image;
 }
 
-$q = parlDBQuery("SELECT position,dept FROM moffice WHERE to_date='9999-12-31'
-	AND source='chgpages/selctee' AND person=?
-	ORDER BY from_date DESC", $pid);
-for ($i = 0; $i < $q->rows(); $i++) {
-    $row['selctee'][] = prettify_office($q->field($i, 'position'), $q->field($i, 'dept'));
+$offices = MofficeModel::where('to_date', '9999-12-31')
+  ->where('source', 'chgpages/selctee')
+  ->where('person', $pid)
+  ->orderBy('from_date', 'desc')
+  ->get(['position', 'dept']);
+foreach ($offices as $office) {
+    $row['selctee'][] = prettify_office($office->position, $office->dept);
 }
 
 $q = parlDBQuery("SELECT data_key, data_value from personinfo
