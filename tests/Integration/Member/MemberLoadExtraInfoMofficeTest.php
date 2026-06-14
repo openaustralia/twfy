@@ -5,7 +5,6 @@
  * Integration tests for MEMBER::load_extra_info() after migration to Moffice model.
  */
 
-
 use OpenAustralia\TWFY\Models\Member as MemberModel;
 use OpenAustralia\TWFY\Models\Moffice as MofficeModel;
 
@@ -55,8 +54,10 @@ class MemberLoadExtraInfoMofficeTest extends TransactionalTestCase {
     public function test_load_extra_info_populates_office_from_moffice(): void {
         $GLOBALS['this_page'] = 'mp';
         $GLOBALS['PAGE'] = new class {
+
             public function error_message($msg): void {
             }
+
         };
 
         $member = new MEMBER(['person_id' => $this->personId]);
@@ -82,8 +83,10 @@ class MemberLoadExtraInfoMofficeTest extends TransactionalTestCase {
     public function test_load_extra_info_returns_no_offices_when_none_exist(): void {
         $GLOBALS['this_page'] = 'mp';
         $GLOBALS['PAGE'] = new class {
+
             public function error_message($msg): void {
             }
+
         };
 
         $suffix2 = random_int(100000, 999999);

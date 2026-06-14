@@ -5,7 +5,6 @@
  * Tests for USER::init() method.
  */
 
-
 use OpenAustralia\TWFY\Models\User as UserModel;
 
 /**
@@ -133,13 +132,13 @@ class UserInitTest extends TransactionalTestCase {
      * Test that init() handles guest user (user_id = 0).
      */
     public function test_init_guest_user() {
-        // The guest user (0) should already exist in the database
+        // The guest user (0) should already exist in the database.
         $user = new USER();
         $result = $user->init(0);
 
         // This test verifies init() doesn't break on user_id 0
         // Actual result depends on whether guest user is seeded in test DB
-        // If it exists, it should load successfully; if not, init() should return false
+        // If it exists, it should load successfully; if not, init() should return false.
         $this->assertIsBool($result);
     }
 
@@ -150,11 +149,11 @@ class UserInitTest extends TransactionalTestCase {
         $this->insertTestUser(99040, 'David', 'Lee', 'david@example.com', 'User', 1, 0);
 
         $user = new USER();
-        // USER constructor doesn't load data - init() must be called
+        // USER constructor doesn't load data - init() must be called.
         $this->assertSame('0', $user->user_id());
         $this->assertSame('Guest', $user->firstname());
 
-        // After init, values should be set
+        // After init, values should be set.
         $user->init(99040);
         $this->assertSame(99040, $user->user_id());
         $this->assertSame('David', $user->firstname());

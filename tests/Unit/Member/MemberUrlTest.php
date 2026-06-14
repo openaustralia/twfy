@@ -10,7 +10,6 @@
 
 use PHPUnit\Framework\TestCase;
 
-
 if (!defined('DOMAIN')) {
     define('DOMAIN', 'example.org');
 }
@@ -125,7 +124,6 @@ public function test_url_peer_absolute(): void {
         $this->assertStringContainsString('/peer/', $url);
         $this->assertStringContainsString('john_doe', $url);
 }
-
 
     // =========================================================================
 

@@ -4,7 +4,6 @@
  * @file
  */
 
-
 if (!class_exists('URL')) {
     /**
      * Minimal URL class for user confirmation tests.

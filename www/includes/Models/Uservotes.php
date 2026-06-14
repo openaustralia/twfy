@@ -1,12 +1,5 @@
 <?php
 
-/**
- * @file
- * Eloquent model for uservotes table.
- *
- * Vim:sw=4:ts=4:et:nowrap.
- */
-
 namespace OpenAustralia\TWFY\Models;
 
 use Illuminate\Database\Eloquent\Model;
@@ -24,7 +17,7 @@ class Uservotes extends Model {
 
     protected $table = 'uservotes';
 
-    // No primary key - this is a bridge/junction table
+    // No primary key - this is a bridge/junction table.
     public $timestamps = true;
     public $incrementing = false;
 
@@ -33,7 +26,7 @@ class Uservotes extends Model {
         'vote' => 'int',
     ];
 
-    // Fillable fields for mass assignment
+    // Fillable fields for mass assignment.
     protected $fillable = [
         'user_id',
         'epobject_id',

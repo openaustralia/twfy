@@ -5,18 +5,20 @@
  * Integration tests for MEMBER::name_to_person_id().
  */
 
-
 use OpenAustralia\TWFY\Models\Member as MemberModel;
 
+/**
+ *
+ */
 class MemberNameToPersonIdTest extends TransactionalTestCase {
 
     private function insertTestMember(
-        int $memberId,
-        int $personId,
-        string $firstName,
-        string $lastName,
-        string $constituency,
-        int $house = HOUSE::REPRESENTATIVES
+      int $memberId,
+      int $personId,
+      string $firstName,
+      string $lastName,
+      string $constituency,
+      int $house = HOUSE::REPRESENTATIVES,
     ): void {
         MemberModel::query()->insert([
             'member_id' => $memberId,
@@ -37,8 +39,10 @@ class MemberNameToPersonIdTest extends TransactionalTestCase {
     public function test_name_to_person_id_returns_match_for_mp_name_without_middle_name(): void {
         $GLOBALS['this_page'] = 'mp';
         $GLOBALS['PAGE'] = new class {
+
             public function error_message($msg) {
             }
+
         };
 
         $this->insertTestMember(99400, 88400, 'Jane', 'Citizen', 'TxNameSeatA');
@@ -54,8 +58,10 @@ class MemberNameToPersonIdTest extends TransactionalTestCase {
     public function test_name_to_person_id_returns_all_person_ids_when_name_is_ambiguous(): void {
         $GLOBALS['this_page'] = 'mp';
         $GLOBALS['PAGE'] = new class {
+
             public function error_message($msg) {
             }
+
         };
 
         $this->insertTestMember(99410, 88410, 'Alex', 'Taylor', 'TxNameSeatC');
@@ -75,8 +81,10 @@ class MemberNameToPersonIdTest extends TransactionalTestCase {
     public function test_name_to_person_id_matches_name_with_middle_name(): void {
         $GLOBALS['this_page'] = 'mp';
         $GLOBALS['PAGE'] = new class {
+
             public function error_message($msg) {
             }
+
         };
 
         // Exercise the middle-name branch where first_name contains
@@ -94,8 +102,10 @@ class MemberNameToPersonIdTest extends TransactionalTestCase {
     public function test_name_to_person_id_filters_by_passed_constituency(): void {
         $GLOBALS['this_page'] = 'mp';
         $GLOBALS['PAGE'] = new class {
+
             public function error_message($msg) {
             }
+
         };
 
         $this->insertTestMember(99430, 88430, 'Chris', 'Jordan', 'TxNameSeatH');
@@ -108,4 +118,5 @@ class MemberNameToPersonIdTest extends TransactionalTestCase {
         $result = $member->name_to_person_id('Chris Jordan', 'TxNameSeatI');
         $this->assertSame(88431, $result);
     }
+
 }

@@ -129,7 +129,7 @@ class MySQLTest extends TestCase {
         $badness = "' OR '1'='1";
         $sql = $this->db->interpolate('WHERE email=?', [$badness]);
         $expected_escaped = "\' OR \'1\'=\'1";
-        $this->assertSame("WHERE email='".$expected_escaped."'", $sql);
+        $this->assertSame("WHERE email='" . $expected_escaped . "'", $sql);
     }
 
     /**

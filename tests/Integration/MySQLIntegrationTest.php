@@ -8,10 +8,9 @@ require_once __DIR__ . '/DatabaseIntegrationTestCase.php';
  *
  * A test table is created before each test and dropped after, ensuring isolation.
  */
-class MySQLIntegrationTest extends DatabaseIntegrationTestCase
-{
-    protected function createTemporaryTables(): void
-    {
+class MySQLIntegrationTest extends DatabaseIntegrationTestCase {
+
+    protected function createTemporaryTables(): void {
         $sql = "CREATE TEMPORARY TABLE test_users (
             id INT AUTO_INCREMENT PRIMARY KEY,
             name VARCHAR(100),
@@ -21,8 +20,7 @@ class MySQLIntegrationTest extends DatabaseIntegrationTestCase
         $this->db->query($sql);
     }
 
-    protected function dropTemporaryTables(): void
-    {
+    protected function dropTemporaryTables(): void {
         $this->db->query("DROP TEMPORARY TABLE IF EXISTS test_users");
     }
 
@@ -30,8 +28,7 @@ class MySQLIntegrationTest extends DatabaseIntegrationTestCase
     // INSERT with parameterized queries
     // -------------------------------------------------------------------------
 
-    public function test_insert_with_string_parameter(): void
-    {
+    public function test_insert_with_string_parameter(): void {
         $q = $this->db->query(
             "INSERT INTO test_users (name, email) VALUES (?, ?)",
             'Alice',
@@ -41,8 +38,7 @@ class MySQLIntegrationTest extends DatabaseIntegrationTestCase
         $this->assertGreaterThan(0, $q->insert_id());
     }
 
-    public function test_insert_with_int_parameter(): void
-    {
+    public function test_insert_with_int_parameter(): void {
         $q = $this->db->query(
             "INSERT INTO test_users (name, email, age) VALUES (?, ?, ?)",
             'Bob',
@@ -57,16 +53,15 @@ class MySQLIntegrationTest extends DatabaseIntegrationTestCase
     // SELECT with parameterized queries
     // -------------------------------------------------------------------------
 
-    public function test_select_with_string_parameter(): void
-    {
-        // First insert
+    public function test_select_with_string_parameter(): void {
+        // First insert.
         $this->db->query(
             "INSERT INTO test_users (name, email) VALUES (?, ?)",
             'Charlie',
             'charlie@example.com'
         );
 
-        // Then select
+        // Then select.
         $q = $this->db->query(
             "SELECT name, email FROM test_users WHERE email = ?",
             'charlie@example.com'
@@ -76,9 +71,8 @@ class MySQLIntegrationTest extends DatabaseIntegrationTestCase
         $this->assertSame('Charlie', $q->field(0, 'name'));
     }
 
-    public function test_select_with_int_parameter(): void
-    {
-        // Insert multiple
+    public function test_select_with_int_parameter(): void {
+        // Insert multiple.
         $this->db->query(
             "INSERT INTO test_users (name, age) VALUES (?, ?)",
             'Diana',
@@ -90,7 +84,7 @@ class MySQLIntegrationTest extends DatabaseIntegrationTestCase
             25
         );
 
-        // Select by age
+        // Select by age.
         $q = $this->db->query("SELECT name FROM test_users WHERE age = ?", 25);
         $this->assertTrue($q->success());
         $this->assertSame(2, $q->rows());
@@ -100,8 +94,7 @@ class MySQLIntegrationTest extends DatabaseIntegrationTestCase
     // UPDATE with parameterized queries
     // -------------------------------------------------------------------------
 
-    public function test_update_with_parameters(): void
-    {
+    public function test_update_with_parameters(): void {
         $insert_id = $this->db->query(
             "INSERT INTO test_users (name, email) VALUES (?, ?)",
             'Frank',
@@ -116,7 +109,7 @@ class MySQLIntegrationTest extends DatabaseIntegrationTestCase
         $this->assertTrue($q->success());
         $this->assertSame(1, $q->affected_rows());
 
-        // Verify the update
+        // Verify the update.
         $verify = $this->db->query(
             "SELECT email FROM test_users WHERE id = ?",
             $insert_id
@@ -128,8 +121,7 @@ class MySQLIntegrationTest extends DatabaseIntegrationTestCase
     // DELETE with parameterized queries
     // -------------------------------------------------------------------------
 
-    public function test_delete_with_parameter(): void
-    {
+    public function test_delete_with_parameter(): void {
         $id = $this->db->query(
             "INSERT INTO test_users (name) VALUES (?)",
             'Grace'
@@ -139,7 +131,7 @@ class MySQLIntegrationTest extends DatabaseIntegrationTestCase
         $this->assertTrue($q->success());
         $this->assertSame(1, $q->affected_rows());
 
-        // Verify deletion
+        // Verify deletion.
         $verify = $this->db->query("SELECT COUNT(*) as cnt FROM test_users WHERE id = ?", $id);
         $this->assertSame('0', $verify->field(0, 'cnt'));
     }
@@ -148,9 +140,8 @@ class MySQLIntegrationTest extends DatabaseIntegrationTestCase
     // SQL injection prevention - the key security test
     // -------------------------------------------------------------------------
 
-    public function test_sql_injection_attempt_fails_safely(): void
-    {
-        // Insert a benign record first
+    public function test_sql_injection_attempt_fails_safely(): void {
+        // Insert a benign record first.
         $this->db->query(
             "INSERT INTO test_users (name, email) VALUES (?, ?)",
             'Hank',
@@ -165,7 +156,7 @@ class MySQLIntegrationTest extends DatabaseIntegrationTestCase
             "' OR '1'='1"
         );
 
-        // Should be 0 (no match), not treating it as SQL code
+        // Should be 0 (no match), not treating it as SQL code.
         $this->assertSame('0', $q->field(0, 'cnt'));
     }
 
@@ -173,8 +164,7 @@ class MySQLIntegrationTest extends DatabaseIntegrationTestCase
     // Mixed parameter types
     // -------------------------------------------------------------------------
 
-    public function test_mixed_string_and_int_parameters(): void
-    {
+    public function test_mixed_string_and_int_parameters(): void {
         $this->db->query(
             "INSERT INTO test_users (name, email, age) VALUES (?, ?, ?)",
             'Ivy',
@@ -191,4 +181,5 @@ class MySQLIntegrationTest extends DatabaseIntegrationTestCase
         $this->assertSame(1, $q->rows());
         $this->assertSame('Ivy', $q->field(0, 'name'));
     }
+
 }

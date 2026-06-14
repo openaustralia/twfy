@@ -11,12 +11,14 @@ use OpenAustralia\TWFY\Models\Member as MemberModel;
 use OpenAustralia\TWFY\Models\Moffice as MofficeModel;
 
 if (!function_exists('prettify_office')) {
+
     function prettify_office($pos, $dept) {
         if ($pos && $dept) {
             return "$pos, $dept";
         }
         return $pos ?: "Member, $dept";
     }
+
 }
 
 /**
