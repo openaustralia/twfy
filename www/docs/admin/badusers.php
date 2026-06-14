@@ -4,6 +4,9 @@
  * @file
  */
 
+use OpenAustralia\TWFY\Models\Commentreport;
+use OpenAustralia\TWFY\Models\Comments;
+
 include_once __DIR__ . "/../../includes//easyparliament/init.php";
 include_once __DIR__ . "/../../includes/easyparliament/commentreportlist.php";
 
@@ -37,24 +40,17 @@ for ($row = 0; $row < $q->rows(); $row++) {
     $user_id = $q->field($row, 'user_id');
 
     // Get the total comments posted for this user.
-    $r = parlDBQuery("SELECT COUNT(*) AS totalcount
-					FROM	comments
-					WHERE	user_id = '" . $user_id . "'");
-
-    $totalcomments = $r->field(0, 'totalcount');
+    $totalcomments = Comments::where('user_id', $user_id)->count();
 
     $percentagedeleted = ($q->field($row, 'deletedcount') / $totalcomments) * 100;
 
 
     // Get complaints made about this user's comments, but not upheld.
-    $r = parlDBQuery("SELECT COUNT(*) AS count
-					FROM commentreports, comments
-					WHERE	commentreports.comment_id = comments.comment_id
-					AND		comments.user_id = '$user_id'
-					AND		commentreports.resolved IS NOT NULL
-					AND		commentreports.upheld = '0'");
-
-    $notupheldcount = $r->field(0, 'count');
+    $notupheldcount = Comments::join('commentreports', 'commentreports.comment_id', '=', 'comments.comment_id')
+      ->where('comments.user_id', $user_id)
+      ->whereNotNull('commentreports.resolved')
+      ->where('commentreports.upheld', '0')
+      ->count();
 
 
     $USERURL->insert(['u' => $user_id]);
@@ -82,37 +78,34 @@ $PAGE->display_table($tabledata);
 ?>
 <h4>Users who've made most rejected reports</h4>
 <?php
-$q = parlDBQuery("SELECT COUNT(*) AS rejectedcount,
-						cr.user_id,
-						u.firstname,
-						u.lastname
-				FROM	commentreports cr, users u
-				WHERE	cr.resolved IS NOT NULL
-				AND		cr.upheld = '0'
-				AND		cr.user_id = u.user_id
-				AND		cr.user_id != 0
-				GROUP BY cr.user_id
-				ORDER BY rejectedcount DESC");
+$rejectedReports = Commentreport::join('users as u', 'commentreports.user_id', '=', 'u.user_id')
+  ->whereNotNull('commentreports.resolved')
+  ->where('commentreports.upheld', '0')
+  ->where('commentreports.user_id', '!=', 0)
+  ->groupBy('commentreports.user_id')
+  ->orderByDesc('rejectedcount')
+  ->select(['commentreports.user_id', 'u.firstname', 'u.lastname'])
+  ->selectRaw('COUNT(*) AS rejectedcount')
+  ->get();
 
 $rows = [];
 $USERURL = new URL('userview');
 
-for ($row = 0; $row < $q->rows(); $row++) {
+foreach ($rejectedReports as $report) {
 
-    $user_id = $q->field($row, 'user_id');
+    $user_id = $report->user_id;
 
     $USERURL->insert(['u' => $user_id]);
 
     // Get how many valid complaints they've submitted.
-    $r = parlDBQuery("SELECT COUNT(*) AS upheldcount
-					FROM commentreports
-					WHERE	user_id = '$user_id'
-					AND		upheld = '1'");
+    $upheldcount = Commentreport::where('user_id', $user_id)
+      ->where('upheld', '1')
+      ->count();
 
     $rows[] = [
-        '<a href="' . $USERURL->generate() . '">' . $q->field($row, 'firstname') . ' ' . $q->field($row, 'lastname') . '</a>',
-        $q->field($row, 'rejectedcount'),
-        $r->field(0, 'upheldcount')
+        '<a href="' . $USERURL->generate() . '">' . $report->firstname . ' ' . $report->lastname . '</a>',
+        $report->rejectedcount,
+        $upheldcount
     ];
 
 }

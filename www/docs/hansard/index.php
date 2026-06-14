@@ -4,6 +4,8 @@
  * @file
  */
 
+use OpenAustralia\TWFY\Models\Hansard;
+
 include_once __DIR__ . '/../../includes/easyparliament/init.php';
 
 $hansardmajors = $GLOBALS['hansardmajors'] ?? [];
@@ -18,23 +20,23 @@ if (($date = get_http_var('d')) && preg_match('#^\d\d\d\d-\d\d-\d\d$#', $date)) 
     $PAGE->set_hansard_headings(['date' => $date]);
     $URL = new URL($this_page);
 
-    $q = parlDBQuery("SELECT MIN(hdate) AS hdate FROM hansard WHERE hdate > ?", $date);
-    if ($q->rows() > 0 && $q->field(0, 'hdate') != null) {
-        $URL->insert(['d' => $q->field(0, 'hdate')]);
-        $title = format_date($q->field(0, 'hdate'), SHORTDATEFORMAT);
+    $nextDate = Hansard::where('hdate', '>', $date)->min('hdate');
+    if ($nextDate !== null) {
+        $URL->insert(['d' => $nextDate]);
+        $title = format_date($nextDate, SHORTDATEFORMAT);
         $nextprevdata['next'] = [
-            'hdate' => $q->field(0, 'hdate'),
+            'hdate' => $nextDate,
             'url' => $URL->generate(),
             'body' => 'Next day',
             'title' => $title
         ];
     }
-    $q = parlDBQuery("SELECT MAX(hdate) AS hdate FROM hansard WHERE hdate < ?", $date);
-    if ($q->rows() > 0 && $q->field(0, 'hdate') != null) {
-        $URL->insert(['d' => $q->field(0, 'hdate')]);
-        $title = format_date($q->field(0, 'hdate'), SHORTDATEFORMAT);
+    $prevDate = Hansard::where('hdate', '<', $date)->max('hdate');
+    if ($prevDate !== null) {
+        $URL->insert(['d' => $prevDate]);
+        $title = format_date($prevDate, SHORTDATEFORMAT);
         $nextprevdata['prev'] = [
-            'hdate' => $q->field(0, 'hdate'),
+            'hdate' => $prevDate,
             'url' => $URL->generate(),
             'body' => 'Previous day',
             'title' => $title
