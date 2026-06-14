@@ -618,8 +618,8 @@ function search_by_usage($search, $house = 0) {
     if (count($speaker_count)) {
         $speaker_ids = array_keys($speaker_count);
         $query = MemberModel::leftJoin('moffice', 'member.person_id', '=', 'moffice.person')
-        ->select('member.member_id', 'member.person_id', 'member.title', 'member.first_name', 'member.last_name', 'member.constituency', 'member.house', 'member.party', 'moffice.moffice_id', 'moffice.dept', 'moffice.position', 'moffice.from_date', 'moffice.to_date', 'member.left_house')
-        ->whereIn('member.member_id', $speaker_ids);
+          ->select('member.member_id', 'member.person_id', 'member.title', 'member.first_name', 'member.last_name', 'member.constituency', 'member.house', 'member.party', 'moffice.moffice_id', 'moffice.dept', 'moffice.position', 'moffice.from_date', 'moffice.to_date', 'member.left_house')
+          ->whereIn('member.member_id', $speaker_ids);
         if ($house) {
             $query->where('member.house', $house);
         }
