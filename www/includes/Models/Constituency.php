@@ -26,7 +26,7 @@ class Constituency extends Model {
 
     protected $table = 'constituency';
 
-    public $timestamps = false;
+    public $timestamps = true;
 
     // Cast date fields
     protected $casts = [
