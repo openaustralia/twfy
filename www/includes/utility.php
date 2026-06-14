@@ -8,6 +8,8 @@
 include_once __DIR__ . '/strptime.php';
 include_once __DIR__ . '/easyparliament/house.php';
 
+use OpenAustralia\TWFY\Models\Hansard;
+
 /**
  *
  */
@@ -1013,17 +1015,19 @@ function major_summary($data, $limit = "") {
         } else {
             $date = $data[$printed_majors[0]]['hdate'];
         }
-        $q = parlDBQuery('SELECT major, body, gid
-				FROM hansard,epobject
-				WHERE hansard.epobject_id = epobject.epobject_id AND section_id=0
-				AND hdate="' . $date . '"
-				AND major IN (' . implode(',', $printed_majors) . ')
-				ORDER BY major desc, hpos' . $limitsql);
+        $rows = Hansard::join('epobject', 'hansard.epobject_id', '=', 'epobject.epobject_id')
+          ->where('section_id', 0)
+          ->where('hdate', $date)
+          ->whereIn('major', $printed_majors)
+          ->orderByDesc('major')
+          ->orderBy('hpos')
+          ->when($limit, fn ($q) => $q->limit($limit))
+          ->get(['major', 'epobject.body', 'gid']);
         $current_major = 0;
-        for ($i = 0; $i < $q->rows(); $i++) {
-            $gid = fix_gid_from_db($q->field($i, 'gid'));
-            $major = $q->field($i, 'major');
-            $body = $q->field($i, 'body');
+        foreach ($rows as $row) {
+            $gid = fix_gid_from_db($row->gid);
+            $major = $row->major;
+            $body = $row->body;
             // If (strstr($body, 'Chair]')) continue;.
             if ($major != $current_major) {
                 if ($current_major) {
@@ -1051,17 +1055,22 @@ function major_summary($data, $limit = "") {
         } else {
             $date = $data[4]['hdate'];
         }
-        $q = parlDBQuery('SELECT section_id, body, gid FROM hansard,epobject
-				WHERE hansard.epobject_id = epobject.epobject_id AND major=4 AND hdate="' . $date . '" AND subsection_id=0
-				ORDER BY major, hpos' . $limitsql);
-        if ($q->rows()) {
+        $rows = Hansard::join('epobject', 'hansard.epobject_id', '=', 'epobject.epobject_id')
+          ->where('major', 4)
+          ->where('hdate', $date)
+          ->where('subsection_id', 0)
+          ->orderBy('major')
+          ->orderBy('hpos')
+          ->when($limit, fn ($q) => $q->limit($limit))
+          ->get(['section_id', 'epobject.body', 'gid']);
+        if ($rows->count()) {
             $LISTURL = new URL($hansardmajors[4]['page_all']);
             _major_summary_title(4, $data, $LISTURL, $daytext);
             $current_sid = 0;
-            for ($i = 0; $i < $q->rows(); $i++) {
-                $gid = fix_gid_from_db($q->field($i, 'gid'));
-                $body = $q->field($i, 'body');
-                $section_id = $q->field($i, 'section_id');
+            foreach ($rows as $row) {
+                $gid = fix_gid_from_db($row->gid);
+                $body = $row->body;
+                $section_id = $row->section_id;
                 if (!$section_id) {
                     if ($current_sid++) {
                         print '</ul>';
