@@ -232,6 +232,8 @@ CREATE TABLE `hansard` (
   `minor` int DEFAULT NULL,
   `created` datetime DEFAULT NULL,
   `modified` datetime DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`epobject_id`),
   UNIQUE KEY `gid` (`gid`),
   KEY `epobject_id` (`epobject_id`),
