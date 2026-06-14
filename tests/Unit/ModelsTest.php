@@ -343,4 +343,283 @@ class ModelsTest extends TestCase {
         $this->assertContains('name', $model->getFillable());
     }
 
+    // --- Alert ---
+
+    public function test_alert_table_name(): void {
+        $model = new Alert();
+        $this->assertSame('alerts', $model->getTable());
+    }
+
+    public function test_alert_primary_key(): void {
+        $model = new Alert();
+        $this->assertSame('alert_id', $model->getKeyName());
+    }
+
+    public function test_alert_has_timestamps(): void {
+        $model = new Alert();
+        $this->assertTrue($model->usesTimestamps());
+    }
+
+    public function test_alert_fillable(): void {
+        $model = new Alert();
+        $this->assertContains('email', $model->getFillable());
+        $this->assertContains('criteria', $model->getFillable());
+    }
+
+    public function test_alert_casts(): void {
+        $model = new Alert();
+        $casts = $model->getCasts();
+        $this->assertSame('bool', $casts['deleted']);
+        $this->assertSame('bool', $casts['confirmed']);
+    }
+
+    // --- Anonvote ---
+
+    public function test_anonvote_table_name(): void {
+        $model = new Anonvote();
+        $this->assertSame('anonvotes', $model->getTable());
+    }
+
+    public function test_anonvote_primary_key(): void {
+        $model = new Anonvote();
+        $this->assertSame('epobject_id', $model->getKeyName());
+        $this->assertFalse($model->getIncrementing());
+    }
+
+    public function test_anonvote_casts(): void {
+        $model = new Anonvote();
+        $casts = $model->getCasts();
+        $this->assertSame('int', $casts['yes_votes']);
+        $this->assertSame('int', $casts['no_votes']);
+    }
+
+    // --- ApiKey ---
+
+    public function test_api_key_table_name(): void {
+        $model = new ApiKey();
+        $this->assertSame('api_key', $model->getTable());
+    }
+
+    public function test_api_key_fillable(): void {
+        $model = new ApiKey();
+        $this->assertContains('api_key', $model->getFillable());
+        $this->assertContains('user_id', $model->getFillable());
+    }
+
+    // --- ApiStat ---
+
+    public function test_api_stat_table_name(): void {
+        $model = new ApiStat();
+        $this->assertSame('api_stats', $model->getTable());
+    }
+
+    public function test_api_stat_fillable(): void {
+        $model = new ApiStat();
+        $this->assertContains('api_key', $model->getFillable());
+        $this->assertContains('query', $model->getFillable());
+    }
+
+    // --- Consinfo ---
+
+    public function test_consinfo_table_name(): void {
+        $model = new Consinfo();
+        $this->assertSame('consinfo', $model->getTable());
+    }
+
+    public function test_consinfo_not_incrementing(): void {
+        $model = new Consinfo();
+        $this->assertFalse($model->getIncrementing());
+    }
+
+    public function test_consinfo_fillable(): void {
+        $model = new Consinfo();
+        $this->assertContains('constituency', $model->getFillable());
+        $this->assertContains('data_key', $model->getFillable());
+        $this->assertContains('data_value', $model->getFillable());
+    }
+
+    // --- Editqueue ---
+
+    public function test_editqueue_table_name(): void {
+        $model = new Editqueue();
+        $this->assertSame('editqueue', $model->getTable());
+    }
+
+    public function test_editqueue_primary_key(): void {
+        $model = new Editqueue();
+        $this->assertSame('edit_id', $model->getKeyName());
+    }
+
+    public function test_editqueue_fillable(): void {
+        $model = new Editqueue();
+        $this->assertContains('title', $model->getFillable());
+        $this->assertContains('body', $model->getFillable());
+    }
+
+    // --- Gidredirect ---
+
+    public function test_gidredirect_table_name(): void {
+        $model = new Gidredirect();
+        $this->assertSame('gidredirect', $model->getTable());
+    }
+
+    public function test_gidredirect_primary_key(): void {
+        $model = new Gidredirect();
+        $this->assertSame('gid_from', $model->getKeyName());
+        $this->assertSame('string', $model->getKeyType());
+        $this->assertFalse($model->getIncrementing());
+    }
+
+    public function test_gidredirect_fillable(): void {
+        $model = new Gidredirect();
+        $this->assertContains('gid_from', $model->getFillable());
+        $this->assertContains('gid_to', $model->getFillable());
+    }
+
+    // --- Glossary ---
+
+    public function test_glossary_table_name(): void {
+        $model = new Glossary();
+        $this->assertSame('glossary', $model->getTable());
+    }
+
+    public function test_glossary_primary_key(): void {
+        $model = new Glossary();
+        $this->assertSame('glossary_id', $model->getKeyName());
+    }
+
+    public function test_glossary_fillable(): void {
+        $model = new Glossary();
+        $this->assertContains('title', $model->getFillable());
+        $this->assertContains('body', $model->getFillable());
+    }
+
+    // --- Indexbatch ---
+
+    public function test_indexbatch_table_name(): void {
+        $model = new Indexbatch();
+        $this->assertSame('indexbatch', $model->getTable());
+    }
+
+    public function test_indexbatch_primary_key(): void {
+        $model = new Indexbatch();
+        $this->assertSame('indexbatch_id', $model->getKeyName());
+    }
+
+    // --- Memberinfo ---
+
+    public function test_memberinfo_table_name(): void {
+        $model = new Memberinfo();
+        $this->assertSame('memberinfo', $model->getTable());
+    }
+
+    public function test_memberinfo_not_incrementing(): void {
+        $model = new Memberinfo();
+        $this->assertFalse($model->getIncrementing());
+    }
+
+    public function test_memberinfo_fillable(): void {
+        $model = new Memberinfo();
+        $this->assertContains('member_id', $model->getFillable());
+        $this->assertContains('data_key', $model->getFillable());
+        $this->assertContains('data_value', $model->getFillable());
+    }
+
+    // --- Mention ---
+
+    public function test_mention_table_name(): void {
+        $model = new Mention();
+        $this->assertSame('mentions', $model->getTable());
+    }
+
+    public function test_mention_primary_key(): void {
+        $model = new Mention();
+        $this->assertSame('mention_id', $model->getKeyName());
+    }
+
+    public function test_mention_fillable(): void {
+        $model = new Mention();
+        $this->assertContains('gid', $model->getFillable());
+        $this->assertContains('type', $model->getFillable());
+        $this->assertContains('url', $model->getFillable());
+    }
+
+    // --- PbcMember ---
+
+    public function test_pbc_member_table_name(): void {
+        $model = new PbcMember();
+        $this->assertSame('pbc_members', $model->getTable());
+    }
+
+    public function test_pbc_member_fillable(): void {
+        $model = new PbcMember();
+        $this->assertContains('member_id', $model->getFillable());
+        $this->assertContains('bill_id', $model->getFillable());
+    }
+
+    public function test_pbc_member_casts(): void {
+        $model = new PbcMember();
+        $casts = $model->getCasts();
+        $this->assertSame('bool', $casts['chairman']);
+        $this->assertSame('bool', $casts['attending']);
+    }
+
+    // --- Personinfo ---
+
+    public function test_personinfo_table_name(): void {
+        $model = new Personinfo();
+        $this->assertSame('personinfo', $model->getTable());
+    }
+
+    public function test_personinfo_not_incrementing(): void {
+        $model = new Personinfo();
+        $this->assertFalse($model->getIncrementing());
+    }
+
+    public function test_personinfo_fillable(): void {
+        $model = new Personinfo();
+        $this->assertContains('person_id', $model->getFillable());
+        $this->assertContains('data_key', $model->getFillable());
+        $this->assertContains('data_value', $model->getFillable());
+    }
+
+    // --- Title ---
+
+    public function test_title_table_name(): void {
+        $model = new Title();
+        $this->assertSame('titles', $model->getTable());
+    }
+
+    public function test_title_primary_key(): void {
+        $model = new Title();
+        $this->assertSame('title', $model->getKeyName());
+        $this->assertSame('string', $model->getKeyType());
+        $this->assertFalse($model->getIncrementing());
+    }
+
+    public function test_title_fillable(): void {
+        $model = new Title();
+        $this->assertContains('title', $model->getFillable());
+    }
+
+    // --- VideoTimestamp ---
+
+    public function test_video_timestamp_table_name(): void {
+        $model = new VideoTimestamp();
+        $this->assertSame('video_timestamps', $model->getTable());
+    }
+
+    public function test_video_timestamp_fillable(): void {
+        $model = new VideoTimestamp();
+        $this->assertContains('gid', $model->getFillable());
+        $this->assertContains('user_id', $model->getFillable());
+        $this->assertContains('atime', $model->getFillable());
+    }
+
+    public function test_video_timestamp_casts(): void {
+        $model = new VideoTimestamp();
+        $casts = $model->getCasts();
+        $this->assertSame('bool', $casts['deleted']);
+    }
+
 }
