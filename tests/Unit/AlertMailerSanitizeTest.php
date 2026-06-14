@@ -2,7 +2,7 @@
 
 use PHPUnit\Framework\TestCase;
 
-require_once __DIR__ . '/../../www/includes/alertmailer_sanitize.php';
+require_once INCLUDESPATH . 'alertmailer_sanitize.php';
 
 /**
  * Tests for sanitizeAlertCriteria.
