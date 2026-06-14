@@ -5,7 +5,6 @@
  * Integration tests for MEMBER::name_to_person_id().
  */
 
-require_once __DIR__ . '/../../bootstrap.php';
 
 use OpenAustralia\TWFY\Models\Member as MemberModel;
 

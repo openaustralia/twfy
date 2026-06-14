@@ -5,7 +5,6 @@
  * Tests for USER::email_exists() method.
  */
 
-require_once __DIR__ . '/../../bootstrap.php';
 
 use OpenAustralia\TWFY\Models\User as UserModel;
 

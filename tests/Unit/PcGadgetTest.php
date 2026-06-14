@@ -5,7 +5,6 @@
  * Unit tests for pc.php gadget script.
  */
 
-require_once __DIR__ . '/../bootstrap.php';
 require_once INCLUDESPATH . 'easyparliament/member.php';
 
 use PHPUnit\Framework\TestCase;

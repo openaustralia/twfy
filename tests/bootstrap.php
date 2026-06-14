@@ -82,7 +82,7 @@ if (!function_exists('format_date')) {
     }
 }
 
-require_once __DIR__ . '/../www/includes/mysql.php';
+require_once INCLUDESPATH . 'mysql.php';
 
 // eloquent.php expects DB_* to be defined as constants (as conf/general does
 // in production). Tests pass them in as env vars via phpunit.xml; promote them

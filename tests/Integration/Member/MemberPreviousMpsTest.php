@@ -5,7 +5,6 @@
  * Tests for MEMBER::previous_mps() method.
  */
 
-require_once __DIR__ . '/../../bootstrap.php';
 
 use OpenAustralia\TWFY\Models\Member as MemberModel;
 

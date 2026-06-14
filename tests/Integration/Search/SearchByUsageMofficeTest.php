@@ -8,7 +8,6 @@
  * speaker offices are correctly fetched and included in results.
  */
 
-require_once __DIR__ . '/../../bootstrap.php';
 require_once EASYPARLIAMENTPATH . 'searchengine.php';
 
 use Illuminate\Database\Capsule\Manager as DB;
