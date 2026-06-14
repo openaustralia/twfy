@@ -10,6 +10,8 @@
 
 include_once __DIR__ . "/constituencies.php";
 
+use OpenAustralia\TWFY\Models\PostcodeLookup;
+
 /**
  * Whether the form of the postcode is one or not.
  */
