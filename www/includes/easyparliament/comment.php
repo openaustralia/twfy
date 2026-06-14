@@ -20,6 +20,13 @@
  * posts a report about a comment. The flag is unset when/if the report is
  * rejected.
  */
+
+use OpenAustralia\TWFY\Models\Hansard;
+use OpenAustralia\TWFY\Models\User;
+
+/**
+ * A class for doing things with single comments.
+ */
 class COMMENT {
 
 
@@ -228,8 +235,7 @@ class COMMENT {
         // FIXME handle timezones.
         $posted = date('Y-m-d H:i:s', time());
 
-        $q_gid = parlDBQuery("SELECT gid FROM hansard WHERE epobject_id = ?", $data['epobject_id']);
-        $data['gid'] = $q_gid->field(0, 'gid');
+        $data['gid'] = Hansard::where('epobject_id', $data['epobject_id'])->value('gid');
 
         $q = parlDBQuery("INSERT INTO comments
 						(user_id, epobject_id, body, posted, visible, original_gid)
@@ -356,16 +362,16 @@ class COMMENT {
 
         if ($this->url == '') {
 
-            $q = parlDBQuery("SELECT major, gid FROM hansard WHERE epobject_id = ?", $this->epobject_id);
+            $q = Hansard::where('epobject_id', $this->epobject_id)->first(['major', 'gid']);
 
-            if ($q->rows() > 0) {
+            if ($q) {
                 // If you change stuff here, you might have to change it in
                 // $COMMENTLIST->_get_comment_data() too...
 
                 // In includes/utility.php.
-                $gid = fix_gid_from_db($q->field(0, 'gid'));
+                $gid = fix_gid_from_db($q->gid);
 
-                $major = $q->field(0, 'major');
+                $major = $q->major;
                 $page = $hansardmajors[$major]['page'];
                 $gidvar = $hansardmajors[$major]['gidvar'];
 
@@ -380,16 +386,17 @@ class COMMENT {
      *
      */
     public function _set_username() {
-        // Gets and sets the user's name who posted the comment.
-
-        if ($this->firstname == '' && $this->lastname == '') {
-            $q = parlDBQuery("SELECT firstname, lastname FROM users WHERE user_id = ?", $this->user_id);
-
-            if ($q->rows() > 0) {
-                $this->firstname = $q->field(0, 'firstname');
-                $this->lastname = $q->field(0, 'lastname');
-            }
+        if ($this->firstname != '' || $this->lastname != '') {
+            return;
         }
+
+        $user = User::find($this->user_id);
+        if (!$user) {
+            return;
+        }
+
+        $this->firstname = $user->firstname;
+        $this->lastname = $user->lastname;
     }
 
 }
