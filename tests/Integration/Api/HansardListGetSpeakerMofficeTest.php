@@ -5,8 +5,8 @@
  * Integration tests for HANSARDLIST::_get_speaker() after migration to Moffice model.
  */
 
-require_once __DIR__ . '/../bootstrap.php';
-require_once __DIR__ . '/../../www/includes/easyparliament/hansardlist.php';
+require_once __DIR__ . '/../../bootstrap.php';
+require_once __DIR__ . '/../../../www/includes/easyparliament/hansardlist.php';
 
 use OpenAustralia\TWFY\Models\Member as MemberModel;
 use OpenAustralia\TWFY\Models\Moffice as MofficeModel;
