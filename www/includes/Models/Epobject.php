@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Eloquent model for epobject table.
- */
-
 namespace OpenAustralia\TWFY\Models;
 
 use Illuminate\Database\Eloquent\Model;
@@ -35,4 +30,5 @@ class Epobject extends Model {
         'created',
         'modified',
     ];
+
 }
