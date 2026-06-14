@@ -4,6 +4,8 @@
  * @file
  */
 
+use OpenAustralia\TWFY\Models\User;
+
 include_once __DIR__ . "/../../includes/easyparliament/init.php";
 include_once __DIR__ . "/../../includes/easyparliament/commentreportlist.php";
 
@@ -17,19 +19,15 @@ $PAGE->stripe_start();
 
 $PAGE->block_start(['title' => 'Stats']);
 
-$q = parlDBQuery("SELECT COUNT(*) AS count FROM users WHERE confirmed = '1'");
-$confirmedusers = $q->field(0, 'count');
+$confirmedusers = User::where('confirmed', 1)->count();
 
-$q = parlDBQuery("SELECT COUNT(*) AS count FROM users WHERE confirmed = '0'");
-$unconfirmedusers = $q->field(0, 'count');
+$unconfirmedusers = User::where('confirmed', 0)->count();
 
 $olddate = gmdate("Y-m-d H:i:s", time() - 86400);
-$q = parlDBQuery("SELECT COUNT(*) AS count FROM users WHERE lastvisit > '$olddate'");
-$dayusers = $q->field(0, 'count');
+$dayusers = User::where('lastvisit', '>', $olddate)->count();
 
 $olddate = gmdate("Y-m-d H:i:s", time() - 86400 * 7);
-$q = parlDBQuery("SELECT COUNT(*) AS count FROM users WHERE lastvisit > '$olddate'");
-$weekusers = $q->field(0, 'count');
+$weekusers = User::where('lastvisit', '>', $olddate)->count();
 ?>
 <ul>
 <li>Confirmed users: <?php echo $confirmedusers; ?></li>
@@ -47,40 +45,33 @@ $PAGE->block_end();
 <h4>Recently registered users</h4>
 <?php
 
-$q = parlDBQuery("SELECT firstname,
-						lastname,
-						email,
-						user_id,
-						confirmed,
-						registrationtime
-				FROM	users
-				ORDER BY registrationtime DESC
-				LIMIT 50
-				");
+$recentUsers = User::orderBy('registrationtime', 'desc')
+  ->limit(50)
+  ->get(['firstname', 'lastname', 'email', 'user_id', 'confirmed', 'registrationtime']);
 
 $rows = [];
 $USERURL = new URL('userview');
 
-for ($row = 0; $row < $q->rows(); $row++) {
+foreach ($recentUsers as $user) {
 
-    $user_id = $q->field($row, 'user_id');
+    $user_id = $user->user_id;
 
     $USERURL->insert(['u' => $user_id]);
 
-    if ($q->field($row, 'confirmed') == 1) {
+    if ($user->confirmed == 1) {
         $confirmed = 'Yes';
-        $name = '<a href="' . $USERURL->generate() . '">' . htmlspecialchars($q->field($row, 'firstname'))
-        . ' ' . htmlspecialchars($q->field($row, 'lastname')) . '</a>';
+        $name = '<a href="' . $USERURL->generate() . '">' . htmlspecialchars($user->firstname)
+        . ' ' . htmlspecialchars($user->lastname) . '</a>';
     } else {
         $confirmed = 'No';
-        $name = htmlspecialchars($q->field($row, 'firstname') . ' ' . $q->field($row, 'lastname'));
+        $name = htmlspecialchars($user->firstname . ' ' . $user->lastname);
     }
 
     $rows[] = [
         $name,
-        '<a href="mailto:' . $q->field($row, 'email') . '">' . $q->field($row, 'email') . '</a>',
+        '<a href="mailto:' . $user->email . '">' . $user->email . '</a>',
         $confirmed,
-        $q->field($row, 'registrationtime')
+        $user->registrationtime
     ];
 }
 
