@@ -5,7 +5,7 @@
  * Integration tests for representative API endpoints.
  */
 
-require_once __DIR__ . '/../bootstrap.php';
+require_once __DIR__ . '/../../bootstrap.php';
 
 if (!function_exists('member_full_name')) {
     function member_full_name($house, $title, $first_name, $last_name, $constituency) {
@@ -23,9 +23,9 @@ if (!function_exists('get_http_var')) {
     }
 }
 
-require_once __DIR__ . '/../../www/docs/api/api_functions.php';
-require_once __DIR__ . '/../../www/docs/api/api_getRepresentative.php';
-require_once __DIR__ . '/../../www/docs/api/api_getRepresentatives.php';
+require_once __DIR__ . '/../../../www/docs/api/api_functions.php';
+require_once __DIR__ . '/../../../www/docs/api/api_getRepresentative.php';
+require_once __DIR__ . '/../../../www/docs/api/api_getRepresentatives.php';
 
 class RepresentativeApiIntegrationTest extends TransactionalTestCase {
 
@@ -112,7 +112,7 @@ class RepresentativeApiIntegrationTest extends TransactionalTestCase {
     }
 
     public function test_mp_named_api_files_are_removed(): void {
-        $this->assertFileDoesNotExist(__DIR__ . '/../../www/docs/api/api_getMP.php');
-        $this->assertFileDoesNotExist(__DIR__ . '/../../www/docs/api/api_getMPs.php');
+        $this->assertFileDoesNotExist(__DIR__ . '/../../../www/docs/api/api_getMP.php');
+        $this->assertFileDoesNotExist(__DIR__ . '/../../../www/docs/api/api_getMPs.php');
     }
 }
