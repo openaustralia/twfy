@@ -15,6 +15,8 @@ CREATE TABLE `alerts` (
   `confirmed` tinyint(1) NOT NULL DEFAULT '0',
   `created` datetime NOT NULL DEFAULT '0000-01-01 00:00:00',
   `recommended` tinyint(1) NOT NULL DEFAULT '0',
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`alert_id`),
   KEY `email` (`email`),
   KEY `confirmed` (`confirmed`,`deleted`)
@@ -26,6 +28,8 @@ CREATE TABLE `anonvotes` (
   `epobject_id` int unsigned NOT NULL DEFAULT '0',
   `yes_votes` int unsigned NOT NULL DEFAULT '0',
   `no_votes` int unsigned NOT NULL DEFAULT '0',
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`epobject_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -39,6 +43,8 @@ CREATE TABLE `api_key` (
   `created` datetime NOT NULL,
   `disabled` datetime DEFAULT NULL,
   `reason` text NOT NULL,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   KEY `api_key` (`api_key`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
@@ -51,6 +57,8 @@ CREATE TABLE `api_stats` (
   `ip_address` varchar(16) NOT NULL,
   `query_time` datetime NOT NULL,
   `query` text NOT NULL,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   KEY `api_key` (`api_key`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
@@ -86,6 +94,8 @@ CREATE TABLE `commentreports` (
   `firstname` varchar(50) DEFAULT NULL,
   `lastname` varchar(50) DEFAULT NULL,
   `email` varchar(100) DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`report_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -113,6 +123,8 @@ CREATE TABLE `consinfo` (
   `constituency` varchar(100) NOT NULL DEFAULT '',
   `data_key` varchar(100) NOT NULL DEFAULT '',
   `data_value` text NOT NULL,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   UNIQUE KEY `consinfo_constituency_data_key` (`constituency`,`data_key`),
   KEY `constituency` (`constituency`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
@@ -151,6 +163,8 @@ CREATE TABLE `editqueue` (
   `approved` tinyint(1) DEFAULT NULL,
   `decided` datetime DEFAULT NULL,
   `reason` varchar(255) DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`edit_id`),
   KEY `approved` (`approved`),
   KEY `glossary_id` (`glossary_id`)
@@ -165,6 +179,8 @@ CREATE TABLE `epobject` (
   `type` int DEFAULT NULL,
   `created` datetime DEFAULT NULL,
   `modified` datetime DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`epobject_id`),
   KEY `type` (`type`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
@@ -176,6 +192,8 @@ CREATE TABLE `gidredirect` (
   `gid_to` char(60) DEFAULT NULL,
   `hdate` date NOT NULL DEFAULT '0000-01-01',
   `major` int DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   UNIQUE KEY `gid_from` (`gid_from`),
   KEY `gid_to` (`gid_to`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
@@ -191,6 +209,8 @@ CREATE TABLE `glossary` (
   `last_modified` datetime DEFAULT NULL,
   `type` int DEFAULT NULL,
   `visible` tinyint DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`glossary_id`),
   KEY `visible` (`visible`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
@@ -232,6 +252,8 @@ CREATE TABLE `hansard` (
 CREATE TABLE `indexbatch` (
   `indexbatch_id` int NOT NULL AUTO_INCREMENT,
   `created` datetime DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`indexbatch_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -268,6 +290,8 @@ CREATE TABLE `memberinfo` (
   `data_key` varchar(100) NOT NULL DEFAULT '',
   `data_value` text NOT NULL,
   `lastupdate` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   UNIQUE KEY `memberinfo_member_id_data_key` (`member_id`,`data_key`),
   KEY `member_id` (`member_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
@@ -281,6 +305,8 @@ CREATE TABLE `mentions` (
   `date` date DEFAULT NULL,
   `url` varchar(255) DEFAULT NULL,
   `mentioned_gid` varchar(100) DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`mention_id`),
   UNIQUE KEY `all_values` (`gid`,`type`,`date`,`url`,`mentioned_gid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
@@ -295,6 +321,8 @@ CREATE TABLE `moffice` (
   `to_date` date NOT NULL DEFAULT '9999-12-31',
   `person` int DEFAULT NULL,
   `source` varchar(255) NOT NULL DEFAULT '',
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`moffice_id`),
   KEY `person` (`person`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
@@ -308,6 +336,8 @@ CREATE TABLE `pbc_members` (
   `bill_id` int NOT NULL DEFAULT '0',
   `sitting` varchar(4) NOT NULL DEFAULT '',
   `attending` tinyint(1) NOT NULL DEFAULT '0',
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   KEY `member_id` (`member_id`),
   KEY `bill_id` (`bill_id`)
@@ -320,6 +350,8 @@ CREATE TABLE `personinfo` (
   `data_key` varchar(100) NOT NULL DEFAULT '',
   `data_value` text NOT NULL,
   `lastupdate` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   UNIQUE KEY `personinfo_person_id_data_key` (`person_id`,`data_key`),
   KEY `person_id` (`person_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
@@ -329,6 +361,8 @@ CREATE TABLE `personinfo` (
 CREATE TABLE `postcode_lookup` (
   `postcode` varchar(10) NOT NULL DEFAULT '',
   `name` varchar(100) NOT NULL DEFAULT '',
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   KEY `postcode` (`postcode`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -341,6 +375,8 @@ CREATE TABLE `search_query_log` (
   `count_hits` int DEFAULT NULL,
   `ip_address` text,
   `query_time` datetime DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   KEY `query_time` (`query_time`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
@@ -349,6 +385,8 @@ CREATE TABLE `search_query_log` (
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `titles` (
   `title` varchar(190) NOT NULL DEFAULT '',
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`title`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -399,6 +437,8 @@ CREATE TABLE `video_timestamps` (
   `atime` time NOT NULL,
   `deleted` tinyint(1) NOT NULL DEFAULT '0',
   `whenstamped` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   UNIQUE KEY `gid_user_id` (`gid`,`user_id`),
   KEY `gid` (`gid`),
