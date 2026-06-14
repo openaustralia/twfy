@@ -7,6 +7,7 @@
 include_once __DIR__ . "/searchengine.php";
 include_once __DIR__ . "/searchlog.php";
 
+use OpenAustralia\TWFY\Models\Member as MemberModel;
 use OpenAustralia\TWFY\Models\Moffice as MofficeModel;
 
 /**
@@ -2052,17 +2053,11 @@ class HANSARDLIST {
             if (!isset($this->speakers[$speaker_id])) {
                 // Speaker isn't cached, so fetch the data.
 
-                $q = parlDBQuery("SELECT title, first_name,
-										last_name,
-										house,
-										constituency,
-										party,
-                                        person_id
-								FROM 	member
-						WHERE	member_id = ?", $speaker_id);
-                if ($q->rows() > 0) {
+                $row = MemberModel::where('member_id', $speaker_id)
+                  ->first(['title', 'first_name', 'last_name', 'house', 'constituency', 'party', 'person_id']);
+                if ($row !== null) {
                     // *SHOULD* only get one row back here...
-                    $house = $q->field(0, 'house');
+                    $house = $row->house;
                     if ($house == HOUSE::REPRESENTATIVES) {
                         $URL = new URL('mp');
                     } elseif ($house == HOUSE::SENATE) {
@@ -2074,15 +2069,15 @@ class HANSARDLIST {
                     }
                     $URL->insert(['m' => $speaker_id]);
                     $speaker = [
-                        'member_id' => $speaker_id,
-                        'title' => $q->field(0, 'title'),
-                        "first_name" => $q->field(0, "first_name"),
-                        "last_name" => $q->field(0, "last_name"),
-                        'house' => $q->field(0, 'house'),
-                        "constituency" => $q->field(0, "constituency"),
-                        "party" => $q->field(0, "party"),
-                        "person_id" => $q->field(0, "person_id"),
-                        "url" => $URL->generate(),
+                        'member_id'   => $speaker_id,
+                        'title'       => $row->title,
+                        'first_name'  => $row->first_name,
+                        'last_name'   => $row->last_name,
+                        'house'       => $row->house,
+                        'constituency' => $row->constituency,
+                        'party'       => $row->party,
+                        'person_id'   => $row->person_id,
+                        'url'         => $URL->generate(),
                     ];
 
                     global $parties;

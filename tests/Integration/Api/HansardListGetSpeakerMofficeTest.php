@@ -38,29 +38,20 @@ class HansardListGetSpeakerMofficeTest extends TransactionalTestCase {
         $this->personId = 983000 + $suffix;
         $this->mofficeId = 993000 + $suffix;
 
-        // _get_speaker() still uses parlDBQuery for the member lookup, which
-        // runs on the mysqli connection. To keep fixture data visible to it we
-        // insert the member row through parlDBQuery (same connection). Moffice
-        // is queried via MofficeModel (Eloquent), so that insert goes through
-        // the ORM as expected.
-        parlDBQuery(
-            'INSERT INTO member
-             (member_id, person_id, house, title, first_name, last_name, constituency, party,
-              entered_house, left_house, entered_reason, left_reason)
-             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
-            $this->memberId,
-            $this->personId,
-            HOUSE::REPRESENTATIVES,
-            '',
-            'Speaker',
-            'TestPerson',
-            'TxSpeakerSeat' . $suffix,
-            'Test Party',
-            '2010-01-01',
-            '9999-12-31',
-            'general_election',
-            'still_in_office'
-        );
+        MemberModel::query()->insert([
+            'member_id'      => $this->memberId,
+            'person_id'      => $this->personId,
+            'house'          => HOUSE::REPRESENTATIVES,
+            'title'          => '',
+            'first_name'     => 'Speaker',
+            'last_name'      => 'TestPerson',
+            'constituency'   => 'TxSpeakerSeat' . $suffix,
+            'party'          => 'Test Party',
+            'entered_house'  => '2010-01-01',
+            'left_house'     => '9999-12-31',
+            'entered_reason' => 'general_election',
+            'left_reason'    => 'still_in_office',
+        ]);
 
         // Office active during $hdate.
         MofficeModel::query()->insert([
