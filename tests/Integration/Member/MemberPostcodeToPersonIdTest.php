@@ -7,27 +7,6 @@
 
 use OpenAustralia\TWFY\Models\PostcodeLookup;
 
-if (!function_exists('twfy_debug_timestamp')) {
-
-    /**
-     * Test stub for postcode helper timing debug hook.
-     */
-    function twfy_debug_timestamp(): void {
-    }
-
-}
-
-if (!function_exists('validate_postcode')) {
-
-    /**
-     * Test stub matching postcode validation contract used by postcode.php.
-     */
-    function validate_postcode($postcode): int {
-        return preg_match('/^[A-Z]{1,2}\d[A-Z\d]? ?\d[ABD-HJLNP-UW-Z]{2}$/i', (string) $postcode);
-    }
-
-}
-
 /**
  * MEMBER double to observe postcode-to-constituency delegation.
  */
