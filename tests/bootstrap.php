@@ -4,32 +4,8 @@
  * @file
  */
 
-/**
- * Stub functions that mysql.php depends on at include-time and at runtime.
- * These are replaced by real implementations in the live application.
- */
-if (!function_exists('twfy_debug')) {
-    function twfy_debug(string $type, string $msg): void {
-    }
-}
-
-/**
- *
- */
-if (!function_exists('getmicrotime')) {
-    function getmicrotime(): float {
-        return microtime(true);
-    }
-}
-
-/**
- *
- */
-if (!function_exists('get_cookie_var')) {
-    function get_cookie_var(string $varname): string {
-        return $_COOKIE[$varname] ?? '';
-    }
-}
+use Illuminate\Database\Capsule\Manager;
+use PHPUnit\Framework\TestCase;
 
 if (!defined('CONSTITUENCY_COOKIE')) {
     define('CONSTITUENCY_COOKIE', 'constituency');
@@ -72,17 +48,20 @@ if (!defined('LONGDATEFORMAT')) {
     define('LONGDATEFORMAT', 'j F Y');
 }
 
-if (!function_exists('format_date')) {
-    function format_date($date, $format) {
-        $timestamp = strtotime((string) $date);
-        if ($timestamp === false) {
-            return '';
-        }
-        return date((string) $format, $timestamp);
-    }
+if (!defined('DEBUGTAG')) {
+    define('DEBUGTAG', 'debug');
 }
 
-require_once __DIR__ . '/../www/includes/mysql.php';
+if (!defined('DEVSITE')) {
+    define('DEVSITE', false);
+}
+
+if (!defined('DOMAIN')) {
+    define('DOMAIN', 'example.org');
+}
+
+require_once INCLUDESPATH . 'utility.php';
+require_once INCLUDESPATH . 'mysql.php';
 
 // eloquent.php expects DB_* to be defined as constants (as conf/general does
 // in production). Tests pass them in as env vars via phpunit.xml; promote them
@@ -96,12 +75,13 @@ foreach (['DB_HOST', 'DB_USER', 'DB_PASSWORD', 'DB_NAME'] as $_dbConst) {
 }
 unset($_dbConst, $_dbVal);
 
-require_once __DIR__ . '/../www/includes/eloquent.php';
+require_once INCLUDESPATH . 'eloquent.php';
 
 /**
  * Returns the shared ParlDB instance, with test override support.
  */
 if (!function_exists('getParlDB')) {
+
     function getParlDB() {
         global $parldb_override;
         if ($parldb_override !== null) {
@@ -116,20 +96,23 @@ if (!function_exists('getParlDB')) {
 
         return $db;
     }
+
 }
 
 /**
  * Convenience wrapper for getParlDB()->query().
  */
 if (!function_exists('parlDBQuery')) {
+
     function parlDBQuery($sql, ...$params) {
         return getParlDB()->query($sql, ...$params);
     }
+
 }
 
-require_once __DIR__ . '/../www/includes/easyparliament/member.php';
-require_once __DIR__ . '/../www/includes/easyparliament/alert.php';
-require_once __DIR__ . '/../www/docs/api/api_getConstituencies.php';
+require_once EASYPARLIAMENTPATH . 'member.php';
+require_once EASYPARLIAMENTPATH . 'alert.php';
+require_once BASEDIR . '/docs/api/api_getConstituencies.php';
 
 /**
  * @return array{host:string,user:string,pass:string,name:string}|null
@@ -213,7 +196,7 @@ class ParlDB extends MySQL {
 
 }
 
-require_once __DIR__ . '/../www/includes/easyparliament/user.php';
+require_once EASYPARLIAMENTPATH . 'user.php';
 
 /**
  * Wrapper that creates a database connection for tests without calling exit().
@@ -256,7 +239,7 @@ class TestDatabase {
  * test data ever persists to the database.  The connection must be the same
  * mysqli handle used throughout the request (getSharedTestConnection()).
  */
-abstract class TransactionalTestCase extends \PHPUnit\Framework\TestCase {
+abstract class TransactionalTestCase extends TestCase {
 
     /**
      * Override in a subclass to disable mysqli transaction wrapping.
@@ -285,13 +268,13 @@ abstract class TransactionalTestCase extends \PHPUnit\Framework\TestCase {
         // MEMBER and other code paths now use Eloquent for some queries,
         // so start a transaction there too to keep tests isolated.
         if ($this->useEloquentTransaction()) {
-            \Illuminate\Database\Capsule\Manager::connection()->beginTransaction();
+            Manager::connection()->beginTransaction();
         }
     }
 
     protected function tearDown(): void {
         if ($this->useEloquentTransaction()) {
-            $eloquentConnection = \Illuminate\Database\Capsule\Manager::connection();
+            $eloquentConnection = Manager::connection();
             if ($eloquentConnection->transactionLevel() > 0) {
                 $eloquentConnection->rollBack();
             }

@@ -4,6 +4,8 @@
  * @file
  * Nasty way of implementing "by department" stuff with the current schema .*/
 
+use OpenAustralia\TWFY\Models\Hansard;
+
 include_once __DIR__ . "/../../includes/easyparliament/init.php";
 
 $dept = get_http_var('dept');
@@ -13,23 +15,26 @@ $PAGE->stripe_start();
 
 if ($dept) {
     $dept = strtolower(str_replace('_', ' ', $dept));
-    $q = parlDBQuery('SELECT epobject.epobject_id from hansard,epobject
-		WHERE hansard.epobject_id=epobject.epobject_id AND major=3 AND section_id=0
-		AND hdate>(SELECT MAX(hdate) from hansard WHERE major=3) - interval 7 day
-		AND lower(body) = ?', $dept);
-    $ids = [];
-    for ($i = 0; $i < $q->rows(); $i++) {
-        $ids[] = $q->field($i, 'epobject_id');
-    }
+    $maxDate = Hansard::where('major', 3)->max('hdate');
+    $ids = Hansard::join('epobject', 'hansard.epobject_id', '=', 'epobject.epobject_id')
+      ->where('major', 3)
+      ->where('section_id', 0)
+      ->whereRaw('hdate > ? - interval 7 day', [$maxDate])
+      ->whereRaw('lower(body) = ?', [$dept])
+      ->pluck('epobject.epobject_id')
+      ->all();
 
     print '<h2>' . ucwords($dept) . '</h2>';
     print '<h3>Written Questions from the past week</h3>';
-    $q = parlDBQuery('SELECT gid,body from hansard,epobject
-		WHERE hansard.epobject_id=epobject.epobject_id AND major=3 AND subsection_id=0
-    AND section_id in ? ORDER BY body', $ids);
+    $questions = Hansard::join('epobject', 'hansard.epobject_id', '=', 'epobject.epobject_id')
+      ->where('major', 3)
+      ->where('subsection_id', 0)
+      ->whereIn('section_id', $ids)
+      ->orderBy('body')
+      ->get(['gid', 'body']);
     print '<ul>';
-    for ($i = 0; $i < $q->rows(); $i++) {
-        print '<li><a href="' . WEBPATH . '/wrans/?id=' . fix_gid_from_db($q->field($i, 'gid')) . '">' . $q->field($i, 'body') . '</a>';
+    foreach ($questions as $row) {
+        print '<li><a href="' . WEBPATH . '/wrans/?id=' . fix_gid_from_db($row->gid) . '">' . $row->body . '</a>';
         print '</li>';
     }
     print '</ul>';

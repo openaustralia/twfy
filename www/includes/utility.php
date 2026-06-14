@@ -6,6 +6,13 @@
  */
 
 include_once __DIR__ . '/strptime.php';
+include_once __DIR__ . '/easyparliament/house.php';
+
+use OpenAustralia\TWFY\Models\Hansard;
+
+/**
+ *
+ */
 
 /**
  *
@@ -250,30 +257,20 @@ function adodb_backtrace($print = true) {
  * Far from foolproof, but better than nothing.
  */
 function validate_email($string) {
-    if (
-        !preg_match('/^[-!#$%&\'*+\\.\\0-9=?A-Z^_`a-z{|}~]+' .
-            '@' .
-            '[-!#$%&\'*+\\\\0-9=?A-Z^_`a-z{|}~]+\.' .
-            '[-!#$%&\'*+\\.\\0-9=?A-Z^_`a-z{|}~]+$/', $string)
-    ) {
-        return false;
-    } else {
-        return true;
-    }
+    return (bool) preg_match(
+        '/^[-!#$%&\'*+\\.\\0-9=?A-Z^_`a-z{|}~]+' .
+        '@' .
+        '[-!#$%&\'*+\\\\0-9=?A-Z^_`a-z{|}~]+\.' .
+        '[-!#$%&\'*+\\.\\0-9=?A-Z^_`a-z{|}~]+$/',
+        $string
+    );
 }
 
 /**
  *
  */
 function validate_postcode($postcode) {
-    $postcode = trim($postcode);
-
-    $num = '0123456789';
-    if (preg_match("/^[$num][$num][$num][$num]/", $postcode)) {
-        return true;
-    } else {
-        return false;
-    }
+    return (bool) preg_match('/^\d{4}/', trim($postcode));
 }
 
 /**
@@ -309,18 +306,25 @@ function twfy_debug_timestamp($label = "") {
 /**
  *
  */
+if (!function_exists('format_date')) {
+
+    /**
+     *
+     */
 function format_date($date, $format) {
-    // Pass it a date (YYYY-MM-DD) and a
-    // PHP date format string (eg, "Y-m-d H:i:s")
-    // and it returns a nicely formatted string according to requirements.
+        // Pass it a date (YYYY-MM-DD) and a
+        // PHP date format string (eg, "Y-m-d H:i:s")
+        // and it returns a nicely formatted string according to requirements.
 
-    if (preg_match("/^(\d\d\d\d)-(\d\d?)-(\d\d?)$/", $date, $matches)) {
-        [$string, $year, $month, $day] = $matches;
+        if (preg_match("/^(\d\d\d\d)-(\d\d?)-(\d\d?)$/", $date, $matches)) {
+            [$string, $year, $month, $day] = $matches;
 
-        return gmdate($format, gmmktime(0, 0, 0, $month, $day, $year));
-    } else {
-        return "";
-    }
+            return gmdate($format, gmmktime(0, 0, 0, $month, $day, $year));
+        } else {
+            return "";
+        }
+
+}
 
 }
 
@@ -840,11 +844,18 @@ function recursive_strip($a) {
 /**
  * Call this with a key name to get a COOKIE variable.
  */
+if (!function_exists('get_cookie_var')) {
+
+    /**
+     *
+     */
 function get_cookie_var($name, $default = '') {
-    if (array_key_exists($name, $_COOKIE)) {
-        return clean_var($_COOKIE[$name]);
-    }
-    return $default;
+        if (array_key_exists($name, $_COOKIE)) {
+            return clean_var($_COOKIE[$name]);
+        }
+        return $default;
+}
+
 }
 
 /**
@@ -914,34 +925,43 @@ function entities_to_numbers($string) {
 /**
  *
  */
-function make_member_url($name, $const = '', $house = 1) {
-    $s = [' ', '&amp;', '&ocirc;', '&ouml;', '&acirc;', '&iacute;', '&aacute;', '&uacute;'];
-    $r = ['_', 'and', 'o', 'o', 'a', 'i', 'a', 'u'];
-    $name = preg_replace('#^the #', '', strtolower($name));
-    $out = urlencode(str_replace($s, $r, $name));
-    if ($const && ($house == 1 || $house == 2)) {
-        $out .= '/' . urlencode(str_replace($s, $r, strtolower($const)));
-    } elseif ($house == 0) {
-        $out = 'elizabeth_the_second';
-    }
-    return $out;
+if (!function_exists('make_member_url')) {
+
+    /**
+     *
+     */
+function make_member_url($name, $const = '', $house = HOUSE::REPRESENTATIVES) {
+        $s = [' ', '&amp;', '&ocirc;', '&ouml;', '&acirc;', '&iacute;', '&aacute;', '&uacute;'];
+        $r = ['_', 'and', 'o', 'o', 'a', 'i', 'a', 'u'];
+        $name = preg_replace('#^the #', '', strtolower($name));
+        $out = urlencode(str_replace($s, $r, $name));
+        if ($const && ($house == HOUSE::REPRESENTATIVES || $house == HOUSE::SENATE)) {
+            $out .= '/' . urlencode(str_replace($s, $r, strtolower($const)));
+        }
+        return $out;
+}
+
 }
 
 /**
  *
  */
+if (!function_exists('member_full_name')) {
+
+    /**
+     *
+     */
 function member_full_name($house, $title, $first_name, $last_name, $constituency) {
-    $s = 'ERROR';
-    if ($house == 1 || $house == 2 || $house == 3 || $house == 4) {
         $s = $first_name . ' ' . $last_name;
-        if ($title) {
-            $s = $title . ' ' . $s;
+        if ($house == HOUSE::REPRESENTATIVES || $house == HOUSE::SENATE) {
+            $s = $first_name . ' ' . $last_name;
+            if ($title) {
+                $s = $title . ' ' . $s;
+            }
         }
-    } elseif ($house == 0) {
-        // Queen.
-        $s = "$first_name $last_name";
-    }
-    return $s;
+        return $s;
+}
+
 }
 
 /**
@@ -1017,17 +1037,19 @@ function major_summary($data, $limit = "") {
         } else {
             $date = $data[$printed_majors[0]]['hdate'];
         }
-        $q = parlDBQuery('SELECT major, body, gid
-				FROM hansard,epobject
-				WHERE hansard.epobject_id = epobject.epobject_id AND section_id=0
-				AND hdate="' . $date . '"
-				AND major IN (' . implode(',', $printed_majors) . ')
-				ORDER BY major desc, hpos' . $limitsql);
+        $rows = Hansard::join('epobject', 'hansard.epobject_id', '=', 'epobject.epobject_id')
+          ->where('section_id', 0)
+          ->where('hdate', $date)
+          ->whereIn('major', $printed_majors)
+          ->orderByDesc('major')
+          ->orderBy('hpos')
+          ->when($limit, fn($q) => $q->limit($limit))
+          ->get(['major', 'epobject.body', 'gid']);
         $current_major = 0;
-        for ($i = 0; $i < $q->rows(); $i++) {
-            $gid = fix_gid_from_db($q->field($i, 'gid'));
-            $major = $q->field($i, 'major');
-            $body = $q->field($i, 'body');
+        foreach ($rows as $row) {
+            $gid = fix_gid_from_db($row->gid);
+            $major = $row->major;
+            $body = $row->body;
             // If (strstr($body, 'Chair]')) continue;.
             if ($major != $current_major) {
                 if ($current_major) {
@@ -1055,17 +1077,22 @@ function major_summary($data, $limit = "") {
         } else {
             $date = $data[4]['hdate'];
         }
-        $q = parlDBQuery('SELECT section_id, body, gid FROM hansard,epobject
-				WHERE hansard.epobject_id = epobject.epobject_id AND major=4 AND hdate="' . $date . '" AND subsection_id=0
-				ORDER BY major, hpos' . $limitsql);
-        if ($q->rows()) {
+        $rows = Hansard::join('epobject', 'hansard.epobject_id', '=', 'epobject.epobject_id')
+          ->where('major', 4)
+          ->where('hdate', $date)
+          ->where('subsection_id', 0)
+          ->orderBy('major')
+          ->orderBy('hpos')
+          ->when($limit, fn($q) => $q->limit($limit))
+          ->get(['section_id', 'epobject.body', 'gid']);
+        if ($rows->count()) {
             $LISTURL = new URL($hansardmajors[4]['page_all']);
             _major_summary_title(4, $data, $LISTURL, $daytext);
             $current_sid = 0;
-            for ($i = 0; $i < $q->rows(); $i++) {
-                $gid = fix_gid_from_db($q->field($i, 'gid'));
-                $body = $q->field($i, 'body');
-                $section_id = $q->field($i, 'section_id');
+            foreach ($rows as $row) {
+                $gid = fix_gid_from_db($row->gid);
+                $body = $row->body;
+                $section_id = $row->section_id;
                 if (!$section_id) {
                     if ($current_sid++) {
                         print '</ul>';

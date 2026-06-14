@@ -7,6 +7,12 @@
 include_once __DIR__ . "/searchengine.php";
 include_once __DIR__ . "/searchlog.php";
 
+use OpenAustralia\TWFY\Models\Member as MemberModel;
+use OpenAustralia\TWFY\Models\Moffice as MofficeModel;
+use OpenAustralia\TWFY\Models\Bills as BillsModel;
+use OpenAustralia\TWFY\Models\Comments as CommentsModel;
+use OpenAustralia\TWFY\Models\Hansard;
+
 /**
  * The HANSARDLIST class and its children, DEBATELIST and WRANSLIST, display data about
  * Hansard objects. You call display things by doing something like:
@@ -211,9 +217,7 @@ class HANSARDLIST {
         // Returns number of items in debates or wrans, depending on which class this is,
         // DEBATELIST or WRANSLIST.
 
-        $q = parlDBQuery("SELECT COUNT(*) AS count FROM hansard WHERE major=?", $this->major);
-
-        return $q->field(0, 'count');
+        return Hansard::where('major', $this->major)->count();
     }
 
     /**
@@ -970,58 +974,49 @@ class HANSARDLIST {
             return $data;
         }
 
-        $where = 'hansard.speaker_id in (' . $args['member_ids'] . ')';
+        $query = Hansard::join('epobject', 'hansard.epobject_id', '=', 'epobject.epobject_id')
+          ->join('epobject as epobject_section', 'hansard.section_id', '=', 'epobject_section.epobject_id')
+          ->join('epobject as epobject_subsection', 'hansard.subsection_id', '=', 'epobject_subsection.epobject_id')
+          ->join('hansard as hansard_subsection', 'hansard.subsection_id', '=', 'hansard_subsection.epobject_id')
+          ->whereRaw('hansard.speaker_id in (' . $args['member_ids'] . ')');
 
         if (isset($this->major)) {
-            $majorwhere = "AND hansard.major = '" . $this->major . "' ";
-        } else {
-            // We're getting results for all debates/wrans/etc.
-            $majorwhere = '';
+            $query->where('hansard.major', $this->major);
         }
 
-        $q = parlDBQuery("SELECT hansard.subsection_id, hansard.section_id,
-					hansard.htype, hansard.gid, hansard.major,
-					hansard.hdate, hansard.htime, hansard.speaker_id,
-					epobject.body, epobject_section.body AS body_section,
-					epobject_subsection.body AS body_subsection,
-	                                hansard_subsection.gid AS gid_subsection
-				FROM hansard
-				JOIN epobject
-					ON hansard.epobject_id = epobject.epobject_id
-				JOIN epobject AS epobject_section
-                        	        ON hansard.section_id = epobject_section.epobject_id
-				JOIN epobject AS epobject_subsection
-                                	ON hansard.subsection_id = epobject_subsection.epobject_id
-				JOIN hansard AS hansard_subsection
-                                	ON hansard.subsection_id = hansard_subsection.epobject_id
-						WHERE	$where $majorwhere
-						ORDER BY hansard.hdate DESC, hansard.hpos DESC
-						LIMIT	$items_to_list
-						");
+        $rows = $query->orderByDesc('hansard.hdate')
+          ->orderByDesc('hansard.hpos')
+          ->limit($items_to_list)
+          ->get([
+              'hansard.subsection_id', 'hansard.section_id',
+              'hansard.htype', 'hansard.gid', 'hansard.major',
+              'hansard.hdate', 'hansard.htime', 'hansard.speaker_id',
+              'epobject.body', 'epobject_section.body AS body_section',
+              'epobject_subsection.body AS body_subsection',
+              'hansard_subsection.gid AS gid_subsection',
+          ]);
 
         $speeches = [];
-        if ($q->rows() > 0) {
-            for ($n = 0; $n < $q->rows(); $n++) {
-                $speech = [
-                    'subsection_id' => $q->field($n, 'subsection_id'),
-                    'section_id' => $q->field($n, 'section_id'),
-                    'htype' => $q->field($n, 'htype'),
-                    'major' => $q->field($n, 'major'),
-                    'hdate' => $q->field($n, 'hdate'),
-                    'htime' => $q->field($n, 'htime'),
-                    'speaker_id' => $q->field($n, 'speaker_id'),
-                    'body' => $q->field($n, 'body'),
-                    'body_section' => $q->field($n, 'body_section'),
-                    'body_subsection' => $q->field($n, 'body_subsection'),
-                    'gid' => fix_gid_from_db($q->field($n, 'gid')),
-                ];
-                // Cache parent id to speed up _get_listurl.
-                $this->epobjectid_to_gid[$q->field($n, 'subsection_id')] = fix_gid_from_db($q->field($n, 'gid_subsection'));
+        foreach ($rows as $row) {
+            $speech = [
+                'subsection_id' => $row->subsection_id,
+                'section_id' => $row->section_id,
+                'htype' => $row->htype,
+                'major' => $row->major,
+                'hdate' => $row->hdate,
+                'htime' => $row->htime,
+                'speaker_id' => $row->speaker_id,
+                'body' => $row->body,
+                'body_section' => $row->body_section,
+                'body_subsection' => $row->body_subsection,
+                'gid' => fix_gid_from_db($row->gid),
+            ];
+            // Cache parent id to speed up _get_listurl.
+            $this->epobjectid_to_gid[$row->subsection_id] = fix_gid_from_db($row->gid_subsection);
 
-                $url_args = ['m' => $q->field($n, 'speaker_id')];
-                $speech['listurl'] = $this->_get_listurl($speech, $url_args);
-                $speeches[] = $speech;
-            }
+            $url_args = ['m' => $row->speaker_id];
+            $speech['listurl'] = $this->_get_listurl($speech, $url_args);
+            $speeches[] = $speech;
         }
 
         if (count($speeches) > 0) {
@@ -1179,26 +1174,15 @@ class HANSARDLIST {
             }
 
             // Get the data for the gid from the database.
-            $q = parlDBQuery(
-                "SELECT hansard.gid,
-                                    hansard.hdate,
-                                    hansard.section_id,
-                                    hansard.subsection_id,
-                                    hansard.htype,
-                                    hansard.major,
-                                    hansard.speaker_id,
-				    hansard.hpos,
-                                    epobject.body
-                            FROM hansard, epobject
-                            WHERE hansard.gid = ?
-                            AND hansard.epobject_id = epobject.epobject_id",
-                $gid
-            );
+            $q = Hansard::join('epobject', 'hansard.epobject_id', '=', 'epobject.epobject_id')
+              ->where('hansard.gid', $gid)
+              ->first([
+                  'hansard.gid', 'hansard.hdate', 'hansard.section_id',
+                  'hansard.subsection_id', 'hansard.htype', 'hansard.major',
+                  'hansard.speaker_id', 'hansard.hpos', 'epobject.body',
+              ]);
 
-            if ($q->rows() > 1) {
-                $PAGE->error_message("Got more than one row getting data for $gid");
-            }
-            if ($q->rows() == 0) {
+            if (!$q) {
                 // This error message is totally spurious, so don't show it
                 // $PAGE->error_message("Unexpected missing gid $gid while searching");.
                 continue;
@@ -1206,20 +1190,20 @@ class HANSARDLIST {
 
             $itemdata = [];
 
-            $itemdata['gid'] = fix_gid_from_db($q->field(0, 'gid'));
-            $itemdata['hdate'] = $q->field(0, 'hdate');
-            $itemdata['htype'] = $q->field(0, 'htype');
-            $itemdata['major'] = $q->field(0, 'major');
-            $itemdata['section_id'] = $q->field(0, 'section_id');
-            $itemdata['subsection_id'] = $q->field(0, 'subsection_id');
+            $itemdata['gid'] = fix_gid_from_db($q->gid);
+            $itemdata['hdate'] = $q->hdate;
+            $itemdata['htype'] = $q->htype;
+            $itemdata['major'] = $q->major;
+            $itemdata['section_id'] = $q->section_id;
+            $itemdata['subsection_id'] = $q->subsection_id;
             $itemdata['relevance'] = $relevances[$n];
-            $itemdata['speaker_id'] = $q->field(0, 'speaker_id');
-            $itemdata['hpos'] = $q->field(0, 'hpos');
+            $itemdata['speaker_id'] = $q->speaker_id;
+            $itemdata['hpos'] = $q->hpos;
 
             //
             // 1. Trim and highlight the body text.
 
-            $body = $q->field(0, 'body');
+            $body = $q->body;
 
             // We want to trim the body to an extract that is centered
             // around the position of the first search word.
@@ -1599,19 +1583,19 @@ class HANSARDLIST {
                 $nextprev['prev'] = ['body' => 'Previous year'];
                 $nextprev['next'] = ['body' => 'Next year'];
 
-                $q = parlDBQuery("SELECT DATE_FORMAT(hdate, '%Y') AS year
-							FROM hansard WHERE major = ?
-							AND year(hdate) < ?
-							ORDER BY hdate DESC
-							LIMIT 1", $this->major, $firstyear);
+                $prevyear = Hansard::where('major', $this->major)
+                  ->whereRaw('year(hdate) < ?', [$firstyear])
+                  ->orderByDesc('hdate')
+                  ->limit(1)
+                  ->selectRaw("DATE_FORMAT(hdate, '%Y') AS year")
+                  ->value('year');
 
-                $prevyear = $q->field(0, 'year');
-                $q = parlDBQuery("SELECT DATE_FORMAT(hdate, '%Y') AS year
-							FROM hansard WHERE major = ?
-							AND year(hdate) > ?
-							ORDER BY hdate
-							LIMIT 1", $this->major, $finalyear);
-                $nextyear = $q->field(0, 'year');
+                $nextyear = Hansard::where('major', $this->major)
+                  ->whereRaw('year(hdate) > ?', [$finalyear])
+                  ->orderBy('hdate')
+                  ->limit(1)
+                  ->selectRaw("DATE_FORMAT(hdate, '%Y') AS year")
+                  ->value('year');
 
                 if ($action == 'year' && $prevyear) {
                     $YEARURL->insert(['y' => $prevyear]);
@@ -2050,41 +2034,31 @@ class HANSARDLIST {
             if (!isset($this->speakers[$speaker_id])) {
                 // Speaker isn't cached, so fetch the data.
 
-                $q = parlDBQuery("SELECT title, first_name,
-										last_name,
-										house,
-										constituency,
-										party,
-                                        person_id
-								FROM 	member
-						WHERE	member_id = ?", $speaker_id);
-                if ($q->rows() > 0) {
+                $row = MemberModel::where('member_id', $speaker_id)
+                  ->first(['title', 'first_name', 'last_name', 'house', 'constituency', 'party', 'person_id']);
+                if ($row !== null) {
                     // *SHOULD* only get one row back here...
-                    $house = $q->field(0, 'house');
-                    if ($house == 1) {
+                    $house = $row->house;
+                    if ($house == HOUSE::REPRESENTATIVES) {
                         $URL = new URL('mp');
-                    } elseif ($house == 2) {
+                    } elseif ($house == HOUSE::SENATE) {
                         $URL = new URL('peer');
-                    } elseif ($house == 3) {
-                        $URL = new URL('mla');
-                    } elseif ($house == 3) {
-                        $URL = new URL('mla');
-                    } elseif ($house == 4) {
-                        $URL = new URL('msp');
-                    } elseif ($house == 0) {
-                        $URL = new URL('royal');
+                    } else {
+                        // UNKNOWN HOUSE!!
+                        // This should not happen.
+                        $URL = new URL('unknown');
                     }
                     $URL->insert(['m' => $speaker_id]);
                     $speaker = [
-                        'member_id' => $speaker_id,
-                        'title' => $q->field(0, 'title'),
-                        "first_name" => $q->field(0, "first_name"),
-                        "last_name" => $q->field(0, "last_name"),
-                        'house' => $q->field(0, 'house'),
-                        "constituency" => $q->field(0, "constituency"),
-                        "party" => $q->field(0, "party"),
-                        "person_id" => $q->field(0, "person_id"),
-                        "url" => $URL->generate(),
+                        'member_id'   => $speaker_id,
+                        'title'       => $row->title,
+                        'first_name'  => $row->first_name,
+                        'last_name'   => $row->last_name,
+                        'house'       => $row->house,
+                        'constituency' => $row->constituency,
+                        'party'       => $row->party,
+                        'person_id'   => $row->person_id,
+                        'url'         => $URL->generate(),
                     ];
 
                     global $parties;
@@ -2093,19 +2067,19 @@ class HANSARDLIST {
                         $speaker['party'] = $parties[$speaker['party']];
                     }
 
-                    $q = parlDBQuery("SELECT dept, position FROM moffice WHERE person = ?
-								AND to_date >= ? AND from_date <= ?", $speaker['person_id'], $hdate, $hdate);
-                    if ($q->rows() > 0) {
-                        for ($row = 0; $row < $q->rows(); $row++) {
-                            $dept = $q->field($row, 'dept');
-                            $pos = $q->field($row, 'position');
-                            if ($pos && $pos != 'Chairman') {
-                                $speaker['office'][] = [
-                                    'dept' => $dept,
-                                    'position' => $pos,
-                                    'pretty' => prettify_office($pos, $dept)
-                                ];
-                            }
+                    $offices = MofficeModel::where('person', $speaker['person_id'])
+                      ->where('to_date', '>=', $hdate)
+                      ->where('from_date', '<=', $hdate)
+                      ->get(['dept', 'position']);
+                    foreach ($offices as $office) {
+                        $dept = $office->dept;
+                        $pos = $office->position;
+                        if ($pos && $pos != 'Chairman') {
+                            $speaker['office'][] = [
+                                'dept' => $dept,
+                                'position' => $pos,
+                                'pretty' => prettify_office($pos, $dept)
+                            ];
                         }
                     }
                     $this->speakers[$speaker_id] = $speaker;
@@ -2202,30 +2176,23 @@ class HANSARDLIST {
         ) {
             // We'll be getting a count of the comments on all items
             // within this (sub)section.
-            $from = "comments, hansard";
-            $where = "comments.epobject_id = hansard.epobject_id
-					AND subsection_id = '" . $item_data['epobject_id'] . "'";
+            $query = CommentsModel::join('hansard', 'comments.epobject_id', '=', 'hansard.epobject_id')
+              ->where('hansard.subsection_id', $item_data['epobject_id'])
+              ->where('comments.visible', 1);
 
             if ($item_data['htype'] == '10') {
                 // Section - get a count of comments within this section that
                 // don't have a subsection heading.
-                $where .= " AND section_id = '" . $item_data['epobject_id'] . "'";
+                $query->where('hansard.section_id', $item_data['epobject_id']);
             }
 
         } else {
             // Just getting a count of the comments on this item.
-            $from = "comments";
-            $where = "epobject_id = '" . getParlDB()->escape($item_data['epobject_id']) . "'";
+            $query = CommentsModel::where('epobject_id', $item_data['epobject_id'])
+              ->where('visible', 1);
         }
 
-        $q = parlDBQuery("SELECT COUNT(*) AS count
-						FROM 	$from
-						WHERE	$where
-						AND		visible = 1
-
-						");
-
-        return $q->field(0, 'count');
+        return $query->count();
     }
 
     /**
@@ -2559,18 +2526,6 @@ class SPWRANSLIST extends WRANSLIST {
         $this->gidprefix .= 'spwa/';
     }
 
-    /**
-     *
-     */
-    public function get_gid_from_spid($spid) {
-        $q = parlDBQuery("SELECT gid from hansard WHERE gid LIKE 'uk.org.publicwhip/spwa/%.$spid.h'");
-        $gid = $q->field(0, 'gid');
-        if ($gid) {
-            return str_replace('uk.org.publicwhip/spwa/', '', $gid);
-        }
-        return null;
-    }
-
 }
 
 /**
@@ -2712,9 +2667,7 @@ class DEBATELIST extends HANSARDLIST {
      */
     public function total_speeches() {
 
-        $q = parlDBQuery("SELECT COUNT(*) AS count FROM hansard WHERE major=? AND htype = 12", $this->major);
-
-        return $q->field(0, 'count');
+        return Hansard::where('major', $this->major)->where('htype', 12)->count();
     }
 
     /**
@@ -2865,8 +2818,7 @@ class WRANSLIST extends HANSARDLIST {
      *
      */
     public function total_questions() {
-        $q = parlDBQuery("SELECT COUNT(*) AS count FROM hansard WHERE major='" . $this->major . "' AND minor = 1");
-        return $q->field(0, 'count');
+        return Hansard::where('major', $this->major)->where('minor', 1)->count();
     }
 
     /**
@@ -2885,35 +2837,38 @@ class WRANSLIST extends HANSARDLIST {
         $person_id = $args['person_id'];
 
         $total_results = 0;
-        $q = parlDBQuery("SELECT e.body, es.body AS section_body, ess.body AS subsection_body,
-						h.hdate, h.htype, h.gid, h.subsection_id, h.section_id, h.epobject_id
-					FROM hansard h, epobject e, epobject es, epobject ess, member m
-					WHERE h.htype = 12 AND major = 3 AND minor = 1
-						AND h.epobject_id = e.epobject_id
-						AND h.section_id = es.epobject_id
-						AND h.subsection_id = ess.epobject_id
-						AND h.speaker_id = m.member_id
-						AND person_id = ?
-					ORDER BY hdate DESC
-					LIMIT ?, ?", $person_id, $offset, $limit);
-        for ($row = 0; $row < $q->rows; $row++) {
-            $subsection_id = $q->field($row, 'subsection_id');
-            $section_body = $q->field($row, 'section_body');
-            $subsection_body = $q->field($row, 'subsection_body');
-            $r = parlDBQuery("SELECT e.body
-							FROM	hansard h, epobject e
-							WHERE	h.epobject_id = e.epobject_id
-							AND	minor = 2
-							AND		h.subsection_id = ?
-							", $q->field($row, 'subsection_id'));
-            $answer = $r->field(0, 'body');
+        $rows = Hansard::from('hansard as h')
+          ->join('epobject as e', 'h.epobject_id', '=', 'e.epobject_id')
+          ->join('epobject as es', 'h.section_id', '=', 'es.epobject_id')
+          ->join('epobject as ess', 'h.subsection_id', '=', 'ess.epobject_id')
+          ->join('member as m', 'h.speaker_id', '=', 'm.member_id')
+          ->where('h.htype', 12)
+          ->where('major', 3)
+          ->where('minor', 1)
+          ->where('person_id', $person_id)
+          ->orderByDesc('hdate')
+          ->offset($offset)
+          ->limit($limit)
+          ->get([
+              'e.body', 'es.body AS section_body', 'ess.body AS subsection_body',
+              'h.hdate', 'h.htype', 'h.gid', 'h.subsection_id', 'h.section_id', 'h.epobject_id',
+          ]);
+        foreach ($rows as $row) {
+            $subsection_id = $row->subsection_id;
+            $section_body = $row->section_body;
+            $subsection_body = $row->subsection_body;
+            $answer = Hansard::from('hansard as h')
+              ->join('epobject as e', 'h.epobject_id', '=', 'e.epobject_id')
+              ->where('minor', 2)
+              ->where('h.subsection_id', $subsection_id)
+              ->value('e.body');
             $data[] = [
-                'hdate' => $q->field($row, 'hdate'),
+                'hdate' => $row->hdate,
                 'section_body' => $section_body,
                 'subsection_body' => $subsection_body,
-                'question' => $q->field($row, 'body'),
+                'question' => $row->body,
                 'answer' => $answer,
-                'gid' => $q->field($row, 'gid')
+                'gid' => $row->gid,
             ];
         }
         $info = [
@@ -3070,9 +3025,7 @@ class StandingCommittee extends DEBATELIST {
      */
     public function _get_committee($bill_id) {
         include_once __DIR__ . "/../easyparliament/member.php";
-        $q = parlDBQuery('SELECT COUNT(*) AS c from hansard WHERE major=6 AND minor=?
-            AND htype=10', $bill_id);
-        $sittings = $q->field(0, 'c');
+        $sittings = Hansard::where('major', 6)->where('minor', $bill_id)->where('htype', 10)->count();
         $q = parlDBQuery('SELECT member_id,SUM(attending) AS attending, SUM(chairman) AS chairman
 			from pbc_members WHERE bill_id=?
             GROUP BY member_id', $bill_id);
@@ -3150,19 +3103,18 @@ class StandingCommittee extends DEBATELIST {
     public function _get_data_by_session($args) {
         global $DATA, $this_page;
         $session = $args['session'];
-        $q = parlDBQuery('SELECT id, title from bills WHERE session=? ORDER BY title', $session);
+        $billRecords = BillsModel::where('session', $session)->orderBy('title')->get();
         $bills = [];
-        for ($i = 0; $i < $q->rows(); $i++) {
-            $bills[$q->field($i, 'id')] = $q->field($i, 'title');
+        foreach ($billRecords as $record) {
+            $bills[$record->id] = $record->title;
         }
-        $q = parlDBQuery('SELECT minor, COUNT(*) AS c from hansard WHERE major=6 AND htype=12
-			AND minor IN ?
-			GROUP BY minor', array_keys($bills));
-        $counts = [];
-        for ($i = 0; $i < $q->rows(); $i++) {
-            $minor = $q->field($i, 'minor');
-            $counts[$minor] = $q->field($i, 'c');
-        }
+        $counts = Hansard::where('major', 6)
+          ->where('htype', 12)
+          ->whereIn('minor', array_keys($bills))
+          ->groupBy('minor')
+          ->selectRaw('minor, COUNT(*) AS c')
+          ->pluck('c', 'minor')
+          ->all();
         $data = [];
         foreach ($bills as $id => $title) {
             $data[] = [
@@ -3176,10 +3128,10 @@ class StandingCommittee extends DEBATELIST {
         $nextprev = [];
         $nextprev['prev'] = ['body' => 'Previous session', 'title' => ''];
         $nextprev['next'] = ['body' => 'Next session', 'title' => ''];
-        $q = parlDBQuery("SELECT session FROM bills WHERE session < ? ORDER BY session DESC LIMIT 1", $session);
-        $prevyear = $q->field(0, 'session');
-        $q = parlDBQuery("SELECT session FROM bills WHERE session > ? ORDER BY session ASC LIMIT 1", $session);
-        $nextyear = $q->field(0, 'session');
+        $prevRecord = BillsModel::where('session', '<', $session)->orderBy('session', 'desc')->first();
+        $prevyear = $prevRecord ? $prevRecord->session : null;
+        $nextRecord = BillsModel::where('session', '>', $session)->orderBy('session', 'asc')->first();
+        $nextyear = $nextRecord ? $nextRecord->session : null;
         if ($prevyear) {
             $nextprev['prev']['url'] = $YEARURL->generate() . $prevyear . '/';
         }
@@ -3198,17 +3150,18 @@ class StandingCommittee extends DEBATELIST {
         if (!isset($args['num'])) {
             $args['num'] = 20;
         }
-        $q = parlDBQuery('SELECT gid, minor, hdate from hansard
-			WHERE htype=10 AND major=6
-			ORDER BY hdate DESC LIMIT ?', $args['num']);
+        $rows = Hansard::where('htype', 10)->where('major', 6)
+          ->orderByDesc('hdate')
+          ->limit($args['num'])
+          ->get(['gid', 'minor', 'hdate']);
         $data = [];
-        for ($i = 0; $i < $q->rows(); $i++) {
-            $minor = $q->field($i, 'minor');
-            $gid = $q->field($i, 'gid');
-            $hdate = format_date($q->field($i, 'hdate'), LONGDATEFORMAT);
-            $qq = parlDBQuery('SELECT title, session from bills WHERE id=?', $minor);
-            $title = $qq->field(0, 'title');
-            $session = $qq->field(0, 'session');
+        foreach ($rows as $row) {
+            $minor = $row->minor;
+            $gid = $row->gid;
+            $hdate = format_date($row->hdate->format('Y-m-d'), LONGDATEFORMAT);
+            $bill = BillsModel::where('id', $minor)->first(['title', 'session']);
+            $title = $bill ? $bill->title : '';
+            $session = $bill ? $bill->session : '';
             preg_match('#_(\d\d)-(\d)_#', $gid, $m);
             $sitting = make_ranking($m[1] + 0) . ' sitting';
             if ($m[2] > 0) {

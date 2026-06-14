@@ -4,6 +4,8 @@
  * @file
  * Nasty way of implementing "by department" stuff with the current schema .*/
 
+use OpenAustralia\TWFY\Models\Hansard;
+
 include_once __DIR__ . "/../../includes/easyparliament/init.php";
 
 $dept = get_http_var('dept');
@@ -13,16 +15,17 @@ $PAGE->stripe_start();
 
 print '<h2>Departments</h2>';
 
-$q = parlDBQuery('SELECT major,body from hansard,epobject
-	WHERE hansard.epobject_id=epobject.epobject_id AND major in (3,4) AND section_id=0
-	AND hdate>(SELECT MAX(hdate) from hansard WHERE major in (3,4)) - interval 7 day
-	GROUP BY body, major
-	ORDER BY body');
+$maxDate = Hansard::whereIn('major', [3, 4])->max('hdate');
+$rows = Hansard::join('epobject', 'hansard.epobject_id', '=', 'epobject.epobject_id')
+  ->whereIn('major', [3, 4])
+  ->where('section_id', 0)
+  ->whereRaw('hdate > ? - interval 7 day', [$maxDate])
+  ->groupBy('body', 'major')
+  ->orderBy('body')
+  ->get(['major', 'body']);
 $data = [];
-for ($i = 0; $i < $q->rows(); $i++) {
-    $body = $q->field($i, 'body');
-    $major = $q->field($i, 'major');
-    $data[$body][$major] = true;
+foreach ($rows as $row) {
+    $data[$row->body][$row->major] = true;
 }
 
 print '<p>List of departments who have had questions or statements within the past week</p>';

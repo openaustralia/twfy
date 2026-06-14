@@ -10,6 +10,8 @@
 
 include_once __DIR__ . "/constituencies.php";
 
+use OpenAustralia\TWFY\Models\PostcodeLookup;
+
 /**
  * Whether the form of the postcode is one or not.
  */
@@ -77,15 +79,11 @@ function postcode_to_constituency_internal($postcode) {
         return '';
     }
 
-    $q = parlDBQuery('SELECT name from postcode_lookup WHERE postcode = ?', $postcode);
-    if ($q->rows == 1) {
-        $name = $q->field(0, 'name');
-        return $name;
-    } elseif ($q->rows > 1) {
-        for ($i = 0; $i < $q->rows; $i++) {
-            $name[] = $q->field($i, 'name');
-        }
-        return $name;
+    $results = PostcodeLookup::where('postcode', $postcode)->pluck('name');
+    if ($results->count() == 1) {
+        return $results->first();
+    } elseif ($results->count() > 1) {
+        return $results->all();
     } else {
         return '';
     }

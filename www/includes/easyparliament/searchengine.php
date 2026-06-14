@@ -47,6 +47,10 @@ if (defined('XAPIANDB') && XAPIANDB) {
 
 global $xapiandb;
 
+use Illuminate\Database\Capsule\Manager as DB;
+use OpenAustralia\TWFY\Models\Hansard;
+use OpenAustralia\TWFY\Models\Member as MemberModel;
+
 /**
  *
  */
@@ -591,12 +595,12 @@ function search_by_usage($search, $house = 0) {
     // Fetch all the speakers of the results, count them up and get min/max date usage.
     $speaker_count = [];
 
-    $q = parlDBQuery('SELECT gid, speaker_id, hdate FROM hansard WHERE gid IN ?', $gids);
-    for ($n = 0; $n < $q->rows(); $n++) {
-        $gid = $q->field($n, 'gid');
+    $rows = Hansard::whereIn('gid', $gids)->get(['gid', 'speaker_id', 'hdate']);
+    foreach ($rows as $row) {
+        $gid = $row->gid;
         // This is member ID.
-        $speaker_id = $q->field($n, 'speaker_id');
-        $hdate = $q->field($n, 'hdate');
+        $speaker_id = $row->speaker_id;
+        $hdate = $row->hdate->format('Y-m-d');
         if (!isset($speaker_count[$speaker_id])) {
             $speaker_count[$speaker_id] = 0;
             $maxdate[$speaker_id] = '1001-01-01';
@@ -614,38 +618,36 @@ function search_by_usage($search, $house = 0) {
     // Fetch details of all the speakers.
     if (count($speaker_count)) {
         $speaker_ids = array_keys($speaker_count);
-        $sql = 'SELECT member_id, person_id, title, first_name, last_name, constituency, house, party,
-                                moffice_id, dept, position, from_date, to_date, left_house
-                            FROM member LEFT JOIN moffice ON member.person_id = moffice.person
-                            WHERE member_id IN ?'
-                            . ($house ? " AND house=?" : '') .
-                            ' ORDER BY left_house DESC';
-        $q = $house
-            ? parlDBQuery($sql, $speaker_ids, (int) $house)
-            : parlDBQuery($sql, $speaker_ids);
-        for ($n = 0; $n < $q->rows(); $n++) {
-            $mid = $q->field($n, 'member_id');
+        $query = MemberModel::leftJoin('moffice', 'member.person_id', '=', 'moffice.person')
+          ->select('member.member_id', 'member.person_id', 'member.title', 'member.first_name', 'member.last_name', 'member.constituency', 'member.house', 'member.party', 'moffice.moffice_id', 'moffice.dept', 'moffice.position', 'moffice.from_date', 'moffice.to_date', 'member.left_house')
+          ->whereIn('member.member_id', $speaker_ids);
+        if ($house) {
+            $query->where('member.house', $house);
+        }
+        $results = $query->orderBy('member.left_house', 'desc')->get();
+        foreach ($results as $row) {
+            $mid = $row->member_id;
             if (!isset($pids[$mid])) {
-                $title = $q->field($n, 'title');
-                $first = $q->field($n, 'first_name');
-                $last = $q->field($n, 'last_name');
-                $cons = $q->field($n, 'constituency');
-                $house = $q->field($n, 'house');
-                $party = $q->field($n, 'party');
+                $title = $row->title;
+                $first = $row->first_name;
+                $last = $row->last_name;
+                $cons = $row->constituency;
+                $house = $row->house;
+                $party = $row->party;
                 $full_name = ucfirst(member_full_name($house, $title, $first, $last, $cons));
-                $pid = $q->field($n, 'person_id');
+                $pid = $row->person_id;
                 $pids[$mid] = $pid;
                 $speakers[$pid]['house'] = $house;
-                $speakers[$pid]['left'] = $q->field($n, 'left_house');
+                $speakers[$pid]['left'] = $row->left_house;
             }
-            $dept = $q->field($n, 'dept');
-            $posn = $q->field($n, 'position');
-            $moffice_id = $q->field($n, 'moffice_id');
-            if ($dept && $q->field($n, 'to_date') == '9999-12-31') {
+            $dept = $row->dept;
+            $posn = $row->position;
+            $moffice_id = $row->moffice_id;
+            if ($dept && $row->to_date == '9999-12-31') {
                 $speakers[$pid]['office'][$moffice_id] = prettify_office($posn, $dept);
             }
             if (!isset($speakers[$pid]['name'])) {
-                $speakers[$pid]['name'] = ($house == 2 ? 'Senator ' : '') . $full_name . ($house == 1 ? ' MP' : '');
+                $speakers[$pid]['name'] = ($house == HOUSE::SENATE ? 'Senator ' : '') . $full_name . ($house == HOUSE::REPRESENTATIVES ? ' MP' : '');
                 $speakers[$pid]['party'] = $party;
             }
         }

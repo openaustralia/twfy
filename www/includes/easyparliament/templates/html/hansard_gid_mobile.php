@@ -246,12 +246,6 @@ if (isset($data['rows'])) {
                         ($hansardmajors[$data['info']['major']]['location'] == 'Scotland' ? 'Official Report' : 'Hansard'),
                         ' source</a>';
                 }
-
-                if ($data['info']['major'] == 8 && preg_match('#\d{4}-\d\d-\d\d\.(.*?)\.q#', $row['gid'], $m)) {
-                    # Scottish Wrans only
-                    print " | Question $m[1]";
-                }
-
                 if ($data['info']['major'] == 1) { # Commons debates only
                     ?><!-- | <script type="text/javascript" src="https://parlvid.mysociety.org/video.cgi?gid=<?php
                     echo $row['gid'];

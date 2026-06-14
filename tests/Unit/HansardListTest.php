@@ -1,0 +1,241 @@
+<?php
+
+/**
+ * @file
+ * Unit tests for HANSARDLIST methods that don't require a database connection.
+ */
+
+use PHPUnit\Framework\TestCase;
+
+require_once INCLUDESPATH . 'utility.php';
+require_once INCLUDESPATH . 'data.php';
+require_once INCLUDESPATH . 'url.php';
+require_once INCLUDESPATH . 'easyparliament/hansardlist.php';
+
+if (!isset($GLOBALS['DATA'])) {
+    $GLOBALS['DATA'] = new DATA();
+}
+
+/**
+ * Minimal PAGE stub that captures error messages.
+ */
+class FakePageForHansardTest {
+    public array $errors = [];
+
+    public function error_message(string $msg): void {
+        $this->errors[] = $msg;
+    }
+
+    public function set_hansard_headings($info): void {
+    }
+}
+
+class HansardListTest extends TestCase {
+
+    private $origPage;
+
+    protected function setUp(): void {
+        global $PAGE;
+        $this->origPage = $PAGE ?? null;
+        $PAGE = new FakePageForHansardTest();
+    }
+
+    protected function tearDown(): void {
+        global $PAGE;
+        $PAGE = $this->origPage;
+    }
+
+    // --- _validate_date ---
+
+    public function test_validate_date_accepts_valid_date(): void {
+        $list = new HANSARDLIST();
+        $result = $list->_validate_date(['date' => '2023-06-15']);
+        $this->assertSame('2023-06-15', $result);
+    }
+
+    public function test_validate_date_pads_single_digit_month_and_day(): void {
+        $list = new HANSARDLIST();
+        $result = $list->_validate_date(['date' => '2023-1-5']);
+        $this->assertSame('2023-01-05', $result);
+    }
+
+    public function test_validate_date_returns_false_when_no_date_key(): void {
+        $list = new HANSARDLIST();
+        $result = $list->_validate_date([]);
+        $this->assertFalse($result);
+    }
+
+    public function test_validate_date_returns_false_for_invalid_format(): void {
+        $list = new HANSARDLIST();
+        $result = $list->_validate_date(['date' => 'not-a-date']);
+        $this->assertFalse($result);
+    }
+
+    public function test_validate_date_returns_false_for_invalid_calendar_date(): void {
+        $list = new HANSARDLIST();
+        // Feb 30 doesn't exist.
+        $result = $list->_validate_date(['date' => '2023-02-30']);
+        $this->assertFalse($result);
+    }
+
+    public function test_validate_date_returns_false_for_partial_date(): void {
+        $list = new HANSARDLIST();
+        $result = $list->_validate_date(['date' => '2023-12']);
+        $this->assertFalse($result);
+    }
+
+    public function test_validate_date_sets_error_message_on_failure(): void {
+        global $PAGE;
+        /** @var FakePageForHansardTest $PAGE */
+        $list = new HANSARDLIST();
+        $list->_validate_date(['date' => 'bad']);
+        $this->assertNotEmpty($PAGE->errors);
+    }
+
+    // --- display() view validation ---
+
+    public function test_display_returns_false_for_invalid_view(): void {
+        global $PAGE;
+        /** @var FakePageForHansardTest $PAGE */
+        $list = new HANSARDLIST();
+        $result = $list->display('nonexistent_view');
+        $this->assertFalse($result);
+        $this->assertNotEmpty($PAGE->errors);
+    }
+
+    // --- Child class properties ---
+
+    public function test_debatelist_major_is_1(): void {
+        $list = new DEBATELIST();
+        $this->assertSame(1, $list->major);
+    }
+
+    public function test_debatelist_gidprefix(): void {
+        $list = new DEBATELIST();
+        $this->assertSame('uk.org.publicwhip/debate/', $list->gidprefix);
+    }
+
+    public function test_debatelist_listpage(): void {
+        $list = new DEBATELIST();
+        $this->assertSame('debates', $list->listpage);
+    }
+
+    public function test_wranslist_major_is_3(): void {
+        $list = new WRANSLIST();
+        $this->assertSame(3, $list->major);
+    }
+
+    public function test_wranslist_gidprefix(): void {
+        $list = new WRANSLIST();
+        $this->assertSame('uk.org.publicwhip/wrans/', $list->gidprefix);
+    }
+
+    public function test_wmslist_gidprefix(): void {
+        $list = new WMSLIST();
+        $this->assertSame('uk.org.publicwhip/wms/', $list->gidprefix);
+    }
+
+    public function test_whalllist_major_is_2(): void {
+        $list = new WHALLLIST();
+        $this->assertSame(2, $list->major);
+    }
+
+    public function test_whalllist_gidprefix(): void {
+        $list = new WHALLLIST();
+        $this->assertSame('uk.org.publicwhip/debate/westminhall/', $list->gidprefix);
+    }
+
+    public function test_nilist_major_is_5(): void {
+        $list = new NILIST();
+        $this->assertSame(5, $list->major);
+    }
+
+    public function test_nilist_gidprefix(): void {
+        $list = new NILIST();
+        $this->assertSame('uk.org.publicwhip/debate/ni/', $list->gidprefix);
+    }
+
+    public function test_splist_major_is_7(): void {
+        $list = new SPLIST();
+        $this->assertSame(7, $list->major);
+    }
+
+    public function test_splist_gidprefix(): void {
+        $list = new SPLIST();
+        $this->assertSame('uk.org.publicwhip/debate/spor/', $list->gidprefix);
+    }
+
+    public function test_spwranslist_major_is_8(): void {
+        $list = new SPWRANSLIST();
+        $this->assertSame(8, $list->major);
+    }
+
+    public function test_spwranslist_gidprefix(): void {
+        $list = new SPWRANSLIST();
+        $this->assertSame('uk.org.publicwhip/wrans/spwa/', $list->gidprefix);
+    }
+
+    public function test_lordsdebatelist_major_is_101(): void {
+        $list = new LORDSDEBATELIST();
+        $this->assertSame(101, $list->major);
+    }
+
+    public function test_lordsdebatelist_gidprefix(): void {
+        $list = new LORDSDEBATELIST();
+        $this->assertSame('uk.org.publicwhip/lords/', $list->gidprefix);
+    }
+
+    // --- HANSARDLIST accessor defaults ---
+
+    public function test_htype_returns_null_initially(): void {
+        $list = new HANSARDLIST();
+        $this->assertNull($list->htype());
+    }
+
+    public function test_epobject_id_returns_null_initially(): void {
+        $list = new HANSARDLIST();
+        $this->assertNull($list->epobject_id());
+    }
+
+    public function test_gid_returns_null_initially(): void {
+        $list = new HANSARDLIST();
+        $this->assertNull($list->gid());
+    }
+
+    // --- _get_listurl with cached gid ---
+
+    public function test_get_listurl_for_section_htype_10(): void {
+        $list = new DEBATELIST();
+        $id_data = [
+            'major' => 1,
+            'htype' => '10',
+            'gid' => '2023-06-15.1.0',
+            'section_id' => 100,
+            'subsection_id' => 101,
+        ];
+        $url = $list->_get_listurl($id_data);
+        $this->assertIsString($url);
+        // Should contain the gid in the URL.
+        $this->assertStringContainsString('2023-06-15.1.0', $url);
+    }
+
+    public function test_get_listurl_for_speech_uses_cached_parent_gid(): void {
+        $list = new DEBATELIST();
+        // Pre-cache the parent gid.
+        $list->epobjectid_to_gid[200] = '2023-06-15.5.0';
+        $id_data = [
+            'major' => 1,
+            'htype' => '12',
+            'gid' => '2023-06-15.5.3',
+            'section_id' => 100,
+            'subsection_id' => 200,
+        ];
+        $url = $list->_get_listurl($id_data);
+        $this->assertIsString($url);
+        // Should use the cached parent gid in the URL.
+        $this->assertStringContainsString('2023-06-15.5.0', $url);
+        // Should have the item's gid as an anchor.
+        $this->assertStringContainsString('#g5.3', $url);
+    }
+
+}

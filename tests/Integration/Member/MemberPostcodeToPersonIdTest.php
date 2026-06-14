@@ -1,0 +1,82 @@
+<?php
+
+/**
+ * @file
+ * Tests for MEMBER::postcode_to_person_id().
+ */
+
+use OpenAustralia\TWFY\Models\PostcodeLookup;
+
+/**
+ * MEMBER double to observe postcode-to-constituency delegation.
+ */
+class MemberPostcodeMemberDouble extends MEMBER {
+
+    public array $seenConstituencies = [];
+
+    /**
+     * Avoid running parent constructor DB logic in unit-style tests.
+     */
+    public function __construct() {
+    }
+
+    /**
+     * Capture the value postcode_to_person_id delegates to.
+     */
+    public function constituency_to_person_id($constituency) {
+        $this->seenConstituencies[] = $constituency;
+        if ($constituency === '') {
+            return false;
+        }
+        return 12345;
+    }
+
+}
+
+/**
+ * Tests for MEMBER::postcode_to_person_id().
+ */
+class MemberPostcodeToPersonIdTest extends TransactionalTestCase {
+
+    /**
+     * Create a MEMBER test double without running the heavy constructor.
+     */
+    private function makeMemberDouble(): MEMBER {
+        return new MemberPostcodeMemberDouble();
+    }
+
+    /**
+     * Method should lowercase postcode-derived constituency before delegating.
+     */
+    public function test_postcode_to_person_id_lowercases_constituency_before_lookup(): void {
+        $postcode = '2000';
+        PostcodeLookup::where('postcode', $postcode)->delete();
+        PostcodeLookup::create([
+            'postcode' => $postcode,
+            'name' => 'MiXeD Case Constituency',
+        ]);
+
+        $GLOBALS['last_postcode'] = null;
+        $GLOBALS['last_postcode_value'] = null;
+
+        $member = $this->makeMemberDouble();
+
+        $result = $member->postcode_to_person_id('2000');
+
+        $this->assertSame(12345, $result);
+        $this->assertSame(['mixed case constituency'], $member->seenConstituencies);
+    }
+
+    /**
+     * Invalid postcode should delegate an empty constituency and return false.
+     */
+    public function test_postcode_to_person_id_passes_empty_string_for_invalid_postcode(): void {
+        $member = $this->makeMemberDouble();
+
+        $result = $member->postcode_to_person_id('not-a-postcode');
+
+        $this->assertFalse($result);
+        $this->assertSame([''], $member->seenConstituencies);
+    }
+
+}
