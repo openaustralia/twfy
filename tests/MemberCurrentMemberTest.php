@@ -28,16 +28,13 @@ class MemberCurrentMemberTest extends TestCase {
     public function test_current_member_returns_status_for_all_houses(): void {
         $member = $this->makeMemberWithoutConstructor();
         $member->left_house = [
-            1 => ['date' => '9999-12-31'],
-            2 => ['date' => '2020-01-01'],
+            HOUSE::REPRESENTATIVES => ['date' => '9999-12-31'],
+            HOUSE::SENATE => ['date' => '2020-01-01'],
         ];
 
         $this->assertSame([
-            0 => false,
-            1 => true,
-            2 => false,
-            3 => false,
-            4 => false,
+            HOUSE::REPRESENTATIVES => true,
+            HOUSE::SENATE => false,
         ], $member->current_member());
     }
 
@@ -47,13 +44,13 @@ class MemberCurrentMemberTest extends TestCase {
     public function test_current_member_returns_status_for_specific_house(): void {
         $member = $this->makeMemberWithoutConstructor();
         $member->left_house = [
-            1 => ['date' => '9999-12-31'],
-            2 => ['date' => '2019-05-01'],
+            HOUSE::REPRESENTATIVES => ['date' => '9999-12-31'],
+            HOUSE::SENATE => ['date' => '2019-05-01'],
         ];
 
-        $this->assertTrue($member->current_member(1));
-        $this->assertFalse($member->current_member(2));
-        $this->assertFalse($member->current_member(4));
+        $this->assertTrue($member->current_member(HOUSE::REPRESENTATIVES));
+        $this->assertFalse($member->current_member(HOUSE::SENATE));
+        $this->assertNull($member->current_member(4));
     }
 
 }
