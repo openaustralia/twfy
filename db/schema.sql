@@ -167,7 +167,7 @@ CREATE TABLE `epobject` (
   `modified` datetime DEFAULT NULL,
   PRIMARY KEY (`epobject_id`),
   KEY `type` (`type`)
-) ENGINE=InnoDB AUTO_INCREMENT=43444 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
@@ -297,7 +297,7 @@ CREATE TABLE `moffice` (
   `source` varchar(255) NOT NULL DEFAULT '',
   PRIMARY KEY (`moffice_id`),
   KEY `person` (`person`)
-) ENGINE=InnoDB AUTO_INCREMENT=34142 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
