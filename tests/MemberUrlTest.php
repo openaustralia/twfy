@@ -21,12 +21,12 @@ if (!function_exists('make_member_url')) {
     /**
      *
      */
-function make_member_url(string $name, string $const = '', int $house = 1): string {
+function make_member_url(string $name, string $const = '', int $house = HOUSE::REPRESENTATIVES): string {
         $s = [' ', '&amp;', '&ocirc;', '&ouml;', '&acirc;', '&iacute;', '&aacute;', '&uacute;'];
         $r = ['_', 'and', 'o', 'o', 'a', 'i', 'a', 'u'];
         $name = preg_replace('#^the #', '', strtolower($name));
         $out = urlencode(str_replace($s, $r, $name));
-        if ($const && ($house == 1 || $house == 2)) {
+        if ($const && ($house == HOUSE::REPRESENTATIVES || $house == HOUSE::SENATE)) {
             $out .= '/' . urlencode(str_replace($s, $r, strtolower($const)));
         } elseif ($house == 0) {
             $out = 'elizabeth_the_second';
@@ -108,7 +108,7 @@ private function makeMember(int $house, string $firstName, string $lastName, str
      * Absolute URLs (default)
      */
     public function test_url_mp_absolute(): void {
-        $member = $this->makeMember(1, 'Jane', 'Smith', 'Springfield');
+        $member = $this->makeMember(HOUSE::REPRESENTATIVES, 'Jane', 'Smith', 'Springfield');
         $url = $member->url(true);
         $this->assertStringStartsWith('//' . DOMAIN, $url);
         $this->assertStringContainsString('/mp/', $url);
@@ -120,7 +120,7 @@ private function makeMember(int $house, string $firstName, string $lastName, str
      *
      */
 public function test_url_peer_absolute(): void {
-        $member = $this->makeMember(2, 'John', 'Doe', 'Some Shire');
+    $member = $this->makeMember(HOUSE::SENATE, 'John', 'Doe', 'Some Shire');
         $url = $member->url(true);
         $this->assertStringStartsWith('//' . DOMAIN, $url);
         $this->assertStringContainsString('/peer/', $url);
@@ -134,7 +134,7 @@ public function test_url_peer_absolute(): void {
      * Relative URLs
      */
     public function test_url_mp_relative(): void {
-        $member = $this->makeMember(1, 'Jane', 'Smith', 'Springfield');
+        $member = $this->makeMember(HOUSE::REPRESENTATIVES, 'Jane', 'Smith', 'Springfield');
         $url = $member->url(false);
         $this->assertStringNotContainsString('//' . DOMAIN, $url);
         $this->assertStringContainsString('/mp/', $url);
@@ -145,7 +145,7 @@ public function test_url_peer_absolute(): void {
      *
      */
 public function test_url_peer_relative(): void {
-        $member = $this->makeMember(2, 'John', 'Doe', 'Some Shire');
+    $member = $this->makeMember(HOUSE::SENATE, 'John', 'Doe', 'Some Shire');
         $url = $member->url(false);
         $this->assertStringNotContainsString('//' . DOMAIN, $url);
         $this->assertStringContainsString('/peer/', $url);
@@ -157,7 +157,7 @@ public function test_url_peer_relative(): void {
      * Name formatting in URL slug
      */
     public function test_url_spaces_replaced_with_underscores(): void {
-        $member = $this->makeMember(1, 'Mary', 'Van Der Berg', 'Oxford East');
+        $member = $this->makeMember(HOUSE::REPRESENTATIVES, 'Mary', 'Van Der Berg', 'Oxford East');
         $url = $member->url(false);
         $this->assertStringContainsString('mary_van_der_berg', $url);
     }
