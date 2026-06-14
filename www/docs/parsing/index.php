@@ -4,6 +4,8 @@
  * @file
  */
 
+use OpenAustralia\TWFY\Models\Hansard;
+
 include_once __DIR__ . "/../../includes/easyparliament/init.php";
 $DATA->set_page_metadata($this_page, 'heading', 'Parsing status page');
 $PAGE->page_start();
@@ -23,9 +25,9 @@ $notloaded = '';
 
     $hdates = [];
 
-    $q = parlDBQuery('SELECT DISTINCT(hdate) AS hdate, major FROM hansard');
-    for ($i = 0; $i < $q->rows(); $i++) {
-        $hdates[$q->field($i, 'hdate')][$q->field($i, 'major')] = true;
+    $rows = Hansard::distinct()->get(['hdate', 'major']);
+    foreach ($rows as $row) {
+        $hdates[$row->hdate->format('Y-m-d')][$row->major] = true;
     }
     foreach ($dir as $k => $bit) {
         $out = [];
