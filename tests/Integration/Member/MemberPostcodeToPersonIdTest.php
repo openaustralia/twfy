@@ -72,12 +72,10 @@ class MemberPostcodeToPersonIdTest extends TransactionalTestCase {
     public function test_postcode_to_person_id_lowercases_constituency_before_lookup(): void {
         $postcode = '2000';
         PostcodeLookup::where('postcode', $postcode)->delete();
-        parlDBQuery('DELETE FROM postcode_lookup WHERE postcode = ?', $postcode);
-        parlDBQuery(
-            'INSERT INTO postcode_lookup (postcode, name) VALUES (?, ?)',
-            $postcode,
-            'MiXeD Case Constituency'
-        );
+        PostcodeLookup::create([
+            'postcode' => $postcode,
+            'name' => 'MiXeD Case Constituency',
+        ]);
 
         $GLOBALS['last_postcode'] = null;
         $GLOBALS['last_postcode_value'] = null;
