@@ -270,14 +270,7 @@ function validate_email($string) {
  *
  */
 function validate_postcode($postcode) {
-    $postcode = trim($postcode);
-
-    $num = '0123456789';
-    if (preg_match("/^[$num][$num][$num][$num]/", $postcode)) {
-        return true;
-    } else {
-        return false;
-    }
+    return (bool) preg_match('/^\d{4}/', trim($postcode));
 }
 
 /**
