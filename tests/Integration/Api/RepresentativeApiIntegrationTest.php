@@ -23,9 +23,9 @@ if (!function_exists('get_http_var')) {
     }
 }
 
-require_once __DIR__ . '/../../../www/docs/api/api_functions.php';
-require_once __DIR__ . '/../../../www/docs/api/api_getRepresentative.php';
-require_once __DIR__ . '/../../../www/docs/api/api_getRepresentatives.php';
+require_once BASEDIR . '/docs/api/api_functions.php';
+require_once BASEDIR . '/docs/api/api_getRepresentative.php';
+require_once BASEDIR . '/docs/api/api_getRepresentatives.php';
 
 class RepresentativeApiIntegrationTest extends TransactionalTestCase {
 

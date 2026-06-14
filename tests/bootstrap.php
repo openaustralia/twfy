@@ -96,7 +96,7 @@ foreach (['DB_HOST', 'DB_USER', 'DB_PASSWORD', 'DB_NAME'] as $_dbConst) {
 }
 unset($_dbConst, $_dbVal);
 
-require_once __DIR__ . '/../www/includes/eloquent.php';
+require_once INCLUDESPATH . 'eloquent.php';
 
 /**
  * Returns the shared ParlDB instance, with test override support.
@@ -127,9 +127,9 @@ if (!function_exists('parlDBQuery')) {
     }
 }
 
-require_once __DIR__ . '/../www/includes/easyparliament/member.php';
-require_once __DIR__ . '/../www/includes/easyparliament/alert.php';
-require_once __DIR__ . '/../www/docs/api/api_getConstituencies.php';
+require_once EASYPARLIAMENTPATH . 'member.php';
+require_once EASYPARLIAMENTPATH . 'alert.php';
+require_once BASEDIR . '/docs/api/api_getConstituencies.php';
 
 /**
  * @return array{host:string,user:string,pass:string,name:string}|null
@@ -213,7 +213,7 @@ class ParlDB extends MySQL {
 
 }
 
-require_once __DIR__ . '/../www/includes/easyparliament/user.php';
+require_once EASYPARLIAMENTPATH . 'user.php';
 
 /**
  * Wrapper that creates a database connection for tests without calling exit().
