@@ -8,27 +8,25 @@ final class DropTrackbacksTable extends AbstractMigration
 {
     public function up(): void
     {
-        $this->execute('DROP TABLE IF EXISTS `trackbacks`');
+        if ($this->hasTable('trackbacks')) {
+            $this->table('trackbacks')->drop()->save();
+        }
     }
 
     public function down(): void
     {
         // Re-creates the table structure as it was in the legacy schema.
         // Note: data dropped by up() is not recoverable.
-        $this->execute(<<<'SQL'
-            CREATE TABLE `trackbacks` (
-              `trackback_id` int(11) NOT NULL auto_increment,
-              `epobject_id` int(11) default NULL,
-              `blog_name` varchar(255) default NULL,
-              `title` varchar(255) default NULL,
-              `excerpt` varchar(255) default NULL,
-              `url` varchar(255) default NULL,
-              `posted` datetime default NULL,
-              `visible` tinyint(1) NOT NULL default '0',
-              `source_ip` varchar(20) default NULL,
-              PRIMARY KEY  (`trackback_id`),
-              KEY `visible` (`visible`)
-            )
-            SQL);
+        $table = $this->table('trackbacks', ['id' => 'trackback_id']);
+        $table->addColumn('epobject_id', 'integer', ['null' => true])
+              ->addColumn('blog_name', 'string', ['limit' => 255, 'null' => true])
+              ->addColumn('title', 'string', ['limit' => 255, 'null' => true])
+              ->addColumn('excerpt', 'string', ['limit' => 255, 'null' => true])
+              ->addColumn('url', 'string', ['limit' => 255, 'null' => true])
+              ->addColumn('posted', 'datetime', ['null' => true])
+              ->addColumn('visible', 'boolean', ['default' => false])
+              ->addColumn('source_ip', 'string', ['limit' => 20, 'null' => true])
+              ->addIndex(['visible'])
+              ->create();
     }
 }
