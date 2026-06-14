@@ -11,9 +11,6 @@ include_once __DIR__ . "/house.php";
 use Illuminate\Database\Capsule\Manager as DB;
 use OpenAustralia\TWFY\Models\Member as MemberModel;
 
-use Illuminate\Database\Capsule\Manager as DB;
-use OpenAustralia\TWFY\Models\Member as MemberModel;
-
 /**
  *
  */
