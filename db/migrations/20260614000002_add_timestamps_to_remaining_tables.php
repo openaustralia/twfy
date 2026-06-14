@@ -21,6 +21,7 @@ final class AddTimestampsToRemainingTables extends AbstractMigration
         'epobject',
         'gidredirect',
         'glossary',
+        'hansard',
         'indexbatch',
         'memberinfo',
         'mentions',
