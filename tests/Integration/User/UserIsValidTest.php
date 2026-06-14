@@ -5,7 +5,6 @@
  * Tests for THEUSER::isvalid() method.
  */
 
-
 use OpenAustralia\TWFY\Models\User as UserModel;
 
 /**
@@ -59,4 +58,5 @@ class UserIsValidTest extends TransactionalTestCase {
         $this->assertFalse(str_starts_with($upgradedHash, '$1$'));
         $this->assertTrue(password_verify($plaintextPassword, $upgradedHash));
     }
+
 }

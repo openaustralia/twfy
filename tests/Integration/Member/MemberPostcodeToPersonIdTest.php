@@ -5,7 +5,6 @@
  * Tests for MEMBER::postcode_to_person_id().
  */
 
-
 if (!function_exists('twfy_debug_timestamp')) {
 
     /**

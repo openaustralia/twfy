@@ -49,7 +49,7 @@ class UserAddTest extends TransactionalTestCase {
         $USER->add($details, false);
         $user_id = $USER->user_id();
 
-        // Load the user back from the database
+        // Load the user back from the database.
         $retrievedUser = new USER();
         $retrievedUser->init($user_id);
 
@@ -107,9 +107,9 @@ class UserAddTest extends TransactionalTestCase {
 
         $USER->add($details, false);
 
-        // The registration token should be set
+        // The registration token should be set.
         $this->assertNotEmpty($USER->registrationtoken);
-        // Token should be 22 characters as per the code comments
+        // Token should be 22 characters as per the code comments.
         $this->assertEquals(22, strlen($USER->registrationtoken));
     }
 
@@ -126,7 +126,7 @@ class UserAddTest extends TransactionalTestCase {
             'constituency' => 'Test',
             'url' => '',
             'password' => 'pass',
-            // Note: no status provided
+            // Note: no status provided.
         ];
 
         $USER->add($details, false);
@@ -169,7 +169,7 @@ class UserAddTest extends TransactionalTestCase {
     public function test_add_rejects_duplicate_email() {
         $this->markTestIncomplete('Duplicate email rejection is not currently enforced in USER::add().');
 
-        // Create first user
+        // Create first user.
         $USER1 = new USER();
         $details1 = [
             'firstname' => 'First',
@@ -181,7 +181,7 @@ class UserAddTest extends TransactionalTestCase {
         ];
         $USER1->add($details1, false);
 
-        // Try to create second user with same email
+        // Try to create second user with same email.
         $USER2 = new USER();
         $details2 = [
             'firstname' => 'Second',
@@ -194,7 +194,7 @@ class UserAddTest extends TransactionalTestCase {
 
         $result = $USER2->add($details2, false);
 
-        // Should fail due to unique constraint
+        // Should fail due to unique constraint.
         $this->assertFalse($result);
     }
 
@@ -227,9 +227,10 @@ class UserAddTest extends TransactionalTestCase {
             $result2 = $USER2->add($details2, false);
             $this->assertTrue($result2);
             $this->assertNotEmpty($USER2->user_id());
-            // Verify they have different IDs
+            // Verify they have different IDs.
             $this->assertNotEquals($USER1->user_id(), $USER2->user_id());
         }
+
     /**
      * Test user is not confirmed by default.
      */
@@ -253,6 +254,7 @@ class UserAddTest extends TransactionalTestCase {
 
         $this->assertFalse($retrievedUser->confirmed());
     }
+
     /**
      * Test registration IP is stored.
      */
@@ -274,7 +276,7 @@ class UserAddTest extends TransactionalTestCase {
         $retrievedUser = new USER();
         $retrievedUser->init($user_id);
 
-        // IP should be set to something
+        // IP should be set to something.
         $this->assertNotEmpty($retrievedUser->registrationip());
     }
 
@@ -300,7 +302,7 @@ class UserAddTest extends TransactionalTestCase {
         $retrievedUser = new USER();
         $retrievedUser->init($user_id);
 
-        // Password should be hashed, not plaintext
+        // Password should be hashed, not plaintext.
         $this->assertNotEquals($plainPassword, $retrievedUser->password());
         // Should start with $2 (bcrypt prefix)
         $this->assertStringStartsWith('$2', $retrievedUser->password());
@@ -330,7 +332,7 @@ class UserAddTest extends TransactionalTestCase {
         $retrievedUser->init($user_id);
 
         $regTime = $retrievedUser->registrationtime();
-        // Convert Carbon object to string if needed
+        // Convert Carbon object to string if needed.
         if (is_object($regTime)) {
             $regTime = $regTime->format('Y-m-d H:i:s');
         }
@@ -377,7 +379,7 @@ class UserAddTest extends TransactionalTestCase {
             'password' => 'pass',
         ];
 
-        // With confirmation_required=false, should still return true
+        // With confirmation_required=false, should still return true.
         $result = $USER->add($details, false);
 
         $this->assertTrue($result);

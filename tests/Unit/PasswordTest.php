@@ -5,7 +5,6 @@
  * Unit tests for password hashing and verification.
  */
 
-
 use PHPUnit\Framework\TestCase;
 
 /**

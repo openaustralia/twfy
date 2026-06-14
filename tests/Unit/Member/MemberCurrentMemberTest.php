@@ -5,7 +5,6 @@
  * Unit tests for MEMBER::current_member().
  */
 
-
 use PHPUnit\Framework\TestCase;
 
 /**

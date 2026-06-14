@@ -1,12 +1,5 @@
 <?php
 
-/**
- * @file
- * Eloquent model for bills table.
- *
- * Vim:sw=4:ts=4:et:nowrap.
- */
-
 namespace OpenAustralia\TWFY\Models;
 
 use Illuminate\Database\Eloquent\Model;
@@ -31,12 +24,12 @@ class Bills extends Model {
 
     public $timestamps = true;
 
-    // Cast boolean fields
+    // Cast boolean fields.
     protected $casts = [
         'lords' => 'bool',
     ];
 
-    // Fillable fields for mass assignment
+    // Fillable fields for mass assignment.
     protected $fillable = [
         'title',
         'url',

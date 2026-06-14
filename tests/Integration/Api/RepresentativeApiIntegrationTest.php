@@ -5,10 +5,10 @@
  * Integration tests for representative API endpoints.
  */
 
-
 use OpenAustralia\TWFY\Models\Member as MemberModel;
 
 if (!function_exists('member_full_name')) {
+
     function member_full_name($house, $title, $first_name, $last_name, $constituency) {
         $s = $first_name . ' ' . $last_name;
         if ($title) {
@@ -16,18 +16,24 @@ if (!function_exists('member_full_name')) {
         }
         return $s;
     }
+
 }
 
 if (!function_exists('get_http_var')) {
+
     function get_http_var(string $varname): string {
         return $_GET[$varname] ?? '';
     }
+
 }
 
 require_once BASEDIR . '/docs/api/api_functions.php';
 require_once BASEDIR . '/docs/api/api_getRepresentative.php';
 require_once BASEDIR . '/docs/api/api_getRepresentatives.php';
 
+/**
+ *
+ */
 class RepresentativeApiIntegrationTest extends TransactionalTestCase {
 
     /**
@@ -114,4 +120,5 @@ class RepresentativeApiIntegrationTest extends TransactionalTestCase {
         $this->assertFileDoesNotExist(BASEDIR . '/docs/api/api_getMP.php');
         $this->assertFileDoesNotExist(BASEDIR . '/docs/api/api_getMPs.php');
     }
+
 }

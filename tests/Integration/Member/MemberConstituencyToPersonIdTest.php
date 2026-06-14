@@ -5,17 +5,19 @@
  * Integration tests for MEMBER::constituency_to_person_id().
  */
 
-
 use OpenAustralia\TWFY\Models\Member as MemberModel;
 
+/**
+ *
+ */
 class MemberConstituencyToPersonIdTest extends TransactionalTestCase {
 
     private function insertTestMember(
-        int $memberId,
-        int $personId,
-        string $constituency,
-        string $leftReason,
-        string $leftHouse
+      int $memberId,
+      int $personId,
+      string $constituency,
+      string $leftReason,
+      string $leftHouse,
     ): void {
         MemberModel::query()->insert([
             'member_id' => $memberId,
@@ -68,9 +70,11 @@ class MemberConstituencyToPersonIdTest extends TransactionalTestCase {
     public function test_constituency_to_person_id_returns_false_for_empty_constituency(): void {
         // Create a stub for $PAGE to avoid error_message() errors.
         $PAGE = new class {
+
             public function error_message($msg) {
                 // Stub - do nothing.
             }
+
         };
         $GLOBALS['PAGE'] = $PAGE;
 
@@ -79,4 +83,5 @@ class MemberConstituencyToPersonIdTest extends TransactionalTestCase {
         // Empty string should return false early.
         $this->assertFalse($member->constituency_to_person_id(''));
     }
+
 }

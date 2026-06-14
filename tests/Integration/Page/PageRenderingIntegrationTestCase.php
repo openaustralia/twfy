@@ -8,7 +8,6 @@
  * avoiding symbol conflicts between the test bootstrap and the application.
  */
 
-
 use PHPUnit\Framework\TestCase;
 
 /**
