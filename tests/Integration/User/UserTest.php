@@ -5,8 +5,8 @@
  * Unit tests for user.php classes (USER and THEUSER).
  */
 
-require_once __DIR__ . '/bootstrap.php';
-require_once __DIR__ . '/../www/includes/easyparliament/user.php';
+require_once __DIR__ . '/../../bootstrap.php';
+require_once __DIR__ . '/../../../www/includes/easyparliament/user.php';
 
 use PHPUnit\Framework\TestCase;
 

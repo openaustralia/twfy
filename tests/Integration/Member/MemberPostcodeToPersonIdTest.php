@@ -5,7 +5,7 @@
  * Tests for MEMBER::postcode_to_person_id().
  */
 
-require_once __DIR__ . '/bootstrap.php';
+require_once __DIR__ . '/../../bootstrap.php';
 
 if (!function_exists('twfy_debug_timestamp')) {
 

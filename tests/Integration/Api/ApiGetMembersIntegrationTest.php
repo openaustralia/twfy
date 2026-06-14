@@ -5,7 +5,7 @@
  * Integration tests for api_getMembers.php API functions requiring database.
  */
 
-require_once __DIR__ . '/bootstrap.php';
+require_once __DIR__ . '/../../bootstrap.php';
 
 use PHPUnit\Framework\TestCase;
 
