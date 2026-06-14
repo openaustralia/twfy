@@ -13,7 +13,7 @@ SONAR_SCANNER ?= sonar-scanner
 XAPIANDB ?= /app/shared/search/searchdb
 XAPIANDB_LASTUPDATED ?= $(XAPIANDB)/../searchdb-lastupdated
 
-.PHONY: help docker-build docker-run docker xapian-index-docker lint lint-perl lint-perl-ci lint-php lint-php-ci phpcs phpcs-ci phpcs-verbose phpcs-sonar sonar-ci dependencies install setup test test-all install-xdebug test-coverage test-coverage-docker docker-test-db-create docker-test-db-migrate
+.PHONY: help docker-build docker-run docker xapian-index-docker lint lint-perl lint-perl-ci lint-php lint-php-ci phpcs phpcs-ci phpcs-verbose phpcs-sonar sonar-ci dependencies install setup test test-all install-xdebug test-coverage test-coverage-docker docker-test-db-create docker-test-db-migrate docker-db-shell docker-test-db-shell
 
 help:
 	@echo "Available targets:"
@@ -25,6 +25,8 @@ help:
 	@echo "  docker-db-seed [SEEDER=<Name>]      Run Phinx seeders against the docker mysql (all, or a specific one)"
 	@echo "  docker-dump-schema                  Dump docker mysql schema (no data) to db/schema.sql"
 	@echo "  docker-test-db-migrate              Run pending Phinx migrations against the test DB"
+	@echo "  docker-db-shell                     Open interactive MySQL shell for the dev DB"
+	@echo "  docker-test-db-shell                Open interactive MySQL shell for the test DB"
 	@echo "  xapian-index-docker                Run Xapian indexing in Docker"
 	@echo "  help                                Output this help"
 	@echo "  lint                                Run lint-php and lint-perl on the www and scripts directories"
@@ -124,6 +126,15 @@ docker-test-db-create:
 
 docker-test-db-migrate:
 	DB_HOST=$(TEST_DB_HOST) DB_USER=$(TEST_DB_USER) DB_PASSWORD=$(TEST_DB_PASSWORD) DB_NAME=$(TEST_DB_NAME) ./vendor/bin/phinx migrate -c phinx.php
+
+docker-db-shell:
+	docker compose up -d mysql
+	docker compose exec mysql mysql -u$(TEST_DB_USER) -p$(TEST_DB_PASSWORD) -h mysql $(DEV_DB_NAME)
+
+docker-test-db-shell:
+	docker compose up -d mysql
+	docker compose exec mysql mysql -u$(TEST_DB_USER) -p$(TEST_DB_PASSWORD) -h mysql $(TEST_DB_NAME)
+
 xapian-index-docker:
 	docker compose up -d
 	docker compose run --rm \
