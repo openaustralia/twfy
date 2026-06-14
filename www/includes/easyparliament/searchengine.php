@@ -48,6 +48,7 @@ if (defined('XAPIANDB') && XAPIANDB) {
 global $xapiandb;
 
 use Illuminate\Database\Capsule\Manager as DB;
+use OpenAustralia\TWFY\Models\Hansard;
 use OpenAustralia\TWFY\Models\Member as MemberModel;
 
 /**
@@ -594,12 +595,12 @@ function search_by_usage($search, $house = 0) {
     // Fetch all the speakers of the results, count them up and get min/max date usage.
     $speaker_count = [];
 
-    $q = parlDBQuery('SELECT gid, speaker_id, hdate FROM hansard WHERE gid IN ?', $gids);
-    for ($n = 0; $n < $q->rows(); $n++) {
-        $gid = $q->field($n, 'gid');
+    $rows = Hansard::whereIn('gid', $gids)->get(['gid', 'speaker_id', 'hdate']);
+    foreach ($rows as $row) {
+        $gid = $row->gid;
         // This is member ID.
-        $speaker_id = $q->field($n, 'speaker_id');
-        $hdate = $q->field($n, 'hdate');
+        $speaker_id = $row->speaker_id;
+        $hdate = $row->hdate->format('Y-m-d');
         if (!isset($speaker_count[$speaker_id])) {
             $speaker_count[$speaker_id] = 0;
             $maxdate[$speaker_id] = '1001-01-01';
