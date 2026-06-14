@@ -121,4 +121,52 @@ class RepresentativeApiIntegrationTest extends TransactionalTestCase {
         $this->assertFileDoesNotExist(BASEDIR . '/docs/api/api_getMPs.php');
     }
 
+    public function test_getRepresentative_id_returns_member_by_person_id(): void {
+        ob_start();
+        api_getRepresentative_id($this->fixturePersonId);
+        $raw = ob_get_clean();
+
+        $decoded = unserialize($raw, ['allowed_classes' => false]);
+        $this->assertIsArray($decoded);
+        $this->assertNotEmpty($decoded);
+        $this->assertSame($this->fixturePersonId, (int) $decoded[0]['person_id']);
+    }
+
+    public function test_getRepresentatives_search_finds_member_by_name(): void {
+        ob_start();
+        api_getRepresentatives_search('Tx Representative');
+        $raw = ob_get_clean();
+
+        $decoded = unserialize($raw, ['allowed_classes' => false]);
+        $this->assertIsArray($decoded);
+
+        $personIds = array_map(fn($r) => (int) $r['person_id'], $decoded);
+        $this->assertContains($this->fixturePersonId, $personIds);
+    }
+
+    public function test_getRepresentatives_returns_current_members(): void {
+        ob_start();
+        api_getRepresentatives();
+        $raw = ob_get_clean();
+
+        $decoded = unserialize($raw, ['allowed_classes' => false]);
+        $this->assertIsArray($decoded);
+
+        $personIds = array_map(fn($r) => (int) $r['person_id'], $decoded);
+        $this->assertContains($this->fixturePersonId, $personIds);
+    }
+
+    public function test_getMembers_state_finds_member_by_constituency(): void {
+        ob_start();
+        api_getMembers_state(HOUSE::REPRESENTATIVES, $this->fixtureConstituency);
+        $raw = ob_get_clean();
+
+        $decoded = unserialize($raw, ['allowed_classes' => false]);
+        $this->assertIsArray($decoded);
+        $this->assertNotEmpty($decoded);
+
+        $personIds = array_map(fn($r) => (int) $r['person_id'], $decoded);
+        $this->assertContains($this->fixturePersonId, $personIds);
+    }
+
 }
