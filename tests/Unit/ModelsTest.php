@@ -13,6 +13,21 @@ use OpenAustralia\TWFY\Models\SearchQueryLog;
 use OpenAustralia\TWFY\Models\User;
 use OpenAustralia\TWFY\Models\Uservotes;
 use OpenAustralia\TWFY\Models\PostcodeLookup;
+use OpenAustralia\TWFY\Models\Alert;
+use OpenAustralia\TWFY\Models\Anonvote;
+use OpenAustralia\TWFY\Models\ApiKey;
+use OpenAustralia\TWFY\Models\ApiStat;
+use OpenAustralia\TWFY\Models\Consinfo;
+use OpenAustralia\TWFY\Models\Editqueue;
+use OpenAustralia\TWFY\Models\Gidredirect;
+use OpenAustralia\TWFY\Models\Glossary;
+use OpenAustralia\TWFY\Models\Indexbatch;
+use OpenAustralia\TWFY\Models\Memberinfo;
+use OpenAustralia\TWFY\Models\Mention;
+use OpenAustralia\TWFY\Models\PbcMember;
+use OpenAustralia\TWFY\Models\Personinfo;
+use OpenAustralia\TWFY\Models\Title;
+use OpenAustralia\TWFY\Models\VideoTimestamp;
 
 /**
  *
@@ -61,9 +76,9 @@ class ModelsTest extends TestCase {
         $this->assertSame('report_id', $model->getKeyName());
     }
 
-    public function test_commentreport_no_timestamps(): void {
+    public function test_commentreport_has_timestamps(): void {
         $model = new Commentreport();
-        $this->assertFalse($model->usesTimestamps());
+        $this->assertTrue($model->usesTimestamps());
     }
 
     // --- Comments ---
@@ -125,9 +140,9 @@ class ModelsTest extends TestCase {
         $this->assertSame('epobject_id', $model->getKeyName());
     }
 
-    public function test_epobject_no_timestamps(): void {
+    public function test_epobject_has_timestamps(): void {
         $model = new Epobject();
-        $this->assertFalse($model->usesTimestamps());
+        $this->assertTrue($model->usesTimestamps());
     }
 
     public function test_epobject_fillable(): void {
@@ -153,9 +168,9 @@ class ModelsTest extends TestCase {
         $this->assertFalse($model->getIncrementing());
     }
 
-    public function test_hansard_no_timestamps(): void {
+    public function test_hansard_has_timestamps(): void {
         $model = new Hansard();
-        $this->assertFalse($model->usesTimestamps());
+        $this->assertTrue($model->usesTimestamps());
     }
 
     public function test_hansard_fillable(): void {
@@ -204,9 +219,9 @@ class ModelsTest extends TestCase {
         $this->assertSame('moffice_id', $model->getKeyName());
     }
 
-    public function test_moffice_no_timestamps(): void {
+    public function test_moffice_has_timestamps(): void {
         $model = new Moffice();
-        $this->assertFalse($model->usesTimestamps());
+        $this->assertTrue($model->usesTimestamps());
     }
 
     public function test_moffice_fillable(): void {
@@ -232,9 +247,9 @@ class ModelsTest extends TestCase {
         $this->assertSame('search_query_log', $model->getTable());
     }
 
-    public function test_search_query_log_no_timestamps(): void {
+    public function test_search_query_log_has_timestamps(): void {
         $model = new SearchQueryLog();
-        $this->assertFalse($model->usesTimestamps());
+        $this->assertTrue($model->usesTimestamps());
     }
 
     public function test_search_query_log_fillable(): void {
@@ -312,9 +327,9 @@ class ModelsTest extends TestCase {
         $this->assertSame('postcode_lookup', $model->getTable());
     }
 
-    public function test_postcode_lookup_has_no_timestamps(): void {
+    public function test_postcode_lookup_has_timestamps(): void {
         $model = new PostcodeLookup();
-        $this->assertFalse($model->usesTimestamps());
+        $this->assertTrue($model->usesTimestamps());
     }
 
     public function test_postcode_lookup_is_not_incrementing(): void {
