@@ -1,12 +1,5 @@
 <?php
 
-/**
- * @file
- * Eloquent model for hansard table.
- *
- * Vim:sw=4:ts=4:et:nowrap.
- */
-
 namespace OpenAustralia\TWFY\Models;
 
 use Illuminate\Database\Eloquent\Model;
@@ -37,19 +30,19 @@ class Hansard extends Model {
 
     protected $primaryKey = 'epobject_id';
 
-    // Primary key is not auto-increment
+    // Primary key is not auto-increment.
     public $incrementing = false;
 
     public $timestamps = false;
 
-    // Cast date fields
+    // Cast date fields.
     protected $casts = [
         'hdate' => 'date',
         'created' => 'datetime',
         'modified' => 'datetime',
     ];
 
-    // Fillable fields for mass assignment
+    // Fillable fields for mass assignment.
     protected $fillable = [
         'epobject_id',
         'gid',

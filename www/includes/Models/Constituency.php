@@ -1,12 +1,5 @@
 <?php
 
-/**
- * @file
- * Eloquent model for constituency table.
- *
- * Vim:sw=4:ts=4:et:nowrap.
- */
-
 namespace OpenAustralia\TWFY\Models;
 
 use Illuminate\Database\Eloquent\Model;
@@ -28,14 +21,14 @@ class Constituency extends Model {
 
     public $timestamps = true;
 
-    // Cast date fields
+    // Cast date fields.
     protected $casts = [
         'from_date' => 'date',
         'to_date' => 'date',
         'main_name' => 'bool',
     ];
 
-    // Fillable fields for mass assignment
+    // Fillable fields for mass assignment.
     protected $fillable = [
         'name',
         'main_name',

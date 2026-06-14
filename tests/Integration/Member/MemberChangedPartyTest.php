@@ -5,7 +5,6 @@
  * Tests for changed-party handling in MEMBER construction.
  */
 
-
 use OpenAustralia\TWFY\Models\Member as MemberModel;
 
 /**

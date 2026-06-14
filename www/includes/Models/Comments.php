@@ -1,12 +1,5 @@
 <?php
 
-/**
- * @file
- * Eloquent model for comments table.
- *
- * Vim:sw=4:ts=4:et:nowrap.
- */
-
 namespace OpenAustralia\TWFY\Models;
 
 use Illuminate\Database\Eloquent\Model;
@@ -35,14 +28,14 @@ class Comments extends Model {
 
     protected $createdAtColumn = 'posted';
 
-    // Cast date fields
+    // Cast date fields.
     protected $casts = [
         'posted' => 'datetime',
         'modflagged' => 'datetime',
         'visible' => 'bool',
     ];
 
-    // Fillable fields for mass assignment
+    // Fillable fields for mass assignment.
     protected $fillable = [
         'user_id',
         'epobject_id',

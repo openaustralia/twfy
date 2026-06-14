@@ -5,7 +5,6 @@
  * Tests for MEMBER::future_mps() method.
  */
 
-
 use OpenAustralia\TWFY\Models\Member as MemberModel;
 
 /**
@@ -43,7 +42,7 @@ class MemberFutureMpsTest extends TransactionalTestCase {
      * Test that future_mps() returns MPs who entered after current member.
      */
     public function test_future_mps_returns_later_members() {
-        // Insert current member
+        // Insert current member.
         $this->insertTestMember(99001, 'Alice', 'Current', 'TestVille', '2010-01-01');
 
         // Insert future MPs (entered after current member)
@@ -53,14 +52,14 @@ class MemberFutureMpsTest extends TransactionalTestCase {
         // Insert past MPs (entered before current member)
         $this->insertTestMember(99004, 'Diana', 'Past', 'TestVille', '2005-01-01', '2010-01-01');
 
-        // Create MEMBER instance for Alice
+        // Create MEMBER instance for Alice.
         $member = new MEMBER(['person_id' => 99001]);
         $this->assertTrue($member->valid);
 
-        // Get future MPs
+        // Get future MPs.
         $output = $member->future_mps();
 
-        // Output should contain links to Bob and Charlie
+        // Output should contain links to Bob and Charlie.
         $this->assertStringContainsString('Bob', $output);
         $this->assertStringContainsString('Future1', $output);
         $this->assertStringContainsString('Charlie', $output);
@@ -74,13 +73,13 @@ class MemberFutureMpsTest extends TransactionalTestCase {
      * Test that future_mps() filters by constituency.
      */
     public function test_future_mps_filters_by_constituency() {
-        // Insert current member
+        // Insert current member.
         $this->insertTestMember(99010, 'Alice', 'TestA', 'Constituency1', '2010-01-01');
 
-        // Insert future MP in same constituency
+        // Insert future MP in same constituency.
         $this->insertTestMember(99011, 'Bob', 'TestB', 'Constituency1', '2015-01-01');
 
-        // Insert future MP in different constituency
+        // Insert future MP in different constituency.
         $this->insertTestMember(99012, 'Charlie', 'TestC', 'Constituency2', '2015-01-01');
 
         $member = new MEMBER(['person_id' => 99010]);
@@ -99,10 +98,10 @@ class MemberFutureMpsTest extends TransactionalTestCase {
      * Test that future_mps() excludes the current member.
      */
     public function test_future_mps_excludes_current_member() {
-        // Insert current member
+        // Insert current member.
         $this->insertTestMember(99020, 'Alice', 'Current', 'TestVille', '2010-01-01');
 
-        // Insert another member with same name but different person_id
+        // Insert another member with same name but different person_id.
         $this->insertTestMember(99021, 'Alice', 'Current', 'TestVille', '2015-01-01');
 
         $member = new MEMBER(['person_id' => 99020]);
@@ -119,7 +118,7 @@ class MemberFutureMpsTest extends TransactionalTestCase {
      */
     public function test_future_mps_returns_empty_for_non_house_of_commons() {
         // Insert a member who entered the House of Commons then left
-        // This should have no entered_house[1] and thus return empty
+        // This should have no entered_house[1] and thus return empty.
         MemberModel::query()->insert([
             'member_id' => 90010,
             'person_id' => 99030,
@@ -140,7 +139,7 @@ class MemberFutureMpsTest extends TransactionalTestCase {
 
         $output = $member->future_mps();
 
-        // Should return empty string since member not in House of Commons
+        // Should return empty string since member not in House of Commons.
         $this->assertSame('', $output);
     }
 
@@ -148,16 +147,16 @@ class MemberFutureMpsTest extends TransactionalTestCase {
      * Test future_mps() output format contains expected HTML structure.
      */
     public function test_future_mps_output_format() {
-        // Insert current member
+        // Insert current member.
         $this->insertTestMember(99040, 'Alice', 'Current', 'TestVille', '2010-01-01');
 
-        // Insert future MP
+        // Insert future MP.
         $this->insertTestMember(99041, 'Bob', 'Future', 'TestVille', '2015-01-01');
 
         $member = new MEMBER(['person_id' => 99040]);
         $output = $member->future_mps();
 
-        // Check for expected HTML structure
+        // Check for expected HTML structure.
         $this->assertStringContainsString('<li>', $output);
         $this->assertStringContainsString('</li>', $output);
         $this->assertStringContainsString('<a href=', $output);
@@ -168,7 +167,7 @@ class MemberFutureMpsTest extends TransactionalTestCase {
      * Test future_mps() with no future MPs returns empty string.
      */
     public function test_future_mps_no_future_members() {
-        // Insert only one member
+        // Insert only one member.
         $this->insertTestMember(99050, 'Alice', 'Only', 'TestVille', '2010-01-01');
 
         $member = new MEMBER(['person_id' => 99050]);
@@ -184,17 +183,17 @@ class MemberFutureMpsTest extends TransactionalTestCase {
      * Test future_mps() returns members in ascending order of entered_house.
      */
     public function test_future_mps_ordered_by_entered_house() {
-        // Insert current member
+        // Insert current member.
         $this->insertTestMember(99060, 'Alice', 'Current', 'TestVille', '2010-01-01');
 
-        // Insert future MPs in non-chronological order
+        // Insert future MPs in non-chronological order.
         $this->insertTestMember(99062, 'Charlie', 'Third', 'TestVille', '2020-01-01');
         $this->insertTestMember(99061, 'Bob', 'Second', 'TestVille', '2015-01-01');
 
         $member = new MEMBER(['person_id' => 99060]);
         $output = $member->future_mps();
 
-        // Bob should appear before Charlie in output
+        // Bob should appear before Charlie in output.
         $pos_bob = strpos($output, 'Bob');
         $pos_charlie = strpos($output, 'Charlie');
 
@@ -202,4 +201,5 @@ class MemberFutureMpsTest extends TransactionalTestCase {
         $this->assertNotFalse($pos_charlie);
         $this->assertLessThan($pos_charlie, $pos_bob);
     }
+
 }

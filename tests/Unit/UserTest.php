@@ -27,7 +27,7 @@ class UserTest extends TestCase {
      */
     public function test_id_exists_returns_bool(): void {
         $user = new USER();
-        // Just verify the method exists and returns a boolean
+        // Just verify the method exists and returns a boolean.
         $result = $user->id_exists(999999);
         $this->assertIsBool($result);
     }

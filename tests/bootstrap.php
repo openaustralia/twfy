@@ -4,31 +4,40 @@
  * @file
  */
 
+use Illuminate\Database\Capsule\Manager;
+use PHPUnit\Framework\TestCase;
+
 /**
  * Stub functions that mysql.php depends on at include-time and at runtime.
  * These are replaced by real implementations in the live application.
  */
 if (!function_exists('twfy_debug')) {
+
     function twfy_debug(string $type, string $msg): void {
     }
+
 }
 
 /**
  *
  */
 if (!function_exists('getmicrotime')) {
+
     function getmicrotime(): float {
         return microtime(true);
     }
+
 }
 
 /**
  *
  */
 if (!function_exists('get_cookie_var')) {
+
     function get_cookie_var(string $varname): string {
         return $_COOKIE[$varname] ?? '';
     }
+
 }
 
 if (!defined('CONSTITUENCY_COOKIE')) {
@@ -73,6 +82,7 @@ if (!defined('LONGDATEFORMAT')) {
 }
 
 if (!function_exists('format_date')) {
+
     function format_date($date, $format) {
         $timestamp = strtotime((string) $date);
         if ($timestamp === false) {
@@ -80,6 +90,7 @@ if (!function_exists('format_date')) {
         }
         return date((string) $format, $timestamp);
     }
+
 }
 
 require_once INCLUDESPATH . 'mysql.php';
@@ -102,6 +113,7 @@ require_once INCLUDESPATH . 'eloquent.php';
  * Returns the shared ParlDB instance, with test override support.
  */
 if (!function_exists('getParlDB')) {
+
     function getParlDB() {
         global $parldb_override;
         if ($parldb_override !== null) {
@@ -116,15 +128,18 @@ if (!function_exists('getParlDB')) {
 
         return $db;
     }
+
 }
 
 /**
  * Convenience wrapper for getParlDB()->query().
  */
 if (!function_exists('parlDBQuery')) {
+
     function parlDBQuery($sql, ...$params) {
         return getParlDB()->query($sql, ...$params);
     }
+
 }
 
 require_once EASYPARLIAMENTPATH . 'member.php';
@@ -256,7 +271,7 @@ class TestDatabase {
  * test data ever persists to the database.  The connection must be the same
  * mysqli handle used throughout the request (getSharedTestConnection()).
  */
-abstract class TransactionalTestCase extends \PHPUnit\Framework\TestCase {
+abstract class TransactionalTestCase extends TestCase {
 
     /**
      * Override in a subclass to disable mysqli transaction wrapping.
@@ -285,13 +300,13 @@ abstract class TransactionalTestCase extends \PHPUnit\Framework\TestCase {
         // MEMBER and other code paths now use Eloquent for some queries,
         // so start a transaction there too to keep tests isolated.
         if ($this->useEloquentTransaction()) {
-            \Illuminate\Database\Capsule\Manager::connection()->beginTransaction();
+            Manager::connection()->beginTransaction();
         }
     }
 
     protected function tearDown(): void {
         if ($this->useEloquentTransaction()) {
-            $eloquentConnection = \Illuminate\Database\Capsule\Manager::connection();
+            $eloquentConnection = Manager::connection();
             if ($eloquentConnection->transactionLevel() > 0) {
                 $eloquentConnection->rollBack();
             }

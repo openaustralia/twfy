@@ -7,10 +7,13 @@
  * These methods only read from $this->reasons and require no database.
  */
 
-
+use PHPUnit\Framework\TestCase;
 use OpenAustralia\TWFY\Models\Member as MemberModel;
 
-class MemberReasonTextTest extends \PHPUnit\Framework\TestCase {
+/**
+ *
+ */
+class MemberReasonTextTest extends TestCase {
 
     private function makeMemberWithoutConstructor(): MEMBER {
         $reflection = new \ReflectionClass(MEMBER::class);

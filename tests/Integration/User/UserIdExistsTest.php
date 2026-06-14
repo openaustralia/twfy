@@ -5,7 +5,6 @@
  * Tests for USER::id_exists() method.
  */
 
-
 use OpenAustralia\TWFY\Models\User as UserModel;
 
 /**

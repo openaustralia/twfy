@@ -10,11 +10,10 @@ use PHPUnit\Framework\TestCase;
  * (success, rows, field, row, insert_id, affected_rows) by pre-populating the
  * public properties that query() would normally set, so no database is needed.
  */
-class MySQLQueryTest extends TestCase
-{
-    private function makeQuery(): MySQLQuery
-    {
-        // null connection is fine — constructor just stores it, and none of the
+class MySQLQueryTest extends TestCase {
+
+    private function makeQuery(): MySQLQuery {
+        // Null connection is fine — constructor just stores it, and none of the
         // accessor methods use it.
         return new MySQLQuery(null);
     }
@@ -23,26 +22,22 @@ class MySQLQueryTest extends TestCase
     // Default state
     // -------------------------------------------------------------------------
 
-    public function test_success_is_true_by_default(): void
-    {
+    public function test_success_is_true_by_default(): void {
         $q = $this->makeQuery();
         $this->assertTrue($q->success());
     }
 
-    public function test_rows_is_null_by_default(): void
-    {
+    public function test_rows_is_null_by_default(): void {
         $q = $this->makeQuery();
         $this->assertNull($q->rows());
     }
 
-    public function test_insert_id_is_null_by_default(): void
-    {
+    public function test_insert_id_is_null_by_default(): void {
         $q = $this->makeQuery();
         $this->assertNull($q->insert_id());
     }
 
-    public function test_affected_rows_is_null_by_default(): void
-    {
+    public function test_affected_rows_is_null_by_default(): void {
         $q = $this->makeQuery();
         $this->assertNull($q->affected_rows());
     }
@@ -51,15 +46,13 @@ class MySQLQueryTest extends TestCase
     // field()
     // -------------------------------------------------------------------------
 
-    public function test_field_returns_empty_string_when_rows_is_zero(): void
-    {
+    public function test_field_returns_empty_string_when_rows_is_zero(): void {
         $q = $this->makeQuery();
         $q->rows = 0;
         $this->assertSame('', $q->field(0, 'name'));
     }
 
-    public function test_field_returns_correct_string_value(): void
-    {
+    public function test_field_returns_correct_string_value(): void {
         $q = $this->makeQuery();
         $q->rows = 1;
         $q->fieldnames_byname = ['name' => 0, 'email' => 1];
@@ -69,8 +62,7 @@ class MySQLQueryTest extends TestCase
         $this->assertSame('alice@example.com', $q->field(0, 'email'));
     }
 
-    public function test_field_returns_correct_value_from_second_row(): void
-    {
+    public function test_field_returns_correct_value_from_second_row(): void {
         $q = $this->makeQuery();
         $q->rows = 2;
         $q->fieldnames_byname = ['name' => 0];
@@ -83,8 +75,7 @@ class MySQLQueryTest extends TestCase
     // row()
     // -------------------------------------------------------------------------
 
-    public function test_row_returns_associative_array(): void
-    {
+    public function test_row_returns_associative_array(): void {
         $q = $this->makeQuery();
         $q->rows = 1;
         $q->fieldnames_byid = [0 => 'id', 1 => 'name'];
@@ -94,8 +85,7 @@ class MySQLQueryTest extends TestCase
         $this->assertSame(['id' => '42', 'name' => 'Alice'], $q->row(0));
     }
 
-    public function test_row_returns_correct_row_by_index(): void
-    {
+    public function test_row_returns_correct_row_by_index(): void {
         $q = $this->makeQuery();
         $q->rows = 2;
         $q->fieldnames_byid = [0 => 'name'];
@@ -105,15 +95,13 @@ class MySQLQueryTest extends TestCase
         $this->assertSame(['name' => 'Bob'], $q->row(1));
     }
 
-    public function test_row_returns_empty_array_when_not_successful(): void
-    {
+    public function test_row_returns_empty_array_when_not_successful(): void {
         $q = $this->makeQuery();
         $q->success = false;
         $this->assertSame([], $q->row(0));
     }
 
-    public function test_row_returns_empty_array_when_no_rows(): void
-    {
+    public function test_row_returns_empty_array_when_no_rows(): void {
         $q = $this->makeQuery();
         $q->rows = 0;
         $this->assertSame([], $q->row(0));
@@ -123,17 +111,16 @@ class MySQLQueryTest extends TestCase
     // insert / affected (non-SELECT results)
     // -------------------------------------------------------------------------
 
-    public function test_insert_id_returns_set_value(): void
-    {
+    public function test_insert_id_returns_set_value(): void {
         $q = $this->makeQuery();
         $q->insert_id = 99;
         $this->assertSame(99, $q->insert_id());
     }
 
-    public function test_affected_rows_returns_set_value(): void
-    {
+    public function test_affected_rows_returns_set_value(): void {
         $q = $this->makeQuery();
         $q->affected_rows = 3;
         $this->assertSame(3, $q->affected_rows());
     }
+
 }

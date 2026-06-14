@@ -5,7 +5,6 @@
  * Tests for MEMBER::previous_mps() method.
  */
 
-
 use OpenAustralia\TWFY\Models\Member as MemberModel;
 
 /**
@@ -53,14 +52,14 @@ class MemberPreviousMpsTest extends TransactionalTestCase {
         // Insert future MP (entered after current member)
         $this->insertTestMember(99104, 'Diana', 'Later', 'TestVille', '2020-01-01');
 
-        // Create MEMBER instance for Alice
+        // Create MEMBER instance for Alice.
         $member = new MEMBER(['person_id' => 99101]);
         $this->assertTrue($member->valid);
 
-        // Get previous MPs
+        // Get previous MPs.
         $output = $member->previous_mps();
 
-        // Output should contain links to Bob and Charlie
+        // Output should contain links to Bob and Charlie.
         $this->assertStringContainsString('Bob', $output);
         $this->assertStringContainsString('Earlier1', $output);
         $this->assertStringContainsString('Charlie', $output);
@@ -74,13 +73,13 @@ class MemberPreviousMpsTest extends TransactionalTestCase {
      * Test that previous_mps() filters by constituency.
      */
     public function test_previous_mps_filters_by_constituency() {
-        // Insert current member
+        // Insert current member.
         $this->insertTestMember(99110, 'Alice', 'Current', 'Constituency1', '2015-01-01');
 
-        // Insert previous MP in same constituency
+        // Insert previous MP in same constituency.
         $this->insertTestMember(99111, 'Bob', 'Earlier', 'Constituency1', '2010-01-01', '2015-01-01');
 
-        // Insert previous MP in different constituency
+        // Insert previous MP in different constituency.
         $this->insertTestMember(99112, 'Charlie', 'Earlier', 'Constituency2', '2010-01-01', '2015-01-01');
 
         $member = new MEMBER(['person_id' => 99110]);
@@ -102,7 +101,7 @@ class MemberPreviousMpsTest extends TransactionalTestCase {
         // Insert current member (entered 2015)
         $this->insertTestMember(99120, 'Alice', 'Current', 'TestVille', '2015-01-01');
 
-        // Insert another member with same name but different person_id and earlier entry
+        // Insert another member with same name but different person_id and earlier entry.
         $this->insertTestMember(99121, 'Alice', 'Current', 'TestVille', '2010-01-01', '2015-01-01');
 
         $member = new MEMBER(['person_id' => 99120]);
@@ -118,7 +117,7 @@ class MemberPreviousMpsTest extends TransactionalTestCase {
      * Test that previous_mps() returns empty string when member is not in House of Commons.
      */
     public function test_previous_mps_returns_empty_for_non_house_of_commons() {
-        // Insert a member with no entered_house data for House 1
+        // Insert a member with no entered_house data for House 1.
         $member = new MEMBER(['person_id' => 99130]);
         $this->assertFalse($member->valid);
 
@@ -130,10 +129,10 @@ class MemberPreviousMpsTest extends TransactionalTestCase {
      * Test that previous_mps() orders by entered_house DESC (most recent first).
      */
     public function test_previous_mps_ordered_by_entered_house_desc() {
-        // Insert current member
+        // Insert current member.
         $this->insertTestMember(99140, 'Current', 'Alice', 'TestVille', '2020-01-01');
 
-        // Insert previous MPs in non-chronological order
+        // Insert previous MPs in non-chronological order.
         $this->insertTestMember(99141, 'Earliest', 'Bob', 'TestVille', '2000-01-01', '2005-01-01');
         $this->insertTestMember(99142, 'Middle', 'Charlie', 'TestVille', '2010-01-01', '2015-01-01');
         $this->insertTestMember(99143, 'Latest', 'Diana', 'TestVille', '2015-01-01', '2020-01-01');
@@ -171,7 +170,7 @@ class MemberPreviousMpsTest extends TransactionalTestCase {
 
         $output = $member->previous_mps();
 
-        // Should be empty string when no previous members
+        // Should be empty string when no previous members.
         $this->assertSame('', $output);
     }
 
@@ -179,7 +178,7 @@ class MemberPreviousMpsTest extends TransactionalTestCase {
      * Test that previous_mps() handles multiple terms for same person correctly.
      */
     public function test_previous_mps_handles_multiple_terms() {
-        // Insert current member
+        // Insert current member.
         $this->insertTestMember(99160, 'Current', 'Alice', 'TestVille', '2020-01-01');
 
         // Insert previous MP with multiple terms (using MAX to get most recent entry)
