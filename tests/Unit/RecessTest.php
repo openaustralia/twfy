@@ -2,7 +2,7 @@
 
 use PHPUnit\Framework\TestCase;
 
-require_once __DIR__ . '/../../www/includes/easyparliament/recess.php';
+require_once INCLUDESPATH . 'easyparliament/recess.php';
 
 /**
  * Tests for recess_prettify.

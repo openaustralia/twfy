@@ -2,7 +2,7 @@
 
 use PHPUnit\Framework\TestCase;
 
-require_once __DIR__ . '/../../www/includes/easyparliament/search.php';
+require_once INCLUDESPATH . 'easyparliament/search.php';
 
 /**
  * Tests for highlighted_html.

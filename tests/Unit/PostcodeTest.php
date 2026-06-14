@@ -6,7 +6,7 @@
  */
 
 require_once __DIR__ . '/../bootstrap.php';
-require_once __DIR__ . '/../../www/includes/postcode.php';
+require_once INCLUDESPATH . 'postcode.php';
 
 use PHPUnit\Framework\TestCase;
 
