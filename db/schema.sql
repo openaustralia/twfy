@@ -64,32 +64,10 @@ CREATE TABLE `bills` (
   `lords` tinyint(1) NOT NULL DEFAULT '0',
   `session` varchar(50) NOT NULL DEFAULT '',
   `standingprefix` varchar(255) NOT NULL DEFAULT '',
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   KEY `title` (`title`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `campaigners` (
-  `campaigner_id` mediumint unsigned NOT NULL AUTO_INCREMENT,
-  `email` varchar(255) NOT NULL DEFAULT '',
-  `postcode` varchar(255) NOT NULL DEFAULT '',
-  `constituency` varchar(100) NOT NULL DEFAULT '',
-  `token` varchar(255) NOT NULL DEFAULT '',
-  `confirmed` tinyint(1) NOT NULL DEFAULT '0',
-  `signup_date` datetime NOT NULL,
-  PRIMARY KEY (`campaigner_id`),
-  KEY `email` (`email`),
-  KEY `confirmed` (`confirmed`),
-  KEY `constituency` (`constituency`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `campaigners_sent_email` (
-  `campaigner_id` int NOT NULL,
-  `email_name` varchar(100) NOT NULL,
-  UNIQUE KEY `campaigner_id` (`campaigner_id`,`email_name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -122,6 +100,7 @@ CREATE TABLE `comments` (
   `modflagged` datetime DEFAULT NULL,
   `visible` tinyint(1) NOT NULL DEFAULT '0',
   `original_gid` varchar(60) DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`comment_id`),
   KEY `user_id` (`user_id`,`epobject_id`,`visible`),
   KEY `epobject_id` (`epobject_id`,`visible`),
@@ -146,6 +125,8 @@ CREATE TABLE `constituency` (
   `from_date` date NOT NULL DEFAULT '0000-01-01',
   `to_date` date NOT NULL DEFAULT '9999-12-31',
   `cons_id` int DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   KEY `from_date` (`from_date`),
   KEY `to_date` (`to_date`),
   KEY `name` (`name`),
@@ -186,7 +167,7 @@ CREATE TABLE `epobject` (
   `modified` datetime DEFAULT NULL,
   PRIMARY KEY (`epobject_id`),
   KEY `type` (`type`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=43444 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
@@ -316,7 +297,7 @@ CREATE TABLE `moffice` (
   `source` varchar(255) NOT NULL DEFAULT '',
   PRIMARY KEY (`moffice_id`),
   KEY `person` (`person`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=34142 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
@@ -404,6 +385,8 @@ CREATE TABLE `uservotes` (
   `user_id` int unsigned NOT NULL DEFAULT '0',
   `epobject_id` int NOT NULL DEFAULT '0',
   `vote` tinyint(1) NOT NULL DEFAULT '0',
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   KEY `epobject_id` (`epobject_id`,`vote`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
