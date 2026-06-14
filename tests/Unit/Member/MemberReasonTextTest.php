@@ -7,7 +7,6 @@
  * These methods only read from $this->reasons and require no database.
  */
 
-require_once __DIR__ . '/../../bootstrap.php';
 
 use OpenAustralia\TWFY\Models\Member as MemberModel;
 

@@ -8,7 +8,6 @@
  * avoiding symbol conflicts between the test bootstrap and the application.
  */
 
-require_once __DIR__ . '/../../bootstrap.php';
 
 use PHPUnit\Framework\TestCase;
 
@@ -45,7 +44,7 @@ abstract class PageRenderingIntegrationTestCase extends TestCase {
      *
      */
     public static function tearDownAfterClass(): void {
-        $path = __DIR__ . '/../conf/general';
+        $path = BASEDIR . '/../conf/general';
         if (self::$createdConfGeneral) {
             if (self::$originalConfGeneral !== null) {
                 file_put_contents($path, self::$originalConfGeneral);
@@ -110,7 +109,7 @@ abstract class PageRenderingIntegrationTestCase extends TestCase {
      * Ensure conf/general exists so init.php can load.
      */
     private static function ensureConfGeneral(): void {
-        $path = __DIR__ . '/../conf/general';
+        $path = BASEDIR . '/../conf/general';
         if (file_exists($path)) {
             self::$originalConfGeneral = file_get_contents($path);
         }
@@ -128,7 +127,7 @@ abstract class PageRenderingIntegrationTestCase extends TestCase {
             . 'define("DOMAIN", "localhost");' . "\n"
             . 'define("COOKIEDOMAIN", "localhost");' . "\n"
             . 'define("CONTACTEMAIL", "test@example.com");' . "\n"
-            . 'define("BASEDIR", ' . var_export(__DIR__ . '/../www/docs/', true) . ');' . "\n"
+            . 'define("BASEDIR", ' . var_export(BASEDIR . '/docs/', true) . ');' . "\n"
             . 'define("WEBPATH", "/");' . "\n"
             . 'define("DEVSITE", true);' . "\n"
             . 'define("DEBUGTAG", "debug");' . "\n"
@@ -136,11 +135,11 @@ abstract class PageRenderingIntegrationTestCase extends TestCase {
             . 'define("RAWDATA", "/tmp/pwdata/");' . "\n"
             . 'define("PWMEMBERS", "/tmp/pwdata/members/");' . "\n"
             . 'define("DBBACKUP", "/tmp/backup/");' . "\n"
-            . 'define("INCLUDESPATH", ' . var_export(__DIR__ . '/../www/includes/', true) . ');' . "\n"
+            . 'define("INCLUDESPATH", ' . var_export(INCLUDESPATH, true) . ');' . "\n"
             . 'define("IMAGEPATH", "/images/");' . "\n"
-            . 'define("FILEIMAGEPATH", ' . var_export(__DIR__ . '/../www/docs/images/', true) . ');' . "\n"
+            . 'define("FILEIMAGEPATH", ' . var_export(BASEDIR . '/docs/images/', true) . ');' . "\n"
             . 'define("REGMEMPDFPATH", "regmem/scan/");' . "\n"
-            . 'define("METADATAPATH", ' . var_export(__DIR__ . '/../www/includes/easyparliament/metadata.php', true) . ');' . "\n"
+            . 'define("METADATAPATH", ' . var_export(INCLUDESPATH . 'easyparliament/metadata.php', true) . ');' . "\n"
             . 'define("XAPIANDB", "/tmp/searchdb");' . "\n"
             . 'define("RECESSFILE", "/dev/null");' . "\n";
 

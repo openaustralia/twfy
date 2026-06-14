@@ -10,7 +10,6 @@
 
 use PHPUnit\Framework\TestCase;
 
-require_once __DIR__ . '/../../bootstrap.php';
 
 if (!defined('DOMAIN')) {
     define('DOMAIN', 'example.org');

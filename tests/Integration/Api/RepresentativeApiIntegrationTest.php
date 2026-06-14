@@ -5,7 +5,8 @@
  * Integration tests for representative API endpoints.
  */
 
-require_once __DIR__ . '/../../bootstrap.php';
+
+use OpenAustralia\TWFY\Models\Member as MemberModel;
 
 if (!function_exists('member_full_name')) {
     function member_full_name($house, $title, $first_name, $last_name, $constituency) {
@@ -52,22 +53,20 @@ class RepresentativeApiIntegrationTest extends TransactionalTestCase {
         $this->fixtureConstituency = 'TxRepSeat' . $suffix;
         $this->fixtureParty = 'Tx Rep Party ' . $suffix;
 
-        parlDBQuery(
-            'INSERT INTO member (member_id, person_id, house, title, first_name, last_name, constituency, party, entered_house, left_house, entered_reason, left_reason)
-             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
-            $this->fixtureMemberId,
-            $this->fixturePersonId,
-            HOUSE::REPRESENTATIVES,
-            '',
-            'Tx',
-            'Representative',
-            $this->fixtureConstituency,
-            $this->fixtureParty,
-            '2010-01-01',
-            '9999-12-31',
-            'general_election',
-            'still_in_office'
-        );
+        MemberModel::create([
+            'member_id' => $this->fixtureMemberId,
+            'person_id' => $this->fixturePersonId,
+            'house' => HOUSE::REPRESENTATIVES,
+            'title' => '',
+            'first_name' => 'Tx',
+            'last_name' => 'Representative',
+            'constituency' => $this->fixtureConstituency,
+            'party' => $this->fixtureParty,
+            'entered_house' => '2010-01-01',
+            'left_house' => '9999-12-31',
+            'entered_reason' => 'general_election',
+            'left_reason' => 'still_in_office',
+        ]);
     }
 
     protected function tearDown(): void {
@@ -112,7 +111,7 @@ class RepresentativeApiIntegrationTest extends TransactionalTestCase {
     }
 
     public function test_mp_named_api_files_are_removed(): void {
-        $this->assertFileDoesNotExist(__DIR__ . '/../../../www/docs/api/api_getMP.php');
-        $this->assertFileDoesNotExist(__DIR__ . '/../../../www/docs/api/api_getMPs.php');
+        $this->assertFileDoesNotExist(BASEDIR . '/docs/api/api_getMP.php');
+        $this->assertFileDoesNotExist(BASEDIR . '/docs/api/api_getMPs.php');
     }
 }

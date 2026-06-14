@@ -5,7 +5,6 @@
  * Tests for changed-party handling in MEMBER construction.
  */
 
-require_once __DIR__ . '/../../bootstrap.php';
 
 use OpenAustralia\TWFY\Models\Member as MemberModel;
 

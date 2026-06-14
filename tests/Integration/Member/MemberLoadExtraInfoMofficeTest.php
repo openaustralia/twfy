@@ -5,7 +5,6 @@
  * Integration tests for MEMBER::load_extra_info() after migration to Moffice model.
  */
 
-require_once __DIR__ . '/../../bootstrap.php';
 
 use OpenAustralia\TWFY\Models\Member as MemberModel;
 use OpenAustralia\TWFY\Models\Moffice as MofficeModel;

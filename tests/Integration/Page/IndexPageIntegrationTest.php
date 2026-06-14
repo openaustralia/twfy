@@ -16,7 +16,7 @@ class IndexPageIntegrationTest extends PageRenderingIntegrationTestCase {
      * Test that the index page renders without errors.
      */
     public function test_index_page_renders(): void {
-        $this->assertPageRenders(__DIR__ . '/../www/docs/index.php', 'desktop');
+        $this->assertPageRenders(BASEDIR . '/docs/index.php', 'desktop');
     }
 
 }
