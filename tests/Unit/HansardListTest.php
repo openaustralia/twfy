@@ -86,6 +86,7 @@ class HansardListTest extends TestCase {
 
     public function test_validate_date_sets_error_message_on_failure(): void {
         global $PAGE;
+        /** @var FakePageForHansardTest $PAGE */
         $list = new HANSARDLIST();
         $list->_validate_date(['date' => 'bad']);
         $this->assertNotEmpty($PAGE->errors);
@@ -95,6 +96,7 @@ class HansardListTest extends TestCase {
 
     public function test_display_returns_false_for_invalid_view(): void {
         global $PAGE;
+        /** @var FakePageForHansardTest $PAGE */
         $list = new HANSARDLIST();
         $result = $list->display('nonexistent_view');
         $this->assertFalse($result);
