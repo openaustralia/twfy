@@ -106,8 +106,8 @@ function _api_getMP_row($row) {
 function api_getMP_id($id) {
 
     $q = parlDBQuery("SELECT * from member
-		WHERE house=1 AND person_id = ?
-		ORDER BY left_house DESC", $id);
+        WHERE house = ? AND person_id = ?
+        ORDER BY left_house DESC", HOUSE::REPRESENTATIVES, $id);
     if ($q->rows()) {
         $output = [];
         $last_mod = 0;
@@ -182,15 +182,15 @@ function _api_getMP_constituency($constituency) {
 
     $q = parlDBQuery("SELECT * FROM member
 		WHERE constituency = ?
-		AND left_reason = 'still_in_office' AND house=1", $constituency);
+        AND left_reason = 'still_in_office' AND house = ?", $constituency, HOUSE::REPRESENTATIVES);
     if ($q->rows > 0) {
         return _api_getMP_row($q->row(0));
     }
 
     if (get_http_var('always_return')) {
         $q = parlDBQuery("SELECT * FROM member
-			WHERE house=1 AND constituency = ?
-			ORDER BY left_house DESC LIMIT 1", $constituency);
+            WHERE house = ? AND constituency = ?
+            ORDER BY left_house DESC LIMIT 1", HOUSE::REPRESENTATIVES, $constituency);
         if ($q->rows > 0) {
             return _api_getMP_row($q->row(0));
         }

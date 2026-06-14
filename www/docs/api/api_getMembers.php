@@ -61,7 +61,7 @@ function api_getMembers_state($house, $s) {
  *
  */
 function api_getMembers_search($house, $s) {
-    if ($house == 2) {
+    if ($house == HOUSE::SENATE) {
         _api_getMembers_output("SELECT * from member
 			WHERE house = ?
 			AND (first_name LIKE ?

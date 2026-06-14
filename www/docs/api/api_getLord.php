@@ -4,6 +4,8 @@
  * @file
  */
 
+include_once __DIR__ . '/../../includes/easyparliament/house.php';
+
 /**
  *
  */
@@ -45,8 +47,8 @@ function _api_getLord_row($row) {
 function api_getLord_id(int $id) {
 
     $q = parlDBQuery("SELECT * from member
-		WHERE house=2 AND person_id = ?
-		ORDER BY left_house DESC", $id);
+        WHERE house = ? AND person_id = ?
+        ORDER BY left_house DESC", HOUSE::SENATE, $id);
     if ($q->rows()) {
         $output = [];
         $last_mod = 0;
