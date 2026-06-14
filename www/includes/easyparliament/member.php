@@ -10,6 +10,7 @@ include_once __DIR__ . "/house.php";
 
 use Illuminate\Database\Capsule\Manager as DB;
 use OpenAustralia\TWFY\Models\Member as MemberModel;
+use OpenAustralia\TWFY\Models\Moffice as MofficeModel;
 
 /**
  *
@@ -353,9 +354,13 @@ class MEMBER {
      */
     public function load_extra_info() {
 
-        $offices = DB::table('moffice')->where('person', $this->person_id)->orderBy('from_date', 'desc')->get();
+        $offices = MofficeModel::where('person', $this->person_id)
+          ->orderBy('from_date', 'desc')
+          ->get()
+          ->map(static fn (MofficeModel $office): array => $office->toArray())
+          ->all();
         foreach ($offices as $office) {
-            $this->extra_info['office'][] = (array) $office;
+            $this->extra_info['office'][] = $office;
         }
 
         $memberInfoRows = DB::table('memberinfo')->where('member_id', $this->member_id)->get(['data_key', 'data_value']);

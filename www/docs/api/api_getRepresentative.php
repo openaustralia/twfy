@@ -5,6 +5,9 @@
  */
 
 include_once __DIR__ . '/../../includes/easyparliament/member.php';
+include_once __DIR__ . '/../../includes/Models/Moffice.php';
+
+use OpenAustralia\TWFY\Models\Moffice as MofficeModel;
 
 /**
  *
@@ -125,9 +128,14 @@ function _api_getRepresentative_row($row) {
     }
 
     // Ministerialships and Select Committees.
-    $q = parlDBQuery('SELECT * FROM moffice WHERE to_date="9999-12-31" AND person = ? ORDER BY from_date DESC', $row['person_id']);
-    for ($i = 0; $i < $q->rows(); $i++) {
-        $row['office'][] = $q->row($i);
+    $offices = MofficeModel::where('to_date', '9999-12-31')
+      ->where('person', $row['person_id'])
+      ->orderBy('from_date', 'desc')
+      ->get()
+      ->map(static fn (MofficeModel $office): array => $office->toArray())
+      ->all();
+    foreach ($offices as $office) {
+                $row['office'][] = $office;
     }
 
     foreach ($row as $k => $r) {
