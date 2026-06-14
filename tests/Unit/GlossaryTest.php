@@ -2,7 +2,7 @@
 
 use PHPUnit\Framework\TestCase;
 
-require_once __DIR__ . '/../../www/includes/easyparliament/glossary.php';
+require_once INCLUDESPATH . 'easyparliament/glossary.php';
 
 /**
  *

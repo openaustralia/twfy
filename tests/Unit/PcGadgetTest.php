@@ -6,7 +6,7 @@
  */
 
 require_once __DIR__ . '/../bootstrap.php';
-require_once __DIR__ . '/../../www/includes/easyparliament/member.php';
+require_once INCLUDESPATH . 'easyparliament/member.php';
 
 use PHPUnit\Framework\TestCase;
 

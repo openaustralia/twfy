@@ -2,7 +2,7 @@
 
 use Illuminate\Database\Capsule\Manager as DB;
 
-require_once __DIR__ . '/../../../www/includes/easyparliament/searchlog.php';
+require_once INCLUDESPATH . 'easyparliament/searchlog.php';
 
 /**
  * Integration tests for SEARCHLOG using a real database.
