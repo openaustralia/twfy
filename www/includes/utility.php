@@ -6,6 +6,7 @@
  */
 
 include_once __DIR__ . '/strptime.php';
+include_once __DIR__ . '/easyparliament/house.php';
 
 /**
  *
@@ -914,12 +915,12 @@ function entities_to_numbers($string) {
 /**
  *
  */
-function make_member_url($name, $const = '', $house = 1) {
+function make_member_url($name, $const = '', $house = HOUSE::REPRESENTATIVES) {
     $s = [' ', '&amp;', '&ocirc;', '&ouml;', '&acirc;', '&iacute;', '&aacute;', '&uacute;'];
     $r = ['_', 'and', 'o', 'o', 'a', 'i', 'a', 'u'];
     $name = preg_replace('#^the #', '', strtolower($name));
     $out = urlencode(str_replace($s, $r, $name));
-    if ($const && ($house == 1 || $house == 2)) {
+    if ($const && ($house == HOUSE::REPRESENTATIVES || $house == HOUSE::SENATE)) {
         $out .= '/' . urlencode(str_replace($s, $r, strtolower($const)));
     }
     return $out;
@@ -930,7 +931,7 @@ function make_member_url($name, $const = '', $house = 1) {
  */
 function member_full_name($house, $title, $first_name, $last_name, $constituency) {
     $s = $first_name . ' ' . $last_name;
-    if ($house == 1 || $house == 2) {
+    if ($house == HOUSE::REPRESENTATIVES || $house == HOUSE::SENATE) {
         $s = $first_name . ' ' . $last_name;
         if ($title) {
             $s = $title . ' ' . $s;
