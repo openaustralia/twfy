@@ -9,7 +9,7 @@ include_once __DIR__ . '/../../includes/easyparliament/house.php';
 /**
  *
  */
-function api_getLord_front() {
+function api_getSenate_front() {
     ?>
     <p><big>Fetch a particular Senator.</big></p>
 
@@ -25,7 +25,7 @@ function api_getLord_front() {
 /**
  *
  */
-function _api_getLord_row($row) {
+function _api_getSenate_row($row) {
     global $parties;
     $row['full_name'] = member_full_name(
         $row['house'],
@@ -44,7 +44,7 @@ function _api_getLord_row($row) {
 /**
  *
  */
-function api_getLord_id(int $id) {
+function api_getSenate_id(int $id) {
 
     $q = parlDBQuery("SELECT * from member
         WHERE house = ? AND person_id = ?
@@ -53,7 +53,7 @@ function api_getLord_id(int $id) {
         $output = [];
         $last_mod = 0;
         for ($i = 0; $i < $q->rows(); $i++) {
-            $out = _api_getLord_row($q->row($i));
+            $out = _api_getSenate_row($q->row($i));
             $output[] = $out;
             $time = strtotime($q->field($i, 'lastupdate'));
             if ($time > $last_mod) {

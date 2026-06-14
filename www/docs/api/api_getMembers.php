@@ -4,7 +4,7 @@
  * @file
  */
 
-include_once 'api_getMP.php';
+include_once 'api_getRepresentative.php';
 
 /**
  * Shared API functions for get<Members>
@@ -15,7 +15,7 @@ function _api_getMembers_output($sql, ...$params) {
     $output = [];
     $last_mod = 0;
     for ($i = 0; $i < $q->rows(); $i++) {
-        $out = _api_getMP_row($q->row($i));
+        $out = _api_getRepresentative_row($q->row($i));
         $output[] = $out;
         $time = strtotime($q->field($i, 'lastupdate'));
         if ($time > $last_mod) {
