@@ -1,5 +1,6 @@
 <?php
 
+use OpenAustralia\TWFY\Models\Comments;
 use OpenAustralia\TWFY\Models\Member;
 
 /*     The class for displaying one or more comments.
@@ -157,8 +158,6 @@ class COMMENTLIST {
      */
     public function _get_data_by_user($args) {
         // Get a user's most recent comments.
-        // Could perhaps be modified to get different lists of a user's
-        // comments by things in $args?
         global $PAGE;
 
         twfy_debug(get_class($this), "getting data by user");
@@ -185,103 +184,78 @@ class COMMENTLIST {
 
         $offset = $num * ($page - 1);
 
-        // We're getting the most recent comments posted to epobjects.
-        // We're grouping them by epobject so we can just link to each hansard thing once.
-        // When there are numerous comments on an epobject we're getting the most recent
-        // comment_id and posted date.
-        // We're getting the body and speaker details for the epobject.
-        // We're NOT getting the comment bodies. Why? Because adding them to this query
-        // would fetch the text for the oldest comment on an epobject group, rather
-        // than the most recent. So we'll get the comment bodies later...
-        $q = parlDBQuery("SELECT MAX(comments.comment_id) AS comment_id,
-								MAX(comments.posted) AS posted,
-								COUNT(*) AS total_comments,
-								comments.epobject_id,
-								hansard.major,
-								hansard.gid,
-								users.firstname,
-								users.lastname,
-								epobject.body,
-								member.first_name,
-								member.last_name
-						FROM 	comments, users, epobject, hansard
-						LEFT OUTER JOIN member ON hansard.speaker_id = member.member_id
-						WHERE 	comments.epobject_id = epobject.epobject_id
-						AND 	comments.epobject_id = hansard.epobject_id
-						AND 	comments.user_id = users.user_id
-						AND 	users.user_id = ?
-						AND 	visible = '1'
-						GROUP BY epobject_id
-						ORDER BY posted DESC
-						LIMIT ? OFFSET ?",
-            $args['user_id'], $num, $offset
-        );
+        // Get the most recent comments grouped by epobject, with hansard/speaker details.
+        $rows = Comments::query()
+          ->selectRaw('MAX(comments.comment_id) AS comment_id')
+          ->selectRaw('MAX(comments.posted) AS posted')
+          ->selectRaw('COUNT(*) AS total_comments')
+          ->addSelect([
+                'comments.epobject_id',
+                'hansard.major',
+                'hansard.gid',
+                'users.firstname',
+                'users.lastname',
+                'epobject.body',
+                'member.first_name',
+                'member.last_name',
+            ])
+          ->join('users', 'comments.user_id', '=', 'users.user_id')
+          ->join('epobject', 'comments.epobject_id', '=', 'epobject.epobject_id')
+          ->join('hansard', 'comments.epobject_id', '=', 'hansard.epobject_id')
+          ->leftJoin('member', 'hansard.speaker_id', '=', 'member.member_id')
+          ->where('users.user_id', $args['user_id'])
+          ->where('visible', 1)
+          ->groupBy('comments.epobject_id')
+          ->orderByDesc('posted')
+          ->limit($num)
+          ->offset($offset)
+          ->get();
 
         $comments = [];
         $comment_ids = [];
 
-        if ($q->rows() > 0) {
+        foreach ($rows as $n => $row) {
+            $comments[$n] = [
+                'comment_id' => $row->comment_id,
+                'posted' => $row->posted,
+                'total_comments' => $row->total_comments,
+                'epobject_id' => $row->epobject_id,
+                'firstname' => $row->firstname,
+                'lastname' => $row->lastname,
+                'hbody' => $row->body,
+                'speaker' => [
+                    'first_name' => $row->first_name,
+                    'last_name' => $row->last_name,
+                ],
+            ];
 
-            for ($n = 0; $n < $q->rows(); $n++) {
+            $urldata = [
+                'major' => $row->major,
+                'gid' => $row->gid,
+                'comment_id' => $row->comment_id,
+                'user_id' => $args['user_id'],
+            ];
 
-                // All the basic stuff...
-                $comments[$n] = [
-                    'comment_id' => $q->field($n, 'comment_id'),
-                    'posted' => $q->field($n, 'posted'),
-                    'total_comments' => $q->field($n, 'total_comments'),
-                    'epobject_id' => $q->field($n, 'epobject_id'),
-                    'firstname' => $q->field($n, 'firstname'),
-                    'lastname' => $q->field($n, 'lastname'),
-                    // Hansard item body, not comment body.
-                    'hbody' => $q->field($n, 'body'),
-                    'speaker' => [
-                        'first_name' => $q->field($n, 'first_name'),
-                        'last_name' => $q->field($n, 'last_name')
-                    ]
-                ];
+            $comments[$n]['url'] = $this->_comment_url($urldata);
+            $comment_ids[] = $row->comment_id;
+        }
 
-                // Add the URL...
-                $urldata = [
-                    'major' => $q->field($n, 'major'),
-                    'gid' => $q->field($n, 'gid'),
-                    'comment_id' => $q->field($n, 'comment_id'),
-                    'user_id' => $args['user_id']
-                ];
+        if (!empty($comment_ids)) {
+            $bodies = Comments::whereIn('comment_id', $comment_ids)
+              ->pluck('body', 'comment_id');
 
-                $comments[$n]['url'] = $this->_comment_url($urldata);
-
-                // We'll need these for getting the comment bodies.
-                $comment_ids[] = $q->field($n, 'comment_id');
-
-            }
-
-            $r = parlDBQuery("SELECT comment_id,
-									body
-							FROM	comments
-							WHERE	comment_id IN ?",
-                $comment_ids);
-
-            if ($r->rows() > 0) {
-
-                $commentbodies = [];
-
-                for ($n = 0; $n < $r->rows(); $n++) {
-                    $commentbodies[$r->field($n, 'comment_id')] = $r->field($n, 'body');
-                }
-
-                // This does rely on both this and the previous query returning
-                // stuff in the same order...
-                foreach ($comments as $n => $commentdata) {
-                    $comments[$n]['body'] = $commentbodies[$comments[$n]['comment_id']];
-                }
+            foreach ($comments as $n => $commentdata) {
+                $comments[$n]['body'] = $bodies[$comments[$n]['comment_id']] ?? '';
             }
         }
 
         $data['comments'] = $comments;
         $data['results_per_page'] = $num;
         $data['page'] = $page;
-        $q = parlDBQuery('SELECT COUNT(DISTINCT(epobject_id)) AS count FROM comments WHERE visible=1 AND user_id=?', $args['user_id']);
-        $data['total_results'] = $q->field(0, 'count');
+        $data['total_results'] = Comments::where('visible', 1)
+          ->where('user_id', $args['user_id'])
+          ->distinct('epobject_id')
+          ->count('epobject_id');
         return $data;
 
     }
@@ -344,14 +318,14 @@ class COMMENTLIST {
                 $member->last_name ?? '',
                 $member->constituency ?? ''
             );
-            $q = parlDBQuery('SELECT COUNT(*) AS count FROM comments, hansard, member
-                WHERE visible=1 AND comments.epobject_id = hansard.epobject_id
-                    AND hansard.speaker_id = member.member_id AND person_id = ?',
-                $args['pid']);
+            $data['total_results'] = Comments::where('visible', 1)
+              ->join('hansard', 'comments.epobject_id', '=', 'hansard.epobject_id')
+              ->join('member', 'hansard.speaker_id', '=', 'member.member_id')
+              ->where('member.person_id', $args['pid'])
+              ->count();
         } else {
-            $q = parlDBQuery('SELECT COUNT(*) AS count FROM comments WHERE visible=1');
+            $data['total_results'] = Comments::where('visible', 1)->count();
         }
-        $data['total_results'] = $q->field(0, 'count');
         return $data;
     }
 
