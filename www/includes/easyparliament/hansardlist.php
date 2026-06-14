@@ -10,6 +10,7 @@ include_once __DIR__ . "/searchlog.php";
 use OpenAustralia\TWFY\Models\Member as MemberModel;
 use OpenAustralia\TWFY\Models\Moffice as MofficeModel;
 use OpenAustralia\TWFY\Models\Bills as BillsModel;
+use OpenAustralia\TWFY\Models\Comments as CommentsModel;
 use OpenAustralia\TWFY\Models\Hansard;
 
 /**
@@ -2175,30 +2176,23 @@ class HANSARDLIST {
         ) {
             // We'll be getting a count of the comments on all items
             // within this (sub)section.
-            $from = "comments, hansard";
-            $where = "comments.epobject_id = hansard.epobject_id
-					AND subsection_id = '" . $item_data['epobject_id'] . "'";
+            $query = CommentsModel::join('hansard', 'comments.epobject_id', '=', 'hansard.epobject_id')
+              ->where('hansard.subsection_id', $item_data['epobject_id'])
+              ->where('comments.visible', 1);
 
             if ($item_data['htype'] == '10') {
                 // Section - get a count of comments within this section that
                 // don't have a subsection heading.
-                $where .= " AND section_id = '" . $item_data['epobject_id'] . "'";
+                $query->where('hansard.section_id', $item_data['epobject_id']);
             }
 
         } else {
             // Just getting a count of the comments on this item.
-            $from = "comments";
-            $where = "epobject_id = '" . getParlDB()->escape($item_data['epobject_id']) . "'";
+            $query = CommentsModel::where('epobject_id', $item_data['epobject_id'])
+              ->where('visible', 1);
         }
 
-        $q = parlDBQuery("SELECT COUNT(*) AS count
-						FROM 	$from
-						WHERE	$where
-						AND		visible = 1
-
-						");
-
-        return $q->field(0, 'count');
+        return $query->count();
     }
 
     /**
