@@ -4,39 +4,12 @@
  * @file
  */
 
-if (!class_exists('URL')) {
-    /**
-     * Minimal URL class for user confirmation tests.
-     */
-    class URL {
+require_once INCLUDESPATH . 'utility.php';
+require_once INCLUDESPATH . 'data.php';
+require_once INCLUDESPATH . 'url.php';
 
-        /** @var string */
-        private string $page;
-
-        /**
-         * @var array<string,string>
-         */
-        private array $params = [];
-
-        public function __construct(string $page) {
-            $this->page = $page;
-        }
-
-        /**
-         *
-         */
-public function insert(array $params): void {
-            $this->params = array_merge($this->params, $params);
-}
-
-        /**
-         *
-         */
-public function generate(): string {
-            return '/' . $this->page;
-}
-
-    }
+if (!isset($GLOBALS['DATA'])) {
+    $GLOBALS['DATA'] = new DATA();
 }
 
 if (!defined('DOMAIN')) {
@@ -583,7 +556,7 @@ public function test_logout_with_cookie_and_unsafe_returl_falls_back_to_home(): 
                 return stripos($header, 'Location: ') === 0;
             }));
 
-            $this->assertSame('Location: /home/', $locationHeaders[0] ?? null);
+            $this->assertSame('Location: /', $locationHeaders[0] ?? null);
         } finally {
             $_COOKIE = $originalCookie;
             if (function_exists('header_remove')) {
