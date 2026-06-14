@@ -13,56 +13,53 @@ use OpenAustralia\TWFY\Models\Hansard;
 /**
  *
  */
-if (!function_exists('twfy_debug')) {
 
-    /**
-     *
-     */
+/**
+ *
+ */
 function twfy_debug($header, $text = "") {
-        // Pass it a brief header word and some debug text and it'll be output.
+    // Pass it a brief header word and some debug text and it'll be output.
 
-        // We set ?DEBUGTAG=n in the URL.
-        // (DEBUGTAG is set in config.php).
-        // n is a number from (currently) 1 to 4.
-        // This sets what amount of debug information is shown.
-        // For level '1' we show anything that is passed to this function
-        // with a $header in $levels[1].
-        // For level '2', anything with a $header in $levels[1] AND $levels[2].
-        // Level '4' shows everything.
+    // We set ?DEBUGTAG=n in the URL.
+    // (DEBUGTAG is set in config.php).
+    // n is a number from (currently) 1 to 4.
+    // This sets what amount of debug information is shown.
+    // For level '1' we show anything that is passed to this function
+    // with a $header in $levels[1].
+    // For level '2', anything with a $header in $levels[1] AND $levels[2].
+    // Level '4' shows everything.
 
-        $debug_level = get_http_var(DEBUGTAG);
-        // $debug_level = 1;
+    $debug_level = get_http_var(DEBUGTAG);
+    // $debug_level = 1;
 
-        if ($debug_level != '') {
+    if ($debug_level != '') {
 
-            // Set which level shows which types of debug info.
-            $levels = [
-                1 => ['SKIN', 'THEUSER', 'TIME', 'SQLERROR', 'PAGE', 'TEMPLATE', 'SEARCH', 'ALERTS', 'MP'],
-                2 => ['SQL', 'EMAIL', 'WIKIPEDIA', 'hansardlist', 'debatelist', 'wranslist', 'whalllist'],
-                3 => ['SQLRESULT']
-                // Higher than this: 'DATA', etc.
-            ];
+        // Set which level shows which types of debug info.
+        $levels = [
+            1 => ['SKIN', 'THEUSER', 'TIME', 'SQLERROR', 'PAGE', 'TEMPLATE', 'SEARCH', 'ALERTS', 'MP'],
+            2 => ['SQL', 'EMAIL', 'WIKIPEDIA', 'hansardlist', 'debatelist', 'wranslist', 'whalllist'],
+            3 => ['SQLRESULT']
+            // Higher than this: 'DATA', etc.
+        ];
 
-            // Store which headers we are allowed to show.
-            $allowed_headers = [];
+        // Store which headers we are allowed to show.
+        $allowed_headers = [];
 
-            if ($debug_level > count($levels)) {
-                $max_level_to_show = count($levels);
-            } else {
-                $max_level_to_show = $debug_level;
-            }
-
-            for ($n = 1; $n <= $max_level_to_show; $n++) {
-                $allowed_headers = array_merge($allowed_headers, $levels[$n]);
-            }
-
-            // If we can show this header, then, er, show it.
-            if (in_array($header, $allowed_headers) || $debug_level >= 4) {
-                print "<p><span style=\"color:#039;\"><strong>" . htmlspecialchars($header, ENT_QUOTES, 'UTF-8') . "</strong></span> " . htmlspecialchars($text, ENT_QUOTES, 'UTF-8') . "</p>\n";
-            }
+        if ($debug_level > count($levels)) {
+            $max_level_to_show = count($levels);
+        } else {
+            $max_level_to_show = $debug_level;
         }
-}
 
+        for ($n = 1; $n <= $max_level_to_show; $n++) {
+            $allowed_headers = array_merge($allowed_headers, $levels[$n]);
+        }
+
+        // If we can show this header, then, er, show it.
+        if (in_array($header, $allowed_headers) || $debug_level >= 4) {
+            print "<p><span style=\"color:#039;\"><strong>" . htmlspecialchars($header, ENT_QUOTES, 'UTF-8') . "</strong></span> " . htmlspecialchars($text, ENT_QUOTES, 'UTF-8') . "</p>\n";
+        }
+    }
 }
 
 /**
@@ -275,6 +272,9 @@ function validate_email($string) {
 /**
  *
  */
+/**
+ *
+ */
 function validate_postcode($postcode) {
     $postcode = trim($postcode);
 
@@ -289,19 +289,12 @@ function validate_postcode($postcode) {
 /**
  * Returns the unixtime in microseconds.
  */
-if (!function_exists('getmicrotime')) {
-
-    /**
-     *
-     */
 function getmicrotime() {
-        $mtime = microtime();
-        $mtime = explode(" ", $mtime);
-        $mtime = $mtime[1] + $mtime[0];
+    $mtime = microtime();
+    $mtime = explode(" ", $mtime);
+    $mtime = $mtime[1] + $mtime[0];
 
-        return $mtime;
-}
-
+    return $mtime;
 }
 
 /* twfy_debug_timestamp
