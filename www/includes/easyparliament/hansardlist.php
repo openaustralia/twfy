@@ -2067,7 +2067,7 @@ class HANSARDLIST {
                         $URL = new URL('peer');
                     } else {
                         // UNKNOWN HOUSE!!
-                        // this shouldn't happen
+                        // This should not happen.
                         $URL = new URL('unknown');
                     }
                     $URL->insert(['m' => $speaker_id]);
