@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Database\Capsule\Manager as DB;
+use OpenAustralia\TWFY\Models\SearchQueryLog;
 
 require_once INCLUDESPATH . 'easyparliament/searchlog.php';
 
@@ -29,14 +30,13 @@ protected function setUp(): void {
       string $ipAddress = '127.0.0.1',
       ?string $queryTime = null,
     ): void {
-        parlDBQuery(
-            'INSERT INTO search_query_log (query_string, page_number, count_hits, ip_address, query_time) VALUES (?, ?, ?, ?, ?)',
-            $queryString,
-            1,
-            $countHits,
-            $ipAddress,
-            $queryTime ?? date('Y-m-d H:i:s')
-        );
+        SearchQueryLog::create([
+            'query_string' => $queryString,
+            'page_number' => 1,
+            'count_hits' => $countHits,
+            'ip_address' => $ipAddress,
+            'query_time' => $queryTime ?? date('Y-m-d H:i:s'),
+        ]);
     }
 
     /**
@@ -94,8 +94,7 @@ protected function setUp(): void {
             'hits' => 5,
         ]);
 
-        $q = parlDBQuery('SELECT query_string FROM search_query_log WHERE count_hits = ?', 5);
-        $stored = $q->rows() > 0 ? $q->field(0, 'query_string') : null;
+        $stored = SearchQueryLog::where('count_hits', 5)->value('query_string');
 
         $this->assertSame('speaker:10749', $stored);
     }
@@ -112,8 +111,7 @@ protected function setUp(): void {
             'hits' => 10,
         ]);
 
-        $q = parlDBQuery('SELECT query_string FROM search_query_log WHERE count_hits = ?', 10);
-        $stored = $q->rows() > 0 ? $q->field(0, 'query_string') : null;
+        $stored = SearchQueryLog::where('count_hits', 10)->value('query_string');
 
         $this->assertSame('climate change speaker:10749', $stored);
     }
@@ -130,8 +128,7 @@ protected function setUp(): void {
             'hits' => 3,
         ]);
 
-        $q = parlDBQuery('SELECT query_string FROM search_query_log WHERE count_hits = ?', 3);
-        $stored = $q->rows() > 0 ? $q->field(0, 'query_string') : null;
+        $stored = SearchQueryLog::where('count_hits', 3)->value('query_string');
 
         $this->assertSame('budget speaker:10749', $stored);
     }

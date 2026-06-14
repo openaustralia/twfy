@@ -3,6 +3,7 @@
 require_once __DIR__ . '/../request.php';
 
 use OpenAustralia\TWFY\Models\Member;
+use OpenAustralia\TWFY\Models\SearchQueryLog;
 
 /**
  * For doing stuff with searchlogs.
@@ -45,14 +46,13 @@ class SEARCHLOG {
         // Deduplicate repeated terms before storing.
         $query = implode(' ', array_unique(explode(' ', $searchlogdata['query'])));
 
-        parlDBQuery("INSERT INTO search_query_log
-            (query_string, page_number, count_hits, ip_address, query_time)
-            VALUES (?, ?, ?, ?, NOW())",
-            $query,
-            $searchlogdata['page'],
-            $searchlogdata['hits'],
-            ip_address()
-        );
+        SearchQueryLog::create([
+            'query_string' => $query,
+            'page_number' => $searchlogdata['page'],
+            'count_hits' => $searchlogdata['hits'],
+            'ip_address' => ip_address(),
+            'query_time' => date('Y-m-d H:i:s'),
+        ]);
 
     }
 
@@ -61,26 +61,26 @@ class SEARCHLOG {
      */
     public function popular_recent($count) {
 
-        $q = parlDBQuery("
-                SELECT query_string, count(*) AS c
-                FROM search_query_log
-                WHERE count_hits != 0
-                    AND query_time > date_sub(NOW(), INTERVAL 1 DAY)
-                GROUP BY query_string
-                ORDER BY c desc
-                LIMIT ?", $count);
+        $rows = SearchQueryLog::where('count_hits', '!=', 0)
+          ->whereRaw('query_time > date_sub(NOW(), INTERVAL 1 DAY)')
+          ->groupBy('query_string')
+          ->orderByDesc('c')
+          ->limit($count)
+          ->selectRaw('query_string, count(*) AS c')
+          ->get();
 
         $popular_searches = [];
-        for ($row = 0; $row < $q->rows(); $row++) {
-            array_push($popular_searches, $this->_db_row_to_array($q, $row));
+        foreach ($rows as $row) {
+            $popular_searches[] = $this->_row_to_array($row);
         }
         return $popular_searches;
     }
 
     /**
+     * Convert a row object to a display array.
      */
-    public function _db_row_to_array($q, $row) {
-        $query = $q->field($row, 'query_string');
+    public function _row_to_array($row) {
+        $query = $row->query_string;
         // Deduplicate repeated terms (e.g. from bots hitting search with duplicated queries)
         $query = implode(' ', array_unique(explode(' ', $query)));
         $this->SEARCHURL->insert(['s' => $query, 'pop' => 1]);
@@ -96,7 +96,7 @@ class SEARCHLOG {
         }
         $visible_name = preg_replace('/"/', '', $query);
 
-        $rowarray = $q->row($row);
+        $rowarray = (array) $row->getAttributes();
         $rowarray['query'] = $query;
         $rowarray['visible_name'] = $visible_name;
         $rowarray['url'] = $url;
@@ -110,11 +110,12 @@ class SEARCHLOG {
      */
     public function admin_recent_searches($count) {
 
-        $q = parlDBQuery("SELECT query_string, page_number, count_hits, ip_address, query_time
-                FROM search_query_log ORDER BY query_time desc LIMIT $count");
+        $rows = SearchQueryLog::orderByDesc('query_time')
+          ->limit($count)
+          ->get(['query_string', 'page_number', 'count_hits', 'ip_address', 'query_time']);
         $searches_array = [];
-        for ($row = 0; $row < $q->rows(); $row++) {
-            array_push($searches_array, $this->_db_row_to_array($q, $row));
+        foreach ($rows as $row) {
+            $searches_array[] = $this->_row_to_array($row);
         }
         return $searches_array;
     }
@@ -124,14 +125,18 @@ class SEARCHLOG {
      */
     public function admin_popular_searches($count) {
 
-        $q = parlDBQuery("SELECT query_string, count(*) AS c FROM search_query_log
-                WHERE count_hits != 0 AND query_string NOT LIKE '%speaker:%'
-                AND query_time > date_sub(NOW(), INTERVAL 30 DAY)
-                GROUP BY query_string ORDER BY c desc LIMIT ?", $count);
+        $rows = SearchQueryLog::where('count_hits', '!=', 0)
+          ->where('query_string', 'NOT LIKE', '%speaker:%')
+          ->whereRaw('query_time > date_sub(NOW(), INTERVAL 30 DAY)')
+          ->groupBy('query_string')
+          ->orderByDesc('c')
+          ->limit($count)
+          ->selectRaw('query_string, count(*) AS c')
+          ->get();
 
         $popular_searches = [];
-        for ($row = 0; $row < $q->rows(); $row++) {
-            array_push($popular_searches, $this->_db_row_to_array($q, $row));
+        foreach ($rows as $row) {
+            $popular_searches[] = $this->_row_to_array($row);
         }
         return $popular_searches;
     }
@@ -141,15 +146,15 @@ class SEARCHLOG {
      */
     public function admin_failed_searches() {
 
-        $q = parlDBQuery("SELECT query_string,
-                COUNT(*) AS group_count, MIN(query_time) AS min_time, MAX(query_time) AS max_time,
-                COUNT(DISTINCT ip_address) AS count_ips
-                FROM search_query_log WHERE count_hits = 0
-                GROUP BY query_string
-                ORDER BY count_ips DESC, max_time DESC");
+        $rows = SearchQueryLog::where('count_hits', 0)
+          ->groupBy('query_string')
+          ->orderByDesc('count_ips')
+          ->orderByDesc('max_time')
+          ->selectRaw('query_string, COUNT(*) AS group_count, MIN(query_time) AS min_time, MAX(query_time) AS max_time, COUNT(DISTINCT ip_address) AS count_ips')
+          ->get();
         $searches_array = [];
-        for ($row = 0; $row < $q->rows(); $row++) {
-            array_push($searches_array, $this->_db_row_to_array($q, $row));
+        foreach ($rows as $row) {
+            $searches_array[] = $this->_row_to_array($row);
         }
         return $searches_array;
     }
