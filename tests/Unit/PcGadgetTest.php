@@ -5,8 +5,8 @@
  * Unit tests for pc.php gadget script.
  */
 
-require_once __DIR__ . '/bootstrap.php';
-require_once __DIR__ . '/../www/includes/easyparliament/member.php';
+require_once __DIR__ . '/../bootstrap.php';
+require_once __DIR__ . '/../../www/includes/easyparliament/member.php';
 
 use PHPUnit\Framework\TestCase;
 

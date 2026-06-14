@@ -1,6 +1,6 @@
 <?php
 
-require_once __DIR__ . '/DatabaseIntegrationTestCase.php';
+require_once __DIR__ . '/../DatabaseIntegrationTestCase.php';
 
 /**
  * Integration tests for MySQL::query() with a real database connection.

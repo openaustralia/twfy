@@ -5,8 +5,8 @@
  * Unit tests for postcode.php (Australian postal code handling).
  */
 
-require_once __DIR__ . '/bootstrap.php';
-require_once __DIR__ . '/../www/includes/postcode.php';
+require_once __DIR__ . '/../bootstrap.php';
+require_once __DIR__ . '/../../www/includes/postcode.php';
 
 use PHPUnit\Framework\TestCase;
 

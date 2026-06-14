@@ -5,7 +5,7 @@
  * Tests for USER::init() method.
  */
 
-require_once __DIR__ . '/bootstrap.php';
+require_once __DIR__ . '/../../bootstrap.php';
 
 use OpenAustralia\TWFY\Models\User as UserModel;
 
