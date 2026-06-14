@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 use Phinx\Migration\AbstractMigration;
 
-final class AddTimestampsToModelsWithoutThem extends AbstractMigration
+final class AddTimestampsToModels extends AbstractMigration
 {
     public function up(): void
     {
