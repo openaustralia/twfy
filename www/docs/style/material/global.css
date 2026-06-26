@@ -25,71 +25,7 @@ body {
     line-height: 1.5;
 }
 
-#container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 1rem;
-}
-
-h1, h2, h3, h4, h5, h6 {
-    color: #111827;
-    font-weight: 700;
-}
-
-a {
-    color: #1e88e5;
-    text-decoration: none;
-}
-
-a:hover,
-a:focus {
-    text-decoration: underline;
-}
-
-button, input, select, textarea {
-    font: inherit;
-    border-radius: 0.75rem;
-    border: 1px solid #d1d5db;
-    background: #ffffff;
-    padding: 0.55rem 0.75rem;
-}
-
-button {
-    background-color: #1e88e5;
-    color: #ffffff;
-    border: none;
-    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.08);
-}
-
-button:hover,
-button:focus {
-    background-color: #1565c0;
-}
-
-.material-card {
-    background: #ffffff;
-    border-radius: 1rem;
-    box-shadow: 0 12px 24px rgba(15, 23, 42, 0.08);
-    padding: 1rem;
-}
-
-#warning {
-    display: block;
-    margin: 0 0 1.5rem;
-    padding: 1rem 1.25rem;
-    border-radius: 1rem;
-    border: 1px solid #F59E0B;
-    background: #FEF3C7;
-    color: #92400E;
-    font-weight: 600;
-    text-align: center;
-    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.08);
-}
-
-#menu {
-    margin: 0 0 1.5rem;
-}
-
+/* Header layout */
 #banner {
     display: flex;
     align-items: center;
@@ -98,7 +34,7 @@ button:focus {
     flex-wrap: wrap;
     margin-bottom: 1.25rem;
     padding-bottom: 0.5rem;
-    border-bottom: 1px solid rgba(148, 163, 184, 0.2);
+    border-bottom: 1px solid rgba(148, 163, 184, 0.08);
 }
 
 #title {
@@ -106,101 +42,123 @@ button:focus {
     min-width: 12rem;
 }
 
-#title h1 {
-    margin: 0;
-}
+#title h1 { margin: 0; }
 
+/* Compact search box (subtle, part of header) */
 #search {
     flex: 0 0 auto;
-    width: min(100%, 320px);
+    width: min(100%, 280px);
 }
 
-#search p {
-    margin: 0;
-    padding: 0;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
+#search p { margin: 0; padding: 0; display: flex; gap: 0.5rem; align-items: center; }
 
 #search input[name="s"] {
     width: 100%;
     min-width: 0;
-    padding: 0.65rem 0.95rem;
+    padding: 0.5rem 0.75rem;
     border-radius: 9999px;
-    border: 1px solid #cbd5e1;
+    border: 1px solid #e2e8f0;
     background: #f8fafc;
     color: #0f172a;
-    box-shadow: inset 0 1px 2px rgba(15, 23, 42, 0.08);
+    box-shadow: none;
+    font-weight: 400;
 }
 
+/* Make the submit less prominent and match the menu tone */
 #search input[type="submit"] {
     display: inline-flex;
     align-items: center;
     justify-content: center;
     border-radius: 9999px;
-    background-color: #e2e8f0;
-    color: #0f172a;
-    border: 1px solid #cbd5e1;
-    padding: 0.65rem 0.95rem;
+    background-color: transparent;
+    color: #374151;
+    border: 1px solid transparent;
+    padding: 0.45rem 0.7rem;
     cursor: pointer;
     font-weight: 600;
 }
 
 #search input[type="submit"]:hover,
-#search input[type="submit"]:focus {
-    background-color: #cbd5e1;
-}
+#search input[type="submit"]:focus { background-color: rgba(15,23,42,0.03); color: #0f172a; }
 
-#topmenu {
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-    gap: 1rem;
-    padding: 0 0.5rem 0 0;
-}
+/* Top user/login area: keep compact and low-contrast */
+#topmenu { display: flex; justify-content: flex-end; align-items: center; gap: 0.5rem; padding: 0 0.25rem 0 0; }
 
-#topmenu br {
-    display: none;
-}
+#topmenu br { display: none; }
 
-#topmenu ul#user {
-    display: flex;
-    gap: 0.75rem;
-    margin: 0;
-    padding: 0;
-    list-style: none;
-}
+#topmenu ul#user { display: flex; gap: 0.5rem; margin: 0; padding: 0; list-style: none; }
 
-#topmenu ul#user li {
-    float: none;
+#topmenu ul#user li { float: none; display: inline-flex; align-items: center; margin: 0; }
+
+/* Menu links should be subdued until hovered */
+#topmenu ul#user a {
     display: inline-flex;
     align-items: center;
-    margin: 0;
+    padding: 0.35rem 0.6rem;
+    border-radius: 9999px;
+    border: 1px solid transparent;
+    background: transparent;
+    color: #374151;
+    font-weight: 500;
+    text-decoration: none;
 }
+
+#topmenu ul#user a:hover, #topmenu ul#user a:focus { background: rgba(15,23,42,0.03); color: #0f172a; border-color: rgba(15,23,42,0.04); }
+
+/* User name */
+#topmenu ul#user .name { display: inline-flex; font-weight: 600; color: #334155; padding: 0 0.35rem; }
+
+/* Recess warning banner */
+#warning {
+    display: block;
+    background: #fff7ed;
+    color: #92400e;
+    border-left: 4px solid #f59e0b;
+    padding: 0.75rem 1rem;
+    margin: 0 0 1rem 0;
+    border-radius: 6px;
+    font-weight: 600;
+}
+
+/* Small, low-contrast submit styling (kept subtle) */
+#search input[type="submit"] {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 9999px;
+    background-color: transparent;
+    color: #374151;
+    border: 1px solid transparent;
+    padding: 0.45rem 0.7rem;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+#search input[type="submit"]:hover,
+#search input[type="submit"]:focus { background-color: rgba(15,23,42,0.03); color: #0f172a; }
+
+/* Topmenu consolidation */
+#topmenu { display: flex; justify-content: flex-end; align-items: center; gap: 0.5rem; padding: 0 0.25rem 0 0; }
+
+#topmenu br { display: none; }
+
+#topmenu ul#user { display: flex; gap: 0.5rem; margin: 0; padding: 0; list-style: none; }
+
+#topmenu ul#user li { float: none; display: inline-flex; align-items: center; margin: 0; }
 
 #topmenu ul#user a {
     display: inline-flex;
     align-items: center;
-    padding: 0.55rem 0.95rem;
+    padding: 0.35rem 0.6rem;
     border-radius: 9999px;
-    border: 1px solid rgba(15, 23, 42, 0.08);
-    background: #ffffff;
-    color: #111827;
-    font-weight: 600;
+    border: 1px solid transparent;
+    background: transparent;
+    color: #374151;
+    font-weight: 500;
     text-decoration: none;
 }
 
-#topmenu ul#user a:hover,
-#topmenu ul#user a:focus {
-    background: #f1f5f9;
-}
-
-#topmenu ul#user .name {
-    display: inline-flex;
-    font-weight: 600;
-    color: #334155;
-}
+#topmenu ul#user a:hover, #topmenu ul#user a:focus { background: rgba(15,23,42,0.03); color: #0f172a; border-color: rgba(15,23,42,0.04); }
 
 #bottommenu ul {
     display: flex;

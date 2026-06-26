@@ -14,7 +14,7 @@ $PAGE->page_start();
 $PAGE->stripe_start();
 $message = $PAGE->recess_message();
 if ($message != '') {
-    print '<p id="warning">' . $message . '</p>';
+    print '<p id="warning" style="display:block;background:#fff7ed;color:#92400e;border-left:4px solid #f59e0b;padding:0.75rem 1rem;margin:0 0 1rem 0;border-radius:6px;font-weight:600;">' . $message . '</p>';
 }
 
 //
