@@ -119,11 +119,29 @@ if (get_http_var("d") != "") {
     $PAGE->stripe_start();
     ?>
     <h4>Busiest debates from the most recent week</h4>
+    <div class="debates-front debate-cards">
+        <article class="debate-card">
+            <div class="debate-card__header">
+                <h3>House of Representatives</h3>
+            </div>
+            <?php
+            $DEBATELIST = new DEBATELIST();
+            $DEBATELIST->display('biggest_debates', ['days' => 7, 'num' => 12]);
+            ?>
+        </article>
+
+        <article class="debate-card">
+            <div class="debate-card__header">
+                <h3>Senate</h3>
+            </div>
+            <?php
+            $LORDSDEBATELIST = new LORDSDEBATELIST();
+            $LORDSDEBATELIST->display('biggest_debates', ['days' => 7, 'num' => 12]);
+            ?>
+        </article>
+    </div>
+
     <?php
-
-    $DEBATELIST = new DEBATELIST();
-    $DEBATELIST->display('biggest_debates', ['days' => 7, 'num' => 20]);
-
     $rssurl = $DATA->page_metadata($this_page, 'rss');
     $PAGE->stripe_end([
         [

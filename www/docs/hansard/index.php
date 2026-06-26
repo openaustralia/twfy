@@ -82,15 +82,20 @@ if ($message != '') {
 $PAGE->stripe_end();
 $PAGE->stripe_start();
 ?>
-<h3>Busiest House of Representatives debates from the most recent week</h3>
-<?php
-$DEBATELIST = new DEBATELIST();
-$DEBATELIST->display('biggest_debates', ['days' => 7, 'num' => $number_of_debates_to_show]);
+<article class="debate-card debate-card--house">
+    <div class="debate-card__header">
+        <h3>House of Representatives debates</h3>
+        <p class="debate-card__subtitle">Busiest debates from the most recent week</p>
+    </div>
+    <?php
+    $DEBATELIST = new DEBATELIST();
+    $DEBATELIST->display('biggest_debates', ['days' => 7, 'num' => $number_of_debates_to_show]);
 
-$MOREURL = new URL('debatesfront');
-$anchor = $number_of_debates_to_show + 1;
-?>
-<p><strong><a href="<?php echo $MOREURL->generate(); ?>#d<?php echo $anchor; ?>">See more debates</a></strong></p>
+    $MOREURL = new URL('debatesfront');
+    $anchor = $number_of_debates_to_show + 1;
+    ?>
+    <p class="debate-card__footer"><strong><a href="<?php echo $MOREURL->generate(); ?>#d<?php echo $anchor; ?>">See more debates</a></strong></p>
+</article>
 <?php
 
 $PAGE->stripe_end([
@@ -106,15 +111,20 @@ $PAGE->stripe_end([
 
 $PAGE->stripe_start();
 ?>
-<h3>Busiest Senate debates from the most recent week</h3>
-<?php
-$DEBATELIST = new LORDSDEBATELIST();
-$DEBATELIST->display('biggest_debates', ['days' => 7, 'num' => $number_of_debates_to_show]);
+<article class="debate-card debate-card--senate">
+    <div class="debate-card__header">
+        <h3>Senate debates</h3>
+        <p class="debate-card__subtitle">Busiest debates from the most recent week</p>
+    </div>
+    <?php
+    $DEBATELIST = new LORDSDEBATELIST();
+    $DEBATELIST->display('biggest_debates', ['days' => 7, 'num' => $number_of_debates_to_show]);
 
-$MOREURL = new URL('lordsdebatesfront');
-$anchor = $number_of_debates_to_show + 1;
-?>
-<p><strong><a href="<?php echo $MOREURL->generate(); ?>#d<?php echo $anchor; ?>">See more debates</a></strong></p>
+    $MOREURL = new URL('lordsdebatesfront');
+    $anchor = $number_of_debates_to_show + 1;
+    ?>
+    <p class="debate-card__footer"><strong><a href="<?php echo $MOREURL->generate(); ?>#d<?php echo $anchor; ?>">See more debates</a></strong></p>
+</article>
 <?php
 
 $PAGE->stripe_end([
