@@ -77,7 +77,7 @@ $PAGE->page_start();
 $PAGE->stripe_start('head-1');
 $message = $PAGE->recess_message();
 if ($message != '') {
-    print "<p><strong>$message</strong></p>\n";
+    print '<p id="warning">' . $message . '</p>';
 }
 $PAGE->stripe_end();
 $PAGE->stripe_start();
