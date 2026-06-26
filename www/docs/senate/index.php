@@ -136,13 +136,22 @@ if (get_http_var("d") != "") {
 
     $PAGE->stripe_start();
     ?>
-    <h4>Busiest debates from the most recent week</h4>
+    <article class="debate-card debate-card--senate">
+        <div class="debate-card__header">
+            <h3>Senate debates</h3>
+            <p class="debate-card__subtitle">Busiest debates from the most recent week</p>
+        </div>
     <?php
 
     $LORDSDEBATELIST = new LORDSDEBATELIST();
     $LORDSDEBATELIST->display('biggest_debates', ['days' => 7, 'num' => 20]);
 
     $rssurl = $DATA->page_metadata($this_page, 'rss');
+    ?>
+        <p class="debate-card__footer"><strong><a href="<?php echo WEBPATH . $rssurl; ?>">RSS feed of most recent debates</a></strong></p>
+    </article>
+    <?php
+
     $PAGE->stripe_end([
         [
             'type' => 'nextprev'

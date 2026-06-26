@@ -204,13 +204,14 @@ if (isset($data['rows'])) {
             ?>
             <a name="<?php echo $id; ?>"></a>
             <?php
+            echo '<div class="speech-block">';
 
             if (isset($row['speaker']) && count($row['speaker']) > 0) {
                 // We have a speaker to print.
 
                 $speaker = $row['speaker'];
                 $speakername = ucfirst(member_full_name($speaker['house'], $speaker['title'], $speaker['first_name'], $speaker['last_name'], $speaker['constituency']));
-                echo '<p class="speaker"><a href="', $speaker['url'], '" title="See more information about ', $speakername, '">';
+                echo '<div class="speech-header"><p class="speaker"><a href="', $speaker['url'], '" title="See more information about ', $speakername, '">';
                 list($image, $sz) = find_rep_image($speaker['person_id'], true);
                 if ($image) {
                     echo '<img src="', $image, '" class="portrait" alt="Photo of ', $speakername, '"';
@@ -258,10 +259,11 @@ if (isset($data['rows'])) {
                     ?>&output=js-link"></script> -->
                     <?php
                 }
-                echo "</small>";
+                echo "</small></p></div>";
             }
 
             $body = $row['body'];
+            echo '<div class="speech-text">';
 
             if ($hansardmajors[$data['info']['major']]['location'] == 'Scotland') {
                 $body = preg_replace('# (S\dW-\d+) #', ' <a href="/spwrans/?spid=$1">$1</a> ', $body);
@@ -281,8 +283,10 @@ if (isset($data['rows'])) {
             $body = str_replace('pwmotiontext="moved"', 'class="moved"', $body);
             $body = str_replace('<a href="h', '<a rel="nofollow" href="h', $body); # As even sites in Hansard lapse and become spam-sites
             echo str_replace('</p><p', '</p> <p', $body); # NN4 font size bug
+            echo '</div>';
 
             context_link($row);
+            echo '</div>';
 
             $sidebarhtml = '';
             $extrahtml = '';
