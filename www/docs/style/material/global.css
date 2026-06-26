@@ -86,6 +86,116 @@ button:focus {
     box-shadow: 0 1px 2px rgba(15, 23, 42, 0.08);
 }
 
+#banner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-bottom: 1.25rem;
+}
+
+#title {
+    flex: 1 1 auto;
+    min-width: 12rem;
+}
+
+#title h1 {
+    margin: 0;
+}
+
+#search {
+    flex: 0 0 auto;
+    width: min(100%, 320px);
+}
+
+#search p {
+    margin: 0;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+#search input[name="s"] {
+    width: 100%;
+    min-width: 0;
+    padding: 0.65rem 0.95rem;
+    border-radius: 9999px;
+    border: 1px solid #cbd5e1;
+    background: #f8fafc;
+    color: #0f172a;
+    box-shadow: inset 0 1px 2px rgba(15, 23, 42, 0.08);
+}
+
+#search input[type="submit"] {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 9999px;
+    background-color: #e2e8f0;
+    color: #0f172a;
+    border: 1px solid #cbd5e1;
+    padding: 0.65rem 0.95rem;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+#search input[type="submit"]:hover,
+#search input[type="submit"]:focus {
+    background-color: #cbd5e1;
+}
+
+#topmenu {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 1rem;
+    padding: 0 0.5rem 0 0;
+}
+
+#topmenu br {
+    display: none;
+}
+
+#topmenu ul#user {
+    display: flex;
+    gap: 0.75rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+#topmenu ul#user li {
+    float: none;
+    display: inline-flex;
+    align-items: center;
+    margin: 0;
+}
+
+#topmenu ul#user a {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.55rem 0.95rem;
+    border-radius: 9999px;
+    border: 1px solid rgba(15, 23, 42, 0.08);
+    background: #ffffff;
+    color: #111827;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+#topmenu ul#user a:hover,
+#topmenu ul#user a:focus {
+    background: #f1f5f9;
+}
+
+#topmenu ul#user .name {
+    display: inline-flex;
+    font-weight: 600;
+    color: #334155;
+}
+
 #bottommenu ul {
     display: flex;
     flex-wrap: nowrap;
