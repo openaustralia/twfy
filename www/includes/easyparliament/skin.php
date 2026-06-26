@@ -191,7 +191,6 @@ class SKIN {
             </style>
             <?php
         }
-        }
     }
 
 }
