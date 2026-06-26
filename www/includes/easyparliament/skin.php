@@ -154,14 +154,6 @@ class SKIN {
             <link rel="stylesheet" href="<?php echo WEBPATH; ?>style/<?php echo $skinstyles['global']; ?>/global.css"
                 type="text/css">
             <?php
-            if (isset($_SERVER['HTTP_USER_AGENT']) && !(preg_match("/MSIE 4.0/", $_SERVER['HTTP_USER_AGENT'])) && (isset($skinstyles["mobile"]))) {
-                // Hide this from IE4 and Mac AOL5.
-                ?>
-                <style type="text/css">
-                    @import url(<?php echo WEBPATH; ?>style/<?php echo $skinstyles['global']; ?>/global_non_ns4.css);
-                </style>
-                <?php
-            }
         }
         if (isset($skinstyles["screen"]) && $skinstyles["screen"] != "") {
             ?>
@@ -184,12 +176,7 @@ class SKIN {
                 media="screen">
             <?php
         }
-        if (
-            isset($skinstyles["print"]) &&
-            $skinstyles["print"] != "" &&
-            (isset($_SERVER['HTTP_USER_AGENT']) && !(preg_match("/MSIE 4.0/", $_SERVER['HTTP_USER_AGENT'])))
-        ) {
-            // Hide this from IE4 and Mac AOL5.
+        if (isset($skinstyles["print"]) && $skinstyles["print"] != "") {
             ?>
             <link rel="stylesheet" href="<?php echo WEBPATH; ?>style/<?php echo $skinstyles['print']; ?>/print.css" type="text/css"
                 media="print">
@@ -199,15 +186,11 @@ class SKIN {
         if (get_http_var('c4') || get_http_var('c4x')) {
             $x = get_http_var('c4x') ? 'X' : ''; ?>
             <link rel="stylesheet" href="<?php echo WEBPATH; ?>style/channel4/global<?php echo $x ?>.css" type="text/css">
+            <style type="text/css">
+                @import url(<?php echo WEBPATH; ?>style/channel4/global<?php echo $x ?>_non_ns4.css);
+            </style>
             <?php
-            if (isset($_SERVER['HTTP_USER_AGENT']) && !(preg_match("/MSIE 4.0/", $_SERVER['HTTP_USER_AGENT']))) {
-                // Hide this from IE4 and Mac AOL5.
-                ?>
-                <style type="text/css">
-                    @import url(<?php echo WEBPATH; ?>style/channel4/global<?php echo $x ?>_non_ns4.css);
-                </style>
-                <?php
-            }
+        }
         }
     }
 
