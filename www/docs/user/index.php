@@ -502,26 +502,35 @@ function display_form($details = [], $errors = []) {
 
     $PAGE->stripe_start();
 
+    ?>
+    <div class="auth-card auth-card--join">
+        <div class="auth-card__header">
+            <h1><?php
+                if ($this_page == 'userjoin') {
+                    echo "Join OpenAustralia.org";
+                } elseif ($this_page == 'useredit') {
+                    echo "Update your OpenAustralia account";
+                } else {
+                    echo "Edit user account";
+                }
+            ?></h1>
+            <?php if (!$THEUSER->isloggedin() && $this_page == 'userjoin') { ?>
+                <p class="auth-card__notice">Already joined? <a href="<?php $URL = new URL("userlogin"); echo $URL->generate(); ?>">Then log in.</a></p>
+            <?php } ?>
+        </div>
+    <?php
+
     if (isset($errors["db"])) {
 
         $PAGE->error_message($errors["db"]);
 
-    } else {
-
-        $URL = new URL("userlogin");
-
-        if (!$THEUSER->isloggedin()) {
-            ?>
-            <p>Already joined? <a href="<?php echo $URL->generate(); ?>">Then log in!</a></p>
-            <?php
-        }
     }
 
     $ACTIONURL = new URL($this_page);
     $ACTIONURL->reset();
     ?>
 
-    <form method="post" action="<?php echo $ACTIONURL->generate(); ?>">
+    <form class="auth-form" method="post" action="<?php echo $ACTIONURL->generate(); ?>">
         <?php
         if ($this_page == "otheruseredit") {
             ?>
@@ -825,6 +834,7 @@ function display_form($details = [], $errors = []) {
         ?>
 
     </form>
+    </div>
     <?php
 
     if ($this_page == 'userjoin') {

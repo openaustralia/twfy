@@ -51,17 +51,22 @@ $PAGE->page_start();
 $PAGE->stripe_start();
 
 ?>
+<div class="auth-card auth-card--login">
+    <div class="auth-card__header">
+        <h1>Log in</h1>
+        <p>Sign in to continue and complete your action.</p>
+    </div>
 
-<p><strong><?php echo $message; ?></strong></p>
+    <p><strong><?php echo $message; ?></strong></p>
 
-<p>If you're not yet a member, then <a href="<?php echo $joinurl; ?>"><strong>join now</strong></a>.</p>
+    <p>If you're not yet a member, then <a href="<?php echo $joinurl; ?>"><strong>join now</strong></a>.</p>
 
-<p>Otherwise, please log in... <?php echo $message2; ?></p>
+    <p>Otherwise, please log in... <?php echo $message2; ?></p>
+
+    <?php $PAGE->login_form(); ?>
+</div>
 
 <?php
-
-$PAGE->login_form();
-
 
 $PAGE->stripe_end();
 

@@ -96,13 +96,19 @@ function display_page($errors = []) {
     }
     ?>
 
-    <p>Not yet a member? <a href="<?php $URL = new URL("userjoin");
-    echo $URL->generate(); ?>">Join now</a>!</p>
+    <div class="auth-card auth-card--login">
+        <div class="auth-card__header">
+            <h1>Log in</h1>
+            <p>Sign in to access your OpenAustralia account.</p>
+        </div>
+
+        <p class="auth-card__notice">Not yet a member? <a href="<?php $URL = new URL("userjoin");
+        echo $URL->generate(); ?>">Join now</a>!</p>
+
+        <?php $PAGE->login_form($errors); ?>
+    </div>
 
     <?php
-
-    $PAGE->login_form($errors);
-
     $PAGE->stripe_end([
         [
             'type' => 'include',

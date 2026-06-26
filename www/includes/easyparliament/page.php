@@ -2558,9 +2558,9 @@ class PAGE {
         // Used for /user/login/ and /user/prompt/
         // $errors is a hash of potential errors from a previous log in attempt.
         ?>
-                    <form method="post" action="<?php $URL = new URL('userlogin');
-                    $URL->reset();
-                    echo $URL->generate(); ?>">
+                        <form class="auth-form" method="post" action="<?php $URL = new URL('userlogin');
+                        $URL->reset();
+                        echo $URL->generate(); ?>">
 
 
                         <?php
