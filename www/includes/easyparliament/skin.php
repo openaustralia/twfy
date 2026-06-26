@@ -57,9 +57,16 @@
  */
 class SKIN {
 
-    public $skin = 'default';
+    public $skin = 'material';
 
     public $skins = [
+        'material' => [
+            'global' => 'material',
+            'screen' => '',
+            'mobile' => '',
+            'print' => 'default',
+            'extra' => ''
+        ],
         'default' => [
             'global' => 'default',
             'screen' => '',
@@ -126,7 +133,7 @@ class SKIN {
         if (isset($skin) && isset($this->skins[$skin])) {
             $this->skin = $skin;
         } else {
-            $this->skin = "default";
+            $this->skin = "material";
         }
 
         twfy_debug("SKIN", "Skin set to '" . $this->skin . "'");

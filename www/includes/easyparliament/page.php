@@ -315,6 +315,41 @@ class PAGE {
             echo $linkshtml;
 
             $SKIN->output_stylesheets();
+            ?>
+            <link rel="preconnect" href="https://fonts.googleapis.com">
+            <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+            <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+            <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+            <script src="https://cdn.tailwindcss.com"></script>
+            <script>
+                tailwind.config = {
+                    theme: {
+                        extend: {
+                            colors: {
+                                material: {
+                                    50: '#e3f2fd',
+                                    100: '#bbdefb',
+                                    200: '#90caf9',
+                                    300: '#64b5f6',
+                                    400: '#42a5f5',
+                                    500: '#1e88e5',
+                                    600: '#1976d2',
+                                    700: '#1565c0',
+                                    800: '#0d47a1',
+                                    900: '#0b3d91'
+                                }
+                            },
+                            boxShadow: {
+                                material: '0 10px 30px rgba(15, 23, 42, 0.08)'
+                            },
+                            fontFamily: {
+                                sans: ['Roboto', 'ui-sans-serif', 'system-ui', 'sans-serif']
+                            }
+                        }
+                    }
+                }
+            </script>
+            <?php
 
             if ($rssurl = $DATA->page_metadata($this_page, 'rss')) {
                 // If this page has an RSS feed set.
@@ -452,6 +487,41 @@ class PAGE {
             echo $linkshtml;
 
             $SKIN->output_stylesheets();
+            ?>
+            <link rel="preconnect" href="https://fonts.googleapis.com">
+            <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+            <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+            <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+            <script src="https://cdn.tailwindcss.com"></script>
+            <script>
+                tailwind.config = {
+                    theme: {
+                        extend: {
+                            colors: {
+                                material: {
+                                    50: '#e3f2fd',
+                                    100: '#bbdefb',
+                                    200: '#90caf9',
+                                    300: '#64b5f6',
+                                    400: '#42a5f5',
+                                    500: '#1e88e5',
+                                    600: '#1976d2',
+                                    700: '#1565c0',
+                                    800: '#0d47a1',
+                                    900: '#0b3d91'
+                                }
+                            },
+                            boxShadow: {
+                                material: '0 10px 30px rgba(15, 23, 42, 0.08)'
+                            },
+                            fontFamily: {
+                                sans: ['Roboto', 'ui-sans-serif', 'system-ui', 'sans-serif']
+                            }
+                        }
+                    }
+                }
+            </script>
+            <?php
 
             if ($rssurl = $DATA->page_metadata($this_page, 'rss')) {
                 // If this page has an RSS feed set.
@@ -490,8 +560,8 @@ class PAGE {
         // Start the body, put in the page headings.
         ?>
 
-        <body>
-            <div id="container">
+        <body class="font-sans bg-slate-50 text-slate-900">
+            <div id="container" class="mx-auto max-w-screen-xl px-4 py-6">
                 <?php
                 twfy_debug("PAGE", "This page: $this_page");
 
@@ -512,8 +582,8 @@ class PAGE {
         // Start the body, put in the page headings.
         ?>
 
-                <body>
-                    <div id="container">
+                <body class="font-sans bg-slate-50 text-slate-900">
+                    <div id="container" class="mx-auto max-w-screen-xl px-4 py-6">
                         <?php
                         twfy_debug("PAGE", "This page: $this_page");
 

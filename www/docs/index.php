@@ -22,23 +22,24 @@ if ($message != '') {
 
 $HANSARDURL = new URL('hansard');
 $MPURL = new URL('yourmp');
-$PAGE->block_start(['id' => 'intro', 'title' => 'At OpenAustralia.org you can:']);
 ?>
-<ol>
+<section class="mb-10 rounded-[2rem] bg-white p-8 shadow-lg ring-1 ring-slate-200">
+    <div class="max-w-4xl">
+        <p class="text-sm font-semibold uppercase tracking-[0.3em] text-material-600">OpenAustralia</p>
+        <h1 class="mt-4 text-4xl font-bold tracking-tight text-slate-900 sm:text-5xl">Making Parliament easier to explore</h1>
+        <p class="mt-4 text-lg leading-8 text-slate-600">Search Hansard, find your representative, sign up for alerts and keep up with the latest debates from the Australian Parliament.</p>
+    </div>
+</section>
+
+<div class="grid gap-6 xl:grid-cols-2">
 
     <?php
 
-    /**
-     * Find out more about your MP / Find out more about David Howarth, your MP.
-     */
-    function your_mp_bullet_point() {
+    function your_mp_card() {
         global $THEUSER, $MPURL;
-        print "<li>";
+
         $pc_form = true;
         if ($THEUSER->constituency_is_set()) {
-            // (We don't allow the user to search for a postcode if they
-            // already have one set in their prefs.)
-
             $MEMBER = new MEMBER(['constituency' => $THEUSER->constituency()]);
             if ($MEMBER->valid) {
                 $pc_form = false;
@@ -50,53 +51,67 @@ $PAGE->block_start(['id' => 'intro', 'title' => 'At OpenAustralia.org you can:']
                     $former = 'former';
                 }
                 ?>
-                <p><a href="<?php echo $MPURL->generate(); ?>"><strong>Find out more about <?php echo $mpname; ?>, your
-                            <?php echo $former ?> Representative</strong></a>
-                    (<a href="<?php echo $CHANGEURL->generate(); ?>">Change</a>)</p>
+                <article class="rounded-3xl border border-slate-200 bg-white p-6 shadow-lg">
+                    <div class="flex items-center gap-3 text-material-600">
+                        <span class="material-icons text-3xl">public</span>
+                        <div>
+                            <h2 class="text-xl font-semibold text-slate-900">Your Representative</h2>
+                            <p class="text-sm text-slate-600">View details for your current MP.</p>
+                        </div>
+                    </div>
+                    <div class="mt-6 space-y-4">
+                        <p class="text-slate-700"><strong><a class="text-material-700 hover:text-material-900" href="<?php echo $MPURL->generate(); ?>">Find out more about <?php echo $mpname; ?>, your <?php echo $former ?> Representative</a></strong></p>
+                        <p class="text-sm text-slate-500">Not the right address? <a class="font-medium text-material-600 hover:text-material-800" href="<?php echo $CHANGEURL->generate(); ?>">Change postcode</a>.</p>
+                    </div>
+                </article>
                 <?php
             }
         }
 
-        if ($pc_form) { ?>
-            <form action="<?php echo $MPURL->generate(); ?>" method="get">
-                <p><strong>Find out more about your Representative</strong><br>
-                    <label for="pc">Enter your Australian postcode here:</label>&nbsp; <input type="text" name="pc" id="pc"
-                        size="8" maxlength="10" class="text">&nbsp;&nbsp;<input type="submit" value=" GO " class="submit">
-                </p>
-            </form>
+        if ($pc_form) {
+            ?>
+            <article class="rounded-3xl border border-slate-200 bg-white p-6 shadow-lg">
+                <div class="flex items-center gap-3 text-material-600">
+                    <span class="material-icons text-3xl">emoji_people</span>
+                    <div>
+                        <h2 class="text-xl font-semibold text-slate-900">Find your Representative</h2>
+                        <p class="text-sm text-slate-600">Enter your Australian postcode to see your MP.</p>
+                    </div>
+                </div>
+                <form action="<?php echo $MPURL->generate(); ?>" method="get" class="mt-6 space-y-4">
+                    <label class="block text-sm font-medium text-slate-700" for="pc">Australian postcode</label>
+                    <div class="flex flex-col gap-3 sm:flex-row sm:items-center">
+                        <input id="pc" name="pc" type="text" maxlength="10" class="w-full rounded-2xl border border-slate-300 bg-slate-50 px-4 py-3 text-slate-900 focus:border-material-500 focus:outline-none focus:ring-2 focus:ring-material-100" placeholder="e.g. 2000">
+                        <button type="submit" class="inline-flex items-center justify-center rounded-2xl bg-material-600 px-5 py-3 text-sm font-semibold text-white hover:bg-material-700 focus:outline-none focus:ring-2 focus:ring-material-200">Search</button>
+                    </div>
+                </form>
+            </article>
             <?php
         }
-        print "</li>";
     }
 
-    /**
-     * Search / Search for 'mouse'.
-     */
-    function search_bullet_point() {
+    function search_card() {
         global $SEARCHURL;
         ?>
-        <li>
-            <?php
-            $SEARCHURL = new URL('search');
-            ?>
-            <form action="<?php echo $SEARCHURL->generate(); ?>" method="get">
-                <p><strong><label
-                            for="s">Search<?php echo get_http_var("keyword") ? ' Hansard for \'' . htmlspecialchars(get_http_var("keyword")) . '\'' : '' ?>:</label></strong>
-                    <input type="text" name="s" id="s" size="15" maxlength="100" class="text"
-                        value="<?php echo htmlspecialchars(get_http_var("keyword")) ?>">&nbsp;&nbsp;<input type="submit"
-                        value="SEARCH" class="submit">
-                </p>
-                <?php
-                // Display popular queries.
-                global $SEARCHLOG;
-                $popular_searches = $SEARCHLOG->popular_recent(10);
-                if (count($popular_searches) > 0) {
-                    ?>
-                    <p>Popular searches today:
-                        <?php
+        <article class="rounded-3xl border border-slate-200 bg-white p-6 shadow-lg">
+            <div class="flex items-center gap-3 text-material-600">
+                <span class="material-icons text-3xl">search</span>
+                <div>
+                    <h2 class="text-xl font-semibold text-slate-900">Search Hansard</h2>
+                    <p class="text-sm text-slate-600">Look for speeches, questions, committees and topics across Parliament.</p>
+                </div>
+            </div>
+            <form action="<?php echo $SEARCHURL->generate(); ?>" method="get" class="mt-6 space-y-4">
+                <label class="sr-only" for="s">Search Hansard</label>
+                <input id="s" name="s" type="text" maxlength="100" value="<?php echo htmlspecialchars(get_http_var('keyword')); ?>" class="w-full rounded-2xl border border-slate-300 bg-slate-50 px-4 py-3 text-slate-900 focus:border-material-500 focus:outline-none focus:ring-2 focus:ring-material-100" placeholder="Search Parliament...">
+                <div class="flex flex-col gap-3 sm:flex-row sm:justify-between sm:items-center">
+                    <button type="submit" class="rounded-2xl bg-material-600 px-5 py-3 text-sm font-semibold text-white hover:bg-material-700 focus:outline-none focus:ring-2 focus:ring-material-200">Search</button>
+                    <?php
+                    global $SEARCHLOG;
+                    $popular_searches = $SEARCHLOG->popular_recent(10);
+                    if (count($popular_searches) > 0) {
                         $lentotal = 0;
                         $correct_amount = [];
-                        // Select a number of queries that will fit in the space.
                         foreach ($popular_searches as $popular_search) {
                             $len = strlen($popular_search['visible_name']);
                             if ($lentotal + $len > 32) {
@@ -105,91 +120,95 @@ $PAGE->block_start(['id' => 'intro', 'title' => 'At OpenAustralia.org you can:']
                             $lentotal += $len;
                             array_push($correct_amount, $popular_search['display']);
                         }
-                        print implode(", ", $correct_amount);
-                        ?>
-                    </p> <?php
-                }
-                ?>
+                        if (count($correct_amount) > 0) {
+                            ?>
+                            <p class="text-sm text-slate-500">Popular today: <?php echo implode(', ', $correct_amount); ?></p>
+                            <?php
+                        }
+                    }
+                    ?>
+                </div>
             </form>
-        </li>
+        </article>
         <?php
     }
 
-    /**
-     * Sign up to be emailed when something relevant to you happens in Parliament
-     * Sign up to be emailed when 'mouse' is mentioned in Parliament.
-     */
-    function email_alert_bullet_point() {
-        if (get_http_var("keyword")) { ?>
-            <li>
-                <p><a href="<?php echo WEBPATH . "alert?keyword=" . htmlspecialchars(get_http_var('keyword')) ?>&only=1"><strong>Sign
-                            up to be emailed when '<?php echo htmlspecialchars(get_http_var('keyword')) ?>' is mentioned in
-                            Parliament</strong></a></p>
-            </li>
-        <?php } else { ?>
-            <li>
-                <p><a href="<?php echo WEBPATH . "alert/" ?>"><strong>Sign up to be emailed when something relevant to you
-                            happens in Parliament</strong></a></p>
-            </li>
-        <?php }
+    function alert_card() {
+        ?>
+        <article class="rounded-3xl border border-slate-200 bg-white p-6 shadow-lg">
+            <div class="flex items-center gap-3 text-material-600">
+                <span class="material-icons text-3xl">notifications</span>
+                <div>
+                    <h2 class="text-xl font-semibold text-slate-900">Email alerts</h2>
+                    <p class="text-sm text-slate-600">Get notified when Parliament mentions topics you care about.</p>
+                </div>
+            </div>
+            <div class="mt-6 text-slate-700">
+                <?php if (get_http_var('keyword')) { ?>
+                    <p><a class="font-semibold text-material-700 hover:text-material-800" href="<?php echo WEBPATH . 'alert?keyword=' . htmlspecialchars(get_http_var('keyword')) . '&only=1'; ?>">Sign up to be emailed when '<?php echo htmlspecialchars(get_http_var('keyword')); ?>' is mentioned in Parliament.</a></p>
+                <?php } else { ?>
+                    <p><a class="font-semibold text-material-700 hover:text-material-800" href="<?php echo WEBPATH . 'alert/'; ?>">Sign up to be emailed when something relevant to you happens in Parliament.</a></p>
+                <?php } ?>
+            </div>
+        </article>
+        <?php
     }
 
-    /**
-     * Comment on (recent debates)
-     */
-    function comment_on_recent_bullet_point() {
+    function recent_card() {
         global $hansardmajors;
         ?>
-        <li>
-            <p><strong>Read and comment on:</strong></p>
-
-            <?php
-            $DEBATELIST = new DEBATELIST();
-            $data[1] = $DEBATELIST->most_recent_day();
-            $WRANSLIST = new WRANSLIST();
-            $data[3] = $WRANSLIST->most_recent_day();
-            $WHALLLIST = new WHALLLIST();
-            $data[2] = $WHALLLIST->most_recent_day();
-            $WMSLIST = new WMSLIST();
-            $data[4] = $WMSLIST->most_recent_day();
-            $LORDSDEBATELIST = new LORDSDEBATELIST();
-            $data[101] = $LORDSDEBATELIST->most_recent_day();
-            $NILIST = new NILIST();
-            $data[5] = $NILIST->most_recent_day();
-            foreach (array_keys($hansardmajors) as $major) {
-                if (array_key_exists($major, $data)) {
-                    unset($data[$major]['listurl']);
-                    if (count($data[$major]) == 0) {
-                        unset($data[$major]);
+        <article class="rounded-3xl border border-slate-200 bg-white p-6 shadow-lg">
+            <div class="flex items-center gap-3 text-material-600">
+                <span class="material-icons text-3xl">forum</span>
+                <div>
+                    <h2 class="text-xl font-semibold text-slate-900">Recent debates</h2>
+                    <p class="text-sm text-slate-600">Read and comment on recent parliamentary debates.</p>
+                </div>
+            </div>
+            <div class="mt-6 space-y-3 text-slate-700">
+                <?php
+                $DEBATELIST = new DEBATELIST();
+                $data[1] = $DEBATELIST->most_recent_day();
+                $WRANSLIST = new WRANSLIST();
+                $data[3] = $WRANSLIST->most_recent_day();
+                $WHALLLIST = new WHALLLIST();
+                $data[2] = $WHALLLIST->most_recent_day();
+                $WMSLIST = new WMSLIST();
+                $data[4] = $WMSLIST->most_recent_day();
+                $LORDSDEBATELIST = new LORDSDEBATELIST();
+                $data[101] = $LORDSDEBATELIST->most_recent_day();
+                $NILIST = new NILIST();
+                $data[5] = $NILIST->most_recent_day();
+                foreach (array_keys($hansardmajors) as $major) {
+                    if (array_key_exists($major, $data)) {
+                        unset($data[$major]['listurl']);
+                        if (count($data[$major]) == 0) {
+                            unset($data[$major]);
+                        }
                     }
                 }
-            }
-            major_summary($data);
-            ?>
-        </li>
+                major_summary($data);
+                ?>
+            </div>
+        </article>
         <?php
     }
 
     if (get_http_var('keyword')) {
-        // This is for links from Google adverts, where we want to
-        // promote the features relating to their original search higher
-        // than "your MP".
-        search_bullet_point();
-        email_alert_bullet_point();
-        your_mp_bullet_point();
-        comment_on_recent_bullet_point();
+        search_card();
+        alert_card();
+        your_mp_card();
+        recent_card();
     } else {
-        your_mp_bullet_point();
-        search_bullet_point();
-        email_alert_bullet_point();
-        comment_on_recent_bullet_point();
+        your_mp_card();
+        search_card();
+        alert_card();
+        recent_card();
     }
 
     ?>
-</ol>
+</div>
 <?php
-$PAGE->block_end();
-
 $includes = [
     [
         'type' => 'include',
