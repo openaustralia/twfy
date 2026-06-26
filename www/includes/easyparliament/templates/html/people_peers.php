@@ -50,34 +50,19 @@ $th_state = '<a href="' . $URL->generate() . '">State</a>';
 if ($order == 'constituency')
     $th_state = 'State';
 
-?>
-<table border="0" cellpadding="4" cellspacing="0" width="90%" class="people">
-    <thead>
-        <tr>
-            <th>Photo</th>
-            <th><?php echo $th_name; ?></th>
-            <th><?php echo $th_party; ?></th>
-            <th><?php echo $th_state; ?></th>
-            <th>Positions</th>
-            <?php if ($order == 'debates') { ?>
-                <th>Debates spoken in the last year</th>
-            <?php } ?>
-        </tr>
-    </thead>
-    <tbody>
-        <?php
+// Toolbar
+echo '<div class="people-toolbar" style="margin-bottom:0.75rem;font-size:0.95rem;color:#374151">Sort: ' . $th_name . ' | ' . $th_party . ' | ' . $th_state . '</div>';
 
-        $URL = new URL(str_replace('s', '', $this_page));
-        $style = '2';
+echo '<div class="people-cards">';
 
-        foreach ($data['data'] as $pid => $peer) {
-            render_peers_row($peer, $style, $order, $URL);
-        }
-        ?>
-    </tbody>
-</table>
+$URL = new URL(str_replace('s', '', $this_page));
+$style = '2';
 
-<?php
+foreach ($data['data'] as $pid => $peer) {
+    render_peers_row($peer, $style, $order, $URL);
+}
+
+echo '</div>';
 
 function manymins($p, $d)
 {
@@ -97,44 +82,30 @@ function render_peers_row($peer, &$style, $order, $URL)
     else
         $party = $peer['party'];
 
-    #	$MPURL->insert(array('pid'=>$peer['person_id']));
     $url = $URL->generate() . make_member_url($name, $peer['constituency'], 2);
-    ?>
-    <tr>
-        <td class="row">
-            <?php
-            list($image, $sz) = find_rep_image($peer['person_id'], true);
-            if ($image) {
-                echo '<a href="', $url, '">';
-                echo '<img class="portrait" alt="" src="', $image, '"/>';
-                echo '</a>';
-            }
-            ?>
-        </td>
-        <td class="row-<?php echo $style; ?>">
-            <a href="<?php echo $url; ?>"><?php echo ucfirst($name); ?></a>
-        </td>
-        <td class="row-<?php echo $style; ?>"><?php echo $party; ?></td>
-        <td class="row-<?php echo $style; ?>"><?php echo $peer['constituency'] ?></td>
-        <td class="row-<?php echo $style; ?>">
-            <?php
-            if (is_array($peer['dept'])) {
-                print implode('<br>', array_map('manymins', $peer['pos'], $peer['dept']));
-            } elseif ($peer['dept']) {
-                print prettify_office($peer['pos'], $peer['dept']);
-            } else {
-                print '&nbsp;';
-            }
-            ?>
-            </td>
 
-        <?php if ($order == 'debates') { ?>
-            <td class="row-<?php echo $style; ?>"><?php echo number_format($peer['data_value']); ?></td>
-        <?php } ?>
+    list($image, $sz) = find_rep_image($peer['person_id'], true);
 
-    </tr>
-    <?php
-
+    echo '<article class="person-card">';
+    echo '<div class="person-card-inner">';
+    echo '<div class="person-avatar">';
+    if ($image) echo '<a href="' . $url . '"><img class="portrait" alt="" src="' . $image . '"/></a>';
+    echo '</div>';
+    echo '<div class="person-main">';
+    echo '<a class="person-name" href="' . $url . '">' . ucfirst($name) . '</a>';
+    echo '<div class="person-meta"><span class="party">' . htmlspecialchars($party) . '</span> <span class="sep">·</span> <span class="constituency">' . htmlspecialchars($peer['constituency']) . '</span></div>';
+    echo '<div class="person-positions">';
+    if (is_array($peer['dept'])) {
+        echo implode('<br/>', array_map('manymins', $peer['pos'], $peer['dept']));
+    } elseif ($peer['dept']) {
+        echo prettify_office($peer['pos'], $peer['dept']);
+    } else {
+        echo '&nbsp;';
+    }
+    echo '</div>';
+    echo '</div>';
+    echo '</div>';
+    echo '</article>';
 }
 
 ?>

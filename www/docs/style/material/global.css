@@ -191,3 +191,108 @@ body {
     background: #f1f5f9;
     text-decoration: none;
 }
+
+/* People list (MPs / Senators) tidy-up */
+.people {
+    width: 100% !important;
+    border-collapse: collapse;
+    margin: 0;
+    font-size: 0.95rem;
+}
+.people thead th {
+    text-align: left;
+    font-weight: 600;
+    padding: 0.65rem 0.75rem;
+    color: #0f172a;
+    border-bottom: 1px solid rgba(15,23,42,0.06);
+}
+.people tbody td {
+    padding: 0.65rem 0.75rem;
+    vertical-align: middle;
+    border-bottom: 1px solid rgba(15,23,42,0.04);
+    color: #334155;
+}
+.people tr:hover td { background: rgba(15,23,42,0.02); }
+.people .portrait { width: 56px; height: 56px; object-fit: cover; border-radius: 8px; display: block; }
+.people td.row { width: 72px; }
+.people td.row-1, .people td.row-2 { padding-top: 0.6rem; padding-bottom: 0.6rem; }
+
+@media (max-width: 700px) {
+    .people thead { display: none; }
+    .people, .people tbody, .people tr, .people td { display: block; width: 100%; }
+    .people tr { margin-bottom: 0.75rem; border-radius: 8px; background: #ffffff; box-shadow: 0 1px 0 rgba(15,23,42,0.02); }
+    .people td { padding: 0.75rem; border-bottom: none; }
+    .people td.row { float: left; margin-right: 0.75rem; }
+}
+
+/* Card layout for people (mobile-first). Cards stack on small screens and form a grid on larger */
+.people-cards {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+}
+.person-card {
+    background: #ffffff;
+    border: 1px solid rgba(15,23,42,0.04);
+    border-radius: 10px;
+    padding: 0.75rem;
+}
+.person-card-inner { display: flex; gap: 0.75rem; align-items: center; }
+.person-avatar { flex: 0 0 auto; width: 56px; }
+.person-main { flex: 1 1 auto; }
+.person-name { display: block; font-weight: 600; color: #0f172a; text-decoration: none; margin-bottom: 0.25rem; }
+.person-meta { color: #64748b; font-size: 0.9rem; margin-bottom: 0.5rem; }
+.person-positions { color: #475569; font-size: 0.9rem; }
+
+@media (min-width: 740px) {
+    .people-cards { grid-template-columns: repeat(2, 1fr); }
+}
+@media (min-width: 1100px) {
+    .people-cards { grid-template-columns: repeat(3, 1fr); }
+}
+
+/* Pokémon-card inspired accents (subtle, same colour palette) */
+.person-card {
+    background: linear-gradient(180deg, #ffffff 0%, #fbfdff 100%);
+    border: 1px solid rgba(15,23,42,0.04);
+    border-radius: 12px;
+    padding: 0.85rem;
+    position: relative;
+    overflow: hidden;
+    transition: transform .14s ease, box-shadow .14s ease;
+}
+.person-card:hover { transform: translateY(-6px); box-shadow: 0 16px 36px rgba(2,6,23,0.08); }
+
+.person-card::before {
+    /* decorative rounded accent in site material-blue */
+    content: '';
+    position: absolute;
+    right: -48px;
+    top: -36px;
+    width: 160px;
+    height: 160px;
+    background: radial-gradient(circle at 30% 30%, rgba(30,136,229,0.12), transparent 40%);
+    transform: rotate(18deg);
+    pointer-events: none;
+}
+
+.person-avatar { position: relative; }
+.person-avatar .portrait {
+    width: 64px;
+    height: 64px;
+    border-radius: 10px;
+    object-fit: cover;
+    border: 2px solid rgba(15,23,42,0.04);
+    box-shadow: 0 6px 18px rgba(2,6,23,0.06);
+    background: #ffffff;
+}
+
+.person-avatar::after { display: none; }
+
+.person-meta .party { display: inline-block; background: rgba(59,130,246,0.08); color: #1e3a8a; padding: 0.12rem 0.45rem; border-radius: 999px; font-weight: 600; margin-right: 0.45rem; }
+.person-meta .constituency { color: #475569; }
+
+.person-name { font-size: 1.02rem; }
+
+.person-card .person-positions { margin-top: 0.5rem; font-size: 0.88rem; color: #475569; }
+
