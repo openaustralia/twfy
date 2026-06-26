@@ -27,7 +27,7 @@ $MPURL = new URL('yourmp');
     <div class="max-w-4xl">
         <p class="text-sm font-semibold uppercase tracking-[0.3em] text-material-600">OpenAustralia</p>
         <h1 class="mt-4 text-4xl font-bold tracking-tight text-slate-900 sm:text-5xl">Making Parliament easier to explore</h1>
-        <p class="mt-4 text-lg leading-8 text-slate-600">Search Hansard, find your representative, sign up for alerts and keep up with the latest debates from the Australian Parliament.</p>
+        <p class="mt-4 text-lg leading-8 text-slate-600">Search Hansard across both the House of Representatives and the Senate, find your local representative or senator, sign up for alerts, and keep up with the latest parliamentary debates and proceedings.</p>
     </div>
 </section>
 
