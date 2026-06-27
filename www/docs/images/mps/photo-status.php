@@ -4,8 +4,8 @@
  * @file
  */
 
-include_once __DIR__ . "/../../../includes/easyparliament/init.php";
-include_once __DIR__ . "/../../../includes/easyparliament/member.php";
+include_once INCLUDESPATH . 'easyparliament/init.php';
+include_once INCLUDESPATH . 'easyparliament/member.php';
 
 use OpenAustralia\TWFY\Models\Member;
 

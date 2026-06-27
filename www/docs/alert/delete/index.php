@@ -32,7 +32,7 @@
 
 // INITIALISATION.
 
-include_once __DIR__ . "/../../../includes/easyparliament/init.php";
+include_once INCLUDESPATH . 'easyparliament/init.php';
 
 // Instantiate an instance of ALERT.
 
@@ -60,9 +60,9 @@ function delete_success() {
     $PAGE->stripe_start();
 
     ?>
-    
+
     <p>Your alert has been unsubscribed.</p>
-    
+
     <p>You will no longer receive this alert though any others you have requested will be unaffected. If you wish to unsubscribe from any more
     alerts you will have to do this individually.  If you wish to set new alerts then please visit OpenAustralia again.</p>
 
@@ -92,9 +92,9 @@ function delete_error() {
     $PAGE->stripe_start();
 
     ?>
-    
+
     <p>The link you followed to reach this page appears to be incomplete.</p>
-    
+
     <p>If you clicked a link in your alert email you may need to manually copy and paste the entire link to the 'Location' bar of the web browser and try again.</p>
 
     <p>If you still get this message, please do <a href="mailto:<?php echo CONTACTEMAIL; ?>">email us</a> and let us know, and we'll help out!</p>

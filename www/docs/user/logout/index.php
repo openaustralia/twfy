@@ -8,7 +8,7 @@
 // When the logout has happened, we show a page that links to where the user was
 // when they clicked the 'Log out' link.
 
-include_once __DIR__ . "/../../../includes/easyparliament/init.php";
+include_once INCLUDESPATH . 'easyparliament/init.php';
 
 $this_page = "userlogout";
 
