@@ -64,6 +64,45 @@ class TestablePageForDisplayMember extends PAGE {
 
 }
 
+class SpyPageForErrorMessage extends PAGE {
+
+    public bool $started = true;
+    public bool $withinStripe = false;
+    public int $pageStartCalls = 0;
+    public int $stripeEndCalls = 0;
+    public int $pageEndCalls = 0;
+    public array $messageCalls = [];
+
+    public function page_started() {
+        return $this->started;
+    }
+
+    public function page_start() {
+        $this->pageStartCalls++;
+        $this->started = true;
+    }
+
+    public function message($message, $class = '') {
+        $this->messageCalls[] = [
+            'message' => $message,
+            'class' => $class,
+        ];
+    }
+
+    public function within_stripe() {
+        return $this->withinStripe;
+    }
+
+    public function stripe_end($contents = [], $extra = '') {
+        $this->stripeEndCalls++;
+    }
+
+    public function page_end($extra = null) {
+        $this->pageEndCalls++;
+    }
+
+}
+
 class FakeDataForDisplayMember {
 
     public function __construct(private string $rss = '') {
@@ -402,6 +441,48 @@ class PageDisplayMemberTest extends TestCase {
         $this->assertStringContainsString('On the Australian Parliament website', $html);
         $this->assertStringContainsString('2022 Election results for Tasmania', $html);
         $this->assertStringNotContainsString('mailto:', $html);
+    }
+
+    public function test_error_message_starts_page_and_wraps_string_message(): void {
+        $page = new SpyPageForErrorMessage();
+        $page->started = false;
+
+        $page->error_message('Test error text');
+
+        $this->assertSame(1, $page->pageStartCalls);
+        $this->assertCount(1, $page->messageCalls);
+        $this->assertSame(['text' => 'Test error text'], $page->messageCalls[0]['message']);
+        $this->assertSame('error', $page->messageCalls[0]['class']);
+        $this->assertSame(0, $page->stripeEndCalls);
+        $this->assertSame(0, $page->pageEndCalls);
+    }
+
+    public function test_error_message_fatal_within_stripe_closes_stripe_and_page(): void {
+        $page = new SpyPageForErrorMessage();
+        $page->started = true;
+        $page->withinStripe = true;
+
+        $page->error_message(['title' => 'Fatal error'], true);
+
+        $this->assertSame(0, $page->pageStartCalls);
+        $this->assertCount(1, $page->messageCalls);
+        $this->assertSame(['title' => 'Fatal error'], $page->messageCalls[0]['message']);
+        $this->assertSame('error', $page->messageCalls[0]['class']);
+        $this->assertSame(1, $page->stripeEndCalls);
+        $this->assertSame(1, $page->pageEndCalls);
+    }
+
+    public function test_error_message_fatal_outside_stripe_only_ends_page(): void {
+        $page = new SpyPageForErrorMessage();
+        $page->started = true;
+        $page->withinStripe = false;
+
+        $page->error_message(['text' => 'Fatal error'], true);
+
+        $this->assertSame(0, $page->pageStartCalls);
+        $this->assertCount(1, $page->messageCalls);
+        $this->assertSame(0, $page->stripeEndCalls);
+        $this->assertSame(1, $page->pageEndCalls);
     }
 
 }
