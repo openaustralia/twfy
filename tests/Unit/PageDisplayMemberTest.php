@@ -158,24 +158,27 @@ class PageDisplayMemberTest extends TestCase {
     private mixed $originalData;
     private mixed $originalThisPage;
     private mixed $originalTheUser;
+    private mixed $originalSearchengine;
     private array $originalServer;
 
     protected function setUp(): void {
-        global $DATA, $this_page, $THEUSER;
+        global $DATA, $this_page, $THEUSER, $SEARCHENGINE;
 
         $this->originalData = $DATA ?? null;
         $this->originalThisPage = $this_page ?? null;
         $this->originalTheUser = $THEUSER ?? null;
+        $this->originalSearchengine = $SEARCHENGINE ?? null;
         $this->originalServer = $_SERVER;
         $_GET = [];
     }
 
     protected function tearDown(): void {
-        global $DATA, $this_page, $THEUSER;
+        global $DATA, $this_page, $THEUSER, $SEARCHENGINE;
 
         $DATA = $this->originalData;
         $this_page = $this->originalThisPage;
         $THEUSER = $this->originalTheUser;
+        $SEARCHENGINE = $this->originalSearchengine;
         $_SERVER = $this->originalServer;
     }
 
@@ -402,7 +405,15 @@ class PageDisplayMemberTest extends TestCase {
         $this->assertIsString($html);
         $this->assertStringContainsString('Most recent appearances in parliament', $html);
         $this->assertStringContainsString('Taylor Tasman\'s recent appearances', $html);
-        $this->assertStringContainsString('hansardlist-test-stub', $html);
+
+        $hansardlistReflection = new ReflectionClass(HANSARDLIST::class);
+        if (basename((string) $hansardlistReflection->getFileName()) === 'PageDisplayMemberTest.php') {
+            // Our local test stub was loaded.
+            $this->assertStringContainsString('hansardlist-test-stub', $html);
+        } else {
+            // Real HANSARDLIST was loaded by another test first.
+            $this->assertStringContainsString('No data to display.', $html);
+        }
     }
 
     public function test_generate_member_links_renders_email_and_maiden_speech_links(): void {
