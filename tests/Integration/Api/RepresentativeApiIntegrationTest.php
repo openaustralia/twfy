@@ -6,6 +6,7 @@
  */
 
 use OpenAustralia\TWFY\Models\Member as MemberModel;
+use OpenAustralia\TWFY\Models\PostcodeLookup;
 
 if (!function_exists('member_full_name')) {
 
@@ -47,6 +48,7 @@ class RepresentativeApiIntegrationTest extends TransactionalTestCase {
     private int $fixtureSenatorMemberId;
     private int $fixtureSenatorPersonId;
     private string $fixtureState;
+    private string $fixturePostcode;
 
     protected function setUp(): void {
         parent::setUp();
@@ -64,6 +66,7 @@ class RepresentativeApiIntegrationTest extends TransactionalTestCase {
         $this->fixtureSenatorMemberId = 972000 + $suffix;
         $this->fixtureSenatorPersonId = 982000 + $suffix;
         $this->fixtureState = 'Victoria';
+        $this->fixturePostcode = '2000';
 
         MemberModel::create([
             'member_id' => $this->fixtureMemberId,
@@ -93,6 +96,12 @@ class RepresentativeApiIntegrationTest extends TransactionalTestCase {
             'left_house' => '9999-12-31',
             'entered_reason' => 'general_election',
             'left_reason' => 'still_in_office',
+        ]);
+
+        PostcodeLookup::where('postcode', $this->fixturePostcode)->delete();
+        PostcodeLookup::create([
+            'postcode' => $this->fixturePostcode,
+            'name' => $this->fixtureConstituency,
         ]);
     }
 
@@ -124,6 +133,16 @@ class RepresentativeApiIntegrationTest extends TransactionalTestCase {
         $this->assertStringContainsString('always_return', $raw);
     }
 
+    public function test_getRepresentatives_front_renders_expected_help_copy(): void {
+        ob_start();
+        api_getRepresentatives_front();
+        $raw = ob_get_clean();
+
+        $this->assertIsString($raw);
+        $this->assertStringContainsString('Fetch a list of members of the House of Representatives.', $raw);
+        $this->assertStringContainsString('postcode (optional)', $raw);
+    }
+
     public function test_getRepresentative_id_returns_error_for_unknown_person_id(): void {
         ob_start();
         api_getRepresentative_id(-99999999);
@@ -145,6 +164,29 @@ class RepresentativeApiIntegrationTest extends TransactionalTestCase {
             'Unknown constituency, or no Representative for that constituency',
             $decoded['error']
         );
+    }
+
+    public function test_getRepresentatives_postcode_returns_error_for_invalid_postcode(): void {
+        ob_start();
+        api_getRepresentatives_postcode('not-a-postcode');
+        $raw = ob_get_clean();
+
+        $decoded = unserialize($raw, ['allowed_classes' => false]);
+        $this->assertIsArray($decoded);
+        $this->assertSame('Invalid postcode', $decoded['error']);
+    }
+
+    public function test_getRepresentatives_postcode_returns_matching_representative(): void {
+        ob_start();
+        api_getRepresentatives_postcode($this->fixturePostcode);
+        $raw = ob_get_clean();
+
+        $decoded = unserialize($raw, ['allowed_classes' => false]);
+        $this->assertIsArray($decoded);
+        $this->assertNotEmpty($decoded);
+
+        $personIds = array_map(static fn ($row) => (int) $row['person_id'], $decoded);
+        $this->assertContains($this->fixturePersonId, $personIds);
     }
 
     public function test__api_getRepresentative_row_sets_name_and_maps_party(): void {
