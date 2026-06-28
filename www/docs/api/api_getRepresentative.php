@@ -154,10 +154,6 @@ function _api_getRepresentative_constituency($constituency) {
         return false;
     }
 
-    if ($constituency == 'Orkney ') {
-        $constituency = 'Orkney &amp; Shetland';
-    }
-
     $normalised = normalise_constituency_name($constituency);
     if ($normalised) {
         $constituency = $normalised;
