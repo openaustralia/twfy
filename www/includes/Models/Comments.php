@@ -26,7 +26,7 @@ class Comments extends Model {
 
     public $timestamps = true;
 
-    protected $createdAtColumn = 'posted';
+    public const CREATED_AT = 'posted';
 
     // Cast date fields.
     protected $casts = [
