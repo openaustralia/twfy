@@ -93,6 +93,110 @@ class RepresentativeApiIntegrationTest extends TransactionalTestCase {
         $this->assertSame((string) HOUSE::REPRESENTATIVES, (string) $decoded['house']);
     }
 
+    public function test_getRepresentative_front_renders_expected_help_copy(): void {
+        ob_start();
+        api_getRepresentative_front();
+        $raw = ob_get_clean();
+
+        $this->assertIsString($raw);
+        $this->assertStringContainsString('Fetch a particular member of the House of Representatives.', $raw);
+        $this->assertStringContainsString('always_return', $raw);
+    }
+
+    public function test_getRepresentative_id_returns_error_for_unknown_person_id(): void {
+        ob_start();
+        api_getRepresentative_id(-99999999);
+        $raw = ob_get_clean();
+
+        $decoded = unserialize($raw, ['allowed_classes' => false]);
+        $this->assertIsArray($decoded);
+        $this->assertSame('Unknown person ID', $decoded['error']);
+    }
+
+    public function test_getRepresentative_division_returns_error_for_unknown_constituency(): void {
+        ob_start();
+        api_getRepresentative_division('No Such Seat 999999');
+        $raw = ob_get_clean();
+
+        $decoded = unserialize($raw, ['allowed_classes' => false]);
+        $this->assertIsArray($decoded);
+        $this->assertSame(
+            'Unknown constituency, or no Representative for that constituency',
+            $decoded['error']
+        );
+    }
+
+    public function test__api_getRepresentative_row_sets_name_and_maps_party(): void {
+        $GLOBALS['parties'][$this->fixtureParty] = 'Mapped Party Name';
+
+        $row = MemberModel::where('person_id', $this->fixturePersonId)->first();
+        $this->assertNotNull($row);
+
+        $out = _api_getRepresentative_row($row->toArray());
+
+        $this->assertSame('Tx Representative', $out['full_name']);
+        $this->assertSame($out['full_name'], $out['name']);
+        $this->assertSame('Mapped Party Name', $out['party']);
+    }
+
+    public function test__api_getRepresentative_row_adds_current_office_rows(): void {
+        \OpenAustralia\TWFY\Models\Moffice::create([
+            'dept' => 'Cabinet',
+            'position' => 'Minister for Testing',
+            'from_date' => '2020-01-01',
+            'to_date' => '9999-12-31',
+            'person' => $this->fixturePersonId,
+            'source' => 'fixture',
+        ]);
+
+        $row = MemberModel::where('person_id', $this->fixturePersonId)->first();
+        $this->assertNotNull($row);
+
+        $out = _api_getRepresentative_row($row->toArray());
+
+        $this->assertArrayHasKey('office', $out);
+        $this->assertNotEmpty($out['office']);
+        $this->assertSame('Minister for Testing', $out['office'][0]['position']);
+    }
+
+    public function test__api_getRepresentative_constituency_returns_false_for_empty_input(): void {
+        $this->assertFalse(_api_getRepresentative_constituency(''));
+    }
+
+    public function test__api_getRepresentative_constituency_finds_current_member(): void {
+        $out = _api_getRepresentative_constituency($this->fixtureConstituency);
+
+        $this->assertIsArray($out);
+        $this->assertSame($this->fixturePersonId, (int) $out['person_id']);
+    }
+
+    public function test__api_getRepresentative_constituency_honours_always_return(): void {
+        $suffix = random_int(100000, 999999);
+        $personId = 990000 + $suffix;
+        $constituency = 'VacantSeat' . $suffix;
+
+        MemberModel::create([
+            'member_id' => 995000 + $suffix,
+            'person_id' => $personId,
+            'house' => HOUSE::REPRESENTATIVES,
+            'title' => '',
+            'first_name' => 'Former',
+            'last_name' => 'Member',
+            'constituency' => $constituency,
+            'party' => 'Past Party',
+            'entered_house' => '2000-01-01',
+            'left_house' => '2010-01-01',
+            'entered_reason' => 'general_election',
+            'left_reason' => 'general_election',
+        ]);
+
+        $_GET['always_return'] = '1';
+        $out = _api_getRepresentative_constituency($constituency);
+
+        $this->assertIsArray($out);
+        $this->assertSame($personId, (int) $out['person_id']);
+    }
+
     public function test_getRepresentatives_party_returns_representatives_only(): void {
         ob_start();
         api_getRepresentatives_party($this->fixtureParty);
