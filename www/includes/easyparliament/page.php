@@ -11,7 +11,7 @@ if (defined('OPTION_TRACKING') && OPTION_TRACKING) {
 include_once __DIR__ . '/member.php';
 include_once __DIR__ . '/../request.php';
 
-// define a const for mdash
+// A const for mdash
 define('MDASH', " &mdash; ");
 
 /**
