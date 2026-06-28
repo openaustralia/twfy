@@ -28,10 +28,6 @@ function api_getRepresentative_front() {
         <dt>always_return (optional)</dt>
         <dd>For the division option, sets whether to always try and return a Representative, even if the seat is currently
             vacant.</dd>
-        <!--
-<dt>extra (optional)</dt>
-<dd>Returns extra data in one or more categories, separated by commas.</dd>
--->
     </dl>
 
     <h4>Example Response</h4>
