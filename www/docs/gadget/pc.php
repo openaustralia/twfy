@@ -40,9 +40,6 @@ function get_person_id($c) {
     if ($c == '') {
         return false;
     }
-    if ($c == 'Orkney ') {
-        $c = 'Orkney &amp; Shetland';
-    }
     $n = normalise_constituency_name($c);
     if ($n) {
         $c = $n;
