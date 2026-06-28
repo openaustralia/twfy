@@ -81,6 +81,39 @@ class FakeDataForDisplayMember {
 
 }
 
+class FakeMemberForLinks {
+
+    public function __construct(
+        private string $fullName,
+        private string $firstName,
+        private string $lastName,
+        private string $constituency,
+        private int $memberId
+    ) {
+    }
+
+    public function full_name(): string {
+        return $this->fullName;
+    }
+
+    public function first_name(): string {
+        return $this->firstName;
+    }
+
+    public function last_name(): string {
+        return $this->lastName;
+    }
+
+    public function constituency(): string {
+        return $this->constituency;
+    }
+
+    public function member_id(): int {
+        return $this->memberId;
+    }
+
+}
+
 class PageDisplayMemberTest extends TestCase {
 
     private mixed $originalData;
@@ -95,6 +128,7 @@ class PageDisplayMemberTest extends TestCase {
         $this->originalThisPage = $this_page ?? null;
         $this->originalTheUser = $THEUSER ?? null;
         $this->originalServer = $_SERVER;
+        $_GET = [];
     }
 
     protected function tearDown(): void {
@@ -323,6 +357,51 @@ class PageDisplayMemberTest extends TestCase {
         $this->assertStringContainsString('Most recent appearances in parliament', $html);
         $this->assertStringContainsString('Taylor Tasman\'s recent appearances', $html);
         $this->assertStringContainsString('hansardlist-test-stub', $html);
+    }
+
+    public function test_generate_member_links_renders_email_and_maiden_speech_links(): void {
+        $page = new TestablePageForDisplayMember();
+        $member = new FakeMemberForLinks('Pat Canberra', 'Pat', 'Canberra', 'Canberra', 200002);
+
+        $links = [
+            'maiden_speech' => 'uk.org.publicwhip/debate/2024-01-01a.1.0',
+            'mp_email' => 'pat@example.org.au',
+            'mp_twitter_url' => 'https://twitter.com/patcanberra',
+            'mp_website' => 'https://pat.example.org.au',
+            'aph_url' => 'https://www.aph.gov.au/pat',
+        ];
+
+        $html = $page->generate_member_links($member, $links);
+
+        $this->assertIsString($html);
+        $this->assertStringContainsString('More useful links for this person', $html);
+        $this->assertStringContainsString('Maiden speech', $html);
+        $this->assertStringContainsString('mailto:pat@example.org.au', $html);
+        $this->assertStringContainsString('Pat Canberra on Twitter', $html);
+        $this->assertStringContainsString('Pat Canberra\'s personal website', $html);
+        $this->assertStringContainsString('Parliament House web page for Pat Canberra', $html);
+        $this->assertStringNotContainsString('Contact form', $html);
+    }
+
+    public function test_generate_member_links_renders_contact_form_and_c4_list_style(): void {
+        $_GET['c4'] = '1';
+
+        $page = new TestablePageForDisplayMember();
+        $member = new FakeMemberForLinks('Taylor Tasman', 'Taylor', 'Tasman', 'Tasmania', 200004);
+
+        $links = [
+            'mp_contact_form' => 'https://www.aph.gov.au/contact/taylor',
+            'abc_election_results_2022' => 'https://www.abc.net.au/elections/federal/2022/guide/tasm',
+        ];
+
+        $html = $page->generate_member_links($member, $links);
+
+        $this->assertIsString($html);
+        $this->assertStringContainsString('style="list-style-type:none;"', $html);
+        $this->assertStringContainsString('Contact form', $html);
+        $this->assertStringContainsString('On the Australian Parliament website', $html);
+        $this->assertStringContainsString('2022 Election results for Tasmania', $html);
+        $this->assertStringNotContainsString('mailto:', $html);
     }
 
 }
