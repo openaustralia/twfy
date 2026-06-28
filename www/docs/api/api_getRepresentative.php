@@ -15,7 +15,7 @@ use OpenAustralia\TWFY\Models\Moffice as MofficeModel;
  */
 function api_getRepresentative_front() {
     ?>
-    <p><big>Fetch a particular member of the House of Representatives.</big></p>
+    <h3>Fetch a particular member of the House of Representatives.</h3>
 
     <h4>Arguments</h4>
     <dl>
