@@ -1003,7 +1003,7 @@ class HANSARDLIST {
                 'section_id' => $row->section_id,
                 'htype' => $row->htype,
                 'major' => $row->major,
-                'hdate' => $row->hdate,
+                'hdate' => $row->hdate->format('Y-m-d'),
                 'htime' => $row->htime,
                 'speaker_id' => $row->speaker_id,
                 'body' => $row->body,
