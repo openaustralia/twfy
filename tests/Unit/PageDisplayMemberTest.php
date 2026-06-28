@@ -388,9 +388,16 @@ class PageDisplayMemberTest extends TestCase {
 
         $page = new TestablePageForDisplayMember();
 
+        $bufferLevel = ob_get_level();
         ob_start();
-        $page->display_member($member, []);
-        $html = ob_get_clean();
+        try {
+            $page->display_member($member, []);
+            $html = ob_get_clean();
+        } finally {
+            while (ob_get_level() > $bufferLevel) {
+                ob_end_clean();
+            }
+        }
 
         $this->assertIsString($html);
         $this->assertStringContainsString('Most recent appearances in parliament', $html);
