@@ -588,16 +588,16 @@ div[class*="stripe-head"] .main h3 {
 .person-card {
     background: linear-gradient(180deg, #ffffff 0%, #fbfdff 100%);
     border: 1px solid rgba(15,23,42,0.04);
-    border-radius: 12px;
-    padding: 0.85rem;
+    border-radius: 14px;
+    padding: 1rem;
     position: relative;
     overflow: hidden;
+    box-shadow: 0 12px 24px rgba(2,6,23,0.05);
     transition: transform .14s ease, box-shadow .14s ease;
 }
 .person-card:hover { transform: translateY(-6px); box-shadow: 0 16px 36px rgba(2,6,23,0.08); }
 
 .person-card::before {
-    /* decorative rounded accent in site material-blue */
     content: '';
     position: absolute;
     right: -48px;
@@ -609,23 +609,48 @@ div[class*="stripe-head"] .main h3 {
     pointer-events: none;
 }
 
-.person-avatar { position: relative; }
+.person-card-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.55rem;
+}
+
+.person-avatar { position: relative; width: 100%; margin-bottom: 0.15rem; }
 .person-avatar .portrait {
-    width: 64px;
-    height: 64px;
-    border-radius: 10px;
+    width: min(100%, 132px);
+    height: 132px;
+    border-radius: 14px;
     object-fit: cover;
     border: 2px solid rgba(15,23,42,0.04);
     box-shadow: 0 6px 18px rgba(2,6,23,0.06);
     background: #ffffff;
 }
 
+.person-main {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
 .person-avatar::after { display: none; }
 
 .person-meta .party { display: inline-block; background: rgba(59,130,246,0.08); color: #1e3a8a; padding: 0.12rem 0.45rem; border-radius: 999px; font-weight: 600; margin-right: 0.45rem; }
 .person-meta .constituency { color: #475569; }
 
-.person-name { font-size: 1.02rem; }
+.person-name {
+    display: block;
+    font-size: 1.05rem;
+    line-height: 1.25;
+    margin-bottom: 0.2rem;
+}
 
-.person-card .person-positions { margin-top: 0.5rem; font-size: 0.88rem; color: #475569; }
+.person-card .person-positions { margin-top: 0.35rem; font-size: 0.9rem; color: #475569; }
+
+@media (min-width: 740px) {
+    .person-avatar .portrait {
+        width: 116px;
+        height: 116px;
+    }
+}
 
