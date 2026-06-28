@@ -4,6 +4,8 @@
  * @file
  */
 
+use OpenAustralia\TWFY\Models\Hansard;
+
 include_once __DIR__ . "/../../includes/easyparliament/init.php";
 $this_page = "admin_statistics";
 
@@ -27,14 +29,11 @@ $debate_speeches = $DEBATELIST->total_speeches();
 
 $wrans_questions = $WRANSLIST->total_questions();
 
-$q = parlDBQuery("SELECT MIN(hdate) AS mindate, MAX(hdate) AS maxdate FROM hansard");
-$datefrom = format_date($q->field(0, 'mindate'), SHORTDATEFORMAT);
-$dateto = format_date($q->field(0, 'maxdate'), SHORTDATEFORMAT);
+$datefrom = format_date(Hansard::min('hdate'), SHORTDATEFORMAT);
+$dateto = format_date(Hansard::max('hdate'), SHORTDATEFORMAT);
 
-$q = parlDBQuery("SELECT COUNT(DISTINCT hdate) AS count FROM hansard");
-$uniquedates = $q->field(0, 'count');
+$uniquedates = Hansard::distinct()->count('hdate');
 ?>
-
 
 <p><b><?php echo $datefrom?></b> to <b><?php echo $dateto?></b>. Parliament was sitting for
 <b><?php echo $uniquedates?></b> of those days.

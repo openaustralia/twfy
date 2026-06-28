@@ -6,15 +6,16 @@
 
 include_once __DIR__ . "/../postcode.php";
 include_once __DIR__ . "/glossary.php";
+include_once __DIR__ . "/house.php";
 
 use Illuminate\Database\Capsule\Manager as DB;
 use OpenAustralia\TWFY\Models\Member as MemberModel;
+use OpenAustralia\TWFY\Models\Moffice as MofficeModel;
 
 /**
  *
  */
 class MEMBER {
-
 
     public $valid = false;
     public ?int $member_id = null;
@@ -38,17 +39,6 @@ class MEMBER {
      * Which house we should display this person in.
      */
     public $house_disp = 0;
-
-    /**
-     * Mapping member table 'house' numbers to text.
-     */
-    public $houses_pretty = [
-        0 => 'Royal Family',
-        1 => 'House of Commons',
-        2 => 'House of Lords',
-        3 => 'Northern Ireland Assembly',
-        4 => 'Scottish Parliament',
-    ];
 
     /**
      * Mapping member table reasons to text.
@@ -134,6 +124,9 @@ class MEMBER {
         $this->house_disp = 0;
         foreach ($rows as $row) {
             $house = $row->house;
+            if ($house != HOUSE::REPRESENTATIVES && $house != HOUSE::SENATE) {
+                continue;
+            }
             if (!in_array($house, $this->houses)) {
                 $this->houses[] = $house;
             }
@@ -170,17 +163,10 @@ class MEMBER {
                 ];
             }
 
-            // The Monarch.
+            // Senators have priority over Representatives.
             if (
-                $house == 0
-                // MSPs and.
-                || (!$this->house_disp && $house == 4)
-                // MLAs have lowest priority.
-                || (!$this->house_disp && $house == 3)
-                // Lords have highest priority.
-                || ($this->house_disp != 2 && $house == 2)
-                // MPs have higher priority than MLAs.
-                || ((!$this->house_disp || $this->house_disp == 3) && $house == 1)
+                $house == HOUSE::SENATE
+                || ($this->house_disp != HOUSE::SENATE && $house == HOUSE::REPRESENTATIVES)
             ) {
                 // OA-306 assure that person's party affiliation and constituency
                 // are derived from thier latest membership role.
@@ -354,7 +340,7 @@ class MEMBER {
     public function set_users_mp() {
         // Is this MP THEUSER's MP?
         global $THEUSER;
-        if (is_object($THEUSER) && $THEUSER->constituency_is_set() && $this->current_member(1)) {
+        if (is_object($THEUSER) && $THEUSER->constituency_is_set() && $this->current_member(HOUSE::REPRESENTATIVES)) {
             twfy_debug('MP', "set_users_mp converting postcode to person");
             $constituency = $THEUSER->constituency();
             if ($constituency == $this->constituency()) {
@@ -368,9 +354,13 @@ class MEMBER {
      */
     public function load_extra_info() {
 
-        $offices = DB::table('moffice')->where('person', $this->person_id)->orderBy('from_date', 'desc')->get();
+        $offices = MofficeModel::where('person', $this->person_id)
+          ->orderBy('from_date', 'desc')
+          ->get()
+          ->map(static fn (MofficeModel $office): array => $office->toArray())
+          ->all();
         foreach ($offices as $office) {
-            $this->extra_info['office'][] = (array) $office;
+            $this->extra_info['office'][] = $office;
         }
 
         $memberInfoRows = DB::table('memberinfo')->where('member_id', $this->member_id)->get(['data_key', 'data_value']);
@@ -422,12 +412,12 @@ class MEMBER {
         }
 
         if (isset($this->extra_info['public_whip_attendrank'])) {
-            $prefix = ($this->house(2) ? 'L' : '');
+            $prefix = ($this->house(HOUSE::SENATE) ? 'L' : '');
             $this->extra_info[$prefix . 'public_whip_division_attendance_rank'] = $this->extra_info['public_whip_attendrank'];
             $this->extra_info[$prefix . 'public_whip_division_attendance_rank_outof'] = $this->extra_info['public_whip_attendrank_outof'];
             $this->extra_info[$prefix . 'public_whip_division_attendance_quintile'] = floor($this->extra_info['public_whip_attendrank'] / ($this->extra_info['public_whip_attendrank_outof'] + 1) * 5);
         }
-        if ($this->house(2) && isset($this->extra_info['public_whip_division_attendance'])) {
+        if ($this->house(HOUSE::SENATE) && isset($this->extra_info['public_whip_division_attendance'])) {
             $this->extra_info['Lpublic_whip_division_attendance'] = $this->extra_info['public_whip_division_attendance'];
             unset($this->extra_info['public_whip_division_attendance']);
         }
@@ -510,7 +500,7 @@ class MEMBER {
      */
     public function full_name($no_mp_title = false) {
         $title = $this->title;
-        if ($no_mp_title && $this->house_disp == 1) {
+        if ($no_mp_title && $this->house_disp == HOUSE::REPRESENTATIVES) {
             $title = '';
         }
         return member_full_name($this->house_disp, $title, $this->first_name, $this->last_name, $this->constituency);
@@ -570,14 +560,25 @@ class MEMBER {
     }
 
     /**
+     * Normalize date values coming from either raw DB strings or DateTime objects.
+     */
+    private function normalise_date_value($value): string {
+        if ($value instanceof \DateTimeInterface) {
+            return $value->format('Y-m-d');
+        }
+        return (string) $value;
+    }
+
+    /**
      *
      */
     public function entered_house_text($entered_house) {
         if (!$entered_house) {
             return '';
         }
+        $entered_house = $this->normalise_date_value($entered_house);
         [$year, $month, $day] = explode('-', $entered_house);
-        if ($month == 1 && $day == 1 && $this->house(2)) {
+        if ((int) $month == 1 && (int) $day == 1 && $this->house(HOUSE::SENATE)) {
             return $year;
         } elseif (checkdate((int) $month, (int) $day, (int) $year) && $year != '9999') {
             return format_date($entered_house, LONGDATEFORMAT);
@@ -603,6 +604,7 @@ class MEMBER {
         if (!$left_house) {
             return '';
         }
+        $left_house = $this->normalise_date_value($left_house);
         [$year, $month, $day] = explode('-', $left_house);
         if (checkdate((int) $month, (int) $day, (int) $year) && $year != '9999') {
             return format_date($left_house, LONGDATEFORMAT);
@@ -642,7 +644,7 @@ class MEMBER {
      */
     public function current_member($house = 0) {
         $current = [];
-        foreach (array_keys($this->houses_pretty) as $h) {
+        foreach (array_keys(HOUSE::PRETTY) as $h) {
             $lh = $this->left_house($h);
             $current[$h] = ($lh && $lh['date'] == '9999-12-31');
         }
@@ -664,17 +666,16 @@ class MEMBER {
      */
     public function url($absolute = true) {
         $house = $this->house_disp;
-        if ($house == 1) {
+        if ($house == HOUSE::REPRESENTATIVES) {
             $URL = new URL('mp');
-        } elseif ($house == 2) {
+        } elseif ($house == HOUSE::SENATE) {
+            // TODO: Change the URLs to senate.
             $URL = new URL('peer');
-        } elseif ($house == 3) {
-            $URL = new URL('mla');
-        } elseif ($house == 4) {
-            $URL = new URL('msp');
-        } elseif ($house == 0) {
-            $URL = new URL('royal');
+        } else {
+            // Unexpected house identifier.
+            return 'unknown';
         }
+
         $member_url = make_member_url($this->full_name(true), $this->constituency(), $house);
         if ($absolute) {
             // Scheme-relative URL: the browser preserves the current scheme,
@@ -714,11 +715,11 @@ class MEMBER {
      */
     public function previous_mps() {
         $previous_people = '';
-        $entered_house = $this->entered_house(1);
+        $entered_house = $this->entered_house(HOUSE::REPRESENTATIVES);
         if (is_null($entered_house)) {
             return '';
         }
-        $members = MemberModel::where('house', 1)
+        $members = MemberModel::where('house', HOUSE::REPRESENTATIVES)
           ->where('constituency', $this->constituency())
           ->where('person_id', '!=', $this->person_id())
           ->where('entered_house', '<', $entered_house['date'])
@@ -743,11 +744,11 @@ class MEMBER {
      */
     public function future_mps() {
         $future_people = '';
-        $entered_house = $this->entered_house(1);
+        $entered_house = $this->entered_house(HOUSE::REPRESENTATIVES);
         if (is_null($entered_house)) {
             return '';
         }
-        $members = MemberModel::where('house', 1)
+        $members = MemberModel::where('house', HOUSE::REPRESENTATIVES)
           ->where('constituency', $this->constituency())
           ->where('person_id', '!=', $this->person_id())
           ->where('entered_house', '>', $entered_house['date'])

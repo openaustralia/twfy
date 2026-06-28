@@ -4,20 +4,23 @@
  * @file
  */
 
-include_once 'api_getMP.php';
+include_once 'api_getRepresentative.php';
+
+use Illuminate\Database\Eloquent\Builder;
+use OpenAustralia\TWFY\Models\Member as MemberModel;
 
 /**
  * Shared API functions for get<Members>
  */
-function _api_getMembers_output($sql, ...$params) {
+function _api_getMembers_output(Builder $query) {
 
-    $q = parlDBQuery($sql, ...$params);
+    $rows = $query->get();
     $output = [];
     $last_mod = 0;
-    for ($i = 0; $i < $q->rows(); $i++) {
-        $out = _api_getMP_row($q->row($i));
+    foreach ($rows as $row) {
+        $out = _api_getRepresentative_row($row->toArray());
         $output[] = $out;
-        $time = strtotime($q->field($i, 'lastupdate'));
+        $time = strtotime($row->lastupdate);
         if ($time > $last_mod) {
             $last_mod = $time;
         }
@@ -26,62 +29,58 @@ function _api_getMembers_output($sql, ...$params) {
 }
 
 /**
+ * Scope: current members of the given house.
+ */
+function _api_currentMembers($house): Builder {
+    return MemberModel::query()->where('house', $house)
+      ->whereRaw('entered_house <= date(NOW())')
+      ->whereRaw('date(NOW()) <= left_house');
+}
+
+/**
  *
  */
 function api_getMembers_party($house, $s) {
-    // Needed to call db->escape()
     global $parties;
     $canon_to_short = array_flip($parties);
     if (isset($canon_to_short[ucwords($s)])) {
         $s = $canon_to_short[ucwords($s)];
     }
-    _api_getMembers_output('SELECT * from member
-		WHERE house = ?
-		AND party LIKE ? AND entered_house <= date(NOW()) AND date(NOW()) <= left_house',
-        $house, "%$s%");
+    _api_getMembers_output(
+        _api_currentMembers($house)
+          ->where('party', 'LIKE', "%$s%")
+    );
 }
 
 /**
  *
  */
 function api_getMembers_state($house, $s) {
-    // Needed to call db->escape()
     global $parties;
     $canon_to_short = array_flip($parties);
     if (isset($canon_to_short[ucwords($s)])) {
         $s = $canon_to_short[ucwords($s)];
     }
-    _api_getMembers_output('SELECT * from member
-                WHERE house = ?
-                AND constituency LIKE ? AND entered_house <= date(NOW()) AND date(NOW()) <= left_house',
-        $house, "%$s%");
+    _api_getMembers_output(
+        _api_currentMembers($house)
+          ->where('constituency', 'LIKE', "%$s%")
+    );
 }
 
 /**
  *
  */
 function api_getMembers_search($house, $s) {
-    if ($house == 2) {
-        _api_getMembers_output("SELECT * from member
-			WHERE house = ?
-			AND (first_name LIKE ?
-			OR last_name LIKE ?
-			OR CONCAT(first_name, ' ', last_name) LIKE ?
-			OR constituency LIKE ?)
-			AND entered_house <= date(NOW()) AND date(NOW()) <= left_house",
-        $house, "%$s%", "%$s%", "%$s%", "%$s%");
-    } else {
-        _api_getMembers_output("SELECT * from member
-			WHERE house = ?
-			AND (
-                first_name LIKE ?
-                OR last_name LIKE ?
-                OR CONCAT(first_name, ' ', last_name) LIKE ?
-            )
-			AND entered_house <= date(NOW())
-            AND date(NOW()) <= left_house",
-        $house, "%$s%", "%$s%", "%$s%");
-    }
+    $query = _api_currentMembers($house)
+      ->where(function ($q) use ($house, $s) {
+          $q->where('first_name', 'LIKE', "%$s%")
+            ->orWhere('last_name', 'LIKE', "%$s%")
+            ->orWhereRaw("CONCAT(first_name, ' ', last_name) LIKE ?", ["%$s%"]);
+          if ($house == HOUSE::SENATE) {
+              $q->orWhere('constituency', 'LIKE', "%$s%");
+          }
+      });
+    _api_getMembers_output($query);
 }
 
 /**
@@ -100,10 +99,12 @@ function api_getMembers_date($house, $date) {
  */
 function api_getMembers($house, $date = null) {
     if ($date === null) {
-        _api_getMembers_output('SELECT * from member WHERE house= ? ' .
-            ' AND entered_house <= date(NOW()) AND date(NOW()) <= left_house', $house);
+        _api_getMembers_output(_api_currentMembers($house));
     } else {
-        _api_getMembers_output('SELECT * from member WHERE house= ? ' .
-            ' AND entered_house <= date(?) AND date(?) <= left_house', $house, $date, $date);
+        _api_getMembers_output(
+            MemberModel::query()->where('house', $house)
+              ->whereRaw('entered_house <= date(?)', [$date])
+              ->whereRaw('date(?) <= left_house', [$date])
+        );
     }
 }

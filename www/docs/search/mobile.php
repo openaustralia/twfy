@@ -84,15 +84,15 @@ if (get_http_var('s') != '' || get_http_var('pid') != '') {
 
 
                     $URL = new URL($this_page);
-                    $url_l = $URL->generate('html', ['house' => 2]);
-                    $url_c = $URL->generate('html', ['house' => 1]);
+                    $url_l = $URL->generate('html', ['house' => HOUSE::SENATE]);
+                    $url_c = $URL->generate('html', ['house' => HOUSE::REPRESENTATIVES]);
                     $URL->remove(['house']);
                     $url_b = $URL->generate();
                     switch ($q_house) {
-                        case 1:
+                        case HOUSE::REPRESENTATIVES:
                             print "Representatives | <a href=\"$url_l\">Senators</a> | <a href=\"$url_b\">Both</a>";
                             break;
-                        case 2:
+                        case HOUSE::SENATE:
                             print "<a href=\"$url_c\">Representatives</a> | Senators | <a href=\"$url_b\">Both</a>";
                             break;
                         default:
@@ -110,9 +110,9 @@ if (get_http_var('s') != '' || get_http_var('pid') != '') {
                 if ($pid) {
                     $house = $speaker['house'];
                     $left = $speaker['left'];
-                    if ($house == 1) {
+                    if ($house == HOUSE::REPRESENTATIVES) {
                         print '<span style="color:#009900">&bull;</span> ';
-                    } elseif ($house == 2) {
+                    } elseif ($house == HOUSE::SENATE) {
                         print '<span style="color:#990000">&bull;</span> ';
                     }
                     if ($left == '9999-12-31') {

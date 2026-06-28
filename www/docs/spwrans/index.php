@@ -19,19 +19,6 @@ if (get_http_var('d')) {
     $LIST = new SPWRANSLIST();
     $LIST->display('date', $args);
 
-} elseif (get_http_var('spid')) {
-    // We have a Scottish Parliament ID, need to find the date.
-    $spid = get_http_var('spid');
-    $SPWRANSLIST = new SPWRANSLIST();
-    $gid = $SPWRANSLIST->get_gid_from_spid($spid);
-    if ($gid) {
-        $URL = new URL('spwrans');
-        $URL->insert(['id' => $gid]);
-        header('Location: //' . DOMAIN . $URL->generate('none'), true, 301);
-        exit;
-    }
-    $PAGE->error_message("Couldn't match that Scottish Parliament ID to a GID.");
-
 } elseif (get_http_var('id')) {
     // We have an id so show that item.
     // Could be a section id or a q/a id.
