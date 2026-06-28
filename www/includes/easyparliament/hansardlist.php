@@ -957,10 +957,13 @@ class HANSARDLIST {
     }
 
     // Display a person's most recent debates.
-    // Only used by MP RSS generator now, MP pages use Xapian search.
+    // Still used by scripts/mprss.php via $HANSARDLIST->display('person', ...).
+    // display() dynamically dispatches the 'person' view to this method.
+    // MP pages use Xapian search instead.
 
     /**
-     * XXX: Abolish this entirely?
+     * Keep until MP RSS generation no longer depends on display('person').
+     * then replace with Xapian
      */
     public function _get_data_by_person($args) {
         global $PAGE, $hansardmajors;
