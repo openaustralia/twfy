@@ -11,7 +11,10 @@ use OpenAustralia\TWFY\Models\Member as MemberModel;
 use OpenAustralia\TWFY\Models\Moffice as MofficeModel;
 
 /**
+ * Display API documentation for getRepresentative.
  *
+ * Called from index.php when ?method=getRepresentative&docs=1 is requested.
+ * Renders help text and usage examples for the API documentation explorer.
  */
 function api_getRepresentative_front() {
     ?>
@@ -64,7 +67,9 @@ function api_getRepresentative_front() {
 }
 
 /**
+ * Fetch Representative data by person ID.
  *
+ * Called via the API dispatcher (index.php) when ?method=getRepresentative&id=... is requested.
  */
 function api_getRepresentative_id($id) {
 
@@ -91,7 +96,9 @@ function api_getRepresentative_id($id) {
 }
 
 /**
+ * Fetch Representative data by electoral division (constituency).
  *
+ * Called via the API dispatcher (index.php) when ?method=getRepresentative&division=... is requested.
  */
 function api_getRepresentative_division($constituency) {
     $person = _api_getRepresentative_constituency($constituency);
@@ -104,7 +111,11 @@ function api_getRepresentative_division($constituency) {
 }
 
 /**
+ * Transform a member row into API output format.
  *
+ * Internal helper called by api_getRepresentative_id(), api_getRepresentative_division(),
+ * and _api_getRepresentative_constituency(). Adds full name, party mapping, office details,
+ * and HTML entity decoding.
  */
 function _api_getRepresentative_row($row) {
     global $parties;
@@ -145,8 +156,14 @@ function _api_getRepresentative_row($row) {
 }
 
 /**
- * Very similary to MEMBER's constituency_to_person_id
- * Should all be abstracted properly :-/.
+ * Internal helper to look up a Representative by constituency.
+ *
+ * Called by api_getRepresentative_division() and by api_getRepresentatives_postcode().
+ * Searches for current member first (left_reason='still_in_office'), then optionally
+ * returns the most recent former member if ?always_return=1 is set.
+ *
+ * Similar to MEMBER::constituency_to_person_id() but specific to Representatives.
+ * TODO: Should be abstracted properly.
  */
 function _api_getRepresentative_constituency($constituency) {
 
