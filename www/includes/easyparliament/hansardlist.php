@@ -162,12 +162,14 @@ class HANSARDLIST {
 
         } else {
             // Don't have a valid $view.
-            $PAGE->error_message("You haven't specified a view type.");
+            if (isset($PAGE) && is_object($PAGE) && method_exists($PAGE, 'error_message')) {
+                $PAGE->error_message("You haven't specified a view type.");
+            }
             return false;
         }
 
         // Set the values of this page's headings depending on the data we've fetched.
-        if (isset($data['info'])) {
+        if (isset($data['info']) && isset($PAGE) && is_object($PAGE) && method_exists($PAGE, 'set_hansard_headings')) {
             $PAGE->set_hansard_headings($data['info']);
         }
 

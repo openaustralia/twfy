@@ -30,6 +30,17 @@ class FakePageForHansardTest {
     }
 }
 
+class HANSARDLISTRecentStub extends HANSARDLIST {
+
+    public function _get_data_by_recent($args) {
+        return [
+            'info' => ['text' => 'Recent dates'],
+            'rows' => [],
+        ];
+    }
+
+}
+
 class HansardListTest extends TestCase {
 
     private $origPage;
@@ -46,9 +57,15 @@ class HansardListTest extends TestCase {
 
     protected function tearDown(): void {
         global $PAGE, $SEARCHENGINE, $SEARCHLOG;
+        $this->clearPageGlobal();
         $PAGE = $this->origPage;
         $SEARCHENGINE = $this->origSearchengine;
         $SEARCHLOG = $this->origSearchlog;
+    }
+
+    private function clearPageGlobal(): void {
+        global $PAGE;
+        $PAGE = null;
     }
 
     // --- _validate_date ---
@@ -107,6 +124,16 @@ class HansardListTest extends TestCase {
         $result = $list->display('nonexistent_view');
         $this->assertFalse($result);
         $this->assertNotEmpty($PAGE->errors);
+    }
+
+    public function test_display_does_not_fatal_when_page_is_null_and_info_exists(): void {
+        $this->clearPageGlobal();
+        $list = new HANSARDLISTRecentStub();
+
+        $result = $list->display('recent', [], 'none');
+
+        $this->assertIsArray($result);
+        $this->assertSame('Recent dates', $result['info']['text']);
     }
 
     // --- Child class properties ---
