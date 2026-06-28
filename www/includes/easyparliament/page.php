@@ -1761,35 +1761,6 @@ class PAGE {
     /**
      *
      */
-    public function expenses_printout($col, $extra_info, $style) {
-        for ($ey = 2007; $ey >= 2002; --$ey) {
-            $k = 'expenses' . $ey . '_' . $col;
-            $kr = $k . '_rank';
-            print '<td class="row-' . $style . '">';
-            if (isset($extra_info[$k])) {
-                print '&pound;' . number_format(str_replace(',', '', $extra_info[$k]));
-            } elseif ($col == 'col7a') {
-                print 'N/A';
-            } else {
-                print '&nbsp;';
-            }
-            if (isset($extra_info[$kr]) && isset($extra_info[$k]) && $extra_info[$k] > 0) {
-                print ' (';
-                if (isset($extra_info[$kr . '_joint'])) {
-                    print 'joint&nbsp;';
-                }
-                print make_ranking($extra_info[$kr]) . ")";
-            }
-            if ($col == 'col5' && $ey == 2007) {
-                print '<sup><a href="#travel2007">*</a></sup>';
-            }
-            print '</td>';
-        }
-    }
-
-    /**
-     *
-     */
     public function generate_member_links($member, $links) {
         // Receives its data from $MEMBER->display_links;
         // This returns HTML, rather than outputting it.
