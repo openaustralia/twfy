@@ -1595,93 +1595,6 @@ class PAGE {
             $this->block_end();
         } // End DISPLAY_VOTING_DATA feature flag
 
-        // Topics of interest only for MPs at the moment
-        // if (in_array(1, $member['houses'])) {
-        // Disable topics of interest.
-        if (0) {
-
-            ?> <a name="topics"></a>
-            <?php $this->block_start(['id' => 'topics', 'title' => 'Committees and topics of interest']);
-            $topics_block_empty = true;
-
-            // Select committee membership.
-            if (array_key_exists('office', $extra_info)) {
-                $mins = [];
-                foreach ($extra_info['office'] as $row) {
-                    if ($row['to_date'] == '9999-12-31' && $row['source'] == 'chgpages/selctee') {
-                        $m = prettify_office($row['position'], $row['dept']);
-                        if ($row['from_date'] != '2004-05-28') {
-                            $m .= ' <small>(since ' . format_date($row['from_date'], SHORTDATEFORMAT) . ')</small>';
-                        }
-                        $mins[] = $m;
-                    }
-                }
-                if ($mins) {
-                    print "<h5>Select Committee membership</h5>";
-                    print "<ul>";
-                    foreach ($mins as $min) {
-                        print '<li>' . $min . '</li>';
-                    }
-                    print "</ul>";
-                    $topics_block_empty = false;
-                }
-            }
-            $wrans_dept = false;
-            $wrans_dept_1 = null;
-            $wrans_dept_2 = null;
-            if (isset($extra_info['wrans_departments'])) {
-                $wrans_dept = true;
-                $wrans_dept_1 = "<li><strong>Departments:</strong> " . $extra_info['wrans_departments'] . "</p>";
-            }
-            if (isset($extra_info['wrans_subjects'])) {
-                $wrans_dept = true;
-                $wrans_dept_2 = "<li><strong>Subjects (based on headings added by Hansard):</strong> " . $extra_info['wrans_subjects'] . "</p>";
-            }
-
-            if ($wrans_dept) {
-                print "<p><strong>Asks most questions about</strong></p>";
-                print "<ul>";
-                if ($wrans_dept_1) {
-                    print $wrans_dept_1;
-                }
-                if ($wrans_dept_2) {
-                    print $wrans_dept_2;
-                }
-                print "</ul>";
-                $topics_block_empty = false;
-                $WRANSURL = new URL('search');
-                $WRANSURL->insert(['pid' => $member['person_id'], 's' => 'section:wrans', 'pop' => 1]);
-                ?>
-                <p><small>(based on <a href="<?php echo $WRANSURL->generate() ?>">written questions asked by
-                            <?php echo $member['full_name'] ?></a>
-                        and
-                        answered by departments)</small></p><?php
-            }
-
-            // Public Bill Committees.
-            if (count($extra_info['pbc'])) {
-                $topics_block_empty = false;
-                print '<h5>Public Bill Committees <small>(sittings attended)</small></h5> <ul>';
-                foreach ($extra_info['pbc'] as $bill_id => $arr) {
-                    print '<li>';
-                    if ($arr['chairman']) {
-                        print 'Chairman, ';
-                    }
-                    print '<a href="/pbc/' . $arr['session'] . '/' . urlencode($arr['title']) . '">'
-                        . $arr['title'] . ' Committee</a> <small>(' . $arr['attending']
-                        . ' out of ' . $arr['outof'] . ')</small>';
-                }
-                print '</ul>';
-            }
-
-            if ($topics_block_empty) {
-                print "<p><em>This MP is not currently on any select <!-- or public bill --> committee
-                    and has had no written questions answered for which we know the department or subject.</em></p>";
-            }
-            $this->block_end();
-
-        }
-
         if (!in_array(HOUSE::REPRESENTATIVES, $member['houses'])) {
             ?> <a name="hansard"></a>
             <?php
@@ -1728,7 +1641,6 @@ class PAGE {
                         href="<?php echo $HELPURL->generate(); ?>#rss" title="An explanation of what RSS feeds are for">?</a>)</p>
                 <?php
             }
-
             $this->block_end();
         }
 
@@ -1844,77 +1756,6 @@ class PAGE {
             $this->block_end();
         }
 
-        if (isset($extra_info['expenses2004_col1']) || isset($extra_info['expenses2006_col1']) || isset($extra_info['expenses2007_col1'])) {
-            ?>
-            <a name="expenses"></a>
-            <?php
-            $title = 'Expenses';
-            $this->block_start(['id' => 'expenses', 'title' => $title]);
-            print '<p class="italic">Figures in brackets are ranks. Parliament\'s <a href="http://www.parliament.uk/site_information/allowances.cfm">explanatory notes</a>.</p>';
-            print '<table class="people"><tr><th>Type</th><th>2006/07';
-            if (isset($extra_info['expenses2007_col1_rank_outof'])) {
-                print ' (ranking out of ' . $extra_info['expenses2007_col1_rank_outof'] . ')';
-            }
-            print '</th><th>2005/06';
-            if (isset($extra_info['expenses2006_col1_rank_outof'])) {
-                // TODO: Needs to be more complicated, because of General Election.
-                print ' (ranking out of ' . $extra_info['expenses2006_col1_rank_outof'] . ')';
-            }
-            print '</th><th>2004/05';
-            if (isset($extra_info['expenses2005_col1_rank_outof'])) {
-                print ' (ranking out of ' . $extra_info['expenses2005_col1_rank_outof'] . ')';
-            }
-            print '</th><th>2003/04';
-            if (isset($extra_info['expenses2004_col1_rank_outof'])) {
-                print ' (ranking out of&nbsp;' . $extra_info['expenses2004_col1_rank_outof'] . ')';
-            }
-            print '</th><th>2002/03';
-            if (isset($extra_info['expenses2003_col1_rank_outof'])) {
-                print ' (ranking out of&nbsp;' . $extra_info['expenses2003_col1_rank_outof'] . ')';
-            }
-            print '</th><th>2001/02';
-            if (isset($extra_info['expenses2002_col1_rank_outof'])) {
-                print ' (ranking out of&nbsp;' . $extra_info['expenses2002_col1_rank_outof'] . ')';
-            }
-            print '</th></tr>';
-            print '<tr><td class="row-1">Additional Costs Allowance</td>';
-            $this->expenses_printout('col1', $extra_info, 1);
-            print '</tr><tr><td class="row-2">London Supplement</td>';
-            $this->expenses_printout('col2', $extra_info, 2);
-            print '</tr><tr><td class="row-1">Incidental Expenses Provision</td>';
-            $this->expenses_printout('col3', $extra_info, 1);
-            print '</tr><tr><td class="row-2">Staffing Allowance</td>';
-            $this->expenses_printout('col4', $extra_info, 2);
-            print '</tr><tr><td class="row-1">Members\' Travel</td>';
-            $this->expenses_printout('col5', $extra_info, 1);
-            print '</tr><tr><td class="row-2">Members\' Staff Travel</td>';
-            $this->expenses_printout('col6', $extra_info, 2);
-            print '</tr><tr><td class="row-1">Centrally Purchased Stationery</td>';
-            $this->expenses_printout('col7', $extra_info, 1);
-            print '</tr><tr><td class="row-2">Stationery: Associated Postage Costs</td>';
-            $this->expenses_printout('col7a', $extra_info, 2);
-            print '</tr><tr><td class="row-1">Centrally Provided Computer Equipment</td>';
-            $this->expenses_printout('col8', $extra_info, 1);
-            print '</tr><tr><td class="row-2">Other Costs</td>';
-            $this->expenses_printout('col9', $extra_info, 2);
-            print '</tr><tr><th style="text-align: right">Total</th>';
-            $this->expenses_printout('total', $extra_info, 1);
-            print '</tr></table>';
-            if (isset($extra_info['expenses2007_col5a'])) {
-                print '<p><a name="travel2007"></a><sup>*</sup> <small>';
-                foreach (['a' => 'Car', 'b' => '3rd party', 'c' => 'Rail', 'd' => 'Air', 'e' => 'Other', 'f' => 'European'] as $let => $desc) {
-                    if ($extra_info['expenses2007_col5' . $let] > 0) {
-                        print $desc . ' &pound;' . number_format(str_replace(',', '', $extra_info['expenses2007_col5' . $let]));
-                        if (isset($extra_info['expenses2007_col5' . $let . '_rank'])) {
-                            print ' (' . make_ranking($extra_info['expenses2007_col5' . $let . '_rank']) . ')';
-                        }
-                        print '. ';
-                    }
-                }
-                print '</small></p>';
-            }
-            $this->block_end();
-        }
     }
 
     /**
