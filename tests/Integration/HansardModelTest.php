@@ -8,6 +8,7 @@
 use OpenAustralia\TWFY\Models\Epobject;
 use OpenAustralia\TWFY\Models\Hansard;
 
+require_once INCLUDESPATH . 'data.php';
 require_once INCLUDESPATH . 'url.php';
 include_once EASYPARLIAMENTPATH . 'hansardlist.php';
 
@@ -17,6 +18,20 @@ include_once EASYPARLIAMENTPATH . 'hansardlist.php';
 class HansardModelTest extends TransactionalTestCase {
 
     private static int $nextId = 80000;
+
+    protected function setUp(): void {
+        parent::setUp();
+
+        if (!isset($GLOBALS['DATA']) || !$GLOBALS['DATA']) {
+            $GLOBALS['DATA'] = new DATA();
+        }
+        if (!isset($GLOBALS['hansardmajors']) || !$GLOBALS['hansardmajors']) {
+            $GLOBALS['hansardmajors'] = [
+                1 => ['title' => 'House of Representatives debates', 'page_all' => 'debates'],
+                3 => ['title' => 'Written Answers', 'page_all' => 'wrans'],
+            ];
+        }
+    }
 
     /**
      * Insert a minimal hansard record.
@@ -160,7 +175,7 @@ class HansardModelTest extends TransactionalTestCase {
         $this->assertCount(1, $data['rows']);
         $this->assertSame(12345, $data['rows'][0]['speaker_id']);
         $this->assertSame('A speech by the requested member', $data['rows'][0]['body']);
-        $this->assertStringContainsString('Questions without notice | House of Representatives debates', $data['rows'][0]['parent']['body']);
+        $this->assertSame('Questions without notice | Cost of living | House of Representatives debates', $data['rows'][0]['parent']['body']);
     }
 
 }
