@@ -44,6 +44,9 @@ class RepresentativeApiIntegrationTest extends TransactionalTestCase {
     private int $fixturePersonId;
     private string $fixtureConstituency;
     private string $fixtureParty;
+    private int $fixtureSenatorMemberId;
+    private int $fixtureSenatorPersonId;
+    private string $fixtureState;
 
     protected function setUp(): void {
         parent::setUp();
@@ -56,19 +59,37 @@ class RepresentativeApiIntegrationTest extends TransactionalTestCase {
         $suffix = random_int(100000, 999999);
         $this->fixtureMemberId = 970000 + $suffix;
         $this->fixturePersonId = 980000 + $suffix;
-        $this->fixtureConstituency = 'TxRepSeat' . $suffix;
-        $this->fixtureParty = 'Tx Rep Party ' . $suffix;
+        $this->fixtureConstituency = 'Canberra' . $suffix;
+        $this->fixtureParty = 'ALP';
+        $this->fixtureSenatorMemberId = 972000 + $suffix;
+        $this->fixtureSenatorPersonId = 982000 + $suffix;
+        $this->fixtureState = 'Victoria';
 
         MemberModel::create([
             'member_id' => $this->fixtureMemberId,
             'person_id' => $this->fixturePersonId,
             'house' => HOUSE::REPRESENTATIVES,
             'title' => '',
-            'first_name' => 'Tx',
-            'last_name' => 'Representative',
+            'first_name' => 'Pat',
+            'last_name' => 'Canberra',
             'constituency' => $this->fixtureConstituency,
             'party' => $this->fixtureParty,
             'entered_house' => '2010-01-01',
+            'left_house' => '9999-12-31',
+            'entered_reason' => 'general_election',
+            'left_reason' => 'still_in_office',
+        ]);
+
+        MemberModel::create([
+            'member_id' => $this->fixtureSenatorMemberId,
+            'person_id' => $this->fixtureSenatorPersonId,
+            'house' => HOUSE::SENATE,
+            'title' => 'Senator',
+            'first_name' => 'Jordan',
+            'last_name' => 'Victorian',
+            'constituency' => $this->fixtureState,
+            'party' => 'GRN',
+            'entered_house' => '2012-07-01',
             'left_house' => '9999-12-31',
             'entered_reason' => 'general_election',
             'left_reason' => 'still_in_office',
@@ -127,16 +148,16 @@ class RepresentativeApiIntegrationTest extends TransactionalTestCase {
     }
 
     public function test__api_getRepresentative_row_sets_name_and_maps_party(): void {
-        $GLOBALS['parties'][$this->fixtureParty] = 'Mapped Party Name';
+        $GLOBALS['parties'][$this->fixtureParty] = 'Australian Labor Party';
 
         $row = MemberModel::where('person_id', $this->fixturePersonId)->first();
         $this->assertNotNull($row);
 
         $out = _api_getRepresentative_row($row->toArray());
 
-        $this->assertSame('Tx Representative', $out['full_name']);
+        $this->assertSame('Pat Canberra', $out['full_name']);
         $this->assertSame($out['full_name'], $out['name']);
-        $this->assertSame('Mapped Party Name', $out['party']);
+        $this->assertSame('Australian Labor Party', $out['party']);
     }
 
     public function test__api_getRepresentative_row_adds_current_office_rows(): void {
@@ -197,6 +218,148 @@ class RepresentativeApiIntegrationTest extends TransactionalTestCase {
         $this->assertSame($personId, (int) $out['person_id']);
     }
 
+    public function test__api_getMembers_output_returns_serialized_member_rows(): void {
+        ob_start();
+        _api_getMembers_output(MemberModel::where('person_id', $this->fixturePersonId));
+        $raw = ob_get_clean();
+
+        $decoded = unserialize($raw, ['allowed_classes' => false]);
+        $this->assertIsArray($decoded);
+        $this->assertCount(1, $decoded);
+        $this->assertSame($this->fixturePersonId, (int) $decoded[0]['person_id']);
+    }
+
+    public function test__api_currentMembers_returns_only_current_for_house(): void {
+        $suffix = random_int(100000, 999999);
+        $pastPersonId = 993000 + $suffix;
+
+        MemberModel::create([
+            'member_id' => 997000 + $suffix,
+            'person_id' => $pastPersonId,
+            'house' => HOUSE::REPRESENTATIVES,
+            'title' => '',
+            'first_name' => 'Retired',
+            'last_name' => 'Member',
+            'constituency' => 'Wannon',
+            'party' => 'LNP',
+            'entered_house' => '1996-03-02',
+            'left_house' => '1998-10-03',
+            'entered_reason' => 'general_election',
+            'left_reason' => 'general_election',
+        ]);
+
+        $current = _api_currentMembers(HOUSE::REPRESENTATIVES)->get();
+        $personIds = array_map(static fn ($row) => (int) $row['person_id'], $current->toArray());
+
+        $this->assertContains($this->fixturePersonId, $personIds);
+        $this->assertNotContains($pastPersonId, $personIds);
+    }
+
+    public function test_getMembers_party_maps_canonical_name_to_short_code(): void {
+        $GLOBALS['parties'] = [
+            'ALP' => 'Australian Labor Party',
+            'LNP' => 'Liberal National Party',
+        ];
+
+        ob_start();
+        api_getMembers_party(HOUSE::REPRESENTATIVES, 'australian labor party');
+        $raw = ob_get_clean();
+
+        $decoded = unserialize($raw, ['allowed_classes' => false]);
+        $this->assertIsArray($decoded);
+        $this->assertNotEmpty($decoded);
+
+        $personIds = array_map(fn ($r) => (int) $r['person_id'], $decoded);
+        $this->assertContains($this->fixturePersonId, $personIds);
+    }
+
+    public function test_getMembers_search_matches_representative_name(): void {
+        ob_start();
+        api_getMembers_search(HOUSE::REPRESENTATIVES, 'Pat Canberra');
+        $raw = ob_get_clean();
+
+        $decoded = unserialize($raw, ['allowed_classes' => false]);
+        $this->assertIsArray($decoded);
+
+        $personIds = array_map(fn ($r) => (int) $r['person_id'], $decoded);
+        $this->assertContains($this->fixturePersonId, $personIds);
+    }
+
+    public function test_getMembers_search_matches_state_for_senate(): void {
+        ob_start();
+        api_getMembers_search(HOUSE::SENATE, $this->fixtureState);
+        $raw = ob_get_clean();
+
+        $decoded = unserialize($raw, ['allowed_classes' => false]);
+        $this->assertIsArray($decoded);
+
+        $personIds = array_map(fn ($r) => (int) $r['person_id'], $decoded);
+        $this->assertContains($this->fixtureSenatorPersonId, $personIds);
+    }
+
+    public function test_getMembers_date_returns_error_for_invalid_date(): void {
+        ob_start();
+        api_getMembers_date(HOUSE::REPRESENTATIVES, 'not-a-date');
+        $raw = ob_get_clean();
+
+        $decoded = unserialize($raw, ['allowed_classes' => false]);
+        $this->assertIsArray($decoded);
+        $this->assertSame('Invalid date format', $decoded['error']);
+    }
+
+    public function test_getMembers_date_returns_members_for_valid_date(): void {
+        ob_start();
+        api_getMembers_date(HOUSE::REPRESENTATIVES, '1/1/2011');
+        $raw = ob_get_clean();
+
+        $decoded = unserialize($raw, ['allowed_classes' => false]);
+        $this->assertIsArray($decoded);
+        $this->assertArrayNotHasKey('error', $decoded);
+    }
+
+    public function test_getMembers_without_date_returns_current_house_members(): void {
+        ob_start();
+        api_getMembers(HOUSE::REPRESENTATIVES);
+        $raw = ob_get_clean();
+
+        $decoded = unserialize($raw, ['allowed_classes' => false]);
+        $this->assertIsArray($decoded);
+
+        $personIds = array_map(fn ($r) => (int) $r['person_id'], $decoded);
+        $this->assertContains($this->fixturePersonId, $personIds);
+    }
+
+    public function test_getMembers_with_date_filters_out_future_member(): void {
+        $suffix = random_int(100000, 999999);
+        $futurePersonId = 994000 + $suffix;
+
+        MemberModel::create([
+            'member_id' => 998000 + $suffix,
+            'person_id' => $futurePersonId,
+            'house' => HOUSE::REPRESENTATIVES,
+            'title' => '',
+            'first_name' => 'Future',
+            'last_name' => 'Member',
+            'constituency' => 'Bennelong',
+            'party' => 'LIB',
+            'entered_house' => '2025-05-01',
+            'left_house' => '9999-12-31',
+            'entered_reason' => 'general_election',
+            'left_reason' => 'still_in_office',
+        ]);
+
+        ob_start();
+        api_getMembers(HOUSE::REPRESENTATIVES, '2011-01-01');
+        $raw = ob_get_clean();
+
+        $decoded = unserialize($raw, ['allowed_classes' => false]);
+        $this->assertIsArray($decoded);
+
+        $personIds = array_map(fn ($r) => (int) $r['person_id'], $decoded);
+        $this->assertContains($this->fixturePersonId, $personIds);
+        $this->assertNotContains($futurePersonId, $personIds);
+    }
+
     public function test_getRepresentatives_party_returns_representatives_only(): void {
         ob_start();
         api_getRepresentatives_party($this->fixtureParty);
@@ -238,7 +401,7 @@ class RepresentativeApiIntegrationTest extends TransactionalTestCase {
 
     public function test_getRepresentatives_search_finds_member_by_name(): void {
         ob_start();
-        api_getRepresentatives_search('Tx Representative');
+        api_getRepresentatives_search('Pat Canberra');
         $raw = ob_get_clean();
 
         $decoded = unserialize($raw, ['allowed_classes' => false]);
