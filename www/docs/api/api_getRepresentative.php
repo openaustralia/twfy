@@ -168,7 +168,7 @@ function _api_getRepresentative_constituency($constituency) {
       ->where('house', HOUSE::REPRESENTATIVES)
       ->first();
     if ($row) {
-        return _api_getRepresentative_row($row->toArray());
+                return _api_getRepresentative_row($row->getAttributes());
     }
 
     if (get_http_var('always_return')) {
@@ -177,7 +177,7 @@ function _api_getRepresentative_constituency($constituency) {
           ->orderByDesc('left_house')
           ->first();
         if ($row) {
-            return _api_getRepresentative_row($row->toArray());
+                        return _api_getRepresentative_row($row->getAttributes());
         }
     }
 
