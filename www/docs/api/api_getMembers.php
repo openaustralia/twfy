@@ -31,8 +31,8 @@ function _api_getMembers_output(Builder $query) {
 /**
  * Scope: current members of the given house.
  */
-function _api_currentMembers($house) {
-    return MemberModel::where('house', $house)
+function _api_currentMembers($house): Builder {
+    return MemberModel::query()->where('house', $house)
       ->whereRaw('entered_house <= date(NOW())')
       ->whereRaw('date(NOW()) <= left_house');
 }
@@ -102,7 +102,7 @@ function api_getMembers($house, $date = null) {
         _api_getMembers_output(_api_currentMembers($house));
     } else {
         _api_getMembers_output(
-            MemberModel::where('house', $house)
+            MemberModel::query()->where('house', $house)
               ->whereRaw('entered_house <= date(?)', [$date])
               ->whereRaw('date(?) <= left_house', [$date])
         );

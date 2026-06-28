@@ -220,7 +220,7 @@ class RepresentativeApiIntegrationTest extends TransactionalTestCase {
 
     public function test__api_getMembers_output_returns_serialized_member_rows(): void {
         ob_start();
-        _api_getMembers_output(MemberModel::where('person_id', $this->fixturePersonId));
+        _api_getMembers_output(MemberModel::query()->where('person_id', $this->fixturePersonId));
         $raw = ob_get_clean();
 
         $decoded = unserialize($raw, ['allowed_classes' => false]);
