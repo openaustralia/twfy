@@ -33,16 +33,22 @@ class FakePageForHansardTest {
 class HansardListTest extends TestCase {
 
     private $origPage;
+    private $origSearchengine;
+    private $origSearchlog;
 
     protected function setUp(): void {
-        global $PAGE;
+        global $PAGE, $SEARCHENGINE, $SEARCHLOG;
         $this->origPage = $PAGE ?? null;
+        $this->origSearchengine = $SEARCHENGINE ?? null;
+        $this->origSearchlog = $SEARCHLOG ?? null;
         $PAGE = new FakePageForHansardTest();
     }
 
     protected function tearDown(): void {
-        global $PAGE;
+        global $PAGE, $SEARCHENGINE, $SEARCHLOG;
         $PAGE = $this->origPage;
+        $SEARCHENGINE = $this->origSearchengine;
+        $SEARCHLOG = $this->origSearchlog;
     }
 
     // --- _validate_date ---
@@ -236,6 +242,39 @@ class HansardListTest extends TestCase {
         $this->assertStringContainsString('2023-06-15.5.0', $url);
         // Should have the item's gid as an anchor.
         $this->assertStringContainsString('#g5.3', $url);
+    }
+
+    public function test_get_data_by_search_returns_empty_rows_when_count_is_zero(): void {
+        global $SEARCHENGINE, $SEARCHLOG;
+
+        $SEARCHENGINE = new class {
+            public function query_description_long(): string {
+                return 'stub description';
+            }
+
+            public function run_count(): int {
+                return 0;
+            }
+        };
+
+        $SEARCHLOG = new class {
+            public array $calls = [];
+
+            public function add(array $data): void {
+                $this->calls[] = $data;
+            }
+        };
+
+        $list = new DEBATELIST();
+        $data = $list->_get_data_by_search(['s' => 'housing']);
+
+        $this->assertSame('housing', $data['info']['s']);
+        $this->assertSame(0, $data['info']['total_results']);
+        $this->assertSame([], $data['rows']);
+        $this->assertCount(1, $SEARCHLOG->calls);
+        $this->assertSame('housing', $SEARCHLOG->calls[0]['query']);
+        $this->assertSame(1, $SEARCHLOG->calls[0]['page']);
+        $this->assertSame(0, $SEARCHLOG->calls[0]['hits']);
     }
 
 }
