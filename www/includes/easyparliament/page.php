@@ -1783,7 +1783,7 @@ class PAGE {
                 $displayed_stuff = 1;
                 ?>
                 <li><strong><?php echo htmlentities($extra_info['number_of_alerts']) ?></strong>
-                    <?php echo ($extra_info['number_of_alerts'] == 1 ? 'person is' : 'people are') ?>
+                    <?php echo $extra_info['number_of_alerts'] == 1 ? 'person is' : 'people are'; ?>
                     tracking whenever
                     <?php
                     $role_name = HOUSE::pretty_name($member['house_disp']);
