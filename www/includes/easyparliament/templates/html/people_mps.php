@@ -125,7 +125,7 @@ function render_mps_row($mp, &$style, $order, $MPURL)
     $name = member_full_name(1, $mp['title'], $mp['first_name'], $mp['last_name'], $mp['constituency']);
     $url = $MPURL->generate() . make_member_url($mp['first_name'] . ' ' . $mp['last_name'], $mp['constituency'], 1);
 
-    list($image, $sz) = find_rep_image($mp['person_id'], true);
+    list($image, $sz) = find_rep_image($mp['person_id'], false);
 
     echo '<article class="person-card">';
     echo '<div class="person-card-inner">';

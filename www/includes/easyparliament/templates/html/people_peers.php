@@ -84,7 +84,7 @@ function render_peers_row($peer, &$style, $order, $URL)
 
     $url = $URL->generate() . make_member_url($name, $peer['constituency'], 2);
 
-    list($image, $sz) = find_rep_image($peer['person_id'], true);
+    list($image, $sz) = find_rep_image($peer['person_id'], false);
 
     echo '<article class="person-card">';
     echo '<div class="person-card-inner">';
