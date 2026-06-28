@@ -11,6 +11,9 @@ if (defined('OPTION_TRACKING') && OPTION_TRACKING) {
 include_once __DIR__ . '/member.php';
 include_once __DIR__ . '/../request.php';
 
+// define a const for mdash
+define('MDASH', " &mdash; ");
+
 /**
  *
  */
@@ -1485,7 +1488,7 @@ class PAGE {
             print $member['entered_house'][HOUSE::SENATE]['date_pretty'] . '</strong>';
             print '</strong>';
             if ($member['entered_house'][HOUSE::SENATE]['reason']) {
-                print ' &mdash; ' . $member['entered_house'][HOUSE::SENATE]['reason'];
+                print MDASH . $member['entered_house'][HOUSE::SENATE]['reason'];
             }
             print '</li>';
             if (!$member['current_member'][HOUSE::REPRESENTATIVES]) {
@@ -1493,7 +1496,7 @@ class PAGE {
                 print $member['left_house'][HOUSE::REPRESENTATIVES]['constituency'] . ' until ';
                 print $member['left_house'][HOUSE::REPRESENTATIVES]['date_pretty'] . '</strong>';
                 if ($member['left_house'][HOUSE::REPRESENTATIVES]['reason']) {
-                    print ' &mdash; ' . $member['left_house'][HOUSE::REPRESENTATIVES]['reason'];
+                    print MDASH . $member['left_house'][HOUSE::REPRESENTATIVES]['reason'];
                 }
                 print '</li>';
             }
@@ -1506,13 +1509,13 @@ class PAGE {
             }
             print $member['entered_house'][HOUSE::SENATE]['date_pretty'] . '</strong>';
             if ($member['entered_house'][HOUSE::SENATE]['reason']) {
-                print ' &mdash; ' . $member['entered_house'][HOUSE::SENATE]['reason'];
+                print MDASH . $member['entered_house'][HOUSE::SENATE]['reason'];
             }
             print '</li>';
         } elseif (in_array(HOUSE::REPRESENTATIVES, $member['houses']) && !$member['current_member'][HOUSE::REPRESENTATIVES]) {
             print '<li><strong>Left House of Representatives on ' . $member['left_house'][HOUSE::REPRESENTATIVES]['date_pretty'] . '</strong>';
             if ($member['left_house'][HOUSE::REPRESENTATIVES]['reason']) {
-                print ' &mdash; ' . $member['left_house'][HOUSE::REPRESENTATIVES]['reason'];
+                print MDASH . $member['left_house'][HOUSE::REPRESENTATIVES]['reason'];
             }
             print '</li>';
         }
@@ -1521,7 +1524,7 @@ class PAGE {
             print '<li><strong>Entered House of Representatives on ';
             print $member['entered_house'][HOUSE::REPRESENTATIVES]['date_pretty'] . '</strong>';
             if ($member['entered_house'][HOUSE::REPRESENTATIVES]['reason']) {
-                print ' &mdash; ' . $member['entered_house'][HOUSE::REPRESENTATIVES]['reason'];
+                print MDASH . $member['entered_house'][HOUSE::REPRESENTATIVES]['reason'];
             }
             print '</li>';
         }
@@ -1534,7 +1537,7 @@ class PAGE {
         if (in_array(HOUSE::SENATE, $member['houses']) && !$member['current_member'][HOUSE::SENATE]) {
             print '<li><strong>Left Senate on ' . $member['left_house'][HOUSE::SENATE]['date_pretty'] . '</strong>';
             if ($member['left_house'][HOUSE::SENATE]['reason']) {
-                print ' &mdash; ' . $member['left_house'][HOUSE::SENATE]['reason'];
+                print MDASH . $member['left_house'][HOUSE::SENATE]['reason'];
             }
             print '</li>';
         }
@@ -1544,7 +1547,7 @@ class PAGE {
                 <?php echo number_format($extra_info['majority_in_seat']); ?> votes. <?php
 
                     if (isset($extra_info['swing_to_lose_seat_today'])) {
-                        print ' &mdash; ' . make_ranking($extra_info['swing_to_lose_seat_today_rank']); ?> out of
+                        print MDASH . make_ranking($extra_info['swing_to_lose_seat_today_rank']); ?> out of
                         <?php echo $extra_info['swing_to_lose_seat_today_rank_outof']; ?> MPs.
                         <?php
                     }
