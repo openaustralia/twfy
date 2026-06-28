@@ -10,6 +10,42 @@ if (!defined('REGMEMPDFPATH')) {
     define('REGMEMPDFPATH', 'regmem/scan/');
 }
 
+// display_member() calls this in the senate-only recent appearances branch.
+// Define a no-op stub so this unit test can run without the full app debug stack.
+if (!function_exists('twfy_debug_timestamp')) {
+
+    function twfy_debug_timestamp() {
+    }
+
+}
+
+// display_member() instantiates SEARCHENGINE in the same branch.
+// This lightweight stub keeps the test focused on PAGE output behavior.
+if (!class_exists('SEARCHENGINE')) {
+
+    class SEARCHENGINE {
+
+        public function __construct($search) {
+        }
+
+    }
+
+}
+
+// display_member() also instantiates HANSARDLIST and calls display().
+// Stub it so we can assert that the branch executed without requiring search/index dependencies.
+if (!class_exists('HANSARDLIST')) {
+
+    class HANSARDLIST {
+
+        public function display($view, $args) {
+            echo '<div class="hansardlist-test-stub"></div>';
+        }
+
+    }
+
+}
+
 require_once INCLUDESPATH . 'url.php';
 require_once BASEDIR . '/includes/easyparliament/page.php';
 
@@ -238,6 +274,55 @@ class PageDisplayMemberTest extends TestCase {
         $this->assertStringContainsString('Entered the Senate on 1 Jul 2022', $html);
         $this->assertStringContainsString('former Representative', $html);
         $this->assertStringContainsString('Email me whenever Jordan Victorian speaks', $html);
+    }
+
+    public function test_display_member_senate_only_member_renders_recent_appearances_block(): void {
+        global $DATA, $this_page, $THEUSER;
+
+        $DATA = new FakeDataForDisplayMember('rss/senate.xml');
+        $this_page = 'mp';
+        $THEUSER = new stdClass();
+        $_SERVER['DEVICE_TYPE'] = 'desktop';
+
+        $member = [
+            'person_id' => 100004,
+            'member_id' => 200004,
+            'full_name' => 'Taylor Tasman',
+            'house_disp' => HOUSE::SENATE,
+            'houses' => [HOUSE::SENATE],
+            'current_member' => [
+                HOUSE::REPRESENTATIVES => false,
+                HOUSE::SENATE => true,
+            ],
+            'left_house' => [
+                HOUSE::SENATE => [
+                    'party' => 'IND',
+                    'constituency' => 'Tasmania',
+                    'date_pretty' => 'Present',
+                    'reason' => '',
+                ],
+            ],
+            'entered_house' => [
+                HOUSE::SENATE => [
+                    'date' => '2019-07-01',
+                    'date_pretty' => '1 Jul 2019',
+                    'reason' => 'General election',
+                ],
+            ],
+            'other_parties' => [],
+            'party' => 'IND',
+        ];
+
+        $page = new TestablePageForDisplayMember();
+
+        ob_start();
+        $page->display_member($member, []);
+        $html = ob_get_clean();
+
+        $this->assertIsString($html);
+        $this->assertStringContainsString('Most recent appearances in parliament', $html);
+        $this->assertStringContainsString('Taylor Tasman\'s recent appearances', $html);
+        $this->assertStringContainsString('hansardlist-test-stub', $html);
     }
 
 }
