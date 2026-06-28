@@ -560,14 +560,25 @@ class MEMBER {
     }
 
     /**
+     * Normalize date values coming from either raw DB strings or DateTime objects.
+     */
+    private function normalise_date_value($value): string {
+        if ($value instanceof \DateTimeInterface) {
+            return $value->format('Y-m-d');
+        }
+        return (string) $value;
+    }
+
+    /**
      *
      */
     public function entered_house_text($entered_house) {
         if (!$entered_house) {
             return '';
         }
+        $entered_house = $this->normalise_date_value($entered_house);
         [$year, $month, $day] = explode('-', $entered_house);
-        if ($month == 1 && $day == 1 && $this->house(HOUSE::SENATE)) {
+        if ((int) $month == 1 && (int) $day == 1 && $this->house(HOUSE::SENATE)) {
             return $year;
         } elseif (checkdate((int) $month, (int) $day, (int) $year) && $year != '9999') {
             return format_date($entered_house, LONGDATEFORMAT);
@@ -593,6 +604,7 @@ class MEMBER {
         if (!$left_house) {
             return '';
         }
+        $left_house = $this->normalise_date_value($left_house);
         [$year, $month, $day] = explode('-', $left_house);
         if (checkdate((int) $month, (int) $day, (int) $year) && $year != '9999') {
             return format_date($left_house, LONGDATEFORMAT);
