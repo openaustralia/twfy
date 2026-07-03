@@ -119,6 +119,19 @@ function api_getRepresentative_division($constituency) {
  */
 function _api_getRepresentative_row($row) {
     global $parties;
+
+    foreach (['entered_house', 'left_house'] as $dateField) {
+        if (!isset($row[$dateField])) {
+            continue;
+        }
+
+        if ($row[$dateField] instanceof \DateTimeInterface) {
+            $row[$dateField] = $row[$dateField]->format('Y-m-d');
+        } elseif (is_string($row[$dateField]) && preg_match('/^\d{4}-\d{2}-\d{2}T/', $row[$dateField])) {
+            $row[$dateField] = substr($row[$dateField], 0, 10);
+        }
+    }
+
     $row['full_name'] = member_full_name(
         $row['house'],
         $row['title'],
