@@ -41,6 +41,19 @@ class HANSARDLISTRecentStub extends HANSARDLIST {
 
 }
 
+class HANSARDLISTMostRecentDayStub extends HANSARDLIST {
+
+    public ?string $fakeMostRecentDate = null;
+    public int $fetchMostRecentDateCalls = 0;
+    public $listpage = 'debates';
+
+    protected function fetchMostRecentHansardDate(): ?string {
+        $this->fetchMostRecentDateCalls++;
+        return $this->fakeMostRecentDate;
+    }
+
+}
+
 class HansardListTest extends TestCase {
 
     private $origPage;
@@ -302,6 +315,33 @@ class HansardListTest extends TestCase {
         $this->assertSame('housing', $SEARCHLOG->calls[0]['query']);
         $this->assertSame(1, $SEARCHLOG->calls[0]['page']);
         $this->assertSame(0, $SEARCHLOG->calls[0]['hits']);
+    }
+
+    public function test_most_recent_day_returns_empty_array_when_no_date_found(): void {
+        $list = new HANSARDLISTMostRecentDayStub();
+
+        $result = $list->most_recent_day();
+
+        $this->assertSame([], $result);
+        $this->assertSame(1, $list->fetchMostRecentDateCalls);
+    }
+
+    public function test_most_recent_day_returns_computed_data_and_caches_result(): void {
+        $list = new HANSARDLISTMostRecentDayStub();
+        $list->fakeMostRecentDate = '2024-02-29';
+
+        $first = $list->most_recent_day();
+        $second = $list->most_recent_day();
+
+        $expectedTimestamp = gmmktime(0, 0, 0, 2, 29, 2024);
+        $expectedUrl = new URL('debates');
+        $expectedUrl->insert(['d' => '2024-02-29']);
+
+        $this->assertSame('2024-02-29', $first['hdate']);
+        $this->assertSame($expectedTimestamp, $first['timestamp']);
+        $this->assertSame($expectedUrl->generate(), $first['listurl']);
+        $this->assertSame($first, $second);
+        $this->assertSame(1, $list->fetchMostRecentDateCalls);
     }
 
 }

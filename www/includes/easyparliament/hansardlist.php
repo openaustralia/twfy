@@ -246,35 +246,48 @@ class HANSARDLIST {
         // What we return.
         $data = [];
 
-        $q = parlDBQuery("SELECT MAX(hdate) AS hdate
-						FROM 	hansard
-						WHERE	major = ?
-						", $this->major);
-        if ($q->rows() > 0) {
+        $hdate = $this->fetchMostRecentHansardDate();
+        if ($hdate !== null) {
 
-            $hdate = $q->field(0, 'hdate');
-            if ($hdate) {
-                $URL = new URL($this->listpage);
-                $URL->insert(['d' => $hdate]);
+            // Work out a timestamp which is handy for comparing to now.
+            [$year, $month, $date] = explode('-', $hdate);
+            $timestamp = gmmktime(0, 0, 0, $month, $date, $year);
 
-                // Work out a timestamp which is handy for comparing to now.
-                [$year, $month, $date] = explode('-', $hdate);
-                $timestamp = gmmktime(0, 0, 0, $month, $date, $year);
+            $url = new URL($this->listpage);
+            $url->insert(['d' => $hdate]);
 
-                $data = [
-                    'hdate' => $hdate,
-                    'timestamp' => $timestamp,
-                    'listurl' => $URL->generate()
-                ];
+            $data = [
+                'hdate' => $hdate,
+                'timestamp' => $timestamp,
+                'listurl' => $url->generate()
+            ];
 
-                // This is just because it's an expensive query
-                // and we really want to avoid doing it more than once.
-                // So we're caching it.
-                $this->most_recent_day = $data;
-            }
+            // This is just because it's an expensive query
+            // and we really want to avoid doing it more than once.
+            // So we're caching it.
+            $this->most_recent_day = $data;
         }
 
         return $data;
+    }
+
+    /**
+     * Fetch the most recent hansard date for this major.
+     */
+    protected function fetchMostRecentHansardDate(): ?string {
+        $q = parlDBQuery(
+            "SELECT MAX(hdate) AS hdate
+            FROM hansard
+            WHERE major = ?",
+            $this->major
+        );
+
+        if ($q->rows() <= 0) {
+            return null;
+        }
+
+        $hdate = $q->field(0, 'hdate');
+        return $hdate ?: null;
     }
 
     /**
