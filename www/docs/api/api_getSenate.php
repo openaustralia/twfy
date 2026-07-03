@@ -57,7 +57,7 @@ function api_getSenate_id(int $id) {
         $last_mod = 0;
 
         foreach ($rows as $row) {
-            /** @var MemberModel $row */
+            /** @var \OpenAustralia\TWFY\Models\Member $row */
             $rowData = $row->toArray();
             $out = _api_getSenate_row($rowData);
             $output[] = $out;
