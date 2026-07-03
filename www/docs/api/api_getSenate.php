@@ -6,6 +6,8 @@
 
 include_once __DIR__ . '/../../includes/easyparliament/house.php';
 
+use OpenAustralia\TWFY\Models\Member as MemberModel;
+
 /**
  *
  */
@@ -46,16 +48,20 @@ function _api_getSenate_row($row) {
  */
 function api_getSenate_id(int $id) {
 
-    $q = parlDBQuery("SELECT * from member
-        WHERE house = ? AND person_id = ?
-        ORDER BY left_house DESC", HOUSE::SENATE, $id);
-    if ($q->rows()) {
+    $rows = MemberModel::where('house', HOUSE::SENATE)
+      ->where('person_id', $id)
+      ->orderByDesc('left_house')
+      ->get();
+    if ($rows->isNotEmpty()) {
         $output = [];
         $last_mod = 0;
-        for ($i = 0; $i < $q->rows(); $i++) {
-            $out = _api_getSenate_row($q->row($i));
+
+        foreach ($rows as $row) {
+            /** @var MemberModel $row */
+            $rowData = $row->toArray();
+            $out = _api_getSenate_row($rowData);
             $output[] = $out;
-            $time = strtotime($q->field($i, 'lastupdate'));
+            $time = strtotime((string) ($rowData['lastupdate'] ?? ''));
             if ($time > $last_mod) {
                 $last_mod = $time;
             }
