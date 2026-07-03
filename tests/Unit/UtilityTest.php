@@ -6,6 +6,30 @@ require_once INCLUDESPATH . 'utility.php';
 
 class UtilityTest extends TestCase {
 
+    // --- twfy_debug ---
+
+    public function test_twfy_debug_outputs_when_debug_level_is_not_empty(): void {
+        $oldGet = $_GET;
+        $oldPost = $_POST;
+
+        try {
+            $_GET = [DEBUGTAG => '1'];
+            $_POST = [];
+
+            // start output buffering to capture the output of twfy_debug.
+            ob_start();
+            twfy_debug('PAGE', 'debug message');
+            $output = ob_get_clean();
+
+            $this->assertIsString($output);
+            $this->assertStringContainsString('PAGE', $output);
+            $this->assertStringContainsString('debug message', $output);
+        } finally {
+            $_GET = $oldGet;
+            $_POST = $oldPost;
+        }
+    }
+
     // --- validate_email ---
 
     public function test_validate_email_accepts_valid_email(): void {
