@@ -1209,7 +1209,7 @@ class HANSARDLIST {
             $itemdata = [];
 
             $itemdata['gid'] = fix_gid_from_db($q->gid);
-            $itemdata['hdate'] = $q->hdate;
+            $itemdata['hdate'] = $q->hdate->format('Y-m-d');
             $itemdata['htype'] = $q->htype;
             $itemdata['major'] = $q->major;
             $itemdata['section_id'] = $q->section_id;
