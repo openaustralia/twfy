@@ -441,6 +441,45 @@ class RepresentativeApiIntegrationTest extends TransactionalTestCase {
         $this->assertSame($this->fixturePersonId, (int) $decoded[0]['person_id']);
     }
 
+    public function test_getRepresentative_id_returns_history_rows_in_descending_left_house_order(): void {
+        $suffix = random_int(100000, 999999);
+
+        MemberModel::create([
+            'member_id' => 999000 + $suffix,
+            'person_id' => $this->fixturePersonId,
+            'house' => HOUSE::REPRESENTATIVES,
+            'title' => '',
+            'first_name' => 'Pat',
+            'last_name' => 'Canberra',
+            'constituency' => 'OldSeat' . $suffix,
+            'party' => $this->fixtureParty,
+            'entered_house' => '2000-01-01',
+            'left_house' => '2005-01-01',
+            'entered_reason' => 'general_election',
+            'left_reason' => 'general_election',
+        ]);
+
+        ob_start();
+        api_getRepresentative_id($this->fixturePersonId);
+        $raw = ob_get_clean();
+
+        $decoded = unserialize($raw, ['allowed_classes' => false]);
+        $this->assertIsArray($decoded);
+        $this->assertCount(2, $decoded);
+        $this->assertSame('9999-12-31', $decoded[0]['left_house']);
+        $this->assertSame('2005-01-01', $decoded[1]['left_house']);
+    }
+
+    public function test_getRepresentative_id_rejects_valid_senator_person_id(): void {
+        ob_start();
+        api_getRepresentative_id($this->fixtureSenatorPersonId);
+        $raw = ob_get_clean();
+
+        $decoded = unserialize($raw, ['allowed_classes' => false]);
+        $this->assertIsArray($decoded);
+        $this->assertSame('Unknown person ID', $decoded['error']);
+    }
+
     public function test_getRepresentatives_search_finds_member_by_name(): void {
         ob_start();
         api_getRepresentatives_search('Pat Canberra');
