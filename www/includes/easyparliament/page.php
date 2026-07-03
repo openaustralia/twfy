@@ -1782,17 +1782,17 @@ class PAGE {
 
         // BIOGRAPHY.
         if (isset($links['mp_email'])) {
-            $html .= '	<li><a href="mailto:' . $links['mp_email'] . '">Email ' . $member->full_name() . '</a></li>';
+            $html .= '    <li><a href="mailto:' . $links['mp_email'] . '">Email ' . $member->full_name() . '</a></li>';
         } elseif (isset($links['mp_contact_form'])) {
-            $html .= '	<li><a href="' . $links['mp_contact_form'] . '">Contact form</a> <small>(On the Australian Parliament website)</small></li>';
+            $html .= '    <li><a href="' . $links['mp_contact_form'] . '">Contact form</a> <small>(On the Australian Parliament website)</small></li>';
         }
 
         // TODO: shall we remove these?
         if (isset($links['mp_twitter_url'])) {
-            $html .= '	<li><a href="' . $links['mp_twitter_url'] . '">' . $member->full_name() . ' on Twitter</a></li>';
+            $html .= '    <li><a href="' . $links['mp_twitter_url'] . '">' . $member->full_name() . ' on Twitter</a></li>';
         }
         if (isset($links['mp_facebook_url'])) {
-            $html .= '	<li><a href="' . $links['mp_facebook_url'] . '">' . $member->full_name() . ' on Facebook</a></li>';
+            $html .= '    <li><a href="' . $links['mp_facebook_url'] . '">' . $member->full_name() . ' on Facebook</a></li>';
         }
 
         if (isset($links['mp_website'])) {
@@ -1803,59 +1803,59 @@ class PAGE {
         }
 
         if (isset($links['guardian_biography'])) {
-            $html .= '	<li><a href="' . $links['guardian_biography'] . '">Biography</a> <small>(From The Guardian)</small></li>';
+            $html .= '    <li><a href="' . $links['guardian_biography'] . '">Biography</a> <small>(From The Guardian)</small></li>';
         }
         if (isset($links['wikipedia_url'])) {
-            $html .= '	<li><a href="' . $links['wikipedia_url'] . '">Biography</a> <small>(From Wikipedia)</small></li>';
+            $html .= '    <li><a href="' . $links['wikipedia_url'] . '">Biography</a> <small>(From Wikipedia)</small></li>';
         }
         if (isset($links['mp_biography_qanda']) && $links['mp_biography_qanda'] != "") {
-            $html .= '	<li><a href="' . $links['mp_biography_qanda'] . '">Biography</a> <small>(From ABC\'s Q &amp; A)</small></li>';
+            $html .= '    <li><a href="' . $links['mp_biography_qanda'] . '">Biography</a> <small>(From ABC\'s Q &amp; A)</small></li>';
         }
 
         if (isset($links['diocese_url'])) {
-            $html .= '	<li><a href="' . $links['diocese_url'] . '">Diocese website</a></li>';
+            $html .= '    <li><a href="' . $links['diocese_url'] . '">Diocese website</a></li>';
         }
 
         if (isset($links['journa_list_link'])) {
-            $html .= '	<li><a href="' . $links['journa_list_link'] . '">Newspaper articles written by this MP</a> <small>(From Journa-list)</small></li>';
+            $html .= '    <li><a href="' . $links['journa_list_link'] . '">Newspaper articles written by this MP</a> <small>(From Journa-list)</small></li>';
 
         }
         if (isset($links['guardian_parliament_history'])) {
-            $html .= '	<li><a href="' . $links['guardian_parliament_history'] . '">Parliamentary career</a> <small>(From The Guardian)</small></li>';
+            $html .= '    <li><a href="' . $links['guardian_parliament_history'] . '">Parliamentary career</a> <small>(From The Guardian)</small></li>';
         }
 
         if (isset($links['guardian_election_results'])) {
-            $html .= '	<li><a href="' . $links['guardian_election_results'] . '">Election results for ' . $member->constituency() . '</a> <small>(From The Guardian)</small></li>';
+            $html .= '    <li><a href="' . $links['guardian_election_results'] . '">Election results for ' . $member->constituency() . '</a> <small>(From The Guardian)</small></li>';
         }
         if (isset($links['abc_election_results_2022'])) {
-            $html .= '	<li><a href="' . $links['abc_election_results_2022'] . '">2022 Election results for ' . $member->constituency() . '</a> <small>(From ABC)</small></li>';
+            $html .= '    <li><a href="' . $links['abc_election_results_2022'] . '">2022 Election results for ' . $member->constituency() . '</a> <small>(From ABC)</small></li>';
         }
         if (isset($links['abc_election_results_2019'])) {
-            $html .= '	<li><a href="' . $links['abc_election_results_2019'] . '">2019 Election results for ' . $member->constituency() . '</a> <small>(From ABC)</small></li>';
+            $html .= '    <li><a href="' . $links['abc_election_results_2019'] . '">2019 Election results for ' . $member->constituency() . '</a> <small>(From ABC)</small></li>';
         }
         if (isset($links['abc_election_results_2016'])) {
-            $html .= '	<li><a href="' . $links['abc_election_results_2016'] . '">2016 Election results for ' . $member->constituency() . '</a> <small>(From ABC)</small></li>';
+            $html .= '    <li><a href="' . $links['abc_election_results_2016'] . '">2016 Election results for ' . $member->constituency() . '</a> <small>(From ABC)</small></li>';
         }
         if (isset($links['abc_election_results_2013'])) {
-            $html .= '	<li><a href="' . $links['abc_election_results_2013'] . '">2013 Election results for ' . $member->constituency() . '</a> <small>(From ABC)</small></li>';
+            $html .= '    <li><a href="' . $links['abc_election_results_2013'] . '">2013 Election results for ' . $member->constituency() . '</a> <small>(From ABC)</small></li>';
         }
         if (isset($links['abc_election_results_2010'])) {
-            $html .= '	<li><a href="' . $links['abc_election_results_2010'] . '">2010 Election results for ' . $member->constituency() . '</a> <small>(From ABC)</small></li>';
+            $html .= '    <li><a href="' . $links['abc_election_results_2010'] . '">2010 Election results for ' . $member->constituency() . '</a> <small>(From ABC)</small></li>';
         }
         if (isset($links['abc_election_results_2007'])) {
-            $html .= '	<li><a href="' . $links['abc_election_results_2007'] . '">2007 Election results for ' . $member->constituency() . '</a> <small>(From ABC)</small></li>';
+            $html .= '    <li><a href="' . $links['abc_election_results_2007'] . '">2007 Election results for ' . $member->constituency() . '</a> <small>(From ABC)</small></li>';
         }
 
         if (isset($links['guardian_candidacies'])) {
-            $html .= '	<li><a href="' . $links['guardian_candidacies'] . '">Previous candidacies</a> <small>(From The Guardian)</small></li>';
+            $html .= '    <li><a href="' . $links['guardian_candidacies'] . '">Previous candidacies</a> <small>(From The Guardian)</small></li>';
         }
 
         if (isset($links['guardian_contactdetails'])) {
-            $html .= '	<li><a href="' . $links['guardian_contactdetails'] . '">Contact details</a> <small>(From The Guardian)</small></li>';
+            $html .= '    <li><a href="' . $links['guardian_contactdetails'] . '">Contact details</a> <small>(From The Guardian)</small></li>';
         }
 
         if (isset($links['bbc_profile_url'])) {
-            $html .= '	<li><a href="' . $links['bbc_profile_url'] . '">General information</a> <small>(From BBC News)</small></li>';
+            $html .= '    <li><a href="' . $links['bbc_profile_url'] . '">General information</a> <small>(From BBC News)</small></li>';
 
         }
 
@@ -1865,7 +1865,7 @@ class PAGE {
         }
         // $html .= ' <li><a href="http://catalogue.bbc.co.uk/catalogue/infax/search/' . $bbc_name . '">TV/radio appearances</a> <small>(From BBC Programme Catalogue)</small></li>';
 
-        $html .= "	</ul>
+        $html .= "    </ul>
                     </div>
                 </div> <!-- end block -->
 ";
