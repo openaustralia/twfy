@@ -987,7 +987,7 @@ function majorSummary($data, $limit = "") {
 
     print '<ul id="hansard-day">';
     renderMajorSummaryStandardMajors($data, $limit, $one_date, $daytext);
-    // TODO: Check if Australia even need this
+    // TODO: Check if Australia even need this.
     renderMajorSummaryWms($data, $limit, $one_date, $daytext);
     print '</ul>';
 }
