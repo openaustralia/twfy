@@ -12,6 +12,14 @@ require_once INCLUDESPATH . 'data.php';
 require_once INCLUDESPATH . 'url.php';
 include_once EASYPARLIAMENTPATH . 'hansardlist.php';
 
+class DEBATELISTHansardDataAccessStub extends DEBATELIST {
+
+    public function callGetHandsardData(array $input): array {
+        return $this->getHandsardData($input);
+    }
+
+}
+
 /**
  * Tests for HANSARDLIST/DEBATELIST/WRANSLIST ORM-converted methods.
  */
@@ -246,7 +254,7 @@ class HansardModelTest extends TransactionalTestCase {
         $this->assertSame('Questions without notice | Cost of living | House of Representatives debates', $data['rows'][0]['parent']['body']);
     }
 
-    public function test_get_hansard_data_returns_row_with_body_and_urls(): void {
+    public function test_get_handsard_data_returns_row_with_body_and_urls(): void {
         $epobjectId = 92000;
         $this->insertEpobjectRaw($epobjectId, 'Body for hansard data');
         $this->insertHansardRaw([
@@ -260,8 +268,8 @@ class HansardModelTest extends TransactionalTestCase {
             'hpos' => 1,
         ]);
 
-        $list = new DEBATELIST();
-        $rows = $list->_get_hansard_data([
+        $list = new DEBATELISTHansardDataAccessStub();
+        $rows = $list->callGetHandsardData([
             'amount' => ['body' => true],
             'where' => ['hansard.epobject_id=' => $epobjectId],
             'order' => 'hansard.hpos ASC',

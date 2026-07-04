@@ -30,8 +30,6 @@ function twfy_debug($header, $text = "") {
     // Level '4' shows everything.
 
     $debug_level = get_http_var(DEBUGTAG);
-    // $debug_level = 1;
-
     if ($debug_level != '') {
 
         // Set which level shows which types of debug info.

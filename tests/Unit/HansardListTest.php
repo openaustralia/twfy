@@ -54,6 +54,22 @@ class HANSARDLISTMostRecentDayStub extends HANSARDLIST {
 
 }
 
+class HANSARDLISTGetSectionStub extends HANSARDLIST {
+
+    public array $fakeHansardData = [];
+    public ?array $lastInput = null;
+
+    public function callGetSection(array $itemdata): array {
+        return $this->getSection($itemdata);
+    }
+
+    public function getHandsardData($input) {
+        $this->lastInput = $input;
+        return $this->fakeHansardData;
+    }
+
+}
+
 class HansardListTest extends TestCase {
 
     private $origPage;
@@ -342,6 +358,42 @@ class HansardListTest extends TestCase {
         $this->assertSame($expectedUrl->generate(), $first['listurl']);
         $this->assertSame($first, $second);
         $this->assertSame(1, $list->fetchMostRecentDateCalls);
+    }
+
+    public function test_get_section_returns_itemdata_when_item_is_section(): void {
+        $list = new HANSARDLISTGetSectionStub();
+        $itemdata = [
+            'htype' => '10',
+            'epobject_id' => 123,
+            'body' => 'Section heading',
+            'section_id' => 123,
+        ];
+
+        $result = $list->callGetSection($itemdata);
+
+        $this->assertSame($itemdata, $result);
+        $this->assertNull($list->lastInput);
+    }
+
+    public function test_get_section_fetches_parent_section_for_non_section_item(): void {
+        $list = new HANSARDLISTGetSectionStub();
+        $list->fakeHansardData = [[
+            'epobject_id' => 50,
+            'body' => 'Parent section',
+        ]];
+
+        $itemdata = [
+            'htype' => '12',
+            'section_id' => 50,
+        ];
+
+        $result = $list->callGetSection($itemdata);
+
+        $this->assertSame([
+            'amount' => ['body' => true],
+            'where' => ['hansard.epobject_id=' => 50],
+        ], $list->lastInput);
+        $this->assertSame($list->fakeHansardData[0], $result);
     }
 
 }

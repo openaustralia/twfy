@@ -35,7 +35,7 @@ use OpenAustralia\TWFY\Models\Hansard;
  * Once we have an array of data, the render() function is called, which includes
  * a template. This cycles through the data array and outputs HTML.
  *
- * Most of the data is fetched from the database by the _get_hansard_data() function.
+ * Most of the data is fetched from the database by the getHandsardData() function.
  *
  * The COMMENTSLIST class is simpler and works in a similar fashion - that might help
  * you get your head round how this all works...
@@ -49,7 +49,7 @@ use OpenAustralia\TWFY\Models\Hansard;
  * (You'll need to allow the 'xml' format in render() too).
  *
  * No support for pages of results yet. This would be passed in in the $args array
- * and used in the LIMIT of the _get_hansard_data() function.
+ * and used in the LIMIT of the getHandsardData() function.
  * The template could then display links to next/prev pages in the sequence.
  */
 class HANSARDLIST {
@@ -314,7 +314,7 @@ class HANSARDLIST {
     /**
      *
      */
-    public function _get_section($itemdata) {
+    protected function getSection($itemdata) {
         // Pass it an array of data about an item and it will return an
         // array of data about the item's section heading.
 
@@ -339,7 +339,7 @@ class HANSARDLIST {
                 ]
             ];
 
-            $sectiondata = $this->_get_hansard_data($input);
+            $sectiondata = $this->getHandsardData($input);
 
             if (count($sectiondata) > 0) {
                 $sectiondata = $sectiondata[0];
@@ -381,7 +381,7 @@ class HANSARDLIST {
                 ]
             ];
 
-            $subsectiondata = $this->_get_hansard_data($input);
+            $subsectiondata = $this->getHandsardData($input);
             if (count($subsectiondata) == 0) {
                 $subsectiondata = null;
             } else {
@@ -480,7 +480,7 @@ class HANSARDLIST {
                 'limit' => 1
             ];
 
-            $prevdata = $this->_get_hansard_data($input);
+            $prevdata = $this->getHandsardData($input);
 
             if (count($prevdata) > 0) {
                 if ($itemdata['htype'] == '10' || $itemdata['htype'] == '11') {
@@ -523,7 +523,7 @@ class HANSARDLIST {
                 'order' => 'hpos ASC',
                 'limit' => 1
             ];
-            $nextdata = $this->_get_hansard_data($input);
+            $nextdata = $this->getHandsardData($input);
 
             if (count($nextdata) > 0) {
                 if ($itemdata['htype'] == '10' || $itemdata['htype'] == '11') {
@@ -719,7 +719,7 @@ class HANSARDLIST {
         $gid = $this->gidprefix . $args['gid'];
         $q = parlDBQuery("SELECT gid_to FROM gidredirect WHERE gid_from = ?", $gid);
         if ($q->rows() == 0) {
-            $itemdata = $this->_get_hansard_data($input);
+            $itemdata = $this->getHandsardData($input);
         } else {
             do {
                 $gid = $q->field(0, 'gid_to');
@@ -728,7 +728,7 @@ class HANSARDLIST {
             $redirected_gid = $gid;
             twfy_debug(get_class($this), "found redirected gid $redirected_gid");
             $input['where'] = ['gid=' => $redirected_gid];
-            $itemdata = $this->_get_hansard_data($input);
+            $itemdata = $this->getHandsardData($input);
             // Store that it is one, in case caller wants to do proper redirect.
             if (count($itemdata) > 0) {
                 $itemdata[0]['redirected_gid'] = fix_gid_from_db($redirected_gid);
@@ -834,7 +834,7 @@ class HANSARDLIST {
         if (strstr($gid, $from)) {
             $check_gid = str_replace($from, $to, $gid);
             $input['where'] = ['gid=' => $this->gidprefix . $check_gid];
-            $itemdata = $this->_get_hansard_data($input);
+            $itemdata = $this->getHandsardData($input);
             if (count($itemdata) > 0) {
                 $itemdata[0]['redirected_gid'] = $check_gid;
                 $itemdata = $itemdata[0];
@@ -883,7 +883,7 @@ class HANSARDLIST {
                 'order' => 'hpos'
             ];
 
-            $sections = $this->_get_hansard_data($input);
+            $sections = $this->getHandsardData($input);
 
             if (count($sections) > 0) {
 
@@ -894,7 +894,7 @@ class HANSARDLIST {
                     // For each section on this date, get the subsections within it.
 
                     // Get all the section data.
-                    $sectionrow = $this->_get_section($sections[$n]);
+                    $sectionrow = $this->getSection($sections[$n]);
 
                     // Get the subsections within the section.
                     $input = [
@@ -911,7 +911,7 @@ class HANSARDLIST {
                         'order' => 'hpos'
                     ];
 
-                    $rows = $this->_get_hansard_data($input);
+                    $rows = $this->getHandsardData($input);
 
                     // Put the section at the top of the rows array.
                     array_unshift($rows, $sectionrow);
@@ -1279,7 +1279,7 @@ class HANSARDLIST {
             if ($itemdata['major'] && $hansardmajors[$itemdata['major']]['type'] == 'debate') {
                 // Debate.
                 if ($itemdata['htype'] != 10) {
-                    $section = $this->_get_section($itemdata);
+                    $section = $this->getSection($itemdata);
                     $itemdata['parent']['body'] = $section['body'];
                     // $itemdata['parent']['listurl'] = $section['listurl'];
                     if ($itemdata['section_id'] != $itemdata['subsection_id']) {
@@ -1299,7 +1299,7 @@ class HANSARDLIST {
 
             } else {
                 // Wrans or WMS.
-                $section = $this->_get_section($itemdata);
+                $section = $this->getSection($itemdata);
                 $subsection = $this->_get_subsection($itemdata);
                 $body = $hansardmajors[$itemdata['major']]['title'] . ' &#8212; ';
                 if (isset($section['body'])) {
@@ -1638,7 +1638,7 @@ class HANSARDLIST {
     /**
      *
      */
-    public function _get_hansard_data($input) {
+    protected function getHandsardData($input) {
         global $hansardmajors;
 
         /*
@@ -1904,7 +1904,7 @@ class HANSARDLIST {
      *
      */
     public function _get_votes($epobject_id) {
-        // Called from _get_hansard_data().
+        // Called from getHandsardData().
         // Separated out here just for clarity.
         // Returns an array of user and anon yes/no votes for an epobject.
 
@@ -2239,7 +2239,7 @@ class HANSARDLIST {
                     'epobject_id=' => $itemdata['subsection_id'],
                 ],
             ];
-            $parent = $this->_get_hansard_data($input);
+            $parent = $this->getHandsardData($input);
             // Display that item, i.e. the whole of the Written Answer.
             twfy_debug(get_class($this), "instead of " . $args['gid'] . " selecting subheading gid " . $parent[0]['gid'] . " to get whole wrans");
             $args['gid'] = $parent[0]['gid'];
@@ -2257,7 +2257,7 @@ class HANSARDLIST {
                 'order' => 'hpos ASC',
                 'limit' => 1
             ];
-            $next = $this->_get_hansard_data($input);
+            $next = $this->getHandsardData($input);
             if ($next) {
                 twfy_debug(get_class($this), 'instead of ' . $args['gid'] . ' moving to ' . $next[0]['gid']);
                 $args['gid'] = $next[0]['gid'];
@@ -2314,7 +2314,7 @@ class HANSARDLIST {
             }
 
             // Get the section and subsection headings for this item.
-            $sectionrow = $this->_get_section($itemdata);
+            $sectionrow = $this->getSection($itemdata);
             $subsectionrow = $this->_get_subsection($itemdata);
 
             // Get the nextprev links for this item, to link to next/prev pages.
@@ -2365,7 +2365,7 @@ class HANSARDLIST {
                     'order' => 'hpos ASC'
                 ];
 
-                $data['rows'] = $this->_get_hansard_data($input);
+                $data['rows'] = $this->getHandsardData($input);
                 if (!count($data['rows']) || (count($data['rows']) == 1 && strstr($data['rows'][0]['body'], 'was asked'))) {
 
                     $input = [
@@ -2381,7 +2381,7 @@ class HANSARDLIST {
                         ],
                         'order' => 'hpos'
                     ];
-                    $data['subrows'] = $this->_get_hansard_data($input);
+                    $data['subrows'] = $this->getHandsardData($input);
                     if (count($data['subrows']) == 1) {
                         return ['info' => ['redirected_gid' => $data['subrows'][0]['gid']]];
                     }
@@ -2397,7 +2397,7 @@ class HANSARDLIST {
                     'order' => 'hpos ASC'
                 ];
 
-                $data['rows'] = $this->_get_hansard_data($input);
+                $data['rows'] = $this->getHandsardData($input);
 
             } elseif ($itemdata['htype'] == '12' || $itemdata['htype'] == '13') {
                 // Debate speech or procedural, so we're just displaying this one item.
@@ -2437,7 +2437,7 @@ class HANSARDLIST {
             'where' => ['hdate=' => $args['date'], 'major=' => $this->major, 'gid LIKE ' => '%.' . $args['column'] . '.%'],
             'order' => 'hpos'
         ];
-        $data = $this->_get_hansard_data($input);
+        $data = $this->getHandsardData($input);
 
         return $data;
     }
@@ -3085,11 +3085,11 @@ class StandingCommittee extends DEBATELIST {
             ],
             'order' => 'hdate,hpos'
         ];
-        $sections = $this->_get_hansard_data($input);
+        $sections = $this->getHandsardData($input);
         if (count($sections) > 0) {
             $data['rows'] = [];
             for ($n = 0; $n < count($sections); $n++) {
-                $sectionrow = $this->_get_section($sections[$n]);
+                $sectionrow = $this->getSection($sections[$n]);
                 $input = [
                     'amount' => [
                         'body' => true,
@@ -3103,7 +3103,7 @@ class StandingCommittee extends DEBATELIST {
                     ],
                     'order' => 'hpos'
                 ];
-                $rows = $this->_get_hansard_data($input);
+                $rows = $this->getHandsardData($input);
                 array_unshift($rows, $sectionrow);
                 $data['rows'] = array_merge($data['rows'], $rows);
             }
