@@ -73,6 +73,33 @@ class DEBATELISTDateAccessStub extends DEBATELIST {
         return $this->fetchDateSections($date)->all();
     }
 
+    public function callFetchDateSubsections(int $sectionId): array {
+        return $this->fetchDateSubsections($sectionId)->all();
+    }
+
+    public function callBuildDateRows(string $date): array {
+        return $this->buildDateRows($date);
+    }
+
+    public function callGetDateHeadingContentCount(array $item): ?int {
+        return $this->getDateHeadingContentCount($item);
+    }
+
+    public function callGetDateHeadingExcerpt(array $item): ?string {
+        return $this->getDateHeadingExcerpt($item);
+    }
+
+}
+
+/**
+ * Test access wrapper for protected getDataByDate() on wrans.
+ */
+class WRANSLISTDateAccessStub extends WRANSLIST {
+
+    public function callBuildDateRows(string $date): array {
+        return $this->buildDateRows($date);
+    }
+
 }
 
 /**
@@ -687,6 +714,141 @@ class HansardModelTest extends TransactionalTestCase {
         $this->assertCount(1, $rows);
         $this->assertSame($sectionId, (int) $rows[0]->epobject_id);
         $this->assertSame('Section on requested date', $rows[0]->body);
+    }
+
+    public function test_fetch_date_subsections_returns_only_subsections_for_section(): void {
+        $sectionId = 96120;
+        $subsectionId = 96121;
+        $otherSectionSubsectionId = 96122;
+
+        $this->insertEpobject($sectionId, 'Section parent');
+        $this->insertEpobject($subsectionId, 'Matching subsection');
+        $this->insertEpobject($otherSectionSubsectionId, 'Other subsection');
+
+        $this->insertHansard([
+            'major' => 1,
+            'hdate' => '2024-07-04',
+            'gid' => 'uk.org.publicwhip/debate/2024-07-04.1.0',
+            'epobject_id' => $sectionId,
+            'section_id' => $sectionId,
+            'subsection_id' => $sectionId,
+            'htype' => 10,
+            'hpos' => 1,
+        ]);
+        $this->insertHansard([
+            'major' => 1,
+            'hdate' => '2024-07-04',
+            'gid' => 'uk.org.publicwhip/debate/2024-07-04.1.0a',
+            'epobject_id' => $subsectionId,
+            'section_id' => $sectionId,
+            'subsection_id' => $subsectionId,
+            'htype' => 11,
+            'hpos' => 2,
+        ]);
+        $this->insertHansard([
+            'major' => 1,
+            'hdate' => '2024-07-04',
+            'gid' => 'uk.org.publicwhip/debate/2024-07-04.2.0a',
+            'epobject_id' => $otherSectionSubsectionId,
+            'section_id' => 96123,
+            'subsection_id' => $otherSectionSubsectionId,
+            'htype' => 11,
+            'hpos' => 3,
+        ]);
+
+        $list = new DEBATELISTDateAccessStub();
+        $rows = $list->callFetchDateSubsections($sectionId);
+
+        $this->assertCount(1, $rows);
+        $this->assertSame($subsectionId, (int) $rows[0]->epobject_id);
+        $this->assertSame('Matching subsection', $rows[0]->body);
+    }
+
+    public function test_build_date_rows_adds_counts_and_excerpts_for_section_and_subsection(): void {
+        $sectionId = 96130;
+        $subsectionId = 96131;
+        $sectionSpeechId = 96132;
+        $subsectionSpeechId = 96133;
+
+        $this->insertEpobject($sectionId, 'Section heading');
+        $this->insertEpobject($subsectionId, 'Subsection heading');
+        $this->insertEpobject($sectionSpeechId, 'Section excerpt body');
+        $this->insertEpobject($subsectionSpeechId, 'Subsection excerpt body');
+
+        $this->insertHansard([
+            'major' => 1,
+            'hdate' => '2024-07-05',
+            'gid' => 'uk.org.publicwhip/debate/2024-07-05.1.0',
+            'epobject_id' => $sectionId,
+            'section_id' => $sectionId,
+            'subsection_id' => $sectionId,
+            'htype' => 10,
+            'hpos' => 1,
+        ]);
+        $this->insertHansard([
+            'major' => 1,
+            'hdate' => '2024-07-05',
+            'gid' => 'uk.org.publicwhip/debate/2024-07-05.1.1',
+            'epobject_id' => $sectionSpeechId,
+            'section_id' => $sectionId,
+            'subsection_id' => $sectionId,
+            'htype' => 12,
+            'hpos' => 2,
+        ]);
+        $this->insertHansard([
+            'major' => 1,
+            'hdate' => '2024-07-05',
+            'gid' => 'uk.org.publicwhip/debate/2024-07-05.1.2',
+            'epobject_id' => $subsectionId,
+            'section_id' => $sectionId,
+            'subsection_id' => $subsectionId,
+            'htype' => 11,
+            'hpos' => 3,
+        ]);
+        $this->insertHansard([
+            'major' => 1,
+            'hdate' => '2024-07-05',
+            'gid' => 'uk.org.publicwhip/debate/2024-07-05.1.3',
+            'epobject_id' => $subsectionSpeechId,
+            'section_id' => $sectionId,
+            'subsection_id' => $subsectionId,
+            'htype' => 12,
+            'hpos' => 4,
+        ]);
+
+        $list = new DEBATELISTDateAccessStub();
+        $rows = $list->callBuildDateRows('2024-07-05');
+
+        $this->assertCount(2, $rows);
+        $this->assertSame('Section heading', $rows[0]['body']);
+        $this->assertSame(1, $rows[0]['contentcount']);
+        $this->assertSame('Section heading', $rows[0]['excerpt']);
+        $this->assertSame('Subsection heading', $rows[1]['body']);
+        $this->assertSame(1, $rows[1]['contentcount']);
+        $this->assertSame('Subsection heading', $rows[1]['excerpt']);
+    }
+
+    public function test_date_heading_helpers_return_null_for_non_debate_rows(): void {
+        $sectionId = 96140;
+
+        $this->insertEpobject($sectionId, 'Wrans section');
+        $this->insertHansard([
+            'major' => 3,
+            'hdate' => '2024-07-06',
+            'gid' => 'uk.org.publicwhip/wrans/2024-07-06.1.0',
+            'epobject_id' => $sectionId,
+            'section_id' => $sectionId,
+            'subsection_id' => $sectionId,
+            'htype' => 10,
+            'hpos' => 1,
+        ]);
+
+        $list = new WRANSLISTDateAccessStub();
+        $rows = $list->callBuildDateRows('2024-07-06');
+
+        $this->assertCount(1, $rows);
+        $this->assertArrayNotHasKey('contentcount', $rows[0]);
+        $this->assertSame('Wrans section', $rows[0]['body']);
     }
 
     public function test_most_recent_day_returns_latest_hdate_for_major_and_caches_result(): void {
