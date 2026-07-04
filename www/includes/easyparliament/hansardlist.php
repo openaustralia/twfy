@@ -1083,6 +1083,67 @@ class HANSARDLIST {
         return $rows;
     }
 
+    /**
+     * Parse a comma-separated list of member IDs into integers.
+     */
+    protected function parseMemberIds(string $memberIds): array {
+        $parsedIds = [];
+
+        foreach (explode(',', $memberIds) as $memberId) {
+            $memberId = trim($memberId);
+            if ($memberId !== '' && ctype_digit($memberId)) {
+                $parsedIds[] = (int) $memberId;
+            }
+        }
+
+        return array_values(array_unique($parsedIds));
+    }
+
+    /**
+     * Convert one person-view query row into the expected payload.
+     */
+    protected function mapPersonSpeechRow($row): array {
+        $speech = [
+            'subsection_id' => $row->subsection_id,
+            'section_id' => $row->section_id,
+            'htype' => $row->htype,
+            'major' => $row->major,
+            'hdate' => $row->hdate->format('Y-m-d'),
+            'htime' => $row->htime,
+            'speaker_id' => $row->speaker_id,
+            'body' => $row->body,
+            'body_section' => $row->body_section,
+            'body_subsection' => $row->body_subsection,
+            'gid' => fix_gid_from_db($row->gid),
+        ];
+
+        // Cache parent id to speed up _get_listurl.
+        $this->epobjectid_to_gid[$row->subsection_id] = fix_gid_from_db($row->gid_subsection);
+
+        $url_args = ['m' => $row->speaker_id];
+        $speech['listurl'] = $this->_get_listurl($speech, $url_args);
+
+        return $speech;
+    }
+
+    /**
+     * Add parent heading text for person-view speech rows.
+     */
+    protected function addPersonSpeechParentBodies(array $speeches): array {
+        global $hansardmajors;
+
+        for ($n = 0; $n < count($speeches); $n++) {
+            $thing = $hansardmajors[$speeches[$n]['major']]['title'];
+            $speeches[$n]['parent']['body'] = $speeches[$n]['body_section'] . ' | ' . $thing;
+            if ($speeches[$n]['subsection_id'] != $speeches[$n]['section_id']) {
+                $speeches[$n]['parent']['body'] = $speeches[$n]['body_subsection'] .
+                  ' | ' . $speeches[$n]['parent']['body'];
+            }
+        }
+
+        return $speeches;
+    }
+
     // Display a person's most recent debates.
     // Still used by scripts/mprss.php via $HANSARDLIST->display('person', ...).
     // display() dynamically dispatches the 'person' view to this method.
@@ -1104,11 +1165,17 @@ class HANSARDLIST {
             return $data;
         }
 
+        $memberIds = $this->parseMemberIds($args['member_ids']);
+        if (empty($memberIds)) {
+            $data['rows'] = [];
+            return $data;
+        }
+
         $query = Hansard::join('epobject', 'hansard.epobject_id', '=', 'epobject.epobject_id')
           ->join('epobject as epobject_section', 'hansard.section_id', '=', 'epobject_section.epobject_id')
           ->join('epobject as epobject_subsection', 'hansard.subsection_id', '=', 'epobject_subsection.epobject_id')
           ->join('hansard as hansard_subsection', 'hansard.subsection_id', '=', 'hansard_subsection.epobject_id')
-          ->whereRaw('hansard.speaker_id in (' . $args['member_ids'] . ')');
+          ->whereIn('hansard.speaker_id', $memberIds);
 
         if (isset($this->major)) {
             $query->where('hansard.major', $this->major);
@@ -1128,39 +1195,11 @@ class HANSARDLIST {
 
         $speeches = [];
         foreach ($rows as $row) {
-            $speech = [
-                'subsection_id' => $row->subsection_id,
-                'section_id' => $row->section_id,
-                'htype' => $row->htype,
-                'major' => $row->major,
-                'hdate' => $row->hdate->format('Y-m-d'),
-                'htime' => $row->htime,
-                'speaker_id' => $row->speaker_id,
-                'body' => $row->body,
-                'body_section' => $row->body_section,
-                'body_subsection' => $row->body_subsection,
-                'gid' => fix_gid_from_db($row->gid),
-            ];
-            // Cache parent id to speed up _get_listurl.
-            $this->epobjectid_to_gid[$row->subsection_id] = fix_gid_from_db($row->gid_subsection);
-
-            $url_args = ['m' => $row->speaker_id];
-            $speech['listurl'] = $this->_get_listurl($speech, $url_args);
-            $speeches[] = $speech;
+            $speeches[] = $this->mapPersonSpeechRow($row);
         }
 
         if (count($speeches) > 0) {
-            // Get the subsection texts.
-            for ($n = 0; $n < count($speeches); $n++) {
-                $thing = $hansardmajors[$speeches[$n]['major']]['title'];
-                // Add the parent's body on...
-                $speeches[$n]['parent']['body'] = $speeches[$n]['body_section'] . ' | ' . $thing;
-                if ($speeches[$n]['subsection_id'] != $speeches[$n]['section_id']) {
-                    $speeches[$n]['parent']['body'] = $speeches[$n]['body_subsection'] .
-                        ' | ' . $speeches[$n]['parent']['body'];
-                }
-            }
-            $data['rows'] = $speeches;
+            $data['rows'] = $this->addPersonSpeechParentBodies($speeches);
         } else {
             $data['rows'] = [];
         }
@@ -1275,7 +1314,7 @@ class HANSARDLIST {
             $createds = $SEARCHENGINE->get_createds();
         }
         $relevances = $SEARCHENGINE->get_relevances();
-        if (count($gids) <= 0) {
+        if (empty($gids)) {
             // No results.
             $data['rows'] = [];
             return $data;
@@ -2478,7 +2517,7 @@ class HANSARDLIST {
                 ];
 
                 $data['rows'] = $this->getHandsardData($input);
-                if (!count($data['rows']) || (count($data['rows']) == 1 && strstr($data['rows'][0]['body'], 'was asked'))) {
+                if (empty($data['rows']) || (count($data['rows']) == 1 && strstr($data['rows'][0]['body'], 'was asked'))) {
 
                     $input = [
                         'amount' => [
@@ -2825,7 +2864,7 @@ class DEBATELIST extends HANSARDLIST {
 
         // Get the most recent day on which we have a debate.
         $recentday = $this->most_recent_day();
-        if (!count($recentday)) {
+        if (empty($recentday)) {
             return [];
         }
 
@@ -3023,7 +3062,7 @@ class WRANSLIST extends HANSARDLIST {
 
         // Get the most recent day on which we have wrans.
         $recentday = $this->most_recent_day();
-        if (!count($recentday)) {
+        if (empty($recentday)) {
             return [];
         }
 

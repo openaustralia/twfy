@@ -336,6 +336,65 @@ class HansardModelTest extends TransactionalTestCase {
         $this->assertSame('Questions without notice | Cost of living | House of Representatives debates', $data['rows'][0]['parent']['body']);
     }
 
+    public function test_get_data_by_person_accepts_multiple_comma_separated_member_ids(): void {
+        $sectionId = 91010;
+        $subsectionId = 91011;
+        $firstSpeechId = 91012;
+        $secondSpeechId = 91013;
+
+        $this->insertEpobject($sectionId, 'Cost of living');
+        $this->insertEpobject($subsectionId, 'Questions without notice');
+        $this->insertEpobject($firstSpeechId, 'First requested speech');
+        $this->insertEpobject($secondSpeechId, 'Second requested speech');
+
+        $this->insertHansard([
+            'epobject_id' => $subsectionId,
+            'gid' => 'uk.org.publicwhip/debate/2024-01-16.1.0',
+            'htype' => 11,
+            'speaker_id' => 0,
+            'major' => 1,
+            'section_id' => $sectionId,
+            'subsection_id' => $subsectionId,
+            'hpos' => 1,
+        ]);
+        $this->insertHansard([
+            'epobject_id' => $firstSpeechId,
+            'gid' => 'uk.org.publicwhip/debate/2024-01-16.1.1',
+            'htype' => 12,
+            'speaker_id' => 12345,
+            'major' => 1,
+            'section_id' => $sectionId,
+            'subsection_id' => $subsectionId,
+            'hpos' => 2,
+        ]);
+        $this->insertHansard([
+            'epobject_id' => $secondSpeechId,
+            'gid' => 'uk.org.publicwhip/debate/2024-01-16.1.2',
+            'htype' => 12,
+            'speaker_id' => 54321,
+            'major' => 1,
+            'section_id' => $sectionId,
+            'subsection_id' => $subsectionId,
+            'hpos' => 3,
+        ]);
+
+        $list = new DEBATELIST();
+        $data = $list->_get_data_by_person(['member_ids' => '12345, nope, 54321', 'max' => 10]);
+
+        $this->assertCount(2, $data['rows']);
+        $speakerIds = array_map(static fn ($row) => (int) $row['speaker_id'], $data['rows']);
+        $this->assertContains(12345, $speakerIds);
+        $this->assertContains(54321, $speakerIds);
+    }
+
+    public function test_get_data_by_person_returns_empty_rows_for_invalid_member_id_string(): void {
+        $list = new DEBATELIST();
+
+        $data = $list->_get_data_by_person(['member_ids' => 'not-a-member-id', 'max' => 10]);
+
+        $this->assertSame(['rows' => []], $data);
+    }
+
     public function test_get_handsard_data_returns_row_with_body_and_urls(): void {
         $epobjectId = 92000;
         $this->insertEpobjectRaw($epobjectId, 'Body for hansard data');
