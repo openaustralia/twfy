@@ -1003,10 +1003,6 @@ function major_summary($data, $limit = "") {
     if (isset($data['date'])) {
         $one_date = true;
     }
-    $limitsql = "";
-    if ($limit) {
-        $limitsql = " limit $limit";
-    }
 
     $daytext = [];
     if (!$one_date) {
