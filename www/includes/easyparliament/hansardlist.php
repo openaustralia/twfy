@@ -775,108 +775,12 @@ class HANSARDLIST {
         }
 
         if (count($itemdata) == 0) {
-            /* Deal with old links to some Lords pages. Somewhere. I can't remember where */
-            $itemdata = $this->check_gid_change($args['gid'], 'a', '');
-            if ($itemdata) {
-                return $itemdata;
-            }
-
-            if (substr($args['gid'], -1) == 'L') {
-                $letts = ['a', 'b', 'c', 'd', 'e'];
-                for ($i = 0; $i < 4; $i++) {
-                    $itemdata = $this->check_gid_change($args['gid'], $letts[$i], $letts[$i + 1]);
-                    if ($itemdata) {
-                        return $itemdata;
-                    }
-                }
-            }
-
-            /* A lot of written answers were moved from 10th to 11th May and 11th May to 12th May.
-            Deal with the bots who have stored links to those now non-existant written answers. */
-            /* 2007-05-31: And then they were moved BACK in the volume edition, ARGH */
-            $itemdata = $this->check_gid_change($args['gid'], '2006-05-10a', '2006-05-10c');
-            if ($itemdata) {
-                return $itemdata;
-            }
-            $itemdata = $this->check_gid_change($args['gid'], '2006-05-10a', '2006-05-11d');
-            if ($itemdata) {
-                return $itemdata;
-            }
-            $itemdata = $this->check_gid_change($args['gid'], '2006-05-11b', '2006-05-11d');
-            if ($itemdata) {
-                return $itemdata;
-            }
-            $itemdata = $this->check_gid_change($args['gid'], '2006-05-11b', '2006-05-12c');
-            if ($itemdata) {
-                return $itemdata;
-            }
-            $itemdata = $this->check_gid_change($args['gid'], '2006-05-11c', '2006-05-10c');
-            if ($itemdata) {
-                return $itemdata;
-            }
-            $itemdata = $this->check_gid_change($args['gid'], '2006-05-12b', '2006-05-11d');
-            if ($itemdata) {
-                return $itemdata;
-            }
-
-            $itemdata = $this->check_gid_change($args['gid'], '2007-01-08', '2007-01-05');
-            if ($itemdata) {
-                return $itemdata;
-            }
-            $itemdata = $this->check_gid_change($args['gid'], '2007-02-19', '2007-02-16');
-            if ($itemdata) {
-                return $itemdata;
-            }
-
-            /* More movearounds... */
-            $itemdata = $this->check_gid_change($args['gid'], '2005-10-10d', '2005-09-12a');
-            if ($itemdata) {
-                return $itemdata;
-            }
-            $itemdata = $this->check_gid_change($args['gid'], '2005-10-14a', '2005-10-13b');
-            if ($itemdata) {
-                return $itemdata;
-            }
-            $itemdata = $this->check_gid_change($args['gid'], '2005-10-18b', '2005-10-10e');
-            if ($itemdata) {
-                return $itemdata;
-            }
-            $itemdata = $this->check_gid_change($args['gid'], '2005-11-17b', '2005-11-15c');
-            if ($itemdata) {
-                return $itemdata;
-            }
-
             $PAGE->error_message("Sorry, there is no Hansard object with a gid of '" . htmlentities($args['gid']) . "'.");
             return false;
         }
 
         return $itemdata;
 
-    }
-
-    /**
-     *
-     */
-    public function check_gid_change($gid, $from, $to) {
-        $input = [
-            'amount' => [
-                'body' => true,
-                'speaker' => true,
-                'comment' => true,
-                'votes' => true
-            ]
-        ];
-        if (strstr($gid, $from)) {
-            $check_gid = str_replace($from, $to, $gid);
-            $input['where'] = ['gid=' => $this->gidprefix . $check_gid];
-            $itemdata = $this->getHandsardData($input);
-            if (count($itemdata) > 0) {
-                $itemdata[0]['redirected_gid'] = $check_gid;
-                $itemdata = $itemdata[0];
-                return $itemdata;
-            }
-        }
-        return null;
     }
 
     /**
