@@ -44,29 +44,38 @@ function _api_getSenate_row($row) {
 }
 
 /**
+ * Output serialized Senate rows from a member query.
+ */
+function _api_getSenate_output(Builder $query): void {
+    $rows = $query->get();
+    $output = [];
+    $last_mod = 0;
+
+    foreach ($rows as $row) {
+        /** @var \OpenAustralia\TWFY\Models\Member $row */
+        $rowData = $row->toArray();
+        $out = _api_getSenate_row($rowData);
+        $output[] = $out;
+        $time = strtotime((string) ($rowData['lastupdate'] ?? ''));
+        if ($time > $last_mod) {
+            $last_mod = $time;
+        }
+    }
+
+    api_output($output, $last_mod);
+}
+
+/**
  *
  */
 function api_getSenate_id(int $id) {
 
-    $rows = MemberModel::where('house', HOUSE::SENATE)
+    $query = MemberModel::where('house', HOUSE::SENATE)
       ->where('person_id', $id)
-      ->orderByDesc('left_house')
-      ->get();
-    if ($rows->isNotEmpty()) {
-        $output = [];
-        $last_mod = 0;
+      ->orderByDesc('left_house');
 
-        foreach ($rows as $row) {
-            /** @var \OpenAustralia\TWFY\Models\Member $row */
-            $rowData = $row->toArray();
-            $out = _api_getSenate_row($rowData);
-            $output[] = $out;
-            $time = strtotime((string) ($rowData['lastupdate'] ?? ''));
-            if ($time > $last_mod) {
-                $last_mod = $time;
-            }
-        }
-        api_output($output, $last_mod);
+    if ($query->exists()) {
+        _api_getSenate_output($query);
     } else {
         api_error('Unknown person ID');
     }
