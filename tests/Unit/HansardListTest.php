@@ -63,6 +63,10 @@ class HANSARDLISTGetSectionStub extends HANSARDLIST {
         return $this->getSection($itemdata);
     }
 
+    public function callGetSubsection(array $itemdata) {
+        return $this->getSubsection($itemdata);
+    }
+
     public function getHandsardData($input) {
         $this->lastInput = $input;
         return $this->fakeHansardData;
@@ -394,6 +398,60 @@ class HansardListTest extends TestCase {
             'where' => ['hansard.epobject_id=' => 50],
         ], $list->lastInput);
         $this->assertSame($list->fakeHansardData[0], $result);
+    }
+
+    public function test_get_subsection_returns_itemdata_when_item_is_subsection(): void {
+        $list = new HANSARDLISTGetSectionStub();
+        $itemdata = [
+            'htype' => '11',
+            'epobject_id' => 321,
+            'body' => 'Subsection heading',
+            'subsection_id' => 321,
+        ];
+
+        $result = $list->callGetSubsection($itemdata);
+
+        $this->assertSame($itemdata, $result);
+        $this->assertNull($list->lastInput);
+    }
+
+    public function test_get_subsection_fetches_parent_subsection_for_speech_item(): void {
+        $list = new HANSARDLISTGetSectionStub();
+        $list->fakeHansardData = [[
+            'epobject_id' => 75,
+            'body' => 'Parent subsection',
+        ]];
+
+        $itemdata = [
+            'htype' => '12',
+            'subsection_id' => 75,
+        ];
+
+        $result = $list->callGetSubsection($itemdata);
+
+        $this->assertSame([
+            'amount' => ['body' => true],
+            'where' => ['hansard.epobject_id=' => 75],
+        ], $list->lastInput);
+        $this->assertSame($list->fakeHansardData[0], $result);
+    }
+
+    public function test_get_subsection_returns_null_when_parent_not_found_for_speech_item(): void {
+        $list = new HANSARDLISTGetSectionStub();
+        $list->fakeHansardData = [];
+
+        $itemdata = [
+            'htype' => '13',
+            'subsection_id' => 88,
+        ];
+
+        $result = $list->callGetSubsection($itemdata);
+
+        $this->assertSame([
+            'amount' => ['body' => true],
+            'where' => ['hansard.epobject_id=' => 88],
+        ], $list->lastInput);
+        $this->assertNull($result);
     }
 
 }
