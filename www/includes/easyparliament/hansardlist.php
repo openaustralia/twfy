@@ -824,7 +824,7 @@ class HANSARDLIST {
 
             $sections = $this->getHandsardData($input);
 
-            if (count($sections) > 0) {
+            if (!empty($sections)) {
 
                 // Where we'll keep the full list of sections and subsections.
                 $data['rows'] = [];
