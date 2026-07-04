@@ -54,6 +54,17 @@ class HANSARDLISTMostRecentDayStub extends HANSARDLIST {
 
 }
 
+/**
+ * Test access wrapper for protected validateDate().
+ */
+class HANSARDLISTValidateDateStub extends HANSARDLIST {
+
+    public function callValidateDate(array $args) {
+        return $this->validateDate($args);
+    }
+
+}
+
 class HANSARDLISTGetSectionStub extends HANSARDLIST {
 
     public array $fakeHansardData = [];
@@ -101,50 +112,50 @@ class HansardListTest extends TestCase {
         $PAGE = null;
     }
 
-    // --- _validate_date ---
+    // --- validateDate ---
 
     public function test_validate_date_accepts_valid_date(): void {
-        $list = new HANSARDLIST();
-        $result = $list->_validate_date(['date' => '2023-06-15']);
+        $list = new HANSARDLISTValidateDateStub();
+        $result = $list->callValidateDate(['date' => '2023-06-15']);
         $this->assertSame('2023-06-15', $result);
     }
 
     public function test_validate_date_pads_single_digit_month_and_day(): void {
-        $list = new HANSARDLIST();
-        $result = $list->_validate_date(['date' => '2023-1-5']);
+        $list = new HANSARDLISTValidateDateStub();
+        $result = $list->callValidateDate(['date' => '2023-1-5']);
         $this->assertSame('2023-01-05', $result);
     }
 
     public function test_validate_date_returns_false_when_no_date_key(): void {
-        $list = new HANSARDLIST();
-        $result = $list->_validate_date([]);
+        $list = new HANSARDLISTValidateDateStub();
+        $result = $list->callValidateDate([]);
         $this->assertFalse($result);
     }
 
     public function test_validate_date_returns_false_for_invalid_format(): void {
-        $list = new HANSARDLIST();
-        $result = $list->_validate_date(['date' => 'not-a-date']);
+        $list = new HANSARDLISTValidateDateStub();
+        $result = $list->callValidateDate(['date' => 'not-a-date']);
         $this->assertFalse($result);
     }
 
     public function test_validate_date_returns_false_for_invalid_calendar_date(): void {
-        $list = new HANSARDLIST();
+        $list = new HANSARDLISTValidateDateStub();
         // Feb 30 doesn't exist.
-        $result = $list->_validate_date(['date' => '2023-02-30']);
+        $result = $list->callValidateDate(['date' => '2023-02-30']);
         $this->assertFalse($result);
     }
 
     public function test_validate_date_returns_false_for_partial_date(): void {
-        $list = new HANSARDLIST();
-        $result = $list->_validate_date(['date' => '2023-12']);
+        $list = new HANSARDLISTValidateDateStub();
+        $result = $list->callValidateDate(['date' => '2023-12']);
         $this->assertFalse($result);
     }
 
     public function test_validate_date_sets_error_message_on_failure(): void {
         global $PAGE;
         /** @var FakePageForHansardTest $PAGE */
-        $list = new HANSARDLIST();
-        $list->_validate_date(['date' => 'bad']);
+        $list = new HANSARDLISTValidateDateStub();
+        $list->callValidateDate(['date' => 'bad']);
         $this->assertNotEmpty($PAGE->errors);
     }
 

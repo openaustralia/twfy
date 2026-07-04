@@ -12,10 +12,24 @@ require_once INCLUDESPATH . 'data.php';
 require_once INCLUDESPATH . 'url.php';
 include_once EASYPARLIAMENTPATH . 'hansardlist.php';
 
+/**
+ * Test access wrapper for protected getHandsardData().
+ */
 class DEBATELISTHansardDataAccessStub extends DEBATELIST {
 
     public function callGetHandsardData(array $input): array {
         return $this->getHandsardData($input);
+    }
+
+}
+
+/**
+ * Test access wrapper for protected getItem().
+ */
+class DEBATELISTGetItemAccessStub extends DEBATELIST {
+
+    public function callGetItem(array $args) {
+        return $this->getItem($args);
     }
 
 }
@@ -369,8 +383,8 @@ class HansardModelTest extends TransactionalTestCase {
             'speaker_id' => 0,
         ]);
 
-        $list = new DEBATELIST();
-        $item = $list->_get_item(['gid' => '2024-04-01.2.0']);
+        $list = new DEBATELISTGetItemAccessStub();
+        $item = $list->callGetItem(['gid' => '2024-04-01.2.0']);
 
         $this->assertIsArray($item);
         $this->assertSame($epobjectId, (int) $item['epobject_id']);

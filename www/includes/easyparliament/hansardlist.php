@@ -358,7 +358,7 @@ class HANSARDLIST {
     /**
      *
      */
-    public function _get_subsection($itemdata) {
+    protected function getSubsection($itemdata) {
         // Pass it an array of data about an item and it will return an
         // array of data about the item's subsection heading.
 
@@ -656,7 +656,7 @@ class HANSARDLIST {
     /**
      *
      */
-    public function _validate_date($args) {
+    protected function validateDate($args) {
         // Used when we're viewing things by (_get_data_by_date() functions).
         // If $args['date'] is a valid yyyy-mm-dd date, it is returned.
         // Else false is returned.
@@ -692,7 +692,7 @@ class HANSARDLIST {
     /**
      *
      */
-    public function _get_item($args) {
+    protected function getItem($args) {
         global $PAGE;
 
         if (!isset($args['gid']) && $args['gid'] == '') {
@@ -858,7 +858,7 @@ class HANSARDLIST {
         // Where we'll put all the data we want to render.
         $data = [];
 
-        $date = $this->_validate_date($args);
+        $date = $this->validateDate($args);
 
         if ($date) {
 
@@ -1283,7 +1283,7 @@ class HANSARDLIST {
                     $itemdata['parent']['body'] = $section['body'];
                     // $itemdata['parent']['listurl'] = $section['listurl'];
                     if ($itemdata['section_id'] != $itemdata['subsection_id']) {
-                        $subsection = $this->_get_subsection($itemdata);
+                        $subsection = $this->getSubsection($itemdata);
                         $itemdata['parent']['body'] .= ': ' . $subsection['body'];
                         // $itemdata['parent']['listurl'] = $subsection['listurl'];
                     }
@@ -1300,7 +1300,7 @@ class HANSARDLIST {
             } else {
                 // Wrans or WMS.
                 $section = $this->getSection($itemdata);
-                $subsection = $this->_get_subsection($itemdata);
+                $subsection = $this->getSubsection($itemdata);
                 $body = $hansardmajors[$itemdata['major']]['title'] . ' &#8212; ';
                 if (isset($section['body'])) {
                     $body .= $section['body'];
@@ -2228,7 +2228,7 @@ class HANSARDLIST {
         $data = [];
 
         // Get the information about the item this URL refers to.
-        $itemdata = $this->_get_item($args);
+        $itemdata = $this->getItem($args);
 
         // If part of a Written Answer (just question or just answer), select the whole thing.
         if (isset($itemdata['major']) && $hansardmajors[$itemdata['major']]['type'] == 'other' and ($itemdata['htype'] == '12' or $itemdata['htype'] == '13')) {
@@ -2243,7 +2243,7 @@ class HANSARDLIST {
             // Display that item, i.e. the whole of the Written Answer.
             twfy_debug(get_class($this), "instead of " . $args['gid'] . " selecting subheading gid " . $parent[0]['gid'] . " to get whole wrans");
             $args['gid'] = $parent[0]['gid'];
-            $itemdata = $this->_get_item($args);
+            $itemdata = $this->getItem($args);
             $itemdata['redirected_gid'] = $args['gid'];
         }
 
@@ -2261,7 +2261,7 @@ class HANSARDLIST {
             if ($next) {
                 twfy_debug(get_class($this), 'instead of ' . $args['gid'] . ' moving to ' . $next[0]['gid']);
                 $args['gid'] = $next[0]['gid'];
-                $itemdata = $this->_get_item($args);
+                $itemdata = $this->getItem($args);
                 $itemdata['redirected_gid'] = $args['gid'];
             }
         }
@@ -2315,7 +2315,7 @@ class HANSARDLIST {
 
             // Get the section and subsection headings for this item.
             $sectionrow = $this->getSection($itemdata);
-            $subsectionrow = $this->_get_subsection($itemdata);
+            $subsectionrow = $this->getSubsection($itemdata);
 
             // Get the nextprev links for this item, to link to next/prev pages.
             // Duh.
@@ -2665,7 +2665,7 @@ class DEBATELIST extends HANSARDLIST {
             // Get the subsection texts.
 
             for ($n = 0; $n < count($speeches); $n++) {
-                $parent = $this->_get_subsection($speeches[$n]);
+                $parent = $this->getSubsection($speeches[$n]);
                 $speeches[$n]['parent']['body'] = $parent['body'];
 
             }
