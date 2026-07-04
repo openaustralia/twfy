@@ -6,6 +6,7 @@
 
 include_once __DIR__ . '/../../includes/easyparliament/house.php';
 
+use Illuminate\Database\Eloquent\Builder;
 use OpenAustralia\TWFY\Models\Member as MemberModel;
 
 /**
