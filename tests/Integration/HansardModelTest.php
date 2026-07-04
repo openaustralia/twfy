@@ -370,4 +370,43 @@ class HansardModelTest extends TransactionalTestCase {
         $this->assertSame('2024-04-01.2.0', $item['gid']);
     }
 
+    public function test_most_recent_day_returns_latest_hdate_for_major_and_caches_result(): void {
+        $this->insertHansardRaw([
+            'major' => 1,
+            'hdate' => '2024-05-01',
+            'gid' => 'uk.org.publicwhip/debate/2024-05-01.1.0',
+        ]);
+        $this->insertHansardRaw([
+            'major' => 1,
+            'hdate' => '2024-05-03',
+            'gid' => 'uk.org.publicwhip/debate/2024-05-03.1.0',
+        ]);
+        $this->insertHansardRaw([
+            'major' => 3,
+            'hdate' => '2024-05-09',
+            'gid' => 'uk.org.publicwhip/wrans/2024-05-09.1.0',
+        ]);
+
+        $list = new DEBATELIST();
+
+        $first = $list->most_recent_day();
+
+        $expectedUrl = new URL('debates');
+        $expectedUrl->insert(['d' => '2024-05-03']);
+
+        $this->assertSame('2024-05-03', $first['hdate']);
+        $this->assertSame(gmmktime(0, 0, 0, 5, 3, 2024), $first['timestamp']);
+        $this->assertSame($expectedUrl->generate(), $first['listurl']);
+
+        // Cached result should be returned on subsequent calls.
+        $this->insertHansardRaw([
+            'major' => 1,
+            'hdate' => '2024-05-10',
+            'gid' => 'uk.org.publicwhip/debate/2024-05-10.1.0',
+        ]);
+
+        $second = $list->most_recent_day();
+        $this->assertSame($first, $second);
+    }
+
 }
