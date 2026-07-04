@@ -35,6 +35,21 @@ class DEBATELISTGetItemAccessStub extends DEBATELIST {
 }
 
 /**
+ * Test access wrapper for protected next/prev methods.
+ */
+class DEBATELISTNextPrevAccessStub extends DEBATELIST {
+
+    public function callGetNextPrevItems(array $itemdata): array {
+        return $this->getNextPrevItems($itemdata);
+    }
+
+    public function callGetNextPrevDates(string $date): array {
+        return $this->getNextPrevDates($date);
+    }
+
+}
+
+/**
  * Tests for HANSARDLIST/DEBATELIST/WRANSLIST ORM-converted methods.
  */
 class HansardModelTest extends TransactionalTestCase {
@@ -350,8 +365,8 @@ class HansardModelTest extends TransactionalTestCase {
             'hpos' => 5,
         ]);
 
-        $list = new DEBATELIST();
-        $nextprev = $list->_get_nextprev_items([
+        $list = new DEBATELISTNextPrevAccessStub();
+        $nextprev = $list->callGetNextPrevItems([
             'htype' => '12',
             'major' => 1,
             'hdate' => '2024-03-01',
@@ -366,6 +381,53 @@ class HansardModelTest extends TransactionalTestCase {
         $this->assertSame('Next speaker', $nextprev['next']['body']);
         $this->assertStringContainsString('2024-03-01.1.1', $nextprev['prev']['url']);
         $this->assertStringContainsString('2024-03-01.1.3', $nextprev['next']['url']);
+    }
+
+    public function test_get_nextprev_dates_returns_prev_next_and_up_links(): void {
+        $this->insertHansardRaw([
+            'major' => 1,
+            'hdate' => '2024-02-27',
+            'gid' => 'uk.org.publicwhip/debate/2024-02-27.1.0',
+            'epobject_id' => 95000,
+            'section_id' => 95000,
+            'subsection_id' => 95000,
+            'htype' => 10,
+            'hpos' => 1,
+        ]);
+        $this->insertHansardRaw([
+            'major' => 1,
+            'hdate' => '2024-03-01',
+            'gid' => 'uk.org.publicwhip/debate/2024-03-01.1.0',
+            'epobject_id' => 95001,
+            'section_id' => 95001,
+            'subsection_id' => 95001,
+            'htype' => 10,
+            'hpos' => 1,
+        ]);
+        $this->insertHansardRaw([
+            'major' => 1,
+            'hdate' => '2024-03-05',
+            'gid' => 'uk.org.publicwhip/debate/2024-03-05.1.0',
+            'epobject_id' => 95002,
+            'section_id' => 95002,
+            'subsection_id' => 95002,
+            'htype' => 10,
+            'hpos' => 1,
+        ]);
+
+        $list = new DEBATELISTNextPrevAccessStub();
+        $nextprev = $list->callGetNextPrevDates('2024-03-01');
+
+        $this->assertArrayHasKey('prev', $nextprev);
+        $this->assertArrayHasKey('next', $nextprev);
+        $this->assertArrayHasKey('up', $nextprev);
+        $this->assertSame('2024-02-27', $nextprev['prev']['hdate']);
+        $this->assertSame('2024-03-05', $nextprev['next']['hdate']);
+        $this->assertSame('Previous day', $nextprev['prev']['body']);
+        $this->assertSame('Next day', $nextprev['next']['body']);
+        $this->assertStringContainsString('d=2024-02-27', $nextprev['prev']['url']);
+        $this->assertStringContainsString('d=2024-03-05', $nextprev['next']['url']);
+        $this->assertSame("All of 2024's debates", $nextprev['up']['body']);
     }
 
     public function test_get_item_returns_item_for_existing_gid(): void {

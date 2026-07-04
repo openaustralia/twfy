@@ -399,7 +399,7 @@ class HANSARDLIST {
     /**
      *
      */
-    public function _get_nextprev_items($itemdata) {
+    protected function getNextPrevItems($itemdata) {
         global $hansardmajors;
 
         // Pass it an array of item info, of a section/subsection, and this will return
@@ -582,7 +582,7 @@ class HANSARDLIST {
     /**
      *
      */
-    public function _get_nextprev_dates($date) {
+    protected function getNextPrevDates($date) {
         global $hansardmajors;
         // Pass it a yyyy-mm-dd date and it'll return an array
         // containing the next/prev dates that contain items from
@@ -862,7 +862,7 @@ class HANSARDLIST {
 
         if ($date) {
 
-            $nextprev = $this->_get_nextprev_dates($date);
+            $nextprev = $this->getNextPrevDates($date);
 
             // We can then access this from $PAGE and the templates.
             $DATA->set_page_metadata($this_page, 'nextprev', $nextprev);
@@ -2320,14 +2320,14 @@ class HANSARDLIST {
             // Get the nextprev links for this item, to link to next/prev pages.
             // Duh.
             if ($itemdata['htype'] == '10') {
-                $nextprev = $this->_get_nextprev_items($sectionrow);
+                $nextprev = $this->getNextPrevItems($sectionrow);
 
             } elseif ($itemdata['htype'] == '11') {
-                $nextprev = $this->_get_nextprev_items($subsectionrow);
+                $nextprev = $this->getNextPrevItems($subsectionrow);
 
             } else {
                 // Ordinary lowly item.
-                $nextprev = $this->_get_nextprev_items($itemdata);
+                $nextprev = $this->getNextPrevItems($itemdata);
 
                 if (isset($subsectionrow['gid'])) {
                     $nextprev['up']['url'] = $subsectionrow['listurl'];
