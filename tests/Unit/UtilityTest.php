@@ -4,6 +4,9 @@ use PHPUnit\Framework\TestCase;
 
 require_once INCLUDESPATH . 'utility.php';
 
+/**
+ * Unit tests for utility helpers.
+ */
 class UtilityTest extends TestCase {
 
     // --- twfy_debug ---
@@ -16,7 +19,7 @@ class UtilityTest extends TestCase {
             $_GET = [DEBUGTAG => '1'];
             $_POST = [];
 
-            // start output buffering to capture the output of twfy_debug.
+            // Start output buffering to capture the output of twfy_debug.
             ob_start();
             twfy_debug('PAGE', 'debug message');
             $output = ob_get_clean();
@@ -299,6 +302,28 @@ class UtilityTest extends TestCase {
     public function test_trim_characters_strips_html(): void {
         $result = trim_characters('<p>Hello <b>world</b></p>', 0, 100);
         $this->assertStringNotContainsString('<', $result);
+    }
+
+    // --- majorSummary ---
+
+    public function test_major_summary_renders_empty_list_for_empty_data(): void {
+        ob_start();
+        majorSummary([]);
+        $output = ob_get_clean();
+
+        $this->assertSame('<ul id="hansard-day"></ul>', $output);
+    }
+
+    public function test_major_summary_renders_same_output_for_empty_with_explicit_limit(): void {
+        ob_start();
+        majorSummary([]);
+        $defaultOutput = ob_get_clean();
+
+        ob_start();
+        majorSummary([], 10);
+        $limitedOutput = ob_get_clean();
+
+        $this->assertSame($defaultOutput, $limitedOutput);
     }
 
 }

@@ -966,24 +966,9 @@ function member_full_name($house, $title, $first_name, $last_name, $constituency
  *
  */
 function prettify_office($pos, $dept) {
-    $lookup = [
-        'Prime Minister, HM Treasury' => 'Prime Minister',
-        'Secretary of State, Foreign & Commonwealth Office' => 'Foreign Secretary',
-        'Secretary of State, Home Office' => 'Home Secretary',
-        'Minister of State (Energy), Department of Trade and Industry'
-        => 'Minister for energy, Department of Trade and Industry',
-        'Minister of State (Pensions), Department for Work and Pensions'
-        => 'Minister for pensions, Department for Work and Pensions',
-        'Lords Commissioner, HM Treasury' => 'Lords Commissioner, HM Treasury, i.e. Government Whip',
-        'Parliamentary Secretary to the Treasury, HM Treasury'
-        => 'Parliamentary Secretary to the Treasury, i.e. Chief Whip',
-    ];
     // Government post, or Chairman of Select Committee.
     if ($pos && $dept) {
         $pretty = "$pos, $dept";
-        if (array_key_exists($pretty, $lookup)) {
-            $pretty = $lookup[$pretty];
-        }
     } elseif ($pos) {
         $pretty = $pos;
     } else {
@@ -996,41 +981,58 @@ function prettify_office($pos, $dept) {
 /**
  *
  */
-function major_summary($data, $limit = "") {
-    global $hansardmajors;
+function majorSummary($data, $limit = "") {
+    $one_date = isset($data['date']);
+    $daytext = buildMajorSummaryDayText($data, $one_date);
 
-    $one_date = false;
-    if (isset($data['date'])) {
-        $one_date = true;
+    print '<ul id="hansard-day">';
+    renderMajorSummaryStandardMajors($data, $limit, $one_date, $daytext);
+    // TODO: Check if Australia even need this
+    renderMajorSummaryWms($data, $limit, $one_date, $daytext);
+    print '</ul>';
+}
+
+/**
+ * Build day text labels shown in the summary headers.
+ */
+function buildMajorSummaryDayText(array $data, bool $one_date): array {
+    if ($one_date) {
+        return [];
     }
 
     $daytext = [];
-    if (!$one_date) {
-        $todaystime = gmmktime(0, 0, 0, date('m'), date('d'), date('Y'));
-        foreach ($data as $major => $array) {
-            if ($todaystime - $array['timestamp'] == 86400) {
-                $daytext[$major] = "Yesterday's";
-            } elseif ($todaystime - $array['timestamp'] <= (6 * 86400)) {
-                $daytext[$major] = gmdate('l', $array['timestamp']) . "'s";
-            } else {
-                $daytext[$major] = "The most recent ";
-            }
+    $todaystime = gmmktime(0, 0, 0, date('m'), date('d'), date('Y'));
+    foreach ($data as $major => $array) {
+        if (!isset($array['timestamp'])) {
+            continue;
+        }
+        if ($todaystime - $array['timestamp'] == 86400) {
+            $daytext[$major] = "Yesterday's";
+        } elseif ($todaystime - $array['timestamp'] <= (6 * 86400)) {
+            $daytext[$major] = gmdate('l', $array['timestamp']) . "'s";
+        } else {
+            $daytext[$major] = "The most recent ";
         }
     }
+
+    return $daytext;
+}
+
+/**
+ * Render major summary lists for standard majors.
+ */
+function renderMajorSummaryStandardMajors(array $data, $limit, bool $one_date, array $daytext): void {
+    global $hansardmajors;
+
     $printed_majors = [1, 2, 3, 5, 101];
-    print '<ul id="hansard-day">';
-    while (count($printed_majors)) {
+    while (!empty($printed_majors)) {
         if (!array_key_exists($printed_majors[0], $data)) {
             unset($printed_majors[0]);
             sort($printed_majors);
             continue;
         }
 
-        if ($one_date) {
-            $date = $data['date'];
-        } else {
-            $date = $data[$printed_majors[0]]['hdate'];
-        }
+        $date = $one_date ? $data['date'] : $data[$printed_majors[0]]['hdate'];
         $rows = Hansard::join('epobject', 'hansard.epobject_id', '=', 'epobject.epobject_id')
           ->where('section_id', 0)
           ->where('hdate', $date)
@@ -1039,6 +1041,7 @@ function major_summary($data, $limit = "") {
           ->orderBy('hpos')
           ->when($limit, fn($q) => $q->limit($limit))
           ->get(['major', 'epobject.body', 'gid']);
+
         $current_major = 0;
         foreach ($rows as $row) {
             $gid = fix_gid_from_db($row->gid);
@@ -1050,7 +1053,7 @@ function major_summary($data, $limit = "") {
                     print '</ul>';
                 }
                 $LISTURL = new URL($hansardmajors[$major]['page_all']);
-                _major_summary_title($major, $data, $LISTURL, $daytext);
+                majorSummaryTitle($major, $data, $LISTURL, $daytext);
                 $current_major = $major;
                 // XXX: Surely a better way of doing this? Oh well.
                 unset($printed_majors[array_search($major, $printed_majors)]);
@@ -1061,54 +1064,62 @@ function major_summary($data, $limit = "") {
             print $body . '</a>';
         }
         print '</ul>';
+
         if ($one_date) {
             $printed_majors = [];
         }
     }
-    if (array_key_exists(4, $data)) {
-        if ($one_date) {
-            $date = $data['date'];
-        } else {
-            $date = $data[4]['hdate'];
-        }
-        $rows = Hansard::join('epobject', 'hansard.epobject_id', '=', 'epobject.epobject_id')
-          ->where('major', 4)
-          ->where('hdate', $date)
-          ->where('subsection_id', 0)
-          ->orderBy('major')
-          ->orderBy('hpos')
-          ->when($limit, fn($q) => $q->limit($limit))
-          ->get(['section_id', 'epobject.body', 'gid']);
-        if ($rows->count()) {
-            $LISTURL = new URL($hansardmajors[4]['page_all']);
-            _major_summary_title(4, $data, $LISTURL, $daytext);
-            $current_sid = 0;
-            foreach ($rows as $row) {
-                $gid = fix_gid_from_db($row->gid);
-                $body = $row->body;
-                $section_id = $row->section_id;
-                if (!$section_id) {
-                    if ($current_sid++) {
-                        print '</ul>';
-                    }
-                    print '<li>' . $body . '<ul>';
+}
 
-                } else {
-                    $LISTURL->insert(['id' => $gid]);
-                    print '<li><a href="' . $LISTURL->generate() . '">';
-                    print $body . '</a>';
-                }
+/**
+ * Render major summary list for Written Ministerial Statements.
+ */
+function renderMajorSummaryWms(array $data, $limit, bool $one_date, array $daytext): void {
+    global $hansardmajors;
+
+    if (!array_key_exists(4, $data)) {
+        return;
+    }
+
+    $date = $one_date ? $data['date'] : $data[4]['hdate'];
+    $rows = Hansard::join('epobject', 'hansard.epobject_id', '=', 'epobject.epobject_id')
+      ->where('major', 4)
+      ->where('hdate', $date)
+      ->where('subsection_id', 0)
+      ->orderBy('major')
+      ->orderBy('hpos')
+      ->when($limit, fn($q) => $q->limit($limit))
+      ->get(['section_id', 'epobject.body', 'gid']);
+
+    if (!$rows->count()) {
+        return;
+    }
+
+    $LISTURL = new URL($hansardmajors[4]['page_all']);
+    majorSummaryTitle(4, $data, $LISTURL, $daytext);
+    $current_sid = 0;
+    foreach ($rows as $row) {
+        $gid = fix_gid_from_db($row->gid);
+        $body = $row->body;
+        $section_id = $row->section_id;
+        if (!$section_id) {
+            if ($current_sid++) {
+                print '</ul>';
             }
-            print '</ul></ul>';
+            print '<li>' . $body . '<ul>';
+        } else {
+            $LISTURL->insert(['id' => $gid]);
+            print '<li><a href="' . $LISTURL->generate() . '">';
+            print $body . '</a>';
         }
     }
-    print '</ul>';
+    print '</ul></ul>';
 }
 
 /**
  *
  */
-function _major_summary_title($major, $data, $LISTURL, $daytext) {
+function majorSummaryTitle($major, $data, $LISTURL, $daytext) {
     global $hansardmajors;
     print '<li><strong>';
     if (isset($daytext[$major])) {

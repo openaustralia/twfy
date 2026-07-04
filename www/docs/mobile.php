@@ -165,7 +165,7 @@ $PAGE->block_start(['id' => 'intro', 'title' => 'At OpenAustralia.org you can:']
                     }
                 }
             }
-            major_summary($data, 10);
+            majorSummary($data, 10);
             ?>
         </li>
         <?php

@@ -192,7 +192,7 @@ class HANSARDLIST {
             'bill' => '_get_data_by_bill',
             'calendar' => '_get_data_by_calendar',
             'column' => '_get_data_by_column',
-            'date' => '_get_data_by_date',
+            'date' => 'getDataByDate',
             'gid' => '_get_data_by_gid',
             'mp' => '_get_data_by_mp',
             'person' => '_get_data_by_person',
@@ -725,7 +725,7 @@ class HANSARDLIST {
      *
      */
     protected function validateDate($args) {
-        // Used when we're viewing things by (_get_data_by_date() functions).
+        // Used when we're viewing things by getDataByDate().
         // If $args['date'] is a valid yyyy-mm-dd date, it is returned.
         // Else false is returned.
         global $PAGE;
@@ -819,7 +819,7 @@ class HANSARDLIST {
     /**
      *
      */
-    public function _get_data_by_date($args) {
+    protected function getDataByDate($args) {
         // For displaying the section and subsection headings as
         // links for an entire day of debates/wrans.
 
@@ -839,59 +839,7 @@ class HANSARDLIST {
             // We can then access this from $PAGE and the templates.
             $DATA->set_page_metadata($this_page, 'nextprev', $nextprev);
 
-            // Get all the sections for this date.
-            // Then for each of those we'll get the subsections and rows.
-            $input = [
-                'amount' => [
-                    'body' => true,
-                    'comment' => true,
-                    'excerpt' => true
-                ],
-                'where' => [
-                    'hdate=' => "$date",
-                    'htype=' => '10',
-                    'major=' => $this->major
-                ],
-                'order' => 'hpos'
-            ];
-
-            $sections = $this->getHandsardData($input);
-
-            if (!empty($sections)) {
-
-                // Where we'll keep the full list of sections and subsections.
-                $data['rows'] = [];
-
-                for ($n = 0; $n < count($sections); $n++) {
-                    // For each section on this date, get the subsections within it.
-
-                    // Get all the section data.
-                    $sectionrow = $this->getSection($sections[$n]);
-
-                    // Get the subsections within the section.
-                    $input = [
-                        'amount' => [
-                            'body' => true,
-                            'comment' => true,
-                            'excerpt' => true
-                        ],
-                        'where' => [
-                            'section_id=' => $sections[$n]['epobject_id'],
-                            'htype=' => '11',
-                            'major=' => $this->major
-                        ],
-                        'order' => 'hpos'
-                    ];
-
-                    $rows = $this->getHandsardData($input);
-
-                    // Put the section at the top of the rows array.
-                    array_unshift($rows, $sectionrow);
-
-                    // Add the section heading and the subsections to the full list.
-                    $data['rows'] = array_merge($data['rows'], $rows);
-                }
-            }
+            $data['rows'] = $this->buildDateRows($date);
 
             // For page headings etc.
             $data['info']['date'] = $date;
@@ -899,6 +847,159 @@ class HANSARDLIST {
         }
 
         return $data;
+    }
+
+    /**
+     * Build section/subsection rows for date view output.
+     */
+    protected function buildDateRows(string $date): array {
+        $rows = [];
+        $sections = $this->fetchDateSections($date);
+
+        foreach ($sections as $section) {
+            $rows[] = $this->mapDateHeadingRow($section);
+
+            $subsections = $this->fetchDateSubsections((int) $section->epobject_id);
+            foreach ($subsections as $subsection) {
+                $rows[] = $this->mapDateHeadingRow($subsection);
+            }
+        }
+
+        return $rows;
+    }
+
+    /**
+     * Fetch section heading rows for one date.
+     */
+    protected function fetchDateSections(string $date) {
+        return Hansard::from('hansard as h')
+          ->join('epobject as e', 'h.epobject_id', '=', 'e.epobject_id')
+          ->where('h.hdate', $date)
+          ->where('h.htype', 10)
+          ->where('h.major', $this->major)
+          ->orderBy('h.hpos')
+          ->get([
+              'h.epobject_id', 'h.htype', 'h.gid', 'h.hpos',
+              'h.section_id', 'h.subsection_id', 'h.hdate', 'h.htime',
+              'h.source_url', 'h.major', 'e.body',
+          ]);
+    }
+
+    /**
+     * Fetch subsection heading rows for one section.
+     */
+    protected function fetchDateSubsections(int $sectionId) {
+        return Hansard::from('hansard as h')
+          ->join('epobject as e', 'h.epobject_id', '=', 'e.epobject_id')
+          ->where('h.section_id', $sectionId)
+          ->where('h.htype', 11)
+          ->where('h.major', $this->major)
+          ->orderBy('h.hpos')
+          ->get([
+              'h.epobject_id', 'h.htype', 'h.gid', 'h.hpos',
+              'h.section_id', 'h.subsection_id', 'h.hdate', 'h.htime',
+              'h.source_url', 'h.major', 'e.body',
+          ]);
+    }
+
+    /**
+     * Convert a heading row object into template row payload.
+     */
+    protected function mapDateHeadingRow($row): array {
+        $hdate = $row->hdate instanceof DateTimeInterface
+          ? $row->hdate->format('Y-m-d')
+          : substr((string) $row->hdate, 0, 10);
+
+        $item = [
+            'epobject_id' => (int) $row->epobject_id,
+            'htype' => (string) $row->htype,
+            'gid' => fix_gid_from_db((string) $row->gid),
+            'hpos' => (int) $row->hpos,
+            'section_id' => (int) $row->section_id,
+            'subsection_id' => (int) $row->subsection_id,
+            'hdate' => $hdate,
+            'htime' => $row->htime,
+            'source_url' => $row->source_url,
+            'major' => (int) $row->major,
+            'body' => (string) $row->body,
+        ];
+
+        $item['listurl'] = $this->_get_listurl([
+            'major' => $item['major'],
+            'htype' => $item['htype'],
+            'gid' => $item['gid'],
+            'section_id' => $item['section_id'],
+            'subsection_id' => $item['subsection_id'],
+        ]);
+
+        $item['totalcomments'] = $this->_get_comment_count_for_epobject([
+            'htype' => $item['htype'],
+            'epobject_id' => $item['epobject_id'],
+        ]);
+
+        $contentCount = $this->getDateHeadingContentCount($item);
+        if ($contentCount !== null) {
+            $item['contentcount'] = $contentCount;
+        }
+
+        $excerpt = $this->getDateHeadingExcerpt($item);
+        if ($excerpt !== null) {
+            $item['excerpt'] = $excerpt;
+        }
+
+        return $item;
+    }
+
+    /**
+     * Return content count for section/subsection headings.
+     */
+    protected function getDateHeadingContentCount(array $item): ?int {
+        global $hansardmajors;
+
+        if ($hansardmajors[$this->major]['type'] != 'debate') {
+            return null;
+        }
+
+        if ($item['htype'] == '10') {
+            return Hansard::where('section_id', $item['epobject_id'])
+              ->where('subsection_id', $item['epobject_id'])
+              ->where('htype', 12)
+              ->count();
+        }
+
+        if ($item['htype'] == '11') {
+            return Hansard::where('subsection_id', $item['epobject_id'])
+              ->where('htype', 12)
+              ->count();
+        }
+
+        return null;
+    }
+
+    /**
+     * Return excerpt text for section/subsection heading rows.
+     */
+    protected function getDateHeadingExcerpt(array $item): ?string {
+        if ($item['htype'] == '10') {
+            return Hansard::from('hansard as h')
+              ->join('epobject as e', 'h.epobject_id', '=', 'e.epobject_id')
+              ->where('h.major', $this->major)
+              ->where('h.section_id', $item['epobject_id'])
+              ->where('h.subsection_id', $item['epobject_id'])
+              ->orderBy('h.hpos')
+              ->value('e.body');
+        }
+
+        if ($item['htype'] == '11') {
+            return Hansard::from('hansard as h')
+              ->join('epobject as e', 'h.epobject_id', '=', 'e.epobject_id')
+              ->where('h.major', $this->major)
+              ->where('h.subsection_id', $item['epobject_id'])
+              ->orderBy('h.hpos')
+              ->value('e.body');
+        }
+
+        return null;
     }
 
     /**

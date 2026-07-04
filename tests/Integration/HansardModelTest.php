@@ -61,6 +61,17 @@ class DEBATELISTRecentAccessStub extends DEBATELIST {
 }
 
 /**
+ * Test access wrapper for protected getDataByDate().
+ */
+class DEBATELISTDateAccessStub extends DEBATELIST {
+
+    public function callGetDataByDate(array $args): array {
+        return $this->getDataByDate($args);
+    }
+
+}
+
+/**
  * Tests for HANSARDLIST/DEBATELIST/WRANSLIST ORM-converted methods.
  */
 class HansardModelTest extends TransactionalTestCase {
@@ -556,6 +567,62 @@ class HansardModelTest extends TransactionalTestCase {
         $this->assertCount(2, $data['rows']);
         $this->assertStringContainsString('d=2024-06-07', $data['rows'][0]['listurl']);
         $this->assertStringContainsString('d=2024-06-06', $data['rows'][1]['listurl']);
+    }
+
+    public function test_get_data_by_date_returns_section_and_subsection_rows(): void {
+        global $this_page;
+        $this_page = 'debates';
+
+        $sectionId = 96100;
+        $subsectionId = 96101;
+        $speechId = 96102;
+
+        $this->insertEpobject($sectionId, 'Main section heading');
+        $this->insertEpobject($subsectionId, 'Main subsection heading');
+        $this->insertEpobject($speechId, 'First speech in subsection');
+
+        $this->insertHansard([
+            'major' => 1,
+            'hdate' => '2024-07-01',
+            'gid' => 'uk.org.publicwhip/debate/2024-07-01.1.0',
+            'epobject_id' => $sectionId,
+            'section_id' => $sectionId,
+            'subsection_id' => $sectionId,
+            'htype' => 10,
+            'hpos' => 1,
+        ]);
+        $this->insertHansard([
+            'major' => 1,
+            'hdate' => '2024-07-01',
+            'gid' => 'uk.org.publicwhip/debate/2024-07-01.1.0a',
+            'epobject_id' => $subsectionId,
+            'section_id' => $sectionId,
+            'subsection_id' => $subsectionId,
+            'htype' => 11,
+            'hpos' => 2,
+        ]);
+        $this->insertHansard([
+            'major' => 1,
+            'hdate' => '2024-07-01',
+            'gid' => 'uk.org.publicwhip/debate/2024-07-01.1.1',
+            'epobject_id' => $speechId,
+            'section_id' => $sectionId,
+            'subsection_id' => $subsectionId,
+            'htype' => 12,
+            'hpos' => 3,
+        ]);
+
+        $list = new DEBATELISTDateAccessStub();
+        $data = $list->callGetDataByDate(['date' => '2024-07-01']);
+
+        $this->assertSame('2024-07-01', $data['info']['date']);
+        $this->assertSame(1, $data['info']['major']);
+        $this->assertCount(2, $data['rows']);
+        $this->assertSame('Main section heading', $data['rows'][0]['body']);
+        $this->assertSame('Main subsection heading', $data['rows'][1]['body']);
+        $this->assertSame(1, $data['rows'][1]['contentcount']);
+        $this->assertStringContainsString('2024-07-01.1.0', $data['rows'][0]['listurl']);
+        $this->assertStringContainsString('2024-07-01.1.0a', $data['rows'][1]['listurl']);
     }
 
     public function test_most_recent_day_returns_latest_hdate_for_major_and_caches_result(): void {

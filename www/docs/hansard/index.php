@@ -62,7 +62,7 @@ if (($date = get_http_var('d')) && preg_match('#^\d\d\d\d-\d\d-\d\d$#', $date)) 
             $URL->insert(['d' => $date]);
             $data[$major] = ['listurl' => $URL->generate()];
         }
-        major_summary($data);
+        majorSummary($data);
     }
     $PAGE->stripe_end([
         [
