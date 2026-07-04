@@ -6,6 +6,7 @@
  */
 
 use OpenAustralia\TWFY\Models\Member as MemberModel;
+use OpenAustralia\TWFY\Models\Moffice;
 use OpenAustralia\TWFY\Models\PostcodeLookup;
 
 if (!function_exists('member_full_name')) {
@@ -203,7 +204,7 @@ class RepresentativeApiIntegrationTest extends TransactionalTestCase {
     }
 
     public function test__api_getRepresentative_row_adds_current_office_rows(): void {
-        \OpenAustralia\TWFY\Models\Moffice::create([
+        Moffice::create([
             'dept' => 'Cabinet',
             'position' => 'Minister for Testing',
             'from_date' => '2020-01-01',
@@ -271,7 +272,7 @@ class RepresentativeApiIntegrationTest extends TransactionalTestCase {
         $this->assertSame($this->fixturePersonId, (int) $decoded[0]['person_id']);
     }
 
-    public function test__api_currentMembers_returns_only_current_for_house(): void {
+    public function test__api_membersActiveOnDate_returns_only_current_for_house(): void {
         $suffix = random_int(100000, 999999);
         $pastPersonId = 993000 + $suffix;
 
@@ -290,11 +291,47 @@ class RepresentativeApiIntegrationTest extends TransactionalTestCase {
             'left_reason' => 'general_election',
         ]);
 
-        $current = _api_currentMembers(HOUSE::REPRESENTATIVES)->get();
+        $current = _api_membersActiveOnDate(HOUSE::REPRESENTATIVES)->get();
         $personIds = array_map(static fn ($row) => (int) $row['person_id'], $current->toArray());
 
         $this->assertContains($this->fixturePersonId, $personIds);
         $this->assertNotContains($pastPersonId, $personIds);
+    }
+
+    public function test__api_membersActiveOnDate_with_date_returns_historical_members(): void {
+        $suffix = random_int(100000, 999999);
+        $historicPersonId = 992000 + $suffix;
+
+        MemberModel::create([
+            'member_id' => 996000 + $suffix,
+            'person_id' => $historicPersonId,
+            'house' => HOUSE::REPRESENTATIVES,
+            'title' => '',
+            'first_name' => 'Historical',
+            'last_name' => 'Member',
+            'constituency' => 'Old Seat',
+            'party' => 'ALP',
+            'entered_house' => '2000-01-01',
+            'left_house' => '2012-12-31',
+            'entered_reason' => 'general_election',
+            'left_reason' => 'general_election',
+        ]);
+
+        $rows = _api_membersActiveOnDate(HOUSE::REPRESENTATIVES, '2011-01-01')->get();
+        $personIds = array_map(static fn ($row) => (int) $row['person_id'], $rows->toArray());
+
+        $this->assertContains($historicPersonId, $personIds);
+        $this->assertContains($this->fixturePersonId, $personIds);
+    }
+
+    public function test__api_getMembersCanonicalSearchTerm_maps_and_falls_back(): void {
+        $GLOBALS['parties'] = [
+            'ALP' => 'Australian Labor Party',
+            'LNP' => 'Liberal National Party',
+        ];
+
+        $this->assertSame('ALP', _api_getMembersCanonicalSearchTerm('australian labor party'));
+        $this->assertSame('unknown party', _api_getMembersCanonicalSearchTerm('unknown party'));
     }
 
     public function test_getMembers_party_maps_canonical_name_to_short_code(): void {

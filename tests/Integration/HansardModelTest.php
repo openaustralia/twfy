@@ -69,6 +69,10 @@ class DEBATELISTDateAccessStub extends DEBATELIST {
         return $this->getDataByDate($args);
     }
 
+    public function callFetchDateSections(string $date): array {
+        return $this->fetchDateSections($date)->all();
+    }
+
 }
 
 /**
@@ -623,6 +627,66 @@ class HansardModelTest extends TransactionalTestCase {
         $this->assertSame(1, $data['rows'][1]['contentcount']);
         $this->assertStringContainsString('2024-07-01.1.0', $data['rows'][0]['listurl']);
         $this->assertStringContainsString('2024-07-01.1.0a', $data['rows'][1]['listurl']);
+    }
+
+    public function test_fetch_date_sections_returns_only_sections_for_date_and_major(): void {
+        $sectionId = 96110;
+        $subsectionId = 96111;
+        $otherDateSectionId = 96112;
+        $otherMajorSectionId = 96113;
+
+        $this->insertEpobject($sectionId, 'Section on requested date');
+        $this->insertEpobject($subsectionId, 'Subsection on requested date');
+        $this->insertEpobject($otherDateSectionId, 'Section on different date');
+        $this->insertEpobject($otherMajorSectionId, 'Section on different major');
+
+        $this->insertHansard([
+            'major' => 1,
+            'hdate' => '2024-07-02',
+            'gid' => 'uk.org.publicwhip/debate/2024-07-02.1.0',
+            'epobject_id' => $sectionId,
+            'section_id' => $sectionId,
+            'subsection_id' => $sectionId,
+            'htype' => 10,
+            'hpos' => 1,
+        ]);
+        $this->insertHansard([
+            'major' => 1,
+            'hdate' => '2024-07-02',
+            'gid' => 'uk.org.publicwhip/debate/2024-07-02.1.0a',
+            'epobject_id' => $subsectionId,
+            'section_id' => $sectionId,
+            'subsection_id' => $subsectionId,
+            'htype' => 11,
+            'hpos' => 2,
+        ]);
+        $this->insertHansard([
+            'major' => 1,
+            'hdate' => '2024-07-03',
+            'gid' => 'uk.org.publicwhip/debate/2024-07-03.1.0',
+            'epobject_id' => $otherDateSectionId,
+            'section_id' => $otherDateSectionId,
+            'subsection_id' => $otherDateSectionId,
+            'htype' => 10,
+            'hpos' => 1,
+        ]);
+        $this->insertHansard([
+            'major' => 3,
+            'hdate' => '2024-07-02',
+            'gid' => 'uk.org.publicwhip/wrans/2024-07-02.1.0',
+            'epobject_id' => $otherMajorSectionId,
+            'section_id' => $otherMajorSectionId,
+            'subsection_id' => $otherMajorSectionId,
+            'htype' => 10,
+            'hpos' => 1,
+        ]);
+
+        $list = new DEBATELISTDateAccessStub();
+        $rows = $list->callFetchDateSections('2024-07-02');
+
+        $this->assertCount(1, $rows);
+        $this->assertSame($sectionId, (int) $rows[0]->epobject_id);
+        $this->assertSame('Section on requested date', $rows[0]->body);
     }
 
     public function test_most_recent_day_returns_latest_hdate_for_major_and_caches_result(): void {
