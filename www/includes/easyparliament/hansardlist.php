@@ -400,8 +400,6 @@ class HANSARDLIST {
      *
      */
     protected function getNextPrevItems($itemdata) {
-        global $hansardmajors;
-
         // Pass it an array of item info, of a section/subsection, and this will return
         // data for the next/prev items.
 
@@ -410,170 +408,22 @@ class HANSARDLIST {
         // What we return.
         $nextprevdata = [];
 
-        $prev_item_id = false;
-        $next_item_id = false;
+        $prev_item_id = $this->findAdjacentItemId($itemdata, 'prev');
+        $next_item_id = $this->findAdjacentItemId($itemdata, 'next');
 
-        if ($itemdata['htype'] == '10' || $itemdata['htype'] == '11') {
-            // Debate subsection or section - get the next one.
-            if ($hansardmajors[$itemdata['major']]['type'] == 'other') {
-                $where = 'htype = 11';
-            } else {
-                $where = "(htype = 10 OR htype = 11)";
-            }
-        } else {
-            // Anything else in debates - get the next element that isn't
-            // a subsection or section, and is within THIS subsection.
-            $where = "subsection_id = '" . $itemdata['subsection_id'] . "' AND (htype != 10 AND htype != 11)";
+        $prev = $this->buildAdjacentItemLink($itemdata, $prev_item_id, 'prev');
+        if ($prev !== null) {
+            $nextprevdata['prev'] = $prev;
         }
 
-        // Find if there are next/previous debate items of our
-        // chosen type today.
-
-        // For sections/subsections,
-        // this will find headings with no content, but I failed to find
-        // a vaguely simple way to do this. So this is it for now...
-
-        // Find the epobject_id of the previous item (if any):
-        $q = parlDBQuery("SELECT epobject_id
-						FROM 	hansard
-						WHERE 	hdate = ?
-						AND 	hpos < ?
-						AND 	major = ?
-						AND 	$where
-						ORDER BY hpos DESC
-						LIMIT 1", $itemdata['hdate'], $itemdata['hpos'], $itemdata['major']);
-
-        if ($q->rows() > 0) {
-            $prev_item_id = $q->field(0, 'epobject_id');
+        $next = $this->buildAdjacentItemLink($itemdata, $next_item_id, 'next');
+        if ($next !== null) {
+            $nextprevdata['next'] = $next;
         }
 
-        // Find the epobject_id of the next item (if any):
-        $q = parlDBQuery("SELECT epobject_id
-						FROM 	hansard
-						WHERE 	hdate = ?
-						AND 	hpos > ?
-						AND 	major = ?
-						AND 	$where
-						ORDER BY hpos ASC
-						LIMIT 1", $itemdata['hdate'], $itemdata['hpos'], $itemdata['major']);
-
-        if ($q->rows() > 0) {
-            $next_item_id = $q->field(0, 'epobject_id');
-        }
-
-        // Now we're going to get the data for the next and prev items
-        // that we will use to make the links on the page.
-
-        // Previous item.
-        if ($prev_item_id) {
-            // We have a previous one to link to.
-            $wherearr['hansard.epobject_id='] = $prev_item_id;
-
-            // For getting hansard data.
-            $input = [
-                'amount' => [
-                    'body' => true,
-                    'speaker' => true
-                ],
-                'where' => $wherearr,
-                'order' => 'hpos DESC',
-                'limit' => 1
-            ];
-
-            $prevdata = $this->getHandsardData($input);
-
-            if (count($prevdata) > 0) {
-                if ($itemdata['htype'] == '10' || $itemdata['htype'] == '11') {
-                    // Linking to the prev (sub)section.
-                    $thing = $hansardmajors[$this->major]['singular'];
-                    $nextprevdata['prev'] = [
-                        'body' => "Previous $thing",
-                        'url' => $prevdata[0]['listurl'],
-                        'title' => $prevdata[0]['body']
-                    ];
-                } else {
-                    // Linking to the prev speaker.
-
-                    if (isset($prevdata[0]['speaker']) && count($prevdata[0]['speaker']) > 0) {
-                        $title = $prevdata[0]['speaker']['first_name'] . ' ' . $prevdata[0]['speaker']['last_name'];
-                    } else {
-                        $title = '';
-                    }
-                    $nextprevdata['prev'] = [
-                        'body' => 'Previous speaker',
-                        'url' => $prevdata[0]['commentsurl'],
-                        'title' => $title
-                    ];
-                }
-            }
-        }
-
-        // Next item.
-        if ($next_item_id) {
-            // We have a next one to link to.
-            $wherearr['hansard.epobject_id='] = $next_item_id;
-
-            // For getting hansard data.
-            $input = [
-                'amount' => [
-                    'body' => true,
-                    'speaker' => true
-                ],
-                'where' => $wherearr,
-                'order' => 'hpos ASC',
-                'limit' => 1
-            ];
-            $nextdata = $this->getHandsardData($input);
-
-            if (count($nextdata) > 0) {
-                if ($itemdata['htype'] == '10' || $itemdata['htype'] == '11') {
-                    // Linking to the next (sub)section.
-                    $thing = $hansardmajors[$this->major]['singular'];
-                    $nextprevdata['next'] = [
-                        'body' => "Next $thing",
-                        'url' => $nextdata[0]['listurl'],
-                        'title' => $nextdata[0]['body']
-                    ];
-                } else {
-                    // Linking to the next speaker.
-
-                    if (isset($nextdata[0]['speaker']) && count($nextdata[0]['speaker']) > 0) {
-                        $title = $nextdata[0]['speaker']['first_name'] . ' ' . $nextdata[0]['speaker']['last_name'];
-                    } else {
-                        $title = '';
-                    }
-                    $nextprevdata['next'] = [
-                        'body' => 'Next speaker',
-                        'url' => $nextdata[0]['commentsurl'],
-                        'title' => $title
-                    ];
-                }
-            }
-        }
-
-        $URL = new URL($this->listpage);
-
-        if ($this->major == 6) {
-            $URL->remove(['id']);
-            $nextprevdata['up'] = [
-                'body' => htmlspecialchars($this->bill_title),
-                'title' => '',
-                'url' => $URL->generate() . $this->url,
-            ];
-        } elseif ($itemdata['htype'] == '10' || $itemdata['htype'] == '11') {
-            // Create URL for this (sub)section's date.
-            $URL->insert(['d' => $itemdata['hdate']]);
-            $URL->remove(['id']);
-            $things = $hansardmajors[$itemdata['major']]['title'];
-            $nextprevdata['up'] = [
-                'body' => "All $things on " . format_date($itemdata['hdate'], SHORTDATEFORMAT),
-                'title' => '',
-                'url' => $URL->generate()
-            ];
-        } else {
-            // We'll be setting $nextprevdata['up'] within $this->get_data_by_gid()
-            // because we need to know the name and url of the parent item, which
-            // we don't have here. Life sucks.
+        $up = $this->buildNextPrevUpLink($itemdata);
+        if ($up !== null) {
+            $nextprevdata['up'] = $up;
         }
 
         return $nextprevdata;
@@ -595,31 +445,14 @@ class HANSARDLIST {
 
         $URL = new URL($this->listpage);
 
-        $looper = ["next", "prev"];
-
-        foreach ($looper as $n => $nextorprev) {
+        foreach (["next", "prev"] as $nextorprev) {
 
             $URL->reset();
 
-            if ($nextorprev == 'next') {
-                $q = parlDBQuery("SELECT MIN(hdate) AS hdate
-							FROM 	hansard
-							WHERE 	major = ?
-							AND		hdate > ?
-							", $this->major, $date);
-            } else {
-                $q = parlDBQuery("SELECT MAX(hdate) AS hdate
-							FROM 	hansard
-							WHERE 	major = ?
-							AND		hdate < ?
-							", $this->major, $date);
-            }
+            $hdate = $this->findAdjacentHansardDate($date, $nextorprev);
+            if ($hdate !== null) {
 
-            // The '!= NULL' bit is needed otherwise I was getting errors
-            // when displaying the first day of debates.
-            if ($q->rows() > 0 && $q->field(0, 'hdate') != null) {
-
-                $URL->insert(['d' => $q->field(0, 'hdate')]);
+                $URL->insert(['d' => $hdate]);
 
                 if ($nextorprev == 'next') {
                     $body = 'Next day';
@@ -627,10 +460,10 @@ class HANSARDLIST {
                     $body = 'Previous day';
                 }
 
-                $title = format_date($q->field(0, 'hdate'), SHORTDATEFORMAT);
+                $title = format_date($hdate, SHORTDATEFORMAT);
 
                 $nextprevdata[$nextorprev] = [
-                    'hdate' => $q->field(0, 'hdate'),
+                    'hdate' => $hdate,
                     'url' => $URL->generate(),
                     'body' => $body,
                     'title' => $title
@@ -651,6 +484,208 @@ class HANSARDLIST {
 
         return $nextprevdata;
 
+    }
+
+    /**
+     * Apply the htype/subsection filtering used by next/prev item navigation.
+     */
+    protected function applyNextPrevItemFilter($query, array $itemdata): void {
+        global $hansardmajors;
+
+        if ($itemdata['htype'] == '10' || $itemdata['htype'] == '11') {
+            if ($hansardmajors[$itemdata['major']]['type'] == 'other') {
+                $query->where('htype', 11);
+            } else {
+                $query->whereIn('htype', [10, 11]);
+            }
+            return;
+        }
+
+        $query->where('subsection_id', $itemdata['subsection_id'])
+          ->whereNotIn('htype', [10, 11]);
+    }
+
+    /**
+     * Find the previous or next epobject_id for next/prev navigation.
+     */
+    protected function findAdjacentItemId(array $itemdata, string $direction) {
+        $query = Hansard::whereDate('hdate', $itemdata['hdate'])
+          ->where('major', $itemdata['major']);
+
+        $this->applyNextPrevItemFilter($query, $itemdata);
+
+        if ($direction == 'prev') {
+            $query->where('hpos', '<', $itemdata['hpos'])
+              ->orderByDesc('hpos');
+        } else {
+            $query->where('hpos', '>', $itemdata['hpos'])
+              ->orderBy('hpos');
+        }
+
+        $epobject_id = $query->value('epobject_id');
+        if ($epobject_id) {
+            return $epobject_id;
+        }
+
+        global $hansardmajors;
+
+        if ($itemdata['htype'] == '10' || $itemdata['htype'] == '11') {
+            if ($hansardmajors[$itemdata['major']]['type'] == 'other') {
+                $where = 'htype = 11';
+            } else {
+                $where = '(htype = 10 OR htype = 11)';
+            }
+        } else {
+            $where = "subsection_id = '" . getParlDB()->escape($itemdata['subsection_id']) . "' AND (htype != 10 AND htype != 11)";
+        }
+
+        if ($direction == 'prev') {
+            $sql_operator = '<';
+            $sort = 'DESC';
+        } else {
+            $sql_operator = '>';
+            $sort = 'ASC';
+        }
+
+        $q = parlDBQuery("SELECT epobject_id
+                        FROM hansard
+                        WHERE hdate = ?
+                        AND hpos $sql_operator ?
+                        AND major = ?
+                        AND $where
+                        ORDER BY hpos $sort
+                        LIMIT 1", $itemdata['hdate'], $itemdata['hpos'], $itemdata['major']);
+
+        if ($q->rows() > 0) {
+            return $q->field(0, 'epobject_id');
+        }
+
+        return false;
+    }
+
+    /**
+     * Build the previous/next link payload for one adjacent item.
+     */
+    protected function buildAdjacentItemLink(array $itemdata, $epobject_id, string $direction): ?array {
+        global $hansardmajors;
+
+        if (!$epobject_id) {
+            return null;
+        }
+
+        $rows = $this->getHandsardData([
+            'amount' => [
+                'body' => true,
+                'speaker' => true
+            ],
+            'where' => ['hansard.epobject_id=' => $epobject_id],
+            'order' => $direction == 'prev' ? 'hpos DESC' : 'hpos ASC',
+            'limit' => 1
+        ]);
+
+        if (count($rows) == 0) {
+            return null;
+        }
+
+        $row = $rows[0];
+
+        if ($itemdata['htype'] == '10' || $itemdata['htype'] == '11') {
+            $thing = $hansardmajors[$this->major]['singular'];
+            return [
+                'body' => ($direction == 'prev' ? 'Previous ' : 'Next ') . $thing,
+                'url' => $row['listurl'],
+                'title' => $row['body']
+            ];
+        }
+
+        return [
+            'body' => $direction == 'prev' ? 'Previous speaker' : 'Next speaker',
+            'url' => $row['commentsurl'],
+            'title' => $this->extractSpeakerTitle($row)
+        ];
+    }
+
+    /**
+     * Build the shared "up" link for item-level next/prev navigation.
+     */
+    protected function buildNextPrevUpLink(array $itemdata): ?array {
+        global $hansardmajors;
+
+        $URL = new URL($this->listpage);
+
+        if ($this->major == 6) {
+            $URL->remove(['id']);
+            return [
+                'body' => htmlspecialchars($this->bill_title),
+                'title' => '',
+                'url' => $URL->generate() . $this->url,
+            ];
+        }
+
+        if ($itemdata['htype'] == '10' || $itemdata['htype'] == '11') {
+            $URL->insert(['d' => $itemdata['hdate']]);
+            $URL->remove(['id']);
+            $things = $hansardmajors[$itemdata['major']]['title'];
+            return [
+                'body' => "All $things on " . format_date($itemdata['hdate'], SHORTDATEFORMAT),
+                'title' => '',
+                'url' => $URL->generate()
+            ];
+        }
+
+        return null;
+    }
+
+    /**
+     * Extract a friendly speaker label for next/prev links.
+     */
+    protected function extractSpeakerTitle(array $row): string {
+        if (!isset($row['speaker']) || count($row['speaker']) == 0) {
+            return '';
+        }
+
+        return $row['speaker']['first_name'] . ' ' . $row['speaker']['last_name'];
+    }
+
+    /**
+     * Find the next or previous hansard date for this major.
+     */
+    protected function findAdjacentHansardDate(string $date, string $nextorprev): ?string {
+        $query = Hansard::where('major', $this->major);
+
+        if ($nextorprev == 'next') {
+            $hdate = $query->whereDate('hdate', '>', $date)
+              ->orderBy('hdate')
+              ->value('hdate');
+        } else {
+            $hdate = $query->whereDate('hdate', '<', $date)
+              ->orderByDesc('hdate')
+              ->value('hdate');
+        }
+
+        if ($hdate instanceof DateTimeInterface) {
+            return $hdate->format('Y-m-d');
+        }
+
+        if (!$hdate) {
+            if ($nextorprev == 'next') {
+                $q = parlDBQuery("SELECT MIN(hdate) AS hdate
+                                FROM hansard
+                                WHERE major = ?
+                                AND hdate > ?", $this->major, $date);
+            } else {
+                $q = parlDBQuery("SELECT MAX(hdate) AS hdate
+                                FROM hansard
+                                WHERE major = ?
+                                AND hdate < ?", $this->major, $date);
+            }
+
+            if ($q->rows() > 0) {
+                $hdate = $q->field(0, 'hdate');
+            }
+        }
+
+        return $hdate ? substr((string) $hdate, 0, 10) : null;
     }
 
     /**
