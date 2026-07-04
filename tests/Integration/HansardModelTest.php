@@ -50,6 +50,17 @@ class DEBATELISTNextPrevAccessStub extends DEBATELIST {
 }
 
 /**
+ * Test access wrapper for protected getDataByRecent().
+ */
+class DEBATELISTRecentAccessStub extends DEBATELIST {
+
+    public function callGetDataByRecent(array $args): array {
+        return $this->getDataByRecent($args);
+    }
+
+}
+
+/**
  * Tests for HANSARDLIST/DEBATELIST/WRANSLIST ORM-converted methods.
  */
 class HansardModelTest extends TransactionalTestCase {
@@ -452,6 +463,99 @@ class HansardModelTest extends TransactionalTestCase {
         $this->assertSame($epobjectId, (int) $item['epobject_id']);
         $this->assertSame('Item body text', $item['body']);
         $this->assertSame('2024-04-01.2.0', $item['gid']);
+    }
+
+    public function test_get_data_by_recent_returns_distinct_dates_descending(): void {
+        $this->insertHansardRaw([
+            'major' => 1,
+            'hdate' => '2024-06-02',
+            'gid' => 'uk.org.publicwhip/debate/2024-06-02.1.0',
+            'epobject_id' => 96000,
+            'section_id' => 96000,
+            'subsection_id' => 96000,
+            'htype' => 10,
+            'hpos' => 1,
+        ]);
+        $this->insertHansardRaw([
+            'major' => 1,
+            'hdate' => '2024-06-02',
+            'gid' => 'uk.org.publicwhip/debate/2024-06-02.1.1',
+            'epobject_id' => 96001,
+            'section_id' => 96000,
+            'subsection_id' => 96000,
+            'htype' => 12,
+            'hpos' => 2,
+        ]);
+        $this->insertHansardRaw([
+            'major' => 1,
+            'hdate' => '2024-06-03',
+            'gid' => 'uk.org.publicwhip/debate/2024-06-03.1.0',
+            'epobject_id' => 96002,
+            'section_id' => 96002,
+            'subsection_id' => 96002,
+            'htype' => 10,
+            'hpos' => 1,
+        ]);
+        $this->insertHansardRaw([
+            'major' => 3,
+            'hdate' => '2024-06-04',
+            'gid' => 'uk.org.publicwhip/wrans/2024-06-04.1.0',
+            'epobject_id' => 96003,
+            'section_id' => 96003,
+            'subsection_id' => 96003,
+            'htype' => 10,
+            'hpos' => 1,
+        ]);
+
+        $list = new DEBATELISTRecentAccessStub();
+        $data = $list->callGetDataByRecent([]);
+
+        $this->assertSame('Recent dates', $data['info']['text']);
+        $this->assertCount(2, $data['rows']);
+        $this->assertSame(format_date('2024-06-03', SHORTDATEFORMAT), $data['rows'][0]['body']);
+        $this->assertSame(format_date('2024-06-02', SHORTDATEFORMAT), $data['rows'][1]['body']);
+        $this->assertStringContainsString('d=2024-06-03', $data['rows'][0]['listurl']);
+        $this->assertStringContainsString('d=2024-06-02', $data['rows'][1]['listurl']);
+    }
+
+    public function test_get_data_by_recent_respects_days_limit(): void {
+        $this->insertHansardRaw([
+            'major' => 1,
+            'hdate' => '2024-06-05',
+            'gid' => 'uk.org.publicwhip/debate/2024-06-05.1.0',
+            'epobject_id' => 96010,
+            'section_id' => 96010,
+            'subsection_id' => 96010,
+            'htype' => 10,
+            'hpos' => 1,
+        ]);
+        $this->insertHansardRaw([
+            'major' => 1,
+            'hdate' => '2024-06-06',
+            'gid' => 'uk.org.publicwhip/debate/2024-06-06.1.0',
+            'epobject_id' => 96011,
+            'section_id' => 96011,
+            'subsection_id' => 96011,
+            'htype' => 10,
+            'hpos' => 1,
+        ]);
+        $this->insertHansardRaw([
+            'major' => 1,
+            'hdate' => '2024-06-07',
+            'gid' => 'uk.org.publicwhip/debate/2024-06-07.1.0',
+            'epobject_id' => 96012,
+            'section_id' => 96012,
+            'subsection_id' => 96012,
+            'htype' => 10,
+            'hpos' => 1,
+        ]);
+
+        $list = new DEBATELISTRecentAccessStub();
+        $data = $list->callGetDataByRecent(['days' => 2]);
+
+        $this->assertCount(2, $data['rows']);
+        $this->assertStringContainsString('d=2024-06-07', $data['rows'][0]['listurl']);
+        $this->assertStringContainsString('d=2024-06-06', $data['rows'][1]['listurl']);
     }
 
     public function test_most_recent_day_returns_latest_hdate_for_major_and_caches_result(): void {

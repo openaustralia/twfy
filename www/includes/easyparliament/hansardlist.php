@@ -149,23 +149,19 @@ class HANSARDLIST {
 
         global $PAGE;
 
-        $validviews = ['calendar', 'date', 'gid', 'person', 'search', 'search_min', 'recent', 'recent_mostvotes', 'biggest_debates', 'recent_wrans', 'recent_wms', 'column', 'mp', 'bill', 'session', 'recent_debates'];
-        if (in_array($view, $validviews)) {
-
-            // What function do we call for this view?
-            $function = '_get_data_by_' . $view;
-            // Get all the data that's to be rendered.
-            $data = $this->$function($args);
-            if (isset($data['info']['redirected_gid'])) {
-                return $data['info']['redirected_gid'];
-            }
-
-        } else {
+        $function = $this->resolveDataMethodForView($view);
+        if ($function === null) {
             // Don't have a valid $view.
             if (isset($PAGE) && is_object($PAGE) && method_exists($PAGE, 'error_message')) {
                 $PAGE->error_message("You haven't specified a view type.");
             }
             return false;
+        }
+
+        // Get all the data that's to be rendered.
+        $data = $this->$function($args);
+        if (isset($data['info']['redirected_gid'])) {
+            return $data['info']['redirected_gid'];
         }
 
         // Set the values of this page's headings depending on the data we've fetched.
@@ -185,6 +181,43 @@ class HANSARDLIST {
         }
 
         return $return;
+    }
+
+    /**
+     * Map display view names to data-fetch methods.
+     */
+    protected function getViewToMethodMap(): array {
+        return [
+            'biggest_debates' => '_get_data_by_biggest_debates',
+            'bill' => '_get_data_by_bill',
+            'calendar' => '_get_data_by_calendar',
+            'column' => '_get_data_by_column',
+            'date' => '_get_data_by_date',
+            'gid' => '_get_data_by_gid',
+            'mp' => '_get_data_by_mp',
+            'person' => '_get_data_by_person',
+            'recent_debates' => '_get_data_by_recent_debates',
+            'recent_mostvotes' => '_get_data_by_recent_mostvotes',
+            'recent_wms' => '_get_data_by_recent_wms',
+            'recent_wrans' => '_get_data_by_recent_wrans',
+            'recent' => 'getDataByRecent',
+            'search_min' => '_get_data_by_search_min',
+            'search' => '_get_data_by_search',
+            'session' => '_get_data_by_session',
+        ];
+    }
+
+    /**
+     * Resolve a display view to its callable data-fetch method.
+     */
+    protected function resolveDataMethodForView(string $view): ?string {
+        $viewToMethod = $this->getViewToMethodMap();
+        if (!isset($viewToMethod[$view])) {
+            return null;
+        }
+
+        $function = $viewToMethod[$view];
+        return method_exists($this, $function) ? $function : null;
     }
 
     /**
@@ -382,7 +415,7 @@ class HANSARDLIST {
             ];
 
             $subsectiondata = $this->getHandsardData($input);
-            if (count($subsectiondata) == 0) {
+            if (empty($subsectiondata)) {
                 $subsectiondata = null;
             } else {
                 $subsectiondata = $subsectiondata[0];
@@ -583,7 +616,7 @@ class HANSARDLIST {
             'limit' => 1
         ]);
 
-        if (count($rows) == 0) {
+        if (empty($rows)) {
             return null;
         }
 
@@ -640,7 +673,7 @@ class HANSARDLIST {
      * Extract a friendly speaker label for next/prev links.
      */
     protected function extractSpeakerTitle(array $row): string {
-        if (!isset($row['speaker']) || count($row['speaker']) == 0) {
+        if (!isset($row['speaker']) || empty($row['speaker'])) {
             return '';
         }
 
@@ -774,7 +807,7 @@ class HANSARDLIST {
             $itemdata = $itemdata[0];
         }
 
-        if (count($itemdata) == 0) {
+        if (empty($itemdata)) {
             $PAGE->error_message("Sorry, there is no Hansard object with a gid of '" . htmlentities($args['gid']) . "'.");
             return false;
         }
@@ -871,43 +904,82 @@ class HANSARDLIST {
     /**
      *
      */
-    public function _get_data_by_recent($args) {
+    protected function getDataByRecent($args) {
+        $data = ['rows' => []];
 
-        if (isset($args['days']) && is_numeric($args['days'])) {
-            $limit = 'LIMIT ?';
-            $params = [$this->major, $args['days']];
-        } else {
-            $limit = '';
-            $params = [$this->major];
-        }
-
-        $data = [];
-
-        $q = parlDBQuery("SELECT DISTINCT(hdate)
-						FROM 	hansard
-						WHERE major = ?
-						ORDER BY hdate DESC
-						$limit
-						", ...$params);
-
-        if ($q->rows() > 0) {
-
-            $URL = new URL($this->listpage);
-
-            for ($n = 0; $n < $q->rows(); $n++) {
-                $rowdata = [];
-
-                $rowdata['body'] = format_date($q->field($n, 'hdate'), SHORTDATEFORMAT);
-                $URL->insert(['d' => $q->field($n, 'hdate')]);
-                $rowdata['listurl'] = $URL->generate();
-
-                $data['rows'][] = $rowdata;
-            }
+        $hdates = $this->fetchRecentHansardDates($args);
+        if (!empty($hdates)) {
+            $data['rows'] = $this->buildRecentDateRows($hdates);
         }
 
         $data['info']['text'] = 'Recent dates';
 
         return $data;
+    }
+
+    /**
+     * Fetch distinct recent Hansard dates for this major.
+     */
+    protected function fetchRecentHansardDates(array $args): array {
+        $query = Hansard::where('major', $this->major)
+          ->distinct()
+          ->orderByDesc('hdate');
+
+        if (isset($args['days']) && is_numeric($args['days'])) {
+            $query->limit((int) $args['days']);
+        }
+
+        $results = $query->pluck('hdate');
+
+        $hdates = [];
+        foreach ($results as $hdate) {
+            if ($hdate instanceof DateTimeInterface) {
+                $hdates[] = $hdate->format('Y-m-d');
+            } else {
+                $hdates[] = substr((string) $hdate, 0, 10);
+            }
+        }
+
+        if (!empty($hdates)) {
+            return $hdates;
+        }
+
+        $params = [$this->major];
+        $limit = '';
+        if (isset($args['days']) && is_numeric($args['days'])) {
+            $limit = 'LIMIT ?';
+            $params[] = (int) $args['days'];
+        }
+
+        $q = parlDBQuery("SELECT DISTINCT(hdate)
+                        FROM hansard
+                        WHERE major = ?
+                        ORDER BY hdate DESC
+                        $limit", ...$params);
+
+        for ($n = 0; $n < $q->rows(); $n++) {
+            $hdates[] = substr((string) $q->field($n, 'hdate'), 0, 10);
+        }
+
+        return $hdates;
+    }
+
+    /**
+     * Build template rows for recent-date listing.
+     */
+    protected function buildRecentDateRows(array $hdates): array {
+        $URL = new URL($this->listpage);
+        $rows = [];
+
+        foreach ($hdates as $hdate) {
+            $URL->insert(['d' => $hdate]);
+            $rows[] = [
+                'body' => format_date($hdate, SHORTDATEFORMAT),
+                'listurl' => $URL->generate(),
+            ];
+        }
+
+        return $rows;
     }
 
     // Display a person's most recent debates.
