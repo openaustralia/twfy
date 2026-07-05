@@ -133,7 +133,7 @@ docker-db-shell:
 
 docker-test-db-shell:
 	docker compose up -d mysql
-	docker compose exec mysql mysql -u$(TEST_DB_USER) -p$(TEST_DB_PASSWORD) -h mysql $(TEST_DB_NAME)
+	docker compose exec mysql env MYSQL_PWD=$(TEST_DB_PASSWORD) mysql -u$(TEST_DB_USER) -h mysql $(TEST_DB_NAME)
 
 xapian-index-docker:
 	docker compose up -d
