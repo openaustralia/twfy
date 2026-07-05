@@ -253,7 +253,7 @@ class UtilityTest extends TestCase {
     }
 
     public function test_prettify_office_with_lookup_match(): void {
-        $this->assertSame('Prime Minister', prettify_office('Prime Minister', 'HM Treasury'));
+        $this->assertSame('Prime Minister, Treasurer', prettify_office('Prime Minister', 'Treasurer'));
     }
 
     public function test_prettify_office_pos_only(): void {
