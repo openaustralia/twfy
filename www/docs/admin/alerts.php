@@ -9,20 +9,20 @@ include_once __DIR__ . "/../../includes/easyparliament/commentreportlist.php";
 include_once __DIR__ . "/../../includes/easyparliament/searchengine.php";
 include_once __DIR__ . "/../../includes/easyparliament/member.php";
 
+use Illuminate\Support\Collection;
+use OpenAustralia\TWFY\Models\Alert;
+use OpenAustralia\TWFY\Models\User as UserModel;
+
 $this_page = 'admin_alerts';
 
 $PAGE->page_start();
 $PAGE->stripe_start();
 
 print '<h4>Statistics</h4>';
-$q = parlDBQuery('SELECT COUNT(*) AS c FROM alerts');
-$total = $q->field(0, 'c');
-$q = parlDBQuery('SELECT COUNT(*) AS c FROM alerts WHERE confirmed=1 AND deleted=0');
-$active = $q->field(0, 'c');
-$q = parlDBQuery('SELECT COUNT(*) AS c FROM alerts WHERE deleted=1');
-$deleted = $q->field(0, 'c');
-$q = parlDBQuery('SELECT COUNT(*) AS c FROM alerts WHERE confirmed=0');
-$unconfirmed = $q->field(0, 'c');
+$total = Alert::query()->count();
+$active = Alert::query()->where('confirmed', 1)->where('deleted', 0)->count();
+$deleted = Alert::query()->where('deleted', 1)->count();
+$unconfirmed = Alert::query()->where('confirmed', 0)->count();
 $rows = [['Total', $total], ['Active', $active], ['Deleted', $deleted], ['Unconfirmed', $unconfirmed]];
 $tabledata = [
     'header' => ['Stat', 'Number'],
@@ -30,27 +30,46 @@ $tabledata = [
 ];
 $PAGE->display_table($tabledata);
 
-$order = 'email, alert_id';
-if (isset($_GET['o']) && $_GET['o'] == 'c') {
-    $order = 'created, alert_id';
-}
+$orderByCreated = isset($_GET['o']) && $_GET['o'] == 'c';
 
 print '<h4>Active alerts</h4>';
-$q = parlDBQuery('SELECT email,criteria,created FROM alerts WHERE confirmed=1 AND deleted=0 ORDER BY ' . $order);
+$q = Alert::query()
+  ->select(['email', 'criteria', 'created'])
+  ->where('confirmed', 1)
+  ->where('deleted', 0);
+if ($orderByCreated) {
+    $q->orderBy('created')->orderBy('alert_id');
+} else {
+    $q->orderBy('email')->orderBy('alert_id');
+}
 $tabledata = [
     'header' => ['<a href="alerts.php">Email</a>', 'Criteria', '<a href="alerts.php?o=c">Created</a>'],
-    'rows' => generate_rows($q)
+    'rows' => generate_rows($q->get())
 ];
 $PAGE->display_table($tabledata);
 
 print '<h4>Deleted alerts</h4>';
-$q = parlDBQuery('SELECT email,criteria,created FROM alerts WHERE deleted=1 ORDER BY ' . $order);
-$tabledata['rows'] = generate_rows($q);
+$q = Alert::query()
+  ->select(['email', 'criteria', 'created'])
+  ->where('deleted', 1);
+if ($orderByCreated) {
+    $q->orderBy('created')->orderBy('alert_id');
+} else {
+    $q->orderBy('email')->orderBy('alert_id');
+}
+$tabledata['rows'] = generate_rows($q->get());
 $PAGE->display_table($tabledata);
 
 print '<h4>Unconfirmed alerts</h4>';
-$q = parlDBQuery('SELECT email,criteria,created FROM alerts WHERE confirmed=0 ORDER BY ' . $order);
-$tabledata['rows'] = generate_rows($q);
+$q = Alert::query()
+  ->select(['email', 'criteria', 'created'])
+  ->where('confirmed', 0);
+if ($orderByCreated) {
+    $q->orderBy('created')->orderBy('alert_id');
+} else {
+    $q->orderBy('email')->orderBy('alert_id');
+}
+$tabledata['rows'] = generate_rows($q->get());
 $PAGE->display_table($tabledata);
 
 $menu = $PAGE->admin_menu();
@@ -66,23 +85,34 @@ $PAGE->page_end();
 /**
  *
  */
-function generate_rows($q) {
-    global $db;
+function generate_rows(Collection $alerts): array {
     $rows = [];
     $USERURL = new URL('userview');
-    for ($row = 0; $row < $q->rows(); $row++) {
-        $email = $q->field($row, 'email');
-        $criteria = $q->field($row, 'criteria');
+
+    if ($alerts->isEmpty()) {
+        return $rows;
+    }
+
+    $usersByEmail = UserModel::query()
+      ->whereIn('email', $alerts->pluck('email')->unique()->all())
+      ->get(['user_id', 'firstname', 'lastname', 'email'])
+      ->keyBy('email');
+
+    foreach ($alerts as $alert) {
+        $email = $alert->email;
+        $criteria = $alert->criteria;
         $SEARCHENGINE = new SEARCHENGINE($criteria);
-        $r = parlDBQuery("SELECT user_id,firstname,lastname FROM users WHERE email = ?", $email);
-        if ($r->rows() > 0) {
-            $user_id = $r->field(0, 'user_id');
+
+        $user = $usersByEmail->get($email);
+        if ($user) {
+            $user_id = $user->user_id;
             $USERURL->insert(['u' => $user_id]);
-            $name = '<a href="' . $USERURL->generate() . '">' . $r->field(0, 'firstname') . ' ' . $r->field(0, 'lastname') . '</a>';
+            $name = '<a href="' . $USERURL->generate() . '">' . $user->firstname . ' ' . $user->lastname . '</a>';
         } else {
             $name = $email;
         }
-        $created = $q->field($row, 'created');
+
+        $created = $alert->created;
         if ($created == '0000-00-00 00:00:00') {
             $created = '&nbsp;';
         }
