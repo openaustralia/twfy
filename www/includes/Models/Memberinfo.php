@@ -45,7 +45,7 @@ class Memberinfo extends Model {
     }
 
     /**
-     * tells the orm that memberinfo belongs to a member, and that the foreign key is member_id
+     * tells the orm that memberinfo belongs to a member, and that the foreign key is member_id.
      * @return BelongsTo
      */
     public function member(): BelongsTo {
