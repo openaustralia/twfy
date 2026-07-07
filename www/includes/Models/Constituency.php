@@ -50,6 +50,12 @@ class Constituency extends Model {
         'main_name' => 'bool',
     ];
 
+    /**
+     * Defines the relationship to constituency info rows keyed by name.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     *   Related constituency info rows.
+     */
     public function info(): HasMany {
         return $this->hasMany(Consinfo::class, 'constituency', 'name');
     }

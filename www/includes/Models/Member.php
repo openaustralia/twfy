@@ -74,12 +74,19 @@ class Member extends Model {
     /**
      * Defines the relationship to the Memberinfo model.
      *
-     * @return HasMany
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     *   Related member info rows.
      */
     public function info(): HasMany {
         return $this->hasMany(Memberinfo::class, 'member_id', 'member_id');
     }
 
+    /**
+     * Defines the relationship to person info rows for this member's person.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     *   Related person info rows.
+     */
     public function personInfo(): HasMany {
         return $this->hasMany(Personinfo::class, 'person_id', 'person_id');
     }

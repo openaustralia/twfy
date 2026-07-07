@@ -32,6 +32,15 @@ class Personinfo extends Model {
         'data_value',
     ];
 
+    /**
+     * Apply the composite primary key when building update queries.
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     *   Update query builder.
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     *   Updated query builder.
+     */
     protected function setKeysForSaveQuery($query): Builder {
         foreach (self::COMPOSITE_PRIMARY_KEY as $keyName) {
             $query->where($keyName, '=', $this->getAttribute($keyName));
@@ -40,6 +49,12 @@ class Personinfo extends Model {
         return $query;
     }
 
+    /**
+     * Defines the relationship to member rows for this person.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     *   Related member rows.
+     */
     public function members(): HasMany {
         return $this->hasMany(Member::class, 'person_id', 'person_id');
     }
