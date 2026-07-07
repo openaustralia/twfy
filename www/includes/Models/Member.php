@@ -80,4 +80,8 @@ class Member extends Model {
         return $this->hasMany(Memberinfo::class, 'member_id', 'member_id');
     }
 
+    public function personInfo(): HasMany {
+        return $this->hasMany(Personinfo::class, 'person_id', 'person_id');
+    }
+
 }
