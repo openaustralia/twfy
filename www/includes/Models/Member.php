@@ -71,6 +71,11 @@ class Member extends Model {
         'updated_at'    => 'datetime',
     ];
 
+    /**
+     * Defines the relationship to the Memberinfo model.
+     *
+     * @return HasMany
+     */
     public function info(): HasMany {
         return $this->hasMany(Memberinfo::class, 'member_id', 'member_id');
     }
