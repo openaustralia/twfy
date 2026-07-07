@@ -3,6 +3,7 @@
 namespace OpenAustralia\TWFY\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * Constituency Eloquent model — READ-ONLY.
@@ -48,5 +49,9 @@ class Constituency extends Model {
         'to_date' => 'date',
         'main_name' => 'bool',
     ];
+
+    public function info(): HasMany {
+        return $this->hasMany(Consinfo::class, 'constituency', 'name');
+    }
 
 }

@@ -3,6 +3,7 @@
 namespace OpenAustralia\TWFY\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * Gidredirect Eloquent model.
@@ -32,5 +33,13 @@ class Gidredirect extends Model {
     protected $casts = [
         'hdate' => 'date',
     ];
+
+    public function fromHansard(): BelongsTo {
+        return $this->belongsTo(Hansard::class, 'gid_from', 'gid');
+    }
+
+    public function toHansard(): BelongsTo {
+        return $this->belongsTo(Hansard::class, 'gid_to', 'gid');
+    }
 
 }
