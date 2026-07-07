@@ -35,6 +35,12 @@ class Memberinfo extends Model {
     /**
      * Eloquent does not natively support composite keys, so updates need the
      * full key pair applied manually.
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     *   Update query builder.
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     *   Updated query builder.
      */
     protected function setKeysForSaveQuery($query): Builder {
         foreach (self::COMPOSITE_PRIMARY_KEY as $keyName) {
@@ -45,8 +51,10 @@ class Memberinfo extends Model {
     }
 
     /**
-     * tells the orm that memberinfo belongs to a member, and that the foreign key is member_id.
-     * @return BelongsTo
+     * Defines the relationship back to the owning member.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     *   Owning member row.
      */
     public function member(): BelongsTo {
         return $this->belongsTo(Member::class, 'member_id', 'member_id');

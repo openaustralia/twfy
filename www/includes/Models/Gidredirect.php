@@ -34,10 +34,22 @@ class Gidredirect extends Model {
         'hdate' => 'date',
     ];
 
+    /**
+     * Defines the relationship to the source Hansard row for this redirect.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     *   Source Hansard row.
+     */
     public function fromHansard(): BelongsTo {
         return $this->belongsTo(Hansard::class, 'gid_from', 'gid');
     }
 
+    /**
+     * Defines the relationship to the target Hansard row for this redirect.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     *   Target Hansard row.
+     */
     public function toHansard(): BelongsTo {
         return $this->belongsTo(Hansard::class, 'gid_to', 'gid');
     }
