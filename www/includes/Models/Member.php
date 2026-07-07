@@ -3,6 +3,7 @@
 namespace OpenAustralia\TWFY\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * Eloquent model for the `member` table.
@@ -69,5 +70,9 @@ class Member extends Model {
         'created_at'    => 'datetime',
         'updated_at'    => 'datetime',
     ];
+
+    public function info(): HasMany {
+        return $this->hasMany(Memberinfo::class, 'member_id', 'member_id');
+    }
 
 }
