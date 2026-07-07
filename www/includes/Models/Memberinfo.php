@@ -44,6 +44,10 @@ class Memberinfo extends Model {
         return $query;
     }
 
+    /**
+     * tells the orm that memberinfo belongs to a member, and that the foreign key is member_id
+     * @return BelongsTo
+     */
     public function member(): BelongsTo {
         return $this->belongsTo(Member::class, 'member_id', 'member_id');
     }
