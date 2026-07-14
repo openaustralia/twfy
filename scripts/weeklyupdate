@@ -8,13 +8,13 @@ source consts
 source ../../shlib/deployfns
 read_conf "../conf/general"
 
-INDEX="`pwd`/all-titles-in-ns0"
+INDEX="$(pwd)/all-titles-in-ns0"
 
 # Get new Wikipedia titles database
-rm -f "${INDEX}.gz" $INDEX
+rm -f "${INDEX}.gz" "$INDEX"
 
 # looks for "enwiki/ in the page (with a leading quote) so it doesn't pick up "tenwiki"
-DUMPDATE=`curl -s "https://dumps.wikimedia.org/backup-index.html" | grep "\"enwiki/" | perl -pi.bak -e "s/.*(\d\d\d\d\d\d\d\d).*/\\\$1/;"`
+DUMPDATE=$(curl -s "https://dumps.wikimedia.org/backup-index.html" | grep "\"enwiki/" | perl -pi.bak -e "s/.*(\d\d\d\d\d\d\d\d).*/\\\$1/;")
 echo "Wikipedia dump date $DUMPDATE"
 
 echo "Downloading to ${INDEX}"
@@ -28,7 +28,7 @@ MYSQL="mysql --local-infile=1 -u ${DB_USER} --password=${DB_PASSWORD} --host=$DB
 echo "load data local infile '$INDEX' ignore into table titles;" | $MYSQL
 cat wikipedia-exceptions | $MYSQL
 # Cleanup
-rm -f $INDEX
+rm -f "$INDEX"
 
 # Compact Xapian database
 ./compactsearchdb
