@@ -30,10 +30,13 @@ jobs:
           sudo apt-get install -y \
             libdbd-mysql-perl \
             libdbi-perl \
+            libperl-critic-perl \
             libsearch-xapian-perl \
             libxml-rss-perl \
             libxml-twig-perl \
             libxml-simple-perl
       - name: Lint
         run: make lint-perl-ci
+      - name: Lint with Perl::Critic
+        run: make lint-perl-critic
 
