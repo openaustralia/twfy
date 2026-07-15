@@ -26,7 +26,7 @@ gunzip "${INDEX}.gz"
 MYSQL="mysql --local-infile=1 -u ${DB_USER} --password=${DB_PASSWORD} --host=$DB_HOST $DB_NAME"
 
 echo "load data local infile '$INDEX' ignore into table titles;" | $MYSQL
-cat wikipedia-exceptions | $MYSQL
+$MYSQL < wikipedia-exceptions
 # Cleanup
 rm -f "$INDEX"
 
