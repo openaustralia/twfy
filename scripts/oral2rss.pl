@@ -1,5 +1,7 @@
 #!/usr/bin/perl
 
+# Generates per-department Oral Answers RSS feeds from recent Hansard data.
+
 use warnings;
 use strict;
 use FindBin;
@@ -15,7 +17,7 @@ my $dbh = DBI->connect($dsn, mySociety::Config::get('DB_USER'), mySociety::Confi
 my $Output_Dir= shift || die "usage: $0 output_dir/\n";
 
 my $query= $dbh->prepare("
-	select hansard.*, epobject.body from hansard, epobject where hdate >= date_sub(now(), interval 30 day) and major=1 and htype= 10 and hansard.epobject_id = epobject.epobject_id and epobject.body like 'Oral Answers%'
+	SELECT hansard.*, epobject.body FROM hansard, epobject WHERE hdate >= DATE_SUB(NOW(), INTERVAL 30 day) AND major=1 AND htype= 10 AND hansard.epobject_id = epobject.epobject_id AND epobject.body LIKE 'Oral Answers%'
 	");
 $query->execute();
 
@@ -24,18 +26,15 @@ $query->execute();
 my %oral;
 while (my $result = $query->fetchrow_hashref) {
 
-	my $subquery= $dbh->prepare(" select epobject.epobject_id,
-				      epobject.body,
-				      hansard.gid
-				 from epobject, hansard
-				where hansard.section_id=?
-				  and hansard.epobject_id= epobject.epobject_id
-			  	  and htype=11
-			  ");
-	$subquery->execute($result->{epobject_id});	
+	my $subquery= $dbh->prepare(" SELECT epobject.epobject_id, epobject.body, hansard.gid
+				        FROM epobject, hansard
+                        WHERE hansard.section_id=?
+                            AND hansard.epobject_id= epobject.epobject_id
+                            AND htype=11");
+	$subquery->execute($result->{epobject_id});
 	while (my $r= $subquery->fetchrow_hashref) {
-    		my ($id)= $r->{gid} =~ m#\/([^/]+)$#;
-    		push @{$oral{$result->{body}}}, [$result->{epobject_id}, $result->{hdate}, $id , $r->{body}] ;
+        my ($id)= $r->{gid} =~ m#\/([^/]+)$#;
+        push @{$oral{$result->{body}}}, [$result->{epobject_id}, $result->{hdate}, $id , $r->{body}] ;
 	}
 }
 
@@ -68,8 +67,8 @@ $rss->channel(
 		$rss->add_item(
 			title=>"$dept_name &mdash; $topic->[3]",
 			link=>'http://www.openaustralia.org/debates/?id=' . $topic->[2],
- 			description=>"$area - $topic->[3]"
- 		);
+            description=>"$area - $topic->[3]"
+        );
 	}
 	my $filename= $dept_name;
 	$filename =~ s/[^a-z0-9]//gi;
