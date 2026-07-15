@@ -112,7 +112,7 @@ Stop everything with `docker compose down`.
 
 ### MySQL version
 
-We run **MySQL 8.0** in production (currently 8.0.44). The `mysql:8.0`
+We run **MySQL 8.4** in production. The `mysql:8.4`
 image is pinned in [`docker-compose.yml`](docker-compose.yml) and in the
 GitHub Actions workflow (`.github/workflows/php.yml`) so local
 development, CI and production stay aligned. Schema dumps from
