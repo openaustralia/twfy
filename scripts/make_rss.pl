@@ -1,5 +1,7 @@
 #!/usr/bin/env perl
 
+# Generates RSS feeds for debates and related parliamentary streams.
+
 use warnings;
 use strict;
 use FindBin;
@@ -96,13 +98,16 @@ sub wms_rss {
         syn => $syn,
     );
 
+    # The queries we need
+    my $prepared_local_title_query = $dbh->prepare("SELECT body FROM epobject WHERE epobject_id=?");
+    my $prepared_local_office_query = $dbh->prepare('SELECT position, dept FROM moffice WHERE person=? ORDER BY from_date DESC LIMIT 1');
+
     while (my $result = $query->fetchrow_hashref) {
-        my $local_title_query = $dbh->prepare("SELECT body FROM epobject WHERE epobject_id=?");
-        $local_title_query->execute($result->{subsection_id});
-        my ($title) = $local_title_query->fetchrow_array; # title, not dept.
-        my $local_office_query = $dbh->prepare('SELECT position, dept FROM moffice WHERE person=? ORDER BY from_date DESC LIMIT 1');
-        $local_office_query->execute($result->{person_id});
-        my ($posn, $dept) = $local_office_query->fetchrow_array;
+        $prepared_local_title_query->execute($result->{subsection_id});
+        my ($title) = $prepared_local_title_query->fetchrow_array; # title, not dept.
+        $prepared_local_office_query->execute($result->{person_id});
+        my ($posn, $dept) = $prepared_local_office_query->fetchrow_array;
+
         $title .= ' (' . member_full_name($result);
         $title .= ", $posn, $dept" if ($posn && $dept);
         $title .= ')';
@@ -120,11 +125,17 @@ sub wms_rss {
 }
 
 sub wrans_rss {
-    my $query = $dbh->prepare("SELECT hdate FROM hansard WHERE major='3' ORDER BY hdate DESC LIMIT 1");
+    my $query = $dbh->prepare("SELECT hdate FROM hansard WHERE major=3 ORDER BY hdate DESC LIMIT 1");
     $query->execute();
     my ($date) = $query->fetchrow_array();
 
-    $query = $dbh->prepare("SELECT e.body, h.hdate, h.htype, h.gid, h.subsection_id, h.section_id, h.epobject_id FROM hansard h, epobject e WHERE h.major='3' AND htype='12' AND hdate=? AND h.epobject_id = e.epobject_id ORDER BY h.epobject_id DESC");
+    $query = $dbh->prepare("SELECT e.body, h.hdate, h.htype, h.gid, h.subsection_id, h.section_id, h.epobject_id
+        FROM hansard h, epobject e
+        WHERE h.major=3
+            AND htype=12
+            AND hdate=?
+            AND h.epobject_id = e.epobject_id
+        ORDER BY h.epobject_id DESC");
     $query->execute($date);
     my $rss = new XML::RSS (version => '1.0');
     $rss->channel(
@@ -135,10 +146,10 @@ sub wrans_rss {
         syn => $syn,
     );
 
+    my $prepared_local_title_query = $dbh->prepare("SELECT body FROM epobject WHERE epobject_id=?");
     while (my $result = $query->fetchrow_hashref) {
-        my $local_title_query = $dbh->prepare("SELECT body FROM epobject WHERE epobject_id=?");
-        $local_title_query->execute($result->{subsection_id});
-        my ($title) = $local_title_query->fetchrow_array; # title, not dept.
+        $prepared_local_title_query->execute($result->{subsection_id});
+        my ($title) = $prepared_local_title_query->fetchrow_array; # title, not dept.
         my ($id) = $result->{gid} =~ m#\/([^/]+)$#;
 
         next unless ($id =~ /q\d+$/);
