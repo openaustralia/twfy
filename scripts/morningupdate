@@ -34,8 +34,7 @@ fi
 # Make sure only one copy runs at once
 if [[ -z "${LOCKFILE:-}" ]]
 then
-    ./run-with-lockfile -n morningupdate-lockfile "$0"
-    rc=$?
+    if ./run-with-lockfile -n morningupdate-lockfile "$0"; then rc=0; else rc=$?; fi
     if [[ $rc -eq 100 ]]
     then
             echo "Another copy of morningupdate or compactsearchdb is already running" 1>&2
