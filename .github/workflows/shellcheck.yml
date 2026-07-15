@@ -28,5 +28,5 @@ jobs:
       - name: Install ShellCheck
         run: sudo apt-get update && sudo apt-get install -y shellcheck
       - name: Lint update scripts
-        run: shellcheck -x weeklyupdate morningupdate dailyupdate
+        run: shellcheck -x weeklyupdate morningupdate dailyupdate rssgenerate
         working-directory: scripts
