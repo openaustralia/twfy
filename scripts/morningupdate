@@ -1,18 +1,30 @@
 #!/usr/bin/env bash
 # morningupdate.  Called when new data is available from ukparse.
+# Runs the daily publish pipeline: imports latest speeches, refreshes Xapian
+# search index, regenerates RSS feeds, and updates XML sitemaps.
 
 # Call with VERBOSE=true set in the environment for diagnostic messages:
 # VERBOSE=true ./morningupdate
 
 #set -x  # for debugging, prints each line before executing it
 
+set -Eeuo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+cd "$SCRIPT_DIR"
+
 source consts
 source ../../shlib/deployfns
 read_conf "../conf/general"
 
-[ -z "$VERBOSE" ] && VERBOSE=false
+VERBOSE="${VERBOSE:-false}"
+if [[ "$VERBOSE" == "1" ]]; then
+    VERBOSE=true
+elif [[ "$VERBOSE" == "0" ]]; then
+    VERBOSE=false
+fi
 
-if $VERBOSE
+if [[ "$VERBOSE" == "true" ]]
 then
 	CRONQUIET_NODASH=""
 else
@@ -20,39 +32,46 @@ else
 fi
 
 # Make sure only one copy runs at once
-if [ -z "$LOCKFILE" ]
+if [[ -z "${LOCKFILE:-}" ]]
 then
     ./run-with-lockfile -n morningupdate-lockfile "$0"
-    if [ $? = 100 ]
+    rc=$?
+    if [[ $rc -eq 100 ]]
     then
             echo "Another copy of morningupdate or compactsearchdb is already running" 1>&2
     fi
-    exit $?
+    exit $rc
 fi
 
 echo -n "Start time: "
 date +"%Y-%m-%d %H:%M:%S %Z"
 
-$VERBOSE && echo "Parsing from APH to XML and loading into the database"
+[[ "$VERBOSE" == "true" ]] && echo "Parsing from APH to XML and loading into the database"
 ../../openaustralia-parser/bin/run parse-speeches.rb previous-working-day
 
 
-if [ -n "$XAPIANDB" ]; then
-    # Update Xapan index
-    $VERBOSE && echo "Xapian indexing"
+if [[ -n "${XAPIANDB:-}" ]]; then
+    # Update Xapian index
+    [[ "$VERBOSE" == "true" ]] && echo "Xapian indexing"
     ../search/index.pl "$XAPIANDB" sincefile "$XAPIANDB/../searchdb-lastupdated" "$CRONQUIET_NODASH"
 else
     echo "SKIPPED Xapian indexing: XAPIANDB is blank"
 fi
 # Create new RSS files.
-if $VERBOSE
+if [[ "$VERBOSE" == "true" ]]
 then
 	echo "Running rssgenerate"
 	./rssgenerate
 else
- 	at NOW >/dev/null 2>/dev/null <<EOF
+    if command -v at >/dev/null 2>&1; then
+        # Queue rssgenerate to run asynchronously via 'at'.
+		at NOW >/dev/null 2>/dev/null <<'EOF'
 ./rssgenerate
 EOF
+    else
+        echo "WARNING: 'at' not found; running rssgenerate inline" 1>&2
+        ./rssgenerate
+    fi
 fi
 
 # Update the XML sitemaps to keep the search engines informed
