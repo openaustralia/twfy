@@ -40,7 +40,7 @@ jobs:
       pull-requests: write
     services:
       mysql:
-        image: mysql:8.0
+        image: mysql:8.4
         env:
           MYSQL_ROOT_PASSWORD: root
           MYSQL_DATABASE: test_twfy
@@ -110,7 +110,7 @@ jobs:
       pull-requests: write
     services:
       mysql:
-        image: mysql:8.0
+        image: mysql:8.4
         env:
           MYSQL_ROOT_PASSWORD: root
           MYSQL_DATABASE: test_twfy
@@ -156,7 +156,7 @@ jobs:
           DB_NAME: test_twfy
       - name: Dump schema from migrated database
         run: |
-          docker run --rm --network host mysql:8.0 mysqldump \
+          docker run --rm --network host mysql:8.4 mysqldump \
             --host=127.0.0.1 --protocol=TCP \
             --user=root --password=root \
             --no-data --skip-comments --skip-add-drop-table --skip-set-charset \
