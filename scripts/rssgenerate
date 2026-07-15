@@ -1,14 +1,11 @@
 #!/usr/bin/env bash
 
 # Make sure only one copy runs at once
-if [ x$LOCKFILE = x ]
+if [[ -z "${LOCKFILE:-}" ]]
 then
-        ./run-with-lockfile -n rssgenerate-lockfile $0
-        if [ $? = 100 ]
-        then
-                echo "Another copy of rssgenerate is already running" 1>&2
-        fi
-        exit $?
+    if ./run-with-lockfile -n rssgenerate-lockfile "$0"; then rc=0; else rc=$?; fi
+    [[ $rc -eq 100 ]] && echo "Another copy of rssgenerate is already running" 1>&2
+    exit $rc
 fi
 
 # Check Xapian index is correct
