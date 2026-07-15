@@ -1,5 +1,10 @@
 #!/usr/bin/env bash
 # Jobs that need running weekly
+# Refresh the local Wikipedia title lookup table used by the site.
+#
+# This downloads the latest enwiki all-titles dump, loads it into the MySQL
+# titles table, applies local title exclusions from wikipedia-exceptions, and
+# then compacts the Xapian search database.
 #set -x
 #set -v
 
