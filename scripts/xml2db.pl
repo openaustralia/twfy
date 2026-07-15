@@ -5,11 +5,11 @@ use strict;
 # $Id: xml2db.pl,v 1.23 2008/01/26 09:34:42 twfy-staging Exp $
 #
 # Loads XML written answer, debate and member files into the fawkes database.
-# 
+#
 # Magic numbers, and other properties of the destination schema
 # are documented here:
 #        http://parl.stand.org.uk/cgi-bin/moin.cgi/DataSchema
-#        
+#
 # The XML files for Hansard objects come from the Public Whip parser:
 #       http://scm.kforge.net/plugins/scmsvn/cgi-bin/viewcvs.cgi/trunk/parlparse/pyscraper/?root=ukparse
 # And those for MPs are in (semi-)manually updated files here:
@@ -25,7 +25,7 @@ mySociety::Config::set_file('../conf/general');
 
 my $parldata = mySociety::Config::get('RAWDATA');
 
-use DBI; 
+use DBI;
 use XML::Twig;
 use File::Find;
 use Getopt::Long;
@@ -83,7 +83,7 @@ Loads XML files from the parldata (pwdata) directory into the fawkes database.
 The input files contain debates, written answers and so on, and were generated
 by pyscraper from parlparse. This script synchronises the database to the
 files, so existing entries with the same gid are updated preserving their
-database id. 
+database id.
 
 --wrans - process Written Answers (C&L)
 --debates - process Commons Debates
@@ -103,7 +103,7 @@ database id.
 
 --force - also delete items from database that weren't in the XML
           file (applied per day only)
---quiet - don't print the contents whenever an existing entry is 
+--quiet - don't print the contents whenever an existing entry is
           modified or deleted
 --cronquiet - stop printing date names as entries are processed
 
@@ -211,7 +211,7 @@ sub process_type {
                         if (m/^$xname(\d{4}-\d\d-\d\d)([a-z]*)\.xml$/
                             || /^$xname\d{4}-\d\d-\d\d_[^_]*_[^_]*_(\d{4}-\d\d-\d\d)([a-z]*)\.xml$/) {
                                 my $date_part = $1;
-        
+
                                 if ($xmaxtime[$i] < $stat[9]) {
                                         $xmaxfile = $xfile;
                                         $xmaxtime[$i] = $stat[9];
@@ -257,10 +257,10 @@ sub process_type {
                         }
                         $xmaxtime[$i] = $stat[9];
                 }
-       
+
                 if ($xxmaxtime != $xsince) {
                         # We use the current maxtime, so we run things still at that time again
-                        # (the rsync from parlparse might have only got one of two files set in 
+                        # (the rsync from parlparse might have only got one of two files set in
                         # the same second, and next time it might get the other)
                         #print "$xname since: $xsince new max $xmaxtime from changedates\n";
                         my $xdir = $xdirs->[0];
@@ -382,7 +382,7 @@ sub fix_case_part
         # This mainly applies to departmental names for Oral Answers to Questions
 #        print "fix_case_part " . $_ . "\n";
 
-        s/\s+$//g; 
+        s/\s+$//g;
         s/^\s+//g;
         s/\s+/ /g;
 
@@ -415,10 +415,10 @@ sub parsefile_glob {
 ##########################################################################
 # Database
 
-my ($dbh, 
+my ($dbh,
         $epadd, $epcheck, $epupdate,
         $hadd, $hcheck, $hupdate, $hdelete, $hdeletegid,
-        $constituencyadd, $constituencydel, $memberadd, $memberexist, $membercheck, 
+        $constituencyadd, $constituencydel, $memberadd, $memberexist, $membercheck,
         $gradd, $grcheck, $grdeletegid,
         $lastid);
 
@@ -429,41 +429,41 @@ sub db_connect
         $dbh = DBI->connect($dsn, mySociety::Config::get('DB_USER'), mySociety::Config::get('DB_PASSWORD'), { RaiseError => 1, PrintError => 0 });
 
         # epobject queries
-        $epadd = $dbh->prepare("insert into epobject (title, body, type, created, modified)
-                values ('', ?, 1, NOW(), NOW())");
-        $epcheck = $dbh->prepare("select body from epobject where epobject_id = ?");
-        $epupdate = $dbh->prepare("update epobject set body = ?, modified = NOW() where epobject_id = ?");
+        $epadd = $dbh->prepare("INSERT INTO epobject (title, body, type, created, modified)
+                VALUES ('', ?, 1, NOW(), NOW())");
+        $epcheck = $dbh->prepare("SELECT body FROM epobject WHERE epobject_id = ?");
+        $epupdate = $dbh->prepare("UPDATE epobject SET body = ?, modified = NOW() WHERE epobject_id = ?");
 
         # hansard object queries
-        $hadd = $dbh->prepare("insert into hansard (epobject_id, gid, htype, speaker_id, major, minor, section_id, subsection_id, hpos, hdate, htime, source_url, created, modified)
-                values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())");
-        $hcheck = $dbh->prepare("select epobject_id, gid, htype, speaker_id, major, minor, section_id, subsection_id, hpos, hdate, htime, source_url from hansard where gid = ?");
-        $hupdate = $dbh->prepare("update hansard set gid = ?, htype = ?, speaker_id = ?, major = ?, minor = ?, section_id = ?, subsection_id = ?, hpos = ?, hdate = ?, htime = ?, source_url = ?, modified = NOW()
-                where epobject_id = ? and gid = ?");
-        $hdelete = $dbh->prepare("delete from hansard where gid = ? and epobject_id = ?");
-        $hdeletegid = $dbh->prepare("delete from hansard where gid = ?");
+        $hadd = $dbh->prepare("INSERT INTO hansard (epobject_id, gid, htype, speaker_id, major, minor, section_id, subsection_id, hpos, hdate, htime, source_url, created, modified)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())");
+        $hcheck = $dbh->prepare("SELECT epobject_id, gid, htype, speaker_id, major, minor, section_id, subsection_id, hpos, hdate, htime, source_url FROM hansard WHERE gid = ?");
+        $hupdate = $dbh->prepare("UPDATE hansard SET gid = ?, htype = ?, speaker_id = ?, major = ?, minor = ?, section_id = ?, subsection_id = ?, hpos = ?, hdate = ?, htime = ?, source_url = ?, modified = NOW()
+                WHERE epobject_id = ? AND gid = ?");
+        $hdelete = $dbh->prepare("DELETE FROM hansard WHERE gid = ? AND epobject_id = ?");
+        $hdeletegid = $dbh->prepare("DELETE FROM hansard WHERE gid = ?");
 
         # member (MP) queries
-        $constituencydel = $dbh->prepare("delete from constituency");
-        $constituencyadd = $dbh->prepare("insert into constituency
-                (cons_id, name, main_name, from_date, to_date) values
+        $constituencydel = $dbh->prepare("DELETE FROM constituency");
+        $constituencyadd = $dbh->prepare("INSERT INTO constituency
+                (cons_id, name, main_name, from_date, to_date) VALUES
                 (?, ?, ?, ?, ?)");
-        $memberadd = $dbh->prepare("replace into member (member_id, person_id, house, title, first_name, last_name,
-                constituency, party, entered_house, left_house, entered_reason, left_reason) 
-                values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-        $memberexist = $dbh->prepare("select member_id from member where member_id = ?");
-        $membercheck = $dbh->prepare("select member_id from member where
-                member_id = ? and person_id = ? and house = ? and title = ? and first_name = ? and last_name = ?
-                and constituency = ? and party = ? and entered_house = ? and left_house = ?
-                and entered_reason = ? and left_reason = ?"); 
+        $memberadd = $dbh->prepare("REPLACE INTO member (member_id, person_id, house, title, first_name, last_name,
+                constituency, party, entered_house, left_house, entered_reason, left_reason)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+        $memberexist = $dbh->prepare("SELECT member_id FROM member WHERE member_id = ?");
+        $membercheck = $dbh->prepare("SELECT member_id FROM member WHERE
+                member_id = ? AND person_id = ? AND house = ? AND title = ? AND first_name = ? AND last_name = ?
+                AND constituency = ? AND party = ? AND entered_house = ? AND left_house = ?
+                AND entered_reason = ? AND left_reason = ?");
 
         # gidredirect entries
-        $gradd = $dbh->prepare("replace into gidredirect (gid_from, gid_to, hdate, major) values (?,?,?,?)");
-        $grcheck = $dbh->prepare("select gid_from, hdate, major from gidredirect where gid_to = ?");
-        $grdeletegid = $dbh->prepare("delete from gidredirect where gid_from = ?");
+        $gradd = $dbh->prepare("REPLACE INTO gidredirect (gid_from, gid_to, hdate, major) VALUES (?,?,?,?)");
+        $grcheck = $dbh->prepare("SELECT gid_from, hdate, major FROM gidredirect WHERE gid_to = ?");
+        $grdeletegid = $dbh->prepare("DELETE FROM gidredirect WHERE gid_from = ?");
 
         # other queries
-        $lastid = $dbh->prepare("select last_insert_id()");
+        $lastid = $dbh->prepare("SELECT last_insert_id()");
 
         # Clear any half made previous attempts.
         delete_lonely_epobjects()
@@ -487,15 +487,15 @@ sub delete_lonely_epobjects()
         my $r2 = $dbh->selectcol_arrayref("select count(*) from hansard");
         my $c2 = $r2->[0];
         return if $c2 == $c1;
-        
+
         print "Fixing up lonely epobjects. Counts: $c1 $c2\n" unless $cronquiet;
-        my $q = $dbh->prepare("select epobject_id from epobject");
+        my $q = $dbh->prepare("SELECT epobject_id FROM epobject");
         $q->execute();
         my $left;
         while (my @row = $q->fetchrow_array) {
                 $left->{$row[0]} = 1;
         }
-        $q = $dbh->prepare("select epobject_id from hansard");
+        $q = $dbh->prepare("SELECT epobject_id FROM hansard");
         $q->execute();
         while (my @row = $q->fetchrow_array) {
                 delete($left->{$row[0]});
@@ -506,7 +506,7 @@ sub delete_lonely_epobjects()
         print "Lonely epobject count: $rows\n" unless $cronquiet;
         if ($rows > 0) {
                 my $delids = join(", ", @array);
-                my $qq = $dbh->prepare("delete from epobject where epobject_id in (" . $delids . ")");
+                my $qq = $dbh->prepare("DELETE FROM epobject WHERE epobject_id IN (" . $delids . ")");
                 my $delrows = $qq->execute();
                 $qq->finish();
                 die "deleted " . $delrows . " but thought " . $rows if $delrows != $rows;
@@ -521,11 +521,11 @@ sub check_extra_gids
         my $gidsref = shift;
         my $where = shift;
 
-        my $q = $dbh->prepare("select gid from hansard where hdate = ? and gid not like '%L' and $where");
+        my $q = $dbh->prepare("SELECT gid FROM hansard WHERE hdate = ? AND gid not LIKE '%L' AND $where");
         my $rows = $q->execute($date);
         my $array_ref1 = $q->fetchall_arrayref();
         $q->finish();
-        $q = $dbh->prepare("select gid_from from gidredirect where hdate = ? and $where");
+        $q = $dbh->prepare("SELECT gid_from FROM gidredirect WHERE hdate = ? AND $where");
         $rows = $q->execute($date);
         my $array_ref2 = $q->fetchall_arrayref();
         $q->finish();
@@ -541,7 +541,7 @@ sub check_extra_gids
         # code is partly a double check.
         my %xml_hash;
         foreach my $gid (@xml_gids) {
-                $xml_hash{$gid} = 1; 
+                $xml_hash{$gid} = 1;
         }
         my $missing = 0;
         foreach my $gid (@mysql_allgids) {
@@ -550,7 +550,7 @@ sub check_extra_gids
                         $missing++;
                         my $vital = 0;
                         # check no comments, votes etc.
-                        for my $entry (["comments", "epobject_id",], 
+                        for my $entry (["comments", "epobject_id",],
                                            ["anonvotes", "epobject_id",],
                                            ["uservotes", "epobject_id",],
                                            ["trackbacks", "epobject_id",],
@@ -558,8 +558,8 @@ sub check_extra_gids
                                            ["editqueue", "epobject_id_h",],
                                            ) {
                                 my ($table, $field) = @$entry;
-                                my $epuse_comments = $dbh->prepare("select count(*) from epobject, hansard, $table
-                                        where epobject.epobject_id = $table.$field and epobject.epobject_id = hansard.epobject_id and
+                                my $epuse_comments = $dbh->prepare("SELECT COUNT(*) FROM epobject, hansard, $table
+                                        WHERE epobject.epobject_id = $table.$field AND epobject.epobject_id = hansard.epobject_id AND
                                         hansard.gid = ?");
                                 $epuse_comments->execute($gid);
                                 my $num_rows = $epuse_comments->fetchrow_array();
@@ -568,11 +568,11 @@ sub check_extra_gids
                                         if ($gid =~ /wrans/ && !$cronquiet) {
                                                 my $search_gid = $gid;
                                                 $search_gid =~ s/(\d\d\d\d-\d)\d-\d\d\w(\.\d+\.)/$1%$2/;
-                                                my $daychange = $dbh->prepare('SELECT gid,epobject_id FROM hansard WHERE gid like ? AND gid != ?');
+                                                my $daychange = $dbh->prepare('SELECT gid,epobject_id FROM hansard WHERE gid LIKE ? AND gid != ?');
                                                 $daychange->execute($search_gid, $gid);
                                                 my ($new_gid, $new_epobjectid) = $daychange->fetchrow_array();
                                                 if ($new_epobjectid) {
-                                                        my $hgetid = $dbh->prepare("select epobject_id from hansard where gid = ?");
+                                                        my $hgetid = $dbh->prepare("SELECT epobject_id FROM hansard WHERE gid = ?");
                                                         $hgetid->execute($gid);
                                                         my $old_epobjectid = $hgetid->fetchrow_array();
                                                         $hgetid->finish();
@@ -583,14 +583,14 @@ sub check_extra_gids
                                                                 next;
                                                         }
                                                 }
-                                        }                                
+                                        }
                                         print "VITAL ERROR! gid $gid needs deleting, has an entry in table $table, but no gid redirect\n";
                                         $vital++;
                                 }
                         }
                         # either fix it, or display it
                         if ($force) {
-                                if ($vital > 0) { 
+                                if ($vital > 0) {
                                         die "Refusing to even force delete, when there are references in other tables\n";
                                 } else {
                                         $hdeletegid->execute($gid);
@@ -616,8 +616,8 @@ sub check_extra_gids
 
 sub delete_redirected_gids {
         my ($date, $grdests) = @_;
-        my $q_redirect = $dbh->prepare('SELECT gid_to from gidredirect WHERE gid_from = ?');
-        my $hgetid = $dbh->prepare("select epobject_id from hansard where gid = ?");
+        my $q_redirect = $dbh->prepare('SELECT gid_to FROM gidredirect WHERE gid_from = ?');
+        my $hgetid = $dbh->prepare("SELECT epobject_id FROM hansard WHERE gid = ?");
         foreach my $from_gid (sort keys %$grdests) {
                 my $to_gid = $grdests->{$from_gid};
                 my $loop;
@@ -639,16 +639,16 @@ sub delete_redirected_gids {
                 }
 
                 # move comments and votes and so forth to redirected gid destination
-                for my $entry (["comments", "epobject_id",], 
-                                   ["anonvotes", "epobject_id",],
-                                   ["uservotes", "epobject_id",],
-                                   ["trackbacks", "epobject_id",],
-                                   ["editqueue", "epobject_id_l",],
-                                   ["editqueue", "epobject_id_h",],
-                                   ) {
+                for my $entry (["comments", "epobject_id",],
+                                ["anonvotes", "epobject_id",],
+                                ["uservotes", "epobject_id",],
+                                ["trackbacks", "epobject_id",],
+                                ["editqueue", "epobject_id_l",],
+                                ["editqueue", "epobject_id_h",],
+                                ) {
                         my ($table, $field) = @$entry;
-                        my $epuse_comments = $dbh->prepare("select count(*) from epobject, hansard, $table
-                                where epobject.epobject_id = $table.$field and epobject.epobject_id = hansard.epobject_id and
+                        my $epuse_comments = $dbh->prepare("SELECT COUNT(*) FROM epobject, hansard, $table
+                                WHERE epobject.epobject_id = $table.$field AND epobject.epobject_id = hansard.epobject_id AND
                                 hansard.gid = ?");
                         $epuse_comments->execute($from_gid);
                         my $num_rows = $epuse_comments->fetchrow_array();
@@ -660,7 +660,7 @@ sub delete_redirected_gids {
 
                                 print "gid $from_gid has $num_rows " . ($num_rows==1?'entry':'entries') . " in table $table, new gid $to_gid\n" unless $cronquiet;
                                 update_eid($table, $field, $old_epobjectid, $new_epobjectid);
-                         }
+                        }
                 }
 
                 # delete the now obsolete "from record" (which is replaced by its "to record")
@@ -669,28 +669,28 @@ sub delete_redirected_gids {
                         print "deleted $from_gid which is now redirected to $to_gid\n" unless $cronquiet;
                 }
                 $hdeletegid->finish();
-         }
+        }
 }
 
 sub update_eid {
         my ($table, $field, $old_epobjectid, $new_epobjectid) = @_;
         print "updating epobject id from $old_epobjectid => $new_epobjectid\n" unless $cronquiet;
         if ($table eq 'anonvotes') {
-                my $epalready = $dbh->prepare("select epobject_id,yes_votes,no_votes from anonvotes where epobject_id=?");
+                my $epalready = $dbh->prepare("SELECT epobject_id,yes_votes,no_votes FROM anonvotes WHERE epobject_id=?");
                 $epalready->execute($new_epobjectid);
                 my @arr = $epalready->fetchrow_array();
                 if ($arr[0]) {
-                        my $epdelete = $dbh->prepare('delete from anonvotes where epobject_id=?');
+                        my $epdelete = $dbh->prepare('DELETE FROM anonvotes WHERE epobject_id=?');
                         $epdelete->execute($new_epobjectid);
                         $epdelete->finish();
-                        my $epuse_updateid = $dbh->prepare("update anonvotes set yes_votes=yes_votes+$arr[1],
-                                no_votes=no_votes+$arr[2], epobject_id=? where epobject_id = ?");
+                        my $epuse_updateid = $dbh->prepare("UPDATE anonvotes SET yes_votes=yes_votes+$arr[1],
+                                no_votes=no_votes+$arr[2], epobject_id=? WHERE epobject_id = ?");
                         $epuse_updateid->execute($new_epobjectid, $old_epobjectid);
                         $epuse_updateid->finish();
                         return;
                 }
         }
-        my $epuse_updateid = $dbh->prepare("update $table set $field = ? where $field = ?");
+        my $epuse_updateid = $dbh->prepare("UPDATE $table SET $field = ? WHERE $field = ?");
         $epuse_updateid->execute($new_epobjectid, $old_epobjectid);
         $epuse_updateid->finish();
 }
@@ -704,7 +704,7 @@ sub db_addpair
         my $major = $$hparams[3];
 
         $ignorehistorygids{$gid} = 1;
-       
+
         # Depending on what mode we're in
         if ($tallygidsmode) {
                 die "Got gid $gid twice in XML file" if (defined $gids{$gid});
@@ -773,7 +773,7 @@ sub db_addpair
         }
         $hcheck->finish();
         $grcheck->finish();
-        
+
         $epadd->execute(@$epparams);
         my $epid = last_id();
         $epadd->finish();
@@ -781,7 +781,7 @@ sub db_addpair
         $hadd->finish();
 
         # print "added " . $gid . "\n";
-        
+
         return $epid;
 }
 
@@ -861,7 +861,7 @@ sub memory_test
                 $memmark = mem_use_begin();
                         add_debates_day("2004-04-01");
                 mem_use_end("add_debates_day", $memmark);
-                my $qq = $dbh->do('delete from hansard where hdate="2004-04-01"');
+                my $qq = $dbh->do('DELETE FROM hansard WHERE hdate="2004-04-01"');
                 delete_lonely_epobjects();
         }
         db_disconnect();
@@ -875,18 +875,18 @@ sub memory_test
 # MPs and Peers, also constituencies, people
 
 sub add_mps_and_peers {
-        $dbh->do("delete from moffice");
-        my $twig = XML::Twig->new(twig_handlers => 
-                { 'constituency' => \&loadconstituency, 
-                  'member' => \&loadmember, 
-                  'lord' => \&loadlord, 
-                  'royal' => \&loadroyal, 
-                  'member_ni' => \&loadni,
-                  'member_sp' => \&loadmsp,
-                  'person' => \&loadperson,
-                  'moffice' => \&loadmoffice }, 
+        $dbh->do("DELETE FROM moffice");
+        my $twig = XML::Twig->new(twig_handlers =>
+                { 'constituency' => \&loadconstituency,
+                    'member' => \&loadmember,
+                    'lord' => \&loadlord,
+                    'royal' => \&loadroyal,
+                    'member_ni' => \&loadni,
+                    'member_sp' => \&loadmsp,
+                    'person' => \&loadperson,
+                    'moffice' => \&loadmoffice },
                 output_filter => $outputfilter );
-        $constituencydel->execute(); 
+        $constituencydel->execute();
         $constituencydel->finish();
         my $pwmembers = mySociety::Config::get('PWMEMBERS');
         $twig->parsefile($pwmembers . "divisions.xml");
@@ -900,7 +900,7 @@ sub add_mps_and_peers {
 }
 
 sub check_member_ids {
-        my $q = $dbh->prepare("select member_id from member"); 
+        my $q = $dbh->prepare("SELECT member_id FROM member");
         $q->execute();
         while (my @row = $q->fetchrow_array) {
                 print "Member $row[0] in DB, not in XML\n" if (!$member_ids{$row[0]});
@@ -926,7 +926,7 @@ sub loadmoffices {
         }
         foreach my $row (@moffices) {
                 next unless $row;
-                my $sth = $dbh->do("insert into moffice (dept, position, from_date, to_date, person, source) values (?, ?, ?, ?, ?, ?)", {}, 
+                my $sth = $dbh->do("INSERT INTO moffice (dept, position, from_date, to_date, person, source) VALUES (?, ?, ?, ?, ?, ?)", {},
                 $row->[1], $row->[2], $row->[3], $row->[4], $row->[5], $row->[6]);
         }
 }
@@ -972,7 +972,7 @@ sub loadconstituency
     for (my $name = $cons->first_child('name'); $name;
         $name = $name->next_sibling('name')) {
 
-        # We encode entities as e.g. &Ouml;, as otherwise non-ASCII characters         
+        # We encode entities as e.g. &Ouml;, as otherwise non-ASCII characters
         # get lost somewhere between Perl, the database and the browser.
         $constituencyadd->execute(
             $consid,
@@ -999,29 +999,29 @@ sub loadmember {
 
         my $house;
 		if ($member->att('house') eq "representatives") {
-	        $id =~ s:uk.org.publicwhip/member/::;
+            $id =~ s:uk.org.publicwhip/member/::;
 			$house = 1;
 		}
 		elsif ($member->att('house') eq "senate") {
-	        $id =~ s:uk.org.publicwhip/lord/::;
+            $id =~ s:uk.org.publicwhip/lord/::;
 			$house = 2;
 		}
         else {
-                die "Unknown house"; 
+                die "Unknown house";
         }
-        
+
         # We encode entities as e.g. &Ouml;, as otherwise non-ASCII characters
         # get lost somewhere between Perl, the database and the browser.
         # Just done for names (not constituency and party) as they are the
         # only place to have accents, and constituencies have & signs and
         # the postcode search matching system uses them.
-        db_memberadd($id, 
+        db_memberadd($id,
                 $person_id,
-                $house, 
+                $house,
                 encode_entities_noapos($member->att('title')),
-                encode_entities_noapos($member->att('firstname')), 
+                encode_entities_noapos($member->att('firstname')),
                 encode_entities_noapos($member->att('lastname')),
-                encode_entities_noapos($member->att('division')), 
+                encode_entities_noapos($member->att('division')),
                 $member->att('party'),
                 $member->att('fromdate'), $member->att('todate'),
                 $member->att('fromwhy'), $member->att('towhy'));
@@ -1035,13 +1035,13 @@ sub loadlord {
         my $person_id = $membertoperson{$id};
         $id =~ s:uk.org.publicwhip/lord/::;
         $person_id =~ s:uk.org.publicwhip/person/::;
-#        print "$id $person_id ".$member->att('title').' '.$member->att('lordname')."\n"; 
+#        print "$id $person_id ".$member->att('title').' '.$member->att('lordname')."\n";
 
         my $house = 2;
         if ($member->att('house') ne "lords") {
-                die "Unknown house"; 
+                die "Unknown house";
         }
-        
+
         my $fromdate = $member->att('fromdate');
         $fromdate = "$fromdate-01-01" if length($fromdate)==4;
         $fromdate = '0000-00-00' unless $fromdate;
@@ -1057,7 +1057,7 @@ sub loadlord {
                 $house,
                 encode_entities_noapos($member->att('title')),
                 $member->att('forenames'),
-                $member->att('lordname'), 
+                $member->att('lordname'),
                 encode_entities_noapos($member->att('lordofname')),
                 $affiliation,
                 $fromdate, $member->att('todate'),
@@ -1080,7 +1080,7 @@ sub loadroyal {
                 $person_id,
                 $house,
                 encode_entities_noapos($member->att('title')),
-                encode_entities_noapos($member->att('firstname')), 
+                encode_entities_noapos($member->att('firstname')),
                 encode_entities_noapos($member->att('lastname')),
                 '', # No constituency, all land is "held of the Crown"
                 '', # No party, constitutionally
@@ -1096,13 +1096,13 @@ sub loadni {
         $id =~ s:uk.org.publicwhip/member/::;
         $person_id =~ s:uk.org.publicwhip/person/::;
         my $house = 3;
-        db_memberadd($id, 
+        db_memberadd($id,
                 $person_id,
-                $house, 
+                $house,
                 encode_entities_noapos($member->att('title')),
-                encode_entities_noapos($member->att('firstname')), 
+                encode_entities_noapos($member->att('firstname')),
                 encode_entities_noapos($member->att('lastname')),
-                encode_entities_noapos($member->att('constituency')), 
+                encode_entities_noapos($member->att('constituency')),
                 Encode::encode('iso-8859-1', $member->att('party')),
                 $member->att('fromdate'), $member->att('todate'),
                 $member->att('fromwhy'), $member->att('towhy'));
@@ -1115,17 +1115,17 @@ sub loadmsp {
         $id =~ s:uk.org.publicwhip/member/::;
         $person_id =~ s:uk.org.publicwhip/person/::;
         my $house = 4;
-        db_memberadd($id, 
+        db_memberadd($id,
                 $person_id,
-                $house, 
+                $house,
                 encode_entities_noapos($member->att('title')),
-                encode_entities_noapos($member->att('firstname')), 
+                encode_entities_noapos($member->att('firstname')),
                 encode_entities_noapos($member->att('lastname')),
-                encode_entities_noapos($member->att('constituency')), 
+                encode_entities_noapos($member->att('constituency')),
                 Encode::encode('iso-8859-1', $member->att('party')),
                 $member->att('fromdate'), $member->att('todate'),
                 $member->att('fromwhy'), $member->att('towhy'));
-        $dbh->do('replace into personinfo (person_id, data_key, data_value) values (?, ?, ?)', {},
+        $dbh->do('REPLACE INTO personinfo (person_id, data_key, data_value) VALUES (?, ?, ?)', {},
                 $person_id, 'sp_url', $member->att('spurl'));
 }
 
@@ -1146,9 +1146,9 @@ sub loadperson {
 sub add_wrans_day
 {
         my ($date) = @_;
-        
+
         use vars qw($lordshead);
-        my $twig = XML::Twig->new(twig_handlers => { 
+        my $twig = XML::Twig->new(twig_handlers => {
                         'ques' => sub { do_load_speech($_, 3, 1, $_->sprint(1)) },
                         'reply' => sub { do_load_speech($_, 3, 2, $_->sprint(1)) },
                         'minor-heading' => sub {
@@ -1201,7 +1201,7 @@ sub add_wrans_day
 
         # and delete anything that has been redirected (moving comments etc)
         delete_redirected_gids($date, \%grdests);
-         
+
         undef $twig;
 }
 
@@ -1211,7 +1211,7 @@ sub add_wrans_day
 sub add_debates_day
 {
         my ($date) = @_;
-        my $twig = XML::Twig->new(twig_handlers => { 
+        my $twig = XML::Twig->new(twig_handlers => {
                 'speech' => sub { do_load_speech($_, 1, 0, $_->sprint(1)) },
                 'minor-heading' => sub { do_load_subheading($_, 1, strip_string($_->sprint(1))) },
                 'major-heading' => sub { load_debate_heading($_, 1) },
@@ -1241,7 +1241,7 @@ sub add_debates_day
 }
 
 # load <major-heading> tags
-sub load_debate_heading { 
+sub load_debate_heading {
         my ($speech, $major) = @_;
         # we merge together the Oral Answers to Questions major heading with the
         # major headings "under" it.
@@ -1262,7 +1262,7 @@ sub load_debate_division {
         my ($division, $major) = @_;
         my $divdate = $division->att('divdate');
         my $divnumber = $division->att('divnumber');
-        my $text = 
+        my $text =
 "<p class=\"divisionheading\">Division number $divnumber</p>
 <p class=\"divisionbody\"><a href=\"" . mySociety::Config::get('PUBLICWHIP_HOST') . "/division.php?date=$divdate&amp;number=$divnumber";
         $text .= '&amp;house=lords' if $major == 101;
@@ -1278,7 +1278,7 @@ list of votes</a> (From <a href=\"" . mySociety::Config::get('PUBLICWHIP_HOST') 
 sub add_lordsdebates_day
 {
         my ($date) = @_;
-        my $twig = XML::Twig->new(twig_handlers => { 
+        my $twig = XML::Twig->new(twig_handlers => {
                 'speech' => sub { do_load_speech($_, 101, 0, $_->sprint(1)) },
                 'minor-heading' => sub { do_load_subheading($_, 101, strip_string($_->sprint(1))) },
                 'major-heading' => sub { load_debate_heading($_, 101) },
@@ -1312,7 +1312,7 @@ sub add_lordsdebates_day
 sub add_westminhall_day
 {
         my ($date) = @_;
-        my $twig = XML::Twig->new(twig_handlers => { 
+        my $twig = XML::Twig->new(twig_handlers => {
                 'speech' => sub { do_load_speech($_, 2, 0, $_->sprint(1)) },
                 'minor-heading' => sub { do_load_subheading($_, 2, strip_string($_->sprint(1))) },
                 'major-heading' => sub { load_debate_heading($_, 2) },
@@ -1430,7 +1430,7 @@ sub load_lords_wms_speech {
 
 sub add_ni_day {
         my ($date) = @_;
-        my $twig = XML::Twig->new(twig_handlers => { 
+        my $twig = XML::Twig->new(twig_handlers => {
                 'speech' => sub {
                         my $speech = $_;
                         if (!$currsection && !$currsubsection) {
@@ -1465,7 +1465,7 @@ sub add_ni_day {
         undef $twig;
 }
 
-sub load_ni_heading { 
+sub load_ni_heading {
         my ($speech, $inoralanswers) = @_;
         my $text = strip_string($speech->sprint(1));
         if ($inoralanswers) {
@@ -1480,7 +1480,7 @@ sub load_ni_heading {
 
 sub add_scotland_day {
         my ($date) = @_;
-        my $twig = XML::Twig->new(twig_handlers => { 
+        my $twig = XML::Twig->new(twig_handlers => {
                 'speech'        => sub { do_load_speech($_, 7, 0, $_->sprint(1)) },
                 'minor-heading' => sub { do_load_subheading($_, 7, strip_string($_->sprint(1))) },
                 'major-heading' => sub { do_load_heading($_, 7, strip_string($_->sprint(1))) },
@@ -1526,7 +1526,7 @@ sub load_scotland_division {
 
 sub add_scotwrans_day {
         my ($date) = @_;
-        my $twig = XML::Twig->new(twig_handlers => { 
+        my $twig = XML::Twig->new(twig_handlers => {
                 'ques' => sub { do_load_speech($_, 8, 1, $_->sprint(1)) },
                 'reply' => sub { do_load_speech($_, 8, 2, $_->sprint(1)) },
                 'minor-heading' => sub { do_load_heading($_, 8, strip_string($_->sprint(1))) },
@@ -1563,12 +1563,12 @@ sub add_bill {
                 die "Couldn't get session out of $url, $bill, $date";
         }
         # Get bill ID
-        my $bill_id = $dbh->selectrow_array('select id from bills where url=?', {}, $url);
+        my $bill_id = $dbh->selectrow_array('SELECT id FROM bills WHERE url=?', {}, $url);
         if (!$bill_id) {
-                $bill_id = $dbh->selectrow_array('select id from bills where title=? and session=?', {}, $bill, $session);
+                $bill_id = $dbh->selectrow_array('SELECT id FROM bills WHERE title=? AND session=?', {}, $bill, $session);
         }
         if (!$bill_id) {
-                $dbh->do('insert into bills (session, title, lords, url, standingprefix) values (?,?,?,?,"")',
+                $dbh->do('INSERT INTO bills (session, title, lords, url, standingprefix) VALUES (?,?,?,?,"")',
                         {}, $session, $bill, $lords, $url);
                 $bill_id = last_id();
         }
@@ -1579,7 +1579,7 @@ sub add_standing_title {
         my ($heading, $bill, $bill_id, @preheadingspeech) = @_;
         $heading->att('id') =~ /^.*\/(.*?_.*?_)/;
         my $prefix = $1;
-        $dbh->do('update bills set standingprefix=? where id=?', {}, $prefix, $bill_id);
+        $dbh->do('UPDATE bills SET standingprefix=? WHERE id=?', {}, $prefix, $bill_id);
         do_load_heading($heading, 6, $bill, $bill_id);
         foreach (@preheadingspeech) {
                 do_load_speech($_, 6, $bill_id, $_->sprint(1));
@@ -1590,7 +1590,7 @@ sub add_standing_day {
         my ($date) = @_;
         use vars qw($bill $bill_id $majorheadingstate @preheadingspeech);
         $majorheadingstate = 0;
-        my $twig = XML::Twig->new(twig_handlers => { 
+        my $twig = XML::Twig->new(twig_handlers => {
                 'bill' => sub {
                         $bill = strip_string($_->att('title'));
                         my $url = $_->att('url');
@@ -1605,14 +1605,14 @@ sub add_standing_day {
                                 (my $member_id = $_->att('memberid')) =~ s:uk.org.publicwhip/member/::;
                                 $current_file =~ /_(\d\d-\d)_/;
                                 my $sitting = $1;
-                                if (my ($id, $curr_attending) = $dbh->selectrow_array('select id,attending from pbc_members where member_id=? and bill_id=?
-                                        and sitting=?', {}, $member_id, $bill_id, $sitting)) {
+                                if (my ($id, $curr_attending) = $dbh->selectrow_array('SELECT id,attending FROM pbc_members WHERE member_id=? AND bill_id=?
+                                        AND sitting=?', {}, $member_id, $bill_id, $sitting)) {
                                         if ($curr_attending != $attending) {
-                                                $dbh->do('update pbc_members set attending=? where id=?', {},
+                                                $dbh->do('UPDATE pbc_members SET attending=? WHERE id=?', {},
                                                         $attending, $id);
                                         }
                                 } else {
-                                        $dbh->do('insert into pbc_members (bill_id, sitting, member_id, attending, chairman) values
+                                        $dbh->do('INSERT INTO pbc_members (bill_id, sitting, member_id, attending, chairman) VALUES
                                                 (?, ?, ?, ?, ?)', {}, $bill_id, $sitting, $member_id, $attending, $chairman);
                                 }
                         }
@@ -1791,7 +1791,7 @@ sub do_load_heading
 
         my $type = 10;
         my $speaker = 0;
-       
+
         my @epparam = (fix_case($text));
         my @hparam = ($speech->att('id'), $type, $speaker, $major, $minor, 0, 0, $hpos, $curdate, $htime, $url);
         my $epid = db_addpair(\@epparam, \@hparam);
@@ -1850,7 +1850,7 @@ sub do_load_gidredirect
 {
         my ($gidredirect, $major) = @_;
 
-        my $oldgid = $gidredirect->att('oldgid'); 
+        my $oldgid = $gidredirect->att('oldgid');
         my $newgid = $gidredirect->att('newgid');
         my $matchtype = $gidredirect->att('matchtype');
         # if matchtype is multiplecover, let through >1 identical GIDs
@@ -1869,7 +1869,7 @@ sub do_load_gidredirect
                 $gids{$oldgid} = 1;
                 return if ($matchtype eq 'removed');
         }
- 
+
         $gradd->execute($oldgid, $newgid, $curdate, $major);
         $gradd->finish();
 }
