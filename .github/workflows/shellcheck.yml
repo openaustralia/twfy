@@ -31,7 +31,7 @@ jobs:
         run: shellcheck -x weeklyupdate morningupdate dailyupdate
         working-directory: scripts
 
-  weekylyupdate:
+  weeklyupdate:
     runs-on: ubuntu-latest
     services:
       mysql:
@@ -50,7 +50,14 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+      - name: Checkout shlib
+        uses: actions/checkout@v4
+        with:
+          repository: openaustralia/shlib
+          path: shlib-checkout
+      - name: Switch shlib to PR branch if it exists
+        run: git fetch origin ${{ github.head_ref || github.ref_name }} && git checkout ${{ github.head_ref || github.ref_name }} || echo "No PR branch found, using main"
+        working-directory: shlib-checkout
       - name: run weeklyupdate script
         run: scripts/weeklyupdate
-
 
