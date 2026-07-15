@@ -1,5 +1,7 @@
 #!/usr/bin/perl
 
+# Parses source text for ministerial committees into structured output.
+
 use warnings;
 use strict;
 use LWP::Simple;
@@ -94,54 +96,52 @@ sub process {
 
 
 sub cleanup_members {
-	my $ref= shift;
-	foreach my $ctte (keys %{$ref}) {
-	   foreach my $subctte (keys %{$ref->{$ctte}}) {
-		#print "\n$ctte: $subctte\n\t";
-		my @members;
+    my $ref= shift;
+    foreach my $ctte (keys %{$ref}) {
+        foreach my $subctte (keys %{$ref->{$ctte}}) {
+            my @members;
 
-		# pass 1 - rules. does most of the checkable cleanup.
-		foreach my $member (@{$ref->{$ctte}->{$subctte}->{'composition'}}) {
-			if ($member =~ m#^[\(a-z]#) { #titles all start with a capital letter
-				$members[$#members] .= " " . $member;
-			} elsif ($member =~ m#^[^(]+\)#) { # tings which have a closing bracket by no opening are continuations
-				$members[$#members] .= " " . $member;
-			} elsif ($member =~ m#^\s+\d+\s*$#)  { # errant page numbers
-			} elsif ($member =~ m#^\S+\s*$#)  { # positions all have more than one word
-				$members[$#members] .= " " . $member;
-			} else {
-				push @members, $member;
-			}
-		}
-		my @intermediate=@members;
-		@members=();
-		# pass 2. Look for keywords. Only doable after previous step
+            # pass 1 - rules. does most of the checkable cleanup.
+            foreach my $member (@{$ref->{$ctte}->{$subctte}->{'composition'}}) {
+                if ($member =~ m#^[\(a-z]#) { #titles all start with a capital letter
+                    $members[$#members] .= " " . $member;
+                } elsif ($member =~ m#^[^(]+\)#) { # tings which have a closing bracket by no opening are continuations
+                    $members[$#members] .= " " . $member;
+                } elsif ($member =~ m#^\s+\d+\s*$#)  { # errant page numbers
+                } elsif ($member =~ m#^\S+\s*$#)  { # positions all have more than one word
+                    $members[$#members] .= " " . $member;
+                } else {
+                    push @members, $member;
+                }
+            }
+            my @intermediate=@members;
+            @members=();
+            # pass 2. Look for keywords. Only doable after previous step
 
-		my $attendance='';
-		foreach my $member (@intermediate) {
-			if ($member =~ m#^(?:Prime|Minster|Minister|Deputy|Secretary|Chief Whip|Chief Sec|Chancellor|Leader|The|Attorney|Other|Advocate|Paymaster|Solicitor|Parliamentary|When)#) {
-				if ($member=~ m#^(?:The )?(.*) also has the right to attend#)  {
-					$member = "[Right to Attend] $1";
-				}
-					
-				push @members, $attendance.$member;
-			} else {
-				if ($member =~ m#In attendance#i) {
-					$attendance= "[In Attendance] ";
-				} elsif ($member =~ m#^Also has the right to attend$#) {
-					$attendance= "[Right to Attend] ";
-				} else {
-					$members[$#members] .= " " . $member;
-				}
-				#$members[$#members] .= " " . $member;
-			}
-		}
+            my $attendance='';
+            foreach my $member (@intermediate) {
+                if ($member =~ m#^(?:Prime|Minster|Minister|Deputy|Secretary|Chief Whip|Chief Sec|Chancellor|Leader|The|Attorney|Other|Advocate|Paymaster|Solicitor|Parliamentary|When)#) {
+                    if ($member=~ m#^(?:The )?(.*) also has the right to attend#)  {
+                        $member = "[Right to Attend] $1";
+                    }
 
-		#print join "\n\t", @members;
-		$ref->{$ctte}->{$subctte}->{'composition'}=\@members;
-	   }
-	}
-	return ($ref);
+                    push @members, $attendance.$member;
+                } else {
+                    if ($member =~ m#In attendance#i) {
+                        $attendance= "[In Attendance] ";
+                    } elsif ($member =~ m#^Also has the right to attend$#) {
+                        $attendance= "[Right to Attend] ";
+                    } else {
+                        $members[$#members] .= " " . $member;
+                    }
+                    #$members[$#members] .= " " . $member;
+                }
+            }
+
+            $ref->{$ctte}->{$subctte}->{'composition'}=\@members;
+        }
+    }
+    return ($ref);
 }
 
 
@@ -152,7 +152,7 @@ sub output {
 
 	print "ctte\tsubctte\ttype\tvalue\tnote\n";
 	foreach my $ctte (keys %{$ref}) {
-		foreach my $subctte (keys %{$ref->{$ctte}}){  
+		foreach my $subctte (keys %{$ref->{$ctte}}){
 			if ($ref->{$ctte}->{$subctte}->{'termsofreference'}) {
 				print "$ctte\t$subctte\tterms\t$ref->{$ctte}->{$subctte}->{'termsofreference'}\n";
 			}
