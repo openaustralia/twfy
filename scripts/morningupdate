@@ -26,9 +26,9 @@ fi
 
 if [[ "$VERBOSE" == "true" ]]
 then
-	CRONQUIET_NODASH=""
+    CRONQUIET_NODASH=""
 else
-	CRONQUIET_NODASH="cronquiet"
+    CRONQUIET_NODASH="cronquiet"
 fi
 
 # Make sure only one copy runs at once
@@ -37,7 +37,7 @@ then
     if ./run-with-lockfile -n morningupdate-lockfile "$0"; then rc=0; else rc=$?; fi
     if [[ $rc -eq 100 ]]
     then
-            echo "Another copy of morningupdate or compactsearchdb is already running" 1>&2
+        echo "Another copy of morningupdate or compactsearchdb is already running" 1>&2
     fi
     exit $rc
 fi
@@ -59,12 +59,12 @@ fi
 # Create new RSS files.
 if [[ "$VERBOSE" == "true" ]]
 then
-	echo "Running rssgenerate"
-	./rssgenerate
+    echo "Running rssgenerate"
+    ./rssgenerate
 else
     if command -v at >/dev/null 2>&1; then
         # Queue rssgenerate to run asynchronously via 'at'.
-		at NOW >/dev/null 2>/dev/null <<'EOF'
+        at NOW >/dev/null 2>/dev/null <<'EOF'
 ./rssgenerate
 EOF
     else

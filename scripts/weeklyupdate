@@ -17,19 +17,19 @@ INDEX="$(mktemp "${TMPDIR:-/tmp}/all-titles-in-ns0.XXXXXX")"
 INDEX_GZ="${INDEX}.gz"
 
 cleanup() {
-	rm -f "$INDEX_GZ" "$INDEX"
+    rm -f "$INDEX_GZ" "$INDEX"
 }
 trap cleanup EXIT
 
 # Get new Wikipedia titles database
 # looks for "enwiki/ in the page (with a leading quote) so it doesn't pick up "tenwiki"
 DUMPDATE="$(curl --fail --location --silent --show-error "https://dumps.wikimedia.org/backup-index.html" \
-	| grep -oE '"enwiki/[0-9]{8}/' \
-	| head -n 1 \
-	| grep -oE '[0-9]{8}')"
+    | grep -oE '"enwiki/[0-9]{8}/' \
+    | head -n 1 \
+    | grep -oE '[0-9]{8}')"
 if [[ -z "$DUMPDATE" ]]; then
-	echo "Could not determine Wikipedia dump date" >&2
-	exit 1
+    echo "Could not determine Wikipedia dump date" >&2
+    exit 1
 fi
 echo "Wikipedia dump date $DUMPDATE"
 
@@ -41,12 +41,12 @@ ls -lh "$INDEX_GZ"
 gunzip "$INDEX_GZ"
 
 MYSQL=(
-	mysql
-	--local-infile=1
-	-u "${DB_USER}"
-	"--password=${DB_PASSWORD}"
-	--host="${DB_HOST}"
-	"${DB_NAME}"
+    mysql
+    --local-infile=1
+    -u "${DB_USER}"
+    "--password=${DB_PASSWORD}"
+    --host="${DB_HOST}"
+    "${DB_NAME}"
 )
 
 echo "load data local infile '$INDEX' ignore into table titles;" | "${MYSQL[@]}"
