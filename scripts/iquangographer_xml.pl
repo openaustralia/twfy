@@ -11,7 +11,7 @@ use lib "$FindBin::Bin/../../perllib";
 use mySociety::Config;
 mySociety::Config::set_file('../conf/general');
 
-use DBI; 
+use DBI;
 use Data::Dumper;
 use XML::Simple;
 my $dsn = 'DBI:mysql:database=' . mySociety::Config::get('DB_NAME'). ':host=' . mySociety::Config::get('DB_HOST');
@@ -33,11 +33,11 @@ my $sequences;
 
 }
 
-sub get_variables {	
-	my $member_query= $dbh->prepare("select * from member where left_reason='still_in_office' and house = 1 ");
+sub get_variables {
+	my $member_query= $dbh->prepare("SELECT * FROM member WHERE left_reason='still_in_office' AND house = 1");
 	$member_query->execute();
-	my $member_info_query= $dbh->prepare("select * from memberinfo where member_id= ? ");
-	my $person_info_query= $dbh->prepare("select * from personinfo where person_id = ? ");
+	my $member_info_query= $dbh->prepare("SELECT * FROM memberinfo WHERE member_id= ?");
+	my $person_info_query= $dbh->prepare("SELECT * FROM personinfo WHERE person_id = ?");
 
 	while (my $result= $member_query->fetchrow_hashref) {
 		$member->{$result->{'member_id'}}->{'memberdata'}=$result;
@@ -51,12 +51,12 @@ sub get_variables {
 
 		$person_info_query->execute($result->{'person_id'});
 		while (my $m_r= $person_info_query->fetchrow_hashref) {
-		
+
 			if ($m_r->{'data_key'} =~ m#expenses#i) {
                         	my ($year, $name);
                         	next if $m_r->{'data_key'} =~ m#outof#i;
                         	next if $m_r->{'data_key'} =~ m#quintile#i;
-	
+
                         	if (($year, $name)= $m_r->{'data_key'}=~ m#expenses(\d+)_(.*)$#) {
                                 	$member->{$result->{'member_id'}}->{'expenses'}->{$name}->{$year}=$m_r->{'data_value'};
                                 	$memberinfo_keys{$name}++;
@@ -64,7 +64,7 @@ sub get_variables {
 			} else {
 				$member->{$result->{'member_id'}}->{'values'}->{$m_r->{'data_key'}}=$m_r->{'data_value'};
 				$memberinfo_keys{$m_r->{'data_key'}}++;
-			}	
+			}
 
 		}
 
@@ -77,7 +77,7 @@ sub get_variables {
 
 sub make_structure_and_output{
 	my $index=0;
-	my $output;	
+	my $output;
 	foreach my $mp (sort {
 				(lc($member->{$a}->{'memberdata'}->{'last_name'}) cmp lc($member->{$b}->{'memberdata'}->{'last_name'})) or
 				(lc($member->{$a}->{'memberdata'}->{'first_name'}) cmp lc($member->{$b}->{'memberdata'}->{'first_name'})) or
@@ -91,7 +91,7 @@ sub make_structure_and_output{
 		$output->{'points'}->{'point'}[$index]->{'colour'}= &get_colour($member->{$mp}->{'memberdata'}->{'party'}) || '000000';
 		$output->{'points'}->{'point'}[$index]->{'link'}= 'http://www.openaustralia.org/mp/?m=' . $mp;
 
-		foreach my $data_key (keys %{$member->{$mp}->{'values'}}){ 
+		foreach my $data_key (keys %{$member->{$mp}->{'values'}}){
 			my $skip=0;
 			foreach my $k (keys %skip_these) { $skip=1 if $data_key =~ m#$k#i; }
 			next if ($data_key =~ m#expenses#i and $data_key !~ m#total#i);
@@ -114,7 +114,7 @@ sub make_structure_and_output{
 			} else {
 				if (not $member->{$mp}->{'values'}->{$data_key} =~ m#[^\.\d \-]#) {
 					if ($variables_max{$data_key} <  $member->{$mp}->{'values'}->{$data_key} ) {
-						#warn "$data_key $variables_max{$data_key} <  $member->{$mp}->{'values'}->{$data_key} "; 
+						#warn "$data_key $variables_max{$data_key} <  $member->{$mp}->{'values'}->{$data_key} ";
 						$variables_max{$data_key}= $member->{$mp}->{'values'}->{$data_key};
 					}
 				}
@@ -122,11 +122,11 @@ sub make_structure_and_output{
 		}
 
 		my $sequenceno=0;
-                foreach my $name (keys %{$member->{$mp}->{'expenses'}}){ 
+                foreach my $name (keys %{$member->{$mp}->{'expenses'}}){
 
                         next if $name =~ m#outof#i;
                         next if $name =~ m#quintile#i;
-                        
+
                         if ($member->{$mp}->{'expenses'}->{$name}=~ m#%#) {
                                         $varinfo{$name}->{'unit'}='%';
                                         $member->{$mp}->{'expenses'}->{$name} =~ s#%##;
@@ -135,7 +135,7 @@ sub make_structure_and_output{
                         }
 
                         foreach my $year (keys %{$member->{$mp}->{'expenses'}->{$name}} ) {
-                                my $amount= $member->{$mp}->{'expenses'}->{$name}->{$year};     
+                                my $amount= $member->{$mp}->{'expenses'}->{$name}->{$year};
 
                                 #$output->{'points'}->{'point'}[$index]->{'sequences'}->{'sequence'}[$sequenceno]->{$name}->{'s'.$year}=$year;
                                 $output->{'points'}->{'point'}[$index]->{'sequences'}->{$name}->[0]->{'s'.$year}= $amount;
@@ -155,15 +155,15 @@ sub make_structure_and_output{
                         }
                         $sequenceno++;
 
-                }       
+                }
 
 		$index++;
-	}	
+	}
 
 
 	foreach my $key (keys %memberinfo_keys) {
-		if ($key =~ m#swing#i) { $varinfo{$key}->{'unit'}='%'; }	
-		if ($key =~ m#expenses#i) { $varinfo{$key}->{'unit'}='&pound;'; }	
+		if ($key =~ m#swing#i) { $varinfo{$key}->{'unit'}='%'; }
+		if ($key =~ m#expenses#i) { $varinfo{$key}->{'unit'}='&pound;'; }
 	}
 
 	$index=0;
@@ -176,9 +176,8 @@ sub make_structure_and_output{
 		next if $skip;
 		$output->{'variables'}->{'variable'}[$index]->{'name'}= $key;
 		$output->{'variables'}->{'variable'}[$index]->{'title'}= $varinfo{$key}->{'name'} || &make_name($key);
-		$output->{'variables'}->{'variable'}[$index]->{'unit'}= $varinfo{$key}->{'unit'} || '';	
+		$output->{'variables'}->{'variable'}[$index]->{'unit'}= $varinfo{$key}->{'unit'} || '';
 		$output->{'variables'}->{'variable'}[$index]->{'min'}= 0;
-		
 		$output->{'variables'}->{'variable'}[$index]->{'max'}= $variables_max{$key};
 
                 if (defined $sequences->{$key}) {
