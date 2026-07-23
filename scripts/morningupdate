@@ -1,75 +1,76 @@
 #!/usr/bin/env bash
 # morningupdate.  Called when new data is available from ukparse.
+# Runs the daily publish pipeline: imports latest speeches, refreshes Xapian
+# search index, regenerates RSS feeds, and updates XML sitemaps.
 
 # Call with VERBOSE=true set in the environment for diagnostic messages:
 # VERBOSE=true ./morningupdate
 
 #set -x  # for debugging, prints each line before executing it
 
+set -Eeuo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+cd "$SCRIPT_DIR"
+
 source consts
 source ../../shlib/deployfns
 read_conf "../conf/general"
 
-[ -z "$VERBOSE" ] && VERBOSE=false
+VERBOSE="${VERBOSE:-false}"
+if [[ "$VERBOSE" == "1" ]]; then
+    VERBOSE=true
+elif [[ "$VERBOSE" == "0" ]]; then
+    VERBOSE=false
+fi
 
-if $VERBOSE
+if [[ "$VERBOSE" == "true" ]]
 then
-	CRONQUIET=""
-	CRONQUIET_NODASH=""
+    CRONQUIET_NODASH=""
 else
-	CRONQUIET="--cronquiet"
-	CRONQUIET_NODASH="cronquiet"
+    CRONQUIET_NODASH="cronquiet"
 fi
 
 # Make sure only one copy runs at once
-if [ x$LOCKFILE = x ]
+if [[ -z "${LOCKFILE:-}" ]]
 then
-        ./run-with-lockfile -n morningupdate-lockfile $0
-        if [ $? = 100 ]
-        then
-                echo "Another copy of morningupdate or compactsearchdb is already running" 1>&2
-        fi
-        exit $?
+    if ./run-with-lockfile -n morningupdate-lockfile "$0"; then rc=0; else rc=$?; fi
+    if [[ $rc -eq 100 ]]
+    then
+        echo "Another copy of morningupdate or compactsearchdb is already running" 1>&2
+    fi
+    exit $rc
 fi
 
 echo -n "Start time: "
 date +"%Y-%m-%d %H:%M:%S %Z"
 
-# Get new data -- with the "-a" so we get same timestamps as remote filesystem
-#$VERBOSE && echo "Rsyncing new data from parlparse"
-#rsync --exclude '.zip' --exclude '.svn' --exclude 'tmp/' --recursive --archive ukparse.kforge.net::parldata /home/fawkes/parldata
-$VERBOSE && echo "Parsing from APH to XML and loading into the database"
+[[ "$VERBOSE" == "true" ]] && echo "Parsing from APH to XML and loading into the database"
 ../../openaustralia-parser/bin/run parse-speeches.rb previous-working-day
 
-# Load recent new files from XML into the database
-# $VERBOSE && echo "Loading into database"
-# --cronquiet because we think things are reliable enough we decide we don't
-# want email on success each day just for the database loader
-#./xml2db.pl $CRONQUIET --all --members
-# We do these on separate lines, so if one fails, others still run
-#./xml2db.pl $CRONQUIET --recent --wrans --quiet
-# ./xml2db.pl $CRONQUIET --recent --debates
-#./xml2db.pl $CRONQUIET --recent --westminhall --quiet
-#./xml2db.pl $CRONQUIET --recent --wms --quiet
-# ./xml2db.pl $CRONQUIET --recent --lordsdebates
-#./xml2db.pl $CRONQUIET --recent --ni --quiet
 
-if [ -n "$XAPIANDB" ]; then
-    # Update Xapan index
-    $VERBOSE && echo "Xapian indexing"
+if [[ -n "${XAPIANDB:-}" ]]; then
+    # Update Xapian index
+    [[ "$VERBOSE" == "true" ]] && echo "Xapian indexing"
     ../search/index.pl "$XAPIANDB" sincefile "$XAPIANDB/../searchdb-lastupdated" "$CRONQUIET_NODASH"
 else
     echo "SKIPPED Xapian indexing: XAPIANDB is blank"
 fi
 # Create new RSS files.
-if $VERBOSE
+if [[ "$VERBOSE" == "true" ]]
 then
-	echo "Running rssgenerate"
-	./rssgenerate
+    echo "Running rssgenerate"
+    ./rssgenerate
 else
- 	at NOW >/dev/null 2>/dev/null <<EOF
+    if command -v at >/dev/null 2>&1; then
+        # Queue rssgenerate to run asynchronously via 'at'.
+        at NOW >/dev/null 2>/dev/null <<'EOF'
 ./rssgenerate
 EOF
+    else
+        echo "WARNING: 'at' not found; running rssgenerate inline" 1>&2
+        ./rssgenerate
+    fi
 fi
 
 # Update the XML sitemaps to keep the search engines informed

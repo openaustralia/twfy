@@ -1,0 +1,32 @@
+name: "Shell checks"
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Checkout shlib
+        uses: actions/checkout@v4
+        with:
+          repository: openaustralia/shlib
+          path: shlib-checkout
+          ref: main
+      - name: Switch shlib to PR branch if it exists
+        run: git fetch origin ${{ github.head_ref || github.ref_name }} && git checkout ${{ github.head_ref || github.ref_name }} || echo "No PR branch found, using main"
+        working-directory: shlib-checkout
+      - name: Link shlib as sibling
+        run: ln -s "${{ github.workspace }}/shlib-checkout" ../shlib
+      - name: Install ShellCheck
+        run: sudo apt-get update && sudo apt-get install -y shellcheck
+      - name: Lint update scripts
+        run: shellcheck -x weeklyupdate morningupdate dailyupdate rssgenerate
+        working-directory: scripts
