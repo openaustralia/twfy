@@ -471,9 +471,14 @@ div#help.block h4 {
 div#help.block h4 a {
 	color: #fff;
 	}
-	
-	
-	
+/* On the home page this box sits in the main column rather than the sidebar,
+   so it needs the heading background that div.sidebar div.block h4 supplies. */
+div.main div#help.block h4 {
+	background: #A8A98C; /* NAT */
+	}
+
+
+
 /**** SIDEBARS ******************************************************************/
 
 div.sidebar {

@@ -9,22 +9,23 @@ $this->block_start(['id' => 'help', 'title' => "What's all this about?"]);
 
 $URL = new URL('about');
 $abouturl = $URL->generate();
-
-$URL = new URL('help');
-$helpurl = $URL->generate();
 ?>
 
+<p><strong>Hansard, made findable.</strong> Searchable transcripts of Australian Federal Parliament.</p>
+
+<p><a href="<?php echo $abouturl; ?>" title="link to About Us page">OpenAustralia.org.au</a> is an independent
+    collection of Hansard, the official record of the Australian Federal Parliament. The Hansard library at
+    OpenAustralia.org.au is stored as a machine-readable and searchable repository, providing democratic open access to
+    Australia's legislative systems.</p>
+
+<p>The <a href="https://www.oaf.org.au">OpenAustralia Foundation</a> is a public digital online library; independent and
+    strictly non-partisan. As a <a
+        href="https://www.acnc.gov.au/charity/55c2c06e21ac71e9359a0590b9fc100e">registered charity</a>, it is powered by
+    donations from people like you.</p>
+
 <p><a href="https://donate.oaf.org.au/">
-        <img src="<?php echo IMAGEPATH . "donate_greenL.png" ?>" width="108" height="43" border="0" align="right"
-            hspace="4" vspace="5" alt="Donate"></a>
-    <a href="<?php echo $abouturl; ?>" title="link to About Us page">OpenAustralia.org</a> is a
-    non-partisan website run by a charity, the <a href="https://www.oaf.org.au">OpenAustralia
-        Foundation</a>. It aims to make it easy for people to keep tabs on their
-    representatives in Parliament.
+        <img src="<?php echo IMAGEPATH . "donate_greenL.png" ?>" width="108" height="43" alt="Donate"></a>
 </p>
-<p>The OpenAustralia Foundation is a public digital online library. It is an independent, strictly non-partisan <a
-        href="https://www.acnc.gov.au/charity/55c2c06e21ac71e9359a0590b9fc100e">charity</a>, powered by donations from
-    people like you.</p>
 
 <?php
 $this->block_end();
