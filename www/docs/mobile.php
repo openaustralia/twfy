@@ -64,7 +64,7 @@ $PAGE->block_start(['id' => 'intro', 'title' => 'At OpenAustralia.org you can:']
 
         if ($pc_form) { ?>
             <form action="<?php echo $MPURL->generate(); ?>" method="get">
-                <p><strong>Find out about the Federal Representative for your postcode:</strong>
+                <p><strong><label for="pc">Find out about the Federal Representative for your postcode:</label></strong>
                     <input type="text" name="pc" id="pc" size="10" maxlength="10" class="text">&nbsp;&nbsp;<input type="submit"
                         value=" GO " class="submit">
                 </p>

@@ -11,7 +11,7 @@ $URL = new URL('about');
 $abouturl = $URL->generate();
 ?>
 
-<p><strong>Hansard, made findable.</strong> Searchable transcripts of Australian Federal Parliament.</p>
+<p><strong>Hansard, made findable.</strong> Searchable transcripts of the Australian Federal Parliament.</p>
 
 <p><a href="<?php echo $abouturl; ?>" title="link to About Us page">OpenAustralia.org.au</a> is an independent
     collection of Hansard, the official record of the Australian Federal Parliament. The Hansard library at
