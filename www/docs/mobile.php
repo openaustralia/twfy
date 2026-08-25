@@ -24,6 +24,10 @@ if ($message != '') {
 
 $HANSARDURL = new URL('hansard');
 $MPURL = new URL('yourmp');
+
+// Explain what the site is before offering the search tools.
+$PAGE->include_sidebar_template('whatisthissite');
+
 $PAGE->block_start(['id' => 'intro', 'title' => 'At OpenAustralia.org you can:']);
 ?>
 <ol>
@@ -52,7 +56,7 @@ $PAGE->block_start(['id' => 'intro', 'title' => 'At OpenAustralia.org you can:']
                 }
                 ?>
                 <p><a href="<?php echo $MPURL->generate(); ?>"><strong>Find out more about <?php echo $mpname; ?>, your
-                            <?php echo $former ?> Representative</strong></a>
+                            <?php echo $former ?> Federal Representative</strong></a>
                     (<a href="<?php echo $CHANGEURL->generate(); ?>">Change</a>)</p>
                 <?php
             }
@@ -60,7 +64,7 @@ $PAGE->block_start(['id' => 'intro', 'title' => 'At OpenAustralia.org you can:']
 
         if ($pc_form) { ?>
             <form action="<?php echo $MPURL->generate(); ?>" method="get">
-                <p><strong>Find out about the Representative for your postcode:</strong>
+                <p><strong><label for="pc">Find out about the Federal Representative for your postcode:</label></strong>
                     <input type="text" name="pc" id="pc" size="10" maxlength="10" class="text">&nbsp;&nbsp;<input type="submit"
                         value=" GO " class="submit">
                 </p>
@@ -191,11 +195,5 @@ $PAGE->block_start(['id' => 'intro', 'title' => 'At OpenAustralia.org you can:']
 <?php
 $PAGE->block_end();
 
-$includes = [
-    [
-        'type' => 'include',
-        'content' => 'whatisthissite'
-    ]
-];
-
+$PAGE->stripe_end();
 $PAGE->page_end_mobile();
