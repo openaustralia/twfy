@@ -28,6 +28,10 @@ conf/general
 # composer output
 /vendor/
 
+# npm output
+/node_modules/
+www/docs/style/tailwind/tailwind.css
+
 # docker volumes
 _mysqldata/*
 _xapiandb/*

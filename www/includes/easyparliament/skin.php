@@ -139,6 +139,11 @@ class SKIN {
 
         print "\t<!-- skin: " . $this->skin . " -->\n";
 
+        // Utility classes for new/updated page layouts; built by `make tailwind-build`.
+        ?>
+        <link rel="stylesheet" href="<?php echo WEBPATH; ?>style/tailwind/tailwind.css" type="text/css">
+        <?php
+
         // The array of stylesheets to use for this skin.
         $skinstyles = $this->skins[$this->skin];
 

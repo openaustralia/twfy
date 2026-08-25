@@ -1,0 +1,11 @@
+{
+  "name": "twfy",
+  "private": true,
+  "scripts": {
+    "build:css": "tailwindcss -i ./www/docs/style/tailwind/input.css -o ./www/docs/style/tailwind/tailwind.css --minify",
+    "watch:css": "tailwindcss -i ./www/docs/style/tailwind/input.css -o ./www/docs/style/tailwind/tailwind.css --watch"
+  },
+  "devDependencies": {
+    "tailwindcss": "^3.4.0"
+  }
+}
