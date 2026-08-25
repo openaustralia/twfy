@@ -1,4 +1,5 @@
 /** @type {import('tailwindcss').Config} */
+// Tailwind CSS is MIT licensed, compatible with this repo's BSD-3-Clause license (see LICENSE.txt).
 module.exports = {
   content: ['./www/**/*.php'],
   corePlugins: {
