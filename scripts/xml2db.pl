@@ -553,7 +553,6 @@ sub check_extra_gids
                         for my $entry (["comments", "epobject_id",], 
                                            ["anonvotes", "epobject_id",],
                                            ["uservotes", "epobject_id",],
-                                           ["trackbacks", "epobject_id",],
                                            ["editqueue", "epobject_id_l",],
                                            ["editqueue", "epobject_id_h",],
                                            ) {
