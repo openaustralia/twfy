@@ -1146,8 +1146,9 @@ class PAGE {
         if (isset($data['url'])) {
             $title = '<a href="' . $data['url'] . '">' . $title . '</a>';
         }
+        $class = $data['class'] ?? '';
         ?>
-                    <div class="block" <?php echo $id; ?>>
+                <div class="block <?php echo htmlspecialchars($class); ?>" <?php echo $id; ?>>
                         <?php if ($title) { ?>
                             <h4><?php echo $title; ?></h4><?php
                         } ?>

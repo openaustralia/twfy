@@ -25,7 +25,7 @@ function search_hero() {
     $SEARCHURL = new URL('search');
     $keyword = get_http_var('keyword');
     ?>
-    <section class="!mx-4 mb-8 rounded-lg bg-[#26343b] p-6 text-white shadow-md md:p-8">
+    <section class="!mx-4 !box-border !w-[calc(100vw-2rem)] mb-8 rounded-lg bg-[#26343b] p-6 text-white shadow-md md:p-8">
         <h2 class="!text-white mb-2 text-2xl font-semibold">Search Hansard</h2>
         <p class="mb-5 text-slate-200">Find speeches, debates and decisions from Australia's Federal Parliament.</p>
         <form action="<?php echo $SEARCHURL->generate(); ?>" method="get" class="flex flex-col gap-3 sm:flex-row">
