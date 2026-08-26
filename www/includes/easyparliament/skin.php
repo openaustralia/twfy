@@ -156,7 +156,7 @@ class SKIN {
                 // Hide this from IE4 and Mac AOL5.
                 ?>
                 <style type="text/css">
-                    @import url(<?php echo WEBPATH; ?>style/<?php echo $skinstyles['global']; ?>/global_non_ns4.css);
+                    @import url(<?php echo WEBPATH; ?>style/<?php echo $skinstyles['global']; ?>/global_non_ns4.css?v=3);
                 </style>
                 <?php
             }
