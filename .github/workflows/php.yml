@@ -111,6 +111,85 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
+  visual:
+    name: Homepage screenshots
+    runs-on: ubuntu-latest
+    needs: lint
+    permissions:
+      contents: read
+    services:
+      mysql:
+        image: mysql:8.4
+        env:
+          MYSQL_ROOT_PASSWORD: examplepassword
+          MYSQL_DATABASE: twfy
+          MYSQL_USER: twfyuser
+          MYSQL_PASSWORD: twfypass
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -u root -pexamplepassword"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=10
+        ports:
+          - 3306:3306
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Checkout phplib
+        uses: actions/checkout@v4
+        with:
+          repository: openaustralia/phplib
+          path: phplib-checkout
+          ref: main
+      - name: Link phplib as sibling
+        run: ln -s ${{ github.workspace }}/phplib-checkout ../phplib
+      - name: Setup PHP 8.3
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: mbstring, mysqli
+          coverage: none
+          tools: composer
+      - name: Install PHP dependencies
+        run: composer install --no-interaction --prefer-dist
+      - name: Load database schema
+        run: ./vendor/bin/phinx migrate -c phinx.php
+        env:
+          DB_HOST: 127.0.0.1
+          DB_USER: twfyuser
+          DB_PASSWORD: twfypass
+          DB_NAME: twfy
+      - name: Start PHP application
+        run: |
+          cp conf/general-example.local-dev conf/general
+          sed -i \
+            -e 's/DB_USER", "openaustralia"/DB_USER", "twfyuser"/' \
+            -e 's/DB_PASSWORD", "openaustralia"/DB_PASSWORD", "twfypass"/' \
+            -e 's/DB_NAME", "openaustralia"/DB_NAME", "twfy"/' \
+            conf/general
+          php -S 127.0.0.1:8080 -t www > /tmp/twfy-server.log 2>&1 &
+          for attempt in {1..30}; do curl --fail http://127.0.0.1:8080/ && exit 0; sleep 1; done
+          cat /tmp/twfy-server.log
+          exit 1
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - name: Install npm dependencies
+        run: npm ci
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Capture homepage screenshots
+        run: npx playwright test
+      - name: Upload homepage screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: homepage-screenshots
+          path: test-results/
+          if-no-files-found: error
+
   schema-check:
     name: Schema in git matches migrations
     runs-on: ubuntu-latest
