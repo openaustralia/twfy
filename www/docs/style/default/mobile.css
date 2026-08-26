@@ -9,12 +9,6 @@ a img {
 	border: none;
 	}
 
-/* For NS4 */
-h2, h3, h4, h5, p, th, td, caption {
-	font-family: Verdana, Arial, Geneva, Sans-serif;
-}
-
-
 /**** FONT SIZES *************************************************************/
 /**** We keep these all together so it's easy to compare and change */
 
@@ -88,4 +82,3 @@ p.error {
 .printonly {
 	display: none;
 }
-/* Everything else is in global_non_ns4.css */

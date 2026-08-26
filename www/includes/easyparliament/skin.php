@@ -17,7 +17,7 @@
  * to maintain the new skin for the user.
  *
  * Each skin can have a different number of stylesheets.
- * global.css (and global_non_ns4.css) are called first.
+ * global.css and the main layout stylesheet are called first.
  * screen.css and print.css are media-specific.
  * extra.css comes last and can modfiy the previous styles.
  *
@@ -149,17 +149,12 @@ class SKIN {
 
         if (isset($skinstyles["global"]) && $skinstyles["global"] != "") {
             ?>
-            <link rel="stylesheet" href="<?php echo WEBPATH; ?>style/<?php echo $skinstyles['global']; ?>/global.css?v=4"
+            <link rel="stylesheet" href="<?php echo WEBPATH; ?>style/<?php echo $skinstyles['global']; ?>/global.css?v=6"
+                type="text/css">
+            <link rel="stylesheet"
+                href="<?php echo WEBPATH; ?>style/<?php echo $skinstyles['global']; ?>/layout.css?v=1"
                 type="text/css">
             <?php
-            if (isset($_SERVER['HTTP_USER_AGENT']) && !(preg_match("/MSIE 4.0/", $_SERVER['HTTP_USER_AGENT'])) && (isset($skinstyles["mobile"]))) {
-                // Hide this from IE4 and Mac AOL5.
-                ?>
-                <style type="text/css">
-                    @import url(<?php echo WEBPATH; ?>style/<?php echo $skinstyles['global']; ?>/global_non_ns4.css?v=4);
-                </style>
-                <?php
-            }
         }
         if (isset($skinstyles["screen"]) && $skinstyles["screen"] != "") {
             ?>
@@ -169,9 +164,9 @@ class SKIN {
         }
         if (isset($skinstyles["mobile"]) && $skinstyles["mobile"] != "") {
             ?>
-            <link rel="stylesheet" href="<?php echo WEBPATH; ?>style/<?php echo $skinstyles['mobile']; ?>/global_non_ns4_mobile.css?v=3"
+            <link rel="stylesheet" href="<?php echo WEBPATH; ?>style/<?php echo $skinstyles['mobile']; ?>/layout_mobile.css?v=1"
                 type="text/css">
-            <link rel="stylesheet" href="<?php echo WEBPATH; ?>style/<?php echo $skinstyles['mobile']; ?>/mobile.css?v=2"
+            <link rel="stylesheet" href="<?php echo WEBPATH; ?>style/<?php echo $skinstyles['mobile']; ?>/mobile.css?v=3"
                 type="text/css">
             <?php
             // Link tag should end in media="handheld"> but mobile's don't always obey that - I'm looking at you Windows Mobile 8/.
@@ -184,10 +179,8 @@ class SKIN {
         }
         if (
             isset($skinstyles["print"]) &&
-            $skinstyles["print"] != "" &&
-            (isset($_SERVER['HTTP_USER_AGENT']) && !(preg_match("/MSIE 4.0/", $_SERVER['HTTP_USER_AGENT'])))
+            $skinstyles["print"] != ""
         ) {
-            // Hide this from IE4 and Mac AOL5.
             ?>
             <link rel="stylesheet" href="<?php echo WEBPATH; ?>style/<?php echo $skinstyles['print']; ?>/print.css" type="text/css"
                 media="print">
@@ -196,16 +189,10 @@ class SKIN {
 
         if (get_http_var('c4') || get_http_var('c4x')) {
             $x = get_http_var('c4x') ? 'X' : ''; ?>
-            <link rel="stylesheet" href="<?php echo WEBPATH; ?>style/channel4/global<?php echo $x ?>.css" type="text/css">
+            <link rel="stylesheet" href="<?php echo WEBPATH; ?>style/channel4/global<?php echo $x ?>.css?v=2" type="text/css">
+            <link rel="stylesheet" href="<?php echo WEBPATH; ?>style/channel4/layout<?php echo $x ?>.css?v=1"
+                type="text/css">
             <?php
-            if (isset($_SERVER['HTTP_USER_AGENT']) && !(preg_match("/MSIE 4.0/", $_SERVER['HTTP_USER_AGENT']))) {
-                // Hide this from IE4 and Mac AOL5.
-                ?>
-                <style type="text/css">
-                    @import url(<?php echo WEBPATH; ?>style/channel4/global<?php echo $x ?>_non_ns4.css);
-                </style>
-                <?php
-            }
         }
     }
 
