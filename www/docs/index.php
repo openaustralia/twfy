@@ -11,7 +11,8 @@ include_once __DIR__ . "/../includes/easyparliament/member.php";
 
 $PAGE->page_start();
 
-$PAGE->stripe_start();
+// This page has no real sidebar content, so skip the (otherwise empty) sidebar column.
+$PAGE->stripe_start('side', '', true);
 $message = $PAGE->recess_message();
 if ($message != '') {
     print '<p id="warning">' . $message . '</p>';
@@ -168,8 +169,15 @@ $PAGE->block_start(['id' => 'intro', 'title' => 'At OpenAustralia.org you can:']
                     }
                 }
             }
-            major_summary($data);
             ?>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="bg-white rounded-lg shadow-md p-4">
+                    <?php major_summary($data, "", [101]); ?>
+                </div>
+                <div class="bg-white rounded-lg shadow-md p-4">
+                    <?php major_summary($data, "", [1, 2, 3, 4, 5]); ?>
+                </div>
+            </div>
         </li>
         <?php
     }
