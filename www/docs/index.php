@@ -25,13 +25,13 @@ function search_hero() {
     $SEARCHURL = new URL('search');
     $keyword = get_http_var('keyword');
     ?>
-    <section class="!mx-4 mb-8 rounded-lg bg-slate-800 p-6 text-white shadow-md md:p-8">
-        <h2 class="mb-2 text-2xl font-semibold">Search Hansard</h2>
+    <section class="!mx-4 mb-8 rounded-lg bg-[#26343b] p-6 text-white shadow-md md:p-8">
+        <h2 class="!text-white mb-2 text-2xl font-semibold">Search Hansard</h2>
         <p class="mb-5 text-slate-200">Find speeches, debates and decisions from Australia's Federal Parliament.</p>
         <form action="<?php echo $SEARCHURL->generate(); ?>" method="get" class="flex flex-col gap-3 sm:flex-row">
             <label for="hero-search" class="sr-only">Search Hansard</label>
             <input type="text" name="s" id="hero-search" maxlength="100" class="!m-0 !min-w-0 !w-full box-border rounded border-0 px-4 py-3 text-base text-slate-900 shadow-sm" value="<?php echo htmlspecialchars($keyword); ?>" placeholder="Search by topic, person or phrase">
-            <button type="submit" class="rounded bg-sky-500 px-6 py-3 font-semibold text-white shadow-sm hover:bg-sky-400">Search</button>
+            <button type="submit" class="rounded bg-teal-600 px-6 py-3 font-semibold text-white shadow-sm hover:bg-teal-500">Search</button>
         </form>
     </section>
     <?php
@@ -148,13 +148,13 @@ $PAGE->block_start(['id' => 'intro', 'title' => 'At OpenAustralia.org you can:']
     function email_alert_bullet_point() {
         if (get_http_var("keyword")) { ?>
             <li class="list-none">
-                <p class="mb-0"><a class="font-semibold text-slate-800 hover:text-sky-700" href="<?php echo WEBPATH . "alert?keyword=" . htmlspecialchars(get_http_var('keyword')) ?>&only=1">Create and manage email alerts</a><br>
+                <p class="mb-0"><a class="font-semibold text-teal-800 hover:text-teal-600" href="<?php echo WEBPATH . "alert?keyword=" . htmlspecialchars(get_http_var('keyword')) ?>&only=1">Create and manage email alerts</a><br>
                     <span class="text-sm text-slate-600">Get notified when '<?php echo htmlspecialchars(get_http_var('keyword')) ?>' is mentioned in Parliament.</span>
                 </p>
             </li>
         <?php } else { ?>
             <li class="list-none">
-                <p class="mb-0"><a class="font-semibold text-slate-800 hover:text-sky-700" href="<?php echo WEBPATH . "alert/" ?>">Create and manage email alerts</a><br>
+                <p class="mb-0"><a class="font-semibold text-teal-800 hover:text-teal-600" href="<?php echo WEBPATH . "alert/" ?>">Create and manage email alerts</a><br>
                     <span class="text-sm text-slate-600">Stay informed when something relevant happens in Parliament.</span>
                 </p>
             </li>
@@ -193,10 +193,10 @@ $PAGE->block_start(['id' => 'intro', 'title' => 'At OpenAustralia.org you can:']
             }
             ?>
             <div class="grid grid-cols-1 gap-5 md:grid-cols-2 md:gap-6">
-                <div class="rounded-lg border border-slate-200 border-t-4 border-t-sky-700 bg-white p-5 shadow-[0_3px_10px_rgba(0,0,0,0.08)]">
+                <div class="rounded-lg border border-slate-200 border-t-4 border-t-teal-700 bg-white p-5 shadow-[0_3px_10px_rgba(0,0,0,0.08)]">
                     <?php major_summary($data, "", [101], '🏛️ Senate debates'); ?>
                 </div>
-                <div class="rounded-lg border border-slate-200 border-t-4 border-t-emerald-700 bg-white p-5 shadow-[0_3px_10px_rgba(0,0,0,0.08)]">
+                <div class="rounded-lg border border-slate-200 border-t-4 border-t-teal-700 bg-white p-5 shadow-[0_3px_10px_rgba(0,0,0,0.08)]">
                     <?php major_summary($data, "", [1, 2, 3, 4, 5], '🏛️ House debates'); ?>
                 </div>
             </div>
