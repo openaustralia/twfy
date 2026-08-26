@@ -1012,7 +1012,7 @@ function major_summary($data, $limit = "", $majors_filter = null, $heading = nul
     }
     $list_classes = $heading === null
         ? ''
-        : ' !m-0 !list-none space-y-1 [&_a]:!text-teal-800 [&_a:hover]:!text-teal-600 [&_li]:border-b [&_li]:border-slate-100 [&_li]:py-2 [&_li:last-child]:border-0';
+        : ' !m-0 !list-none [&_ul]:!list-none [&_li]:!list-none space-y-1 [&_a]:!text-teal-800 [&_a:hover]:!text-teal-600 [&_li]:border-b [&_li]:border-slate-100 [&_li]:py-2 [&_li:last-child]:border-0';
     print '<ul id="hansard-day" class="' . $list_classes . '">';
     while (count($printed_majors)) {
         if (!array_key_exists($printed_majors[0], $data)) {
@@ -1043,7 +1043,7 @@ function major_summary($data, $limit = "", $majors_filter = null, $heading = nul
                     print '</ul>';
                 }
                 $LISTURL = new URL($hansardmajors[$major]['page_all']);
-                _major_summary_title($major, $data, $LISTURL, $daytext);
+                _major_summary_title($major, $data, $LISTURL, $daytext, $heading !== null);
                 $current_major = $major;
                 // XXX: Surely a better way of doing this? Oh well.
                 unset($printed_majors[array_search($major, $printed_majors)]);
@@ -1069,7 +1069,7 @@ function major_summary($data, $limit = "", $majors_filter = null, $heading = nul
 				ORDER BY major, hpos' . $limitsql);
         if ($q->rows()) {
             $LISTURL = new URL($hansardmajors[4]['page_all']);
-            _major_summary_title(4, $data, $LISTURL, $daytext);
+            _major_summary_title(4, $data, $LISTURL, $daytext, $heading !== null);
             $current_sid = 0;
             for ($i = 0; $i < $q->rows(); $i++) {
                 $gid = fix_gid_from_db($q->field($i, 'gid'));
@@ -1079,7 +1079,7 @@ function major_summary($data, $limit = "", $majors_filter = null, $heading = nul
                     if ($current_sid++) {
                         print '</ul>';
                     }
-                    print '<li>' . $body . '<ul>';
+                    print '<li>' . $body . '<ul' . ($heading !== null ? ' class="!list-none"' : '') . '>';
 
                 } else {
                     $LISTURL->insert(['id' => $gid]);
@@ -1096,7 +1096,7 @@ function major_summary($data, $limit = "", $majors_filter = null, $heading = nul
 /**
  *
  */
-function _major_summary_title($major, $data, $LISTURL, $daytext) {
+function _major_summary_title($major, $data, $LISTURL, $daytext, $card_mode = false) {
     global $hansardmajors;
     print '<li><strong>';
     if (isset($daytext[$major])) {
@@ -1112,5 +1112,5 @@ function _major_summary_title($major, $data, $LISTURL, $daytext) {
     if (isset($daytext[$major])) {
         print ':';
     }
-    print '</strong> <ul>';
+    print '</strong> <ul' . ($card_mode ? ' class="!list-none"' : '') . '>';
 }
