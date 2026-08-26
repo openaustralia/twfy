@@ -82,7 +82,9 @@ if ($message != '') {
 $PAGE->stripe_end();
 $PAGE->stripe_start();
 ?>
-<h3>Busiest House of Representatives debates from the most recent week</h3>
+<section class="!mx-4 !box-border !w-auto rounded-lg border border-slate-200 border-t-4 border-t-teal-700 bg-white p-5 shadow-[0_3px_10px_rgba(0,0,0,0.08)] [&_dt]:border-b [&_dt]:border-slate-100 [&_dt]:pt-3 [&_dt]:font-semibold [&_dt]:!text-teal-800 [&_dd]:!m-0 [&_dd]:pb-3 [&_dd]:pt-1 [&_dd]:text-sm [&_dd]:text-slate-600">
+<h3 class="!m-0 !mb-4 !text-xl !text-slate-800">🏛️ Busiest House of Representatives debates</h3>
+<p class="mb-4 text-sm text-slate-600">The most active House debates from the last seven days.</p>
 <?php
 $DEBATELIST = new DEBATELIST();
 $DEBATELIST->display('biggest_debates', ['days' => 7, 'num' => $number_of_debates_to_show]);
@@ -90,7 +92,8 @@ $DEBATELIST->display('biggest_debates', ['days' => 7, 'num' => $number_of_debate
 $MOREURL = new URL('debatesfront');
 $anchor = $number_of_debates_to_show + 1;
 ?>
-<p><strong><a href="<?php echo $MOREURL->generate(); ?>#d<?php echo $anchor; ?>">See more debates</a></strong></p>
+<p class="!mb-0"><strong><a class="!text-teal-800 hover:!text-teal-600" href="<?php echo $MOREURL->generate(); ?>#d<?php echo $anchor; ?>">See more House debates</a></strong></p>
+</section>
 <?php
 
 $PAGE->stripe_end([
@@ -106,7 +109,9 @@ $PAGE->stripe_end([
 
 $PAGE->stripe_start();
 ?>
-<h3>Busiest Senate debates from the most recent week</h3>
+<section class="!mx-4 !box-border !w-auto rounded-lg border border-slate-200 border-t-4 border-t-teal-700 bg-white p-5 shadow-[0_3px_10px_rgba(0,0,0,0.08)] [&_dt]:border-b [&_dt]:border-slate-100 [&_dt]:pt-3 [&_dt]:font-semibold [&_dt]:!text-teal-800 [&_dd]:!m-0 [&_dd]:pb-3 [&_dd]:pt-1 [&_dd]:text-sm [&_dd]:text-slate-600">
+<h3 class="!m-0 !mb-4 !text-xl !text-slate-800">🏛️ Busiest Senate debates</h3>
+<p class="mb-4 text-sm text-slate-600">The most active Senate debates from the last seven days.</p>
 <?php
 $DEBATELIST = new LORDSDEBATELIST();
 $DEBATELIST->display('biggest_debates', ['days' => 7, 'num' => $number_of_debates_to_show]);
@@ -114,7 +119,8 @@ $DEBATELIST->display('biggest_debates', ['days' => 7, 'num' => $number_of_debate
 $MOREURL = new URL('lordsdebatesfront');
 $anchor = $number_of_debates_to_show + 1;
 ?>
-<p><strong><a href="<?php echo $MOREURL->generate(); ?>#d<?php echo $anchor; ?>">See more debates</a></strong></p>
+<p class="!mb-0"><strong><a class="!text-teal-800 hover:!text-teal-600" href="<?php echo $MOREURL->generate(); ?>#d<?php echo $anchor; ?>">See more Senate debates</a></strong></p>
+</section>
 <?php
 
 $PAGE->stripe_end([

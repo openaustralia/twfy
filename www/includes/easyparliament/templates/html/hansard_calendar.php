@@ -90,16 +90,16 @@ if (isset($data['years'])) {
 
             // Create the table tag opener and day headers
             ?>
-            <div class="calendar">
-                <table border="0">
-                    <caption><?php echo "$monthName $year"; ?></caption>
+            <div class="calendar !float-none !m-0 !h-auto !w-full !border-0">
+                <table border="0" class="!m-0 !w-full table-fixed">
+                    <caption class="!bg-transparent !p-0 !pb-3 !text-left !text-sm !text-slate-600"><?php echo "$monthName $year"; ?></caption>
                     <thead>
                         <tr><?php
 
                         // Create the calendar headers
 
                         foreach ($daysOfWeek as $day) {
-                            print "<th>$day</th>";
+                            print "<th class=\"!p-1 !text-center !text-xs !font-semibold !text-slate-500\">$day</th>";
                         }
 
                         // Create the rest of the calendar
@@ -146,19 +146,19 @@ if (isset($data['years'])) {
                             // Also highlight days where there are no
                             // sittings - e.g. WH is only Tuesday-Thursday
                             if ($currentDay == $toDay) {
-                                print '<td class="on"';
+                                print '<td class="on !rounded-full !bg-teal-700 !p-1 !text-center !text-white"';
                                 if (count($recess) > 0 && $recess[0] && $recess[0] != 1) {
                                     print ' title="' . htmlspecialchars($recess[0], ENT_QUOTES, 'UTF-8') . '"';
                                 }
                                 print '>';
                             } elseif (count($recess) > 0 && $recess[0]) {
-                                print '<td class="no"';
+                                print '<td class="no !bg-slate-50 !p-1 !text-center !text-slate-300"';
                                 if ($recess[0] != 1) {
                                     print ' title="' . htmlspecialchars($recess[0], ENT_QUOTES, 'UTF-8') . '"';
                                 }
                                 print '>';
                             } else {
-                                print '<td>';
+                                print '<td class="!p-1 !text-center !text-slate-700">';
                             }
 
                             // Is the $currentDay a member of $dates? If so,
@@ -168,10 +168,11 @@ if (isset($data['years'])) {
                                 $date = sprintf("%04d-%02d-%02d", $year, $month, $currentDay);
 
                                 if ($currentDay == $toDay) {
-                                    print $currentDay . '</td>';
+                                    print '<span aria-current="date">' . $currentDay . '</span></td>';
                                 } else {
                                     $DAYURL->insert(['d' => $date]);
-                                    print "<a href=\"" . $DAYURL->generate() . "\">$currentDay</a></td>";
+                                    $day_label = date('l', mktime(0, 0, 0, $month, $currentDay, $year)) . " $currentDay $monthName $year";
+                                    print "<a class=\"!text-teal-800 hover:!text-teal-600\" aria-label=\"$day_label\" href=\"" . $DAYURL->generate() . "\">$currentDay</a></td>";
                                 }
 
                                 // $currentDay is not a member of $dates.

@@ -962,7 +962,19 @@ acronym {
 		width: 100%;
 	}
 
+	#search {
+		position: relative;
+		height: auto;
+		width: 100%;
+	}
+
 	div.main {
+		float: none;
+		width: 100%;
+	}
+
+	div.sidebar {
+		float: none;
 		width: 100%;
 	}
 }
