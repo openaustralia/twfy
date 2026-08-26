@@ -5,7 +5,11 @@
  * This sidebar is on the very front page of the site.
  */
 
-$this->block_start(['id' => 'help', 'title' => "What's all this about?"]);
+$this->block_start([
+    'id' => 'help',
+    'title' => "What's all this about?",
+    'class' => '!box-border !w-[calc(100vw-2rem)]',
+]);
 
 $URL = new URL('about');
 $abouturl = $URL->generate();
