@@ -50,7 +50,7 @@ $PAGE->include_sidebar_template('whatisthissite');
 
 $PAGE->block_start(['id' => 'intro', 'title' => 'At OpenAustralia.org you can:']);
 ?>
-<ol>
+<ol class="!list-none [&>li]:!ml-0">
 
     <?php
 
