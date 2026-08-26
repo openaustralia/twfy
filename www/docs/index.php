@@ -170,12 +170,12 @@ $PAGE->block_start(['id' => 'intro', 'title' => 'At OpenAustralia.org you can:']
                 }
             }
             ?>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div class="bg-white rounded-lg shadow-md p-4">
-                    <?php major_summary($data, "", [101]); ?>
+            <div class="grid grid-cols-1 gap-5 md:grid-cols-2 md:gap-6">
+                <div class="rounded-lg border border-slate-200 border-t-4 border-t-sky-700 bg-white p-5 shadow-[0_3px_10px_rgba(0,0,0,0.08)]">
+                    <?php major_summary($data, "", [101], '🏛️ Senate debates'); ?>
                 </div>
-                <div class="bg-white rounded-lg shadow-md p-4">
-                    <?php major_summary($data, "", [1, 2, 3, 4, 5]); ?>
+                <div class="rounded-lg border border-slate-200 border-t-4 border-t-emerald-700 bg-white p-5 shadow-[0_3px_10px_rgba(0,0,0,0.08)]">
+                    <?php major_summary($data, "", [1, 2, 3, 4, 5], '🏛️ House debates'); ?>
                 </div>
             </div>
         </li>

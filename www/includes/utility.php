@@ -978,7 +978,7 @@ function prettify_office($pos, $dept) {
 /**
  *
  */
-function major_summary($data, $limit = "", $majors_filter = null) {
+function major_summary($data, $limit = "", $majors_filter = null, $heading = null) {
     global $hansardmajors;
 
     $one_date = false;
@@ -1007,7 +1007,10 @@ function major_summary($data, $limit = "", $majors_filter = null) {
     if ($majors_filter !== null) {
         $printed_majors = array_values(array_intersect($printed_majors, $majors_filter));
     }
-    print '<ul id="hansard-day">';
+    if ($heading !== null) {
+        print '<h5 class="mb-3 border-b border-slate-200 pb-2 text-base font-semibold text-slate-800">' . $heading . '</h5>';
+    }
+    print '<ul id="hansard-day" class="!m-0 !list-none space-y-1 [&_a]:text-slate-700 [&_a:hover]:text-sky-700 [&_li]:border-b [&_li]:border-slate-100 [&_li]:py-2 [&_li:last-child]:border-0">';
     while (count($printed_majors)) {
         if (!array_key_exists($printed_majors[0], $data)) {
             unset($printed_majors[0]);
