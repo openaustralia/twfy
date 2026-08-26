@@ -13,7 +13,7 @@ SONAR_SCANNER ?= sonar-scanner
 XAPIANDB ?= /app/shared/search/searchdb
 XAPIANDB_LASTUPDATED ?= $(XAPIANDB)/../searchdb-lastupdated
 
-.PHONY: help docker-build docker-run docker xapian-index-docker lint lint-perl lint-perl-ci lint-php lint-php-ci phpcs phpcs-ci phpcs-verbose phpcs-sonar sonar-ci dependencies tailwind-build tailwind-watch install setup test test-all install-xdebug test-coverage test-coverage-docker docker-test-db-create docker-test-db-migrate docker-db-shell docker-test-db-shell
+.PHONY: help docker-build docker-run docker xapian-index-docker lint lint-perl lint-perl-ci lint-php lint-php-ci phpcs phpcs-ci phpcs-verbose phpcs-sonar sonar-ci dependencies tailwind-build tailwind-watch playwright-update install setup test test-all install-xdebug test-coverage test-coverage-docker docker-test-db-create docker-test-db-migrate docker-db-shell docker-test-db-shell
 
 help:
 	@echo "Available targets:"
@@ -33,6 +33,7 @@ help:
 	@echo "  dependencies                        Install PHP (Composer) dependencies into ./vendor"
 	@echo "  tailwind-build                      Install npm dependencies and build www/docs/style/tailwind/tailwind.css"
 	@echo "  tailwind-watch                      Rebuild tailwind.css on every change while developing"
+	@echo "  playwright-update                   Regenerate committed homepage screenshots"
 	@echo "  install                             Install Composer/npm dependencies, build tailwind.css, and build script dependencies"
 	@echo "  setup                               Install ubuntu packages required for development"
 	@echo "  test [TEST_ARGS=...]                Run PHPUnit tests"
@@ -181,6 +182,9 @@ tailwind-build: node_modules
 
 tailwind-watch: node_modules
 	npm run watch:css
+
+playwright-update: node_modules
+	npx playwright test --update-snapshots
 
 install: dependencies tailwind-build scripts/run-with-lockfile
 
