@@ -57,6 +57,10 @@ class PAGE {
     public $within_stripe_sidebar = false;
     public $blockbody_open = false;
 
+    // Set by stripe_start() when called with $full_width, so stripe_end() knows to
+    // omit the (otherwise empty) sidebar column rather than rendering an empty beige box.
+    private $stripe_full_width = false;
+
     /**
      *
      */
@@ -983,14 +987,19 @@ class PAGE {
      * 'procedural-1', 'procedural-2' - For the proecdures in hansard listings.
      * 'foot' - For the bottom stripe on hansard debates/wrans listings.
      * $id is the value of an id for this div (if blank, not used).
+     * $full_width - Pass true when this stripe's sidebar will have no real content
+     * (i.e. stripe_end() will be called with no $contents), so that main fills the
+     * width instead of leaving an empty sidebar column. Defaults to false so existing
+     * callers are unaffected.
      */
-    public function stripe_start($type = 'side', $id = '') {
+    public function stripe_start($type = 'side', $id = '', $full_width = false) {
+        $this->stripe_full_width = $full_width;
         print '<div class="stripe-' . htmlspecialchars($type) . '"';
         if (!empty($id)) {
             print ' id="' . htmlspecialchars($id) . '"';
         }
         print '>';
-        print '<div class="main">';
+        print '<div class="main' . ($full_width ? ' !w-full' : '') . '">';
 
         $this->within_stripe_main = true;
         // On most, uncomplicated pages, the first stripe on a page will include
@@ -1049,12 +1058,13 @@ class PAGE {
         global $DATA, $this_page;
 
         $this->within_stripe_main = false;
+        $extrahtml = '';
         ?>
                         </div> <!-- end .main -->
+                        <?php if (!$this->stripe_full_width || count($contents) > 0) { ?>
                         <div class="sidebar">
                             <?php
                             $this->within_stripe_sidebar = true;
-                            $extrahtml = '';
 
                             if (count($contents) == 0) {
                                 print "\t\t\t&nbsp;\n";
@@ -1081,6 +1091,7 @@ class PAGE {
                             $this->within_stripe_sidebar = false;
                             ?>
                         </div> <!-- end .sidebar -->
+                        <?php } ?>
                         <div class="break"></div>
                         <?php
                         if ($extrahtml != '') {
