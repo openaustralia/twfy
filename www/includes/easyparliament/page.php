@@ -1270,11 +1270,11 @@ class PAGE {
         }
         ?>
 
-                    <div id="footer">
-                        <p><?php
+                    <div id="footer" class="!box-border max-md:!w-screen max-md:!px-4">
+                        <p class="max-md:!m-0 max-md:!mb-4 max-md:!leading-7"><?php
                         print implode(' &nbsp;&nbsp;&nbsp; ', $links);
                         ?></p>
-                        <p>
+                        <p class="max-md:!m-0 max-md:!leading-7">
                             Other Wonderful Projects from the OpenAustralia Foundation:
                             <a href="https://theyvoteforyou.org.au/">They Vote For You</a> |
                             <a href="https://www.righttoknow.org.au/">Right To Know</a> |
