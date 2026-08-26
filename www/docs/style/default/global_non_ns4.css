@@ -647,42 +647,42 @@ div.sidebar div.calendar td.on {
 
 /**** MISC THINGS ****************************************************************/
 
-ul#hansard-day,
-ul#hansard-day li,
-ul#hansard-day ul,
-ul#hansard-day ul li {
+ul:is(#hansard-day, .hansard-day),
+ul:is(#hansard-day, .hansard-day) li,
+ul:is(#hansard-day, .hansard-day) ul,
+ul:is(#hansard-day, .hansard-day) ul li {
 	list-style-type: none;
 	line-height: 1.3em;
 	margin: 0;
 	padding: 0;
 	}
-ul#hansard-day {
+ul:is(#hansard-day, .hansard-day) {
 	margin: 0 14px 1em 18px;
 	}
-ul#hansard-day li,
-ul#hansard-day ul li {
+ul:is(#hansard-day, .hansard-day) li,
+ul:is(#hansard-day, .hansard-day) ul li {
 	margin-bottom: 0.5em;
 	}
-ul#hansard-day ul {
+ul:is(#hansard-day, .hansard-day) ul {
 	margin: 0.5em 0 0 3em;
 	}
-div#intro ul#hansard-day {
+div#intro ul:is(#hansard-day, .hansard-day) {
 	list-style-type: disc;
 	margin: 0 0 0 2em;
 	padding: 0;
 }
-div#intro ul#hansard-day li {
+div#intro ul:is(#hansard-day, .hansard-day) li {
 	list-style-type: disc;
 	margin: 0 0 0 0;
 	padding: 0;
 }
-div#intro ul#hansard-day ul {
+div#intro ul:is(#hansard-day, .hansard-day) ul {
 	padding: 0;
 	margin: 0 0 0.5em 2em;
 }
-div#intro ul#hansard-day ul li {
+div#intro ul:is(#hansard-day, .hansard-day) ul li {
 }
-div#intro ul#hansard-day ul ul {
+div#intro ul:is(#hansard-day, .hansard-day) ul ul {
 	margin: 0 0 0 2em;
 }
 
