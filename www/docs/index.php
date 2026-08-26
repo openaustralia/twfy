@@ -15,7 +15,7 @@ $PAGE->page_start();
 $PAGE->stripe_start('side', '', true);
 $message = $PAGE->recess_message();
 if ($message != '') {
-    print '<p id="warning">' . $message . '</p>';
+    print '<p id="warning" class="!box-border !w-[calc(100vw-2rem)]">' . $message . '</p>';
 }
 
 /**
