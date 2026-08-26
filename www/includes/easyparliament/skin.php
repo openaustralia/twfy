@@ -149,14 +149,14 @@ class SKIN {
 
         if (isset($skinstyles["global"]) && $skinstyles["global"] != "") {
             ?>
-            <link rel="stylesheet" href="<?php echo WEBPATH; ?>style/<?php echo $skinstyles['global']; ?>/global.css?v=3"
+            <link rel="stylesheet" href="<?php echo WEBPATH; ?>style/<?php echo $skinstyles['global']; ?>/global.css?v=4"
                 type="text/css">
             <?php
             if (isset($_SERVER['HTTP_USER_AGENT']) && !(preg_match("/MSIE 4.0/", $_SERVER['HTTP_USER_AGENT'])) && (isset($skinstyles["mobile"]))) {
                 // Hide this from IE4 and Mac AOL5.
                 ?>
                 <style type="text/css">
-                    @import url(<?php echo WEBPATH; ?>style/<?php echo $skinstyles['global']; ?>/global_non_ns4.css?v=3);
+                    @import url(<?php echo WEBPATH; ?>style/<?php echo $skinstyles['global']; ?>/global_non_ns4.css?v=4);
                 </style>
                 <?php
             }
@@ -169,9 +169,9 @@ class SKIN {
         }
         if (isset($skinstyles["mobile"]) && $skinstyles["mobile"] != "") {
             ?>
-            <link rel="stylesheet" href="<?php echo WEBPATH; ?>style/<?php echo $skinstyles['mobile']; ?>/global_non_ns4_mobile.css?v=2"
+            <link rel="stylesheet" href="<?php echo WEBPATH; ?>style/<?php echo $skinstyles['mobile']; ?>/global_non_ns4_mobile.css?v=3"
                 type="text/css">
-            <link rel="stylesheet" href="<?php echo WEBPATH; ?>style/<?php echo $skinstyles['mobile']; ?>/mobile.css"
+            <link rel="stylesheet" href="<?php echo WEBPATH; ?>style/<?php echo $skinstyles['mobile']; ?>/mobile.css?v=2"
                 type="text/css">
             <?php
             // Link tag should end in media="handheld"> but mobile's don't always obey that - I'm looking at you Windows Mobile 8/.
