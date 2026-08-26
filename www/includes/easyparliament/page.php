@@ -566,20 +566,17 @@ class PAGE {
                             <div id="title">
                                 <h1><?php echo $img; ?></h1>
                             </div>
-                            <?php
-                            // If ($this_page != 'home' && $this_page != 'search' && $this_page != 'yourmp') {.
-                            $URL = new URL('search');
-                            $URL->reset();
-                            ?>
-                            <div id="search">
-                                <form action="<?php echo $URL->generate(); ?>" method="get">
-                                    <p style="padding-left: 5px"><input name="s" size="15"> <input type="submit" class="submit"
-                                            value="Search"></p>
-                                </form>
-                            </div>
-                            <?php
-                            // }
-                            ?>
+                            <?php if ($this_page != 'home') {
+                                $URL = new URL('search');
+                                $URL->reset();
+                                ?>
+                                <div id="search">
+                                    <form action="<?php echo $URL->generate(); ?>" method="get">
+                                        <p style="padding-left: 5px"><input name="s" size="15"> <input type="submit" class="submit"
+                                                value="Search"></p>
+                                    </form>
+                                </div>
+                            <?php } ?>
                         </div> <!-- end #banner -->
                         <?php
     }
