@@ -192,7 +192,7 @@ $PAGE->block_start(['id' => 'intro', 'title' => 'At OpenAustralia.org you can:']
                 }
             }
             ?>
-            <div class="grid grid-cols-1 gap-5 md:grid-cols-2 md:gap-6">
+            <div class="!box-border !w-[calc(100vw-2rem)] max-md:!-ml-[27px] grid grid-cols-1 gap-5 md:grid-cols-2 md:gap-6">
                 <div class="rounded-lg border border-slate-200 border-t-4 border-t-teal-700 bg-white p-5 shadow-[0_3px_10px_rgba(0,0,0,0.08)]">
                     <?php major_summary($data, "", [101], '🏛️ Senate debates'); ?>
                 </div>
