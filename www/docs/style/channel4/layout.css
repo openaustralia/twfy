@@ -1,4 +1,3 @@
-/* Only included by modern browsers. */
 /* The 'body' and font sizes are set in global.css. */
 
 /**** GENERIC HTML ELEMENTS *****************************************************/
@@ -11,11 +10,11 @@ body {
 h2 {
 	color: #B82E00;
 	}
-	
+
 h3 {
 	color: #880101;
 	}
-	
+
 h4 {
 	color: #3e206a;
 	}
@@ -75,7 +74,7 @@ a:active, a:hover {
 
 /**** MENU ***********************************************************************/
 
-#bottommenu {	
+#bottommenu {
 	background-color: #3e206a;
 	}
 
@@ -90,7 +89,7 @@ a:active, a:hover {
 	background-color: #c5addd;
 	color: #000;
 	}
-	
+
 #bottommenu a {
 	padding-right: 20px;
 	border: 1px solid #3e206a;
@@ -124,24 +123,24 @@ div.stripe-side {
 
 /* The main, left-column */
 
-div.main {	
+div.main {
 	background: #fff;
 	border-right: solid 1px #3e206a;
-	}	
+	}
 
 div.main p.italic,
 div.main p.indentitalic {
 	color: #3e206a;
 	}
 
-/**** BLOCKS *************************************************************************/	
+/**** BLOCKS *************************************************************************/
 /* A 'block' is a colored area with a headline, like all those ones on the home page. */
 
 div.block {
 	border: 1px solid #c5addd; /* #BDE190; */
 	background-color: #fff;
 	}
-	
+
 div.block h4 {
 	background: #c5addd;
 	color: #000;
@@ -161,8 +160,8 @@ div.sidebar div.block h4 {
 div.sidebar div.block h4 a {
 	color: #fff;
 	}
-	
-/**** MISC THINGS ****************************************************************/	
+
+/**** MISC THINGS ****************************************************************/
 
 table.people th {
 	text-align: left;
@@ -175,8 +174,8 @@ table.people td.row-2 {
 	background: #c5becf;
 	}
 
-	
-/**** MP PAGE ****************************************************************/	
+
+/**** MP PAGE ****************************************************************/
 /* We override the standard block styles for these special MP page blocks.   */
 
 div#mp.block,

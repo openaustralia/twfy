@@ -1,10 +1,9 @@
-/* Only included by modern browsers. */
 /* The 'body' and font sizes are set in global.css. */
 
 /**** GENERIC HTML ELEMENTS *****************************************************/
 
 body {
-	min-width: 950px; /* NAT */
+	min-width: 0;
 }
 
 h1 {
@@ -113,6 +112,7 @@ div.row span.formw {
 /* Used on every page */
 
 #container {
+	width: 100%;
 	margin: 0 auto 0 auto;
 	padding: 0;
 	}
@@ -154,7 +154,7 @@ div.row span.formw {
 #content {
 	clear: both;
 	width: 100%;
-	min-width: 950px; /* NAT */
+	min-width: 0;
 	}
 
 #footer {
@@ -302,7 +302,7 @@ div.stripe-procedural-2 {
 
 div.main {
 	float: left;
-	width: 74%; /* NAT */
+	/* width: 74%; */ /* NAT */
 	margin: 0;
 	padding: 0;
 	background: #fff;
@@ -365,7 +365,6 @@ div.stripe-procedural-2 p {
 
 div.main p,
 div.main ul,
-div.main ol,
 div.main dl,
 div.main pre,
 div.main iframe,
@@ -598,7 +597,7 @@ div.calendar caption {
 	text-align: left;
 	padding: 0.3em 0.4em;
 	background: #a8a98c;
-	color: #000;
+	color: #fff;
 	font-weight: bold;
 	width: 189px;
 	}
@@ -668,8 +667,8 @@ ul:is(#hansard-day, .hansard-day) ul {
 	}
 div#intro ul:is(#hansard-day, .hansard-day) {
 	list-style-type: disc;
-	margin: 0 0 0 2em;
-	padding: 0;
+	margin: 0;
+	padding: 0 0 0 1em;
 }
 div#intro ul:is(#hansard-day, .hansard-day) li {
 	list-style-type: disc;
@@ -678,7 +677,7 @@ div#intro ul:is(#hansard-day, .hansard-day) li {
 }
 div#intro ul:is(#hansard-day, .hansard-day) ul {
 	padding: 0;
-	margin: 0 0 0.5em 2em;
+	margin: 0 0 0.5em 1em;
 }
 div#intro ul:is(#hansard-day, .hansard-day) ul li {
 }
@@ -927,7 +926,7 @@ div#intro.block li li {
 div#intro.block li p {
 	font-weight: normal;
 	line-height: 1.8em;
-	padding: 0.2em 0 0 0.5em;
+	padding: 0.2em 0 0 0em;
 	margin-bottom: 0;
 	}
 
@@ -949,22 +948,6 @@ acronym {
 	border: solid 1px #648D46; /* NAT */
 	background-color: #D5E9C6; /* NAT */
 	padding: 0.3em; /* NAT */
-}
-
-@media screen and (max-width: 767px) {
-	body,
-	#container,
-	#banner,
-	#menu,
-	#content,
-	#footer {
-		min-width: 0;
-		width: 100%;
-	}
-
-	div.main {
-		width: 100%;
-	}
 }
 
 #topics h5 {
