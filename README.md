@@ -125,8 +125,10 @@ The application must be running at <http://localhost> before starting the tests.
 To intentionally update the baselines after reviewing a visual change:
 
 ```bash
-npx playwright test --update-snapshots
+make playwright-update
 ```
+
+This regenerates both the desktop and mobile homepage screenshots.
 
 GitHub Actions runs the same tests against its own fresh database. Because homepage
 content is data-dependent, CI checks that the page and search hero render, captures
