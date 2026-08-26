@@ -27,9 +27,10 @@ $abouturl = $URL->generate();
         href="https://www.acnc.gov.au/charity/55c2c06e21ac71e9359a0590b9fc100e">registered charity</a>, it is powered by
     donations from people like you.</p>
 
-<p><a href="https://donate.oaf.org.au/">
-        <img src="<?php echo IMAGEPATH . "donate_greenL.png" ?>" width="108" height="43" alt="Donate"></a>
-</p>
+<div class="mt-5 border-t border-slate-200 pt-4">
+    <p class="mb-3 text-sm text-slate-600">Help keep Australia's parliamentary record open and searchable.</p>
+    <a class="inline-block rounded bg-teal-700 px-4 py-2 font-semibold !text-white no-underline shadow-sm hover:bg-teal-600" href="https://donate.oaf.org.au/">Support OpenAustralia.org</a>
+</div>
 
 <?php
 $this->block_end();
