@@ -33,8 +33,32 @@ function search_hero() {
             <input type="text" name="s" id="hero-search" maxlength="100" class="!m-0 !min-w-0 !w-full box-border rounded border-0 px-4 py-3 text-base text-slate-900 shadow-sm" value="<?php echo htmlspecialchars($keyword); ?>" placeholder="Search by topic, person or phrase">
             <button type="submit" class="rounded bg-teal-600 px-6 py-3 font-semibold text-white shadow-sm hover:bg-teal-500">Search</button>
         </form>
+        <?php popular_searches(); ?>
     </section>
     <?php
+}
+
+/**
+ * Display popular searches that fit in the homepage search hero.
+ */
+function popular_searches() {
+    global $SEARCHLOG;
+    $popular_searches = $SEARCHLOG->popular_recent(10);
+    if (count($popular_searches) == 0) {
+        return;
+    }
+
+    $lentotal = 0;
+    $correct_amount = [];
+    foreach ($popular_searches as $popular_search) {
+        $len = strlen($popular_search['visible_name']);
+        if ($lentotal + $len > 32) {
+            continue;
+        }
+        $lentotal += $len;
+        $correct_amount[] = $popular_search['display'];
+    }
+    print '<p class="!mb-0 !mt-4 text-sm text-slate-200 [&_a]:!text-teal-200 [&_a:hover]:!text-white">Popular searches today: ' . implode(', ', $correct_amount) . '</p>';
 }
 
 search_hero();
@@ -112,30 +136,6 @@ $PAGE->block_start(['id' => 'intro', 'title' => 'At OpenAustralia.org you can:']
                         value="<?php echo htmlspecialchars(get_http_var("keyword")) ?>">&nbsp;&nbsp;<input type="submit"
                         value="SEARCH" class="submit">
                 </p>
-                <?php
-                // Display popular queries.
-                global $SEARCHLOG;
-                $popular_searches = $SEARCHLOG->popular_recent(10);
-                if (count($popular_searches) > 0) {
-                    ?>
-                    <p>Popular searches today:
-                        <?php
-                        $lentotal = 0;
-                        $correct_amount = [];
-                        // Select a number of queries that will fit in the space.
-                        foreach ($popular_searches as $popular_search) {
-                            $len = strlen($popular_search['visible_name']);
-                            if ($lentotal + $len > 32) {
-                                continue;
-                            }
-                            $lentotal += $len;
-                            array_push($correct_amount, $popular_search['display']);
-                        }
-                        print implode(", ", $correct_amount);
-                        ?>
-                    </p> <?php
-                }
-                ?>
             </form>
         </li>
         <?php

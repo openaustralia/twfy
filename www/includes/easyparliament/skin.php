@@ -141,7 +141,7 @@ class SKIN {
 
         // Utility classes for new/updated page layouts; built by `make tailwind-build`.
         ?>
-        <link rel="stylesheet" href="<?php echo WEBPATH; ?>style/tailwind/tailwind.css?v=2" type="text/css">
+        <link rel="stylesheet" href="<?php echo WEBPATH; ?>style/tailwind/tailwind.css?v=3" type="text/css">
         <?php
 
         // The array of stylesheets to use for this skin.
