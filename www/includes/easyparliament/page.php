@@ -897,7 +897,7 @@ class PAGE {
             $username = $THEUSER->firstname() . ' ' . $THEUSER->lastname();
 
             ?>
-                            <ul id="user">
+                            <ul id="user" class="!box-border !max-w-full max-md:!fixed max-md:!right-4 max-md:!top-14 max-md:!z-10 max-md:!w-auto">
                                 <li><a href="<?php echo $LOGOUTURL->generate(); ?>" title="<?php echo $logouttitle; ?>" <?php echo $logoutclass; ?>><?php echo $logouttext; ?></a></li>
                                 <li><a href="<?php echo $EDITURL->generate(); ?>" title="<?php echo $edittitle; ?>" <?php echo $editclass; ?>><?php echo $edittext; ?></a></li>
                                 <li><span class="name"><?php echo htmlentities($username); ?></span></li>
@@ -951,7 +951,7 @@ class PAGE {
             }
 
             ?>
-                            <ul id="user">
+                            <ul id="user" class="!box-border !max-w-full max-md:!fixed max-md:!right-4 max-md:!top-14 max-md:!z-10 max-md:!w-auto">
                                 <li><a href="<?php echo $LOGINURL->generate(); ?>" title="<?php echo $logintitle; ?>" <?php echo $loginclass; ?>><?php echo $logintext; ?></a></li>
                                 <li><a href="<?php echo $JOINURL->generate(); ?>" title="<?php echo $jointitle; ?>" <?php echo $joinclass; ?>><?php echo $jointext; ?></a></li>
                                 <!--            <li><a href="<?php echo $GETINVURL->generate(); ?>" title="<?php echo $getinvolvedtitle; ?>"<?php echo $getinvolvedclass; ?>><?php echo $getinvolvedtext; ?></a></li> -->
