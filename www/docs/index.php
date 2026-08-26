@@ -148,13 +148,13 @@ $PAGE->block_start(['id' => 'intro', 'title' => 'At OpenAustralia.org you can:']
     function email_alert_bullet_point() {
         if (get_http_var("keyword")) { ?>
             <li class="list-none">
-                <p class="mb-0"><a class="font-semibold text-teal-800 hover:text-teal-600" href="<?php echo WEBPATH . "alert?keyword=" . htmlspecialchars(get_http_var('keyword')) ?>&only=1">Create and manage email alerts</a><br>
+                <p class="mb-0"><a class="font-semibold !text-teal-800 hover:!text-teal-600" href="<?php echo WEBPATH . "alert?keyword=" . htmlspecialchars(get_http_var('keyword')) ?>&only=1">Create and manage email alerts</a><br>
                     <span class="text-sm text-slate-600">Get notified when '<?php echo htmlspecialchars(get_http_var('keyword')) ?>' is mentioned in Parliament.</span>
                 </p>
             </li>
         <?php } else { ?>
             <li class="list-none">
-                <p class="mb-0"><a class="font-semibold text-teal-800 hover:text-teal-600" href="<?php echo WEBPATH . "alert/" ?>">Create and manage email alerts</a><br>
+                <p class="mb-0"><a class="font-semibold !text-teal-800 hover:!text-teal-600" href="<?php echo WEBPATH . "alert/" ?>">Create and manage email alerts</a><br>
                     <span class="text-sm text-slate-600">Stay informed when something relevant happens in Parliament.</span>
                 </p>
             </li>
