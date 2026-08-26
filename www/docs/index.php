@@ -18,6 +18,27 @@ if ($message != '') {
     print '<p id="warning">' . $message . '</p>';
 }
 
+/**
+ * Display the homepage Hansard search form.
+ */
+function search_hero() {
+    $SEARCHURL = new URL('search');
+    $keyword = get_http_var('keyword');
+    ?>
+    <section class="!mx-4 mb-8 rounded-lg bg-slate-800 p-6 text-white shadow-md md:p-8">
+        <h2 class="mb-2 text-2xl font-semibold">Search Hansard</h2>
+        <p class="mb-5 text-slate-200">Find speeches, debates and decisions from Australia's Federal Parliament.</p>
+        <form action="<?php echo $SEARCHURL->generate(); ?>" method="get" class="flex flex-col gap-3 sm:flex-row">
+            <label for="hero-search" class="sr-only">Search Hansard</label>
+            <input type="text" name="s" id="hero-search" maxlength="100" class="!m-0 !min-w-0 !w-full box-border rounded border-0 px-4 py-3 text-base text-slate-900 shadow-sm" value="<?php echo htmlspecialchars($keyword); ?>" placeholder="Search by topic, person or phrase">
+            <button type="submit" class="rounded bg-sky-500 px-6 py-3 font-semibold text-white shadow-sm hover:bg-sky-400">Search</button>
+        </form>
+    </section>
+    <?php
+}
+
+search_hero();
+
 //
 // SEARCH AND RECENT HANSARD.
 
@@ -126,15 +147,16 @@ $PAGE->block_start(['id' => 'intro', 'title' => 'At OpenAustralia.org you can:']
      */
     function email_alert_bullet_point() {
         if (get_http_var("keyword")) { ?>
-            <li>
-                <p><a href="<?php echo WEBPATH . "alert?keyword=" . htmlspecialchars(get_http_var('keyword')) ?>&only=1"><strong>Sign
-                            up to be emailed when '<?php echo htmlspecialchars(get_http_var('keyword')) ?>' is mentioned in
-                            Parliament</strong></a></p>
+            <li class="list-none">
+                <p class="mb-0"><a class="font-semibold text-slate-800 hover:text-sky-700" href="<?php echo WEBPATH . "alert?keyword=" . htmlspecialchars(get_http_var('keyword')) ?>&only=1">Create and manage email alerts</a><br>
+                    <span class="text-sm text-slate-600">Get notified when '<?php echo htmlspecialchars(get_http_var('keyword')) ?>' is mentioned in Parliament.</span>
+                </p>
             </li>
         <?php } else { ?>
-            <li>
-                <p><a href="<?php echo WEBPATH . "alert/" ?>"><strong>Sign up to be emailed when something relevant to you
-                            happens in Parliament</strong></a></p>
+            <li class="list-none">
+                <p class="mb-0"><a class="font-semibold text-slate-800 hover:text-sky-700" href="<?php echo WEBPATH . "alert/" ?>">Create and manage email alerts</a><br>
+                    <span class="text-sm text-slate-600">Stay informed when something relevant happens in Parliament.</span>
+                </p>
             </li>
         <?php }
     }
@@ -186,13 +208,11 @@ $PAGE->block_start(['id' => 'intro', 'title' => 'At OpenAustralia.org you can:']
         // This is for links from Google adverts, where we want to
         // promote the features relating to their original search higher
         // than "your MP".
-        search_bullet_point();
         email_alert_bullet_point();
         your_mp_bullet_point();
         comment_on_recent_bullet_point();
     } else {
         your_mp_bullet_point();
-        search_bullet_point();
         email_alert_bullet_point();
         comment_on_recent_bullet_point();
     }
