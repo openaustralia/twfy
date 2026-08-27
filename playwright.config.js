@@ -4,7 +4,7 @@ module.exports = defineConfig({
   testDir: './playwright',
   snapshotPathTemplate: '{testDir}/__screenshots__/{testFilePath}/{arg}{ext}',
   use: {
-    baseURL: 'http://localhost',
+    baseURL: 'http://127.0.0.1:8080',
     browserName: 'chromium',
   },
   projects: [
