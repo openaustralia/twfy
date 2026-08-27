@@ -56,6 +56,17 @@ if (function_exists('date_default_timezone_set')) {
 // The error_handler function is in includes/utility.php.
 $old_error_handler = set_error_handler("error_handler");
 
+// Report uncaught errors/exceptions to Sentry, if configured (conf/general).
+// Sentry::init() registers its own error/exception/shutdown handlers, and
+// by default chains to whatever was already registered, so error_handler
+// above still runs as before - this adds reporting, it doesn't replace it.
+if (defined('SENTRY_DSN') && SENTRY_DSN) {
+    \Sentry\init([
+        'dsn' => SENTRY_DSN,
+        'environment' => defined('SENTRY_ENVIRONMENT') ? SENTRY_ENVIRONMENT : 'development',
+    ]);
+}
+
 // The time the page starts, so we can display the total at the end.
 // getmicrotime() is in utiltity.php.
 define("STARTTIME", getmicrotime());
