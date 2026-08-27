@@ -21,6 +21,16 @@ jobs:
           extensions: mbstring, pdo, sqlite
           coverage: none # Use 'xdebug' or 'pcov' for code coverage
           tools: composer
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Build Tailwind CSS
+        run: |
+          npm ci
+          npm run build:css
+          test -s www/docs/style/tailwind/tailwind.css
       - name: validate configuration
         run: composer validate
       - name: composer install packages
