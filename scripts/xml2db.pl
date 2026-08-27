@@ -23,7 +23,9 @@ use lib "$FindBin::Bin/../../perllib";
 use mySociety::Config;
 mySociety::Config::set_file('../conf/general');
 
-my $parldata = mySociety::Config::get('RAWDATA');
+# RAWDATA env var wins over conf/general's RAWDATA (the docker container path
+# /app/shared/pwdata/), so this can point at a host-side XML output dir instead.
+my $parldata = $ENV{RAWDATA} || mySociety::Config::get('RAWDATA');
 
 use DBI;
 use XML::Twig;
@@ -425,7 +427,11 @@ my ($dbh,
 sub db_connect
 {
         # Connect to database, and prepare queries
-        my $dsn = 'DBI:mysql:database=' . mySociety::Config::get('DB_NAME'). ':host=' . mySociety::Config::get('DB_HOST');
+        # DB_HOST/DB_PORT env vars win over conf/general's DB_HOST (which is "mysql",
+        # the docker-compose service name, only resolvable from inside the docker network).
+        my $db_host = $ENV{DB_HOST} || mySociety::Config::get('DB_HOST');
+        my $db_port = $ENV{DB_PORT} || 3306;
+        my $dsn = 'DBI:mysql:database=' . mySociety::Config::get('DB_NAME') . ':host=' . $db_host . ':port=' . $db_port;
         $dbh = DBI->connect($dsn, mySociety::Config::get('DB_USER'), mySociety::Config::get('DB_PASSWORD'), { RaiseError => 1, PrintError => 0 });
 
         # epobject queries

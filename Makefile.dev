@@ -1,0 +1,35 @@
+# Dev-only scripts for working against the sibling ../openaustralia-parser checkout.
+# Not part of the main build/test/deploy chain (see Makefile for that); include as needed:
+#   make -f Makefile.dev <target>
+
+TWFY_MYSQL_PORT ?= 3306
+
+# Must match ../openaustralia-parser/configuration.yml's xml_path (relative to that dir).
+PARSER_XML_PATH := $(CURDIR)/../openaustralia-parser/tmp/pwdata/
+
+# Same _xapiandb/ dir the docker webhost container reads (mounted to /app/shared/search).
+XAPIANDB := $(CURDIR)/_xapiandb/searchdb
+XAPIANDB_LASTUPDATED := $(CURDIR)/_xapiandb/searchdb-lastupdated
+
+.PHONY: parse-members parse-speeches xapian-index
+
+# Parse member data (from ../openaustralia-parser) and load it into the local dev DB.
+# DB_HOST/DB_PORT override conf/general's DB_HOST ("mysql", the docker-compose service
+# name) so scripts/xml2db.pl can reach the docker-compose mysql container from the host.
+# RAWDATA overrides conf/general's RAWDATA (docker path /app/shared/pwdata/) so
+# xml2db.pl reads the XML that the parser actually wrote to on the host.
+parse-members:
+	cd ../openaustralia-parser && DB_HOST=127.0.0.1 DB_PORT=$(TWFY_MYSQL_PORT) RAWDATA=$(PARSER_XML_PATH) bin/run parse-members.rb
+
+# Parse Hansard speeches (from ../openaustralia-parser) and load them into the local dev DB.
+# ARGS is passed through to parse-speeches.rb, e.g.:
+#   make -f Makefile.dev parse-speeches ARGS="2026-08-10 2026-08-12"
+parse-speeches:
+	cd ../openaustralia-parser && DB_HOST=127.0.0.1 DB_PORT=$(TWFY_MYSQL_PORT) RAWDATA=$(PARSER_XML_PATH) bin/run parse-speeches.rb $(ARGS)
+
+# (Re)index rows added/changed since the last run into _xapiandb/, so newly parsed
+# speeches become searchable. Needed after parse-members/parse-speeches for search to
+# pick up new data; the site falls back to slower MySQL search if _xapiandb/ is empty.
+xapian-index:
+	mkdir -p _xapiandb
+	cd search && DB_HOST=127.0.0.1 DB_PORT=$(TWFY_MYSQL_PORT) ./index.pl $(XAPIANDB) sincefile $(XAPIANDB_LASTUPDATED)

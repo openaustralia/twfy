@@ -23,17 +23,21 @@ my $dbfile=shift;
 die "Specify Xapian database file as first parameter" if !$dbfile;
 my $action=shift;
 die "As second parameter, specify:
-    'all' to (re)index everything (sometimes memory leaks and doesn't work see indexall.sh), or 
-    'lastweek' to (re)index just the last week, or 
-    'lastmonth' to (re)index just the last month, or 
+    'all' to (re)index everything (sometimes memory leaks and doesn't work see indexall.sh), or
+    'lastweek' to (re)index just the last week, or
+    'lastmonth' to (re)index just the last month, or
     'daterange' to (re)index between two dates, specified as next parameters
-    'sincefile' to (re)index updates since a given date (specified in unixtime inside a file as 
+    'sincefile' to (re)index updates since a given date (specified in unixtime inside a file as
                    the last parameter, the file is updated to now after indexing)
     'check' to check everything is indexed
 " if !$action or ($action ne "all" and $action ne "lastweek" and $action ne "lastmonth" and $action ne "sincefile" and $action ne "check" and $action ne "daterange");
 
 # Open MySQL
-my $dsn = 'DBI:mysql:database=' . mySociety::Config::get('DB_NAME'). ':host=' . mySociety::Config::get('DB_HOST');
+# DB_HOST/DB_PORT env vars win over conf/general's DB_HOST ("mysql", the docker-compose
+# service name), so this can be run against the docker-compose mysql container from the host.
+my $db_host = $ENV{DB_HOST} || mySociety::Config::get('DB_HOST');
+my $db_port = $ENV{DB_PORT} || 3306;
+my $dsn = 'DBI:mysql:database=' . mySociety::Config::get('DB_NAME') . ':host=' . $db_host . ':port=' . $db_port;
 $dbh = DBI->connect($dsn, mySociety::Config::get('DB_USER'), mySociety::Config::get('DB_PASSWORD'), { RaiseError => 1, PrintError => 0 });
 
 # Work out when to update from, for "sincefile" case
@@ -51,7 +55,7 @@ if ($action eq "sincefile") {
         close FH;
     } else {
         # No file, update everything
-        $since_date_condition = "";        
+        $since_date_condition = "";
     }
     # Store time we need to update from next time
     my $sth = $dbh->prepare("select unix_timestamp(now())");
@@ -91,13 +95,13 @@ if ($action ne "check") {
     # Batch numbers - each new stuff gets a new batch number
     my $max_indexbatch = $dbh->selectrow_array('select max(indexbatch_id) from indexbatch');
     my $new_indexbatch = $max_indexbatch + 1;
-    
-    # Get data for items to update from MySQL 
-    my $query = "select epobject.epobject_id, body, person_id, hdate, gid, major, 
+
+    # Get data for items to update from MySQL
+    my $query = "select epobject.epobject_id, body, person_id, hdate, gid, major,
         section_id, subsection_id, party,
         unix_timestamp(concat(hdate, ' ', if(htime, htime, 0))) as unix_time,
         unix_timestamp(hansard.created) as created, hpos
-        from epobject, hansard 
+        from epobject, hansard
 	    left join member on hansard.speaker_id = member.member_id
 	    where epobject.epobject_id = hansard.epobject_id";
     if ($action eq "lastweek") {
@@ -142,7 +146,7 @@ if ($action ne "check") {
             }
         }
         #print "$gid $person_id $$row{'major'}\n";
-        
+
         # Make new post for this item in Xapian
         $::doc=new Search::Xapian::Document();
         #print Dumper($row);
@@ -176,7 +180,7 @@ if ($action ne "check") {
         $::doc->add_value(6, sprintf('%010s', $$row{'created'}) . ':' . sprintf('%05s', $$row{'hpos'}));
         $::doc->add_value(7, $$row{'section_id'} . ':' . ($$row{'subsection_id'}==0?$$row{'epobject_id'}:$$row{'subsection_id'}));
         $::n=1;
-        $parser->parse($$row{'body'}); 
+        $parser->parse($$row{'body'});
         $parser->eof();
 
         # See if we already have the document in Xapian
@@ -230,7 +234,7 @@ if ($action ne "check") {
         }
         $allterms++;
     }
-    # Compare them. 
+    # Compare them.
     # Check for items in Xapian not in MySQL:
     foreach my $xapian_gid (keys %xapian_gids) {
         my $in_mysql = $mysql_gids{$xapian_gid};
