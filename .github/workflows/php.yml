@@ -182,6 +182,8 @@ jobs:
         run: npx playwright install --with-deps chromium
       - name: Capture homepage screenshots
         run: npx playwright test
+        env:
+          PLAYWRIGHT_BASE_URL: http://127.0.0.1:8080
       - name: Upload homepage screenshots
         if: always()
         uses: actions/upload-artifact@v4
