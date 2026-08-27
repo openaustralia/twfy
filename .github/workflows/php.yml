@@ -167,7 +167,7 @@ jobs:
             -e 's/DB_PASSWORD", "openaustralia"/DB_PASSWORD", "twfypass"/' \
             -e 's/DB_NAME", "openaustralia"/DB_NAME", "twfy"/' \
             conf/general
-          php -S 127.0.0.1:8080 -t www > /tmp/twfy-server.log 2>&1 &
+          php -S 127.0.0.1:8080 -t www/docs > /tmp/twfy-server.log 2>&1 &
           for attempt in {1..30}; do curl --fail http://127.0.0.1:8080/ && exit 0; sleep 1; done
           cat /tmp/twfy-server.log
           exit 1
