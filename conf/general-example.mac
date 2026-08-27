@@ -43,6 +43,12 @@ define ("DEVSITE", true);
 // Add this and a number to the URL (eg '?debug=1') to view debug info.
 define ("DEBUGTAG", 'debug');
 
+// Sentry DSN for error/exception reporting. Empty by default, so the SDK
+// stays disabled (see init.php). Staging/production get the real value
+// templated in from infrastructure's sentry_dsn (group_vars/all.yml).
+define ("SENTRY_DSN", "");
+define ("SENTRY_ENVIRONMENT", "development");
+
 // Timezone (only works in PHP5)
 define ("TIMEZONE", "Australia/Sydney");
 
