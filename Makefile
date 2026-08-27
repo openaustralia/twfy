@@ -73,7 +73,7 @@ docker-build:
 docker-run:
 	docker compose up -d $(DOCKER_ARGS)
 
-docker: docker-build docker-run
+docker: tailwind-build docker-build docker-run
 	@echo "Site should now be available at http://localhost:$(TWFY_HTTP_PORT) and MySQL at http://localhost:$(TWFY_MYSQL_PORT)"
 
 # Run pending Phinx migrations against the docker mysql service via the webhost container.
