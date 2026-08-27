@@ -4,7 +4,7 @@ module.exports = defineConfig({
   testDir: './playwright',
   snapshotPathTemplate: '{testDir}/__screenshots__/{testFilePath}/{arg}{ext}',
   use: {
-    baseURL: 'http://localhost',
+    baseURL: process.env.PLAYWRIGHT_BASE_URL || 'http://localhost',
     browserName: 'chromium',
   },
   projects: [
