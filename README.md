@@ -110,6 +110,31 @@ make docker-db-migrate           # apply pending Phinx migrations
 
 Stop everything with `docker compose down`.
 
+### Homepage screenshots with Playwright
+
+Playwright captures the homepage at desktop and mobile sizes. The local run compares
+the screenshots with the committed baselines in `playwright/__screenshots__/`:
+
+```bash
+npm ci                                      # install npm dependencies
+npx playwright install chromium             # install the test browser
+npm run test:visual                         # compare desktop/mobile screenshots
+```
+
+The application must be running at <http://localhost> before starting the tests.
+To intentionally update the baselines after reviewing a visual change:
+
+```bash
+make playwright-update
+```
+
+This regenerates both the desktop and mobile homepage screenshots.
+
+GitHub Actions runs the same tests against its own fresh database. Because homepage
+content is data-dependent, CI checks that the page and search hero render, captures
+the desktop/mobile screenshots, and uploads them as the `homepage-screenshots`
+artifact rather than comparing them with local data baselines.
+
 ### MySQL version
 
 We run **MySQL 8.4** in production. The `mysql:8.4`
