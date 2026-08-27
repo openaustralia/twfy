@@ -1012,7 +1012,7 @@ function major_summary($data, $limit = "", $majors_filter = null, $heading = nul
     }
     $list_classes = $heading === null
         ? 'hansard-day'
-        : 'hansard-day !m-0 !list-none [&_ul]:!list-none [&_li]:!list-none space-y-1 [&_a]:!text-teal-800 [&_a:hover]:!text-teal-600 [&_li]:border-b [&_li]:border-slate-100 [&_li]:py-2 [&_li:last-child]:border-0';
+        : 'hansard-day !m-0 !list-none [&_ul]:!list-none [&_li]:!list-none space-y-1 [&_a]:!text-teal-800 [&_a:hover]:!text-teal-600 [&_li]:!border-b [&_li]:!border-slate-100 [&_li]:!py-2 [&_li:last-child]:!border-0';
     $list_id = $heading === null ? ' id="hansard-day"' : '';
     print '<ul' . $list_id . ' class="' . $list_classes . '">';
     while (count($printed_majors)) {
