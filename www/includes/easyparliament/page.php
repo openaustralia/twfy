@@ -562,18 +562,19 @@ class PAGE {
             $img = '<a href="' . $HOMEURL . '" title="' . $HOMETITLE . '">' . $img . '</a>';
         }
         ?>
-                        <div id="banner">
+                        <div id="banner" class="!box-border max-md:!w-screen flex flex-wrap items-center justify-between gap-3 px-4 py-3 md:px-8">
                             <div id="title">
-                                <h1><?php echo $img; ?></h1>
+                                <h1 class="!m-0"><?php echo $img; ?></h1>
                             </div>
                             <?php if ($this_page != 'home') {
                                 $URL = new URL('search');
                                 $URL->reset();
                                 ?>
                                 <div id="search">
-                                    <form action="<?php echo $URL->generate(); ?>" method="get">
-                                        <p style="padding-left: 5px"><input name="s" size="15"> <input type="submit" class="submit"
-                                                value="Search"></p>
+                                    <form action="<?php echo $URL->generate(); ?>" method="get" class="flex gap-2">
+                                        <label for="banner-search" class="sr-only">Search Hansard</label>
+                                        <input type="text" name="s" id="banner-search" size="15" class="!box-border rounded border border-slate-300 px-3 py-1.5 text-sm text-slate-900">
+                                        <input type="submit" class="submit rounded bg-teal-700 px-4 py-1.5 text-sm font-semibold !text-white hover:bg-teal-600" value="Search">
                                     </form>
                                 </div>
                             <?php } ?>
