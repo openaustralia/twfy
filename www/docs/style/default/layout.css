@@ -143,128 +143,14 @@ div.row span.formw {
 	font-weight: bold;
 	}
 
-#menu {
-	position: relative;
-	width: 100%;
-	background-color: #EBECCF;  /* NAT */
-	border-top: 1px solid #fff;
-	}
-
 #content {
 	clear: both;
 	width: 100%;
 	min-width: 950px; /* NAT */
 	}
 
-#footer {
-	width: 100%;
-	padding: 0.7em 0 0.2em 0;
-	margin: 0;
-	background-color: #CDCEBC; /* NAT */
-	}
-
-#footer p {
-	margin-left: 18px;
-	}
-
-/**** MENU ***********************************************************************/
-
-#topmenu {
-	position: relative;
-	margin: 0;
-	padding: 0 14px 2px 0;
-	border-top: 1px solid #fff;
-	z-index: 10;
-	}
-
-#bottommenu {
-	position: relative;
-	width: 100%;
-	height: 22px; /* NAT */
-	margin: 0;
-	padding: 0 0 0 0px; /* was 2px left padding */
-	z-index: 10;
-	background-color: #CDCEBC; /* NAT */
-	}
-
-#topmenu ul,
-#bottommenu ul {
-	list-style: none;
-	margin: 0 0 0 18px;
-	padding: 0;
-	}
-
-ul#user {
-	position: relative;
-	float: right;
-	width: 25em;
-	height: 20px;  /* NAT */
-	}
-ul#user li {
-	float: right;
-	}
-ul#user .name {
-	display: block;
-	margin: 3px 5px 0 0;
-	}
-
-#topmenu li,
-#bottommenu li {
-	position: relative;
-	display: block;
-	float: left;
-	width: auto;
-	margin: 0;
-	padding: 0;
-	}
-
-#topmenu br {
-	clear: both;
-	}
-
-#topmenu a,
-#bottommenu a {
-	position: relative;
-	display: block;
-	margin: 0;
-	padding: 3px 10px;
-	background: #DECEB3;  /* NAT */
-	border-left: 1px solid #fff;
-	border-bottom: 1px solid #fff;
-	color: #000;
-	font-weight: bold;
-	width: 5.5em;
-	/* Mac IE will ignore the next line \*/
-	width: auto;
-	/* end hack */
-	}
-
-#bottommenu a {
-	padding-right: 20px;
-	border-width: 0 1px; /* NAT */
-	border-style: solid; /* NAT */
-	border-color: #AE967F; /* NAT */
-	background: #DECEB3; /* NAT */
-	color: #000; /* NAT */
-	}
-
-#topmenu a.on,
-#topmenu a:hover {
-	background: #EBA668; /* NAT */
-	color: #fff;
-	text-decoration: none; /* NAT */
-	}
-
-#topmenu a.on {
-	border-bottom: 1px solid #4D6C25;
-	}
-
-#bottommenu a.on,
-#bottommenu a:hover {
-	background: #EBA668; /* NAT */
-	color: #fff; /* NAT */
-	text-decoration: none; /* NAT */
-	}
+/**** MENU and FOOTER are now styled with Tailwind classes directly in *********/
+/**** page.php - see #menu / #footer there. Nothing here targets them. ********/
 
 /**** STRIPES *****************************************************************/
 /**** The horizontal stripes. And/or the main column / sidebar structure.     */

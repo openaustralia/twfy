@@ -680,9 +680,14 @@ class PAGE {
             // Where we're linking to.
             $URL = new URL($toppage);
 
-            $class = $toppage == $top_hilite ? ' class="on"' : '';
+            $is_current = $toppage == $top_hilite;
+            $tab_class = $is_current
+                ? 'on !text-white border-0 border-b-2 border-solid border-teal-400'
+                : 'border-0 border-b-2 border-solid border-transparent !text-slate-200 hover:!text-white';
+            $class = ' class="inline-block rounded px-3 py-1.5 font-semibold !no-underline ' . $tab_class . '"';
+            $aria_current = $is_current ? ' aria-current="page"' : '';
 
-            $top_links[] = '<a href="' . $URL->generate() . '" title="' . $title . '"' . $class . '>' . $text . '</a>';
+            $top_links[] = '<a href="' . $URL->generate() . '" title="' . $title . '"' . $class . $aria_current . '>' . $text . '</a>';
 
             if ($toppage == $top_hilite) {
                 // This top menu link is highlighted, so generate its bottom menu.
@@ -699,22 +704,7 @@ class PAGE {
             }
         }
         ?>
-                        <div id="menu">
-                            <div id="topmenu">
-                                <?php
-                                $user_bottom_links = $this->user_bar($top_hilite, $bottom_hilite);
-                                if ($user_bottom_links) {
-                                    $bottom_links = $user_bottom_links;
-                                }
-                                ?>
-                                <br>
-                            </div>
-                            <div id="bottommenu">
-                                <ul>
-                                    <li><?php print implode("</li>\n\t\t\t<li>", $top_links); ?></li>
-                                </ul>
-                            </div>
-                        </div> <!-- end #menu -->
+                        <?php include __DIR__ . '/templates/html/menu.php'; ?>
 
                         <?php
     }
@@ -866,7 +856,7 @@ class PAGE {
             $edittitle = $menudata['title'];
             $EDITURL = new URL('userviewself');
             if ($this_page == 'userviewself' || $this_page == 'useredit' || $top_hilite == 'userviewself') {
-                $editclass = ' class="on"';
+                $editclass = ' class="on inline-block rounded px-2 py-1 text-sm font-semibold !no-underline !text-white border-0 border-b-2 border-solid border-teal-400" aria-current="page"';
                 $bottompages = [];
                 foreach ($bottompages as $bottompage) {
                     $menudata = $DATA->page_metadata($bottompage, 'menu');
@@ -878,7 +868,7 @@ class PAGE {
                     $bottom_links[] = '<a href="' . $URL->generate() . '" title="' . $title . '"' . $class . '>' . $text . '</a>';
                 }
             } else {
-                $editclass = '';
+                $editclass = ' class="inline-block rounded px-2 py-1 text-sm font-semibold !no-underline border-0 border-b-2 border-solid border-transparent !text-slate-200 hover:!text-white"';
             }
 
             // The 'Log out' link.
@@ -889,21 +879,12 @@ class PAGE {
             $LOGOUTURL = new URL('userlogout');
             if ($this_page != 'userlogout') {
                 $LOGOUTURL->insert(["ret" => $returl]);
-                $logoutclass = '';
+                $logoutclass = ' class="inline-block rounded px-2 py-1 text-sm font-semibold !no-underline border-0 border-b-2 border-solid border-transparent !text-slate-200 hover:!text-white"';
             } else {
-                $logoutclass = ' class="on"';
+                $logoutclass = ' class="on inline-block rounded px-2 py-1 text-sm font-semibold !no-underline !text-white border-0 border-b-2 border-solid border-teal-400" aria-current="page"';
             }
 
             $username = $THEUSER->firstname() . ' ' . $THEUSER->lastname();
-
-            ?>
-                            <ul id="user" class="!box-border !max-w-full max-md:!absolute max-md:!left-[calc(100vw-8rem)] max-md:!right-auto max-md:!w-auto">
-                                <li><a href="<?php echo $LOGOUTURL->generate(); ?>" title="<?php echo $logouttitle; ?>" <?php echo $logoutclass; ?>><?php echo $logouttext; ?></a></li>
-                                <li><a href="<?php echo $EDITURL->generate(); ?>" title="<?php echo $edittitle; ?>" <?php echo $editclass; ?>><?php echo $edittext; ?></a></li>
-                                <li><span class="name"><?php echo htmlentities($username); ?></span></li>
-                                <!--            <li><a href="<?php echo $GETINVURL->generate(); ?>" title="<?php echo $getinvolvedtitle; ?>"<?php echo $getinvolvedclass; ?>><?php echo $getinvolvedtext; ?></a></li> -->
-                            </ul>
-                            <?php
 
         } else {
             // User logged out.
@@ -921,9 +902,9 @@ class PAGE {
                     // immediately!
                     $JOINURL->insert(["ret" => $returl]);
                 }
-                $joinclass = '';
+                $joinclass = ' class="inline-block rounded px-2 py-1 text-sm font-semibold !no-underline border-0 border-b-2 border-solid border-transparent !text-slate-200 hover:!text-white"';
             } else {
-                $joinclass = ' class="on"';
+                $joinclass = ' class="on inline-block rounded px-2 py-1 text-sm font-semibold !no-underline !text-white border-0 border-b-2 border-solid border-teal-400" aria-current="page"';
             }
 
             // The 'Log in' link.
@@ -945,19 +926,14 @@ class PAGE {
                     // And the join page.
                     $LOGINURL->insert(["ret" => $returl]);
                 }
-                $loginclass = '';
+                $loginclass = ' class="inline-block rounded px-2 py-1 text-sm font-semibold !no-underline border-0 border-b-2 border-solid border-transparent !text-slate-200 hover:!text-white"';
             } else {
-                $loginclass = ' class="on"';
+                $loginclass = ' class="on inline-block rounded px-2 py-1 text-sm font-semibold !no-underline !text-white border-0 border-b-2 border-solid border-teal-400" aria-current="page"';
             }
-
-            ?>
-                            <ul id="user" class="!box-border !max-w-full max-md:!absolute max-md:!left-[calc(100vw-8rem)] max-md:!right-auto max-md:!w-auto">
-                                <li><a href="<?php echo $LOGINURL->generate(); ?>" title="<?php echo $logintitle; ?>" <?php echo $loginclass; ?>><?php echo $logintext; ?></a></li>
-                                <li><a href="<?php echo $JOINURL->generate(); ?>" title="<?php echo $jointitle; ?>" <?php echo $joinclass; ?>><?php echo $jointext; ?></a></li>
-                                <!--            <li><a href="<?php echo $GETINVURL->generate(); ?>" title="<?php echo $getinvolvedtitle; ?>"<?php echo $getinvolvedclass; ?>><?php echo $getinvolvedtext; ?></a></li> -->
-                            </ul>
-                            <?php
         }
+        ?>
+                            <?php include __DIR__ . '/templates/html/user_bar.php'; ?>
+                            <?php
         return $bottom_links;
     }
 
