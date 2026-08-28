@@ -495,7 +495,7 @@ class PAGE {
         ?>
 
         <body>
-            <div id="container">
+            <div id="container" class="!box-border flex min-h-screen flex-col">
                 <?php
                 twfy_debug("PAGE", "This page: $this_page");
 
@@ -946,7 +946,7 @@ class PAGE {
 
         // Where the actual meat of the page begins, after the title and menu.
         ?>
-                        <div id="content">
+                        <div id="content" class="!box-border flex flex-1 flex-col">
                             <?php
     }
 
@@ -1251,7 +1251,7 @@ class PAGE {
         ];
         ?>
 
-                    <div id="footer" class="!box-border !m-0 !bg-transparent !p-0 max-md:!w-screen">
+                    <div id="footer" class="!box-border !m-0 !mt-auto !bg-transparent !p-0 max-md:!w-screen">
                         <div class="!box-border max-md:!w-screen bg-slate-100 px-4 py-10 md:px-8">
                             <div class="grid gap-8 md:grid-cols-[2fr_1fr_1fr_1fr]">
                                 <div>
