@@ -238,7 +238,7 @@ sub makerankings {
                 WHERE person_id IN ";
         my $sth = $dbh->prepare($query .
                 #"( 10001 )");
-                '(SELECT person_id FROM member WHERE house=1 AND CURRENT_DATE <= left_house ORDER BY member_id)');
+                '(SELECT person_id FROM member WHERE house=1 AND CURRENT_DATE <= left_house) ORDER BY member_id');
         $sth->execute();
         if ($sth->rows == 0) {
             $sth = $dbh->prepare($query .
@@ -402,7 +402,7 @@ sub makerankings {
         $query = "SELECT member_id,person_id FROM member
                 WHERE person_id IN ";
         $sth = $dbh->prepare($query .
-                '(SELECT person_id FROM member WHERE house=2 AND CURRENT_DATE <= left_house ORDER BY member_id)');
+                '(SELECT person_id FROM member WHERE house=2 AND CURRENT_DATE <= left_house) ORDER BY member_id');
         $sth->execute();
         while ( my @row = $sth->fetchrow_array() ) {
                 my $mp_id = $row[0];
