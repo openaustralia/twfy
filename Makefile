@@ -153,7 +153,12 @@ lint-perl-ci lint-perl:
 	find -L www scripts -iregex '.*\.pl$$' ! -path '*/archived/*' -print0 | xargs -0 -n 1 perl -c
 
 lint-perl-critic:
-	find -L scripts -iregex '.*\.(pl|pm)$$' ! -path '*/archived/*' -print0 | xargs -0 -n 1 perlcritic --profile .perlcriticrc
+	# -r/--no-run-if-empty: the -iregex below matches zero files (find's default
+	# BRE dialect treats the unescaped parens/pipe as literal characters, not
+	# grouping/alternation - see openaustralia/openaustralia#936), so without
+	# -r, xargs invokes perlcritic once anyway with no file argument, and its
+	# behaviour reading an empty stdin varies by environment.
+	find -L scripts -iregex '.*\.(pl|pm)$$' ! -path '*/archived/*' -print0 | xargs -0 -r -n 1 perlcritic --profile .perlcriticrc
 
 phpcs:
 	./vendor/bin/phpcs --standard=phpcs.xml --tab-width=4 --report=summary www scripts $(PHPCS_ARGS)
