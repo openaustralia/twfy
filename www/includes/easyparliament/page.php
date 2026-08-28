@@ -1245,41 +1245,78 @@ class PAGE {
         global $DATA, $this_page;
 
         $pages = ['about', 'contact', 'linktous', 'houserules'];
+        $help_links = [];
 
         foreach ($pages as $page) {
             $URL = new URL($page);
             $title = $DATA->page_metadata($page, 'title');
 
             if ($page == $this_page) {
-                $links[] = $title;
+                $help_links[] = $title;
             } else {
-                $links[] = '<a href="' . $URL->generate() . '">' . $title . '</a>';
+                $help_links[] = '<a href="' . $URL->generate() . '">' . $title . '</a>';
             }
         }
-        $links[] = '<a href="' . WEBPATH . 'api/">API</a> / <a href="https://data.openaustralia.org.au">XML</a>';
-        $links[] = '<a href="https://software.openaustralia.org">Source code</a>';
 
         $qs = $_SERVER['QUERY_STRING'];
         if (preg_match('/.*show_pc.*/i', $qs)) {
-            $links[] = '<a href="/?show_mobile">Mobile OA</a>';
+            $help_links[] = '<a href="/?show_mobile">Mobile OA</a>';
         }
 
         $user_agent = (isset($_SERVER['HTTP_USER_AGENT'])) ? strtolower($_SERVER['HTTP_USER_AGENT']) : '';
         if (stristr($user_agent, 'Firefox/')) {
-            $links[] = '<a href="http://mycroft.mozdev.org/download.html?name=openaustralia">Add search to Firefox</a>';
+            $help_links[] = '<a href="http://mycroft.mozdev.org/download.html?name=openaustralia">Add search to Firefox</a>';
         }
+
+        $dev_links = [
+            '<a href="' . WEBPATH . 'api/">API</a> / <a href="https://data.openaustralia.org.au">XML</a>',
+            '<a href="https://software.openaustralia.org">Source code</a>',
+        ];
         ?>
 
-                    <div id="footer" class="!box-border max-md:!w-screen max-md:!px-4">
-                        <p class="max-md:!m-0 max-md:!mb-4 max-md:!leading-7"><?php
-                        print implode(' &nbsp;&nbsp;&nbsp; ', $links);
-                        ?></p>
-                        <p class="max-md:!m-0 max-md:!leading-7">
-                            Other Wonderful Projects from the OpenAustralia Foundation:
-                            <a href="https://theyvoteforyou.org.au/">They Vote For You</a> |
-                            <a href="https://www.righttoknow.org.au/">Right To Know</a> |
-                            <a href="http://www.planningalerts.org.au/">PlanningAlerts</a>
-                        </p>
+                    <div id="footer" class="!box-border !m-0 !bg-transparent !p-0 max-md:!w-screen">
+                        <div class="!box-border max-md:!w-screen bg-slate-100 px-4 py-10 md:px-8">
+                            <div class="grid gap-8 md:grid-cols-[2fr_1fr_1fr_1fr]">
+                                <div>
+                                    <h2 class="text-lg font-semibold text-slate-900">OpenAustralia.org.au</h2>
+                                    <p class="mt-2 text-sm text-slate-600">Hansard, made findable. Searchable
+                                        transcripts of the Australian Federal Parliament.</p>
+                                    <p class="mt-2 text-sm text-slate-600">The
+                                        <a class="underline" href="https://www.oaf.org.au">OpenAustralia Foundation</a>
+                                        is a public digital online library; independent and strictly non-partisan. As a
+                                        <a class="underline" href="https://www.acnc.gov.au/charity/55c2c06e21ac71e9359a0590b9fc100e">registered
+                                            charity</a>, it is powered by donations from people like you.</p>
+                                </div>
+                                <div>
+                                    <h2 class="text-sm font-semibold uppercase tracking-wide text-slate-500">Help</h2>
+                                    <ul class="mt-3 space-y-2 text-sm">
+                                        <?php foreach ($help_links as $link): ?>
+                                        <li><?php echo $link; ?></li>
+                                        <?php endforeach; ?>
+                                    </ul>
+                                </div>
+                                <div>
+                                    <h2 class="text-sm font-semibold uppercase tracking-wide text-slate-500">Developers</h2>
+                                    <ul class="mt-3 space-y-2 text-sm">
+                                        <?php foreach ($dev_links as $link): ?>
+                                        <li><?php echo $link; ?></li>
+                                        <?php endforeach; ?>
+                                    </ul>
+                                </div>
+                                <div class="rounded-lg bg-white p-5 shadow-sm">
+                                    <p class="text-sm text-slate-600">Your donations keep this site and others like
+                                        it running.</p>
+                                    <a class="mt-3 inline-block rounded bg-teal-700 px-4 py-2 font-semibold !text-white no-underline shadow-sm hover:bg-teal-600" href="https://donate.oaf.org.au/">Donate now</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="!box-border max-md:!w-screen border-t border-slate-200 bg-white px-4 py-4 text-sm text-slate-600 md:px-8">
+                            <p>Other Wonderful Projects from the OpenAustralia Foundation:
+                                <a href="https://theyvoteforyou.org.au/">They Vote For You</a> |
+                                <a href="https://www.righttoknow.org.au/">Right To Know</a> |
+                                <a href="http://www.planningalerts.org.au/">PlanningAlerts</a>
+                            </p>
+                        </div>
                     </div>
 
             </div> <!-- end #content -->
