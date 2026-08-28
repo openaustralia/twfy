@@ -432,7 +432,7 @@ sub db_connect
         my $db_host = $ENV{DB_HOST} || mySociety::Config::get('DB_HOST');
         my $db_port = $ENV{DB_PORT} || 3306;
         my $dsn = 'DBI:mysql:database=' . mySociety::Config::get('DB_NAME') . ':host=' . $db_host . ':port=' . $db_port;
-        $dbh = DBI->connect($dsn, mySociety::Config::get('DB_USER'), mySociety::Config::get('DB_PASSWORD'), { RaiseError => 1, PrintError => 0 });
+        $dbh = DBI->connect($dsn, mySociety::Config::get('DB_USER'), mySociety::Config::get('DB_PASSWORD'), { RaiseError => 1, PrintError => 0, mysql_enable_utf8mb4 => 1 });
 
         # epobject queries
         $epadd = $dbh->prepare("INSERT INTO epobject (title, body, type, created, modified)
