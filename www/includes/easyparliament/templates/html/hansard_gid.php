@@ -52,16 +52,22 @@ if ($usePlatesTemplate) {
     $PAGE->heading_displayed = true;
 }
 
-$PAGE->stripe_start('head-1');
+if (!$usePlatesTemplate) {
+    $PAGE->stripe_start('head-1');
 
-$sidebar = $hansardmajors[$data['info']['major']]['sidebar_short'];
+    $sidebar = $hansardmajors[$data['info']['major']]['sidebar_short'];
 
-$PAGE->stripe_end(array(
-    array(
-        'type' => 'include',
-        'content' => $sidebar
-    )
-));
+    $PAGE->stripe_end(array(
+        array(
+            'type' => 'include',
+            'content' => $sidebar
+        )
+    ));
+}
+// For Plates pages, sidebars/hocdebates_short.php / holdebates_short.php's "What are
+// House debates?"/"What are Senate debates?" link (to /debates/#help or /senate/#help)
+// becomes its own block in the right-hand column instead - see $aboutTitle/
+// $aboutBodyHtml below and resources/views/hansard/about-debates.php.
 
 if ($data['info']['date'] == date('Y-m-d')) { ?>
     <div style="padding: 4px; margin: 1em; color: #000000; background-color: #ffeeee; border: solid 2px #ff0000;">
@@ -357,6 +363,16 @@ if (isset($data['rows'])) {
         $dateURL->insert(['d' => $data['info']['date']]);
         $dateURL->remove(['id']);
 
+        // Same wording as sidebars/hocdebates.php / holdebates.php (the "What are
+        // Debates?" block shown on /debates/ and /senate/'s own calendar pages) -
+        // duplicated rather than shared, since those files also call
+        // $PAGE->block_start()/block_end() to draw their own box, which isn't what's
+        // wanted here. Keep the two in sync by hand if this wording ever changes.
+        $aboutBodyHtml = [
+            1 => '<p><strong>Debates</strong> in the House of Representatives are an opportunity for members from all parties to <strong>scrutinise</strong> government legislation and <strong>raise important local, national or topical issues</strong>.</p><p>And sometimes to shout at each other.</p>',
+            101 => '<p><strong>Debates</strong> in the Senate are an opportunity for Senators from all parties to <strong>scrutinise</strong> government legislation and <strong>raise important local, national or topical issues</strong>.</p><p>And sometimes to shout at each other.</p>',
+        ];
+
         echo $platesEngine->render('hansard/transcript', [
             'items' => $plates_items,
             'speakers' => HansardSpeechView::buildRoster($plates_items),
@@ -376,6 +392,13 @@ if (isset($data['rows'])) {
             // $this->e() would then escape a second time into "&amp;amp;".
             'dateUrl' => $dateURL->generate('none'),
             'chamber' => $chamberNames[$data['info']['major']] ?? '',
+            // "What are House debates?"/"What are Senate debates?" - was a link-only
+            // sidebar block (sidebars/hocdebates_short.php etc.) above the card; now
+            // its own block in the right-hand column, with the explanation inline
+            // instead of behind a link to elsewhere. See resources/views/hansard/
+            // about-debates.php.
+            'aboutTitle' => 'What are ' . ($hansardmajors[$data['info']['major']]['title'] ?? 'debates') . '?',
+            'aboutBodyHtml' => $aboutBodyHtml[$data['info']['major']] ?? '',
         ]);
     }
 
