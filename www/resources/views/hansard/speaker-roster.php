@@ -7,7 +7,7 @@
  * already sorted most-said-first - nothing here decides ordering or counts.
  */
 ?>
-<aside class="lg:col-span-1 bg-white rounded-2xl shadow-lg p-6 md:p-8">
+<aside class="bg-white rounded-2xl shadow-lg p-6 md:p-8">
     <h2 class="text-sm font-semibold uppercase tracking-wide text-teal-700 mb-4">Speakers in this Debate</h2>
     <ul class="space-y-3">
         <?php
