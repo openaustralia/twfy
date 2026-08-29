@@ -9,7 +9,7 @@
 // The array $data will be packed full of luverly stuff about hansard objects.
 // See the bottom of this document for information about its structure and contents...
 
-global $PAGE, $this_page, $GLOSSARY, $hansardmajors;
+global $PAGE, $this_page, $GLOSSARY, $hansardmajors, $DATA;
 
 include_once __DIR__ . "/../../../easyparliament/searchengine.php";
 include_once __DIR__ . "/../../../easyparliament/member.php";
@@ -373,6 +373,26 @@ if (isset($data['rows'])) {
             101 => '<p><strong>Debates</strong> in the Senate are an opportunity for Senators from all parties to <strong>scrutinise</strong> government legislation and <strong>raise important local, national or topical issues</strong>.</p><p>And sometimes to shout at each other.</p>',
         ];
 
+        // "All Senate debates on 18 August 2026 / « Previous debate / Next debate »" -
+        // was the stripe-foot block at the bottom of the page (still is, for non-Plates
+        // majors - see the guarded stripe_start('foot') below); its own block in the
+        // right-hand column here instead. Same page metadata $PAGE->nextprevlinks()
+        // itself reads, set earlier by HANSARDLIST::_get_nextprev_items() - each of
+        // prev/up/next is optional (eg no "prev" on the very first debate ever
+        // recorded), and a present one isn't always a link (nextprevlinks() falls back
+        // to plain text with no 'url' in some cases too).
+        $nextPrev = [];
+        $nextprevdata = $DATA->page_metadata($this_page, 'nextprev') ?: [];
+        foreach (['prev', 'up', 'next'] as $direction) {
+            if (isset($nextprevdata[$direction]['body'])) {
+                $nextPrev[$direction] = [
+                    'label' => $nextprevdata[$direction]['body'],
+                    'url' => $nextprevdata[$direction]['url'] ?? null,
+                    'title' => $nextprevdata[$direction]['title'] ?? '',
+                ];
+            }
+        }
+
         echo $platesEngine->render('hansard/transcript', [
             'items' => $plates_items,
             'speakers' => HansardSpeechView::buildRoster($plates_items),
@@ -399,6 +419,7 @@ if (isset($data['rows'])) {
             // about-debates.php.
             'aboutTitle' => 'What are ' . ($hansardmajors[$data['info']['major']]['title'] ?? 'debates') . '?',
             'aboutBodyHtml' => $aboutBodyHtml[$data['info']['major']] ?? '',
+            'nextPrev' => $nextPrev,
         ]);
     }
 
@@ -464,7 +485,10 @@ if (isset($data['rows'])) {
 }
 
 
-if ($this_page == 'debates' || $this_page == 'whall' || $this_page == 'lordsdebates' || $this_page == 'nidebates') {
+if (
+    !$usePlatesTemplate
+    && ($this_page == 'debates' || $this_page == 'whall' || $this_page == 'lordsdebates' || $this_page == 'nidebates')
+) {
     // Previous / Index / Next links, if any.
 
     $PAGE->stripe_start('foot');

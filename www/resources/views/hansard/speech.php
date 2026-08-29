@@ -35,8 +35,16 @@
             ?>
             <p class="mb-3">
                 <span class="font-bold text-slate-900">
+                    <?php
+                    // ! prefixes throughout this file's links: layout.css has legacy
+                    // "a:link { color: #00b; text-decoration: underline }" /
+                    // "a:visited { color: #505; ... }" rules (specificity 0,1,1) that
+                    // beat a plain Tailwind colour class (0,1,0) regardless of stylesheet
+                    // order - same fix PR #225's nav bar already uses (see page.php).
+                    // Without it, every link here rendered classic underlined blue.
+                    ?>
                     <?php if ($speech->speakerUrl): ?>
-                        <a href="<?php echo $this->e($speech->speakerUrl) ?>" class="hover:text-teal-700"
+                        <a href="<?php echo $this->e($speech->speakerUrl) ?>" class="!text-slate-900 hover:!text-teal-700 !no-underline"
                             title="See more information about <?php echo $this->e($speech->speakerName) ?>"><?php echo $this->e($speech->speakerName) ?></a>
                     <?php else: ?>
                         <?php echo $this->e($speech->speakerName) ?>
@@ -86,7 +94,7 @@
         <?php if ($speech->sourceUrl || $speech->contextLinkHtml || $speech->commentTeaserHtml): ?>
             <div class="mt-3 text-sm text-slate-500 space-x-3">
                 <?php if ($speech->sourceUrl): ?>
-                    <a href="<?php echo $this->e($speech->sourceUrl) ?>" class="hover:text-teal-700"
+                    <a href="<?php echo $this->e($speech->sourceUrl) ?>" class="!text-slate-500 hover:!text-teal-700 !no-underline"
                         title="The source of this piece of text"><?php echo $this->e($speech->sourceLabel) ?></a>
                 <?php endif; ?>
                 <?php echo $speech->contextLinkHtml ?>
