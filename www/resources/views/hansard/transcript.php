@@ -9,6 +9,9 @@
  * code's only job is building that list of plain data objects.
  */
 ?>
+<?php if (!empty($breadcrumbs)): ?>
+    <?php echo $this->fetch('hansard/breadcrumbs', ['crumbs' => $breadcrumbs]) ?>
+<?php endif; ?>
 <div class="bg-slate-50 p-3 md:p-6 rounded-2xl">
     <?php
     // lg:grid puts the transcript and the "Speakers in this debate" roster

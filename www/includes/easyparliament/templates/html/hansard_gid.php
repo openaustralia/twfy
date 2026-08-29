@@ -41,6 +41,43 @@ if ($usePlatesTemplate) {
     // 'url' in some cases too).
     $nextprevdata = $DATA->page_metadata($this_page, 'nextprev') ?: [];
     $nextPrev = HansardSpeechView::buildNextPrev($nextprevdata, $hansardmajors[$data['info']['major']]['title'] ?? 'debates');
+
+    // "House debates"/"Senate debates" (chamberLabel) and "House of Representatives"/
+    // "Senate" (chamberName) - two different existing labels for the same thing,
+    // kept as two variables rather than picked between, since transcript.php's
+    // eyebrow line already uses the first and its "chamber" row the second. Both the
+    // transcript card and the section-index page (below) now show one or the other
+    // somewhere on the page - see openaustralia/openaustralia's own "which house was
+    // this?" feedback on the section-index page, which had neither.
+    $chamberNames = [1 => 'House of Representatives', 101 => 'Senate'];
+    $chamberLabel = $hansardmajors[$data['info']['major']]['title'] ?? '';
+    $chamberName = $chamberNames[$data['info']['major']] ?? '';
+
+    // Same "d=" listing link hansardlist.php itself builds for its own nextprev 'up'
+    // link ("All House debates on 20 August 2026") - $page_all is the internal page
+    // key ('debates'/'lordsdebates') the URL class maps to the real /debates/,
+    // /senate/ etc. path. remove(['id']) matters: without it this page's own ?id=
+    // survives into the generated URL alongside ?d=. Computed here, unconditionally,
+    // so both the transcript card and the section-index page (which has no
+    // $plates_items of its own) can build a breadcrumb trail with it.
+    $dateURL = new URL($hansardmajors[$data['info']['major']]['page_all']);
+    $dateURL->insert(['d' => $data['info']['date']]);
+    $dateURL->remove(['id']);
+
+    // "Home / House of Representatives / 20 August 2026 / Adjournment" - see
+    // resources/views/hansard/breadcrumbs.php. The current page's own crumb (last)
+    // is added by each caller below, since only they know their own title/whether
+    // it should link anywhere.
+    $chamberAllURL = new URL($hansardmajors[$data['info']['major']]['page_all']);
+    // Same as $dateURL above: without this, the URL class carries this page's own
+    // current ?id= query param straight through, so the crumb would silently link
+    // back to this same page instead of the general listing.
+    $chamberAllURL->remove(['id']);
+    $breadcrumbsSoFar = [
+        ['label' => 'Home', 'url' => '/'],
+        ['label' => $chamberName, 'url' => $chamberAllURL->generate('none')],
+        ['label' => date('j F Y', strtotime($data['info']['date'])), 'url' => $dateURL->generate('none')],
+    ];
 }
 
 // Will set the page headings and start the page HTML if it hasn't
@@ -366,16 +403,8 @@ if (isset($data['rows'])) {
     } // End cycling through rows.
 
     if ($usePlatesTemplate && count($plates_items) > 0) {
-        $chamberNames = [1 => 'House of Representatives', 101 => 'Senate'];
-
-        // Same "d=" listing link hansardlist.php itself builds for its own nextprev
-        // 'up' link ("All House debates on 20 August 2026") - $page_all is the
-        // internal page key ('debates'/'lordsdebates') the URL class maps to the
-        // real /debates/, /senate/ etc. path. remove(['id']) matters: without it
-        // this page's own ?id= survives into the generated URL alongside ?d=.
-        $dateURL = new URL($hansardmajors[$data['info']['major']]['page_all']);
-        $dateURL->insert(['d' => $data['info']['date']]);
-        $dateURL->remove(['id']);
+        // $chamberNames/$dateURL: computed once, unconditionally, near the top of
+        // this file now - see the comment there.
 
         // Same wording as sidebars/hocdebates.php / holdebates.php (the "What are
         // Debates?" block shown on /debates/ and /senate/'s own calendar pages) -
@@ -387,9 +416,18 @@ if (isset($data['rows'])) {
             101 => '<p><strong>Debates</strong> in the Senate are an opportunity for Senators from all parties to <strong>scrutinise</strong> government legislation and <strong>raise important local, national or topical issues</strong>.</p><p>And sometimes to shout at each other.</p>',
         ];
 
+        // The page's own crumb, last in the trail - $subsection_title when there is
+        // one (a debate within a section, eg "Second Reading" within "Social
+        // Security... Bill 2026"), else $section_title (a section with no
+        // subsections of its own). Both default to '&nbsp;' (see the loop above)
+        // when genuinely empty - never true for a Plates page, since $plates_items
+        // being non-empty here means at least one titled row was seen.
+        $pageOwnCrumbTitle = $subsection_title != '&nbsp;' ? $subsection_title : $section_title;
+
         echo $platesEngine->render('hansard/transcript', [
             'items' => $plates_items,
             'speakers' => HansardSpeechView::buildRoster($plates_items),
+            'breadcrumbs' => array_merge($breadcrumbsSoFar, [['label' => $pageOwnCrumbTitle]]),
             // $hansardmajors[...]['title'] is "House debates"/"Senate debates" - the
             // same text the old stripe-head-1 h2 printed above the card (see
             // $PAGE->heading_displayed suppression below). Shown next to $section_title
@@ -445,27 +483,42 @@ if (isset($data['rows'])) {
         // A section-index page (eg an Adjournment debate - "Climate Change",
         // "Humanitarian and Refugee Visas" etc, each its own separate debate with its
         // own gid, not content living on this page) - not a transcript, so no
-        // hansard/transcript.php card here. Same pagination top and bottom, and the
-        // section's own title, wrapping resources/views/hansard/section-index.php's
-        // card list in the same shell every other Plates page uses.
-        ?>
-        <div class="bg-slate-50 p-3 md:p-6 rounded-2xl">
-            <div class="bg-white rounded-2xl shadow-lg p-6 md:p-8 space-y-8">
-                <div>
-                    <h1 class="text-3xl md:text-4xl font-bold text-slate-900 leading-tight"><?php echo $section_title ?></h1>
-                    <hr class="mt-4 border-0 border-t border-slate-200">
-                </div>
-                <?php if (!empty($nextPrev)): ?>
-                    <?php echo $platesEngine->render('hansard/pagination', ['nextPrev' => $nextPrev, 'edge' => 'top']) ?>
-                <?php endif; ?>
-                <?php
-                $sectionIndexItems = array_map(
-                    fn($row) => HansardSectionIndexItem::fromSubrow($row, $hansardmajors),
-                    $data['subrows']
-                );
-                echo $platesEngine->render('hansard/section-index', ['items' => $sectionIndexItems]);
-                ?>
-        <?php
+        // hansard/transcript.php card here. One template (section-index-page.php)
+        // now owns this whole page's shell (breadcrumbs, card, pagination, optional
+        // "About the Adjournment" sidebar) - orchestration here is just building the
+        // item list and deciding whether the Adjournment-specific "about" card
+        // applies.
+        $sectionIndexItems = array_map(
+            fn($row) => HansardSectionIndexItem::fromSubrow($row, $hansardmajors),
+            $data['subrows']
+        );
+
+        // Only for the Adjournment itself, matched on title rather than major/htype:
+        // other section-index-shaped pages are possible in principle (see the
+        // 'other'-type major handling in HansardSectionIndexItem::fromSubrow()) and
+        // this wording is Adjournment-specific, so it stays hidden rather than
+        // showing something wrong for them.
+        $aboutTitle = '';
+        $aboutBodyHtml = '';
+        if ($section_title == 'Adjournment') {
+            $aboutTitle = 'What is the Adjournment?';
+            $aboutBodyHtml = '<p>At the end of most sitting days, before the House formally '
+                . 'adjourns, individual members get a few minutes each to speak on almost '
+                . 'anything &#8212; a local issue, a national one, a tribute to a '
+                . 'constituent.</p><p>Topics don&rsquo;t need to relate to any bill before '
+                . 'the House, which is why each one below is its own separate item rather '
+                . 'than one continuous debate.</p>';
+        }
+
+        echo $platesEngine->render('hansard/section-index-page', [
+            'breadcrumbs' => array_merge($breadcrumbsSoFar, [['label' => $section_title]]),
+            'chamberLabel' => $chamberLabel,
+            'sectionTitle' => $section_title,
+            'items' => $sectionIndexItems,
+            'nextPrev' => $nextPrev,
+            'aboutTitle' => $aboutTitle,
+            'aboutBodyHtml' => $aboutBodyHtml,
+        ]);
     } elseif (isset($data['subrows'])) {
         $PAGE->stripe_start();
         print '<ul>';
@@ -505,16 +558,6 @@ if (isset($data['rows'])) {
         }
         print '</ul>';
         $PAGE->stripe_end();
-    }
-
-    if (isset($data['subrows']) && $usePlatesTemplate) {
-        ?>
-                <?php if (!empty($nextPrev)): ?>
-                    <?php echo $platesEngine->render('hansard/pagination', ['nextPrev' => $nextPrev, 'edge' => 'bottom']) ?>
-                <?php endif; ?>
-            </div>
-        </div>
-        <?php
     }
 } else {
     ?>
