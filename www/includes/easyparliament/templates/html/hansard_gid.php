@@ -552,6 +552,13 @@ if (isset($data['rows'])) {
             'nextPrev' => $nextPrev,
             'aboutTitle' => $aboutTitle,
             'aboutBodyHtml' => $aboutBodyHtml,
+            // Matches LONGERDATEFORMAT (what the suppressed old h3 used, eg "Tuesday,
+            // 18 August 2026") - same format transcript.php's own 'date' uses.
+            'date' => date('l, j F Y', strtotime($data['info']['date'])),
+            // 'none': a plain URL, not pre-HTML-escaped - section-index-page.php's
+            // $this->e() does that itself, same as transcript.php's own 'dateUrl'.
+            'dateUrl' => $dateURL->generate('none'),
+            'chamber' => $chamberNames[$data['info']['major']] ?? '',
         ]);
     } elseif (isset($data['subrows'])) {
         $PAGE->stripe_start();
