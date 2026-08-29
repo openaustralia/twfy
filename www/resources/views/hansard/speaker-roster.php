@@ -8,7 +8,12 @@
  */
 ?>
 <aside class="bg-white rounded-2xl shadow-lg p-6 md:p-8">
-    <h2 class="text-base font-semibold uppercase tracking-wide text-teal-700 mb-4">Speakers in this Debate</h2>
+    <?php
+    // mt-0 mx-0: same unscoped legacy "h2 { margin: 0.2em 14px 10px 18px; }" rule
+    // (layout.css, search "NAT") that about-debates.php's own h2 has to neutralise -
+    // see that file's comment for the full explanation.
+    ?>
+    <h2 class="text-base font-semibold uppercase tracking-wide text-teal-700 mb-4 mt-0 mx-0">Speakers in this Debate</h2>
     <ul class="space-y-3">
         <?php
         // Only the photo and the name link to the speaker's profile - the party/
