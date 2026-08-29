@@ -25,9 +25,9 @@
         <img src="<?php echo $this->e($speech->avatarUrl) ?>"
             alt="Photo of <?php echo $this->e($speech->speakerName ?? '') ?>"
             class="w-16 h-16 rounded-full flex-shrink-0 object-cover object-top">
-    <?php elseif ($speech->speakerName): ?>
+    <?php elseif ($speech->speakerInitials): ?>
         <div class="w-16 h-16 rounded-full flex-shrink-0 bg-slate-200 text-slate-600 flex items-center justify-center font-semibold text-lg">
-            <?php echo $this->e(mb_strtoupper(mb_substr($speech->speakerName, 0, 1))) ?>
+            <?php echo $this->e($speech->speakerInitials) ?>
         </div>
     <?php endif; ?>
 
@@ -40,7 +40,7 @@
             // rendered between them. Inline flow renders that same whitespace as an
             // ordinary space, and still wraps naturally on narrow screens.
             ?>
-            <p class="mb-3">
+            <p class="mb-3 text-lg">
                 <span class="font-bold text-slate-900">
                     <?php
                     // ! prefixes throughout this file's links: layout.css has legacy

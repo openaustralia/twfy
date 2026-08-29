@@ -9,7 +9,14 @@
  * the same wording as sidebars/hocdebates.php / holdebates.php.
  */
 ?>
-<aside class="bg-white rounded-2xl shadow-lg p-6 md:p-8">
+<?php
+// aria-labelledby, not aria-label: reuses the visible heading text below as this
+// landmark's accessible name (axe's landmark-unique rule needs each <aside> on the
+// page to be distinguishable - there are two/three here, all otherwise plain
+// "complementary" regions with no way to tell them apart by screen reader landmark
+// navigation).
+?>
+<aside class="bg-white rounded-2xl shadow-lg p-6 md:p-8" aria-labelledby="about-debates-heading">
     <?php
     // mt-0 mx-0: layout.css has a bare, unscoped "h2 { margin: 0.2em 14px 10px 18px;
     // color: #B82E00; }" left over from the old design (search "NAT" in that file) -
@@ -18,7 +25,7 @@
     // parts left to neutralise are the margins. Without mx-0 specifically, the 18px
     // left margin pushed the title out of alignment with the paragraph text below it.
     ?>
-    <h2 class="text-base font-semibold uppercase tracking-wide text-teal-700 mt-0 mb-4 mx-0"><?php echo $this->e($title) ?></h2>
+    <h2 id="about-debates-heading" class="text-base font-semibold uppercase tracking-wide text-teal-700 mt-0 mb-4 mx-0"><?php echo $this->e($title) ?></h2>
     <div class="text-sm text-slate-600 space-y-3">
         <?php echo $bodyHtml ?>
     </div>
