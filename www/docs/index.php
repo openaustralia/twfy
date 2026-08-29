@@ -30,7 +30,7 @@ function search_hero() {
     $SEARCHURL = new URL('search');
     $keyword = get_http_var('keyword');
     ?>
-    <section class="mb-8 box-border rounded-lg bg-[#26343b] p-6 text-white shadow-md md:p-8">
+    <section class="mx-4 mb-8 box-border rounded-lg bg-[#26343b] p-6 text-white shadow-md md:mx-8 md:p-8">
         <h2 class="!text-white mb-2 text-2xl font-semibold">🔎 Search Hansard</h2>
         <?php
         // text-lg: matches the body-copy size introduced on the debate transcript
@@ -85,19 +85,19 @@ function popular_searches() {
  */
 function feature_row() {
     ?>
-    <section class="mb-12 rounded-2xl bg-slate-50 px-4 py-10 md:px-8">
-        <div class="mx-auto grid max-w-4xl grid-cols-1 gap-10 text-center md:grid-cols-3">
-            <div>
+    <section class="mx-4 mb-12 rounded-2xl bg-slate-50 px-4 py-10 md:mx-8 md:px-8">
+        <div class="mx-auto grid max-w-5xl grid-cols-1 gap-6 md:grid-cols-3">
+            <div class="rounded-2xl bg-white p-6 text-center shadow-md md:p-8">
                 <?php feature_icon('👤'); ?>
                 <?php your_mp_bullet_point(); ?>
             </div>
-            <div>
+            <div class="rounded-2xl bg-white p-6 text-center shadow-md md:p-8">
                 <?php feature_icon('📜'); ?>
                 <h3 class="mb-2 text-lg font-semibold text-slate-900">Read the Debates</h3>
                 <p class="text-slate-600">Access and search the complete record of what's said in the House of
                     Representatives and the Senate.</p>
             </div>
-            <div>
+            <div class="rounded-2xl bg-white p-6 text-center shadow-md md:p-8">
                 <?php feature_icon('✉️'); ?>
                 <?php email_alert_bullet_point(); ?>
             </div>
@@ -187,7 +187,7 @@ function email_alert_bullet_point() {
  */
 function latest_activity() {
     ?>
-    <section class="mb-12">
+    <section class="mx-4 mb-12 md:mx-8">
         <h2 class="mb-1 text-center text-3xl font-bold text-slate-900">Latest Activity in Parliament</h2>
         <p class="mb-8 text-center text-slate-600">Recent debates from the House and the Senate.</p>
         <div class="grid grid-cols-1 gap-8 md:grid-cols-2">
@@ -307,7 +307,7 @@ function about_this_site_card() {
     $URL = new URL('about');
     $abouturl = $URL->generate();
     ?>
-    <section class="mb-12 rounded-2xl bg-slate-50 px-4 py-12 md:px-8">
+    <section class="mx-4 mb-12 rounded-2xl bg-slate-50 px-4 py-12 md:mx-8 md:px-8">
         <div class="mx-auto max-w-2xl rounded-2xl bg-white p-6 text-center shadow-md md:p-10">
             <h2 class="mb-4 text-2xl font-bold text-slate-900">What's all this about?</h2>
             <div class="space-y-4 text-lg text-slate-700">
