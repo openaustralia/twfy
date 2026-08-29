@@ -108,6 +108,23 @@ class HansardSpeechViewTest extends TestCase {
     }
 
     /**
+     * _get_speaker() (hansardlist.php) only sets 'office' when the member holds one
+     * on the debate's own date (moffice's date range) - appended after the
+     * party/electorate line when present.
+     */
+    public function test_forSpeech_appends_the_office_when_the_speaker_holds_one() {
+        $row = $this->speechRow([
+            'speaker' => $this->speaker([
+                'office' => [['dept' => '', 'position' => 'Minister for Health', 'pretty' => 'Minister for Health']],
+            ]),
+        ]);
+
+        $view = HansardSpeechView::forSpeech($row, $this->info(), true);
+
+        $this->assertSame('Queensland, Australian Greens, Minister for Health', $view->speakerDescription);
+    }
+
+    /**
      *
      */
     public function test_forSpeech_leaves_speaker_fields_null_when_the_row_has_no_speaker() {
@@ -259,6 +276,21 @@ class HansardSpeechViewTest extends TestCase {
         $this->assertSame('Hansard source', $withSource->sourceLabel);
         $this->assertNull($emptySource->sourceUrl);
         $this->assertNull($missingSource->sourceUrl);
+    }
+
+    /**
+     * $row['commentsurl'] only gets set for htype-12 rows (see hansard_gid.php's own
+     * $input['amount'] building) - permalinkUrl is null when it's genuinely absent,
+     * not just falsy, since an empty string would still be a link to somewhere.
+     */
+    public function test_forSpeech_sets_the_permalink_only_when_the_row_has_a_commentsurl() {
+        $withUrl = HansardSpeechView::forSpeech($this->speechRow(['commentsurl' => '/debates/?id=2026-08-18.108.2']), $this->info(), true);
+        $noUrlKey = $this->speechRow([]);
+        unset($noUrlKey['commentsurl']);
+        $withoutUrl = HansardSpeechView::forSpeech($noUrlKey, $this->info(), true);
+
+        $this->assertSame('/debates/?id=2026-08-18.108.2', $withUrl->permalinkUrl);
+        $this->assertNull($withoutUrl->permalinkUrl);
     }
 
     /**
