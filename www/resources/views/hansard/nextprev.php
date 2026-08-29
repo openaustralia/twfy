@@ -2,7 +2,7 @@
 
 /**
  * @file
- * "All Senate debates on 18 August 2026 / « Previous debate / Next debate »" - was
+ * "All Senate debates on 18 August 2026 / ⬅️ Previous debate / Next debate ➡️" - was
  * the stripe-foot block at the bottom of the page (see the guarded
  * stripe_start('foot') in hansard_gid.php); its own block in the right-hand column
  * here instead. $nextPrev has up to three keys - 'prev', 'up', 'next' - each optional,
@@ -33,9 +33,9 @@
                 <?php if (isset($nextPrev['prev'])): ?>
                     <?php if ($nextPrev['prev']['url']): ?>
                         <a href="<?php echo $this->e($nextPrev['prev']['url']) ?>" class="!text-slate-700 hover:!text-teal-700 !no-underline"
-                            title="<?php echo $this->e($nextPrev['prev']['title']) ?>">&laquo; <?php echo $this->e($nextPrev['prev']['label']) ?></a>
+                            title="<?php echo $this->e($nextPrev['prev']['title']) ?>">⬅️ <?php echo $this->e($nextPrev['prev']['label']) ?></a>
                     <?php else: ?>
-                        <span class="text-slate-400">&laquo; <?php echo $this->e($nextPrev['prev']['label']) ?></span>
+                        <span class="text-slate-400">⬅️ <?php echo $this->e($nextPrev['prev']['label']) ?></span>
                     <?php endif; ?>
                 <?php else: ?>
                     <span></span>
@@ -43,9 +43,9 @@
                 <?php if (isset($nextPrev['next'])): ?>
                     <?php if ($nextPrev['next']['url']): ?>
                         <a href="<?php echo $this->e($nextPrev['next']['url']) ?>" class="!text-slate-700 hover:!text-teal-700 !no-underline"
-                            title="<?php echo $this->e($nextPrev['next']['title']) ?>"><?php echo $this->e($nextPrev['next']['label']) ?> &raquo;</a>
+                            title="<?php echo $this->e($nextPrev['next']['title']) ?>"><?php echo $this->e($nextPrev['next']['label']) ?> ➡️</a>
                     <?php else: ?>
-                        <span class="text-slate-400"><?php echo $this->e($nextPrev['next']['label']) ?> &raquo;</span>
+                        <span class="text-slate-400"><?php echo $this->e($nextPrev['next']['label']) ?> ➡️</span>
                     <?php endif; ?>
                 <?php endif; ?>
             </div>
