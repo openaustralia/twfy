@@ -347,8 +347,19 @@ if (isset($data['rows'])) {
 
     if ($usePlatesTemplate && count($plates_items) > 0) {
         $chamberNames = [1 => 'House of Representatives', 101 => 'Senate'];
+
+        // Same "d=" listing link hansardlist.php itself builds for its own nextprev
+        // 'up' link ("All House debates on 20 August 2026") - $page_all is the
+        // internal page key ('debates'/'lordsdebates') the URL class maps to the
+        // real /debates/, /senate/ etc. path. remove(['id']) matters: without it
+        // this page's own ?id= survives into the generated URL alongside ?d=.
+        $dateURL = new URL($hansardmajors[$data['info']['major']]['page_all']);
+        $dateURL->insert(['d' => $data['info']['date']]);
+        $dateURL->remove(['id']);
+
         echo $platesEngine->render('hansard/transcript', [
             'items' => $plates_items,
+            'speakers' => HansardSpeechView::buildRoster($plates_items),
             // $hansardmajors[...]['title'] is "House debates"/"Senate debates" - the
             // same text the old stripe-head-1 h2 printed above the card (see
             // $PAGE->heading_displayed suppression below). Shown next to $section_title
@@ -359,6 +370,11 @@ if (isset($data['rows'])) {
             // Matches LONGERDATEFORMAT (what the suppressed old h3 used, eg "Tuesday, 18
             // August 2026") rather than the plain 'j F Y' this used before.
             'date' => date('l, j F Y', strtotime($data['info']['date'])),
+            // 'none': a plain URL, not pre-HTML-escaped - transcript.php's $this->e()
+            // does that itself, same as every other href here (see chamberLabel etc.).
+            // generate()'s default ('html') already returns "&amp;"-joined args, which
+            // $this->e() would then escape a second time into "&amp;amp;".
+            'dateUrl' => $dateURL->generate('none'),
             'chamber' => $chamberNames[$data['info']['major']] ?? '',
         ]);
     }
