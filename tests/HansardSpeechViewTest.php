@@ -231,6 +231,20 @@ class HansardSpeechViewTest extends TestCase {
     }
 
     /**
+     * A real example from senate 2026-08-19.164: a stray, empty "<i/>" left between
+     * two real <i>...</i> phrases by the parser's XML-to-HTML conversion. Browsers
+     * don't treat "<i/>" as self-closing - left in, it opens an <i> that never closes,
+     * silently italicising everything on the page that follows it.
+     */
+    public function test_forSpeech_strips_stray_self_closed_italic_tags() {
+        $row = $this->speechRow(['body' => '<p><i>Civil penalty provision</i> <i/> <i>authorising conduct</i></p>']);
+
+        $view = HansardSpeechView::forSpeech($row, $this->info(), true);
+
+        $this->assertSame('<p><i>Civil penalty provision</i>  <i>authorising conduct</i></p>', $view->bodyHtml);
+    }
+
+    /**
      *
      */
     public function test_forSpeech_only_sets_a_source_url_when_the_row_has_a_non_empty_one() {
@@ -270,6 +284,19 @@ class HansardSpeechViewTest extends TestCase {
         $this->assertSame('<p>The Senate divided.</p>', $view->bodyHtml);
         $this->assertSame('<context-link:2026-08-18.108.1>', $view->contextLinkHtml);
         $this->assertSame('<comment-teaser:2026-08-18.108.1:101>', $view->commentTeaserHtml);
+    }
+
+    /**
+     * forProcedural() runs bodyHtml through the same cleanBody() as forSpeech() (see
+     * that class's test for why the <i/> case matters) - procedural rows are short,
+     * but nothing rules out the same parser artifact turning up in one.
+     */
+    public function test_forProcedural_also_cleans_the_body() {
+        $row = ['gid' => '2026-08-18.108.1', 'body' => '<p><i>Term</i> <i/> <i>other</i></p>'];
+
+        $view = HansardProceduralView::forProcedural($row, $this->info());
+
+        $this->assertSame('<p><i>Term</i>  <i>other</i></p>', $view->bodyHtml);
     }
 
     /**
