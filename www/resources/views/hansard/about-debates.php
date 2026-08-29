@@ -11,13 +11,14 @@
 ?>
 <aside class="bg-white rounded-2xl shadow-lg p-6 md:p-8">
     <?php
-    // mt-0: Tailwind's preflight reset is off project-wide (tailwind.config.js), and
-    // global.css only sets h2's font-size, not its margin - so without this, the
-    // browser's own default h2 top-margin stacks above mb-4's bottom-margin, pushing
-    // this title (and the body text under it) out of line with the roster card's own
-    // "Speakers in this Debate" title below.
+    // mt-0 mx-0: layout.css has a bare, unscoped "h2 { margin: 0.2em 14px 10px 18px;
+    // color: #B82E00; }" left over from the old design (search "NAT" in that file) -
+    // it applies to every <h2> on the site, this one included, and nothing here
+    // touches font-size/colour (already overridden by the classes below) so the only
+    // parts left to neutralise are the margins. Without mx-0 specifically, the 18px
+    // left margin pushed the title out of alignment with the paragraph text below it.
     ?>
-    <h2 class="text-base font-semibold uppercase tracking-wide text-teal-700 mt-0 mb-4"><?php echo $this->e($title) ?></h2>
+    <h2 class="text-base font-semibold uppercase tracking-wide text-teal-700 mt-0 mb-4 mx-0"><?php echo $this->e($title) ?></h2>
     <div class="text-sm text-slate-600 space-y-3">
         <?php echo $bodyHtml ?>
     </div>
