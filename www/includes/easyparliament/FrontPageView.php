@@ -97,6 +97,16 @@ class FrontPageView {
             $correctAmount[] = $popularSearch['display'];
         }
 
+        // Genuinely possible, not just theoretical: every one of the day's popular
+        // searches individually longer than $maxChars leaves this empty even though
+        // $popularSearches itself wasn't - null here too, or the caller renders an
+        // empty "Popular searches today: " line with nothing after the colon
+        // (Sentry caught this - www/resources/views/front/search-hero.php checks
+        // !== null, which is true for '').
+        if (count($correctAmount) == 0) {
+            return null;
+        }
+
         return implode(', ', $correctAmount);
     }
 

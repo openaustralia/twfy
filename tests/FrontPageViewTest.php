@@ -105,6 +105,18 @@ class FrontPageViewTest extends TestCase {
     }
 
     /**
+     * Caught by Sentry's automated review on the PR: genuinely possible, not just
+     * theoretical - every one of the day's popular searches individually longer than
+     * the budget leaves $correctAmount empty even though $popularSearches itself
+     * wasn't, and search-hero.php's !== null check doesn't catch a bare ''.
+     */
+    public function test_popularSearchesLabel_returns_null_when_every_search_is_too_long_to_fit() {
+        $searches = [$this->popularSearch('this-search-term-alone-is-already-too-long', 'x')];
+
+        $this->assertNull(FrontPageView::popularSearchesLabel($searches, 10));
+    }
+
+    /**
      *
      */
     public function test_popularSearchesLabel_joins_the_display_html_of_every_search_that_fits() {
