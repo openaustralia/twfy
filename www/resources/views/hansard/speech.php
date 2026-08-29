@@ -6,12 +6,19 @@
  * (see HansardSpeechView.php) - already-finished data, no raw hansard row fields here.
  */
 ?>
+<?php
+// border-solid: Tailwind's preflight reset is off project-wide (tailwind.config.js) -
+// preflight is what normally sets border-style: solid globally, so a border-*-width
+// utility alone renders invisible (style defaults to the browser's own "none" on a
+// <div>) without it. Same issue as the header <hr> elsewhere in this template set,
+// just hitting a border-width utility instead of a border-color one.
+?>
 <div id="<?php echo $this->e($speech->id) ?>"
     class="flex items-start gap-5<?php
         if ($speech->isCurrentSpeaker) {
-            echo ' border-l-4 border-teal-700 pl-4 -ml-4';
+            echo ' border-solid border-l-4 border-teal-700 pl-4 -ml-4';
         } elseif ($speech->isInterjection) {
-            echo ' border-l-4 border-amber-400 bg-amber-50/60 rounded-r-lg pl-4 py-2 -ml-4';
+            echo ' border-solid border-l-4 border-amber-400 bg-amber-50/60 rounded-r-lg pl-4 py-2 -ml-4';
         }
     ?>">
     <?php if ($speech->avatarUrl): ?>
