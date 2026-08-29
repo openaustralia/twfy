@@ -58,17 +58,30 @@
                             <span class="mt-0.5 shrink-0 whitespace-nowrap rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-medium text-slate-600">💬 <?php echo $this->e($item->countLabel) ?></span>
                         <?php endif; ?>
                     </div>
-                    <?php if ($item->excerptHtml): ?>
-                        <p class="mt-2 border-0 border-l-2 border-slate-200 pl-3 text-sm italic text-slate-500">
-                            <?php echo $item->excerptHtml /* already-safe HTML (trim_characters() output, may contain entities like &#8212; - echoed raw same as the old rendering, not re-escaped) */ ?>
-                            <?php if ($firstSpeakerName): ?>
-                                <cite class="mt-1 block not-italic text-xs font-medium text-slate-500">&mdash; <?php echo $this->e($firstSpeakerName) ?></cite>
+                    <?php if ($item->excerptHtml || $item->speakers): ?>
+                        <?php
+                        // One shared left border/indent for the excerpt+citation and
+                        // the "who spoke" chips together - they're both about the
+                        // same thing (what was said here, and by whom), so one
+                        // continuous left edge reads as a single block. Previously
+                        // only the excerpt was indented and the chips snapped back
+                        // out to the title's own margin, which put the avatars
+                        // visibly out of line with everything just above them.
+                        ?>
+                        <div class="mt-2 border-0 border-l-2 border-slate-200 pl-3">
+                            <?php if ($item->excerptHtml): ?>
+                                <p class="text-sm italic text-slate-500">
+                                    <?php echo $item->excerptHtml /* already-safe HTML (trim_characters() output, may contain entities like &#8212; - echoed raw same as the old rendering, not re-escaped) */ ?>
+                                    <?php if ($firstSpeakerName): ?>
+                                        <cite class="mt-1 block not-italic text-xs font-medium text-slate-500">&mdash; <?php echo $this->e($firstSpeakerName) ?></cite>
+                                    <?php endif; ?>
+                                </p>
                             <?php endif; ?>
-                        </p>
-                    <?php endif; ?>
-                    <?php if ($item->speakers): ?>
-                        <p class="mt-3 text-xs font-medium uppercase tracking-wide text-slate-500">Spoke on this topic</p>
-                        <?php echo $this->fetch('hansard/speaker-chips', ['speakers' => $item->speakers]) ?>
+                            <?php if ($item->speakers): ?>
+                                <p class="<?php echo $item->excerptHtml ? 'mt-3' : '' ?> text-xs font-medium uppercase tracking-wide text-slate-500">Spoke on this topic</p>
+                                <?php echo $this->fetch('hansard/speaker-chips', ['speakers' => $item->speakers]) ?>
+                            <?php endif; ?>
+                        </div>
                     <?php endif; ?>
                     <?php
                     // Heroicons "chevron-right" (MIT) - a plain clickability hint, not
@@ -85,17 +98,21 @@
             <?php else: ?>
                 <div class="py-4 pl-2 pr-8">
                     <p class="text-lg font-semibold text-slate-900"><?php echo $item->titleHtml /* already-safe HTML, same source as the old stripe rendering */ ?></p>
-                    <?php if ($item->excerptHtml): ?>
-                        <p class="mt-2 border-0 border-l-2 border-slate-200 pl-3 text-sm italic text-slate-500">
-                            <?php echo $item->excerptHtml /* already-safe HTML - see the <a> branch's comment above */ ?>
-                            <?php if ($firstSpeakerName): ?>
-                                <cite class="mt-1 block not-italic text-xs font-medium text-slate-500">&mdash; <?php echo $this->e($firstSpeakerName) ?></cite>
+                    <?php if ($item->excerptHtml || $item->speakers): ?>
+                        <div class="mt-2 border-0 border-l-2 border-slate-200 pl-3">
+                            <?php if ($item->excerptHtml): ?>
+                                <p class="text-sm italic text-slate-500">
+                                    <?php echo $item->excerptHtml /* already-safe HTML - see the <a> branch's comment above */ ?>
+                                    <?php if ($firstSpeakerName): ?>
+                                        <cite class="mt-1 block not-italic text-xs font-medium text-slate-500">&mdash; <?php echo $this->e($firstSpeakerName) ?></cite>
+                                    <?php endif; ?>
+                                </p>
                             <?php endif; ?>
-                        </p>
-                    <?php endif; ?>
-                    <?php if ($item->speakers): ?>
-                        <p class="mt-3 text-xs font-medium uppercase tracking-wide text-slate-500">Spoke on this topic</p>
-                        <?php echo $this->fetch('hansard/speaker-chips', ['speakers' => $item->speakers]) ?>
+                            <?php if ($item->speakers): ?>
+                                <p class="<?php echo $item->excerptHtml ? 'mt-3' : '' ?> text-xs font-medium uppercase tracking-wide text-slate-500">Spoke on this topic</p>
+                                <?php echo $this->fetch('hansard/speaker-chips', ['speakers' => $item->speakers]) ?>
+                            <?php endif; ?>
+                        </div>
                     <?php endif; ?>
                 </div>
             <?php endif; ?>
