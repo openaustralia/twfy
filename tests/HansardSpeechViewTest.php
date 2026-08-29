@@ -102,6 +102,7 @@ class HansardSpeechViewTest extends TestCase {
         $view = HansardSpeechView::forSpeech($row, $this->info(), true);
 
         $this->assertSame('Senator Penny Allman-Payne', $view->speakerName);
+        $this->assertSame('PA', $view->speakerInitials);
         $this->assertSame('/senator/?m=100931', $view->speakerUrl);
         $this->assertSame('Queensland, Australian Greens', $view->speakerDescription);
     }
@@ -364,6 +365,38 @@ class HansardSpeechViewTest extends TestCase {
     }
 
     /**
+     *
+     */
+    public function test_buildRoster_carries_the_initials_from_the_first_appearance() {
+        $items = [
+            $this->speechView('Katy Gallagher', '/senator/?m=100907', 'First speech.', null, null, 'KG'),
+        ];
+
+        $roster = HansardSpeechView::buildRoster($items);
+
+        $this->assertSame('KG', $roster[0]->initials);
+    }
+
+    /**
+     * Two letters (eg "LT" for Lidia Thorpe), matching the mockup's own placeholder
+     * avatars - not the single first-letter-of-the-full-name-string this used before,
+     * which would also have wrongly included a title ("S" for "Senator ...", not the
+     * person's own initials at all).
+     */
+    public function test_initials_takes_the_first_letter_of_first_and_last_name() {
+        $this->assertSame('LT', HansardSpeechView::initials('Lidia', 'Thorpe'));
+    }
+
+    /**
+     *
+     */
+    public function test_initials_uppercases_and_handles_a_missing_name_gracefully() {
+        $this->assertSame('PA', HansardSpeechView::initials('penny', 'allman-payne'));
+        $this->assertSame('P', HansardSpeechView::initials('Penny', ''));
+        $this->assertSame('', HansardSpeechView::initials('', ''));
+    }
+
+    /**
      * @return array<string, mixed>
      */
     private function speechRow(array $overrides = []): array {
@@ -412,9 +445,11 @@ class HansardSpeechViewTest extends TestCase {
       string $bodyText,
       ?string $description = null,
       ?string $avatarUrl = null,
+      ?string $initials = null,
     ): HansardSpeechView {
         $view = new HansardSpeechView();
         $view->speakerName = $name;
+        $view->speakerInitials = $initials;
         $view->speakerUrl = $url;
         $view->speakerDescription = $description;
         $view->avatarUrl = $avatarUrl;

@@ -7,13 +7,18 @@
  * already sorted most-said-first - nothing here decides ordering or counts.
  */
 ?>
-<aside class="bg-white rounded-2xl shadow-lg p-6 md:p-8">
+<?php
+// aria-labelledby: see about-debates.php's own comment - makes this landmark
+// distinguishable from the page's other <aside> regions for screen reader landmark
+// navigation, reusing the visible heading text rather than duplicating it.
+?>
+<aside class="bg-white rounded-2xl shadow-lg p-6 md:p-8" aria-labelledby="speaker-roster-heading">
     <?php
     // mt-0 mx-0: same unscoped legacy "h2 { margin: 0.2em 14px 10px 18px; }" rule
     // (layout.css, search "NAT") that about-debates.php's own h2 has to neutralise -
     // see that file's comment for the full explanation.
     ?>
-    <h2 class="text-base font-semibold uppercase tracking-wide text-teal-700 mb-4 mt-0 mx-0">Speakers in this Debate</h2>
+    <h2 id="speaker-roster-heading" class="text-base font-semibold uppercase tracking-wide text-teal-700 mb-4 mt-0 mx-0">Speakers in this Debate</h2>
     <ul class="space-y-3">
         <?php
         // Only the photo and the name link to the speaker's profile - the party/
@@ -30,7 +35,7 @@
                 <?php if ($speaker->avatarUrl): ?>
                     <?php $avatar = '<img src="' . $this->e($speaker->avatarUrl) . '" alt="Photo of ' . $this->e($speaker->name) . '" class="w-8 h-8 rounded-full flex-shrink-0 object-cover object-top">' ?>
                 <?php else: ?>
-                    <?php $avatar = '<div class="w-8 h-8 rounded-full flex-shrink-0 bg-slate-200 text-slate-600 flex items-center justify-center font-semibold text-xs">' . $this->e(mb_strtoupper(mb_substr($speaker->name, 0, 1))) . '</div>' ?>
+                    <?php $avatar = '<div class="w-8 h-8 rounded-full flex-shrink-0 bg-slate-200 text-slate-600 flex items-center justify-center font-semibold text-xs">' . $this->e($speaker->initials) . '</div>' ?>
                 <?php endif; ?>
                 <?php if ($speaker->url): ?>
                     <a href="<?php echo $this->e($speaker->url) ?>" class="!no-underline" title="See more information about <?php echo $this->e($speaker->name) ?>">
