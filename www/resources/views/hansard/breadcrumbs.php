@@ -19,7 +19,15 @@
 // really only 4 crumbs (three "/"s counted right along with them) - purely visual
 // punctuation has no business being counted as content.
 ?>
-<nav aria-label="Breadcrumb" class="mb-3 md:mb-4 px-1">
+<?php
+// Rendered as the first thing inside the white card (transcript.php/
+// section-index-page.php), not above the page's own outer shell - matches the
+// mockup this whole redesign follows (kattekrab.github.io/oa-closegap.html), which
+// puts its own breadcrumb line inside the card too. That also solves needing any
+// top margin of its own: the card's own p-6/p-8 already provides it, the same way
+// the mockup's does.
+?>
+<nav aria-label="Breadcrumb" class="mb-4">
     <ol class="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-slate-500">
         <?php foreach ($crumbs as $n => $crumb): ?>
             <?php
