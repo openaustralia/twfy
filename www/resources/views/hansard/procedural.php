@@ -7,7 +7,12 @@
  * little apart from the surrounding speeches. $item is a HansardProceduralView.
  */
 ?>
-<div id="<?php echo $this->e($item->id) ?>" class="border-t border-b border-slate-200 py-4 text-sm text-slate-600 italic">
+<?php
+// border-solid: Tailwind's preflight reset is off project-wide (tailwind.config.js) -
+// without it a border-*-width utility on a <div> renders invisible, since preflight
+// is what normally sets border-style: solid globally.
+?>
+<div id="<?php echo $this->e($item->id) ?>" class="border-solid border-t border-b border-slate-200 py-4 text-sm text-slate-600 italic">
     <?php echo $item->bodyHtml /* pre-sanitised hansard body HTML, same pipeline as the old rendering path */ ?>
 
     <?php if ($item->contextLinkHtml || $item->commentTeaserHtml): ?>
