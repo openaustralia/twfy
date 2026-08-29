@@ -392,6 +392,15 @@ if (isset($data['rows'])) {
                 ];
             }
         }
+        if (isset($nextPrev['up'])) {
+            // The server-built label ("All Senate debates on 18 Aug 2026", or
+            // sometimes just "See the whole debate" - depends which branch of
+            // HANSARDLIST::_get_nextprev_items() fired) repeats the date already
+            // shown in the card's own header above. "on this day" instead of the
+            // date - the actual date the link goes to is still right there in
+            // $date/$dateUrl, this is just the "see everything" link's own label.
+            $nextPrev['up']['label'] = 'All ' . ($hansardmajors[$data['info']['major']]['title'] ?? 'debates') . ' on this day';
+        }
 
         echo $platesEngine->render('hansard/transcript', [
             'items' => $plates_items,
