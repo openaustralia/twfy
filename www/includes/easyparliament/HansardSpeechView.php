@@ -117,11 +117,25 @@ class HansardSpeechView {
      * Same body-cleanup steps hansard_gid.php's old rendering path already applied
      * (search highlighting/glossarising already happened earlier, on $data['rows'],
      * before either rendering path runs) - kept identical so the two paths produce
-     * the same text, just different surrounding markup.
+     * the same text, just different surrounding markup - plus one the old path never
+     * needed: stripping stray self-closed <i/> tags.
+     *
+     * Some hansard bodies contain a literal, empty "<i/>" between two real <i>...</i>
+     * phrases (an artifact of the parser's XML-to-HTML conversion, likely a collapsed
+     * empty <phrase italics="yes"> - see eg senate 2026-08-19.164, "Civil penalty
+     * provision" / "Exception" definitions). HTML doesn't treat "<i/>" as self-closing
+     * - browsers read it as an ordinary opening <i> with no matching close, which then
+     * swallows every paragraph after it into one giant italic run for the rest of the
+     * page. The old stripe rendering had this exact same malformed markup and was
+     * equally broken by it - it just never showed, since stripe rows had no styling
+     * that made "is this text italic" visible. This new design colours .italic/
+     * .indentitalic text, which makes the bug impossible to miss, so it's worth fixing
+     * here rather than leaving for openaustralia-parser/a DB cleanup.
      */
-    private static function cleanBody(string $body): string {
+    public static function cleanBody(string $body): string {
         $body = str_replace('pwmotiontext="moved"', 'class="moved"', $body);
         $body = str_replace('<a href="h', '<a rel="nofollow" href="h', $body);
+        $body = str_replace('<i/>', '', $body);
         return str_replace('</p><p', '</p> <p', $body);
     }
 
@@ -190,7 +204,9 @@ class HansardProceduralView {
     public static function forProcedural(array $row, array $info): self {
         $view = new self();
         $view->id = 'g' . gid_to_anchor($row['gid']);
-        $view->bodyHtml = $row['body'];
+        // Same cleanup as HansardSpeechView::forSpeech() - see cleanBody()'s own
+        // comment for why the <i/> strip matters even for these short rows.
+        $view->bodyHtml = HansardSpeechView::cleanBody($row['body']);
         $view->contextLinkHtml = context_link($row);
         $view->commentTeaserHtml = generate_commentteaser($row, $info['major']);
         return $view;
