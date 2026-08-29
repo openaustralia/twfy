@@ -106,10 +106,11 @@ function feature_row() {
                 <p class="text-slate-600">Access and search the complete record of what's said in the House of
                     Representatives and the Senate.</p>
             </a>
-            <div class="rounded-2xl bg-white p-6 text-center shadow-md md:p-8">
+            <a href="<?php echo htmlspecialchars(email_alert_url()) ?>"
+                class="block rounded-2xl bg-white p-6 text-center shadow-md !text-inherit !no-underline hover:shadow-lg md:p-8">
                 <?php feature_icon('✉️'); ?>
                 <?php email_alert_bullet_point(); ?>
-            </div>
+            </a>
         </div>
     </section>
     <?php
@@ -178,13 +179,23 @@ function email_alert_bullet_point() {
     ?>
     <h3 class="mb-2 text-lg font-semibold text-slate-900">Get Free Email Alerts</h3>
     <?php if (get_http_var("keyword")) { ?>
-        <p class="mb-3 text-slate-600">Get notified when '<?php echo htmlspecialchars(get_http_var('keyword')) ?>' is mentioned in Parliament.</p>
-        <a class="font-semibold !text-teal-800 hover:!text-teal-600" href="<?php echo WEBPATH . "alert?keyword=" . htmlspecialchars(get_http_var('keyword')) ?>&only=1">Create and manage email alerts</a>
+        <p class="text-slate-600">Get notified when '<?php echo htmlspecialchars(get_http_var('keyword')) ?>' is mentioned in Parliament.</p>
     <?php } else { ?>
-        <p class="mb-3 text-slate-600">Sign up to get an email whenever your representative speaks or a keyword you
-            care about is mentioned.</p>
-        <a class="font-semibold !text-teal-800 hover:!text-teal-600" href="<?php echo WEBPATH . "alert/" ?>">Create and manage email alerts</a>
+        <p class="text-slate-600">Sign up to get an email whenever your representative speaks or a keyword you care
+            about is mentioned.</p>
     <?php }
+}
+
+/**
+ * Where email_alert_bullet_point()'s own "Create and manage email alerts" link used
+ * to go - now the whole feature-row card links here instead (matching the "Read the
+ * Debates" card next to it), so this just needs the URL, not a rendered link.
+ */
+function email_alert_url() {
+    if (get_http_var("keyword")) {
+        return WEBPATH . "alert?keyword=" . htmlspecialchars(get_http_var('keyword')) . "&only=1";
+    }
+    return WEBPATH . "alert/";
 }
 
 /**
@@ -196,10 +207,17 @@ function email_alert_bullet_point() {
  */
 function latest_activity() {
     ?>
+    <?php
+    // max-w-5xl mx-auto: the mockup caps this section at its own container class
+    // (responsive, ~1280px at this width) rather than letting it run the full content
+    // width the way this section did before - matches the cap already used on the
+    // feature row above and keeps the two columns from stretching so wide the cards
+    // read as sparse.
+    ?>
     <section class="mx-4 mb-12 md:mx-8">
         <h2 class="mb-1 text-center text-3xl font-bold text-slate-900">Latest Activity in Parliament</h2>
         <p class="mb-8 text-center text-slate-600">Recent debates from the House and the Senate.</p>
-        <div class="grid grid-cols-1 gap-8 md:grid-cols-2">
+        <div class="mx-auto grid max-w-5xl grid-cols-1 gap-8 md:grid-cols-2">
             <?php
             // text-green-700/text-red-700: the House and Senate chambers' own actual
             // colours (green benches, red benches) - a real, recognisable Australian
