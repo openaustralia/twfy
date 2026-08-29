@@ -17,9 +17,9 @@
     <?php if ($speech->avatarUrl): ?>
         <img src="<?php echo $this->e($speech->avatarUrl) ?>"
             alt="Photo of <?php echo $this->e($speech->speakerName ?? '') ?>"
-            class="w-12 h-12 rounded-full flex-shrink-0 object-cover object-top">
+            class="w-16 h-16 rounded-full flex-shrink-0 object-cover object-top">
     <?php elseif ($speech->speakerName): ?>
-        <div class="w-12 h-12 rounded-full flex-shrink-0 bg-slate-200 text-slate-600 flex items-center justify-center font-semibold text-sm">
+        <div class="w-16 h-16 rounded-full flex-shrink-0 bg-slate-200 text-slate-600 flex items-center justify-center font-semibold text-lg">
             <?php echo $this->e(mb_strtoupper(mb_substr($speech->speakerName, 0, 1))) ?>
         </div>
     <?php endif; ?>
@@ -42,8 +42,13 @@
                         <?php echo $this->e($speech->speakerName) ?>
                     <?php endif; ?>
                 </span>
+                <?php
+                // text-slate-500 matches the mockup's own text-gray-500 for this line
+                // (kept at the same font size as the name, per earlier feedback -
+                // the mockup itself uses text-sm here, smaller than the name).
+                ?>
                 <?php if ($speech->speakerDescription): ?>
-                    <span class="text-sm text-slate-600"><?php echo $speech->speakerDescription /* already-escaped by HansardSpeechView */ ?></span>
+                    <span class="text-slate-500"><?php echo $speech->speakerDescription /* already-escaped by HansardSpeechView */ ?></span>
                 <?php endif; ?>
             </p>
         <?php endif; ?>
@@ -62,7 +67,12 @@
         // idea (green = "this is a motion", distinct from teal/amber) with an emerald
         // that fits the new palette rather than the old rule's literal hex.
         ?>
-        <div class="text-lg leading-relaxed [&_p]:mb-4 [&_p:last-child]:mb-0
+        <?php
+        // font-size/line-height match the mockup's own `prose` block exactly (Tailwind
+        // Typography's default: 1rem/1.75) rather than the text-lg/leading-relaxed guess
+        // used before there was a real value to match against.
+        ?>
+        <div class="text-base leading-[1.75] [&_p]:mb-4 [&_p:last-child]:mb-0
             [&_.moved]:font-semibold [&_.moved]:text-emerald-700
             [&_.italic]:italic [&_.italic]:text-emerald-700
             [&_.indentitalic]:italic [&_.indentitalic]:text-emerald-700 [&_.indentitalic]:ml-[4em]<?php

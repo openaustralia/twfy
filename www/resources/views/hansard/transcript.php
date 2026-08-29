@@ -10,7 +10,14 @@
  */
 ?>
 <div class="bg-slate-50 p-3 md:p-6 rounded-2xl">
-    <div class="bg-white rounded-2xl shadow-lg p-6 md:p-8 space-y-8">
+    <?php
+    // lg:grid puts the transcript and the "Speakers in this debate" roster
+    // side-by-side, matching the mockup - both sit in the same grey backdrop rather
+    // than the roster looking like a bolted-on afterthought. Below lg they stack, card
+    // then roster, in source order.
+    ?>
+    <div class="lg:grid lg:grid-cols-3 lg:gap-6 lg:items-start">
+    <div class="lg:col-span-2 bg-white rounded-2xl shadow-lg p-6 md:p-8 space-y-8">
         <div>
             <?php
             // "House debates"/"Senate debates" - was its own heading above the card
@@ -32,7 +39,12 @@
             <?php endif; ?>
             <h1 class="text-3xl md:text-4xl font-bold text-slate-900 leading-tight"><?php echo $subsectionTitle /* already-safe HTML, same source as the old stripe-head-2 heading */ ?></h1>
             <div class="mt-3 flex items-center gap-4 text-sm text-slate-600">
-                <span><?php echo $this->e($date) ?></span>
+                <?php if ($dateUrl): ?>
+                    <a href="<?php echo $this->e($dateUrl) ?>" class="hover:text-teal-700"
+                        title="See all debates on this date"><?php echo $this->e($date) ?></a>
+                <?php else: ?>
+                    <span><?php echo $this->e($date) ?></span>
+                <?php endif; ?>
                 <?php if ($chamber): ?>
                     <span aria-hidden="true">&middot;</span>
                     <?php
@@ -60,5 +72,10 @@
                 <?php echo $this->fetch('hansard/procedural', ['item' => $item]) ?>
             <?php endif; ?>
         <?php endforeach; ?>
+    </div>
+
+    <?php if (!empty($speakers)): ?>
+        <?php echo $this->fetch('hansard/speaker-roster', ['speakers' => $speakers]) ?>
+    <?php endif; ?>
     </div>
 </div>

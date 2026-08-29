@@ -125,6 +125,54 @@ class HansardSpeechView {
         return str_replace('</p><p', '</p> <p', $body);
     }
 
+    /**
+     * Builds the "Speakers in this debate" roster from the already-built list of
+     * per-row view models (see forSpeech()) - one entry per distinct speaker
+     * (deduped on speakerUrl, their MP/senator profile page, which is stable even if
+     * a title changes mid-debate), ordered by how much they actually said - summed
+     * word count across all their speeches on this page, most first - not just how
+     * many times they spoke, since one long speech can outweigh several short
+     * interjections. Procedural rows (no speaker) don't contribute.
+     */
+    public static function buildRoster(array $items): array {
+        $roster = [];
+        foreach ($items as $item) {
+            if (!($item instanceof self) || !$item->speakerName) {
+                continue;
+            }
+            $key = $item->speakerUrl ?: $item->speakerName;
+            if (!isset($roster[$key])) {
+                $entry = new HansardSpeakerRosterEntry();
+                $entry->name = $item->speakerName;
+                $entry->url = $item->speakerUrl;
+                $entry->avatarUrl = $item->avatarUrl;
+                $entry->description = $item->speakerDescription;
+                $roster[$key] = $entry;
+            }
+            $roster[$key]->speechCount++;
+            $roster[$key]->wordCount += str_word_count(strip_tags($item->bodyHtml));
+        }
+
+        $roster = array_values($roster);
+        usort($roster, fn($a, $b) => $b->wordCount <=> $a->wordCount);
+
+        return $roster;
+    }
+
+}
+
+/**
+ * One row in the "Speakers in this debate" roster (see
+ * HansardSpeechView::buildRoster()).
+ */
+class HansardSpeakerRosterEntry {
+    public string $name;
+    public ?string $url = null;
+    public ?string $avatarUrl = null;
+    public ?string $description = null;
+    public int $speechCount = 0;
+    public int $wordCount = 0;
+
 }
 
 /**
