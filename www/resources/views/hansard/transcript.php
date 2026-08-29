@@ -74,8 +74,21 @@
         <?php endforeach; ?>
     </div>
 
-    <?php if (!empty($speakers)): ?>
-        <?php echo $this->fetch('hansard/speaker-roster', ['speakers' => $speakers]) ?>
+    <?php if ($aboutBodyHtml || !empty($speakers)): ?>
+        <?php
+        // One grid item holding both right-column cards, stacked - not two separate
+        // col-span-1 siblings. CSS grid auto-placement would otherwise drop the second
+        // one into row 2's *first* column (under the transcript card, not under the
+        // first sidebar card), since nothing here pins it back to column 3.
+        ?>
+        <div class="lg:col-span-1 space-y-6">
+            <?php if ($aboutBodyHtml): ?>
+                <?php echo $this->fetch('hansard/about-debates', ['title' => $aboutTitle, 'bodyHtml' => $aboutBodyHtml]) ?>
+            <?php endif; ?>
+            <?php if (!empty($speakers)): ?>
+                <?php echo $this->fetch('hansard/speaker-roster', ['speakers' => $speakers]) ?>
+            <?php endif; ?>
+        </div>
     <?php endif; ?>
     </div>
 </div>
