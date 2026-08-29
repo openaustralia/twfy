@@ -62,7 +62,16 @@
                     </span>
                 <?php endif; ?>
             </div>
-            <hr class="mt-4 border-slate-200">
+            <?php
+            // border-0 border-t, not just a border-color utility: Tailwind's preflight
+            // reset is off project-wide (tailwind.config.js), so <hr> still carries the
+            // browser's own default styling here - a thick, inset/3D-looking double
+            // line, not the clean flat rule Tailwind users normally take for granted.
+            // The mockup sidesteps this entirely with a plain border-b div instead of a
+            // real <hr>; resetting the native borders first gets the same flat look
+            // while keeping the semantic element.
+            ?>
+            <hr class="mt-4 border-0 border-t border-slate-200">
         </div>
 
         <?php foreach ($items as $item): ?>

@@ -8,7 +8,7 @@
  */
 ?>
 <aside class="bg-white rounded-2xl shadow-lg p-6 md:p-8">
-    <h2 class="text-sm font-semibold uppercase tracking-wide text-teal-700 mb-4">Speakers in this Debate</h2>
+    <h2 class="text-base font-semibold uppercase tracking-wide text-teal-700 mb-4">Speakers in this Debate</h2>
     <ul class="space-y-3">
         <?php
         // Only the photo and the name link to the speaker's profile - the party/
