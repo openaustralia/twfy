@@ -7,6 +7,9 @@ TWFY_MYSQL_PORT ?= 3306
 # Must match ../openaustralia-parser/configuration.yml's xml_path (relative to that dir).
 PARSER_XML_PATH := $(CURDIR)/../openaustralia-parser/tmp/pwdata/
 
+# Must match ../openaustralia-parser/configuration.yml's members_xml_path (relative to that dir).
+PARSER_MEMBERS_XML_PATH := $(CURDIR)/../openaustralia-parser/tmp/members_xml_output/
+
 # Same _xapiandb/ dir the docker webhost container reads (mounted to /app/shared/search).
 XAPIANDB := $(CURDIR)/_xapiandb/searchdb
 XAPIANDB_LASTUPDATED := $(CURDIR)/_xapiandb/searchdb-lastupdated
@@ -16,10 +19,12 @@ XAPIANDB_LASTUPDATED := $(CURDIR)/_xapiandb/searchdb-lastupdated
 # Parse member data (from ../openaustralia-parser) and load it into the local dev DB.
 # DB_HOST/DB_PORT override conf/general's DB_HOST ("mysql", the docker-compose service
 # name) so scripts/xml2db.pl can reach the docker-compose mysql container from the host.
-# RAWDATA overrides conf/general's RAWDATA (docker path /app/shared/pwdata/) so
-# xml2db.pl reads the XML that the parser actually wrote to on the host.
+# PWMEMBERS overrides conf/general's PWMEMBERS (docker path /app/shared/pwdata/members/)
+# so xml2db.pl reads the member XML the parser actually wrote to on the host - without
+# this it looks for /app/shared/pwdata/members/divisions.xml on the host filesystem,
+# which doesn't exist there, and fails partway through with no data loaded.
 parse-members:
-	cd ../openaustralia-parser && DB_HOST=127.0.0.1 DB_PORT=$(TWFY_MYSQL_PORT) RAWDATA=$(PARSER_XML_PATH) bin/run parse-members.rb
+	cd ../openaustralia-parser && DB_HOST=127.0.0.1 DB_PORT=$(TWFY_MYSQL_PORT) RAWDATA=$(PARSER_XML_PATH) PWMEMBERS=$(PARSER_MEMBERS_XML_PATH) bin/run parse-members.rb
 
 # Parse Hansard speeches (from ../openaustralia-parser) and load them into the local dev DB.
 # ARGS is passed through to parse-speeches.rb, e.g.:

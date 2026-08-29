@@ -892,7 +892,11 @@ sub add_mps_and_peers {
                 output_filter => $outputfilter );
         $constituencydel->execute();
         $constituencydel->finish();
-        my $pwmembers = mySociety::Config::get('PWMEMBERS');
+        # PWMEMBERS env var wins over conf/general's PWMEMBERS (the docker container
+        # path /app/shared/pwdata/members/), so this can point at a host-side XML
+        # output dir instead - same reasoning as $parldata/RAWDATA above, which this
+        # member-loading path had never picked up.
+        my $pwmembers = $ENV{PWMEMBERS} || mySociety::Config::get('PWMEMBERS');
         $twig->parsefile($pwmembers . "divisions.xml");
         $twig->parsefile($pwmembers . "people.xml");
         $twig->parsefile($pwmembers . "representatives.xml");
