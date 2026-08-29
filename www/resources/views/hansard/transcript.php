@@ -10,6 +10,10 @@
  */
 ?>
 <div class="bg-slate-50 p-3 md:p-6 rounded-2xl">
+    <?php if (!empty($nextPrev)): ?>
+        <?php echo $this->fetch('hansard/pagination', ['nextPrev' => $nextPrev]) ?>
+    <?php endif; ?>
+
     <?php
     // lg:grid puts the transcript and the "Speakers in this debate" roster
     // side-by-side, matching the mockup - both sit in the same grey backdrop rather
@@ -89,7 +93,7 @@
         <?php endforeach; ?>
     </div>
 
-    <?php if ($aboutBodyHtml || !empty($speakers) || !empty($nextPrev)): ?>
+    <?php if ($aboutBodyHtml || !empty($speakers)): ?>
         <?php
         // One grid item holding all the right-column cards, stacked - not separate
         // col-span-1 siblings. CSS grid auto-placement would otherwise drop later ones
@@ -102,9 +106,6 @@
             <?php endif; ?>
             <?php if (!empty($speakers)): ?>
                 <?php echo $this->fetch('hansard/speaker-roster', ['speakers' => $speakers]) ?>
-            <?php endif; ?>
-            <?php if (!empty($nextPrev)): ?>
-                <?php echo $this->fetch('hansard/nextprev', ['nextPrev' => $nextPrev]) ?>
             <?php endif; ?>
         </div>
     <?php endif; ?>
