@@ -343,6 +343,46 @@ class PAGE {
 
             <?php } ?>
 
+            <?php
+            // Browser-side Sentry (JS errors, unlike init.php's PHP-side
+            // \Sentry\init() - see that file's own comment). Deliberately not added
+            // to page_header_mobile() below - mobile.php is on its way out entirely
+            // (#943), not worth instrumenting.
+            //
+            // Reuses the same SENTRY_DSN/SENTRY_ENVIRONMENT conf/general already
+            // provides the PHP SDK, rather than a second, separate DSN: a DSN's
+            // public key (the part before the @) isn't secret, it's designed to be
+            // embedded in client-side code (docs.sentry.io/product/security-legal-pii/
+            // security-policy-reporting/#is-the-dsn-a-secret) - so no new config was
+            // needed to add this. Browser events land in the same Sentry project as
+            // server-side ones, distinguished by SDK/platform in Sentry's own UI, not
+            // a separate project - that would need real infra work (a new Sentry
+            // project created by hand, then its own DSN threaded through
+            // group_vars/openaustralia.yml the way sentry_secret_key/
+            // sentry_project_id already are) that this deliberately doesn't do.
+            //
+            // Loader Script, not a versioned bundle URL: Sentry's own current
+            // recommended install method (docs.sentry.io/platforms/javascript/
+            // install/cdn/) - unlike a deploy action, an auto-updating monitoring SDK
+            // is the wanted property here, not a liability to pin a version against.
+            if (!DEVSITE && defined('SENTRY_DSN') && SENTRY_DSN) {
+                $sentry_public_key = parse_url(SENTRY_DSN, PHP_URL_USER);
+                if ($sentry_public_key) {
+                    ?>
+                    <script type="text/javascript">
+                        window.sentryOnLoad = function () {
+                            Sentry.init({
+                                environment: "<?php echo addslashes(SENTRY_ENVIRONMENT); ?>",
+                            });
+                        };
+                    </script>
+                    <script src="https://js.sentry-cdn.com/<?php echo urlencode($sentry_public_key); ?>.min.js"
+                        crossorigin="anonymous"></script>
+                    <?php
+                }
+            }
+            ?>
+
         </head>
 
         <?php
