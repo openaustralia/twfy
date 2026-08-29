@@ -10,6 +10,7 @@ if (defined('OPTION_TRACKING') && OPTION_TRACKING) {
 
 include_once __DIR__ . '/member.php';
 include_once __DIR__ . '/../request.php';
+include_once __DIR__ . '/SentryBrowserView.php';
 
 /**
  *
@@ -365,21 +366,24 @@ class PAGE {
             // recommended install method (docs.sentry.io/platforms/javascript/
             // install/cdn/) - unlike a deploy action, an auto-updating monitoring SDK
             // is the wanted property here, not a liability to pin a version against.
-            if (!DEVSITE && defined('SENTRY_BROWSER_DSN') && SENTRY_BROWSER_DSN) {
-                $sentry_public_key = parse_url(SENTRY_BROWSER_DSN, PHP_URL_USER);
-                if ($sentry_public_key) {
-                    ?>
-                    <script type="text/javascript">
-                        window.sentryOnLoad = function () {
-                            Sentry.init({
-                                environment: "<?php echo addslashes(SENTRY_ENVIRONMENT); ?>",
-                            });
-                        };
-                    </script>
-                    <script src="https://js.sentry-cdn.com/<?php echo urlencode($sentry_public_key); ?>.min.js"
-                        crossorigin="anonymous"></script>
-                    <?php
-                }
+            //
+            // The decision/URL-building itself lives in SentryBrowserView - DEVSITE/
+            // SENTRY_BROWSER_DSN are define()'d once from conf/general, so a test
+            // can only exercise the "disabled" branch of a check against the real
+            // constants directly; taking them as plain parameters is what makes the
+            // "renders" branch reachable at all. See that class for why.
+            $sentry_loader_url = SentryBrowserView::loaderScriptUrl(DEVSITE, defined('SENTRY_BROWSER_DSN') ? SENTRY_BROWSER_DSN : null);
+            if ($sentry_loader_url) {
+                ?>
+                <script type="text/javascript">
+                    window.sentryOnLoad = function () {
+                        Sentry.init({
+                            environment: "<?php echo addslashes(SENTRY_ENVIRONMENT); ?>",
+                        });
+                    };
+                </script>
+                <script src="<?php echo htmlspecialchars($sentry_loader_url); ?>" crossorigin="anonymous"></script>
+                <?php
             }
             ?>
 
