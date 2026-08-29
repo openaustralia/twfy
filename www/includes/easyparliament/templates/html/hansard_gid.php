@@ -13,8 +13,21 @@ global $PAGE, $this_page, $GLOSSARY, $hansardmajors;
 
 include_once __DIR__ . "/../../../easyparliament/searchengine.php";
 include_once __DIR__ . "/../../../easyparliament/member.php";
+include_once __DIR__ . "/../../../easyparliament/HansardSpeechView.php";
 
 twfy_debug("TEMPLATE", "hansard_gid.php");
+
+// House representatives (1) and Senate (101) - the two houses this fork actually
+// parses - get the new Plates-rendered transcript. Everything else (Wrans, WMS, and
+// the UK/NI/Scotland majors left over from the mySociety fork this codebase started
+// from, none of which are populated on this site) keeps the existing stripe-based
+// rendering below untouched. See openaustralia/openaustralia#939 and the debate-page
+// redesign plan for why.
+$usePlatesTemplate = in_array($data['info']['major'], [1, 101], true);
+$plates_items = [];
+if ($usePlatesTemplate) {
+    $platesEngine = new League\Plates\Engine(__DIR__ . "/../../../../resources/views");
+}
 
 // Will set the page headings and start the page HTML if it hasn't
 // already been started.
@@ -28,6 +41,16 @@ if (!isset($data['info'])) {
 }
 
 $PAGE->page_start();
+
+if ($usePlatesTemplate) {
+    // stripe_start() below would otherwise auto-print $PAGE->heading() the first time
+    // it's called on the page - "House debates"/"Senate debates" plus the formatted
+    // date, sourced from page metadata set generically in set_hansard_headings(). The
+    // card (transcript.php) now carries both - the chamber label next to the section
+    // title, the date in its own row below - so suppress the original to avoid showing
+    // either twice.
+    $PAGE->heading_displayed = true;
+}
 
 $PAGE->stripe_start('head-1');
 
@@ -110,21 +133,28 @@ if (isset($data['rows'])) {
 
         // DISPLAY SECTION AND SUBSECTION HEADINGS.
         if (!$titles_displayed && $row['htype'] != '10' && $row['htype'] != '11') {
-            // Output the titles we've got so far.
+            if ($usePlatesTemplate) {
+                // Rendered inside the card itself instead (see transcript.php) - no
+                // separate stripe-head-2 title bar above it, so there's only one
+                // title on the page, not two.
+                $titles_displayed = true;
+            } else {
+                // Output the titles we've got so far.
 
-            $PAGE->stripe_start('head-2');
-            ?>
-            <h4><?php echo $section_title; ?></h4>
-            <h5><?php echo $subsection_title; ?></h5>
-            <?php
+                $PAGE->stripe_start('head-2');
+                ?>
+                <h4><?php echo $section_title; ?></h4>
+                <h5><?php echo $subsection_title; ?></h5>
+                <?php
 
-            $PAGE->stripe_end(array(
-                array(
-                    'type' => 'nextprev'
-                )
-            ));
+                $PAGE->stripe_end(array(
+                    array(
+                        'type' => 'nextprev'
+                    )
+                ));
 
-            $titles_displayed = true;
+                $titles_displayed = true;
+            }
         }
 
         // NOW, depending on the contents of this row, we do something different...
@@ -136,6 +166,12 @@ if (isset($data['rows'])) {
         } elseif ($row['htype'] == '13') {
             // DEBATE PROCEDURAL.
 
+            if ($usePlatesTemplate) {
+                $plates_items[] = HansardProceduralView::forProcedural($row, $data['info']);
+                ob_flush();
+                continue;
+            }
+
             $stripecount++;
             $style = $stripecount % 2 == 0 ? '1' : '2';
 
@@ -143,7 +179,7 @@ if (isset($data['rows'])) {
 
             echo $row['body'];
 
-            context_link($row);
+            echo context_link($row);
 
             $sidebarhtml = generate_commentteaser($row, $data['info']['major']);
 
@@ -157,6 +193,18 @@ if (isset($data['rows'])) {
 
         } elseif ($row['htype'] == '12') {
             // A STANDARD SPEECH OR WRANS TEXT.
+
+            if ($usePlatesTemplate) {
+                // Same "is this a new time?" check as the stripe path below, just
+                // without any of the stripe rendering that goes with it.
+                $showTimestamp = substr($row['htime'], 0, 5) != $timetracker && $row['htime'] != "00:00:00";
+                if ($showTimestamp) {
+                    $timetracker = substr($row['htime'], 0, 5);
+                }
+                $plates_items[] = HansardSpeechView::forSpeech($row, $data['info'], $showTimestamp);
+                ob_flush();
+                continue;
+            }
 
             $stripecount++;
             $style = $stripecount % 2 == 0 ? '1' : '2';
@@ -268,7 +316,7 @@ if (isset($data['rows'])) {
             $body = str_replace('<a href="h', '<a rel="nofollow" href="h', $body); # As even sites in Hansard lapse and become spam-sites
             echo str_replace('</p><p', '</p> <p', $body); # NN4 font size bug
 
-            context_link($row);
+            echo context_link($row);
 
             $sidebarhtml = '';
             $extrahtml = '';
@@ -296,6 +344,24 @@ if (isset($data['rows'])) {
         ob_flush(); //flush the output buffer
 
     } // End cycling through rows.
+
+    if ($usePlatesTemplate && count($plates_items) > 0) {
+        $chamberNames = [1 => 'House of Representatives', 101 => 'Senate'];
+        echo $platesEngine->render('hansard/transcript', [
+            'items' => $plates_items,
+            // $hansardmajors[...]['title'] is "House debates"/"Senate debates" - the
+            // same text the old stripe-head-1 h2 printed above the card (see
+            // $PAGE->heading_displayed suppression below). Shown next to $section_title
+            // in the card's eyebrow line instead, so it's not lost, just moved.
+            'chamberLabel' => $hansardmajors[$data['info']['major']]['title'] ?? '',
+            'sectionTitle' => $section_title,
+            'subsectionTitle' => $subsection_title,
+            // Matches LONGERDATEFORMAT (what the suppressed old h3 used, eg "Tuesday, 18
+            // August 2026") rather than the plain 'j F Y' this used before.
+            'date' => date('l, j F Y', strtotime($data['info']['date'])),
+            'chamber' => $chamberNames[$data['info']['major']] ?? '',
+        ]);
+    }
 
     if (!$titles_displayed) {
         $PAGE->stripe_start('head-2');
@@ -372,24 +438,32 @@ if ($this_page == 'debates' || $this_page == 'whall' || $this_page == 'lordsdeba
 }
 
 
-function context_link(&$row)
+// Returns the "See this X in context" link's HTML, or '' outside a single-debate
+// page. Used to echo directly inline in the old stripe-based rendering below, and
+// to build a HansardSpeechView/HansardProceduralView field in the Plates-rendered
+// path (see HansardSpeechView.php) - kept as one function, not duplicated, since
+// both paths want exactly the same link.
+function context_link($row)
 {
     global $this_page;
 
-    if ($this_page == 'debate') {
-        if ($row['htype'] == '12') {
-            $thing = 'speech';
-        } elseif ($row['htype'] == '13') {
-            $thing = 'item';
-        } else {
-            $thing = 'item';
-        }
-        ?>
-        <p><small><strong><a href="<?php echo $row['listurl']; ?>" class="permalink"
-                        title="See this <?php echo $thing; ?> within the entire debate">See this <?php echo $thing; ?> in
-                        context</a></strong></small></p>
-        <?php
+    if ($this_page != 'debate') {
+        return '';
     }
+
+    if ($row['htype'] == '12') {
+        $thing = 'speech';
+    } else {
+        $thing = 'item';
+    }
+
+    ob_start();
+    ?>
+    <p><small><strong><a href="<?php echo $row['listurl']; ?>" class="permalink"
+                    title="See this <?php echo $thing; ?> within the entire debate">See this <?php echo $thing; ?> in
+                    context</a></strong></small></p>
+    <?php
+    return ob_get_clean();
 }
 
 
