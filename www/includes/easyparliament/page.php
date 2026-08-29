@@ -367,24 +367,12 @@ class PAGE {
             // install/cdn/) - unlike a deploy action, an auto-updating monitoring SDK
             // is the wanted property here, not a liability to pin a version against.
             //
-            // The decision/URL-building itself lives in SentryBrowserView - DEVSITE/
-            // SENTRY_BROWSER_DSN are define()'d once from conf/general, so a test
-            // can only exercise the "disabled" branch of a check against the real
-            // constants directly; taking them as plain parameters is what makes the
-            // "renders" branch reachable at all. See that class for why.
-            $sentry_loader_url = SentryBrowserView::loaderScriptUrl(DEVSITE, defined('SENTRY_BROWSER_DSN') ? SENTRY_BROWSER_DSN : null);
-            if ($sentry_loader_url) {
-                ?>
-                <script type="text/javascript">
-                    window.sentryOnLoad = function () {
-                        Sentry.init({
-                            environment: "<?php echo addslashes(SENTRY_ENVIRONMENT); ?>",
-                        });
-                    };
-                </script>
-                <script src="<?php echo htmlspecialchars($sentry_loader_url); ?>" crossorigin="anonymous"></script>
-                <?php
-            }
+            // The decision and the markup itself both live in SentryBrowserView -
+            // DEVSITE/SENTRY_BROWSER_DSN are define()'d once from conf/general, so a
+            // test can only exercise the "disabled" branch of a check against the
+            // real constants directly; taking them as plain parameters is what makes
+            // the "renders" branch reachable at all. See that class for why.
+            echo SentryBrowserView::renderTag(DEVSITE, defined('SENTRY_BROWSER_DSN') ? SENTRY_BROWSER_DSN : null, SENTRY_ENVIRONMENT);
             ?>
 
         </head>

@@ -72,4 +72,38 @@ class SentryBrowserViewTest extends TestCase {
         $this->assertSame('https://js.sentry-cdn.com/key%2Bplus.min.js', $url);
     }
 
+    /**
+     *
+     */
+    public function test_renderTag_returns_an_empty_string_when_nothing_should_render() {
+        $this->assertSame('', SentryBrowserView::renderTag(true, 'https://publickey123@o12345.ingest.sentry.io/67890', 'production'));
+        $this->assertSame('', SentryBrowserView::renderTag(false, null, 'production'));
+    }
+
+    /**
+     * page.php's own glue is just `echo SentryBrowserView::renderTag(...)` now - this
+     * is the one test that actually exercises the branch a real page render could
+     * never reach (see this class's own file comment), so it's worth checking the
+     * full markup precisely, not just "isn't empty".
+     */
+    public function test_renderTag_renders_both_script_tags_with_the_loader_url_and_environment() {
+        $tag = SentryBrowserView::renderTag(false, 'https://publickey123@o12345.ingest.sentry.io/67890', 'production');
+
+        $this->assertStringContainsString('window.sentryOnLoad', $tag);
+        $this->assertStringContainsString('environment: "production"', $tag);
+        $this->assertStringContainsString('src="https://js.sentry-cdn.com/publickey123.min.js" crossorigin="anonymous"', $tag);
+    }
+
+    /**
+     * $environment reaches a JS string literal, not an HTML attribute - addslashes(),
+     * not htmlspecialchars(), same as page.php's own pre-extraction code did (it's a
+     * fixed SENTRY_ENVIRONMENT constant in practice, never untrusted input, but the
+     * escaping should still match the context it's actually used in).
+     */
+    public function test_renderTag_escapes_the_environment_for_a_js_string_literal() {
+        $tag = SentryBrowserView::renderTag(false, 'https://publickey123@o12345.ingest.sentry.io/67890', "it's fine");
+
+        $this->assertStringContainsString('environment: "it\\\'s fine"', $tag);
+    }
+
 }
