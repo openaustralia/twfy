@@ -78,21 +78,11 @@ RewriteRule ^/mp/(['a-zA-Z_\ +-]+)/?$       /mp/index.php?n=$1 [QSA]
 RewriteRule ^/news/archives/(.*)$  /news/index.php/archives/$1 [QSA]
 RewriteRule ^/news/index.rdf$      /news/rdf.php [QSA]
 
-    # default top level / URL Mobile redirection (by exclusion)
-    RewriteCond         %{QUERY_STRING}         !.*show_pc.* [NC]
-        # NOTE: May want to add other bot patters here
-        RewriteCond         %{HTTP_USER_AGENT}      !^.*(spider|crawl|slurp|bot).*$ [NC]
-    RewriteCond         %{HTTP_USER_AGENT}      ^.*webOS.*$ [NC,OR]
-    RewriteCond         %{HTTP_USER_AGENT}      !^.*Linux.*$ [NC,OR]
-    RewriteCond         %{HTTP_USER_AGENT}      ^.*Android.*$ [NC]
-    RewriteCond         %{HTTP_USER_AGENT}      !^.*Win.*$ [NC,OR]
-    RewriteCond         %{HTTP_USER_AGENT}      ^.*Windows\s+CE.*$ [NC]
-    RewriteCond         %{HTTP_USER_AGENT}      !^.*OS\s+(X|9).*$ [NC,OR]
-    RewriteCond         %{HTTP_USER_AGENT}      ^.*iPhone.*$ [NC,OR]
-    RewriteCond         %{HTTP_USER_AGENT}      ^.*iPod.*$ [NC]
-    RewriteCond         %{HTTP_USER_AGENT}      !^.*Solaris.*$ [NC]
-    RewriteCond         %{HTTP_USER_AGENT}      !^.*BSD.*$
-    RewriteRule         ^/$                     /mobile.php [PT]
+    # The front page (index.php) is a responsive/adaptive design as of the front-page
+    # redesign - mobile visitors get the same page as desktop now, not mobile.php (see
+    # openaustralia/twfy#228 and the debate transcript page redesign it stacks on,
+    # openaustralia/twfy#227). No more mobile redirect for '/' - mobile.php itself is
+    # left in place for anyone linking to it directly, just no longer routed to here.
 
     # help/ URL Mobile redirection (by exclusion)
     RewriteCond         %{QUERY_STRING}         !.*show_pc.* [NC]
@@ -126,8 +116,13 @@ RewriteRule ^/news/index.rdf$      /news/rdf.php [QSA]
     RewriteCond         %{HTTP_USER_AGENT}      !^.*BSD.*$
     RewriteRule         ^/search/(.*)$            /search/mobile.php$1 [PT]
 
-    # senate/ URL Mobile redirection (by exclusion)
+    # senate/ URL Mobile redirection (by exclusion). !(^|&)id= excludes the single-debate
+    # transcript view (?id=<gid>, hansard_gid.php) - that's a responsive/adaptive design
+    # now (see openaustralia/twfy#227), so mobile visitors get the same page as desktop.
+    # Everything else under /senate/ (date/year listings etc.) hasn't been redesigned yet,
+    # so still gets the dedicated mobile.php as before.
     RewriteCond         %{QUERY_STRING}         !.*show_pc.* [NC]
+    RewriteCond         %{QUERY_STRING}         !(^|&)id= [NC]
         # NOTE: May want to add other bot patters here
         RewriteCond         %{HTTP_USER_AGENT}      !^.*(spider|crawl|slurp|bot).*$ [NC]
     RewriteCond         %{HTTP_USER_AGENT}      ^.*webOS.*$ [NC,OR]
@@ -142,8 +137,11 @@ RewriteRule ^/news/index.rdf$      /news/rdf.php [QSA]
     RewriteCond         %{HTTP_USER_AGENT}      !^.*BSD.*$
     RewriteRule         ^/senate/(.*)$            /senate/mobile.php$1 [QSA]
 
-    # debates/ URL Mobile redirection (by exclusion)
+    # debates/ URL Mobile redirection (by exclusion). Same !(^|&)id= exclusion as
+    # /senate/ above, for the same reason - only the single-debate transcript view is
+    # redesigned so far.
     RewriteCond         %{QUERY_STRING}         !.*show_pc.* [NC]
+    RewriteCond         %{QUERY_STRING}         !(^|&)id= [NC]
         # NOTE: May want to add other bot patters here
         RewriteCond         %{HTTP_USER_AGENT}      !^.*(spider|crawl|slurp|bot).*$ [NC]
     RewriteCond         %{HTTP_USER_AGENT}      ^.*webOS.*$ [NC,OR]
