@@ -10,8 +10,8 @@
  * HansardSpeechView.php).
  */
 ?>
-<ul class="list-none space-y-3">
-    <?php foreach ($items as $item): ?>
+<ul class="list-none">
+    <?php foreach ($items as $n => $item): ?>
         <?php
         // The excerpt is the *first* speech in this topic only (see
         // hansardlist.php's own excerpt query - ORDER BY hpos ASC LIMIT 1), not
@@ -22,24 +22,32 @@
         ?>
         <?php $firstSpeakerName = $item->speakers[0]->name ?? null; ?>
         <li>
+            <?php if ($n > 0): ?>
+                <?php
+                // border-0 border-t, not just a border-color utility: Tailwind's
+                // preflight reset is off project-wide (tailwind.config.js), so <hr>
+                // still carries the browser's own default styling here - a thick,
+                // inset/3D-looking double line - see transcript.php's own header <hr>
+                // for the same fix. A plain line between items, not a boxed/bordered
+                // card around each one (which rendered with a stray black border -
+                // Tailwind's bare "border" utility sets border-color: currentColor
+                // with nothing here overriding it away from the default text colour).
+                ?>
+                <hr class="border-0 border-t border-slate-200">
+            <?php endif; ?>
             <?php
             // !-prefixed classes: layout.css's legacy "a:link"/"a:visited" rules
             // (specificity 0,1,1) beat a plain Tailwind colour class (0,1,0)
             // regardless of stylesheet order - see speech.php's own comment on this.
             //
-            // border-solid: Tailwind's preflight reset is off project-wide
-            // (tailwind.config.js), so a border-*-width utility alone renders
-            // invisible without it (style defaults to the browser's own "none") -
-            // same issue speech.php's own left-accent border already documents.
-            //
-            // pr-9, and the chevron below: reserves room on the right for a hover-only
+            // pr-8, and the chevron below: reserves room on the right for a hover-only
             // affordance, so nothing here needs to know the chevron exists to avoid
             // overlapping it - min-w-0 flex-1 on the title is what actually lets long
-            // titles wrap instead of overflowing the card.
+            // titles wrap instead of overflowing.
             ?>
             <?php if ($item->url): ?>
                 <a href="<?php echo $this->e($item->url) ?>"
-                    class="group relative block rounded-xl bg-white p-4 pr-9 ring-1 border-solid border ring-slate-200 shadow-sm transition-shadow !no-underline hover:shadow-md">
+                    class="group relative block rounded-lg py-4 pl-2 pr-8 !no-underline transition-colors hover:bg-slate-50">
                     <div class="flex items-start justify-between gap-3">
                         <p class="min-w-0 flex-1 text-lg font-semibold !text-slate-900"><?php echo $item->titleHtml /* already-safe HTML, same source as the old stripe rendering */ ?></p>
                         <?php if ($item->countLabel): ?>
@@ -60,18 +68,18 @@
                     <?php endif; ?>
                     <?php
                     // Heroicons "chevron-right" (MIT) - a plain clickability hint, not
-                    // a control of its own (aria-hidden, the whole card is already the
-                    // one link). Vertically centred on the card, not just the title
-                    // row, so it doesn't drift off-centre next to a two-line title.
+                    // a control of its own (aria-hidden, the whole row is already the
+                    // one link). Vertically centred on the row, not just the title
+                    // line, so it doesn't drift off-centre next to a two-line title.
                     ?>
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                         stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"
-                        class="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-300 opacity-0 transition-opacity group-hover:opacity-100 group-hover:text-teal-600">
+                        class="absolute right-2 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-300 opacity-0 transition-opacity group-hover:opacity-100 group-hover:text-teal-600">
                         <path d="m8.25 4.5 7.5 7.5-7.5 7.5" />
                     </svg>
                 </a>
             <?php else: ?>
-                <div class="rounded-xl bg-white p-4 ring-1 border-solid border ring-slate-200">
+                <div class="py-4 pl-2 pr-8">
                     <p class="text-lg font-semibold text-slate-900"><?php echo $item->titleHtml /* already-safe HTML, same source as the old stripe rendering */ ?></p>
                     <?php if ($item->excerptHtml): ?>
                         <p class="mt-2 border-0 border-l-2 border-slate-200 pl-3 text-sm italic text-slate-500">
