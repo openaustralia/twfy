@@ -19,6 +19,7 @@ class HansardSpeechView {
     public string $id;
     public ?string $timestamp = null;
     public ?string $speakerName = null;
+    public ?string $speakerInitials = null;
     public ?string $speakerUrl = null;
     public ?string $speakerDescription = null;
     public ?string $avatarUrl = null;
@@ -53,6 +54,10 @@ class HansardSpeechView {
                 $speaker['last_name'],
                 $speaker['constituency']
             ));
+            // From first_name/last_name directly, not by splitting $speakerName's
+            // words - that string can start with a title ("Senator Penny
+            // Allman-Payne"), which would wrongly give "SP" instead of "PA".
+            $view->speakerInitials = self::initials($speaker['first_name'], $speaker['last_name']);
             $view->speakerUrl = $speaker['url'];
             $view->speakerDescription = self::speakerDescription($speaker);
 
@@ -114,6 +119,18 @@ class HansardSpeechView {
     }
 
     /**
+     * Two-letter avatar-fallback initials (eg "PA" for Penny Allman-Payne), matching
+     * the mockup's own placeholder avatars ("https://placehold.co/48x48/.../?text=LT"
+     * for Lidia Thorpe) - falls back to whichever of first/last name is present when
+     * only one is, and to '' when neither is (so callers can treat an empty string as
+     * "nothing to show" the same way they'd treat null).
+     */
+    public static function initials(string $firstName, string $lastName): string {
+        $initials = mb_substr($firstName, 0, 1) . mb_substr($lastName, 0, 1);
+        return mb_strtoupper($initials);
+    }
+
+    /**
      * Same body-cleanup steps hansard_gid.php's old rendering path already applied
      * (search highlighting/glossarising already happened earlier, on $data['rows'],
      * before either rendering path runs) - kept identical so the two paths produce
@@ -158,6 +175,7 @@ class HansardSpeechView {
             if (!isset($roster[$key])) {
                 $entry = new HansardSpeakerRosterEntry();
                 $entry->name = $item->speakerName;
+                $entry->initials = $item->speakerInitials;
                 $entry->url = $item->speakerUrl;
                 $entry->avatarUrl = $item->avatarUrl;
                 $entry->description = $item->speakerDescription;
@@ -181,6 +199,7 @@ class HansardSpeechView {
  */
 class HansardSpeakerRosterEntry {
     public string $name;
+    public ?string $initials = null;
     public ?string $url = null;
     public ?string $avatarUrl = null;
     public ?string $description = null;
