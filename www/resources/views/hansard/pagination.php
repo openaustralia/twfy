@@ -40,8 +40,16 @@ $borderClass = $edge == 'top' ? 'pb-4 border-0 border-solid border-b' : 'pt-4 bo
 // users navigating by landmark.
 $navLabel = $edge == 'top' ? 'Debate navigation' : 'Debate navigation, end of transcript';
 ?>
-<nav class="flex items-stretch justify-between gap-3 <?php echo $borderClass ?> border-slate-200" aria-label="<?php echo $this->e($navLabel) ?>">
-    <div class="flex-1 min-w-0">
+<?php
+// flex-col by default, sm:flex-row from there up: at narrow widths (found testing
+// what mobile visitors would actually see once they stop being redirected to
+// hansard_gid_mobile.php) the always-horizontal layout squeezed the two flex-1 side
+// columns down toward nothing to make room for the centre link's own
+// (deliberately unshrinkable, whitespace-nowrap) width, and the result visibly
+// overlapped rather than just looking cramped.
+?>
+<nav class="flex flex-col gap-3 sm:flex-row sm:items-stretch sm:justify-between <?php echo $borderClass ?> border-slate-200" aria-label="<?php echo $this->e($navLabel) ?>">
+    <div class="sm:flex-1 sm:min-w-0">
         <?php if (isset($nextPrev['prev'])): ?>
             <?php if ($nextPrev['prev']['url']): ?>
                 <a href="<?php echo $this->e($nextPrev['prev']['url']) ?>"
@@ -68,18 +76,18 @@ $navLabel = $edge == 'top' ? 'Debate navigation' : 'Debate navigation, end of tr
             <?php endif; ?>
         <?php endif; ?>
     </div>
-    <div class="flex-1 min-w-0">
+    <div class="sm:flex-1 sm:min-w-0">
         <?php if (isset($nextPrev['next'])): ?>
             <?php if ($nextPrev['next']['url']): ?>
                 <a href="<?php echo $this->e($nextPrev['next']['url']) ?>"
-                    class="group block rounded-lg px-4 py-2.5 text-right !no-underline hover:bg-slate-50 transition-colors">
+                    class="group block rounded-lg px-4 py-2.5 sm:text-right !no-underline hover:bg-slate-50 transition-colors">
                     <span class="block text-xs font-semibold uppercase tracking-wide text-slate-600 group-hover:text-teal-700"><?php echo $this->e($nextPrev['next']['label']) ?> ➡️</span>
                     <?php if ($nextPrev['next']['title']): ?>
                         <span class="block text-sm font-medium !text-slate-900 truncate"><?php echo $this->e($nextPrev['next']['title']) ?></span>
                     <?php endif; ?>
                 </a>
             <?php else: ?>
-                <div class="block rounded-lg px-4 py-2.5 text-right">
+                <div class="block rounded-lg px-4 py-2.5 sm:text-right">
                     <span class="block text-xs font-semibold uppercase tracking-wide text-slate-300"><?php echo $this->e($nextPrev['next']['label']) ?> ➡️</span>
                 </div>
             <?php endif; ?>
