@@ -14,9 +14,6 @@
 <div class="bg-slate-50 p-3 md:p-6 rounded-2xl">
     <div class="lg:grid lg:grid-cols-3 lg:gap-6 lg:items-start">
         <div class="lg:col-span-2 bg-white rounded-2xl shadow-lg p-6 md:p-8 space-y-8">
-            <?php if (!empty($breadcrumbs)): ?>
-                <?php echo $this->fetch('hansard/breadcrumbs', ['crumbs' => $breadcrumbs]) ?>
-            <?php endif; ?>
             <div>
                 <?php
                 // Same eyebrow-label idea as transcript.php's own chamberLabel line -

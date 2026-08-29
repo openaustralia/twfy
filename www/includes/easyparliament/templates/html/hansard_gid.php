@@ -43,41 +43,24 @@ if ($usePlatesTemplate) {
     $nextPrev = HansardSpeechView::buildNextPrev($nextprevdata, $hansardmajors[$data['info']['major']]['title'] ?? 'debates');
 
     // "House debates"/"Senate debates" (chamberLabel) and "House of Representatives"/
-    // "Senate" (chamberName) - two different existing labels for the same thing,
-    // kept as two variables rather than picked between, since transcript.php's
-    // eyebrow line already uses the first and its "chamber" row the second. Both the
-    // transcript card and the section-index page (below) now show one or the other
-    // somewhere on the page - see openaustralia/openaustralia's own "which house was
-    // this?" feedback on the section-index page, which had neither.
+    // "Senate" (chamberNames, indexed by major) - two different existing labels for
+    // the same thing, kept separate since transcript.php's eyebrow line uses the
+    // first and its "chamber" row the second. Both the transcript card and the
+    // section-index page (below) show one or the other somewhere on the page - see
+    // openaustralia/openaustralia's own "which house was this?" feedback on the
+    // section-index page, which had neither.
     $chamberNames = [1 => 'House of Representatives', 101 => 'Senate'];
     $chamberLabel = $hansardmajors[$data['info']['major']]['title'] ?? '';
-    $chamberName = $chamberNames[$data['info']['major']] ?? '';
 
     // Same "d=" listing link hansardlist.php itself builds for its own nextprev 'up'
     // link ("All House debates on 20 August 2026") - $page_all is the internal page
     // key ('debates'/'lordsdebates') the URL class maps to the real /debates/,
     // /senate/ etc. path. remove(['id']) matters: without it this page's own ?id=
     // survives into the generated URL alongside ?d=. Computed here, unconditionally,
-    // so both the transcript card and the section-index page (which has no
-    // $plates_items of its own) can build a breadcrumb trail with it.
+    // so the transcript card's own date link can use it.
     $dateURL = new URL($hansardmajors[$data['info']['major']]['page_all']);
     $dateURL->insert(['d' => $data['info']['date']]);
     $dateURL->remove(['id']);
-
-    // "Home / House of Representatives / 20 August 2026 / Adjournment" - see
-    // resources/views/hansard/breadcrumbs.php. The current page's own crumb (last)
-    // is added by each caller below, since only they know their own title/whether
-    // it should link anywhere.
-    $chamberAllURL = new URL($hansardmajors[$data['info']['major']]['page_all']);
-    // Same as $dateURL above: without this, the URL class carries this page's own
-    // current ?id= query param straight through, so the crumb would silently link
-    // back to this same page instead of the general listing.
-    $chamberAllURL->remove(['id']);
-    $breadcrumbsSoFar = [
-        ['label' => 'Home', 'url' => '/'],
-        ['label' => $chamberName, 'url' => $chamberAllURL->generate('none')],
-        ['label' => date('j F Y', strtotime($data['info']['date'])), 'url' => $dateURL->generate('none')],
-    ];
 }
 
 // Will set the page headings and start the page HTML if it hasn't
@@ -486,19 +469,16 @@ if (isset($data['rows'])) {
         // $chamberNames/$dateURL/$aboutTitle/$aboutBodyHtml: computed once,
         // unconditionally for every Plates page, near the top of this file / just
         // above - see the comments there.
-
-        // The page's own crumb, last in the trail - $subsection_title when there is
-        // one (a debate within a section, eg "Second Reading" within "Social
-        // Security... Bill 2026"), else $section_title (a section with no
-        // subsections of its own). Both default to '&nbsp;' (see the loop above)
-        // when genuinely empty - never true for a Plates page, since $plates_items
-        // being non-empty here means at least one titled row was seen.
-        $pageOwnCrumbTitle = $subsection_title != '&nbsp;' ? $subsection_title : $section_title;
+        //
+        // No breadcrumb trail on this card: it already carries a link to "all
+        // debates on this day" (the date row below) and to the neighbouring debates
+        // either side (the pagination bar) - a "Home / House of Representatives /
+        // 20 August 2026" trail above the title would only be repeating links that
+        // are already on the page, one click away either way.
 
         echo $platesEngine->render('hansard/transcript', [
             'items' => $plates_items,
             'speakers' => HansardSpeechView::buildRoster($plates_items),
-            'breadcrumbs' => array_merge($breadcrumbsSoFar, [['label' => $pageOwnCrumbTitle]]),
             // $hansardmajors[...]['title'] is "House debates"/"Senate debates" - the
             // same text the old stripe-head-1 h2 printed above the card (see
             // $PAGE->heading_displayed suppression below). Shown next to $section_title
@@ -554,17 +534,18 @@ if (isset($data['rows'])) {
         // "Humanitarian and Refugee Visas" etc, each its own separate debate with its
         // own gid, not content living on this page) - not a transcript, so no
         // hansard/transcript.php card here. One template (section-index-page.php)
-        // now owns this whole page's shell (breadcrumbs, card, pagination, "about
-        // this section" sidebar) - orchestration here is just building the item
-        // list. $aboutTitle/$aboutBodyHtml: computed once, just above, from
-        // $section_title - same lookup the transcript card's sidebar uses.
+        // now owns this whole page's shell (card, pagination, "about this section"
+        // sidebar) - orchestration here is just building the item list.
+        // $aboutTitle/$aboutBodyHtml: computed once, just above, from
+        // $section_title - same lookup the transcript card's sidebar uses. No
+        // breadcrumb trail here either - same reasoning as the transcript card
+        // above: the pagination bar already links to "all debates on this day".
         $sectionIndexItems = array_map(
             fn($row) => HansardSectionIndexItem::fromSubrow($row, $hansardmajors),
             $data['subrows']
         );
 
         echo $platesEngine->render('hansard/section-index-page', [
-            'breadcrumbs' => array_merge($breadcrumbsSoFar, [['label' => $section_title]]),
             'chamberLabel' => $chamberLabel,
             'sectionTitle' => $section_title,
             'items' => $sectionIndexItems,
