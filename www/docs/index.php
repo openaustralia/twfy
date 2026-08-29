@@ -91,12 +91,21 @@ function feature_row() {
                 <?php feature_icon('👤'); ?>
                 <?php your_mp_bullet_point(); ?>
             </div>
-            <div class="rounded-2xl bg-white p-6 text-center shadow-md md:p-8">
+            <?php
+            // The whole card links to the same place as the "Debates" nav item
+            // (metadata.php's 'hansard' page) - !-prefixed classes since a plain
+            // colour class loses to layout.css's legacy "a:link" rule (specificity
+            // 0,1,1 beats a class selector's 0,1,0), same fix used throughout the
+            // debate transcript page's own templates this session.
+            $HANSARDURL = new URL('hansard');
+            ?>
+            <a href="<?php echo htmlspecialchars($HANSARDURL->generate('none')) ?>"
+                class="block rounded-2xl bg-white p-6 text-center shadow-md !text-inherit !no-underline hover:shadow-lg md:p-8">
                 <?php feature_icon('📜'); ?>
                 <h3 class="mb-2 text-lg font-semibold text-slate-900">Read the Debates</h3>
                 <p class="text-slate-600">Access and search the complete record of what's said in the House of
                     Representatives and the Senate.</p>
-            </div>
+            </a>
             <div class="rounded-2xl bg-white p-6 text-center shadow-md md:p-8">
                 <?php feature_icon('✉️'); ?>
                 <?php email_alert_bullet_point(); ?>
@@ -191,8 +200,13 @@ function latest_activity() {
         <h2 class="mb-1 text-center text-3xl font-bold text-slate-900">Latest Activity in Parliament</h2>
         <p class="mb-8 text-center text-slate-600">Recent debates from the House and the Senate.</p>
         <div class="grid grid-cols-1 gap-8 md:grid-cols-2">
-            <?php latest_activity_column(1, 'House of Representatives'); ?>
-            <?php latest_activity_column(101, 'Senate'); ?>
+            <?php
+            // text-green-700/text-red-700: the House and Senate chambers' own actual
+            // colours (green benches, red benches) - a real, recognisable Australian
+            // parliamentary convention, not an arbitrary choice.
+            ?>
+            <?php latest_activity_column(1, 'House of Representatives', 'text-green-700'); ?>
+            <?php latest_activity_column(101, 'Senate', 'text-red-700'); ?>
         </div>
     </section>
     <?php
@@ -203,7 +217,7 @@ function latest_activity() {
  * the two this fork actually parses, same pair the debate transcript page's own
  * $usePlatesTemplate check uses).
  */
-function latest_activity_column($major, $chamberName) {
+function latest_activity_column($major, $chamberName, $iconColorClass) {
     global $hansardmajors;
 
     $LIST = $major == 101 ? new LORDSDEBATELIST() : new DEBATELIST();
@@ -217,8 +231,17 @@ function latest_activity_column($major, $chamberName) {
     $DAYURL->insert(['d' => $recent['hdate']]);
     ?>
     <div>
+        <?php
+        // Heroicons "building-library" (MIT) - same icon the debate transcript page
+        // uses next to the chamber name (see resources/views/hansard/transcript.php).
+        ?>
         <h3 class="mb-3 flex items-center gap-2 text-lg font-semibold text-slate-900">
-            <span aria-hidden="true">🏛️</span> <?php echo htmlspecialchars($chamberName) ?>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"
+                class="h-5 w-5 <?php echo $iconColorClass ?>" aria-hidden="true">
+                <path d="M12 21v-8.25M15.75 21v-8.25M8.25 21v-8.25M3 9l9-6 9 6m-1.5 12V10.332A48.36 48.36 0 0 0 12 9.75c-2.551 0-5.056.2-7.5.582V21M3 21h18M12 6.75h.008v.008H12V6.75Z" />
+            </svg>
+            <?php echo htmlspecialchars($chamberName) ?>
         </h3>
         <div class="space-y-3">
             <?php foreach ($items as $item): ?>
@@ -295,13 +318,14 @@ function latest_activity_items($major, $date, $limit) {
 }
 
 /**
- * "What's all this about?" - was sidebars/whatisthissite.php's shared khaki block
- * (also used on 404.php, index-election.php, gadget/index.php and mobile.php, so left
- * untouched there - see the note on latest_activity() above: duplicate short, static
- * content into new-design markup rather than restyle a template several unrelated
- * pages still rely on). Repositioned as the mockup's own bottom-of-page charity
- * callout ("We're a small charity with a big mission.") - a near-exact content match,
- * this site's donate/about messaging was already basically that card.
+ * "We're a small charity with a big mission." - the mockup's own bottom-of-page
+ * charity callout, using the content of sidebars/whatisthissite.php's shared khaki
+ * "What's all this about?" block (also used on 404.php, index-election.php,
+ * gadget/index.php and mobile.php, so left untouched there - see the note on
+ * latest_activity() above: duplicate short, static content into new-design markup
+ * rather than restyle a template several unrelated pages still rely on) - this site's
+ * donate/about messaging was already basically that card, just under a different
+ * heading.
  */
 function about_this_site_card() {
     $URL = new URL('about');
@@ -309,7 +333,7 @@ function about_this_site_card() {
     ?>
     <section class="mx-4 mb-12 rounded-2xl bg-slate-50 px-4 py-12 md:mx-8 md:px-8">
         <div class="mx-auto max-w-2xl rounded-2xl bg-white p-6 text-center shadow-md md:p-10">
-            <h2 class="mb-4 text-2xl font-bold text-slate-900">What's all this about?</h2>
+            <h2 class="mb-4 text-2xl font-bold text-slate-900">We're a small charity with a big mission.</h2>
             <div class="space-y-4 text-lg text-slate-700">
                 <p><strong>Hansard, made findable.</strong> Searchable transcripts of the Australian Federal Parliament.</p>
                 <p><a href="<?php echo $abouturl; ?>" class="!text-teal-800 hover:!text-teal-600" title="link to About Us page">OpenAustralia.org.au</a> is
