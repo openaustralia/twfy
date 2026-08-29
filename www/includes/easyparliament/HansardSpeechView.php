@@ -91,6 +91,7 @@ class HansardSpeechView {
      * (the shape HANSARDLIST::_get_speaker() returns), as a HansardSpeakerRosterEntry
      * - the same fields forSpeech() above builds for a single speech's speaker, but
      * factored out so a list of speakers with no per-speech data of their own (eg
+     * HansardSectionIndexItem::fromSubrow()'s "who spoke on this topic" line, or
      * www/docs/index.php's own latest_activity_items()) can build the same shape
      * without going via a fake speech row.
      */
@@ -148,6 +149,37 @@ class HansardSpeechView {
     public static function initials(string $firstName, string $lastName): string {
         $initials = mb_substr($firstName, 0, 1) . mb_substr($lastName, 0, 1);
         return mb_strtoupper($initials);
+    }
+
+    /**
+     * The pagination bar's prev/all/next data (resources/views/hansard/pagination.php),
+     * built from the same page metadata $PAGE->nextprevlinks() itself reads (set by
+     * HANSARDLIST::_get_nextprev_items()) - each of prev/up/next is optional (eg no
+     * "prev" on the very first debate ever recorded), and a present one isn't always a
+     * link (nextprevlinks() falls back to plain text with no 'url' in some cases too).
+     *
+     * $chamberTitle is $hansardmajors[major]['title'] ("House debates"/"Senate
+     * debates") - used to replace the server-built 'up' label ("All Senate debates on
+     * 18 Aug 2026", or sometimes just "See the whole debate", depending which branch
+     * of _get_nextprev_items() fired) with "All Senate debates on this day": the date
+     * is already shown in the card's own header, so repeating it here was redundant -
+     * this is just the "see everything" link's own label, not what it links to.
+     */
+    public static function buildNextPrev(array $nextprevdata, string $chamberTitle): array {
+        $nextPrev = [];
+        foreach (['prev', 'up', 'next'] as $direction) {
+            if (isset($nextprevdata[$direction]['body'])) {
+                $nextPrev[$direction] = [
+                    'label' => $nextprevdata[$direction]['body'],
+                    'url' => $nextprevdata[$direction]['url'] ?? null,
+                    'title' => $nextprevdata[$direction]['title'] ?? '',
+                ];
+            }
+        }
+        if (isset($nextPrev['up'])) {
+            $nextPrev['up']['label'] = 'All ' . $chamberTitle . ' on this day';
+        }
+        return $nextPrev;
     }
 
     /**
@@ -257,6 +289,73 @@ class HansardProceduralView {
         $view->contextLinkHtml = context_link($row);
         $view->commentTeaserHtml = generate_commentteaser($row, $info['major']);
         return $view;
+    }
+
+}
+
+/**
+ * One entry in a section-index page (resources/views/hansard/section-index.php) - eg
+ * an Adjournment debate's own gid page, which lists each MP's separate, unrelated
+ * topic ("Climate Change", "Humanitarian and Refugee Visas", ...) as its own entry.
+ * Unlike HansardSpeechView/HansardProceduralView, each entry here is a link to a
+ * completely separate debate (its own gid, its own already-Plates-rendered
+ * transcript page) - not content living on the section-index page itself.
+ */
+class HansardSectionIndexItem {
+    public string $titleHtml;
+    public ?string $url = null;
+    public ?string $countLabel = null;
+    public ?string $excerptHtml = null;
+    /** @var HansardSpeakerRosterEntry[] Who spoke on this topic, in speaking order. */
+    public array $speakers = [];
+
+    /**
+     * $row is one of $data['subrows'] (see the bottom of hansard_gid.php) -
+     * $hansardmajors is the global config array (dbtypes.php), needed to tell a
+     * "Wrans"/"WMS"-style major (where $row['contentcount'] doesn't mean "speeches",
+     * see the 'other' check below) apart from a debate-style one.
+     */
+    public static function fromSubrow(array $row, array $hansardmajors): self {
+        $item = new self();
+        $item->titleHtml = $row['body'];
+
+        $hasContent = false;
+        if (isset($row['contentcount']) && $row['contentcount'] > 0) {
+            $hasContent = true;
+        } elseif ($row['htype'] == '11' && $hansardmajors[$row['major']]['type'] == 'other') {
+            $hasContent = true;
+        }
+
+        if ($hasContent) {
+            $item->url = $row['listurl'];
+
+            $parts = [];
+            if ($hansardmajors[$row['major']]['type'] != 'other') {
+                // All Wrans have 2 speeches, all WMS have 1 - no need to say so.
+                $plural = $row['contentcount'] == 1 ? 'speech' : 'speeches';
+                $parts[] = $row['contentcount'] . " $plural";
+            }
+            if (($row['totalcomments'] ?? 0) > 0) {
+                $plural = $row['totalcomments'] == 1 ? 'comment' : 'comments';
+                $parts[] = $row['totalcomments'] . " $plural";
+            }
+            if (count($parts) > 0) {
+                $item->countLabel = implode(', ', $parts);
+            }
+        }
+
+        if (isset($row['excerpt']) && $row['excerpt'] != '') {
+            $item->excerptHtml = trim_characters($row['excerpt'], 0, 200);
+        }
+
+        if (!empty($row['speakers'])) {
+            $item->speakers = array_map(
+                fn($speaker) => HansardSpeechView::speakerEntry($speaker),
+                $row['speakers']
+            );
+        }
+
+        return $item;
     }
 
 }

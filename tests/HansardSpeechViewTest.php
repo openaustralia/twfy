@@ -82,6 +82,24 @@ if (!function_exists('generate_commentteaser')) {
 }
 
 /**
+ * Real trim_characters() (www/includes/utility.php) strips tags, trims to a word
+ * boundary, and - the one behaviour HansardSectionIndexItem::fromSubrow()'s own test
+ * cares about - leaves HTML entities alone (eg "&#8212;" stays "&#8212;", it isn't
+ * decoded to an em-dash). This stub keeps just that; not the word-boundary trimming.
+ */
+if (!function_exists('trim_characters')) {
+
+    function trim_characters($text, $start, $length) {
+        $text = strip_tags($text);
+        if (strlen($text) > $length) {
+            $text = substr($text, 0, $length) . '...';
+        }
+        return $text;
+    }
+
+}
+
+/**
  * HansardSpeechView/HansardProceduralView/HansardSpeakerRosterEntry (see
  * HansardSpeechView.php) are the view-model layer for the Plates-rendered debate
  * transcript (hansard_gid.php, major 1/101 only) - plain data in, plain data out,
@@ -429,6 +447,161 @@ class HansardSpeechViewTest extends TestCase {
     }
 
     /**
+     *
+     */
+    public function test_buildNextPrev_builds_all_three_directions_and_relabels_up() {
+        $nextprevdata = [
+            'prev' => ['body' => 'Earlier Debate Title', 'url' => '/debates/?id=a', 'title' => 'Earlier Debate Title'],
+            // 'up's own label ("All Senate debates on 18 Aug 2026", or sometimes
+            // "See the whole debate" - see _get_nextprev_items()) is always replaced,
+            // not just used as a fallback, so what it says here shouldn't matter.
+            'up' => ['body' => 'See the whole debate', 'url' => '/debates/?d=2026-08-20'],
+            'next' => ['body' => 'Later Debate Title', 'url' => '/debates/?id=b', 'title' => 'Later Debate Title'],
+        ];
+
+        $nextPrev = HansardSpeechView::buildNextPrev($nextprevdata, 'House debates');
+
+        $this->assertSame(['label' => 'Earlier Debate Title', 'url' => '/debates/?id=a', 'title' => 'Earlier Debate Title'], $nextPrev['prev']);
+        $this->assertSame('All House debates on this day', $nextPrev['up']['label']);
+        $this->assertSame('/debates/?d=2026-08-20', $nextPrev['up']['url']);
+        $this->assertSame(['label' => 'Later Debate Title', 'url' => '/debates/?id=b', 'title' => 'Later Debate Title'], $nextPrev['next']);
+    }
+
+    /**
+     *
+     */
+    public function test_buildNextPrev_omits_a_direction_the_row_does_not_have() {
+        // Eg the very first debate ever recorded has no 'prev'.
+        $nextprevdata = [
+            'next' => ['body' => 'Later Debate Title', 'url' => '/debates/?id=b'],
+        ];
+
+        $nextPrev = HansardSpeechView::buildNextPrev($nextprevdata, 'House debates');
+
+        $this->assertArrayNotHasKey('prev', $nextPrev);
+        $this->assertArrayNotHasKey('up', $nextPrev);
+        $this->assertArrayHasKey('next', $nextPrev);
+    }
+
+    /**
+     * _get_nextprev_items() sometimes returns a direction with a label but no 'url' -
+     * a plain-text fallback, not a link. buildNextPrev() has to preserve that rather
+     * than pretending every present direction is clickable.
+     */
+    public function test_buildNextPrev_leaves_the_url_null_when_the_row_has_none() {
+        $nextprevdata = [
+            'prev' => ['body' => 'No earlier item'],
+        ];
+
+        $nextPrev = HansardSpeechView::buildNextPrev($nextprevdata, 'House debates');
+
+        $this->assertSame('No earlier item', $nextPrev['prev']['label']);
+        $this->assertNull($nextPrev['prev']['url']);
+    }
+
+    /**
+     *
+     */
+    public function test_fromSubrow_a_debate_topic_with_one_speech_sets_url_and_a_singular_count_label() {
+        $row = $this->subrow(['contentcount' => 1]);
+
+        $item = HansardSectionIndexItem::fromSubrow($row, $this->hansardmajors());
+
+        $this->assertSame('/debates/?id=2026-08-20.165.2', $item->url);
+        $this->assertSame('1 speech', $item->countLabel);
+    }
+
+    /**
+     *
+     */
+    public function test_fromSubrow_a_debate_topic_with_several_speeches_pluralizes_the_count_label() {
+        $row = $this->subrow(['contentcount' => 3]);
+
+        $item = HansardSectionIndexItem::fromSubrow($row, $this->hansardmajors());
+
+        $this->assertSame('3 speeches', $item->countLabel);
+    }
+
+    /**
+     * A Wrans/WMS-style major's htype-11 subrow counts as "has content" even though
+     * contentcount is 0 - unlike a debate, its content lives directly under the
+     * subsection with no separate speech count worth stating (see fromSubrow()'s own
+     * comment: "All Wrans have 2 speeches, all WMS have 1 - no need to say so").
+     */
+    public function test_fromSubrow_treats_an_other_type_majors_subsection_as_having_content_with_no_speech_count() {
+        $row = $this->subrow(['contentcount' => 0, 'major' => 3]);
+
+        $item = HansardSectionIndexItem::fromSubrow($row, $this->hansardmajors());
+
+        $this->assertSame('/debates/?id=2026-08-20.165.2', $item->url);
+        $this->assertNull($item->countLabel);
+    }
+
+    /**
+     *
+     */
+    public function test_fromSubrow_with_no_content_leaves_the_url_and_count_label_null() {
+        $row = $this->subrow(['contentcount' => 0]);
+
+        $item = HansardSectionIndexItem::fromSubrow($row, $this->hansardmajors());
+
+        $this->assertNull($item->url);
+        $this->assertNull($item->countLabel);
+    }
+
+    /**
+     *
+     */
+    public function test_fromSubrow_adds_the_comment_count_onto_the_count_label() {
+        $row = $this->subrow(['contentcount' => 1, 'totalcomments' => 2]);
+
+        $item = HansardSectionIndexItem::fromSubrow($row, $this->hansardmajors());
+
+        $this->assertSame('1 speech, 2 comments', $item->countLabel);
+    }
+
+    /**
+     * trim_characters() (see this file's own stub above) strips tags but leaves HTML
+     * entities alone - fromSubrow() has to pass that straight through as
+     * already-safe HTML, not re-escape it (see section-index.php's own comment on
+     * this - it was a real, visible double-escaping bug during development).
+     */
+    public function test_fromSubrow_trims_the_excerpt_and_keeps_html_entities_intact() {
+        $row = $this->subrow(['excerpt' => '<p>Coal &#8212; and gas.</p>']);
+
+        $item = HansardSectionIndexItem::fromSubrow($row, $this->hansardmajors());
+
+        $this->assertSame('Coal &#8212; and gas.', $item->excerptHtml);
+    }
+
+    /**
+     *
+     */
+    public function test_fromSubrow_builds_a_speaker_chip_for_each_speaker_in_speaking_order() {
+        $row = $this->subrow([
+            'speakers' => [
+                $this->speaker(['first_name' => 'Zali', 'last_name' => 'Steggall', 'url' => '/mp/?m=1']),
+                $this->speaker(['first_name' => 'Alicia', 'last_name' => 'Payne', 'url' => '/mp/?m=2']),
+            ],
+        ]);
+
+        $item = HansardSectionIndexItem::fromSubrow($row, $this->hansardmajors());
+
+        $this->assertCount(2, $item->speakers);
+        $this->assertSame('Zali Steggall', $item->speakers[0]->name);
+        $this->assertSame('Alicia Payne', $item->speakers[1]->name);
+    }
+
+    /**
+     *
+     */
+    public function test_fromSubrow_leaves_speakers_empty_when_the_row_has_none() {
+        $item = HansardSectionIndexItem::fromSubrow($this->subrow([]), $this->hansardmajors());
+
+        $this->assertSame([], $item->speakers);
+    }
+
+    /**
      * @return array<string, mixed>
      */
     private function speechRow(array $overrides = []): array {
@@ -464,6 +637,38 @@ class HansardSpeechViewTest extends TestCase {
      */
     private function info(array $overrides = []): array {
         return array_merge(['major' => 101], $overrides);
+    }
+
+    /**
+     * One entry from $data['subrows'] (see hansardlist.php's _get_hansard_data(),
+     * htype-11 branch) - a single topic within a section-index page, eg one MP's
+     * Adjournment topic.
+     *
+     * @return array<string, mixed>
+     */
+    private function subrow(array $overrides = []): array {
+        return array_merge([
+            'htype' => '11',
+            'major' => 1,
+            'body' => 'Climate Change',
+            'listurl' => '/debates/?id=2026-08-20.165.2',
+            'contentcount' => 1,
+            'totalcomments' => 0,
+        ], $overrides);
+    }
+
+    /**
+     * A minimal stand-in for the global $hansardmajors config array (dbtypes.php) -
+     * just the 'type' field fromSubrow() actually reads, for the two majors these
+     * tests use: 1 (House debates) and 3 (Written Answers/Wrans).
+     *
+     * @return array<int, array<string, string>>
+     */
+    private function hansardmajors(): array {
+        return [
+            1 => ['type' => 'debate'],
+            3 => ['type' => 'other'],
+        ];
     }
 
     /**

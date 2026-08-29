@@ -39,26 +39,8 @@ if ($usePlatesTemplate) {
     // optional (eg no "prev" on the very first debate ever recorded), and a present
     // one isn't always a link (nextprevlinks() falls back to plain text with no
     // 'url' in some cases too).
-    $nextPrev = [];
     $nextprevdata = $DATA->page_metadata($this_page, 'nextprev') ?: [];
-    foreach (['prev', 'up', 'next'] as $direction) {
-        if (isset($nextprevdata[$direction]['body'])) {
-            $nextPrev[$direction] = [
-                'label' => $nextprevdata[$direction]['body'],
-                'url' => $nextprevdata[$direction]['url'] ?? null,
-                'title' => $nextprevdata[$direction]['title'] ?? '',
-            ];
-        }
-    }
-    if (isset($nextPrev['up'])) {
-        // The server-built label ("All Senate debates on 18 Aug 2026", or sometimes
-        // just "See the whole debate" - depends which branch of
-        // HANSARDLIST::_get_nextprev_items() fired) repeats the date already shown
-        // in the card's own header above. "on this day" instead of the date - the
-        // actual date the link goes to is still right there in $date/$dateUrl, this
-        // is just the "see everything" link's own label.
-        $nextPrev['up']['label'] = 'All ' . ($hansardmajors[$data['info']['major']]['title'] ?? 'debates') . ' on this day';
-    }
+    $nextPrev = HansardSpeechView::buildNextPrev($nextprevdata, $hansardmajors[$data['info']['major']]['title'] ?? 'debates');
 }
 
 // Will set the page headings and start the page HTML if it hasn't
@@ -463,10 +445,9 @@ if (isset($data['rows'])) {
         // A section-index page (eg an Adjournment debate - "Climate Change",
         // "Humanitarian and Refugee Visas" etc, each its own separate debate with its
         // own gid, not content living on this page) - not a transcript, so no
-        // hansard/transcript.php card here. Just the same pagination top and bottom,
-        // and the section's own title, wrapping the (still old-style, for now - see
-        // openaustralia/openaustralia#939-adjacent follow-up) list below in the same
-        // card shell every other Plates page uses.
+        // hansard/transcript.php card here. Same pagination top and bottom, and the
+        // section's own title, wrapping resources/views/hansard/section-index.php's
+        // card list in the same shell every other Plates page uses.
         ?>
         <div class="bg-slate-50 p-3 md:p-6 rounded-2xl">
             <div class="bg-white rounded-2xl shadow-lg p-6 md:p-8 space-y-8">
@@ -477,12 +458,16 @@ if (isset($data['rows'])) {
                 <?php if (!empty($nextPrev)): ?>
                     <?php echo $platesEngine->render('hansard/pagination', ['nextPrev' => $nextPrev, 'edge' => 'top']) ?>
                 <?php endif; ?>
-    <?php
-    }
-    if (isset($data['subrows'])) {
-        if (!$usePlatesTemplate) {
-            $PAGE->stripe_start();
-        }
+                <?php
+                $sectionIndexItems = array_map(
+                    fn($row) => HansardSectionIndexItem::fromSubrow($row, $hansardmajors),
+                    $data['subrows']
+                );
+                echo $platesEngine->render('hansard/section-index', ['items' => $sectionIndexItems]);
+                ?>
+        <?php
+    } elseif (isset($data['subrows'])) {
+        $PAGE->stripe_start();
         print '<ul>';
         foreach ($data['subrows'] as $row) {
             print '<li>';
@@ -519,9 +504,7 @@ if (isset($data['rows'])) {
             }
         }
         print '</ul>';
-        if (!$usePlatesTemplate) {
-            $PAGE->stripe_end();
-        }
+        $PAGE->stripe_end();
     }
 
     if (isset($data['subrows']) && $usePlatesTemplate) {
