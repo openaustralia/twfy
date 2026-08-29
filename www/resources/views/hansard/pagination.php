@@ -22,15 +22,17 @@
  */
 ?>
 <?php
-// border-0 border-t/border-b, and border-solid throughout this file: Tailwind's
-// preflight reset is off project-wide (tailwind.config.js) - preflight is what
-// normally sets border-style: solid globally, so a border-*-width utility on a <div>
-// or <a> renders invisible without it (the browser's own default border-style on
-// those is "none", not "solid" the way it is on eg <hr>/<table>). Same root cause as
-// the header <hr> elsewhere in this template set, just hitting the card borders below
-// too. p{t,b}-4, not m{t,b}-4, on this divider: the card's own space-y-8 already puts
-// room around this element from its neighbours; padding (inside the border) keeps the
-// divider line itself snug against the header/speeches, not floating in the gap.
+// border-0 border-t/border-b, and border-solid: Tailwind's preflight reset is off
+// project-wide (tailwind.config.js) - preflight is what normally sets
+// border-style: solid globally, so a border-*-width utility renders invisible
+// without it (the browser's own default border-style on a <div> is "none", not
+// "solid" the way it is on eg <hr>/<table>). Same root cause as the header <hr>
+// elsewhere in this template set. The prev/next cards below dropped their own border
+// (too busy alongside this divider and the card's own outer border) - just a
+// hover:bg-slate-50 now - so this divider is the only border left in this file.
+// p{t,b}-4, not m{t,b}-4: the card's own space-y-8 already puts room around this
+// element from its neighbours; padding (inside the border) keeps the divider line
+// itself snug against the header/speeches, not floating in the gap.
 $borderClass = $edge == 'top' ? 'pb-4 border-0 border-solid border-b' : 'pt-4 border-0 border-solid border-t';
 ?>
 <nav class="flex items-stretch justify-between gap-3 <?php echo $borderClass ?> border-slate-200" aria-label="Debate navigation">
@@ -38,14 +40,14 @@ $borderClass = $edge == 'top' ? 'pb-4 border-0 border-solid border-b' : 'pt-4 bo
         <?php if (isset($nextPrev['prev'])): ?>
             <?php if ($nextPrev['prev']['url']): ?>
                 <a href="<?php echo $this->e($nextPrev['prev']['url']) ?>"
-                    class="group block rounded-lg border-solid border border-slate-200 px-4 py-2.5 !no-underline hover:border-teal-300 hover:bg-slate-50 transition-colors">
+                    class="group block rounded-lg px-4 py-2.5 !no-underline hover:bg-slate-50 transition-colors">
                     <span class="block text-xs font-semibold uppercase tracking-wide text-slate-400 group-hover:text-teal-700">⬅️ <?php echo $this->e($nextPrev['prev']['label']) ?></span>
                     <?php if ($nextPrev['prev']['title']): ?>
                         <span class="block text-sm font-medium !text-slate-900 truncate"><?php echo $this->e($nextPrev['prev']['title']) ?></span>
                     <?php endif; ?>
                 </a>
             <?php else: ?>
-                <div class="block rounded-lg border-solid border border-slate-100 px-4 py-2.5">
+                <div class="block rounded-lg px-4 py-2.5">
                     <span class="block text-xs font-semibold uppercase tracking-wide text-slate-300">⬅️ <?php echo $this->e($nextPrev['prev']['label']) ?></span>
                 </div>
             <?php endif; ?>
@@ -65,14 +67,14 @@ $borderClass = $edge == 'top' ? 'pb-4 border-0 border-solid border-b' : 'pt-4 bo
         <?php if (isset($nextPrev['next'])): ?>
             <?php if ($nextPrev['next']['url']): ?>
                 <a href="<?php echo $this->e($nextPrev['next']['url']) ?>"
-                    class="group block rounded-lg border-solid border border-slate-200 px-4 py-2.5 text-right !no-underline hover:border-teal-300 hover:bg-slate-50 transition-colors">
+                    class="group block rounded-lg px-4 py-2.5 text-right !no-underline hover:bg-slate-50 transition-colors">
                     <span class="block text-xs font-semibold uppercase tracking-wide text-slate-400 group-hover:text-teal-700"><?php echo $this->e($nextPrev['next']['label']) ?> ➡️</span>
                     <?php if ($nextPrev['next']['title']): ?>
                         <span class="block text-sm font-medium !text-slate-900 truncate"><?php echo $this->e($nextPrev['next']['title']) ?></span>
                     <?php endif; ?>
                 </a>
             <?php else: ?>
-                <div class="block rounded-lg border-solid border border-slate-100 px-4 py-2.5 text-right">
+                <div class="block rounded-lg px-4 py-2.5 text-right">
                     <span class="block text-xs font-semibold uppercase tracking-wide text-slate-300"><?php echo $this->e($nextPrev['next']['label']) ?> ➡️</span>
                 </div>
             <?php endif; ?>
