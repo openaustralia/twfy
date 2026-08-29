@@ -10,10 +10,6 @@
  */
 ?>
 <div class="bg-slate-50 p-3 md:p-6 rounded-2xl">
-    <?php if (!empty($nextPrev)): ?>
-        <?php echo $this->fetch('hansard/pagination', ['nextPrev' => $nextPrev]) ?>
-    <?php endif; ?>
-
     <?php
     // lg:grid puts the transcript and the "Speakers in this debate" roster
     // side-by-side, matching the mockup - both sit in the same grey backdrop rather
@@ -22,6 +18,10 @@
     ?>
     <div class="lg:grid lg:grid-cols-3 lg:gap-6 lg:items-start">
     <div class="lg:col-span-2 bg-white rounded-2xl shadow-lg p-6 md:p-8 space-y-8">
+        <?php if (!empty($nextPrev)): ?>
+            <?php echo $this->fetch('hansard/pagination', ['nextPrev' => $nextPrev, 'edge' => 'top']) ?>
+        <?php endif; ?>
+
         <div>
             <?php
             // "House debates"/"Senate debates" - was its own heading above the card
@@ -91,6 +91,10 @@
                 <?php echo $this->fetch('hansard/procedural', ['item' => $item]) ?>
             <?php endif; ?>
         <?php endforeach; ?>
+
+        <?php if (!empty($nextPrev)): ?>
+            <?php echo $this->fetch('hansard/pagination', ['nextPrev' => $nextPrev, 'edge' => 'bottom']) ?>
+        <?php endif; ?>
     </div>
 
     <?php if ($aboutBodyHtml || !empty($speakers)): ?>
