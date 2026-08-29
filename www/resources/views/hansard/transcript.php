@@ -40,7 +40,13 @@
             <h1 class="text-3xl md:text-4xl font-bold text-slate-900 leading-tight"><?php echo $subsectionTitle /* already-safe HTML, same source as the old stripe-head-2 heading */ ?></h1>
             <div class="mt-3 flex items-center gap-4 text-sm text-slate-600">
                 <?php if ($dateUrl): ?>
-                    <a href="<?php echo $this->e($dateUrl) ?>" class="hover:text-teal-700"
+                    <?php
+                    // !-prefixed: layout.css's legacy "a:link"/"a:visited" rules
+                    // (specificity 0,1,1) beat a plain Tailwind colour class (0,1,0)
+                    // regardless of stylesheet order - see speech.php's own comment on
+                    // this. Without it, this rendered classic underlined blue.
+                    ?>
+                    <a href="<?php echo $this->e($dateUrl) ?>" class="!text-slate-600 hover:!text-teal-700 !no-underline"
                         title="See all debates on this date"><?php echo $this->e($date) ?></a>
                 <?php else: ?>
                     <span><?php echo $this->e($date) ?></span>
@@ -83,12 +89,12 @@
         <?php endforeach; ?>
     </div>
 
-    <?php if ($aboutBodyHtml || !empty($speakers)): ?>
+    <?php if ($aboutBodyHtml || !empty($speakers) || !empty($nextPrev)): ?>
         <?php
-        // One grid item holding both right-column cards, stacked - not two separate
-        // col-span-1 siblings. CSS grid auto-placement would otherwise drop the second
-        // one into row 2's *first* column (under the transcript card, not under the
-        // first sidebar card), since nothing here pins it back to column 3.
+        // One grid item holding all the right-column cards, stacked - not separate
+        // col-span-1 siblings. CSS grid auto-placement would otherwise drop later ones
+        // into row 2's *first* column (under the transcript card, not under the first
+        // sidebar card), since nothing here pins them back to column 3.
         ?>
         <div class="lg:col-span-1 space-y-6">
             <?php if ($aboutBodyHtml): ?>
@@ -96,6 +102,9 @@
             <?php endif; ?>
             <?php if (!empty($speakers)): ?>
                 <?php echo $this->fetch('hansard/speaker-roster', ['speakers' => $speakers]) ?>
+            <?php endif; ?>
+            <?php if (!empty($nextPrev)): ?>
+                <?php echo $this->fetch('hansard/nextprev', ['nextPrev' => $nextPrev]) ?>
             <?php endif; ?>
         </div>
     <?php endif; ?>
