@@ -2,6 +2,24 @@
 
 This is a fork of a 2001-ish era PHP app from MySociety in the UK, repurposed for Australia. This is the software running on https://openaustralia.org.au
 
+## Only the House of Representatives and the Senate are real
+
+The original UK app covered several legislatures - the House of Commons, the House of Lords, the
+Scottish Parliament, the Northern Ireland Assembly, Westminster Hall, Public Bill Committees. In
+this fork's code, "Lords" was renamed to "Senate" (that's expected - not a bug), and House of
+Commons became House of Representatives, but the other legislatures were never repurposed: this
+site has never populated Westminster Hall, Written Answers ("Wrans"), Written Ministerial
+Statements, the Northern Ireland Assembly, or the Scottish Parliament (debates or written
+answers) with real data, and never will.
+
+Code for all of those is still in the tree (`dbtypes.php`'s majors 2-8/104, the
+`www/docs/{whall,wrans,wms,ni,sp,spwrans,pbc,mlas,msps}/` routers, matching sidebars, and most of
+`hansardlist.php`'s list classes) - it's dead weight from the fork, not a feature anyone should
+build on. Treat it as such: don't invest effort maintaining it, and prefer removing it outright
+over updating it whenever a change already touches it. See
+[openaustralia/openaustralia#945](https://github.com/openaustralia/openaustralia/issues/945) for
+the tracked removal.
+
 ## What is OpenAustralia.org.au ?
 
 OpenAustralia.org.au is a website run by the non-partisan charity, OpenAustralia Foundation, which makes Australian government and parliamentary information easily accessible to the public through tools such as searching Hansard (parliamentary debates) and tracking politicians' voting records. The site aims to increase transparency and civic engagement in Australian democracy. It provides platforms to easily follow what MPs and Senators say and do, and tracks their registers of interests.
