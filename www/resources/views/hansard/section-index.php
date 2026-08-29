@@ -51,7 +51,11 @@
                     <div class="flex items-start justify-between gap-3">
                         <p class="min-w-0 flex-1 text-lg font-semibold !text-slate-900"><?php echo $item->titleHtml /* already-safe HTML, same source as the old stripe rendering */ ?></p>
                         <?php if ($item->countLabel): ?>
-                            <span class="mt-0.5 shrink-0 whitespace-nowrap rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-medium text-slate-600"><?php echo $this->e($item->countLabel) ?></span>
+                            <?php
+                            // 💬, plain inline - same convention as pagination.php's own
+                            // ⬅️/➡️ (no aria-hidden wrapper there either).
+                            ?>
+                            <span class="mt-0.5 shrink-0 whitespace-nowrap rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-medium text-slate-600">💬 <?php echo $this->e($item->countLabel) ?></span>
                         <?php endif; ?>
                     </div>
                     <?php if ($item->excerptHtml): ?>
