@@ -33,7 +33,7 @@
                     <?php $avatar = '<div class="w-8 h-8 rounded-full flex-shrink-0 bg-slate-200 text-slate-600 flex items-center justify-center font-semibold text-xs">' . $this->e(mb_strtoupper(mb_substr($speaker->name, 0, 1))) . '</div>' ?>
                 <?php endif; ?>
                 <?php if ($speaker->url): ?>
-                    <a href="<?php echo $this->e($speaker->url) ?>" title="See more information about <?php echo $this->e($speaker->name) ?>">
+                    <a href="<?php echo $this->e($speaker->url) ?>" class="!no-underline" title="See more information about <?php echo $this->e($speaker->name) ?>">
                         <?php echo $avatar ?>
                     </a>
                 <?php else: ?>
@@ -41,7 +41,13 @@
                 <?php endif; ?>
                 <div class="min-w-0 flex-grow">
                     <?php if ($speaker->url): ?>
-                        <a href="<?php echo $this->e($speaker->url) ?>" class="block text-sm font-semibold text-slate-900 hover:text-teal-700 truncate"
+                        <?php
+                        // !-prefixed: layout.css's legacy "a:link"/"a:visited" rules
+                        // (specificity 0,1,1) beat a plain Tailwind colour class
+                        // (0,1,0) regardless of stylesheet order - see speech.php's
+                        // own comment on this.
+                        ?>
+                        <a href="<?php echo $this->e($speaker->url) ?>" class="block text-sm font-semibold !text-slate-900 hover:!text-teal-700 !no-underline truncate"
                             title="See more information about <?php echo $this->e($speaker->name) ?>"><?php echo $this->e($speaker->name) ?></a>
                     <?php else: ?>
                         <p class="text-sm font-semibold text-slate-900 truncate"><?php echo $this->e($speaker->name) ?></p>
