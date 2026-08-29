@@ -2,13 +2,13 @@
 
 /**
  * @file
- * Prev/all/next pagination bar, above the transcript card - was the stripe-foot block
- * at the bottom of the page (see the guarded stripe_start('foot') in hansard_gid.php),
- * then briefly its own "More debates" card in the right-hand column, now here instead
- * since it's pagination and reads more like one at the top. $nextPrev has up to three
- * keys - 'prev', 'up', 'next' - each optional, each ['label' => ..., 'url' => ...|null,
- * 'title' => ...]; a present entry with no url is plain text, not a link (matches
- * $PAGE->nextprevlinks()'s own fallback).
+ * Prev/all/next pagination bar - shown twice, top and bottom of the transcript card
+ * (see transcript.php). $edge is 'top' or 'bottom' and decides which side gets the
+ * divider line, so both instances get a border between themselves and the card
+ * content rather than one floating against the card's own padding edge. $nextPrev
+ * has up to three keys - 'prev', 'up', 'next' - each optional, each
+ * ['label' => ..., 'url' => ...|null, 'title' => ...]; a present entry with no url is
+ * plain text, not a link (matches $PAGE->nextprevlinks()'s own fallback).
  *
  * !-prefixed classes: layout.css has legacy "a:link { color: #00b; text-decoration:
  * underline }" / "a:visited { color: #505; ... }" rules (specificity 0,1,1) that beat
@@ -16,7 +16,15 @@
  * PR #225's nav bar already uses (see page.php).
  */
 ?>
-<nav class="flex items-center justify-between gap-4 mb-4 px-1 text-sm" aria-label="Debate navigation">
+<?php
+// border-0 border-t/border-b: same preflight-off <hr> issue noted elsewhere in this
+// template set - this uses a bordered element instead of a real <hr>, so it needs the
+// reset too. p{t,b}-4, not m{t,b}-4: the card's own space-y-8 already puts room around
+// this element from its neighbours; padding (inside the border) keeps the divider
+// line itself snug against the header/speeches, not floating in the gap.
+$borderClass = $edge == 'top' ? 'pb-4 border-0 border-b' : 'pt-4 border-0 border-t';
+?>
+<nav class="flex items-center justify-between gap-4 <?php echo $borderClass ?> border-slate-200 text-sm" aria-label="Debate navigation">
     <div class="flex-1 text-left">
         <?php if (isset($nextPrev['prev'])): ?>
             <?php if ($nextPrev['prev']['url']): ?>
