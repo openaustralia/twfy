@@ -10,7 +10,8 @@
         "robmorgan/phinx": "^0.16.11",
         "sentry/sentry": "^3.22",
         "guzzlehttp/guzzle": "^7.15",
-        "php-http/guzzle7-adapter": "^1.1"
+        "php-http/guzzle7-adapter": "^1.1",
+        "league/plates": "^3.6"
     },
     "autoload": {
         "psr-4": {
