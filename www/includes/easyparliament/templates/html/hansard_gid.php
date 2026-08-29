@@ -27,6 +27,38 @@ $usePlatesTemplate = in_array($data['info']['major'], [1, 101], true);
 $plates_items = [];
 if ($usePlatesTemplate) {
     $platesEngine = new League\Plates\Engine(__DIR__ . "/../../../../resources/views");
+
+    // "All Senate debates on 18 August 2026 / « Previous debate / Next debate »" - was
+    // the stripe-foot block at the bottom of the page (still is, for non-Plates
+    // majors - see the guarded stripe_start('foot') below). Computed here,
+    // unconditionally for every Plates page (not just ones with a full transcript
+    // card - see the $data['subrows'] branch below, eg an Adjournment debate's
+    // section-index page, which has no $plates_items at all but still wants this
+    // same pagination). Same page metadata $PAGE->nextprevlinks() itself reads, set
+    // earlier by HANSARDLIST::_get_nextprev_items() - each of prev/up/next is
+    // optional (eg no "prev" on the very first debate ever recorded), and a present
+    // one isn't always a link (nextprevlinks() falls back to plain text with no
+    // 'url' in some cases too).
+    $nextPrev = [];
+    $nextprevdata = $DATA->page_metadata($this_page, 'nextprev') ?: [];
+    foreach (['prev', 'up', 'next'] as $direction) {
+        if (isset($nextprevdata[$direction]['body'])) {
+            $nextPrev[$direction] = [
+                'label' => $nextprevdata[$direction]['body'],
+                'url' => $nextprevdata[$direction]['url'] ?? null,
+                'title' => $nextprevdata[$direction]['title'] ?? '',
+            ];
+        }
+    }
+    if (isset($nextPrev['up'])) {
+        // The server-built label ("All Senate debates on 18 Aug 2026", or sometimes
+        // just "See the whole debate" - depends which branch of
+        // HANSARDLIST::_get_nextprev_items() fired) repeats the date already shown
+        // in the card's own header above. "on this day" instead of the date - the
+        // actual date the link goes to is still right there in $date/$dateUrl, this
+        // is just the "see everything" link's own label.
+        $nextPrev['up']['label'] = 'All ' . ($hansardmajors[$data['info']['major']]['title'] ?? 'debates') . ' on this day';
+    }
 }
 
 // Will set the page headings and start the page HTML if it hasn't
@@ -373,35 +405,6 @@ if (isset($data['rows'])) {
             101 => '<p><strong>Debates</strong> in the Senate are an opportunity for Senators from all parties to <strong>scrutinise</strong> government legislation and <strong>raise important local, national or topical issues</strong>.</p><p>And sometimes to shout at each other.</p>',
         ];
 
-        // "All Senate debates on 18 August 2026 / « Previous debate / Next debate »" -
-        // was the stripe-foot block at the bottom of the page (still is, for non-Plates
-        // majors - see the guarded stripe_start('foot') below); its own block in the
-        // right-hand column here instead. Same page metadata $PAGE->nextprevlinks()
-        // itself reads, set earlier by HANSARDLIST::_get_nextprev_items() - each of
-        // prev/up/next is optional (eg no "prev" on the very first debate ever
-        // recorded), and a present one isn't always a link (nextprevlinks() falls back
-        // to plain text with no 'url' in some cases too).
-        $nextPrev = [];
-        $nextprevdata = $DATA->page_metadata($this_page, 'nextprev') ?: [];
-        foreach (['prev', 'up', 'next'] as $direction) {
-            if (isset($nextprevdata[$direction]['body'])) {
-                $nextPrev[$direction] = [
-                    'label' => $nextprevdata[$direction]['body'],
-                    'url' => $nextprevdata[$direction]['url'] ?? null,
-                    'title' => $nextprevdata[$direction]['title'] ?? '',
-                ];
-            }
-        }
-        if (isset($nextPrev['up'])) {
-            // The server-built label ("All Senate debates on 18 Aug 2026", or
-            // sometimes just "See the whole debate" - depends which branch of
-            // HANSARDLIST::_get_nextprev_items() fired) repeats the date already
-            // shown in the card's own header above. "on this day" instead of the
-            // date - the actual date the link goes to is still right there in
-            // $date/$dateUrl, this is just the "see everything" link's own label.
-            $nextPrev['up']['label'] = 'All ' . ($hansardmajors[$data['info']['major']]['title'] ?? 'debates') . ' on this day';
-        }
-
         echo $platesEngine->render('hansard/transcript', [
             'items' => $plates_items,
             'speakers' => HansardSpeechView::buildRoster($plates_items),
@@ -433,21 +436,53 @@ if (isset($data['rows'])) {
     }
 
     if (!$titles_displayed) {
-        $PAGE->stripe_start('head-2');
-        ?>
-        <h4><?php echo $section_title; ?></h4>
-        <h5><?php echo $subsection_title; ?></h5>
-        <?php
-        $PAGE->stripe_end(array(
-            array(
-                'type' => 'nextprev'
-            )
-        ));
-        $titles_displayed = true;
+        if ($usePlatesTemplate) {
+            // Same reasoning as the identical check earlier in this file: rendered
+            // inside the card below instead, so skip the old stripe-head-2 title bar
+            // to avoid showing it twice. Section-index pages like an Adjournment
+            // debate's summary (see the $data['subrows'] branch just below) can reach
+            // here with $titles_displayed still false, since their $data['rows'] never
+            // hits a non-10/11 row to set it true.
+            $titles_displayed = true;
+        } else {
+            $PAGE->stripe_start('head-2');
+            ?>
+            <h4><?php echo $section_title; ?></h4>
+            <h5><?php echo $subsection_title; ?></h5>
+            <?php
+            $PAGE->stripe_end(array(
+                array(
+                    'type' => 'nextprev'
+                )
+            ));
+            $titles_displayed = true;
+        }
     }
 
+    if (isset($data['subrows']) && $usePlatesTemplate) {
+        // A section-index page (eg an Adjournment debate - "Climate Change",
+        // "Humanitarian and Refugee Visas" etc, each its own separate debate with its
+        // own gid, not content living on this page) - not a transcript, so no
+        // hansard/transcript.php card here. Just the same pagination top and bottom,
+        // and the section's own title, wrapping the (still old-style, for now - see
+        // openaustralia/openaustralia#939-adjacent follow-up) list below in the same
+        // card shell every other Plates page uses.
+        ?>
+        <div class="bg-slate-50 p-3 md:p-6 rounded-2xl">
+            <div class="bg-white rounded-2xl shadow-lg p-6 md:p-8 space-y-8">
+                <div>
+                    <h1 class="text-3xl md:text-4xl font-bold text-slate-900 leading-tight"><?php echo $section_title ?></h1>
+                    <hr class="mt-4 border-0 border-t border-slate-200">
+                </div>
+                <?php if (!empty($nextPrev)): ?>
+                    <?php echo $platesEngine->render('hansard/pagination', ['nextPrev' => $nextPrev, 'edge' => 'top']) ?>
+                <?php endif; ?>
+    <?php
+    }
     if (isset($data['subrows'])) {
-        $PAGE->stripe_start();
+        if (!$usePlatesTemplate) {
+            $PAGE->stripe_start();
+        }
         print '<ul>';
         foreach ($data['subrows'] as $row) {
             print '<li>';
@@ -484,7 +519,19 @@ if (isset($data['rows'])) {
             }
         }
         print '</ul>';
-        $PAGE->stripe_end();
+        if (!$usePlatesTemplate) {
+            $PAGE->stripe_end();
+        }
+    }
+
+    if (isset($data['subrows']) && $usePlatesTemplate) {
+        ?>
+                <?php if (!empty($nextPrev)): ?>
+                    <?php echo $platesEngine->render('hansard/pagination', ['nextPrev' => $nextPrev, 'edge' => 'bottom']) ?>
+                <?php endif; ?>
+            </div>
+        </div>
+        <?php
     }
 } else {
     ?>
