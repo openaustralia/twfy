@@ -18,10 +18,6 @@
     ?>
     <div class="lg:grid lg:grid-cols-3 lg:gap-6 lg:items-start">
     <div class="lg:col-span-2 bg-white rounded-2xl shadow-lg p-6 md:p-8 space-y-8">
-        <?php if (!empty($nextPrev)): ?>
-            <?php echo $this->fetch('hansard/pagination', ['nextPrev' => $nextPrev, 'edge' => 'top']) ?>
-        <?php endif; ?>
-
         <div>
             <?php
             // "House debates"/"Senate debates" - was its own heading above the card
@@ -83,6 +79,10 @@
             ?>
             <hr class="mt-4 border-0 border-t border-slate-200">
         </div>
+
+        <?php if (!empty($nextPrev)): ?>
+            <?php echo $this->fetch('hansard/pagination', ['nextPrev' => $nextPrev, 'edge' => 'top']) ?>
+        <?php endif; ?>
 
         <?php foreach ($items as $item): ?>
             <?php if ($item instanceof HansardSpeechView): ?>
