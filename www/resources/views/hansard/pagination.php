@@ -34,14 +34,19 @@
 // element from its neighbours; padding (inside the border) keeps the divider line
 // itself snug against the header/speeches, not floating in the gap.
 $borderClass = $edge == 'top' ? 'pb-4 border-0 border-solid border-b' : 'pt-4 border-0 border-solid border-t';
+// Distinct labels, not just "Debate navigation" both times: this partial renders
+// twice on the page (see transcript.php), and axe's landmark-unique rule (rightly)
+// flags two <nav> regions sharing one label as indistinguishable to screen reader
+// users navigating by landmark.
+$navLabel = $edge == 'top' ? 'Debate navigation' : 'Debate navigation, end of transcript';
 ?>
-<nav class="flex items-stretch justify-between gap-3 <?php echo $borderClass ?> border-slate-200" aria-label="Debate navigation">
+<nav class="flex items-stretch justify-between gap-3 <?php echo $borderClass ?> border-slate-200" aria-label="<?php echo $this->e($navLabel) ?>">
     <div class="flex-1 min-w-0">
         <?php if (isset($nextPrev['prev'])): ?>
             <?php if ($nextPrev['prev']['url']): ?>
                 <a href="<?php echo $this->e($nextPrev['prev']['url']) ?>"
                     class="group block rounded-lg px-4 py-2.5 !no-underline hover:bg-slate-50 transition-colors">
-                    <span class="block text-xs font-semibold uppercase tracking-wide text-slate-400 group-hover:text-teal-700">⬅️ <?php echo $this->e($nextPrev['prev']['label']) ?></span>
+                    <span class="block text-xs font-semibold uppercase tracking-wide text-slate-600 group-hover:text-teal-700">⬅️ <?php echo $this->e($nextPrev['prev']['label']) ?></span>
                     <?php if ($nextPrev['prev']['title']): ?>
                         <span class="block text-sm font-medium !text-slate-900 truncate"><?php echo $this->e($nextPrev['prev']['title']) ?></span>
                     <?php endif; ?>
@@ -68,7 +73,7 @@ $borderClass = $edge == 'top' ? 'pb-4 border-0 border-solid border-b' : 'pt-4 bo
             <?php if ($nextPrev['next']['url']): ?>
                 <a href="<?php echo $this->e($nextPrev['next']['url']) ?>"
                     class="group block rounded-lg px-4 py-2.5 text-right !no-underline hover:bg-slate-50 transition-colors">
-                    <span class="block text-xs font-semibold uppercase tracking-wide text-slate-400 group-hover:text-teal-700"><?php echo $this->e($nextPrev['next']['label']) ?> ➡️</span>
+                    <span class="block text-xs font-semibold uppercase tracking-wide text-slate-600 group-hover:text-teal-700"><?php echo $this->e($nextPrev['next']['label']) ?> ➡️</span>
                     <?php if ($nextPrev['next']['title']): ?>
                         <span class="block text-sm font-medium !text-slate-900 truncate"><?php echo $this->e($nextPrev['next']['title']) ?></span>
                     <?php endif; ?>
