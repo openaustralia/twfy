@@ -163,6 +163,10 @@ function latest_activity_column($major, $chamberName, $iconColorClass) {
     echo $platesEngine->render('front/latest-activity-column', [
         'chamberName' => $chamberName,
         'iconColorClass' => $iconColorClass,
+        // House and Senate don't always share a most recent sitting day (eg one
+        // chamber rises for the week before the other), so this is each column's
+        // own $recent['hdate'], not one shared page-level date.
+        'date' => format_date($recent['hdate'], SHORTDATEFORMAT),
         'items' => $items,
         'dayUrl' => $DAYURL->generate('none'),
         'viewAllLabel' => $major == 101 ? 'the Senate' : 'the House',
@@ -170,14 +174,18 @@ function latest_activity_column($major, $chamberName, $iconColorClass) {
 }
 
 /**
- * Every top-level debate section for one hansard major on one date, in the order
- * they happened (start of day first) - the same section_id=0/no-LIMIT query
- * major_summary() (utility.php) itself runs, just scoped to one major instead of
- * the House's whole 1/2/3/4/5 group. $LIST is the DEBATELIST/LORDSDEBATELIST
- * latest_activity_column() already built - reusing its own _get_speaker()
- * (hansardlist.php) for each item's speakers means a speaker who appears in
- * several sections in one day (eg the Speaker themself) is only queried once, not
- * once per section.
+ * The first $maxItemsShown top-level debate sections for one hansard major on one
+ * date, in the order they happened (start of day first) - same section_id=0 query
+ * major_summary() (utility.php) itself runs (unlimited there, just scoped to one
+ * major instead of the House's whole 1/2/3/4/5 group), capped here since a busy
+ * sitting day can run to 20-30 sections and the column's own "View all from the
+ * House/Senate" link (see latest_activity_column()) already exists as the place
+ * to see the rest - showing literally everything on the homepage read as far too
+ * busy to scan (real feedback after seeing it live, not a guess). $LIST is the
+ * DEBATELIST/LORDSDEBATELIST latest_activity_column() already built - reusing its
+ * own _get_speaker() (hansardlist.php) for each item's speakers means a speaker
+ * who appears in several sections in one day (eg the Speaker themself) is only
+ * queried once, not once per section.
  *
  * There's no single "item url" any more - the section heading itself
  * ("Bills"/"Committees"/...) is just a label now, not a link. Every actual link
@@ -198,14 +206,15 @@ function latest_activity_column($major, $chamberName, $iconColorClass) {
 function latest_activity_items($LIST, $major, $date) {
     global $hansardmajors;
 
-    $maxSpeakersShown = 7;
+    $maxItemsShown = 10;
+    $maxSpeakersShown = 1;
     $maxTopicsShown = 5;
     $items = [];
     $q = parlDBQuery('SELECT hansard.epobject_id, body FROM hansard, epobject
 			WHERE hansard.epobject_id = epobject.epobject_id AND section_id=0
 			AND hdate="' . $date . '"
 			AND major=' . intval($major) . '
-			ORDER BY hpos ASC');
+			ORDER BY hpos ASC LIMIT ' . intval($maxItemsShown));
 
     $LISTURL = new URL($hansardmajors[$major]['page_all']);
 

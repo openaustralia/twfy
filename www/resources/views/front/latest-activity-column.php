@@ -35,6 +35,12 @@
             <path d="M12 21v-8.25M15.75 21v-8.25M8.25 21v-8.25M3 9l9-6 9 6m-1.5 12V10.332A48.36 48.36 0 0 0 12 9.75c-2.551 0-5.056.2-7.5.582V21M3 21h18M12 6.75h.008v.008H12V6.75Z" />
         </svg>
         <?php echo $this->e($chamberName) ?>
+        <?php
+        // House and Senate don't always sit on the same day - see index.php's own
+        // latest_activity_column(), which passes each column its own $recent
+        // date rather than one shared page-level one.
+        ?>
+        <span class="text-sm font-normal text-slate-500">&middot; <?php echo $this->e($date) ?></span>
     </h3>
     <ul class="list-none divide-y divide-slate-100 border-y border-slate-100">
         <?php foreach ($items as $item): ?>

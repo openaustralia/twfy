@@ -173,6 +173,17 @@ class FrontPagePlatesViewsTest extends TestCase {
     }
 
     /**
+     * House and Senate don't always share a most recent sitting day, so this is
+     * each column's own date, not one shared page-level one - see index.php's own
+     * latest_activity_column().
+     */
+    public function test_latest_activity_column_shows_its_own_sitting_date_next_to_the_chamber_name() {
+        $html = $this->latestActivityHtml(['date' => '20 Aug 2026']);
+
+        $this->assertStringContainsString('20 Aug 2026', $html);
+    }
+
+    /**
      * Every "all the titles" link is on something specific now, not the item as a
      * whole - each topic links to its own subsection page.
      */
@@ -259,6 +270,7 @@ class FrontPagePlatesViewsTest extends TestCase {
         return $this->engine->render('front/latest-activity-column', array_merge([
             'chamberName' => 'House of Representatives',
             'iconColorClass' => 'text-green-700',
+            'date' => '20 Aug 2026',
             'items' => [],
             'dayUrl' => '/debates/?d=2026-08-20',
             'viewAllLabel' => 'the House',
