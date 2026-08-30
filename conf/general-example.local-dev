@@ -53,6 +53,15 @@ define ("DEBUGTAG", 'debug');
 define ("SENTRY_DSN", "");
 define ("SENTRY_ENVIRONMENT", "development");
 
+// Plausible.io analytics script identifier (the "pa-..." fragment of
+// https://plausible.io/js/pa-....js, from Plausible's own dashboard) - not a
+// secret (it's already public in every page's own HTML), but empty by default
+// in local dev so PlausibleView::renderTag() stays disabled (page.php's
+// page_header()/page_header_mobile() only ever gate on DEVSITE anyway, so this
+// is belt-and-braces). Staging/production get the real value templated in
+// from infrastructure's plausible_script_id (group_vars/openaustralia.yml).
+define ("PLAUSIBLE_SCRIPT_ID", "");
+
 // Timezone (only works in PHP5)
 define ("TIMEZONE", "Australia/Sydney");
 
