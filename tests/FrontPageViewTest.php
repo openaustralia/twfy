@@ -171,4 +171,90 @@ class FrontPageViewTest extends TestCase {
         return ['visible_name' => $visibleName, 'display' => $display];
     }
 
+    /**
+     *
+     */
+    public function test_summarizeTopics_strips_the_stage_suffix_after_the_last_semicolon() {
+        $topics = FrontPageView::summarizeTopics(
+            [$this->subsection('Migration Amendment Bill 2026; Second Reading')],
+            5
+        );
+
+        $this->assertSame('Migration Amendment Bill 2026', $topics['topics'][0]['title']);
+    }
+
+    /**
+     * The same bill usually appears more than once across a sitting day's stages -
+     * deduping on the stripped title collapses them to one entry, keeping that
+     * first occurrence's own url (its earliest stage that day).
+     */
+    public function test_summarizeTopics_dedupes_the_same_bill_across_multiple_stages() {
+        $topics = FrontPageView::summarizeTopics([
+            $this->subsection('Migration Amendment Bill 2026; Second Reading', '/debates/?id=1'),
+            $this->subsection('Migration Amendment Bill 2026; Third Reading', '/debates/?id=2'),
+        ], 5);
+
+        $this->assertCount(1, $topics['topics']);
+        $this->assertSame('/debates/?id=1', $topics['topics'][0]['url']);
+    }
+
+    /**
+     * Some titles legitimately contain their own semicolons before the stage
+     * suffix (eg a multi-bill cognate group) - only the text after the *last*
+     * semicolon is stripped.
+     */
+    public function test_summarizeTopics_only_strips_after_the_last_semicolon() {
+        $topics = FrontPageView::summarizeTopics(
+            [$this->subsection('News Journalism Payments Bill 2026, News Media Bargaining Charge Bill 2026; First Reading')],
+            5
+        );
+
+        $this->assertSame(
+            'News Journalism Payments Bill 2026, News Media Bargaining Charge Bill 2026',
+            $topics['topics'][0]['title']
+        );
+    }
+
+    /**
+     * A bare procedural item (eg "Rearrangement"/"Withdrawal") has no "; <stage>"
+     * suffix at all - kept whole, not mangled.
+     */
+    public function test_summarizeTopics_keeps_a_title_with_no_semicolon_whole() {
+        $topics = FrontPageView::summarizeTopics([$this->subsection('Rearrangement')], 5);
+
+        $this->assertSame('Rearrangement', $topics['topics'][0]['title']);
+    }
+
+    /**
+     *
+     */
+    public function test_summarizeTopics_caps_at_the_limit_and_counts_the_rest() {
+        $subsections = [
+            $this->subsection('Bill One; Second Reading'),
+            $this->subsection('Bill Two; Second Reading'),
+            $this->subsection('Bill Three; Second Reading'),
+        ];
+
+        $topics = FrontPageView::summarizeTopics($subsections, 2);
+
+        $this->assertCount(2, $topics['topics']);
+        $this->assertSame(1, $topics['moreCount']);
+    }
+
+    /**
+     *
+     */
+    public function test_summarizeTopics_returns_a_zero_moreCount_when_nothing_was_cut() {
+        $topics = FrontPageView::summarizeTopics([$this->subsection('Bill One; Second Reading')], 5);
+
+        $this->assertSame(0, $topics['moreCount']);
+    }
+
+    /**
+     * @return array{title: string, url: string}
+     */
+    private function subsection(string $title, string $url = '/debates/?id=1'): array {
+        return ['title' => $title, 'url' => $url];
+    }
+
 }

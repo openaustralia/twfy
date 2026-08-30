@@ -299,6 +299,125 @@ class HansardPlatesViewsTest extends TestCase {
     /**
      *
      */
+    public function test_speaker_chips_renders_an_avatar_when_present() {
+        $speaker = $this->speakerRosterEntry([
+            'name' => 'Penny Allman-Payne',
+            'avatarUrl' => '/images/mpsL/100931.jpg',
+        ]);
+
+        $html = $this->engine->render('hansard/speaker-chips', ['speakers' => [$speaker]]);
+
+        $this->assertStringContainsString('src="/images/mpsL/100931.jpg"', $html);
+        $this->assertStringContainsString('alt=""', $html);
+        $this->assertStringContainsString('Penny Allman-Payne', $html);
+    }
+
+    /**
+     *
+     */
+    public function test_speaker_chips_falls_back_to_initials_when_there_is_no_avatar() {
+        $speaker = $this->speakerRosterEntry(['name' => 'Penny Allman-Payne', 'initials' => 'PA', 'avatarUrl' => null]);
+
+        $html = $this->engine->render('hansard/speaker-chips', ['speakers' => [$speaker]]);
+
+        $this->assertStringNotContainsString('<img', $html);
+        $this->assertStringContainsString('PA', $html);
+    }
+
+    /**
+     *
+     */
+    public function test_speaker_chips_shows_the_description_as_a_title_tooltip() {
+        $speaker = $this->speakerRosterEntry([
+            'name' => 'Katy Gallagher',
+            'description' => 'ALP, Australian Capital Territory & "Territories" Minister',
+        ]);
+
+        $html = $this->engine->render('hansard/speaker-chips', ['speakers' => [$speaker]]);
+
+        $this->assertStringContainsString('title="ALP, Australian Capital Territory &amp; &quot;Territories&quot; Minister"', $html);
+    }
+
+    /**
+     *
+     */
+    public function test_speaker_chips_omits_the_title_attribute_when_there_is_no_description() {
+        $speaker = $this->speakerRosterEntry(['name' => 'Katy Gallagher', 'description' => null]);
+
+        $html = $this->engine->render('hansard/speaker-chips', ['speakers' => [$speaker]]);
+
+        $this->assertStringNotContainsString('title=', $html);
+    }
+
+    /**
+     *
+     */
+    public function test_speaker_chips_renders_every_speaker_in_order() {
+        $html = $this->engine->render('hansard/speaker-chips', [
+            'speakers' => [
+                $this->speakerRosterEntry(['name' => 'Larissa Waters']),
+                $this->speakerRosterEntry(['name' => 'Katy Gallagher']),
+            ],
+        ]);
+
+        $firstPos = strpos($html, 'Larissa Waters');
+        $secondPos = strpos($html, 'Katy Gallagher');
+        $this->assertNotFalse($firstPos);
+        $this->assertNotFalse($secondPos);
+        $this->assertLessThan($secondPos, $firstPos);
+    }
+
+    /**
+     * Only latest_activity_items() (www/docs/index.php) ever sets firstSpeechUrl -
+     * section-index.php's own chips (never set it) stay plain text, since its own
+     * linked card variant already wraps the whole chip row in its own <a>, and a
+     * nested <a> isn't valid HTML.
+     */
+    public function test_speaker_chips_links_the_chip_when_firstSpeechUrl_is_set() {
+        $speaker = $this->speakerRosterEntry(['name' => 'Zali Steggall', 'firstSpeechUrl' => '/debates/?id=2026-08-20.17.1#g17.2']);
+
+        $html = $this->engine->render('hansard/speaker-chips', ['speakers' => [$speaker]]);
+
+        $this->assertStringContainsString('href="/debates/?id=2026-08-20.17.1#g17.2"', $html);
+    }
+
+    /**
+     *
+     */
+    public function test_speaker_chips_renders_a_plain_chip_when_there_is_no_firstSpeechUrl() {
+        $speaker = $this->speakerRosterEntry(['name' => 'Zali Steggall', 'firstSpeechUrl' => null]);
+
+        $html = $this->engine->render('hansard/speaker-chips', ['speakers' => [$speaker]]);
+
+        $this->assertStringNotContainsString('<a href', $html);
+        $this->assertStringContainsString('Zali Steggall', $html);
+    }
+
+    /**
+     *
+     */
+    public function test_speaker_chips_shows_how_many_further_speakers_did_not_fit() {
+        $html = $this->engine->render('hansard/speaker-chips', [
+            'speakers' => [$this->speakerRosterEntry()],
+            'moreCount' => 4,
+        ]);
+
+        $this->assertStringContainsString('+4 more', $html);
+    }
+
+    /**
+     * moreCount is optional - only latest_activity_items() passes it.
+     * section-index.php's own call site doesn't, so it must not warn/error.
+     */
+    public function test_speaker_chips_omits_the_more_chip_when_moreCount_is_not_passed() {
+        $html = $this->engine->render('hansard/speaker-chips', ['speakers' => [$this->speakerRosterEntry()]]);
+
+        $this->assertStringNotContainsString('more', $html);
+    }
+
+    /**
+     *
+     */
     public function test_pagination_renders_prev_and_next_cards_with_labels_and_titles() {
         $html = $this->engine->render('hansard/pagination', [
             'nextPrev' => [
@@ -554,6 +673,23 @@ class HansardPlatesViewsTest extends TestCase {
             $view->$key = $value;
         }
         return $view;
+    }
+
+    /**
+     *
+     */
+    private function speakerRosterEntry(array $overrides = []): HansardSpeakerRosterEntry {
+        $entry = new HansardSpeakerRosterEntry();
+        $entry->name = 'Larissa Waters';
+        $entry->initials = 'LW';
+        $entry->url = null;
+        $entry->avatarUrl = null;
+        $entry->description = null;
+        $entry->firstSpeechUrl = null;
+        foreach ($overrides as $key => $value) {
+            $entry->$key = $value;
+        }
+        return $entry;
     }
 
 }

@@ -23,6 +23,7 @@ $this_page = "home";
 include_once __DIR__ . "/../includes/easyparliament/init.php";
 include_once __DIR__ . "/../includes/easyparliament/member.php";
 include_once __DIR__ . "/../includes/easyparliament/FrontPageView.php";
+include_once __DIR__ . "/../includes/easyparliament/HansardSpeechView.php";
 
 $PAGE->page_start();
 
@@ -107,11 +108,14 @@ function mp_block() {
 }
 
 /**
- * "Latest Activity in Parliament" - the mockup's two-column (House/Senate) feed of
- * recent debates, each with its first speaker and time, not just major_summary()'s
- * (utility.php) plain list of section titles/links. major_summary() is shared by
- * mobile.php and hansard/index.php too, so left as-is there; this runs its own small
- * query instead of changing what those pages get.
+ * "Latest Activity in Australian Parliament" - the two-column (House/Senate) full
+ * agenda for the most recent sitting day: every top-level section (a Bill, a
+ * Committee's report, Question Time, ...), in the order they actually happened -
+ * start of the day first, not the mockup's own "last few things said" feed. Closer
+ * to the original TWFY homepage's major_summary() (utility.php, still used as-is by
+ * mobile.php/hansard/index.php - no LIMIT there either) than to the mockup itself;
+ * each item also shows its first speaker (avatar/name/party-electorate), which
+ * major_summary() never did.
  */
 function latest_activity() {
     ?>
@@ -123,8 +127,8 @@ function latest_activity() {
     // read as sparse.
     ?>
     <section class="mx-4 mb-12 md:mx-8">
-        <h2 class="mb-1 text-center text-3xl font-bold text-slate-900">Latest Activity in Parliament</h2>
-        <p class="mb-8 text-center text-slate-600">Recent debates from the House and the Senate.</p>
+        <h2 class="mb-1 text-center text-3xl font-bold text-slate-900">Latest Activity in Australian Parliament</h2>
+        <p class="mb-8 text-center text-slate-600">The full day's business from the House and the Senate.</p>
         <div class="mx-auto grid max-w-5xl grid-cols-1 gap-8 md:grid-cols-2">
             <?php
             // text-green-700/text-red-700: the House and Senate chambers' own actual
@@ -152,7 +156,7 @@ function latest_activity_column($major, $chamberName, $iconColorClass) {
         return;
     }
 
-    $items = latest_activity_items($major, $recent['hdate'], 5);
+    $items = latest_activity_items($LIST, $major, $recent['hdate']);
     $DAYURL = new URL($hansardmajors[$major]['page_all']);
     $DAYURL->insert(['d' => $recent['hdate']]);
 
@@ -166,51 +170,108 @@ function latest_activity_column($major, $chamberName, $iconColorClass) {
 }
 
 /**
- * The $limit most recent debate sections for one hansard major on one date, each
- * with its first speaker and time. One extra small query per section (fine at this
- * $limit) - major_summary() (utility.php) only ever fetches title/gid, since none of
- * its other callers need a speaker name.
+ * Every top-level debate section for one hansard major on one date, in the order
+ * they happened (start of day first) - the same section_id=0/no-LIMIT query
+ * major_summary() (utility.php) itself runs, just scoped to one major instead of
+ * the House's whole 1/2/3/4/5 group. $LIST is the DEBATELIST/LORDSDEBATELIST
+ * latest_activity_column() already built - reusing its own _get_speaker()
+ * (hansardlist.php) for each item's speakers means a speaker who appears in
+ * several sections in one day (eg the Speaker themself) is only queried once, not
+ * once per section.
+ *
+ * There's no single "item url" any more - the section heading itself
+ * ("Bills"/"Committees"/...) is just a label now, not a link. Every actual link
+ * is on something specific: each topic to its own subsection page (see
+ * FrontPageView::summarizeTopics()), each speaker chip to where they first speak
+ * (same #anchor convention as HANSARDLIST::_get_listurl()'s own htype=12 branch -
+ * the parent subsection's own gid as the page, the speech's own gid as a
+ * fragment).
+ *
+ * A section can have many distinct speakers (a whole day's Bills debate, say) -
+ * capped at $maxSpeakersShown, same "+N more" convention as
+ * resources/views/hansard/speaker-chips.php's own $moreCount. Only the capped
+ * speakers are actually resolved to full member data - the "how many more" count
+ * comes from the id list itself, cheap to fetch in full. Not every section has a
+ * speaker at all (eg a bare procedural heading with no htype=12 rows under it) -
+ * 'speakers' stays [] for those.
  */
-function latest_activity_items($major, $date, $limit) {
+function latest_activity_items($LIST, $major, $date) {
     global $hansardmajors;
 
+    $maxSpeakersShown = 7;
+    $maxTopicsShown = 5;
     $items = [];
-    $q = parlDBQuery('SELECT hansard.epobject_id, body, gid FROM hansard, epobject
+    $q = parlDBQuery('SELECT hansard.epobject_id, body FROM hansard, epobject
 			WHERE hansard.epobject_id = epobject.epobject_id AND section_id=0
 			AND hdate="' . $date . '"
 			AND major=' . intval($major) . '
-			ORDER BY hpos DESC LIMIT ' . intval($limit));
+			ORDER BY hpos ASC');
 
     $LISTURL = new URL($hansardmajors[$major]['page_all']);
 
     for ($i = 0; $i < $q->rows(); $i++) {
         $section_epobject_id = $q->field($i, 'epobject_id');
-        $gid = fix_gid_from_db($q->field($i, 'gid'));
 
-        $speakerQ = parlDBQuery('SELECT hansard.htime, member.title, member.first_name, member.last_name
-				FROM hansard, member
-				WHERE hansard.speaker_id = member.member_id
+        // Topics: a subsection links straight to its own page (no #anchor needed -
+        // unlike a speech, the subsection itself IS the whole page) - same as
+        // HANSARDLIST::_get_listurl()'s own htype=11 branch.
+        $topicsQ = parlDBQuery('SELECT epobject.body, hansard.gid FROM hansard, epobject
+				WHERE hansard.epobject_id = epobject.epobject_id
 				AND hansard.section_id=' . intval($section_epobject_id) . '
-				AND hansard.htype=12
-				ORDER BY hansard.hpos LIMIT 1');
+				AND hansard.htype=11
+				ORDER BY hansard.hpos ASC');
+        $subsections = [];
+        for ($t = 0; $t < $topicsQ->rows(); $t++) {
+            $topicURL = clone $LISTURL;
+            $topicURL->insert(['id' => fix_gid_from_db($topicsQ->field($t, 'gid'))]);
+            $subsections[] = ['title' => $topicsQ->field($t, 'body'), 'url' => $topicURL->generate('none')];
+        }
+        $topics = FrontPageView::summarizeTopics($subsections, $maxTopicsShown);
 
-        $speaker = '';
-        $when = format_date($date, SHORTDATEFORMAT);
-        if ($speakerQ->rows()) {
-            $speaker = ucfirst(member_full_name(1, $speakerQ->field(0, 'title'), $speakerQ->field(0, 'first_name'), $speakerQ->field(0, 'last_name'), ''));
-            $htime = $speakerQ->field(0, 'htime');
-            if ($htime && $htime != '00:00:00') {
-                $when .= ', ' . format_time($htime, TIMEFORMAT);
+        // Speakers: fetch every htype=12 row's speaker_id/gid/parent-subsection gid
+        // up front (ordered by hpos, so the first occurrence per speaker_id - kept
+        // by the isset() check below - is genuinely their first speech), then only
+        // resolve full member data for the ones actually shown.
+        $speechRowsQ = parlDBQuery('SELECT hansard.speaker_id, hansard.gid AS speech_gid, sub.gid AS subsection_gid
+				FROM hansard
+				JOIN hansard AS sub ON hansard.subsection_id = sub.epobject_id
+				WHERE hansard.section_id=' . intval($section_epobject_id) . '
+				AND hansard.htype=12 AND hansard.speaker_id != 0
+				ORDER BY hansard.hpos ASC');
+
+        $firstSpeechBySpeaker = [];
+        for ($r = 0; $r < $speechRowsQ->rows(); $r++) {
+            $speakerId = $speechRowsQ->field($r, 'speaker_id');
+            if (!isset($firstSpeechBySpeaker[$speakerId])) {
+                $firstSpeechBySpeaker[$speakerId] = [
+                    'speech_gid' => $speechRowsQ->field($r, 'speech_gid'),
+                    'subsection_gid' => $speechRowsQ->field($r, 'subsection_gid'),
+                ];
             }
         }
 
-        $URL = clone $LISTURL;
-        $URL->insert(['id' => $gid]);
+        $speakers = [];
+        $shownSpeakerIds = array_slice(array_keys($firstSpeechBySpeaker), 0, $maxSpeakersShown);
+        foreach ($shownSpeakerIds as $speakerId) {
+            $speakerData = $LIST->_get_speaker($speakerId, $date);
+            if (empty($speakerData)) {
+                continue;
+            }
+            $entry = HansardSpeechView::speakerEntry($speakerData);
+            $firstSpeech = $firstSpeechBySpeaker[$speakerId];
+            $speechURL = clone $LISTURL;
+            $speechURL->insert(['id' => fix_gid_from_db($firstSpeech['subsection_gid'])]);
+            $entry->firstSpeechUrl = $speechURL->generate('none') . '#g' . gid_to_anchor(fix_gid_from_db($firstSpeech['speech_gid']));
+            $speakers[] = $entry;
+        }
+        $moreSpeakersCount = max(0, count($firstSpeechBySpeaker) - count($shownSpeakerIds));
+
         $items[] = [
             'title' => $q->field($i, 'body'),
-            'speaker' => $speaker,
-            'when' => $when,
-            'url' => $URL->generate('none'),
+            'speakers' => $speakers,
+            'moreSpeakersCount' => $moreSpeakersCount,
+            'topics' => $topics['topics'],
+            'moreTopicsCount' => $topics['moreCount'],
         ];
     }
 

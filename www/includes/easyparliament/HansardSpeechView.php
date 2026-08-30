@@ -47,28 +47,12 @@ class HansardSpeechView {
 
         if (isset($row['speaker']) && count($row['speaker']) > 0) {
             $speaker = $row['speaker'];
-            $view->speakerName = ucfirst(member_full_name(
-                $speaker['house'],
-                $speaker['title'],
-                $speaker['first_name'],
-                $speaker['last_name'],
-                $speaker['constituency']
-            ));
-            // From first_name/last_name directly, not by splitting $speakerName's
-            // words - that string can start with a title ("Senator Penny
-            // Allman-Payne"), which would wrongly give "SP" instead of "PA".
-            $view->speakerInitials = self::initials($speaker['first_name'], $speaker['last_name']);
-            $view->speakerUrl = $speaker['url'];
-            $view->speakerDescription = self::speakerDescription($speaker);
-
-            // $smallonly=false here (the old stripe rendering passed true): that 'S'
-            // size is only 44x59px, fine floated at its natural size but blurry
-            // upscaled into a 48px circle. 'L' (88x118, same aspect ratio) downscales
-            // instead, which looks sharp - see speech.php for the matching object-top
-            // crop, since these are head-and-shoulders portraits with more empty
-            // space below the shoulders than above the head.
-            [$image] = find_rep_image($speaker['person_id'], false);
-            $view->avatarUrl = $image;
+            $entry = self::speakerEntry($speaker);
+            $view->speakerName = $entry->name;
+            $view->speakerInitials = $entry->initials;
+            $view->speakerUrl = $entry->url;
+            $view->speakerDescription = $entry->description;
+            $view->avatarUrl = $entry->avatarUrl;
 
             $view->isCurrentSpeaker =
                 (isset($speaker['member_id']) && isset($info['member_id']) && $speaker['member_id'] == $info['member_id'])
@@ -100,6 +84,42 @@ class HansardSpeechView {
         $view->commentTeaserHtml = generate_commentteaser($row, $info['major']);
 
         return $view;
+    }
+
+    /**
+     * The name/initials/url/avatar/description fields for one raw $speaker array
+     * (the shape HANSARDLIST::_get_speaker() returns), as a HansardSpeakerRosterEntry
+     * - the same fields forSpeech() above builds for a single speech's speaker, but
+     * factored out so a list of speakers with no per-speech data of their own (eg
+     * www/docs/index.php's own latest_activity_items()) can build the same shape
+     * without going via a fake speech row.
+     */
+    public static function speakerEntry(array $speaker): HansardSpeakerRosterEntry {
+        $entry = new HansardSpeakerRosterEntry();
+        $entry->name = ucfirst(member_full_name(
+            $speaker['house'],
+            $speaker['title'],
+            $speaker['first_name'],
+            $speaker['last_name'],
+            $speaker['constituency']
+        ));
+        // From first_name/last_name directly, not by splitting $name's words - that
+        // string can start with a title ("Senator Penny Allman-Payne"), which would
+        // wrongly give "SP" instead of "PA".
+        $entry->initials = self::initials($speaker['first_name'], $speaker['last_name']);
+        $entry->url = $speaker['url'];
+        $entry->description = self::speakerDescription($speaker);
+
+        // $smallonly=false here (the old stripe rendering passed true): that 'S' size
+        // is only 44x59px, fine floated at its natural size but blurry upscaled into
+        // a larger circle. 'L' (88x118, same aspect ratio) downscales instead, which
+        // looks sharp - see speech.php for the matching object-top crop, since these
+        // are head-and-shoulders portraits with more empty space below the shoulders
+        // than above the head.
+        [$image] = find_rep_image($speaker['person_id'], false);
+        $entry->avatarUrl = $image;
+
+        return $entry;
     }
 
     /**
@@ -205,6 +225,14 @@ class HansardSpeakerRosterEntry {
     public ?string $description = null;
     public int $speechCount = 0;
     public int $wordCount = 0;
+    // Where this speaker first speaks in *this particular* listing - eg
+    // www/docs/index.php's "Latest Activity" item, a whole top-level section that
+    // can span several subsections/topics. Distinct from $url above (their own
+    // MP/senator profile page, used by speaker-roster.php) - null unless the
+    // caller actually sets it (only latest_activity_items() does), so every other
+    // existing use of this class (speaker-roster.php, speaker-chips.php's other
+    // callers) is unaffected.
+    public ?string $firstSpeechUrl = null;
 
 }
 

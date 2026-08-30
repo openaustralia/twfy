@@ -110,4 +110,50 @@ class FrontPageView {
         return implode(', ', $correctAmount);
     }
 
+    /**
+     * The distinct topics within one "Latest Activity" item (eg the actual bills
+     * debated under a "Bills" heading, or the committees reported on under
+     * "Committees") - real Hansard subsection titles, not an inferred/generated
+     * summary, each one linking to its own page (so "all the titles" on the front
+     * page are real links, not just the item's own no-longer-existing whole-card
+     * one). $subsections is each subsection's own body text + url, in order (see
+     * www/docs/index.php's own latest_activity_items()) - title typically "<name>;
+     * <stage>" (eg "Migration Amendment Bill 2026; Second Reading"). The same bill
+     * usually appears more than once across a sitting day's stages, so this strips
+     * the "; <stage>" suffix (the text after the *last* semicolon - some titles
+     * legitimately contain their own semicolons before that, eg a multi-bill
+     * cognate group) before deduping on the result, keeping first-seen order and
+     * that occurrence's own url (its earliest stage that day). A title with no
+     * semicolon at all (eg a bare "Rearrangement"/"Withdrawal" procedural item) is
+     * kept whole.
+     *
+     * @param array<int, array{title: string, url: string}> $subsections
+     *   'title' is already-safe HTML (same source as $item['title']) - not
+     *   re-escaped here.
+     * @param int $limit
+     *   How many distinct topics to keep - the rest are only reflected in
+     *   'moreCount'.
+     *
+     * @return array{topics: array<int, array{title: string, url: string}>, moreCount: int}
+     *   The capped topic list and how many further distinct topics didn't fit.
+     */
+    public static function summarizeTopics(array $subsections, int $limit): array {
+        $topics = [];
+        $seenTitles = [];
+        foreach ($subsections as $subsection) {
+            $lastSemicolon = strrpos($subsection['title'], ';');
+            $topicTitle = $lastSemicolon === false ? $subsection['title'] : trim(substr($subsection['title'], 0, $lastSemicolon));
+            if (isset($seenTitles[$topicTitle])) {
+                continue;
+            }
+            $seenTitles[$topicTitle] = true;
+            $topics[] = ['title' => $topicTitle, 'url' => $subsection['url']];
+        }
+
+        return [
+            'topics' => array_slice($topics, 0, $limit),
+            'moreCount' => max(0, count($topics) - $limit),
+        ];
+    }
+
 }

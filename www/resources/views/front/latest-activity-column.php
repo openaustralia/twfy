@@ -2,11 +2,25 @@
 
 /**
  * @file
- * One "Latest Activity" column (House or Senate). $items is a list of
- * ['title' => already-safe HTML, 'speaker' => plain text or '', 'when' => plain
- * text, 'url' => plain URL] - built by www/docs/index.php's own
- * latest_activity_items(), which is DB-coupled (two queries per item) so stays
- * there rather than moving into FrontPageView.php alongside the DB-free logic.
+ * One "Latest Activity" column (House or Senate) - every top-level section from
+ * the most recent sitting day, start of day first. $items is a list of
+ * ['title' => already-safe HTML, 'speakers' => list of HansardSpeakerRosterEntry
+ * (see HansardSpeechView::speakerEntry()), 'moreSpeakersCount' => int, 'topics' =>
+ * list of ['title' => already-safe HTML, 'url' => plain URL], 'moreTopicsCount' =>
+ * int] - built by www/docs/index.php's own latest_activity_items(), which is
+ * DB-coupled so stays there rather than moving into FrontPageView.php alongside
+ * the DB-free logic (topics themselves are deduped/capped by the DB-free
+ * FrontPageView::summarizeTopics()). Can run to 20-30 items on a busy sitting
+ * day, so each row is a plain compact list item rather than the padded card a
+ * short top-5 list could afford.
+ *
+ * 'title' is just the procedural heading ("Bills", "Committees", ...) - a label,
+ * not a link (a whole top-level section rarely has anywhere more specific to
+ * point at than its own topics do). Every actual link here is on something
+ * specific instead: each topic to its own subsection page, each speaker chip
+ * (hansard/speaker-chips.php - the same "who spoke on this topic" component the
+ * section-index page uses) to where they first speak, via its own
+ * $speaker->firstSpeechUrl.
  */
 ?>
 <div>
@@ -22,22 +36,35 @@
         </svg>
         <?php echo $this->e($chamberName) ?>
     </h3>
-    <div class="space-y-3">
+    <ul class="list-none divide-y divide-slate-100 border-y border-slate-100">
         <?php foreach ($items as $item): ?>
-            <a href="<?php echo $this->e($item['url']) ?>"
-                class="block rounded-lg bg-slate-50 p-4 !no-underline hover:bg-slate-100">
-                <p class="font-semibold !text-slate-900"><?php echo $item['title'] /* already-safe HTML, same source as the old rendering */ ?></p>
-                <?php if ($item['speaker']): ?>
-                    <p class="text-sm text-slate-600">Spoken by: <?php echo $this->e($item['speaker']) ?></p>
+            <li class="px-2 py-2.5">
+                <p class="font-semibold text-slate-900"><?php echo $item['title'] /* already-safe HTML, same source as the old rendering */ ?></p>
+                <?php if ($item['topics']): ?>
+                    <ul class="mt-1 list-none space-y-0.5">
+                        <?php foreach ($item['topics'] as $topic): ?>
+                            <li class="text-sm">
+                                <?php
+                                // !-prefixed: see speaker-chips.php's own comment
+                                // on the same legacy a:link/a:visited specificity
+                                // issue - matters here too even without a
+                                // surrounding <a> any more, since layout.css's
+                                // rule is unscoped to begin with.
+                                ?>
+                                <a href="<?php echo $this->e($topic['url']) ?>" class="!text-slate-600 hover:!text-teal-700 !no-underline hover:!underline"><?php echo $topic['title'] /* already-safe HTML, same source as $item['title'] */ ?></a>
+                            </li>
+                        <?php endforeach; ?>
+                        <?php if ($item['moreTopicsCount'] > 0): ?>
+                            <li class="text-xs font-medium !text-slate-500">+<?php echo (int) $item['moreTopicsCount'] ?> more</li>
+                        <?php endif; ?>
+                    </ul>
                 <?php endif; ?>
-                <?php
-                // text-slate-600, not slate-400: 2.45:1 on the card's slate-50
-                // background (axe-core color-contrast, needs 4.5:1).
-                ?>
-                <p class="text-xs text-slate-600"><?php echo $this->e($item['when']) ?></p>
-            </a>
+                <?php if ($item['speakers']): ?>
+                    <?php echo $this->fetch('hansard/speaker-chips', ['speakers' => $item['speakers'], 'moreCount' => $item['moreSpeakersCount']]) ?>
+                <?php endif; ?>
+            </li>
         <?php endforeach; ?>
-    </div>
+    </ul>
     <a href="<?php echo $this->e($dayUrl) ?>" class="mt-4 inline-block font-semibold !text-teal-800 hover:!text-teal-600 !no-underline">View
         all from <?php echo $this->e($viewAllLabel) ?> &rarr;</a>
 </div>

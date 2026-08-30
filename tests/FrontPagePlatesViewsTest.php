@@ -14,6 +14,8 @@ use PHPUnit\Framework\TestCase;
 
 require_once __DIR__ . '/bootstrap.php';
 require_once __DIR__ . '/../vendor/autoload.php';
+require_once __DIR__ . '/../www/includes/easyparliament/member.php';
+require_once __DIR__ . '/../www/includes/easyparliament/HansardSpeechView.php';
 
 /**
  *
@@ -159,41 +161,121 @@ class FrontPagePlatesViewsTest extends TestCase {
     /**
      *
      */
-    public function test_latest_activity_column_renders_each_item() {
-        $html = $this->engine->render('front/latest-activity-column', [
-            'chamberName' => 'House of Representatives',
-            'iconColorClass' => 'text-green-700',
-            'items' => [
-                ['title' => 'Adjournment', 'speaker' => 'Zali Steggall', 'when' => '20 Aug 2026, 1:00 pm', 'url' => '/debates/?id=1'],
-            ],
-            'dayUrl' => '/debates/?d=2026-08-20',
-            'viewAllLabel' => 'the House',
+    public function test_latest_activity_column_renders_the_heading_as_plain_text_not_a_link() {
+        $html = $this->latestActivityHtml([
+            'items' => [$this->latestActivityItem(['title' => 'Bills'])],
         ]);
 
         $this->assertStringContainsString('House of Representatives', $html);
         $this->assertStringContainsString('text-green-700', $html);
-        $this->assertStringContainsString('Adjournment', $html);
-        $this->assertStringContainsString('Spoken by: Zali Steggall', $html);
-        $this->assertStringContainsString('href="/debates/?id=1"', $html);
-        $this->assertStringContainsString('href="/debates/?d=2026-08-20"', $html);
-        $this->assertStringContainsString('the House', $html);
+        $this->assertStringContainsString('Bills', $html);
+        $this->assertStringNotContainsString('<a href="" ', $html);
+    }
+
+    /**
+     * Every "all the titles" link is on something specific now, not the item as a
+     * whole - each topic links to its own subsection page.
+     */
+    public function test_latest_activity_column_links_each_topic_to_its_own_page() {
+        $item = $this->latestActivityItem([
+            'topics' => [
+                ['title' => 'Migration Amendment Bill 2026', 'url' => '/debates/?id=2026-08-20.17.1'],
+                ['title' => 'Counter-Terrorism Legislation Amendment Bill 2026', 'url' => '/debates/?id=2026-08-20.25.1'],
+            ],
+        ]);
+
+        $html = $this->latestActivityHtml(['items' => [$item]]);
+
+        $this->assertStringContainsString('href="/debates/?id=2026-08-20.17.1"', $html);
+        $this->assertStringContainsString('Migration Amendment Bill 2026', $html);
+        $this->assertStringContainsString('href="/debates/?id=2026-08-20.25.1"', $html);
+        $this->assertStringContainsString('Counter-Terrorism Legislation Amendment Bill 2026', $html);
     }
 
     /**
      *
      */
-    public function test_latest_activity_column_omits_the_speaker_line_when_there_is_none() {
-        $html = $this->engine->render('front/latest-activity-column', [
-            'chamberName' => 'Senate',
-            'iconColorClass' => 'text-red-700',
-            'items' => [
-                ['title' => 'Documents', 'speaker' => '', 'when' => '20 Aug 2026', 'url' => '/senate/?id=1'],
-            ],
-            'dayUrl' => '/senate/?d=2026-08-20',
-            'viewAllLabel' => 'the Senate',
+    public function test_latest_activity_column_shows_how_many_further_topics_did_not_fit() {
+        $item = $this->latestActivityItem([
+            'topics' => [['title' => 'Migration Amendment Bill 2026', 'url' => '/debates/?id=1']],
+            'moreTopicsCount' => 3,
         ]);
 
-        $this->assertStringNotContainsString('Spoken by:', $html);
+        $html = $this->latestActivityHtml(['items' => [$item]]);
+
+        $this->assertStringContainsString('+3 more', $html);
+    }
+
+    /**
+     *
+     */
+    public function test_latest_activity_column_omits_the_topics_list_entirely_when_there_are_none() {
+        $html = $this->latestActivityHtml([
+            'items' => [$this->latestActivityItem(['title' => 'Rearrangement', 'topics' => []])],
+        ]);
+
+        $this->assertStringContainsString('Rearrangement', $html);
+        $this->assertStringNotContainsString('<ul class="mt-1', $html);
+    }
+
+    /**
+     * The speaker chip row reuses hansard/speaker-chips.php - full coverage of its
+     * own branches (avatar/initials fallback, firstSpeechUrl linking, description
+     * tooltip, +N more) lives in HansardPlatesViewsTest.php; this just checks the
+     * two components are actually wired together.
+     */
+    public function test_latest_activity_column_renders_the_speaker_chips_component() {
+        $speaker = new HansardSpeakerRosterEntry();
+        $speaker->name = 'Zali Steggall';
+        $speaker->initials = 'ZS';
+        $speaker->firstSpeechUrl = '/debates/?id=2026-08-20.17.1#g17.2';
+
+        $html = $this->latestActivityHtml([
+            'items' => [$this->latestActivityItem(['speakers' => [$speaker], 'moreSpeakersCount' => 4])],
+        ]);
+
+        $this->assertStringContainsString('Zali Steggall', $html);
+        $this->assertStringContainsString('href="/debates/?id=2026-08-20.17.1#g17.2"', $html);
+        $this->assertStringContainsString('+4 more', $html);
+    }
+
+    /**
+     * Not every section has a speaker at all - eg a bare procedural heading with no
+     * htype=12 rows under it (see latest_activity_items()'s own doc comment).
+     */
+    public function test_latest_activity_column_omits_the_speaker_chips_entirely_when_there_are_none() {
+        $html = $this->latestActivityHtml([
+            'items' => [$this->latestActivityItem(['title' => 'Documents', 'speakers' => []])],
+        ]);
+
+        $this->assertStringNotContainsString('<img', $html);
+        $this->assertStringContainsString('Documents', $html);
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function latestActivityHtml(array $overrides = []): string {
+        return $this->engine->render('front/latest-activity-column', array_merge([
+            'chamberName' => 'House of Representatives',
+            'iconColorClass' => 'text-green-700',
+            'items' => [],
+            'dayUrl' => '/debates/?d=2026-08-20',
+            'viewAllLabel' => 'the House',
+        ], $overrides));
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function latestActivityItem(array $overrides = []): array {
+        return array_merge([
+            'title' => 'Bills',
+            'topics' => [],
+            'moreTopicsCount' => 0,
+            'speakers' => [],
+            'moreSpeakersCount' => 0,
+        ], $overrides);
     }
 
     /**
