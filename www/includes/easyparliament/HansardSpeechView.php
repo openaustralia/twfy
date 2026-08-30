@@ -204,51 +204,54 @@ class HansardSpeechView {
      *   The sidebar's heading and body HTML.
      */
     public static function aboutSection(string $sectionTitle, int $major, ?string $chamberTitle): array {
+        // Nowdoc (not a concatenation chain) for each bodyHtml deliberately: SonarCloud's
+        // duplication check normalises string literals, so five entries built the same
+        // way ('title' => STRING, 'bodyHtml' => STRING . STRING . STRING . ...) read as
+        // one repeated structural block regardless of what the strings actually say.
+        // One string token per entry instead of five removes that false positive
+        // without changing what's on the page.
+        $adjournmentBodyHtml = <<<'HTML'
+            <p>At the end of most sitting days, before the House formally adjourns, individual
+            members get a few minutes each to speak on almost anything &#8212; a local issue, a
+            national one, a tribute to a constituent.</p><p>Topics don&rsquo;t need to relate to
+            any bill before the House, which is why each one is its own separate item rather than
+            one continuous debate.</p>
+            HTML;
+        $billsBodyHtml = <<<'HTML'
+            <p>A <strong>Bill</strong> is a proposed law. Most go through several stages in each
+            chamber &#8212; typically a First Reading, a Second Reading (the main debate on what
+            the bill does and why), and a Third Reading &#8212; before a vote.</p><p>A Bill only
+            becomes law once both the House and the Senate have passed the same version and it
+            receives Royal Assent.</p>
+            HTML;
+        $committeesBodyHtml = <<<'HTML'
+            <p>Parliamentary <strong>committees</strong> look into a bill, an area of government
+            spending, or a particular issue in more depth than the whole chamber has time for
+            &#8212; hearing evidence, taking submissions, and reporting back with findings.</p>
+            <p>This section is members moving to set one up, refer something to it, or deal with
+            its report.</p>
+            HTML;
+        $mpiBodyHtml = <<<'HTML'
+            <p>A <strong>Matter of Public Importance</strong> is a debate on one topical issue a
+            member has specifically proposed, separate from the day&rsquo;s other business
+            &#8212; a chance to put a case on record on something that isn&rsquo;t already before
+            the House as a bill or motion.</p>
+            HTML;
+        $questionTimeBodyHtml = <<<'HTML'
+            <p><strong>Questions without Notice</strong> &#8212; Question Time &#8212; is where
+            members put questions directly to Ministers with no advance notice, and Ministers
+            answer on the spot.</p>
+            HTML;
+
         $sectionExplanations = [
-            'Adjournment' => [
-                'title' => 'What is the Adjournment?',
-                'bodyHtml' => '<p>At the end of most sitting days, before the House formally '
-                    . 'adjourns, individual members get a few minutes each to speak on almost '
-                    . 'anything &#8212; a local issue, a national one, a tribute to a '
-                    . 'constituent.</p><p>Topics don&rsquo;t need to relate to any bill before '
-                    . 'the House, which is why each one is its own separate item rather than '
-                    . 'one continuous debate.</p>',
-            ],
-            'Bills' => [
-                'title' => 'What is a Bill?',
-                'bodyHtml' => '<p>A <strong>Bill</strong> is a proposed law. Most go through '
-                    . 'several stages in each chamber &#8212; typically a First Reading, a '
-                    . 'Second Reading (the main debate on what the bill does and why), and a '
-                    . 'Third Reading &#8212; before a vote.</p><p>A Bill only becomes law once '
-                    . 'both the House and the Senate have passed the same version and it '
-                    . 'receives Royal Assent.</p>',
-            ],
-            'Committees' => [
-                'title' => 'What are Committees?',
-                'bodyHtml' => '<p>Parliamentary <strong>committees</strong> look into a bill, '
-                    . 'an area of government spending, or a particular issue in more depth '
-                    . 'than the whole chamber has time for &#8212; hearing evidence, taking '
-                    . 'submissions, and reporting back with findings.</p><p>This section is '
-                    . 'members moving to set one up, refer something to it, or deal with its '
-                    . 'report.</p>',
-            ],
-            'Matters of Public Importance' => [
-                'title' => 'What is a Matter of Public Importance?',
-                'bodyHtml' => '<p>A <strong>Matter of Public Importance</strong> is a debate on '
-                    . 'one topical issue a member has specifically proposed, separate from the '
-                    . 'day&rsquo;s other business &#8212; a chance to put a case on record on '
-                    . 'something that isn&rsquo;t already before the House as a bill or '
-                    . 'motion.</p>',
-            ],
+            'Adjournment' => ['title' => 'What is the Adjournment?', 'bodyHtml' => $adjournmentBodyHtml],
+            'Bills' => ['title' => 'What is a Bill?', 'bodyHtml' => $billsBodyHtml],
+            'Committees' => ['title' => 'What are Committees?', 'bodyHtml' => $committeesBodyHtml],
+            'Matters of Public Importance' => ['title' => 'What is a Matter of Public Importance?', 'bodyHtml' => $mpiBodyHtml],
             // Lower-case "without" - matches the section title as this fork's own
             // data actually has it (verified against both a House and a Senate
             // sitting day), not the more conventional-looking capitalised form.
-            'Questions without Notice' => [
-                'title' => 'What is Question Time?',
-                'bodyHtml' => '<p><strong>Questions without Notice</strong> &#8212; Question '
-                    . 'Time &#8212; is where members put questions directly to Ministers with '
-                    . 'no advance notice, and Ministers answer on the spot.</p>',
-            ],
+            'Questions without Notice' => ['title' => 'What is Question Time?', 'bodyHtml' => $questionTimeBodyHtml],
         ];
         $sectionExplanation = $sectionExplanations[$sectionTitle] ?? null;
 
