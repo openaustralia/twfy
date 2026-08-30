@@ -239,8 +239,9 @@ function latest_activity_items($LIST, $major, $date) {
 
         // Speakers: fetch every htype=12 row's speaker_id/gid/parent-subsection gid
         // up front (ordered by hpos, so the first occurrence per speaker_id - kept
-        // by the isset() check below - is genuinely their first speech), then only
-        // resolve full member data for the ones actually shown.
+        // by FrontPageView::firstSpeechBySpeaker(), which the raw rows are handed
+        // to below - is genuinely their first speech), then only resolve full
+        // member data for the ones actually shown.
         $speechRowsQ = parlDBQuery('SELECT hansard.speaker_id, hansard.gid AS speech_gid, sub.gid AS subsection_gid
 				FROM hansard
 				JOIN hansard AS sub ON hansard.subsection_id = sub.epobject_id
@@ -248,16 +249,15 @@ function latest_activity_items($LIST, $major, $date) {
 				AND hansard.htype=12 AND hansard.speaker_id != 0
 				ORDER BY hansard.hpos ASC');
 
-        $firstSpeechBySpeaker = [];
+        $speechRows = [];
         for ($r = 0; $r < $speechRowsQ->rows(); $r++) {
-            $speakerId = $speechRowsQ->field($r, 'speaker_id');
-            if (!isset($firstSpeechBySpeaker[$speakerId])) {
-                $firstSpeechBySpeaker[$speakerId] = [
-                    'speech_gid' => $speechRowsQ->field($r, 'speech_gid'),
-                    'subsection_gid' => $speechRowsQ->field($r, 'subsection_gid'),
-                ];
-            }
+            $speechRows[] = [
+                'speaker_id' => $speechRowsQ->field($r, 'speaker_id'),
+                'speech_gid' => $speechRowsQ->field($r, 'speech_gid'),
+                'subsection_gid' => $speechRowsQ->field($r, 'subsection_gid'),
+            ];
         }
+        $firstSpeechBySpeaker = FrontPageView::firstSpeechBySpeaker($speechRows);
 
         $speakers = [];
         $shownSpeakerIds = array_slice(array_keys($firstSpeechBySpeaker), 0, $maxSpeakersShown);

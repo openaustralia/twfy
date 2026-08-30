@@ -156,4 +156,33 @@ class FrontPageView {
         ];
     }
 
+    /**
+     * Each distinct speaker's *first* speech within one "Latest Activity" item,
+     * keyed by speaker_id, in first-seen order - www/docs/index.php's own
+     * latest_activity_items() fetches every htype=12 row in one section ordered by
+     * hpos, so the first occurrence per speaker_id here is genuinely their first
+     * speech in that section.
+     *
+     * @param array<int, array{speaker_id: int|string, speech_gid: string, subsection_gid: string}> $speechRows
+     *   Every htype=12 row's speaker_id/gid/parent-subsection gid, in hpos order -
+     *   a later row for a speaker_id already seen is a later speech by the same
+     *   person and is skipped, not overwritten.
+     *
+     * @return array<int|string, array{speech_gid: string, subsection_gid: string}>
+     *   Each speaker's first speech, keyed by speaker_id.
+     */
+    public static function firstSpeechBySpeaker(array $speechRows): array {
+        $firstSpeechBySpeaker = [];
+        foreach ($speechRows as $speechRow) {
+            $speakerId = $speechRow['speaker_id'];
+            if (!isset($firstSpeechBySpeaker[$speakerId])) {
+                $firstSpeechBySpeaker[$speakerId] = [
+                    'speech_gid' => $speechRow['speech_gid'],
+                    'subsection_gid' => $speechRow['subsection_gid'],
+                ];
+            }
+        }
+        return $firstSpeechBySpeaker;
+    }
+
 }

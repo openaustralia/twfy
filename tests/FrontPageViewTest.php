@@ -257,4 +257,51 @@ class FrontPageViewTest extends TestCase {
         return ['title' => $title, 'url' => $url];
     }
 
+    /**
+     *
+     */
+    public function test_firstSpeechBySpeaker_keys_each_speech_by_its_speaker() {
+        $bySpeaker = FrontPageView::firstSpeechBySpeaker([
+            $this->speechRow(100931, 'g1', 'sub1'),
+            $this->speechRow(100907, 'g2', 'sub1'),
+        ]);
+
+        $this->assertSame(['speech_gid' => 'g1', 'subsection_gid' => 'sub1'], $bySpeaker[100931]);
+        $this->assertSame(['speech_gid' => 'g2', 'subsection_gid' => 'sub1'], $bySpeaker[100907]);
+    }
+
+    /**
+     * $speechRows is ordered by hpos (the caller's own SQL ORDER BY) - a later row
+     * for a speaker_id already seen is a later speech by the same person, kept out
+     * so the first one isn't overwritten.
+     */
+    public function test_firstSpeechBySpeaker_keeps_only_the_first_speech_for_a_repeat_speaker() {
+        $bySpeaker = FrontPageView::firstSpeechBySpeaker([
+            $this->speechRow(100931, 'g1', 'sub1'),
+            $this->speechRow(100931, 'g5', 'sub2'),
+        ]);
+
+        $this->assertCount(1, $bySpeaker);
+        $this->assertSame(['speech_gid' => 'g1', 'subsection_gid' => 'sub1'], $bySpeaker[100931]);
+    }
+
+    /**
+     *
+     */
+    public function test_firstSpeechBySpeaker_preserves_first_seen_order() {
+        $bySpeaker = FrontPageView::firstSpeechBySpeaker([
+            $this->speechRow(100907, 'g1', 'sub1'),
+            $this->speechRow(100931, 'g2', 'sub1'),
+        ]);
+
+        $this->assertSame([100907, 100931], array_keys($bySpeaker));
+    }
+
+    /**
+     * @return array{speaker_id: int, speech_gid: string, subsection_gid: string}
+     */
+    private function speechRow(int $speakerId, string $speechGid, string $subsectionGid): array {
+        return ['speaker_id' => $speakerId, 'speech_gid' => $speechGid, 'subsection_gid' => $subsectionGid];
+    }
+
 }
