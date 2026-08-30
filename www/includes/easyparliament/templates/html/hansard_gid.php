@@ -386,83 +386,18 @@ if (isset($data['rows'])) {
     } // End cycling through rows.
 
     if ($usePlatesTemplate) {
-        // "What is X?" - a short explainer for the specific kind of parliamentary
-        // business this section is (a Bill, the Adjournment, a Committee reference,
-        // Question Time, ...), for the page's right-hand sidebar
-        // (resources/views/hansard/about-debates.php). Keyed on the section's own
-        // title (exact match - these are a small, fairly fixed vocabulary the
-        // chamber itself uses, not free text) rather than major/htype, so the same
-        // lookup applies to a transcript page's eyebrow-line section title and a
-        // section-index page's own h1 alike.
-        //
-        // Not an exhaustive list of every section title this site will ever show -
-        // just the ones seen/asked about so far. Falls back to generic,
-        // chamber-level wording (was a link-only sidebar block -
-        // sidebars/hocdebates_short.php etc. - now inlined here instead) for
-        // anything not in this list, so every page still gets *something* rather
-        // than nothing.
-        $sectionExplanations = [
-            'Adjournment' => [
-                'title' => 'What is the Adjournment?',
-                'bodyHtml' => '<p>At the end of most sitting days, before the House formally '
-                    . 'adjourns, individual members get a few minutes each to speak on almost '
-                    . 'anything &#8212; a local issue, a national one, a tribute to a '
-                    . 'constituent.</p><p>Topics don&rsquo;t need to relate to any bill before '
-                    . 'the House, which is why each one is its own separate item rather than '
-                    . 'one continuous debate.</p>',
-            ],
-            'Bills' => [
-                'title' => 'What is a Bill?',
-                'bodyHtml' => '<p>A <strong>Bill</strong> is a proposed law. Most go through '
-                    . 'several stages in each chamber &#8212; typically a First Reading, a '
-                    . 'Second Reading (the main debate on what the bill does and why), and a '
-                    . 'Third Reading &#8212; before a vote.</p><p>A Bill only becomes law once '
-                    . 'both the House and the Senate have passed the same version and it '
-                    . 'receives Royal Assent.</p>',
-            ],
-            'Committees' => [
-                'title' => 'What are Committees?',
-                'bodyHtml' => '<p>Parliamentary <strong>committees</strong> look into a bill, '
-                    . 'an area of government spending, or a particular issue in more depth '
-                    . 'than the whole chamber has time for &#8212; hearing evidence, taking '
-                    . 'submissions, and reporting back with findings.</p><p>This section is '
-                    . 'members moving to set one up, refer something to it, or deal with its '
-                    . 'report.</p>',
-            ],
-            'Matters of Public Importance' => [
-                'title' => 'What is a Matter of Public Importance?',
-                'bodyHtml' => '<p>A <strong>Matter of Public Importance</strong> is a debate on '
-                    . 'one topical issue a member has specifically proposed, separate from the '
-                    . 'day&rsquo;s other business &#8212; a chance to put a case on record on '
-                    . 'something that isn&rsquo;t already before the House as a bill or '
-                    . 'motion.</p>',
-            ],
-            // Lower-case "without" - matches the section title as this fork's own
-            // data actually has it (verified against both a House and a Senate
-            // sitting day), not the more conventional-looking capitalised form.
-            'Questions without Notice' => [
-                'title' => 'What is Question Time?',
-                'bodyHtml' => '<p><strong>Questions without Notice</strong> &#8212; Question '
-                    . 'Time &#8212; is where members put questions directly to Ministers with '
-                    . 'no advance notice, and Ministers answer on the spot.</p>',
-            ],
-        ];
-        $sectionExplanation = $sectionExplanations[$section_title] ?? null;
-
-        $aboutTitleByMajor = [
-            1 => 'What are House debates?',
-            101 => 'What are Senate debates?',
-        ];
-        // Same wording as sidebars/hocdebates.php / holdebates.php - duplicated
-        // rather than shared, since those files also call
-        // $PAGE->block_start()/block_end() to draw their own box, which isn't what's
-        // wanted here. Keep the two in sync by hand if this wording ever changes.
-        $aboutBodyHtmlByMajor = [
-            1 => '<p><strong>Debates</strong> in the House of Representatives are an opportunity for members from all parties to <strong>scrutinise</strong> government legislation and <strong>raise important local, national or topical issues</strong>.</p><p>And sometimes to shout at each other.</p>',
-            101 => '<p><strong>Debates</strong> in the Senate are an opportunity for Senators from all parties to <strong>scrutinise</strong> government legislation and <strong>raise important local, national or topical issues</strong>.</p><p>And sometimes to shout at each other.</p>',
-        ];
-        $aboutTitle = $sectionExplanation['title'] ?? ($aboutTitleByMajor[$data['info']['major']] ?? 'What are debates?');
-        $aboutBodyHtml = $sectionExplanation['bodyHtml'] ?? ($aboutBodyHtmlByMajor[$data['info']['major']] ?? '');
+        // "What is X?" - a short explainer for the page's right-hand sidebar
+        // (resources/views/hansard/about-debates.php), shared by the transcript
+        // card and the section-index page below. See HansardSpeechView::
+        // aboutSection() for the actual lookup/fallback logic and its own doc
+        // comment.
+        $about = HansardSpeechView::aboutSection(
+            $section_title,
+            $data['info']['major'],
+            $hansardmajors[$data['info']['major']]['title'] ?? null
+        );
+        $aboutTitle = $about['title'];
+        $aboutBodyHtml = $about['bodyHtml'];
     }
 
     if ($usePlatesTemplate && count($plates_items) > 0) {

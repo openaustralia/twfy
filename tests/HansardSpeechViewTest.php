@@ -502,6 +502,64 @@ class HansardSpeechViewTest extends TestCase {
     /**
      *
      */
+    public function test_aboutSection_matches_a_known_section_title_regardless_of_chamber() {
+        $reps = HansardSpeechView::aboutSection('Adjournment', 1, 'House debates');
+        $senate = HansardSpeechView::aboutSection('Adjournment', 101, 'Senate debates');
+
+        $this->assertSame('What is the Adjournment?', $reps['title']);
+        $this->assertStringContainsString('adjourns', $reps['bodyHtml']);
+        // Same explanation either way - the Adjournment isn't chamber-specific.
+        $this->assertSame($reps, $senate);
+    }
+
+    /**
+     *
+     */
+    public function test_aboutSection_matches_each_known_section_title() {
+        $this->assertSame('What is a Bill?', HansardSpeechView::aboutSection('Bills', 1, 'House debates')['title']);
+        $this->assertSame('What are Committees?', HansardSpeechView::aboutSection('Committees', 1, 'House debates')['title']);
+        $this->assertSame(
+            'What is a Matter of Public Importance?',
+            HansardSpeechView::aboutSection('Matters of Public Importance', 1, 'House debates')['title']
+        );
+        // Lower-case "without" - matches the section title as this fork's data
+        // actually has it, not the more conventional-looking capitalised form.
+        $this->assertSame(
+            'What is Question Time?',
+            HansardSpeechView::aboutSection('Questions without Notice', 1, 'House debates')['title']
+        );
+    }
+
+    /**
+     *
+     */
+    public function test_aboutSection_falls_back_to_the_chamber_level_explanation_for_an_unknown_section_title() {
+        $reps = HansardSpeechView::aboutSection('Some New Section Type', 1, 'House debates');
+        $senate = HansardSpeechView::aboutSection('Some New Section Type', 101, 'Senate debates');
+
+        $this->assertSame('What are House debates?', $reps['title']);
+        $this->assertStringContainsString('House of Representatives', $reps['bodyHtml']);
+        $this->assertSame('What are Senate debates?', $senate['title']);
+        $this->assertStringContainsString('Senate', $senate['bodyHtml']);
+    }
+
+    /**
+     * Neither a known section title nor one of the two known majors - the
+     * generic-est fallback, built from whatever $chamberTitle it was given (or
+     * "debates" if not even that).
+     */
+    public function test_aboutSection_falls_back_further_still_for_an_unrecognised_major() {
+        $named = HansardSpeechView::aboutSection('Some New Section Type', 3, 'Some Other Chamber');
+        $unnamed = HansardSpeechView::aboutSection('Some New Section Type', 3, null);
+
+        $this->assertSame('What are Some Other Chamber?', $named['title']);
+        $this->assertSame('', $named['bodyHtml']);
+        $this->assertSame('What are debates?', $unnamed['title']);
+    }
+
+    /**
+     *
+     */
     public function test_fromSubrow_a_debate_topic_with_one_speech_sets_url_and_a_singular_count_label() {
         $row = $this->subrow(['contentcount' => 1]);
 
