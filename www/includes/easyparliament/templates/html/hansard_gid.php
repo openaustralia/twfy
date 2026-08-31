@@ -402,6 +402,15 @@ if (isset($data['rows'])) {
             $nextPrev['up']['label'] = 'All ' . ($hansardmajors[$data['info']['major']]['title'] ?? 'debates') . ' on this day';
         }
 
+        // A subsection heading (htype 11) isn't guaranteed to occur before this
+        // renders - transcript.php puts $subsectionTitle in the page's main <h1>,
+        // unlike the old stripe-head-2 rendering above (h5, well below $section_title's
+        // own h4), so a still-unset '&nbsp;' sentinel here would show as a blank
+        // headline instead of a barely-noticeable blank second line. When that
+        // happens, $section_title becomes the <h1> instead, and drops out of the
+        // eyebrow line above it so it isn't shown twice.
+        $hasSubsectionTitle = $subsection_title !== '&nbsp;';
+
         echo $platesEngine->render('hansard/transcript', [
             'items' => $plates_items,
             'speakers' => HansardSpeechView::buildRoster($plates_items),
@@ -410,8 +419,8 @@ if (isset($data['rows'])) {
             // $PAGE->heading_displayed suppression below). Shown next to $section_title
             // in the card's eyebrow line instead, so it's not lost, just moved.
             'chamberLabel' => $hansardmajors[$data['info']['major']]['title'] ?? '',
-            'sectionTitle' => $section_title,
-            'subsectionTitle' => $subsection_title,
+            'sectionTitle' => $hasSubsectionTitle ? $section_title : '',
+            'subsectionTitle' => $hasSubsectionTitle ? $subsection_title : $section_title,
             // Matches LONGERDATEFORMAT (what the suppressed old h3 used, eg "Tuesday, 18
             // August 2026") rather than the plain 'j F Y' this used before.
             'date' => date('l, j F Y', strtotime($data['info']['date'])),
