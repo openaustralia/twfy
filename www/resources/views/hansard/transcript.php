@@ -15,8 +15,14 @@
     // side-by-side, matching the mockup - both sit in the same grey backdrop rather
     // than the roster looking like a bolted-on afterthought. Below lg they stack, card
     // then roster, in source order.
+    //
+    // lg:items-stretch (grid's own default, stated explicitly), not lg:items-start:
+    // the right column's own box needs to be as tall as the left one for the roster's
+    // lg:sticky wrapper to have any room to travel as the page scrolls - with
+    // items-start it stayed only as tall as its own content, which is barely taller
+    // than the roster card itself, so sticky positioning had almost nowhere to go.
     ?>
-    <div class="lg:grid lg:grid-cols-3 lg:gap-6 lg:items-start">
+    <div class="lg:grid lg:grid-cols-3 lg:gap-6 lg:items-stretch">
     <div class="lg:col-span-2 bg-white rounded-2xl shadow-lg p-6 md:p-8 space-y-8">
         <div>
             <h1 class="text-3xl md:text-4xl font-bold text-slate-900 leading-tight"><?php echo $subsectionTitle /* already-safe HTML, same source as the old stripe-head-2 heading */ ?></h1>
