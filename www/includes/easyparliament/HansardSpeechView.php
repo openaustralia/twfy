@@ -98,7 +98,10 @@ class HansardSpeechView {
         // the loader instead. A named MP's own interjection has a real speaker and
         // no way to tell it apart from an ordinary speech with what's stored today.
         // ?? '': $row['body'] can be null, same as cleanBody()'s own param above.
-        $view->isInterjection = (bool) preg_match('/\binterjecting[—-]/i', $row['body'] ?? '');
+        // Matches "interjecting" alone, not "interjecting" + a dash: real body text
+        // stores the dash as the entity "&#8212;", not a literal em-dash/hyphen
+        // character, so requiring one right after the word never matched anything.
+        $view->isInterjection = (bool) preg_match('/\binterjecting\b/i', $row['body'] ?? '');
 
         if (isset($row['source_url']) && $row['source_url'] != '') {
             $view->sourceUrl = $row['source_url'];
