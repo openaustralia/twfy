@@ -39,7 +39,9 @@ if (!isset($data['info'])) {
 $usePlatesTemplate = in_array($data['info']['major'], [1, 101], true);
 $plates_items = [];
 if ($usePlatesTemplate) {
-    $platesEngine = new League\Plates\Engine(__DIR__ . "/../../../../resources/views");
+    // get_plates_engine() (utility.php): shared with page.php's own every-page
+    // footer render, rather than a second, identically-configured Engine here.
+    $platesEngine = get_plates_engine();
 }
 
 $PAGE->page_start();
