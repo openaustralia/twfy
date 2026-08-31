@@ -10,11 +10,11 @@
  */
 ?>
 <?php
-// aria-labelledby, not aria-label: reuses the visible heading text below as this
-// landmark's accessible name (axe's landmark-unique rule needs each <aside> on the
-// page to be distinguishable - there are two/three here, all otherwise plain
-// "complementary" regions with no way to tell them apart by screen reader landmark
-// navigation).
+// This <aside> uses aria-labelledby, not aria-label, so it reuses the visible
+// heading text below as its accessible name (axe's landmark-unique rule needs each
+// <aside> on the page to be distinguishable - there are two, this one and
+// speaker-roster.php's, both otherwise plain "complementary" regions with no way to
+// tell them apart by screen reader landmark navigation).
 ?>
 <aside class="bg-white rounded-2xl shadow-lg p-6 md:p-8" aria-labelledby="about-debates-heading">
     <?php

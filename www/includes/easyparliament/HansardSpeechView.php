@@ -144,18 +144,24 @@ class HansardSpeechView {
      * for Lidia Thorpe) - falls back to whichever of first/last name is present when
      * only one is, and to '' when neither is (so callers can treat an empty string as
      * "nothing to show" the same way they'd treat null).
+     *
+     * $firstName/$lastName carry no type hints here - member.first_name/last_name
+     * are nullable columns (db/schema.sql), and a real row can hand this function a
+     * null. A string type hint would fatal with a TypeError instead of just
+     * producing a blank initial - Sentry finding on #227.
      */
-    public static function initials(string $firstName, string $lastName): string {
-        $initials = mb_substr($firstName, 0, 1) . mb_substr($lastName, 0, 1);
+    public static function initials($firstName, $lastName): string {
+        $initials = mb_substr((string) $firstName, 0, 1) . mb_substr((string) $lastName, 0, 1);
         return mb_strtoupper($initials);
     }
 
     /**
-     * Same body-cleanup steps hansard_gid.php's old rendering path already applied
-     * (search highlighting/glossarising already happened earlier, on $data['rows'],
-     * before either rendering path runs) - kept identical so the two paths produce
-     * the same text, just different surrounding markup - plus one the old path never
-     * needed: stripping stray self-closed <i/> tags.
+     * cleanBody() applies the same body-cleanup steps hansard_gid.php's old
+     * rendering path already applied (search highlighting/glossarising already ran
+     * earlier, on $data['rows'], before either rendering path runs) - it keeps them
+     * identical so the two paths produce the same text, just different surrounding
+     * markup - plus one step the old path never needed: stripping stray self-closed
+     * <i/> tags.
      *
      * Some hansard bodies contain a literal, empty "<i/>" between two real <i>...</i>
      * phrases (an artifact of the parser's XML-to-HTML conversion, likely a collapsed
@@ -163,13 +169,14 @@ class HansardSpeechView {
      * provision" / "Exception" definitions). HTML doesn't treat "<i/>" as self-closing
      * - browsers read it as an ordinary opening <i> with no matching close, which then
      * swallows every paragraph after it into one giant italic run for the rest of the
-     * page. The old stripe rendering had this exact same malformed markup and was
-     * equally broken by it - it just never showed, since stripe rows had no styling
-     * that made "is this text italic" visible. This new design colours .italic/
+     * page. The old stripe rendering carried this exact same malformed markup and
+     * broke just as badly - it just never showed, since nothing styled stripe rows to
+     * make "is this text italic" visible. This new design colours .italic/
      * .indentitalic text, which makes the bug impossible to miss, so it's worth fixing
      * here rather than leaving for openaustralia-parser/a DB cleanup.
      */
-    public static function cleanBody(string $body): string {
+    public static function cleanBody(?string $body): string {
+        $body ??= '';
         $body = str_replace('pwmotiontext="moved"', 'class="moved"', $body);
         $body = str_replace('<a href="h', '<a rel="nofollow" href="h', $body);
         $body = str_replace('<i/>', '', $body);
@@ -177,13 +184,14 @@ class HansardSpeechView {
     }
 
     /**
-     * Builds the "Speakers in this debate" roster from the already-built list of
-     * per-row view models (see forSpeech()) - one entry per distinct speaker
-     * (deduped on speakerUrl, their MP/senator profile page, which is stable even if
-     * a title changes mid-debate), ordered by how much they actually said - summed
-     * word count across all their speeches on this page, most first - not just how
-     * many times they spoke, since one long speech can outweigh several short
-     * interjections. Procedural rows (no speaker) don't contribute.
+     * buildRoster() builds the "Speakers in this debate" roster from the
+     * already-built list of per-row view models (see forSpeech()) - one entry per
+     * distinct speaker, deduped on speakerUrl (their MP/senator profile page, which
+     * stays stable even if a title changes mid-debate). It orders them by how much
+     * they actually said - summed word count across all their speeches on this
+     * page, most first - not just how many times they spoke, since one long speech
+     * can outweigh several short interjections. Procedural rows (no speaker) don't
+     * contribute.
      */
     public static function buildRoster(array $items): array {
         $roster = [];
