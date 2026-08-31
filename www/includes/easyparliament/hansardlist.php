@@ -2144,12 +2144,26 @@ class HANSARDLIST {
     public function _get_subsection_speakers($subsection_id) {
         $speakers = [];
 
-        $q = parlDBQuery("SELECT speaker_id, hdate, MIN(hpos) AS firsthpos
-                            FROM hansard
-                            WHERE subsection_id = ?
-                            AND htype = '12'
-                            AND speaker_id != '' AND speaker_id != 0
-                            GROUP BY speaker_id, hdate
+        // One row per speaker_id, not per (speaker_id, hdate): a subsection that
+        // spans multiple sitting dates (Adjournment debates never do, but this is
+        // also used for Committees/Question Time now, which can) would otherwise
+        // list the same speaker twice. ROW_NUMBER() picks the row at their earliest
+        // hpos specifically, rather than an arbitrary/nondeterministic hdate for
+        // that speaker - a plain GROUP BY speaker_id can't do that and still return
+        // hdate, since MySQL's default ONLY_FULL_GROUP_BY rejects a non-aggregated
+        // column that isn't in the GROUP BY list.
+        $q = parlDBQuery("SELECT speaker_id, hdate, hpos AS firsthpos
+                            FROM (
+                                SELECT speaker_id, hdate, hpos,
+                                    ROW_NUMBER() OVER (
+                                        PARTITION BY speaker_id ORDER BY hpos ASC
+                                    ) AS rn
+                                FROM hansard
+                                WHERE subsection_id = ?
+                                AND htype = '12'
+                                AND speaker_id != '' AND speaker_id != 0
+                            ) AS first_appearance
+                            WHERE rn = 1
                             ORDER BY firsthpos ASC", $subsection_id);
 
         for ($n = 0; $n < $q->rows(); $n++) {
