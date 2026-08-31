@@ -406,7 +406,16 @@ if (isset($data['rows'])) {
             // shown in the card's own header above. "on this day" instead of the
             // date - the actual date the link goes to is still right there in
             // $date/$dateUrl, this is just the "see everything" link's own label.
+            //
+            // The URL needs overwriting along with the label, not just the label:
+            // HANSARDLIST::_get_nextprev_items()'s ordinary-item branch (the one that
+            // reaches here) points 'up' at the parent subsection/section's own page,
+            // labelled "See the whole debate" to match - accurate for that URL, but a
+            // different destination to the day-listing page this new "All ... on this
+            // day" label promises. $dateURL is that day-listing page, already built
+            // above for the card's own date link.
             $nextPrev['up']['label'] = 'All ' . ($hansardmajors[$data['info']['major']]['title'] ?? 'debates') . ' on this day';
+            $nextPrev['up']['url'] = $dateURL->generate('none');
         }
 
         // A subsection heading (htype 11) isn't guaranteed to occur before this
