@@ -17,18 +17,6 @@ include_once __DIR__ . "/../../../easyparliament/HansardSpeechView.php";
 
 twfy_debug("TEMPLATE", "hansard_gid.php");
 
-// House representatives (1) and Senate (101) - the two houses this fork actually
-// parses - get the new Plates-rendered transcript. Everything else (Wrans, WMS, and
-// the UK/NI/Scotland majors left over from the mySociety fork this codebase started
-// from, none of which are populated on this site) keeps the existing stripe-based
-// rendering below untouched. See openaustralia/openaustralia#939 and the debate-page
-// redesign plan for why.
-$usePlatesTemplate = in_array($data['info']['major'], [1, 101], true);
-$plates_items = [];
-if ($usePlatesTemplate) {
-    $platesEngine = new League\Plates\Engine(__DIR__ . "/../../../../resources/views");
-}
-
 // Will set the page headings and start the page HTML if it hasn't
 // already been started.
 if (!isset($data['info'])) {
@@ -40,17 +28,21 @@ if (!isset($data['info'])) {
     exit;
 }
 
-$PAGE->page_start();
-
+// House representatives (1) and Senate (101) - the two houses this fork actually
+// parses - get the new Plates-rendered transcript. Everything else (Wrans, WMS, and
+// the UK/NI/Scotland majors left over from the mySociety fork this codebase started
+// from, none of which are populated on this site) keeps the existing stripe-based
+// rendering below untouched. See openaustralia/openaustralia#939 and the debate-page
+// redesign plan for why. Reads $data['info']['major'], so this has to come after the
+// isset($data['info']) guard above, not before it - moving it here fixes a real
+// warning on the known bot-triggered no-data path that guard exists for.
+$usePlatesTemplate = in_array($data['info']['major'], [1, 101], true);
+$plates_items = [];
 if ($usePlatesTemplate) {
-    // stripe_start() below would otherwise auto-print $PAGE->heading() the first time
-    // it's called on the page - "House debates"/"Senate debates" plus the formatted
-    // date, sourced from page metadata set generically in set_hansard_headings(). The
-    // card (transcript.php) now carries both - the chamber label next to the section
-    // title, the date in its own row below - so suppress the original to avoid showing
-    // either twice.
-    $PAGE->heading_displayed = true;
+    $platesEngine = new League\Plates\Engine(__DIR__ . "/../../../../resources/views");
 }
+
+$PAGE->page_start();
 
 if (!$usePlatesTemplate) {
     $PAGE->stripe_start('head-1');
@@ -352,6 +344,21 @@ if (isset($data['rows'])) {
     } // End cycling through rows.
 
     if ($usePlatesTemplate && count($plates_items) > 0) {
+        // stripe_start() below would otherwise auto-print $PAGE->heading() the first
+        // time it's called on the page - "House debates"/"Senate debates" plus the
+        // formatted date, sourced from page metadata set generically in
+        // set_hansard_headings(). The card (transcript.php) carries both instead -
+        // the chamber label next to the section title, the date in its own row below
+        // - so suppress the original to avoid showing either twice. Set only here,
+        // inside count($plates_items) > 0, not unconditionally on $usePlatesTemplate
+        // alone: every stripe_start() call in the row loop above is already gated
+        // behind $usePlatesTemplate (each takes an early continue instead), so
+        // nothing there needs this set early - and a Plates-major page with zero
+        // rows to show falls through to the plain $section_title/$subsection_title
+        // stripe_start('head-2') fallback further down, which does still need
+        // $PAGE->heading() to fire normally, or the page loses its heading entirely.
+        $PAGE->heading_displayed = true;
+
         $chamberNames = [1 => 'House of Representatives', 101 => 'Senate'];
 
         // Same "d=" listing link hansardlist.php itself builds for its own nextprev
