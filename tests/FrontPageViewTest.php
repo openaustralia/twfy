@@ -90,6 +90,20 @@ class FrontPageViewTest extends TestCase {
     }
 
     /**
+     * A keyword containing "&" has to be URL-encoded, not HTML-escaped - HTML-
+     * escaping ("&" -> "&amp;") survives into the rendered href, but the browser
+     * decodes that entity straight back to a literal "&" when it resolves the URL,
+     * splitting the query string. rawurlencode() ("&" -> "%26") is what actually
+     * keeps it inside the keyword value.
+     */
+    public function test_emailAlertUrl_url_encodes_a_keyword_containing_reserved_characters() {
+        $this->assertSame(
+            '/alert?keyword=x%26admin%3D1&only=1',
+            FrontPageView::emailAlertUrl('x&admin=1')
+        );
+    }
+
+    /**
      *
      */
     public function test_emailAlertUrl_falls_back_to_the_plain_alert_page() {

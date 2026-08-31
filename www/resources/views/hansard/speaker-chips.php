@@ -49,10 +49,17 @@
             // surrounding <a>'s own colour - see section-index.php's linked card
             // variant, still true even without firstSpeechUrl).
             ?>
+            <?php
+            // aria-label, not title: the <a>'s own title would sit closer in the DOM
+            // than the <li>'s title="" above and win the hover tooltip, hiding the
+            // party/electorate description this whole component exists to show
+            // whenever a chip happens to be a link. aria-label still gives screen
+            // readers the link's purpose without competing for the visible tooltip.
+            ?>
             <?php if ($speaker->firstSpeechUrl): ?>
                 <a href="<?php echo $this->e($speaker->firstSpeechUrl) ?>"
                     class="flex min-w-0 items-center gap-1.5 !no-underline"
-                    title="See <?php echo $this->e($speaker->name) ?>'s first speech here">
+                    aria-label="See <?php echo $this->e($speaker->name) ?>'s first speech here">
             <?php else: ?>
                 <span class="flex min-w-0 items-center gap-1.5">
             <?php endif; ?>

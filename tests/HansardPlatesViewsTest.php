@@ -382,6 +382,26 @@ class HansardPlatesViewsTest extends TestCase {
     }
 
     /**
+     * A linked chip's own title="" would sit closer in the DOM than the <li>'s and
+     * win the hover tooltip, hiding the party/electorate description entirely
+     * whenever a chip happens to be a link (Copilot review finding on #228) - the
+     * link's purpose has to reach screen readers some other way instead.
+     */
+    public function test_speaker_chips_link_uses_aria_label_not_title_so_the_description_tooltip_still_shows() {
+        $speaker = $this->speakerRosterEntry([
+            'name' => 'Zali Steggall',
+            'description' => 'Warringah, Independent',
+            'firstSpeechUrl' => '/debates/?id=2026-08-20.17.1#g17.2',
+        ]);
+
+        $html = $this->engine->render('hansard/speaker-chips', ['speakers' => [$speaker]]);
+
+        $this->assertStringContainsString('<li class="min-w-0" title="Warringah, Independent">', $html);
+        $this->assertStringContainsString('aria-label="See Zali Steggall\'s first speech here"', $html);
+        $this->assertStringNotContainsString('title="See', $html);
+    }
+
+    /**
      *
      */
     public function test_speaker_chips_renders_a_plain_chip_when_there_is_no_firstSpeechUrl() {

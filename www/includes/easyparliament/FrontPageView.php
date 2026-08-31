@@ -53,14 +53,19 @@ class FrontPageView {
     }
 
     /**
-     * Where that same card links to. htmlspecialchars(), not urlencode() - matches
-     * the pre-extraction code exactly (www/docs/index.php's old email_alert_url()) -
-     * not obviously correct for a query value with URL-reserved characters in it,
-     * but not this refactor's place to silently change existing behaviour.
+     * Where that same card links to. rawurlencode() the keyword into the query
+     * string - htmlspecialchars() here (matching the pre-extraction code,
+     * www/docs/index.php's old email_alert_url()) was HTML-escaping, not URL-
+     * encoding: a keyword containing "&" survived as the literal entity "&amp;",
+     * which the browser decodes straight back to "&" when it resolves the href -
+     * splitting the query string and letting a keyword like "x&admin=1" inject an
+     * extra param. This is a plain URL (feature-row.php's <a href> applies $this->e()
+     * itself, same as every other URL this view-model returns), so HTML-escaping
+     * doesn't belong here at all.
      */
     public static function emailAlertUrl(?string $keyword): string {
         if ($keyword) {
-            return WEBPATH . 'alert?keyword=' . htmlspecialchars($keyword) . '&only=1';
+            return WEBPATH . 'alert?keyword=' . rawurlencode($keyword) . '&only=1';
         }
         return WEBPATH . 'alert/';
     }
