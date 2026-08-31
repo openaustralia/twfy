@@ -43,10 +43,13 @@ class FrontPageView {
 
     /**
      * The feature row's third card ("Get Free Email Alerts") message - whether
-     * they arrived with a ?keyword= (eg from an email alert link) or not.
+     * they arrived with a ?keyword= (eg from an email alert link) or not. Checked
+     * with !== null/'', not truthiness - the literal string "0" is a real, if
+     * unlikely, keyword someone might search for, and truthiness would treat it the
+     * same as no keyword at all.
      */
     public static function emailAlertText(?string $keyword): string {
-        if ($keyword) {
+        if ($keyword !== null && $keyword !== '') {
             return "Get notified when '" . $keyword . "' is mentioned in Parliament.";
         }
         return 'Sign up to get an email whenever your representative speaks or a keyword you care about is mentioned.';
@@ -64,7 +67,7 @@ class FrontPageView {
      * doesn't belong here at all.
      */
     public static function emailAlertUrl(?string $keyword): string {
-        if ($keyword) {
+        if ($keyword !== null && $keyword !== '') {
             return WEBPATH . 'alert?keyword=' . rawurlencode($keyword) . '&only=1';
         }
         return WEBPATH . 'alert/';

@@ -112,6 +112,18 @@ class FrontPageViewTest extends TestCase {
     }
 
     /**
+     * A search for the literal keyword "0" is real, if unlikely - a truthiness
+     * check would treat it the same as no keyword at all.
+     */
+    public function test_a_keyword_of_literal_zero_is_not_treated_as_absent() {
+        $this->assertSame(
+            "Get notified when '0' is mentioned in Parliament.",
+            FrontPageView::emailAlertText('0')
+        );
+        $this->assertSame('/alert?keyword=0&only=1', FrontPageView::emailAlertUrl('0'));
+    }
+
+    /**
      *
      */
     public function test_popularSearchesLabel_returns_null_when_there_are_none() {
