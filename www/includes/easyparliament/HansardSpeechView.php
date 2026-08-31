@@ -81,7 +81,8 @@ class HansardSpeechView {
         // speakerName above) and gets a plain-text "X:" line baked into the body by
         // the loader instead. A named MP's own interjection has a real speaker and
         // no way to tell it apart from an ordinary speech with what's stored today.
-        $view->isInterjection = (bool) preg_match('/\binterjecting[—-]/i', $row['body']);
+        // ?? '': $row['body'] can be null, same as cleanBody()'s own param above.
+        $view->isInterjection = (bool) preg_match('/\binterjecting[—-]/i', $row['body'] ?? '');
 
         if (isset($row['source_url']) && $row['source_url'] != '') {
             $view->sourceUrl = $row['source_url'];
