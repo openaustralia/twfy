@@ -634,7 +634,12 @@ function generate_commentteaser($row, $major)
             $commentsurl = $row['commentsurl'];
         }
 
-        $html = "\t\t\t\t" . '<p class="comment-teaser">' . $html . "</p>\n";
+        // No wrapping <p> when there's nothing inside it - speech.php's footer row
+        // puts this next to "Hansard source"/"Link to this" on one line, and an
+        // empty <p> (block-level even with no content) breaks that.
+        if ($html !== '') {
+            $html = "\t\t\t\t" . '<p class="comment-teaser">' . $html . "</p>\n";
+        }
     }
 
     return $html;
