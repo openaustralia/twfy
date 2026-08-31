@@ -13,8 +13,8 @@ require_once __DIR__ . '/../www/includes/easyparliament/SentryBrowserView.php';
  * SentryBrowserView (see www/includes/easyparliament/page.php's page_header()) is
  * pure decision logic for the browser-side Sentry Loader Script - no echo, no
  * globals, so it's directly testable. See that class's own comment for why DEVSITE/
- * SENTRY_BROWSER_DSN have to be passed in as plain parameters rather than read
- * directly for this to be possible at all.
+ * SENTRY_DSN have to be passed in as plain parameters rather than read directly for
+ * this to be possible at all.
  */
 class SentryBrowserViewTest extends TestCase {
 
@@ -47,9 +47,9 @@ class SentryBrowserViewTest extends TestCase {
     }
 
     /**
-     * The one branch an inline check against the real DEVSITE/SENTRY_BROWSER_DSN
-     * constants could never reach in a test (see this class's own comment) - not
-     * dev, DSN present and well-formed.
+     * The one branch an inline check against the real DEVSITE/SENTRY_DSN constants
+     * could never reach in a test (see this class's own comment) - not dev, DSN
+     * present and well-formed.
      */
     public function test_loaderScriptUrl_builds_the_loader_url_from_the_dsns_public_key() {
         $url = SentryBrowserView::loaderScriptUrl(false, 'https://publickey123@o12345.ingest.sentry.io/67890');

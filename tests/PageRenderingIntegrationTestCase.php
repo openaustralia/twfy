@@ -143,14 +143,13 @@ abstract class PageRenderingIntegrationTestCase extends TestCase {
             . 'define("METADATAPATH", ' . var_export(__DIR__ . '/../www/includes/easyparliament/metadata.php', true) . ');' . "\n"
             . 'define("XAPIANDB", "/tmp/searchdb");' . "\n"
             . 'define("RECESSFILE", "/dev/null");' . "\n"
-            // Both DSNs empty (SDKs disabled, same as conf/general-example.local-dev's
-            // own defaults) - but SENTRY_ENVIRONMENT unconditionally defined, same as
+            // SENTRY_DSN empty (SDK disabled, same as conf/general-example.local-dev's
+            // own default) - but SENTRY_ENVIRONMENT unconditionally defined, same as
             // every real conf/general does: page.php's page_header() passes it as a
             // plain function argument (SentryBrowserView::renderTag()) regardless of
-            // whether either SDK is actually enabled, so it has to exist here too or
+            // whether the SDK is actually enabled, so it has to exist here too or
             // this whole subprocess fails with an "Undefined constant" fatal error.
             . 'define("SENTRY_DSN", "");' . "\n"
-            . 'define("SENTRY_BROWSER_DSN", "");' . "\n"
             . 'define("SENTRY_ENVIRONMENT", "development");' . "\n";
 
         file_put_contents($path, $content);

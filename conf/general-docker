@@ -49,13 +49,6 @@ define ("DEBUGTAG", 'debug');
 define ("SENTRY_DSN", "");
 define ("SENTRY_ENVIRONMENT", "development");
 
-// Browser-side Sentry (page.php's page_header()) - a deliberately different,
-// non-secret DSN from SENTRY_DSN above, so the key sitting in every visitor's page
-// source is never the one server-side error reporting uses. Empty here too, same
-// "stays disabled" behaviour. Staging/production get the real value from
-// infrastructure's sentry_browser_dsn (group_vars/all.yml).
-define ("SENTRY_BROWSER_DSN", "");
-
 // Timezone (only works in PHP5)
 define ("TIMEZONE", "Australia/Sydney");
 

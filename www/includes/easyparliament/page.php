@@ -350,17 +350,14 @@ class PAGE {
             // to page_header_mobile() below - mobile.php is on its way out entirely
             // (#943), not worth instrumenting.
             //
-            // A deliberately separate DSN from SENTRY_DSN - both a Sentry DSN's
-            // public key (the part before the @) isn't secret in the confidentiality
-            // sense (it's designed to be embedded in client-side code -
-            // docs.sentry.io/product/security-legal-pii/security-policy-reporting/
-            // #is-the-dsn-a-secret) *and* this still shouldn't be the exact same key
-            // SENTRY_DSN uses: that key would then sit in every visitor's page
-            // source, so anyone scraping it and spamming fake events would land in
-            // the same project as server-side monitoring, potentially burying real
-            // errors there too. SENTRY_BROWSER_DSN is a second Client Key on the
-            // same Sentry project (openaustralia/infrastructure#716), independently
-            // rate-limited/revocable without touching server-side error reporting.
+            // Same DSN as server-side SENTRY_DSN, on purpose: one Sentry project to
+            // watch rather than two. A DSN's public key isn't secret in the
+            // confidentiality sense - it's designed to be embedded in client-side
+            // code (docs.sentry.io/product/security-legal-pii/security-policy-
+            // reporting/#is-the-dsn-a-secret) - so reusing it here isn't a
+            // confidentiality problem, just an earlier, since-reverted worry about a
+            // scraped key spamming fake events into the same project as server-side
+            // monitoring.
             //
             // Loader Script, not a versioned bundle URL: Sentry's own current
             // recommended install method (docs.sentry.io/platforms/javascript/
@@ -368,11 +365,11 @@ class PAGE {
             // is the wanted property here, not a liability to pin a version against.
             //
             // The decision and the markup itself both live in SentryBrowserView -
-            // DEVSITE/SENTRY_BROWSER_DSN are define()'d once from conf/general, so a
-            // test can only exercise the "disabled" branch of a check against the
-            // real constants directly; taking them as plain parameters is what makes
-            // the "renders" branch reachable at all. See that class for why.
-            echo SentryBrowserView::renderTag(DEVSITE, defined('SENTRY_BROWSER_DSN') ? SENTRY_BROWSER_DSN : null, SENTRY_ENVIRONMENT);
+            // DEVSITE/SENTRY_DSN are define()'d once from conf/general, so a test can
+            // only exercise the "disabled" branch of a check against the real
+            // constants directly; taking them as plain parameters is what makes the
+            // "renders" branch reachable at all. See that class for why.
+            echo SentryBrowserView::renderTag(DEVSITE, defined('SENTRY_DSN') ? SENTRY_DSN : null, SENTRY_ENVIRONMENT);
             ?>
 
         </head>
