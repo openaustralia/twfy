@@ -38,7 +38,7 @@
 ?>
 <ul class="mt-2 grid grid-cols-2 gap-x-3 gap-y-1.5 list-none">
     <?php foreach ($speakers as $speaker): ?>
-        <?php $titleAttr = $speaker->description ? ' title="' . $this->e($speaker->description) . '"' : ''; ?>
+        <?php $titleAttr = $speaker->description ? ' title="' . $speaker->description /* already-escaped by HansardSpeechView */ . '"' : ''; ?>
         <li class="min-w-0"<?php echo $titleAttr ?>>
             <?php
             // !-prefixed: layout.css's legacy "a:link"/"a:visited" rules

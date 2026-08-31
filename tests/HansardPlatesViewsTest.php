@@ -347,9 +347,13 @@ class HansardPlatesViewsTest extends TestCase {
      *
      */
     public function test_speaker_chips_shows_the_description_as_a_title_tooltip() {
+        // Already-escaped, same contract HansardSpeechView::speakerDescription()
+        // guarantees (htmlentities() over the whole assembled string) - the template
+        // must not re-escape it, or a "&" in a real party/electorate name would come
+        // out as the literal text "&amp;" in the tooltip, not a "&".
         $speaker = $this->speakerRosterEntry([
             'name' => 'Katy Gallagher',
-            'description' => 'ALP, Australian Capital Territory & "Territories" Minister',
+            'description' => 'ALP, Australian Capital Territory &amp; &quot;Territories&quot; Minister',
         ]);
 
         $html = $this->engine->render('hansard/speaker-chips', ['speakers' => [$speaker]]);
