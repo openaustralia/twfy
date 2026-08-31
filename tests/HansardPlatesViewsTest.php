@@ -204,6 +204,29 @@ class HansardPlatesViewsTest extends TestCase {
     /**
      *
      */
+    public function test_speech_explains_an_unidentified_interjection() {
+        $speech = $this->speechView(['isInterjection' => true, 'speakerName' => null]);
+
+        $html = $this->engine->render('hansard/speech', ['speech' => $speech]);
+
+        $this->assertStringContainsString("Hansard doesn't record who said this", $html);
+    }
+
+    /**
+     * Doesn't apply once there's a real, named speaker - the explanation is
+     * specifically for the case where Hansard itself never names anyone.
+     */
+    public function test_speech_omits_the_interjection_explanation_when_the_speaker_is_named() {
+        $speech = $this->speechView(['isInterjection' => true, 'speakerName' => 'Larissa Waters']);
+
+        $html = $this->engine->render('hansard/speech', ['speech' => $speech]);
+
+        $this->assertStringNotContainsString("Hansard doesn't record who said this", $html);
+    }
+
+    /**
+     *
+     */
     public function test_speech_renders_the_source_context_and_comment_links_when_present() {
         $speech = $this->speechView([
             'sourceUrl' => 'https://parlinfo.aph.gov.au/x',
