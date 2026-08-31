@@ -429,6 +429,19 @@ class HansardSpeechViewTest extends TestCase {
     }
 
     /**
+     * member.first_name/last_name are nullable columns (db/schema.sql) - a real DB
+     * row can hand initials() null, not just ''. The params carry no type hints
+     * (Sentry finding on #227: a string type hint would fatal with a TypeError
+     * instead) - this test verifies that actually holds, not just that the
+     * signature allows it.
+     */
+    public function test_initials_handles_a_null_name_without_a_typeerror() {
+        $this->assertSame('T', HansardSpeechView::initials(null, 'Thorpe'));
+        $this->assertSame('L', HansardSpeechView::initials('Lidia', null));
+        $this->assertSame('', HansardSpeechView::initials(null, null));
+    }
+
+    /**
      * @return array<string, mixed>
      */
     private function speechRow(array $overrides = []): array {

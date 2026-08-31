@@ -124,9 +124,14 @@ class HansardSpeechView {
      * for Lidia Thorpe) - falls back to whichever of first/last name is present when
      * only one is, and to '' when neither is (so callers can treat an empty string as
      * "nothing to show" the same way they'd treat null).
+     *
+     * $firstName/$lastName carry no type hints here - member.first_name/last_name
+     * are nullable columns (db/schema.sql), and a real row can hand this function a
+     * null. A string type hint would fatal with a TypeError instead of just
+     * producing a blank initial - Sentry finding on #227.
      */
-    public static function initials(string $firstName, string $lastName): string {
-        $initials = mb_substr($firstName, 0, 1) . mb_substr($lastName, 0, 1);
+    public static function initials($firstName, $lastName): string {
+        $initials = mb_substr((string) $firstName, 0, 1) . mb_substr((string) $lastName, 0, 1);
         return mb_strtoupper($initials);
     }
 
