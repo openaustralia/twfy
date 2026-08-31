@@ -56,10 +56,12 @@ define ("SENTRY_ENVIRONMENT", "development");
 // Plausible.io analytics script identifier (the "pa-..." fragment of
 // https://plausible.io/js/pa-....js, from Plausible's own dashboard) - not a
 // secret (it's already public in every page's own HTML), but empty by default
-// in local dev so PlausibleView::renderTag() stays disabled (page.php's
-// page_header()/page_header_mobile() only ever gate on DEVSITE anyway, so this
-// is belt-and-braces). Staging/production get the real value templated in
-// from infrastructure's plausible_script_id (group_vars/openaustralia.yml).
+// in local dev so PlausibleView::renderTag() stays disabled. Not just
+// belt-and-braces: tests/PageRenderingIntegrationTestCase.php writes a
+// conf/general that omits this constant entirely, so the defined() guard in
+// page.php is what stops those integration tests fataling. Staging/production
+// get the real value templated in from infrastructure's plausible_script_id
+// (group_vars/openaustralia.yml).
 define ("PLAUSIBLE_SCRIPT_ID", "");
 
 // Timezone (only works in PHP5)

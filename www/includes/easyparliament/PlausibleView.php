@@ -4,11 +4,11 @@
  * @file
  * Whether/how to render the Plausible.io analytics tag (page.php's page_header()/
  * page_header_mobile()) - pure logic and markup building, no echo of its own, so
- * it's directly testable without $PAGE/$DATA or a full page render. Same split as
- * SentryBrowserView.php (page.php's own browser error tracking) - see that file's
- * own comment for why DEVSITE/PLAUSIBLE_SCRIPT_ID have to reach here as plain
- * parameters rather than being read directly: they're define()'d once from
- * conf/general at bootstrap and can't be toggled per-test.
+ * it's directly testable without $PAGE/$DATA or a full page render. DEVSITE and
+ * PLAUSIBLE_SCRIPT_ID have to reach here as plain parameters rather than being
+ * read directly: they're define()'d once from conf/general at bootstrap and so
+ * can't be toggled per-test, which would leave the "render the tag" branch of an
+ * inline check in page_header() permanently unreachable from a test.
  *
  * Plausible Cloud (not the self-hosted option - see openaustralia/infrastructure#547,
  * which removed a self-hosted module that was never actually used) needs nothing

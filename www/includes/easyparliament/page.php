@@ -329,17 +329,24 @@ class PAGE {
                 <?php
             }
 
-            // Was Google Analytics Classic (ga.js, UA-3107958-3) - dead since
-            // Google fully sunset every Universal Analytics property (any "UA-"
-            // one) on 1 July 2024, ga.js itself long before that. Replaced with
-            // Plausible.io Cloud - see PlausibleView.php's own comment for why
-            // this needs no secret, just PLAUSIBLE_SCRIPT_ID.
-            echo PlausibleView::renderTag(DEVSITE, defined('PLAUSIBLE_SCRIPT_ID') ? PLAUSIBLE_SCRIPT_ID : '');
+            echo $this->analytics_tag();
             ?>
 
         </head>
 
         <?php
+    }
+
+    /**
+     * The analytics tag for page_header()'s/page_header_mobile()'s <head>.
+     * Was Google Analytics Classic (ga.js, UA-3107958-3) - dead since Google
+     * fully sunset every Universal Analytics property (any "UA-" one) on
+     * 1 July 2024, ga.js itself long before that. Replaced with Plausible.io
+     * Cloud - see PlausibleView.php's own comment for why this needs no
+     * secret, just PLAUSIBLE_SCRIPT_ID.
+     */
+    private function analytics_tag(): string {
+        return PlausibleView::renderTag(DEVSITE, defined('PLAUSIBLE_SCRIPT_ID') ? PLAUSIBLE_SCRIPT_ID : '');
     }
 
     /**
@@ -459,12 +466,7 @@ class PAGE {
                 <?php
             }
 
-            // Was Google Analytics Classic (ga.js, UA-3107958-3) - dead since
-            // Google fully sunset every Universal Analytics property (any "UA-"
-            // one) on 1 July 2024, ga.js itself long before that. Replaced with
-            // Plausible.io Cloud - see PlausibleView.php's own comment for why
-            // this needs no secret, just PLAUSIBLE_SCRIPT_ID.
-            echo PlausibleView::renderTag(DEVSITE, defined('PLAUSIBLE_SCRIPT_ID') ? PLAUSIBLE_SCRIPT_ID : '');
+            echo $this->analytics_tag();
             ?>
 
         </head>

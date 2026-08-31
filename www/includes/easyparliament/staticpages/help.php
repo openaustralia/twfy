@@ -78,11 +78,11 @@
     <!-- start new faq entry -->
     <dt><a name="extreme"></a>What's that Plausible script I spy in your page source?</dt>
     <dd>
-        <p>We use <a href="https://plausible.io">Plausible</a>, a privacy-friendly analytics tool, to track
+        <p>We use <a href="https://plausible.io" rel="nofollow noreferrer noopener" target="_blank">Plausible</a>, a privacy-friendly analytics tool, to track
             aggregated traffic through the website - which pages get visited, and how many people are visiting.
-            Unlike Google Analytics, which we used to run, Plausible doesn't use cookies and doesn't collect or
-            store any personal data about you. We only track usage data for one reason: to help us understand how
-            we can make the site work better for you lot.</p>
+            Unlike Google Analytics, which we used to run, Plausible doesn't use cookies, doesn't track you
+            across other websites, and doesn't store your IP address or build any profile of you. We only track
+            usage data for one reason: to help us understand how we can make the site work better for you lot.</p>
     </dd>
     <!-- end old faq entry -->
 

@@ -45,10 +45,11 @@ class PlausibleViewTest extends TestCase {
     }
 
     /**
-     * $scriptId ends up in an HTML attribute - htmlspecialchars(), same convention
-     * as SentryBrowserView::loaderScriptUrl()'s own src="" handling, in case it
-     * ever contains characters that would break out of the attribute (unlikely for
-     * a Plausible-issued id, but cheap insurance).
+     * $scriptId ends up in an HTML attribute, so renderTag() runs it through
+     * htmlspecialchars() in case it ever contains characters that would break out
+     * of the attribute (unlikely for a Plausible-issued id, but cheap insurance).
+     * On PHP 8.1+ the default flags include ENT_QUOTES, which is what makes the
+     * &quot; assertion below hold - composer.json pins ^8.3.0, so it does.
      */
     public function test_renderTag_escapes_the_script_id_for_the_html_attribute() {
         $tag = PlausibleView::renderTag(false, 'pa-"><script>alert(1)</script>');
