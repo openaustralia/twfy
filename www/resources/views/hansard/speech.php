@@ -102,7 +102,7 @@
             <div class="mt-3 text-sm text-slate-500 space-x-3">
                 <?php if ($speech->sourceUrl): ?>
                     <a href="<?php echo $this->e($speech->sourceUrl) ?>" class="!text-slate-500 hover:!text-teal-700 !no-underline"
-                        title="The source of this piece of text"><?php echo $this->e($speech->sourceLabel) ?></a>
+                        title="The source of this piece of text">📄 <?php echo $this->e($speech->sourceLabel) ?></a>
                 <?php endif; ?>
                 <?php echo $speech->contextLinkHtml ?>
                 <?php echo $speech->commentTeaserHtml ?>
@@ -115,7 +115,7 @@
                     // for these two majors.
                     ?>
                     <a href="<?php echo $this->e($speech->permalinkUrl) ?>" class="!text-slate-500 hover:!text-teal-700 !no-underline"
-                        title="Copy this URL to link directly to this piece of text">Link to this</a>
+                        title="Copy this URL to link directly to this piece of text">🔗 Link to this</a>
                 <?php endif; ?>
             </div>
         <?php endif; ?>
