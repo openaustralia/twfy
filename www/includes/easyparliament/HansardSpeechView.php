@@ -135,7 +135,11 @@ class HansardSpeechView {
     }
 
     /**
-     *
+     * Every caller treats this return value as already-escaped and echoes it raw
+     * (eg speech.php: "already-escaped by HansardSpeechView") - htmlentities() has
+     * to cover the whole assembled string in one pass, not just $speaker['party'],
+     * or a "&"/"<" in $speaker['constituency'] or $speaker['office'][0]['pretty']
+     * reaches the page unescaped.
      */
     private static function speakerDescription(array $speaker): string {
         $desc = '';
@@ -143,11 +147,11 @@ class HansardSpeechView {
             && $speaker['party'] != 'President' && $speaker['constituency']) {
             $desc .= $speaker['constituency'] . ', ';
         }
-        $desc .= htmlentities($speaker['party']);
+        $desc .= $speaker['party'];
         if (isset($speaker['office'])) {
             $desc .= ', ' . $speaker['office'][0]['pretty'];
         }
-        return $desc;
+        return htmlentities($desc);
     }
 
     /**

@@ -125,6 +125,24 @@ class HansardSpeechViewTest extends TestCase {
     }
 
     /**
+     * Every caller echoes speakerDescription raw, treating it as already-escaped -
+     * a "&" in constituency or office needs to actually be escaped for that to be
+     * true, not just one in $speaker['party'].
+     */
+    public function test_forSpeech_escapes_the_constituency_and_office_too_not_just_the_party() {
+        $row = $this->speechRow([
+            'speaker' => $this->speaker([
+                'constituency' => 'Cook & Innisfail',
+                'office' => [['dept' => '', 'position' => 'x', 'pretty' => 'Minister for A & B']],
+            ]),
+        ]);
+
+        $view = HansardSpeechView::forSpeech($row, $this->info(), true);
+
+        $this->assertSame('Cook &amp; Innisfail, Australian Greens, Minister for A &amp; B', $view->speakerDescription);
+    }
+
+    /**
      *
      */
     public function test_forSpeech_leaves_speaker_fields_null_when_the_row_has_no_speaker() {
