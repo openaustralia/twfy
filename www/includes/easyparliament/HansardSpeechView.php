@@ -155,7 +155,8 @@ class HansardSpeechView {
      * .indentitalic text, which makes the bug impossible to miss, so it's worth fixing
      * here rather than leaving for openaustralia-parser/a DB cleanup.
      */
-    public static function cleanBody(string $body): string {
+    public static function cleanBody(?string $body): string {
+        $body ??= '';
         $body = str_replace('pwmotiontext="moved"', 'class="moved"', $body);
         $body = str_replace('<a href="h', '<a rel="nofollow" href="h', $body);
         $body = str_replace('<i/>', '', $body);
