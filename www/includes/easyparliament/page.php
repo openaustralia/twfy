@@ -369,7 +369,17 @@ class PAGE {
             // only exercise the "disabled" branch of a check against the real
             // constants directly; taking them as plain parameters is what makes the
             // "renders" branch reachable at all. See that class for why.
-            echo SentryBrowserView::renderTag(DEVSITE, defined('SENTRY_DSN') ? SENTRY_DSN : null, SENTRY_ENVIRONMENT);
+            // SENTRY_ENVIRONMENT is always defined in every real conf/general
+            // (infrastructure's general.j2 templates it right next to SENTRY_DSN),
+            // but "unknown-fixme" rather than an undefined-constant fatal is the
+            // better failure mode if some future config ever drops it - loud enough
+            // in the Sentry environment tag to get noticed and fixed, without
+            // breaking every page render over a monitoring constant.
+            echo SentryBrowserView::renderTag(
+                DEVSITE,
+                defined('SENTRY_DSN') ? SENTRY_DSN : null,
+                defined('SENTRY_ENVIRONMENT') ? SENTRY_ENVIRONMENT : 'unknown-fixme'
+            );
             ?>
 
         </head>
