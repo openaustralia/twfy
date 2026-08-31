@@ -231,9 +231,9 @@ class HansardSpeechViewTest extends TestCase {
      *
      */
     public function test_forSpeech_detects_anonymous_interjections() {
-        // A literal em-dash, not the &#8212; entity: the regex matches the raw body
-        // text as stored, before any entity-encoding.
-        $row = $this->speechRow(['body' => '<p>Opposition senators interjecting—</p>']);
+        // The &#8212; entity, not a literal em-dash: real body text stores it this
+        // way (confirmed against real data), not as the literal character.
+        $row = $this->speechRow(['body' => '<p>Opposition senators interjecting&#8212;</p>']);
 
         $view = HansardSpeechView::forSpeech($row, $this->info(), true);
 
