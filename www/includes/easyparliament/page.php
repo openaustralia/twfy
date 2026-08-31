@@ -4,8 +4,6 @@
  * @file
  */
 
-use League\Plates\Engine;
-
 if (defined('OPTION_TRACKING') && OPTION_TRACKING) {
     require_once __DIR__ . '/../../../../phplib/tracking.php';
 }
@@ -1252,8 +1250,10 @@ class PAGE {
             '<a href="https://software.openaustralia.org">Source code</a>',
         ];
 
-        $platesEngine = new Engine(__DIR__ . '/../../resources/views');
-        echo $platesEngine->render('layout/footer', ['helpLinks' => $help_links, 'devLinks' => $dev_links]);
+        // get_plates_engine() (utility.php): shared with whatever page-specific
+        // template also renders Plates views this request, rather than a second,
+        // identically-configured Engine just for the footer.
+        echo get_plates_engine()->render('layout/footer', ['helpLinks' => $help_links, 'devLinks' => $dev_links]);
         ?>
 
             </div> <!-- end #content -->

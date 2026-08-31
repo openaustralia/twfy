@@ -16,8 +16,6 @@
  * DB-coupled (latest_activity_items()) and hasn't been worth pulling out on its own.
  */
 
-use League\Plates\Engine;
-
 $this_page = "home";
 
 include_once __DIR__ . "/../includes/easyparliament/init.php";
@@ -34,7 +32,9 @@ if ($message != '') {
     print '<p id="warning" class="!box-border !w-[calc(100vw-2rem)]">' . $message . '</p>';
 }
 
-$platesEngine = new Engine(__DIR__ . "/../resources/views");
+// get_plates_engine() (utility.php): shared with page.php's own every-page footer
+// render, rather than a second, identically-configured Engine here.
+$platesEngine = get_plates_engine();
 
 /**
  * Display the homepage Hansard search form.

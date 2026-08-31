@@ -7,6 +7,24 @@
 
 include_once __DIR__ . '/strptime.php';
 
+use League\Plates\Engine;
+
+/**
+ * get_plates_engine() returns one League\Plates\Engine shared for the rest of this
+ * request, not a fresh instance per caller - page.php's every-page footer render and
+ * whichever page-specific template (hansard_gid.php, www/docs/index.php, ...) also
+ * renders Plates views both used to construct their own, so a single Hansard page
+ * request built two identically-configured Engines. Cheap either way (no I/O, just
+ * a views-directory string), but there's no reason not to share it.
+ */
+function get_plates_engine(): Engine {
+    static $engine = null;
+    if ($engine === null) {
+        $engine = new Engine(__DIR__ . '/../resources/views');
+    }
+    return $engine;
+}
+
 /**
  *
  */
