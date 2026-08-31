@@ -21,6 +21,12 @@ class HansardSpeechView {
     public ?string $speakerName = null;
     public ?string $speakerInitials = null;
     public ?string $speakerUrl = null;
+    // member_id, falling back to person_id - member_id is null for a chair role like
+    // "The Deputy Speaker" (see isCurrentSpeaker below, which has the same fallback),
+    // so this is buildRoster()'s dedup key precisely because it's stable per person
+    // even when speakerUrl isn't (also null for chair roles) and speakerName alone
+    // isn't (shared across whoever's sitting in the chair at the time).
+    public ?string $speakerId = null;
     public ?string $speakerDescription = null;
     public ?string $avatarUrl = null;
     public bool $isCurrentSpeaker = false;
@@ -53,6 +59,12 @@ class HansardSpeechView {
             $view->speakerUrl = $entry->url;
             $view->speakerDescription = $entry->description;
             $view->avatarUrl = $entry->avatarUrl;
+
+            if (isset($speaker['member_id'])) {
+                $view->speakerId = (string) $speaker['member_id'];
+            } elseif (isset($speaker['person_id'])) {
+                $view->speakerId = (string) $speaker['person_id'];
+            }
 
             $view->isCurrentSpeaker =
                 (isset($speaker['member_id']) && isset($info['member_id']) && $speaker['member_id'] == $info['member_id'])
@@ -186,8 +198,10 @@ class HansardSpeechView {
     /**
      * buildRoster() builds the "Speakers in this debate" roster from the
      * already-built list of per-row view models (see forSpeech()) - one entry per
-     * distinct speaker, deduped on speakerUrl (their MP/senator profile page, which
-     * stays stable even if a title changes mid-debate). It orders them by how much
+     * distinct speaker, deduped on speakerId first (member_id/person_id - stable per
+     * person even for a chair role like "The Deputy Speaker", which has neither a
+     * speakerUrl nor a name unique to one MP), falling back to speakerUrl or
+     * speakerName only when speakerId itself is unset. It orders them by how much
      * they actually said - summed word count across all their speeches on this
      * page, most first - not just how many times they spoke, since one long speech
      * can outweigh several short interjections. Procedural rows (no speaker) don't
@@ -199,7 +213,7 @@ class HansardSpeechView {
             if (!($item instanceof self) || !$item->speakerName) {
                 continue;
             }
-            $key = $item->speakerUrl ?: $item->speakerName;
+            $key = $item->speakerId ?? ($item->speakerUrl ?: $item->speakerName);
             if (!isset($roster[$key])) {
                 $entry = new HansardSpeakerRosterEntry();
                 $entry->name = $item->speakerName;

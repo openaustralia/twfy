@@ -361,6 +361,24 @@ class HansardSpeechViewTest extends TestCase {
     }
 
     /**
+     * Two different people can both be "The Deputy Speaker" in the same debate if
+     * the chair changes hands mid-sitting - neither has a speakerUrl (a chair role,
+     * not a byline), so deduping on speakerUrl-or-name alone would merge two
+     * different people's word/speech counts into one entry. speakerId (member_id) is
+     * what actually tells them apart.
+     */
+    public function test_buildRoster_does_not_merge_two_different_speakers_sharing_a_chair_title() {
+        $items = [
+            $this->speechView('The Deputy Speaker', '', 'Order, order.', null, null, null, '111'),
+            $this->speechView('The Deputy Speaker', '', 'The member will resume their seat.', null, null, null, '222'),
+        ];
+
+        $roster = HansardSpeechView::buildRoster($items);
+
+        $this->assertCount(2, $roster);
+    }
+
+    /**
      *
      */
     public function test_buildRoster_orders_by_word_count_not_speech_count() {
@@ -502,11 +520,13 @@ class HansardSpeechViewTest extends TestCase {
       ?string $description = null,
       ?string $avatarUrl = null,
       ?string $initials = null,
+      ?string $speakerId = null,
     ): HansardSpeechView {
         $view = new HansardSpeechView();
         $view->speakerName = $name;
         $view->speakerInitials = $initials;
         $view->speakerUrl = $url;
+        $view->speakerId = $speakerId;
         $view->speakerDescription = $description;
         $view->avatarUrl = $avatarUrl;
         $view->bodyHtml = '<p>' . $bodyText . '</p>';
