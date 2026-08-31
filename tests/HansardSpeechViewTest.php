@@ -236,6 +236,17 @@ class HansardSpeechViewTest extends TestCase {
     /**
      *
      */
+    public function test_forSpeech_handles_a_null_body_without_a_typeerror() {
+        $row = $this->speechRow(['body' => null]);
+
+        $view = HansardSpeechView::forSpeech($row, $this->info(), true);
+
+        $this->assertFalse($view->isInterjection);
+    }
+
+    /**
+     *
+     */
     public function test_forSpeech_marks_up_moved_motion_text() {
         $row = $this->speechRow(['body' => '<p pwmotiontext="moved">That the bill be read a second time.</p>']);
 
