@@ -66,6 +66,15 @@
                     <span class="text-slate-500"><?php echo $speech->speakerDescription /* already-escaped by HansardSpeechView */ ?></span>
                 <?php endif; ?>
             </p>
+        <?php elseif ($speech->isInterjection): ?>
+            <?php
+            // Only reachable when isInterjection is true and there's no speakerName -
+            // an anonymous interjection ("Government members interjecting—") never
+            // resolves to a real speaker (see HansardSpeechView.php's own comment on
+            // isInterjection), so this is the one case with nothing to show in the
+            // name slot above.
+            ?>
+            <p class="mb-2 text-xs font-medium uppercase tracking-wide text-amber-700">Unidentified interjection - Hansard doesn't record who said this</p>
         <?php endif; ?>
 
         <?php if ($speech->timestamp): ?>
