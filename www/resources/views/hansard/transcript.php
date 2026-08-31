@@ -110,7 +110,9 @@
                 <?php echo $this->fetch('hansard/about-debates', ['title' => $aboutTitle, 'bodyHtml' => $aboutBodyHtml]) ?>
             <?php endif; ?>
             <?php if (!empty($speakers)): ?>
-                <?php echo $this->fetch('hansard/speaker-roster', ['speakers' => $speakers]) ?>
+                <div class="lg:sticky lg:top-6">
+                    <?php echo $this->fetch('hansard/speaker-roster', ['speakers' => $speakers]) ?>
+                </div>
             <?php endif; ?>
         </div>
     <?php endif; ?>
