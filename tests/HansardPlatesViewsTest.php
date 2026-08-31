@@ -221,10 +221,29 @@ class HansardPlatesViewsTest extends TestCase {
     }
 
     /**
+     * The old stripe rendering showed this for every speech (hansard_gid.php's
+     * non-Plates path) - HansardSpeechView already computed permalinkUrl, but no
+     * Plates template read it, so it silently disappeared for these two majors.
+     */
+    public function test_speech_renders_the_permalink_when_present() {
+        $speech = $this->speechView(['permalinkUrl' => '/debate/?id=2026-08-18.108.2']);
+
+        $html = $this->engine->render('hansard/speech', ['speech' => $speech]);
+
+        $this->assertStringContainsString('href="/debate/?id=2026-08-18.108.2"', $html);
+        $this->assertStringContainsString('Link to this', $html);
+    }
+
+    /**
      *
      */
     public function test_speech_omits_the_footer_row_when_there_is_nothing_to_show_there() {
-        $speech = $this->speechView(['sourceUrl' => null, 'contextLinkHtml' => '', 'commentTeaserHtml' => '']);
+        $speech = $this->speechView([
+            'sourceUrl' => null,
+            'contextLinkHtml' => '',
+            'commentTeaserHtml' => '',
+            'permalinkUrl' => null,
+        ]);
 
         $html = $this->engine->render('hansard/speech', ['speech' => $speech]);
 
