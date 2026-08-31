@@ -21,6 +21,12 @@ class HansardSpeechView {
     public ?string $speakerName = null;
     public ?string $speakerInitials = null;
     public ?string $speakerUrl = null;
+    // member_id, falling back to person_id - member_id is null for a chair role like
+    // "The Deputy Speaker" (see isCurrentSpeaker below, which has the same fallback),
+    // so this is buildRoster()'s dedup key precisely because it's stable per person
+    // even when speakerUrl isn't (also null for chair roles) and speakerName alone
+    // isn't (shared across whoever's sitting in the chair at the time).
+    public ?string $speakerId = null;
     public ?string $speakerDescription = null;
     public ?string $avatarUrl = null;
     public bool $isCurrentSpeaker = false;
@@ -53,6 +59,12 @@ class HansardSpeechView {
             $view->speakerUrl = $entry->url;
             $view->speakerDescription = $entry->description;
             $view->avatarUrl = $entry->avatarUrl;
+
+            if (isset($speaker['member_id'])) {
+                $view->speakerId = (string) $speaker['member_id'];
+            } elseif (isset($speaker['person_id'])) {
+                $view->speakerId = (string) $speaker['person_id'];
+            }
 
             $view->isCurrentSpeaker =
                 (isset($speaker['member_id']) && isset($info['member_id']) && $speaker['member_id'] == $info['member_id'])
@@ -124,7 +136,11 @@ class HansardSpeechView {
     }
 
     /**
-     *
+     * Every caller treats this return value as already-escaped and echoes it raw
+     * (eg speech.php: "already-escaped by HansardSpeechView") - htmlentities() has
+     * to cover the whole assembled string in one pass, not just $speaker['party'],
+     * or a "&"/"<" in $speaker['constituency'] or $speaker['office'][0]['pretty']
+     * reaches the page unescaped.
      */
     private static function speakerDescription(array $speaker): string {
         $desc = '';
@@ -132,11 +148,11 @@ class HansardSpeechView {
             && $speaker['party'] != 'President' && $speaker['constituency']) {
             $desc .= $speaker['constituency'] . ', ';
         }
-        $desc .= htmlentities($speaker['party']);
+        $desc .= $speaker['party'];
         if (isset($speaker['office'])) {
             $desc .= ', ' . $speaker['office'][0]['pretty'];
         }
-        return $desc;
+        return htmlentities($desc);
     }
 
     /**
@@ -145,9 +161,14 @@ class HansardSpeechView {
      * for Lidia Thorpe) - falls back to whichever of first/last name is present when
      * only one is, and to '' when neither is (so callers can treat an empty string as
      * "nothing to show" the same way they'd treat null).
+     *
+     * $firstName/$lastName carry no type hints here - member.first_name/last_name
+     * are nullable columns (db/schema.sql), and a real row can hand this function a
+     * null. A string type hint would fatal with a TypeError instead of just
+     * producing a blank initial - Sentry finding on #227.
      */
-    public static function initials(string $firstName, string $lastName): string {
-        $initials = mb_substr($firstName, 0, 1) . mb_substr($lastName, 0, 1);
+    public static function initials($firstName, $lastName): string {
+        $initials = mb_substr((string) $firstName, 0, 1) . mb_substr((string) $lastName, 0, 1);
         return mb_strtoupper($initials);
     }
 
@@ -162,10 +183,16 @@ class HansardSpeechView {
      * debates") - used to replace the server-built 'up' label ("All Senate debates on
      * 18 Aug 2026", or sometimes just "See the whole debate", depending which branch
      * of _get_nextprev_items() fired) with "All Senate debates on this day": the date
-     * is already shown in the card's own header, so repeating it here was redundant -
-     * this is just the "see everything" link's own label, not what it links to.
+     * is already shown in the card's own header, so repeating it here was redundant.
+     *
+     * $dateUrl has to overwrite 'up''s URL along with the label, not just the label:
+     * HANSARDLIST::_get_nextprev_items()'s ordinary-item branch (the one that reaches
+     * here for an individual speech/procedural page) points 'up' at the parent
+     * subsection/section's own page, labelled "See the whole debate" to match -
+     * accurate for that URL, but a different destination to the day-listing page the
+     * "All ... on this day" label promises. Sentry finding on #227/#228.
      */
-    public static function buildNextPrev(array $nextprevdata, string $chamberTitle): array {
+    public static function buildNextPrev(array $nextprevdata, string $chamberTitle, string $dateUrl): array {
         $nextPrev = [];
         foreach (['prev', 'up', 'next'] as $direction) {
             if (isset($nextprevdata[$direction]['body'])) {
@@ -178,6 +205,7 @@ class HansardSpeechView {
         }
         if (isset($nextPrev['up'])) {
             $nextPrev['up']['label'] = 'All ' . $chamberTitle . ' on this day';
+            $nextPrev['up']['url'] = $dateUrl;
         }
         return $nextPrev;
     }
@@ -275,11 +303,12 @@ class HansardSpeechView {
     }
 
     /**
-     * Same body-cleanup steps hansard_gid.php's old rendering path already applied
-     * (search highlighting/glossarising already happened earlier, on $data['rows'],
-     * before either rendering path runs) - kept identical so the two paths produce
-     * the same text, just different surrounding markup - plus one the old path never
-     * needed: stripping stray self-closed <i/> tags.
+     * cleanBody() applies the same body-cleanup steps hansard_gid.php's old
+     * rendering path already applied (search highlighting/glossarising already ran
+     * earlier, on $data['rows'], before either rendering path runs) - it keeps them
+     * identical so the two paths produce the same text, just different surrounding
+     * markup - plus one step the old path never needed: stripping stray self-closed
+     * <i/> tags.
      *
      * Some hansard bodies contain a literal, empty "<i/>" between two real <i>...</i>
      * phrases (an artifact of the parser's XML-to-HTML conversion, likely a collapsed
@@ -287,13 +316,14 @@ class HansardSpeechView {
      * provision" / "Exception" definitions). HTML doesn't treat "<i/>" as self-closing
      * - browsers read it as an ordinary opening <i> with no matching close, which then
      * swallows every paragraph after it into one giant italic run for the rest of the
-     * page. The old stripe rendering had this exact same malformed markup and was
-     * equally broken by it - it just never showed, since stripe rows had no styling
-     * that made "is this text italic" visible. This new design colours .italic/
+     * page. The old stripe rendering carried this exact same malformed markup and
+     * broke just as badly - it just never showed, since nothing styled stripe rows to
+     * make "is this text italic" visible. This new design colours .italic/
      * .indentitalic text, which makes the bug impossible to miss, so it's worth fixing
      * here rather than leaving for openaustralia-parser/a DB cleanup.
      */
-    public static function cleanBody(string $body): string {
+    public static function cleanBody(?string $body): string {
+        $body ??= '';
         $body = str_replace('pwmotiontext="moved"', 'class="moved"', $body);
         $body = str_replace('<a href="h', '<a rel="nofollow" href="h', $body);
         $body = str_replace('<i/>', '', $body);
@@ -301,13 +331,16 @@ class HansardSpeechView {
     }
 
     /**
-     * Builds the "Speakers in this debate" roster from the already-built list of
-     * per-row view models (see forSpeech()) - one entry per distinct speaker
-     * (deduped on speakerUrl, their MP/senator profile page, which is stable even if
-     * a title changes mid-debate), ordered by how much they actually said - summed
-     * word count across all their speeches on this page, most first - not just how
-     * many times they spoke, since one long speech can outweigh several short
-     * interjections. Procedural rows (no speaker) don't contribute.
+     * buildRoster() builds the "Speakers in this debate" roster from the
+     * already-built list of per-row view models (see forSpeech()) - one entry per
+     * distinct speaker, deduped on speakerId first (member_id/person_id - stable per
+     * person even for a chair role like "The Deputy Speaker", which has neither a
+     * speakerUrl nor a name unique to one MP), falling back to speakerUrl or
+     * speakerName only when speakerId itself is unset. It orders them by how much
+     * they actually said - summed word count across all their speeches on this
+     * page, most first - not just how many times they spoke, since one long speech
+     * can outweigh several short interjections. Procedural rows (no speaker) don't
+     * contribute.
      */
     public static function buildRoster(array $items): array {
         $roster = [];
@@ -315,7 +348,7 @@ class HansardSpeechView {
             if (!($item instanceof self) || !$item->speakerName) {
                 continue;
             }
-            $key = $item->speakerUrl ?: $item->speakerName;
+            $key = $item->speakerId ?? ($item->speakerUrl ?: $item->speakerName);
             if (!isset($roster[$key])) {
                 $entry = new HansardSpeakerRosterEntry();
                 $entry->name = $item->speakerName;

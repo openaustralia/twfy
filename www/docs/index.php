@@ -273,7 +273,11 @@ function latest_activity_items($LIST, $major, $date) {
             $entry->firstSpeechUrl = $speechURL->generate('none') . '#g' . gid_to_anchor(fix_gid_from_db($firstSpeech['speech_gid']));
             $speakers[] = $entry;
         }
-        $moreSpeakersCount = max(0, count($firstSpeechBySpeaker) - count($shownSpeakerIds));
+        // count($speakers), not count($shownSpeakerIds): the latter is attempted
+        // lookups, not what's actually rendered - _get_speaker() can come back empty
+        // for one of them (skipped above), which would otherwise undercount "+N more"
+        // by however many lookups failed.
+        $moreSpeakersCount = max(0, count($firstSpeechBySpeaker) - count($speakers));
 
         $items[] = [
             'title' => $q->field($i, 'body'),

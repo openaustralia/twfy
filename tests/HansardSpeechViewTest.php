@@ -143,6 +143,24 @@ class HansardSpeechViewTest extends TestCase {
     }
 
     /**
+     * Every caller echoes speakerDescription raw, treating it as already-escaped -
+     * a "&" in constituency or office needs to actually be escaped for that to be
+     * true, not just one in $speaker['party'].
+     */
+    public function test_forSpeech_escapes_the_constituency_and_office_too_not_just_the_party() {
+        $row = $this->speechRow([
+            'speaker' => $this->speaker([
+                'constituency' => 'Cook & Innisfail',
+                'office' => [['dept' => '', 'position' => 'x', 'pretty' => 'Minister for A & B']],
+            ]),
+        ]);
+
+        $view = HansardSpeechView::forSpeech($row, $this->info(), true);
+
+        $this->assertSame('Cook &amp; Innisfail, Australian Greens, Minister for A &amp; B', $view->speakerDescription);
+    }
+
+    /**
      *
      */
     public function test_forSpeech_leaves_speaker_fields_null_when_the_row_has_no_speaker() {
@@ -379,6 +397,24 @@ class HansardSpeechViewTest extends TestCase {
     }
 
     /**
+     * Two different people can both be "The Deputy Speaker" in the same debate if
+     * the chair changes hands mid-sitting - neither has a speakerUrl (a chair role,
+     * not a byline), so deduping on speakerUrl-or-name alone would merge two
+     * different people's word/speech counts into one entry. speakerId (member_id) is
+     * what actually tells them apart.
+     */
+    public function test_buildRoster_does_not_merge_two_different_speakers_sharing_a_chair_title() {
+        $items = [
+            $this->speechView('The Deputy Speaker', '', 'Order, order.', null, null, null, '111'),
+            $this->speechView('The Deputy Speaker', '', 'The member will resume their seat.', null, null, null, '222'),
+        ];
+
+        $roster = HansardSpeechView::buildRoster($items);
+
+        $this->assertCount(2, $roster);
+    }
+
+    /**
      *
      */
     public function test_buildRoster_orders_by_word_count_not_speech_count() {
@@ -447,19 +483,24 @@ class HansardSpeechViewTest extends TestCase {
     }
 
     /**
-     *
+     * 'up's own URL needs overwriting along with its label, not just used as a
+     * fallback: HANSARDLIST::_get_nextprev_items()'s ordinary-item branch points it
+     * at the parent subsection/section page, a different destination to the
+     * day-listing page "All ... on this day" promises. $dateUrl is that day-listing
+     * page - buildNextPrev() must use it, not whatever URL the row itself carried.
      */
-    public function test_buildNextPrev_builds_all_three_directions_and_relabels_up() {
+    public function test_buildNextPrev_builds_all_three_directions_and_relabels_and_relinks_up() {
         $nextprevdata = [
             'prev' => ['body' => 'Earlier Debate Title', 'url' => '/debates/?id=a', 'title' => 'Earlier Debate Title'],
-            // 'up's own label ("All Senate debates on 18 Aug 2026", or sometimes
-            // "See the whole debate" - see _get_nextprev_items()) is always replaced,
-            // not just used as a fallback, so what it says here shouldn't matter.
-            'up' => ['body' => 'See the whole debate', 'url' => '/debates/?d=2026-08-20'],
+            // 'up's own label/url ("All Senate debates on 18 Aug 2026", or sometimes
+            // "See the whole debate"/the parent section's page - see
+            // _get_nextprev_items()) are always replaced, not used as a fallback, so
+            // what they say here shouldn't matter.
+            'up' => ['body' => 'See the whole debate', 'url' => '/debates/?id=parent-section'],
             'next' => ['body' => 'Later Debate Title', 'url' => '/debates/?id=b', 'title' => 'Later Debate Title'],
         ];
 
-        $nextPrev = HansardSpeechView::buildNextPrev($nextprevdata, 'House debates');
+        $nextPrev = HansardSpeechView::buildNextPrev($nextprevdata, 'House debates', '/debates/?d=2026-08-20');
 
         $this->assertSame(['label' => 'Earlier Debate Title', 'url' => '/debates/?id=a', 'title' => 'Earlier Debate Title'], $nextPrev['prev']);
         $this->assertSame('All House debates on this day', $nextPrev['up']['label']);
@@ -476,7 +517,7 @@ class HansardSpeechViewTest extends TestCase {
             'next' => ['body' => 'Later Debate Title', 'url' => '/debates/?id=b'],
         ];
 
-        $nextPrev = HansardSpeechView::buildNextPrev($nextprevdata, 'House debates');
+        $nextPrev = HansardSpeechView::buildNextPrev($nextprevdata, 'House debates', '/debates/?d=2026-08-20');
 
         $this->assertArrayNotHasKey('prev', $nextPrev);
         $this->assertArrayNotHasKey('up', $nextPrev);
@@ -493,7 +534,7 @@ class HansardSpeechViewTest extends TestCase {
             'prev' => ['body' => 'No earlier item'],
         ];
 
-        $nextPrev = HansardSpeechView::buildNextPrev($nextprevdata, 'House debates');
+        $nextPrev = HansardSpeechView::buildNextPrev($nextprevdata, 'House debates', '/debates/?d=2026-08-20');
 
         $this->assertSame('No earlier item', $nextPrev['prev']['label']);
         $this->assertNull($nextPrev['prev']['url']);
@@ -660,6 +701,30 @@ class HansardSpeechViewTest extends TestCase {
     }
 
     /**
+     * member.first_name/last_name are nullable columns (db/schema.sql) - a real DB
+     * row can hand initials() null, not just ''. The params carry no type hints
+     * (Sentry finding on #227: a string type hint would fatal with a TypeError
+     * instead) - this test verifies that actually holds, not just that the
+     * signature allows it.
+     */
+    public function test_initials_handles_a_null_name_without_a_typeerror() {
+        $this->assertSame('T', HansardSpeechView::initials(null, 'Thorpe'));
+        $this->assertSame('L', HansardSpeechView::initials('Lidia', null));
+        $this->assertSame('', HansardSpeechView::initials(null, null));
+    }
+
+    /**
+     * The hansard table has no body column of its own (it's assembled from
+     * elsewhere - see hansard_gid.php's own $bodies handling), so cleanBody() can't
+     * point at one schema line the way initials() can - but it's the same shape of
+     * risk (a real value this code can plausibly receive, against a non-nullable
+     * param), so this locks in the same defensive treatment.
+     */
+    public function test_cleanBody_handles_a_null_body_without_a_typeerror() {
+        $this->assertSame('', HansardSpeechView::cleanBody(null));
+    }
+
+    /**
      * @return array<string, mixed>
      */
     private function speechRow(array $overrides = []): array {
@@ -741,11 +806,13 @@ class HansardSpeechViewTest extends TestCase {
       ?string $description = null,
       ?string $avatarUrl = null,
       ?string $initials = null,
+      ?string $speakerId = null,
     ): HansardSpeechView {
         $view = new HansardSpeechView();
         $view->speakerName = $name;
         $view->speakerInitials = $initials;
         $view->speakerUrl = $url;
+        $view->speakerId = $speakerId;
         $view->speakerDescription = $description;
         $view->avatarUrl = $avatarUrl;
         $view->bodyHtml = '<p>' . $bodyText . '</p>';

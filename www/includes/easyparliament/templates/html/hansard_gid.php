@@ -17,30 +17,29 @@ include_once __DIR__ . "/../../../easyparliament/HansardSpeechView.php";
 
 twfy_debug("TEMPLATE", "hansard_gid.php");
 
+// Will set the page headings and start the page HTML if it hasn't
+// already been started.
+if (!isset($data['info'])) {
+    // No data! We'll be exiting here! but send a 404 so that spiders stop indexing the page.
+    header("HTTP/1.0 404 Not Found");
+    # Bots have some fiddled with wrans, so we get errors here sometimes that don't
+    # signify a real problem.
+    #trigger_error("Not enough data to display anything.", E_USER_ERROR);
+    exit;
+}
+
 // House representatives (1) and Senate (101) - the two houses this fork actually
 // parses - get the new Plates-rendered transcript. Everything else (Wrans, WMS, and
 // the UK/NI/Scotland majors left over from the mySociety fork this codebase started
 // from, none of which are populated on this site) keeps the existing stripe-based
 // rendering below untouched. See openaustralia/openaustralia#939 and the debate-page
-// redesign plan for why.
+// redesign plan for why. Reads $data['info']['major'], so this has to come after the
+// isset($data['info']) guard above, not before it - moving it here fixes a real
+// warning on the known bot-triggered no-data path that guard exists for.
 $usePlatesTemplate = in_array($data['info']['major'], [1, 101], true);
 $plates_items = [];
 if ($usePlatesTemplate) {
     $platesEngine = new League\Plates\Engine(__DIR__ . "/../../../../resources/views");
-
-    // "All Senate debates on 18 August 2026 / « Previous debate / Next debate »" - was
-    // the stripe-foot block at the bottom of the page (still is, for non-Plates
-    // majors - see the guarded stripe_start('foot') below). Computed here,
-    // unconditionally for every Plates page (not just ones with a full transcript
-    // card - see the $data['subrows'] branch below, eg an Adjournment debate's
-    // section-index page, which has no $plates_items at all but still wants this
-    // same pagination). Same page metadata $PAGE->nextprevlinks() itself reads, set
-    // earlier by HANSARDLIST::_get_nextprev_items() - each of prev/up/next is
-    // optional (eg no "prev" on the very first debate ever recorded), and a present
-    // one isn't always a link (nextprevlinks() falls back to plain text with no
-    // 'url' in some cases too).
-    $nextprevdata = $DATA->page_metadata($this_page, 'nextprev') ?: [];
-    $nextPrev = HansardSpeechView::buildNextPrev($nextprevdata, $hansardmajors[$data['info']['major']]['title'] ?? 'debates');
 
     // "House debates"/"Senate debates" (chamberLabel) and "House of Representatives"/
     // "Senate" (chamberNames, indexed by major) - two different existing labels for
@@ -57,34 +56,32 @@ if ($usePlatesTemplate) {
     // key ('debates'/'lordsdebates') the URL class maps to the real /debates/,
     // /senate/ etc. path. remove(['id']) matters: without it this page's own ?id=
     // survives into the generated URL alongside ?d=. Computed here, unconditionally,
-    // so the transcript card's own date link can use it.
+    // so the transcript card's own date link (and buildNextPrev()'s 'up' link, just
+    // below) can both use it.
     $dateURL = new URL($hansardmajors[$data['info']['major']]['page_all']);
     $dateURL->insert(['d' => $data['info']['date']]);
     $dateURL->remove(['id']);
-}
 
-// Will set the page headings and start the page HTML if it hasn't
-// already been started.
-if (!isset($data['info'])) {
-    // No data! We'll be exiting here! but send a 404 so that spiders stop indexing the page.
-    header("HTTP/1.0 404 Not Found");
-    # Bots have some fiddled with wrans, so we get errors here sometimes that don't
-    # signify a real problem.
-    #trigger_error("Not enough data to display anything.", E_USER_ERROR);
-    exit;
+    // "All Senate debates on 18 August 2026 / « Previous debate / Next debate »" - was
+    // the stripe-foot block at the bottom of the page (still is, for non-Plates
+    // majors - see the guarded stripe_start('foot') below). Computed here,
+    // unconditionally for every Plates page (not just ones with a full transcript
+    // card - see the $data['subrows'] branch below, eg an Adjournment debate's
+    // section-index page, which has no $plates_items at all but still wants this
+    // same pagination). Same page metadata $PAGE->nextprevlinks() itself reads, set
+    // earlier by HANSARDLIST::_get_nextprev_items() - each of prev/up/next is
+    // optional (eg no "prev" on the very first debate ever recorded), and a present
+    // one isn't always a link (nextprevlinks() falls back to plain text with no
+    // 'url' in some cases too).
+    $nextprevdata = $DATA->page_metadata($this_page, 'nextprev') ?: [];
+    $nextPrev = HansardSpeechView::buildNextPrev(
+        $nextprevdata,
+        $hansardmajors[$data['info']['major']]['title'] ?? 'debates',
+        $dateURL->generate('none')
+    );
 }
 
 $PAGE->page_start();
-
-if ($usePlatesTemplate) {
-    // stripe_start() below would otherwise auto-print $PAGE->heading() the first time
-    // it's called on the page - "House debates"/"Senate debates" plus the formatted
-    // date, sourced from page metadata set generically in set_hansard_headings(). The
-    // card (transcript.php) now carries both - the chamber label next to the section
-    // title, the date in its own row below - so suppress the original to avoid showing
-    // either twice.
-    $PAGE->heading_displayed = true;
-}
 
 if (!$usePlatesTemplate) {
     $PAGE->stripe_start('head-1');
@@ -401,7 +398,22 @@ if (isset($data['rows'])) {
     }
 
     if ($usePlatesTemplate && count($plates_items) > 0) {
-        // $chamberNames/$dateURL/$aboutTitle/$aboutBodyHtml: computed once,
+        // stripe_start() below would otherwise auto-print $PAGE->heading() the first
+        // time it's called on the page - "House debates"/"Senate debates" plus the
+        // formatted date, sourced from page metadata set generically in
+        // set_hansard_headings(). The card (transcript.php) carries both instead -
+        // the chamber label next to the section title, the date in its own row below
+        // - so suppress the original to avoid showing either twice. Set only here,
+        // inside count($plates_items) > 0, not unconditionally on $usePlatesTemplate
+        // alone: every stripe_start() call in the row loop above is already gated
+        // behind $usePlatesTemplate (each takes an early continue instead), so
+        // nothing there needs this set early - and a Plates-major page with zero
+        // rows to show falls through to the plain $section_title/$subsection_title
+        // stripe_start('head-2') fallback further down, which does still need
+        // $PAGE->heading() to fire normally, or the page loses its heading entirely.
+        $PAGE->heading_displayed = true;
+
+        // $chamberNames/$dateURL/$aboutTitle/$aboutBodyHtml/$nextPrev: computed once,
         // unconditionally for every Plates page, near the top of this file / just
         // above - see the comments there.
         //
@@ -411,6 +423,15 @@ if (isset($data['rows'])) {
         // 20 August 2026" trail above the title would only be repeating links that
         // are already on the page, one click away either way.
 
+        // A subsection heading (htype 11) isn't guaranteed to occur before this
+        // renders - transcript.php puts $subsectionTitle in the page's main <h1>,
+        // unlike the old stripe-head-2 rendering above (h5, well below $section_title's
+        // own h4), so a still-unset '&nbsp;' sentinel here would show as a blank
+        // headline instead of a barely-noticeable blank second line. When that
+        // happens, $section_title becomes the <h1> instead, and drops out of the
+        // eyebrow line above it so it isn't shown twice.
+        $hasSubsectionTitle = $subsection_title !== '&nbsp;';
+
         echo $platesEngine->render('hansard/transcript', [
             'items' => $plates_items,
             'speakers' => HansardSpeechView::buildRoster($plates_items),
@@ -419,8 +440,8 @@ if (isset($data['rows'])) {
             // $PAGE->heading_displayed suppression below). Shown next to $section_title
             // in the card's eyebrow line instead, so it's not lost, just moved.
             'chamberLabel' => $hansardmajors[$data['info']['major']]['title'] ?? '',
-            'sectionTitle' => $section_title,
-            'subsectionTitle' => $subsection_title,
+            'sectionTitle' => $hasSubsectionTitle ? $section_title : '',
+            'subsectionTitle' => $hasSubsectionTitle ? $subsection_title : $section_title,
             // Matches LONGERDATEFORMAT (what the suppressed old h3 used, eg "Tuesday, 18
             // August 2026") rather than the plain 'j F Y' this used before.
             'date' => date('l, j F Y', strtotime($data['info']['date'])),
