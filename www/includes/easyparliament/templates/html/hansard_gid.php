@@ -167,8 +167,11 @@ if (isset($data['rows'])) {
             // DEBATE PROCEDURAL.
 
             if ($usePlatesTemplate) {
+                // No ob_flush() here (unlike line 342's, below, for the stripe path) -
+                // nothing's echoed for a Plates row at this point, it's just pushed
+                // onto $plates_items and rendered in one batch by $platesEngine->render()
+                // long after this loop ends, so there'd be nothing new to flush.
                 $plates_items[] = HansardProceduralView::forProcedural($row, $data['info']);
-                ob_flush();
                 continue;
             }
 
@@ -201,8 +204,9 @@ if (isset($data['rows'])) {
                 if ($showTimestamp) {
                     $timetracker = substr($row['htime'], 0, 5);
                 }
+                // No ob_flush() here either - same reasoning as the procedural
+                // branch above.
                 $plates_items[] = HansardSpeechView::forSpeech($row, $data['info'], $showTimestamp);
-                ob_flush();
                 continue;
             }
 
