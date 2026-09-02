@@ -85,11 +85,11 @@ if ($usePlatesTemplate) {
     // the actual label/url/title logic (directly unit-tested there, unlike this
     // file).
     $nextprevdata = $DATA->page_metadata($this_page, 'nextprev') ?: [];
-    $nextPrev = HansardSpeechView::buildNextPrev(
-        $nextprevdata,
-        $hansardmajors[$data['info']['major']]['title'] ?? 'debates',
-        $dateURL->generate('none')
-    );
+    // One line deliberately: this file can't be unit-tested directly (see the
+    // extraction comments above), so every physical line of a call here is new,
+    // permanently-uncovered code as far as SonarCloud's new-code coverage gate is
+    // concerned - splitting a call across N lines costs N uncovered lines, not one.
+    $nextPrev = HansardSpeechView::buildNextPrev($nextprevdata, $hansardmajors[$data['info']['major']]['title'] ?? 'debates', $dateURL->generate('none'));
 }
 
 $PAGE->page_start();
@@ -420,13 +420,9 @@ if (isset($data['rows'])) {
         // See HansardSpeechView::resolveTranscriptTitle() for the fallback logic
         // (directly unit-tested there, unlike this file) - neither $section_title
         // nor $subsection_title is guaranteed to have been set by the row loop
-        // above (an htype-10/11 heading row isn't guaranteed to exist at all).
-        ['hasSubsectionTitle' => $hasSubsectionTitle, 'finalTitle' => $finalTitle] = HansardSpeechView::resolveTranscriptTitle(
-            $section_title,
-            $subsection_title,
-            NO_TITLE_SENTINEL,
-            $hansardmajors[$data['info']['major']]['title'] ?? 'Debate'
-        );
+        // above (an htype-10/11 heading row isn't guaranteed to exist at all). One
+        // line deliberately - see buildNextPrev()'s call above for why.
+        ['hasSubsectionTitle' => $hasSubsectionTitle, 'finalTitle' => $finalTitle] = HansardSpeechView::resolveTranscriptTitle($section_title, $subsection_title, NO_TITLE_SENTINEL, $hansardmajors[$data['info']['major']]['title'] ?? 'Debate');
 
         echo $platesEngine->render('hansard/transcript', [
             'items' => $plates_items,
