@@ -147,19 +147,21 @@ class HansardSpeechView {
      */
     private static function speakerDescription(array $speaker): string {
         $desc = '';
-        // member.party stores the raw code (SPK/CWM/DCWM/PRES/DPRES - see
-        // dbtypes.php's $parties), not a display name - checking against
-        // 'Speaker'/'Deputy Speaker'/'President' here never matched any of
-        // them. $parties itself is unused everywhere else too, so $speaker
-        // ['party'] below still prints the raw code rather than a readable
-        // name - a separate, pre-existing issue (openaustralia/openaustralia#953),
-        // not fixed here since it needs wiring up that lookup properly.
-        $chairRoleCodes = ['SPK', 'CWM', 'DCWM', 'PRES', 'DPRES'];
-        if (!in_array($speaker['party'], $chairRoleCodes) && $speaker['constituency']) {
+        // HANSARDLIST::_get_speaker() already translates the raw member.party code
+        // (SPK/CWM/DCWM/PRES/DPRES) into one of these via dbtypes.php's $parties
+        // before $speaker ever reaches here - hyphenated, not spaced, and
+        // Deputy-President wasn't checked for at all before this fix (so a Deputy
+        // President's constituency was shown when it shouldn't have been, same as
+        // every other chair role - Sentry only caught the Deputy Speaker case).
+        $chairRoles = ['Speaker', 'Deputy-Speaker', 'President', 'Deputy-President'];
+        if (!in_array($speaker['party'], $chairRoles) && $speaker['constituency']) {
             $desc .= $speaker['constituency'] . ', ';
         }
         $desc .= $speaker['party'];
-        if (isset($speaker['office'])) {
+        // isset() alone isn't enough - _get_speaker() only ever appends to
+        // 'office', never sets it to [], but a caller building $speaker by hand
+        // (eg a test fixture) could still pass an empty array through.
+        if (!empty($speaker['office'])) {
             $desc .= ', ' . $speaker['office'][0]['pretty'];
         }
         return htmlentities($desc);
