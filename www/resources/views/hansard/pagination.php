@@ -60,8 +60,14 @@ $navLabel = $edge == 'top' ? 'Debate navigation' : 'Debate navigation, end of tr
                     <?php endif; ?>
                 </a>
             <?php else: ?>
+                <?php
+                // text-slate-600, not the -300 this started as: that failed WCAG AA
+                // contrast (~1.48:1) against the white card for this 12px text. The
+                // lack of an <a> is what signals "unavailable" here, not the colour.
+                // Copilot finding on #227.
+                ?>
                 <div class="block rounded-lg px-4 py-2.5">
-                    <span class="block text-xs font-semibold uppercase tracking-wide text-slate-300"><span aria-hidden="true">⬅️</span> <?php echo $this->e($nextPrev['prev']['label']) ?></span>
+                    <span class="block text-xs font-semibold uppercase tracking-wide text-slate-600"><span aria-hidden="true">⬅️</span> <?php echo $this->e($nextPrev['prev']['label']) ?></span>
                 </div>
             <?php endif; ?>
         <?php endif; ?>
@@ -88,7 +94,7 @@ $navLabel = $edge == 'top' ? 'Debate navigation' : 'Debate navigation, end of tr
                 </a>
             <?php else: ?>
                 <div class="block rounded-lg px-4 py-2.5 sm:text-right">
-                    <span class="block text-xs font-semibold uppercase tracking-wide text-slate-300"><?php echo $this->e($nextPrev['next']['label']) ?> <span aria-hidden="true">➡️</span></span>
+                    <span class="block text-xs font-semibold uppercase tracking-wide text-slate-600"><?php echo $this->e($nextPrev['next']['label']) ?> <span aria-hidden="true">➡️</span></span>
                 </div>
             <?php endif; ?>
         <?php endif; ?>

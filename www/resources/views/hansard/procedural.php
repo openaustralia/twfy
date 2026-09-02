@@ -16,7 +16,13 @@
     <?php echo $item->bodyHtml /* pre-sanitised hansard body HTML, same pipeline as the old rendering path */ ?>
 
     <?php if ($item->contextLinkHtml || $item->commentTeaserHtml): ?>
-        <div class="mt-2 flex flex-wrap items-baseline gap-x-3 gap-y-1 not-italic text-slate-500 [&_p]:inline [&_p]:m-0">
+        <?php
+        // [&_a]:...: same fix as speech.php's own footer - contextLinkHtml/
+        // commentTeaserHtml are bare <a> tags from legacy helpers, overridden to
+        // the legacy blue/purple by layout.css's global a:link/a:visited rules
+        // without this. Copilot finding on #227.
+        ?>
+        <div class="mt-2 flex flex-wrap items-baseline gap-x-3 gap-y-1 not-italic text-slate-500 [&_p]:inline [&_p]:m-0 [&_a]:!text-slate-500 [&_a]:hover:!text-teal-700 [&_a]:!no-underline">
             <?php echo $item->contextLinkHtml ?>
             <?php echo $item->commentTeaserHtml ?>
         </div>
