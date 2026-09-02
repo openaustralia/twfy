@@ -177,6 +177,21 @@ class HansardSpeechViewTest extends TestCase {
     }
 
     /**
+     * A chair role like "The Deputy Speaker" can have a person_id but no
+     * member_id (see buildRoster()'s own comment on this) - speakerId falls back
+     * to person_id so the roster still has a stable dedup key for them.
+     */
+    public function test_forSpeech_falls_back_to_person_id_when_member_id_is_absent() {
+        $row = $this->speechRow([
+            'speaker' => $this->speaker(['member_id' => null, 'person_id' => 555]),
+        ]);
+
+        $view = HansardSpeechView::forSpeech($row, $this->info(), true);
+
+        $this->assertSame('555', $view->speakerId);
+    }
+
+    /**
      *
      */
     public function test_forSpeech_leaves_speaker_fields_null_when_the_row_has_no_speaker() {
