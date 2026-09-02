@@ -234,6 +234,32 @@ class HansardSpeechView {
         return $roster;
     }
 
+    /**
+     * The transcript card's prev/up/next pagination bar, from $DATA->page_metadata()'s
+     * 'nextprev' shape - each direction is optional. 'up' is relabelled from "See the
+     * whole debate" to "All House/Senate debates on this day", pointing at $dateUrl
+     * instead - label/url/title must all change together, or title (the hover
+     * tooltip) goes stale. Sentry finding on #227.
+     */
+    public static function buildNextPrev(array $nextprevdata, string $chamberTitle, string $dateUrl): array {
+        $nextPrev = [];
+        foreach (['prev', 'up', 'next'] as $direction) {
+            if (isset($nextprevdata[$direction]['body'])) {
+                $nextPrev[$direction] = [
+                    'label' => $nextprevdata[$direction]['body'],
+                    'url' => $nextprevdata[$direction]['url'] ?? null,
+                    'title' => $nextprevdata[$direction]['title'] ?? '',
+                ];
+            }
+        }
+        if (isset($nextPrev['up'])) {
+            $nextPrev['up']['label'] = 'All ' . $chamberTitle . ' on this day';
+            $nextPrev['up']['url'] = $dateUrl;
+            $nextPrev['up']['title'] = $nextPrev['up']['label'];
+        }
+        return $nextPrev;
+    }
+
 }
 
 /**

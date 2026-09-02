@@ -73,45 +73,15 @@ if ($usePlatesTemplate) {
     // "All Senate debates on 18 August 2026 / « Previous debate / Next debate »" -
     // was the stripe-foot block at the bottom of the page (still is, for non-Plates
     // majors - see the guarded stripe_start('foot') below); its own block in the
-    // right-hand column here instead. Same page metadata $PAGE->nextprevlinks()
-    // itself reads, set earlier by HANSARDLIST::_get_nextprev_items() - each of
-    // prev/up/next is optional (eg no "prev" on the very first debate ever
-    // recorded), and a present one isn't always a link (nextprevlinks() falls back
-    // to plain text with no 'url' in some cases too).
-    $nextPrev = [];
+    // right-hand column here instead. See HansardSpeechView::buildNextPrev() for
+    // the actual label/url/title logic (directly unit-tested there, unlike this
+    // file).
     $nextprevdata = $DATA->page_metadata($this_page, 'nextprev') ?: [];
-    foreach (['prev', 'up', 'next'] as $direction) {
-        if (isset($nextprevdata[$direction]['body'])) {
-            $nextPrev[$direction] = [
-                'label' => $nextprevdata[$direction]['body'],
-                'url' => $nextprevdata[$direction]['url'] ?? null,
-                'title' => $nextprevdata[$direction]['title'] ?? '',
-            ];
-        }
-    }
-    if (isset($nextPrev['up'])) {
-        // The server-built label ("All Senate debates on 18 Aug 2026", or
-        // sometimes just "See the whole debate" - depends which branch of
-        // HANSARDLIST::_get_nextprev_items() fired) repeats the date already
-        // shown in the card's own header above. "on this day" instead of the
-        // date - the actual date the link goes to is still right there in
-        // $date/$dateUrl, this is just the "see everything" link's own label.
-        //
-        // The URL needs overwriting along with the label, not just the label:
-        // HANSARDLIST::_get_nextprev_items()'s ordinary-item branch (the one that
-        // reaches here) points 'up' at the parent subsection/section's own page,
-        // labelled "See the whole debate" to match - accurate for that URL, but a
-        // different destination to the day-listing page this new "All ... on this
-        // day" label promises. $dateURL is that day-listing page, already built
-        // above for the card's own date link.
-        $nextPrev['up']['label'] = 'All ' . ($hansardmajors[$data['info']['major']]['title'] ?? 'debates') . ' on this day';
-        $nextPrev['up']['url'] = $dateURL->generate('none');
-        // title (the hover tooltip, pagination.php) needs overwriting along with
-        // label/url - it otherwise keeps the parent subsection/section's name
-        // from HANSARDLIST::_get_nextprev_items(), stale against the new
-        // destination and label above.
-        $nextPrev['up']['title'] = $nextPrev['up']['label'];
-    }
+    $nextPrev = HansardSpeechView::buildNextPrev(
+        $nextprevdata,
+        $hansardmajors[$data['info']['major']]['title'] ?? 'debates',
+        $dateURL->generate('none')
+    );
 }
 
 $PAGE->page_start();
