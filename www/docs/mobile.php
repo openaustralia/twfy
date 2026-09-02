@@ -2,6 +2,12 @@
 
 /**
  * @file
+ * Legacy mobile front page, reached via the mobile device rewrite (see
+ * hansard_gid_mobile.php's own note for the general mechanism). Slated for
+ * removal (openaustralia/openaustralia#943) along with the rest of mobile.php -
+ * it will not be receiving the front-page redesign (index.php, PR #228). Fix
+ * bugs found here only if they're trivial; otherwise file an issue instead of
+ * investing further.
  */
 
 $_SERVER['DEVICE_TYPE'] = "mobile";
