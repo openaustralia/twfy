@@ -108,7 +108,7 @@
         </div>
 
         <?php if ($speech->sourceUrl || $speech->contextLinkHtml || $speech->commentTeaserHtml || $speech->permalinkUrl): ?>
-            <div class="mt-3 text-sm text-slate-500 space-x-3">
+            <div class="mt-3 flex flex-wrap items-baseline gap-x-3 gap-y-1 text-sm text-slate-500 [&_p]:inline [&_p]:m-0">
                 <?php if ($speech->sourceUrl): ?>
                     <a href="<?php echo $this->e($speech->sourceUrl) ?>" class="!text-slate-500 hover:!text-teal-700 !no-underline"
                         title="The source of this piece of text">📄 <?php echo $this->e($speech->sourceLabel) ?></a>
@@ -116,13 +116,6 @@
                 <?php echo $speech->contextLinkHtml ?>
                 <?php echo $speech->commentTeaserHtml ?>
                 <?php if ($speech->permalinkUrl): ?>
-                    <?php
-                    // Same "Link to this" the old stripe rendering showed for every
-                    // speech (hansard_gid.php's non-Plates path) - HansardSpeechView
-                    // already computed permalinkUrl (from $row['commentsurl']), but
-                    // nothing here read it, so it silently stopped appearing at all
-                    // for these two majors.
-                    ?>
                     <a href="<?php echo $this->e($speech->permalinkUrl) ?>" class="!text-slate-500 hover:!text-teal-700 !no-underline"
                         title="Copy this URL to link directly to this piece of text">🔗 Link to this</a>
                 <?php endif; ?>
