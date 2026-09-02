@@ -9,7 +9,7 @@
     <li><a href="#missing">Is this the whole of Hansard?</a></li>
     <li><a href="#privacy">What is your Privacy Policy?</a></li>
     <li><a href="#cookie">What is your Cookie Policy?</a></li>
-    <li><a href="#extreme">What's that weird 'urchin' javascript I spy in your page source?</a></li>
+    <li><a href="#extreme">What's that Plausible script I spy in your page source?</a></li>
     <li><a href="#rss">What is RSS?</a></li>
     <li><a href="#votingrecord">How is the voting record decided?</a></li>
     <li><a href="#numbers">Why should I read in more depth than just the numbers?</a></li>
@@ -76,12 +76,13 @@
 
 
     <!-- start new faq entry -->
-    <dt><a name="extreme"></a>What's that weird 'urchin' javascript I spy in your page source?</dt>
+    <dt><a name="extreme"></a>What's that Plausible script I spy in your page source?</dt>
     <dd>
-        <p>We use Google Analytics to track aggregated traffic through the website. It captures nothing that you won't
-            find in an Apache logfile, but has an interface we like, and is dead easy to use. Rest assured, we only
-            track usage data for one reason only: to help us understand how we can make the site work better for you
-            lot. If anyone wants to whinge about 'Web Bugs', expect short shrift. </p>
+        <p>We use <a href="https://plausible.io" rel="nofollow noreferrer noopener" target="_blank">Plausible</a>, a privacy-friendly analytics tool, to track
+            aggregated traffic through the website - which pages get visited, and how many people are visiting.
+            Unlike Google Analytics, which we used to run, Plausible doesn't use cookies, doesn't track you
+            across other websites, and doesn't store your IP address or build any profile of you. We only track
+            usage data for one reason: to help us understand how we can make the site work better for you lot.</p>
     </dd>
     <!-- end old faq entry -->
 

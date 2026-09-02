@@ -430,11 +430,11 @@ if (isset($data['rows'])) {
         // are already on the page, one click away either way.
 
         // A subsection heading (htype 11) isn't guaranteed to occur before this
-        // renders - transcript.php puts $subsectionTitle in the page's main <h1>,
+        // renders - transcript.php puts $subsectionTitle in the card's main <h2>,
         // unlike the old stripe-head-2 rendering above (h5, well below $section_title's
         // own h4), so a still-unset '&nbsp;' sentinel here would show as a blank
         // headline instead of a barely-noticeable blank second line. When that
-        // happens, $section_title becomes the <h1> instead, and drops out of the
+        // happens, $section_title becomes the <h2> instead, and drops out of the
         // eyebrow line above it so it isn't shown twice.
         $hasSubsectionTitle = $subsection_title !== '&nbsp;';
 

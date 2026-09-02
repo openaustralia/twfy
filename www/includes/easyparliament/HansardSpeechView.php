@@ -148,8 +148,15 @@ class HansardSpeechView {
      */
     private static function speakerDescription(array $speaker): string {
         $desc = '';
-        if ($speaker['party'] != 'Speaker' && $speaker['party'] != 'Deputy Speaker'
-            && $speaker['party'] != 'President' && $speaker['constituency']) {
+        // member.party stores the raw code (SPK/CWM/DCWM/PRES/DPRES - see
+        // dbtypes.php's $parties), not a display name - checking against
+        // 'Speaker'/'Deputy Speaker'/'President' here never matched any of
+        // them. $parties itself is unused everywhere else too, so $speaker
+        // ['party'] below still prints the raw code rather than a readable
+        // name - a separate, pre-existing issue (openaustralia/openaustralia#953),
+        // not fixed here since it needs wiring up that lookup properly.
+        $chairRoleCodes = ['SPK', 'CWM', 'DCWM', 'PRES', 'DPRES'];
+        if (!in_array($speaker['party'], $chairRoleCodes) && $speaker['constituency']) {
             $desc .= $speaker['constituency'] . ', ';
         }
         $desc .= $speaker['party'];

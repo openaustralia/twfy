@@ -10,6 +10,7 @@ if (defined('OPTION_TRACKING') && OPTION_TRACKING) {
 
 include_once __DIR__ . '/member.php';
 include_once __DIR__ . '/../request.php';
+include_once __DIR__ . '/PlausibleView.php';
 
 /**
  *
@@ -328,24 +329,24 @@ class PAGE {
                 <?php
             }
 
-            if (!DEVSITE) {
-                ?>
-
-                <script type="text/javascript">
-                    var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
-                    document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
-                </script>
-                <script type="text/javascript">
-                    var pageTracker = _gat._getTracker("UA-3107958-3");
-                    pageTracker._initData();
-                    pageTracker._trackPageview();
-                </script>
-
-            <?php } ?>
+            echo $this->analytics_tag();
+            ?>
 
         </head>
 
         <?php
+    }
+
+    /**
+     * The analytics tag for page_header()'s/page_header_mobile()'s <head>.
+     * Was Google Analytics Classic (ga.js, UA-3107958-3) - dead since Google
+     * fully sunset every Universal Analytics property (any "UA-" one) on
+     * 1 July 2024, ga.js itself long before that. Replaced with Plausible.io
+     * Cloud - see PlausibleView.php's own comment for why this needs no
+     * secret, just PLAUSIBLE_SCRIPT_ID.
+     */
+    private function analytics_tag(): string {
+        return PlausibleView::renderTag(DEVSITE, defined('PLAUSIBLE_SCRIPT_ID') ? PLAUSIBLE_SCRIPT_ID : '');
     }
 
     /**
@@ -465,20 +466,8 @@ class PAGE {
                 <?php
             }
 
-            if (!DEVSITE) {
-                ?>
-
-                <script type="text/javascript">
-                    var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
-                    document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
-                </script>
-                <script type="text/javascript">
-                    var pageTracker = _gat._getTracker("UA-3107958-3");
-                    pageTracker._initData();
-                    pageTracker._trackPageview();
-                </script>
-
-            <?php } ?>
+            echo $this->analytics_tag();
+            ?>
 
         </head>
 
