@@ -101,7 +101,7 @@ class HansardPlatesViewsTest extends TestCase {
 
         $html = $this->engine->render('hansard/procedural', ['item' => $item]);
 
-        $this->assertStringNotContainsString('mt-2 not-italic', $html);
+        $this->assertStringNotContainsString('mt-2 flex flex-wrap items-baseline gap-x-3 gap-y-1 not-italic', $html);
     }
 
     /**
