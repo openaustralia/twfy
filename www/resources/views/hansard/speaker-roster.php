@@ -33,7 +33,7 @@
         <?php foreach ($speakers as $speaker): ?>
             <li class="flex items-start gap-3">
                 <?php if ($speaker->avatarUrl): ?>
-                    <?php $avatar = '<img src="' . $this->e($speaker->avatarUrl) . '" alt="Photo of ' . $this->e($speaker->name) . '" class="w-8 h-8 rounded-full flex-shrink-0 object-cover object-top">' ?>
+                    <?php $avatar = '<img src="' . $this->e($speaker->avatarUrl) . '" alt="' . $this->e($speaker->name) . '" class="w-8 h-8 rounded-full flex-shrink-0 object-cover object-top">' ?>
                 <?php else: ?>
                     <?php
                     // initials() (HansardSpeechView.php) can return '' - a chair role
