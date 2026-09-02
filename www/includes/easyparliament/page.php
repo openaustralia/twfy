@@ -10,6 +10,7 @@ if (defined('OPTION_TRACKING') && OPTION_TRACKING) {
 
 include_once __DIR__ . '/member.php';
 include_once __DIR__ . '/../request.php';
+include_once __DIR__ . '/SentryBrowserView.php';
 
 /**
  *
@@ -342,6 +343,44 @@ class PAGE {
                 </script>
 
             <?php } ?>
+
+            <?php
+            // Browser-side Sentry (JS errors, unlike init.php's PHP-side
+            // \Sentry\init() - see that file's own comment). Deliberately not added
+            // to page_header_mobile() below - mobile.php is on its way out entirely
+            // (#943), not worth instrumenting.
+            //
+            // Same DSN as server-side SENTRY_DSN, on purpose: one Sentry project to
+            // watch rather than two. A DSN's public key isn't secret in the
+            // confidentiality sense - it's designed to be embedded in client-side
+            // code (docs.sentry.io/product/security-legal-pii/security-policy-
+            // reporting/#is-the-dsn-a-secret) - so reusing it here isn't a
+            // confidentiality problem, just an earlier, since-reverted worry about a
+            // scraped key spamming fake events into the same project as server-side
+            // monitoring.
+            //
+            // Loader Script, not a versioned bundle URL: Sentry's own current
+            // recommended install method (docs.sentry.io/platforms/javascript/
+            // install/cdn/) - unlike a deploy action, an auto-updating monitoring SDK
+            // is the wanted property here, not a liability to pin a version against.
+            //
+            // The decision and the markup itself both live in SentryBrowserView -
+            // DEVSITE/SENTRY_DSN are define()'d once from conf/general, so a test can
+            // only exercise the "disabled" branch of a check against the real
+            // constants directly; taking them as plain parameters is what makes the
+            // "renders" branch reachable at all. See that class for why.
+            // SENTRY_ENVIRONMENT is always defined in every real conf/general
+            // (infrastructure's general.j2 templates it right next to SENTRY_DSN),
+            // but "unknown-fixme" rather than an undefined-constant fatal is the
+            // better failure mode if some future config ever drops it - loud enough
+            // in the Sentry environment tag to get noticed and fixed, without
+            // breaking every page render over a monitoring constant.
+            echo SentryBrowserView::renderTag(
+                DEVSITE,
+                defined('SENTRY_DSN') ? SENTRY_DSN : null,
+                defined('SENTRY_ENVIRONMENT') ? SENTRY_ENVIRONMENT : 'unknown-fixme'
+            );
+            ?>
 
         </head>
 

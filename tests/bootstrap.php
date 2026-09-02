@@ -68,6 +68,19 @@ if (!defined('WEBPATH')) {
     define('WEBPATH', '/');
 }
 
+// Unlike SENTRY_DSN (guarded with defined() at every call site, since being unset
+// is a normal, supported "SDK disabled" state - see conf/general-example.local-dev),
+// every real conf/general unconditionally defines SENTRY_ENVIRONMENT - it's not
+// optional the same way, so tests get it too rather than a defensive defined()
+// check spreading into application code that shouldn't need one. Caught by
+// page.php's page_header() passing it as a plain function argument
+// (SentryBrowserView::renderTag()) - PHP evaluates arguments before the call, so an
+// undefined constant there is a fatal error regardless of what the function does
+// with it.
+if (!defined('SENTRY_ENVIRONMENT')) {
+    define('SENTRY_ENVIRONMENT', 'development');
+}
+
 if (!defined('LONGDATEFORMAT')) {
     define('LONGDATEFORMAT', 'j F Y');
 }
