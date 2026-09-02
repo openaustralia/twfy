@@ -287,7 +287,11 @@ class HansardSpeechView {
      * Falls back subsection title -> section title -> the major's own label
      * ("House debates"/"Senate debates") when neither heading row occurred on the
      * page - a still-unset $sentinel title would otherwise reach transcript.php's
-     * <h2> literally.
+     * <h2> literally. eyebrowSectionTitle is the same section title shown in the
+     * card's eyebrow line, but blanked instead of left at $sentinel when only a
+     * subsection heading (htype 11, no htype 10) occurred - transcript.php treats
+     * any non-empty sectionTitle as real and renders a "·" separator before it.
+     * Sentry finding on #227.
      */
     public static function resolveTranscriptTitle(string $sectionTitle, string $subsectionTitle, string $sentinel, string $majorTitle): array {
         $hasSubsectionTitle = $subsectionTitle !== $sentinel;
@@ -295,7 +299,12 @@ class HansardSpeechView {
         if ($finalTitle === $sentinel) {
             $finalTitle = $majorTitle;
         }
-        return ['hasSubsectionTitle' => $hasSubsectionTitle, 'finalTitle' => $finalTitle];
+        $eyebrowSectionTitle = ($hasSubsectionTitle && $sectionTitle !== $sentinel) ? $sectionTitle : '';
+        return [
+            'hasSubsectionTitle' => $hasSubsectionTitle,
+            'finalTitle' => $finalTitle,
+            'eyebrowSectionTitle' => $eyebrowSectionTitle,
+        ];
     }
 
 }
