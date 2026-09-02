@@ -570,19 +570,14 @@ function context_link($row)
         return '';
     }
 
-    if ($row['htype'] == '12') {
-        $thing = 'speech';
-    } else {
-        $thing = 'item';
-    }
+    $thing = $row['htype'] == '12' ? 'speech' : 'item';
 
-    ob_start();
-    ?>
-    <p><small><strong><a href="<?php echo $row['listurl']; ?>" class="permalink"
-                    title="See this <?php echo $thing; ?> within the entire debate">See this <?php echo $thing; ?> in
-                    context</a></strong></small></p>
-    <?php
-    return ob_get_clean();
+    // Plain concatenation, not ob_start()/ob_get_clean(): this runs once per row on
+    // a transcript page, which can run to dozens of rows - avoidable buffering
+    // overhead for a string this simple. Copilot finding on #227.
+    return '<p><small><strong><a href="' . $row['listurl'] . '" class="permalink"'
+        . ' title="See this ' . $thing . ' within the entire debate">See this ' . $thing . ' in'
+        . ' context</a></strong></small></p>';
 }
 
 
