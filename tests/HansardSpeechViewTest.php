@@ -143,19 +143,37 @@ class HansardSpeechViewTest extends TestCase {
     }
 
     /**
-     * member.party stores the raw code for a chair role (SPK/CWM/DCWM/PRES/DPRES -
-     * see dbtypes.php's $parties), not a display name - a Deputy Speaker still
+     * HANSARDLIST::_get_speaker() translates the raw member.party code
+     * (SPK/CWM/DCWM/PRES/DPRES) into one of these hyphenated labels via
+     * dbtypes.php's $parties before $speaker reaches here - a chair role still
      * has a constituency on file, but showing it here would be misleading, since
      * they're not speaking as their electorate's member while in the chair.
      */
     public function test_forSpeech_omits_the_constituency_for_a_chair_role() {
+        foreach (['Speaker', 'Deputy-Speaker', 'President', 'Deputy-President'] as $chairRole) {
+            $row = $this->speechRow([
+                'speaker' => $this->speaker(['party' => $chairRole, 'constituency' => 'Queensland']),
+            ]);
+
+            $view = HansardSpeechView::forSpeech($row, $this->info(), true);
+
+            $this->assertSame($chairRole, $view->speakerDescription, "for party '$chairRole'");
+        }
+    }
+
+    /**
+     * A caller could hand speakerDescription() an empty 'office' array (eg a test
+     * fixture, or a future call site) rather than simply not setting the key -
+     * isset() alone would still try to read $speaker['office'][0] and warn.
+     */
+    public function test_forSpeech_tolerates_an_empty_office_array() {
         $row = $this->speechRow([
-            'speaker' => $this->speaker(['party' => 'CWM', 'constituency' => 'Queensland']),
+            'speaker' => $this->speaker(['office' => []]),
         ]);
 
         $view = HansardSpeechView::forSpeech($row, $this->info(), true);
 
-        $this->assertSame('CWM', $view->speakerDescription);
+        $this->assertSame('Queensland, Australian Greens', $view->speakerDescription);
     }
 
     /**
