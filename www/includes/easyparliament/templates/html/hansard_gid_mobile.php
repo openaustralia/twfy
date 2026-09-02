@@ -1,4 +1,11 @@
 <?php
+// Legacy mobile rendering path, reached via conf/httpd.conf.ubuntu's mobile rewrite
+// (docs/*/mobile.php, mobile=1) rather than hansard_gid.php. mobile.php itself is
+// slated for removal (openaustralia/openaustralia#943) and this template with it -
+// it will not be receiving the Plates redesign (openaustralia/openaustralia#939)
+// that hansard_gid.php got. Fix bugs found here only if they're trivial; otherwise
+// file an issue instead of investing further.
+//
 // For displaying the main Hansard content listings (by gid),
 // and individual Hansard items (the comments are handled separately
 // by COMMENTLIST and the comments.php template).

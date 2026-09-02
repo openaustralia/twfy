@@ -40,6 +40,14 @@ if (!isset($data['info'])) {
 // redesign plan for why. Reads $data['info']['major'], so this has to come after the
 // isset($data['info']) guard above, not before it - moving it here fixes a real
 // warning on the known bot-triggered no-data path that guard exists for.
+//
+// Mobile requests never reach this file at all - conf/httpd.conf.ubuntu rewrites
+// them to docs/*/mobile.php, which renders hansard_gid_mobile.php instead (a
+// separate legacy template, unaffected by $usePlatesTemplate here). That's
+// deliberate, not an oversight: mobile.php is slated for removal
+// (openaustralia/openaustralia#943), so it isn't getting the Plates redesign
+// either - see the note at the top of hansard_gid_mobile.php. Copilot finding on
+// #227.
 $usePlatesTemplate = in_array($data['info']['major'], [1, 101], true);
 $plates_items = [];
 if ($usePlatesTemplate) {
