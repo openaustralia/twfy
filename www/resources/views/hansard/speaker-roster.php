@@ -33,9 +33,16 @@
         <?php foreach ($speakers as $speaker): ?>
             <li class="flex items-start gap-3">
                 <?php if ($speaker->avatarUrl): ?>
-                    <?php $avatar = '<img src="' . $this->e($speaker->avatarUrl) . '" alt="Photo of ' . $this->e($speaker->name) . '" class="w-8 h-8 rounded-full flex-shrink-0 object-cover object-top">' ?>
+                    <?php $avatar = '<img src="' . $this->e($speaker->avatarUrl) . '" alt="' . $this->e($speaker->name) . '" class="w-8 h-8 rounded-full flex-shrink-0 object-cover object-top">' ?>
                 <?php else: ?>
-                    <?php $avatar = '<div class="w-8 h-8 rounded-full flex-shrink-0 bg-slate-200 text-slate-600 flex items-center justify-center font-semibold text-xs">' . $this->e($speaker->initials) . '</div>' ?>
+                    <?php
+                    // initials() (HansardSpeechView.php) can return '' - a chair role
+                    // like "The Deputy Speaker" can lack both first_name and last_name -
+                    // which would otherwise render this circle with nothing in it. Fall
+                    // back to the first letter of the resolved name instead.
+                    $fallbackLetter = $speaker->initials !== '' ? $speaker->initials : mb_strtoupper(mb_substr(trim($speaker->name), 0, 1));
+                    ?>
+                    <?php $avatar = '<div class="w-8 h-8 rounded-full flex-shrink-0 bg-slate-200 text-slate-600 flex items-center justify-center font-semibold text-xs">' . $this->e($fallbackLetter) . '</div>' ?>
                 <?php endif; ?>
                 <?php if ($speaker->url): ?>
                     <a href="<?php echo $this->e($speaker->url) ?>" class="!no-underline" title="See more information about <?php echo $this->e($speaker->name) ?>">
