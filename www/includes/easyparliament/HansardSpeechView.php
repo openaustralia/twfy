@@ -264,6 +264,21 @@ class HansardSpeechView {
         return $nextPrev;
     }
 
+    /**
+     * Falls back subsection title -> section title -> the major's own label
+     * ("House debates"/"Senate debates") when neither heading row occurred on the
+     * page - a still-unset $sentinel title would otherwise reach transcript.php's
+     * <h2> literally.
+     */
+    public static function resolveTranscriptTitle(string $sectionTitle, string $subsectionTitle, string $sentinel, string $majorTitle): array {
+        $hasSubsectionTitle = $subsectionTitle !== $sentinel;
+        $finalTitle = $hasSubsectionTitle ? $subsectionTitle : $sectionTitle;
+        if ($finalTitle === $sentinel) {
+            $finalTitle = $majorTitle;
+        }
+        return ['hasSubsectionTitle' => $hasSubsectionTitle, 'finalTitle' => $finalTitle];
+    }
+
 }
 
 /**
