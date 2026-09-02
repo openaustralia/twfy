@@ -222,7 +222,10 @@ class HansardSpeechView {
                 $roster[$key] = $entry;
             }
             $roster[$key]->speechCount++;
-            $roster[$key]->wordCount += str_word_count(strip_tags($item->bodyHtml));
+            // html_entity_decode() first: strip_tags() removes markup but leaves
+            // entities like "&#8212;" as literal text, which str_word_count() then
+            // counts as a word of its own, inflating the roster's ordering.
+            $roster[$key]->wordCount += str_word_count(html_entity_decode(strip_tags($item->bodyHtml)));
         }
 
         $roster = array_values($roster);
