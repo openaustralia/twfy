@@ -118,7 +118,7 @@ class HansardPlatesViewsTest extends TestCase {
         $html = $this->engine->render('hansard/speech', ['speech' => $speech]);
 
         $this->assertStringContainsString('src="/images/mpsL/100931.jpg"', $html);
-        $this->assertStringContainsString('alt="Photo of Penny Allman-Payne"', $html);
+        $this->assertStringContainsString('alt="Penny Allman-Payne"', $html);
         $this->assertStringContainsString('href="/senator/?m=100931"', $html);
         $this->assertStringContainsString('Penny Allman-Payne', $html);
         $this->assertStringContainsString('Queensland, Australian Greens', $html);

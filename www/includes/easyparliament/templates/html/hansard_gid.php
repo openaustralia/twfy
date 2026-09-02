@@ -11,6 +11,10 @@
 
 global $PAGE, $this_page, $GLOSSARY, $hansardmajors, $DATA;
 
+if (!defined('NO_TITLE_SENTINEL')) {
+    define('NO_TITLE_SENTINEL', '&nbsp;');
+}
+
 include_once __DIR__ . "/../../../easyparliament/searchengine.php";
 include_once __DIR__ . "/../../../easyparliament/member.php";
 include_once __DIR__ . "/../../../easyparliament/HansardSpeechView.php";
@@ -120,8 +124,8 @@ if (isset($data['rows'])) {
     // When we get the first subsection, we put its text in $subsection_title.
     // When we get the first item that is neither section or subsection, we
     // print these titles.
-    $section_title = '&nbsp;';
-    $subsection_title = '&nbsp;';
+    $section_title = NO_TITLE_SENTINEL;
+    $subsection_title = NO_TITLE_SENTINEL;
 
     // So we don't keep on printing the titles!
     $titles_displayed = false;
@@ -349,7 +353,7 @@ if (isset($data['rows'])) {
 
     } // End cycling through rows.
 
-    if ($usePlatesTemplate && count($plates_items) > 0) {
+    if ($usePlatesTemplate && !empty($plates_items)) {
         // stripe_start() below would otherwise auto-print $PAGE->heading() the first
         // time it's called on the page - "House debates"/"Senate debates" plus the
         // formatted date, sourced from page metadata set generically in
@@ -431,7 +435,7 @@ if (isset($data['rows'])) {
         // headline instead of a barely-noticeable blank second line. When that
         // happens, $section_title becomes the <h2> instead, and drops out of the
         // eyebrow line above it so it isn't shown twice.
-        $hasSubsectionTitle = $subsection_title !== '&nbsp;';
+        $hasSubsectionTitle = $subsection_title !== NO_TITLE_SENTINEL;
 
         echo $platesEngine->render('hansard/transcript', [
             'items' => $plates_items,

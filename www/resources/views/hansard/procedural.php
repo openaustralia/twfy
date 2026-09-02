@@ -16,7 +16,7 @@
     <?php echo $item->bodyHtml /* pre-sanitised hansard body HTML, same pipeline as the old rendering path */ ?>
 
     <?php if ($item->contextLinkHtml || $item->commentTeaserHtml): ?>
-        <div class="mt-2 not-italic text-slate-500 space-x-3">
+        <div class="mt-2 flex flex-wrap items-baseline gap-x-3 gap-y-1 not-italic text-slate-500 [&_p]:inline [&_p]:m-0">
             <?php echo $item->contextLinkHtml ?>
             <?php echo $item->commentTeaserHtml ?>
         </div>
