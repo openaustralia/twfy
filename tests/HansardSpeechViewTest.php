@@ -506,6 +506,39 @@ class HansardSpeechViewTest extends TestCase {
     }
 
     /**
+     * The plain case: prev/up/next all present, 'up' relabelled to point at the
+     * day-listing page instead of $DATA->page_metadata()'s own "See the whole
+     * debate" (the parent subsection/section's page).
+     */
+    public function test_buildNextPrev_relabels_the_up_link_to_the_day_listing_page() {
+        $nextPrev = HansardSpeechView::buildNextPrev([
+            'prev' => ['body' => 'Motions', 'url' => '/debates/?id=1', 'title' => 'Previous debate'],
+            'up' => ['body' => 'See the whole debate', 'url' => '/debates/?id=2'],
+            'next' => ['body' => 'Adjournment', 'url' => '/debates/?id=3', 'title' => 'Next debate'],
+        ], 'House debates', '/debates/?d=2026-08-20');
+
+        $this->assertSame('Motions', $nextPrev['prev']['label']);
+        $this->assertSame('All House debates on this day', $nextPrev['up']['label']);
+        $this->assertSame('/debates/?d=2026-08-20', $nextPrev['up']['url']);
+        $this->assertSame('All House debates on this day', $nextPrev['up']['title']);
+        $this->assertSame('Adjournment', $nextPrev['next']['label']);
+    }
+
+    /**
+     * Each of prev/up/next is independently optional - the very first debate ever
+     * recorded has no 'prev' at all, for instance.
+     */
+    public function test_buildNextPrev_omits_directions_with_no_data() {
+        $nextPrev = HansardSpeechView::buildNextPrev([
+            'next' => ['body' => 'Adjournment', 'url' => '/debates/?id=3'],
+        ], 'House debates', '/debates/?d=2026-08-20');
+
+        $this->assertArrayNotHasKey('prev', $nextPrev);
+        $this->assertArrayNotHasKey('up', $nextPrev);
+        $this->assertArrayHasKey('next', $nextPrev);
+    }
+
+    /**
      * Two letters (eg "LT" for Lidia Thorpe), matching the mockup's own placeholder
      * avatars - not the single first-letter-of-the-full-name-string this used before,
      * which would also have wrongly included a title ("S" for "Senator ...", not the
