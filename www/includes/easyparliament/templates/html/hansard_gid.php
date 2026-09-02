@@ -424,6 +424,11 @@ if (isset($data['rows'])) {
             // above for the card's own date link.
             $nextPrev['up']['label'] = 'All ' . ($hansardmajors[$data['info']['major']]['title'] ?? 'debates') . ' on this day';
             $nextPrev['up']['url'] = $dateURL->generate('none');
+            // title (the hover tooltip, pagination.php) needs overwriting along with
+            // label/url - it otherwise keeps the parent subsection/section's name
+            // from HANSARDLIST::_get_nextprev_items(), stale against the new
+            // destination and label above.
+            $nextPrev['up']['title'] = $nextPrev['up']['label'];
         }
 
         // A subsection heading (htype 11) isn't guaranteed to occur before this
