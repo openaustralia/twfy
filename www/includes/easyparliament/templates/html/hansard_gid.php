@@ -442,6 +442,16 @@ if (isset($data['rows'])) {
         // eyebrow line above it so it isn't shown twice.
         $hasSubsectionTitle = $subsection_title !== NO_TITLE_SENTINEL;
 
+        // Neither $section_title nor $subsection_title is guaranteed to have been
+        // set by the row loop above (an htype-10/11 heading row isn't guaranteed to
+        // exist at all) - falling back to the chamber label rather than passing the
+        // sentinel through to transcript.php's <h2>, which would otherwise render
+        // the literal '&nbsp;'.
+        $finalTitle = $hasSubsectionTitle ? $subsection_title : $section_title;
+        if ($finalTitle === NO_TITLE_SENTINEL) {
+            $finalTitle = $hansardmajors[$data['info']['major']]['title'] ?? 'Debate';
+        }
+
         echo $platesEngine->render('hansard/transcript', [
             'items' => $plates_items,
             'speakers' => HansardSpeechView::buildRoster($plates_items),
@@ -451,7 +461,7 @@ if (isset($data['rows'])) {
             // in the card's eyebrow line instead, so it's not lost, just moved.
             'chamberLabel' => $hansardmajors[$data['info']['major']]['title'] ?? '',
             'sectionTitle' => $hasSubsectionTitle ? $section_title : '',
-            'subsectionTitle' => $hasSubsectionTitle ? $subsection_title : $section_title,
+            'subsectionTitle' => $finalTitle,
             // Matches LONGERDATEFORMAT (what the suppressed old h3 used, eg "Tuesday, 18
             // August 2026") rather than the plain 'j F Y' this used before.
             'date' => date('l, j F Y', strtotime($data['info']['date'])),
