@@ -150,15 +150,16 @@ lint-php-ci lint-php:
 	find -L www scripts -iregex '.*\.php$$' -print0 | xargs -0 -n 1 -P 4 php -l
 
 lint-perl-ci lint-perl:
-	find -L www scripts -iregex '.*\.pl$$' ! -path '*/archived/*' -print0 | xargs -0 -n 1 perl -c
+	find -L www scripts search -iregex '.*\.pl$$' ! -path '*/archived/*' -print0 | xargs -0 -n 1 perl -c
 
 lint-perl-critic:
-	# -r/--no-run-if-empty: the -iregex below matches zero files (find's default
-	# BRE dialect treats the unescaped parens/pipe as literal characters, not
-	# grouping/alternation - see openaustralia/openaustralia#936), so without
-	# -r, xargs invokes perlcritic once anyway with no file argument, and its
-	# behaviour reading an empty stdin varies by environment.
-	find -L scripts -iregex '.*\.(pl|pm)$$' ! -path '*/archived/*' -print0 | xargs -0 -r -n 1 perlcritic --profile .perlcriticrc
+	# -r (--no-run-if-empty) matters here. find's default regex mode treats
+	# the parentheses and pipe in -iregex as plain characters, not grouping
+	# or alternation (see openaustralia/openaustralia#936), so the -iregex
+	# below matches no files. Without -r, xargs would still run perlcritic
+	# once with no file argument, and its behaviour on empty stdin varies
+	# by environment.
+	find -L scripts search -iregex '.*\.(pl|pm)$$' ! -path '*/archived/*' -print0 | xargs -0 -r -n 1 perlcritic --profile .perlcriticrc
 
 phpcs:
 	./vendor/bin/phpcs --standard=phpcs.xml --tab-width=4 --report=summary www scripts $(PHPCS_ARGS)

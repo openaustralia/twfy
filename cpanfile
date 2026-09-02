@@ -1,5 +1,5 @@
 requires 'DBI';
-requires 'DBD::mysql';
+requires 'DBD::mysql', '4.032';
 requires 'HTML::Entities';
 requires 'HTML::Parser';
 requires 'LWP::Simple';
