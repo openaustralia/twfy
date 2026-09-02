@@ -20,19 +20,19 @@ sub read {
 
 if (0) {
 	my $content= get($url) || die "couldn't fetch $url\n";
-	open (OUT, ">/tmp/cab_cttes.pdf") || die "can't write to temp file /tmp/cab_cttes.pdf:$!";
-	print OUT $content;
-	close(OUT);
+	open (my $out, '>', "/tmp/cab_cttes.pdf") || die "can't write to temp file /tmp/cab_cttes.pdf:$!";
+	print $out $content;
+	close($out);
 	`pdftotext -layout /tmp/cab_cttes.pdf`;
 }
 	my @lines;
-	open (IN, "</tmp/cab_cttes.txt") || die "can't open /tmp/cab_cttes.txt $!";
-	foreach my $l (<IN>) {
+	open (my $in, '<', "/tmp/cab_cttes.txt") || die "can't open /tmp/cab_cttes.txt $!";
+	foreach my $l (<$in>) {
 		chomp($l);
 		next if $l =~ m#^\s*$#;
 		push @lines, $l;
 	}
-	close (IN);
+	close ($in);
 	return (@lines);
 }
 

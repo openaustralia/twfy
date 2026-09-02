@@ -3,7 +3,7 @@
 
 # Indexer of OpenAustralia.org using Xapian.
 
-#use strict;
+use strict;
 use Carp;
 use Search::Xapian qw(:standard);
 use HTML::Parser;
@@ -38,7 +38,7 @@ die "As second parameter, specify:
 my $db_host = $ENV{DB_HOST} || mySociety::Config::get('DB_HOST');
 my $db_port = $ENV{DB_PORT} || 3306;
 my $dsn = 'DBI:mysql:database=' . mySociety::Config::get('DB_NAME') . ':host=' . $db_host . ':port=' . $db_port;
-$dbh = DBI->connect($dsn, mySociety::Config::get('DB_USER'), mySociety::Config::get('DB_PASSWORD'), { RaiseError => 1, PrintError => 0, mysql_enable_utf8mb4 => 1 });
+my $dbh = DBI->connect($dsn, mySociety::Config::get('DB_USER'), mySociety::Config::get('DB_PASSWORD'), { RaiseError => 1, PrintError => 0, mysql_enable_utf8mb4 => 1 });
 
 # Work out when to update from, for "sincefile" case
 my $since_date_condition = "";
@@ -50,9 +50,9 @@ if ($action eq "sincefile") {
 
     if (-e $lastupdatedfile) {
         # Read unix time from file
-        open FH, "<$lastupdatedfile" or die "couldn't open $lastupdatedfile even though it is there";
-        $since_date_condition = " and hansard.modified >= from_unixtime('" . (readline FH) . "')";
-        close FH;
+        open my $fh, '<', $lastupdatedfile or die "couldn't open $lastupdatedfile even though it is there";
+        $since_date_condition = " and hansard.modified >= from_unixtime('" . (readline $fh) . "')";
+        close $fh;
     } else {
         # No file, update everything
         $since_date_condition = "";
@@ -206,9 +206,9 @@ if ($action ne "check") {
     # Write out date we updated to, for 'sincefile' case
     if ($action eq "sincefile") {
 	    # print "updating sincefile\n";
-        open FH, ">$lastupdatedfile.tmp" or die "couldn't write to $lastupdatedfile.tmp";
-        print FH "$now_start_string";
-        close FH;
+        open my $fh, '>', "$lastupdatedfile.tmp" or die "couldn't write to $lastupdatedfile.tmp";
+        print $fh "$now_start_string";
+        close $fh;
         rename "$lastupdatedfile.tmp", $lastupdatedfile;
     }
 } else {

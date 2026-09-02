@@ -193,9 +193,9 @@ sub process_type {
 
         my $process;
         my $xsince = 0;
-        if (open FH, '<' . $xdirs->[0] . 'xml2db-lastload') {
-                $xsince = readline FH;
-                close FH;
+        if (open my $fh, '<', $xdirs->[0] . 'xml2db-lastload') {
+                $xsince = readline $fh;
+                close $fh;
         }
         my @xmaxtime;
         my $xmaxfile = "";
@@ -266,9 +266,9 @@ sub process_type {
                         # the same second, and next time it might get the other)
                         #print "$xname since: $xsince new max $xmaxtime from changedates\n";
                         my $xdir = $xdirs->[0];
-                        open FH, ">${xdir}xml2db-lastload" or die "couldn't open ${xdir}xml2db-lastload for writing";
-                        print FH $xxmaxtime;
-                        close FH;
+                        open my $fh, '>', "${xdir}xml2db-lastload" or die "couldn't open ${xdir}xml2db-lastload for writing";
+                        print $fh $xxmaxtime;
+                        close $fh;
                 }
         }
 }
@@ -1882,7 +1882,7 @@ sub do_load_gidredirect
         $gradd->finish();
 }
 
-sub encode_entities_noapos($) {
+sub encode_entities_noapos {
         my $s = shift;
         encode_entities($s);
         $s =~ s/&#39;/'/;

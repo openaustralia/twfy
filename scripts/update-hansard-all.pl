@@ -20,14 +20,14 @@ my $dbh = DBI->connect($dsn, mySociety::Config::get('DB_USER'), mySociety::Confi
 
 my $sth = $dbh->prepare("UPDATE hansard SET htime=? WHERE gid = ?");
 for my $file (sort </home/fawkes/hansard-updates/h*>) {
-        open FP, $file;
-        while (<FP>) {
+        open my $fp, '<', $file;
+        while (<$fp>) {
                 next if /^--/;
                 my ($gid, $time) = split /\t/;
                 next unless $time;
                 $sth->execute($time, "uk.org.publicwhip/debate/$gid");
         }
-        close FP;
+        close $fp;
 }
 
 $dbh->disconnect();

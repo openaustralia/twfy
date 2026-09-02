@@ -73,8 +73,8 @@ $rss->channel(
 	my $filename= $dept_name;
 	$filename =~ s/[^a-z0-9]//gi;
 
-	open (OUT, ">$Output_Dir/$filename.rss") || die "can't open $Output_Dir/$filename.rss:$!";
-	print OUT $rss->as_string;
-	close (OUT);
+	open (my $out, '>', "$Output_Dir/$filename.rss") || die "can't open $Output_Dir/$filename.rss:$!";
+	print $out $rss->as_string;
+	close ($out);
 }
 

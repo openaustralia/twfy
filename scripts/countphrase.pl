@@ -19,8 +19,11 @@
 #   1475 Foreign Secretary 
 # ...
 
-$currentphrase = "";
-$c = 0;
+use strict;
+use warnings;
+
+my $currentphrase = "";
+my $c = 0;
 
 while (<>)
 {
@@ -37,15 +40,15 @@ while (<>)
     # Convert bad quotes of X
     s/\bX([A-Z])/ $1/;
 
-    # Strip any other characters 
+    # Strip any other characters
     s/[.,-:;?&]/ punctuation /g;
     s/[^a-zA-Z ]//g;
 
     # Split into words
-    split /\s/;
+    my @words = split /\s/;
 
     # Loop through words
-    foreach (@_)
+    foreach (@words)
     {
         # Strip whitespace from ends
         s/^\s+//;

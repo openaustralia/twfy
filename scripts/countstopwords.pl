@@ -5,10 +5,11 @@
 # Use something like this:
 # $ cat ~/pwdata/scrapedxml/debates/2004-05*.xml | ./countphrase.pl  >out
 
+use strict;
+use warnings;
 use Data::Dumper;
 
-$c = 0;
-$counts = {};
+my $counts = {};
 
 while (<>)
 {
@@ -25,18 +26,18 @@ while (<>)
     # Convert bad quotes of X
     s/\bX([A-Z])/ $1/;
 
-    # Strip any other characters 
+    # Strip any other characters
     s/[.,-:;?&]/ /g;
     s/[^a-zA-Z ]//g;
 
     # Split into words
-    split /\s/;
+    my @words = split /\s/;
 
-	$lastword = "";
-	$lastlastword = "";
+	my $lastword = "";
+	my $lastlastword = "";
 
     # Loop through words
-    foreach (@_)
+    foreach (@words)
     {
         # Strip whitespace from ends
         s/^\s+//;
@@ -45,7 +46,7 @@ while (<>)
         next if ($_ eq "");
 
 		$_ = lc $_;
-		$counts->{$_}++;		
+		$counts->{$_}++;
 
 		if ($lastword ne "") {
 			$counts->{"$lastword $_"}++;
@@ -59,7 +60,7 @@ while (<>)
     }
 }
 
-@sorted = sort { $counts->{$a} <=> $counts->{$b} } keys %$counts;
+my @sorted = sort { $counts->{$a} <=> $counts->{$b} } keys %$counts;
 foreach (@sorted) {
 	print $_ . " " . $counts->{$_} . "\n";
 }

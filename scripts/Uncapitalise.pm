@@ -1,6 +1,9 @@
 
 package Uncapitalise;
 
+use strict;
+use warnings;
+
 # To test, this one liner is useful:
 # perl -MUncapitalise -e 'while (my $line = <STDIN>) { Uncapitalise::format($line); print $line; }'
 
@@ -24,7 +27,7 @@ qw {
     RAF MoD DoT HIV AIDS ADHD EU LGC BSE BCCI NHS TUC
 };
 
-sub format ($) {
+sub format {
 	# do most stuff
     $_[0] = join('', map { exists($canonical{lc($_)}) ? $canonical{lc($_)} : (/[aeiouy]/i ? uc(substr($_, 0, 1)) . lc(substr($_, 1)) : uc($_)) } grep { $_ ne '' } split(/([()\-.,;\s\/\\\[\]]+)/, $_[0]));
 
