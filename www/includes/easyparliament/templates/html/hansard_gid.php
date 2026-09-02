@@ -425,7 +425,7 @@ if (isset($data['rows'])) {
         // nor $subsection_title is guaranteed to have been set by the row loop
         // above (an htype-10/11 heading row isn't guaranteed to exist at all). One
         // line deliberately - see buildNextPrev()'s call above for why.
-        ['hasSubsectionTitle' => $hasSubsectionTitle, 'finalTitle' => $finalTitle, 'eyebrowSectionTitle' => $eyebrowSectionTitle] = HansardSpeechView::resolveTranscriptTitle($section_title, $subsection_title, NO_TITLE_SENTINEL, $hansardmajors[$data['info']['major']]['title'] ?? 'Debate');
+        ['finalTitle' => $finalTitle, 'eyebrowSectionTitle' => $eyebrowSectionTitle] = HansardSpeechView::resolveTranscriptTitle($section_title, $subsection_title, NO_TITLE_SENTINEL, $hansardmajors[$data['info']['major']]['title'] ?? 'Debate');
 
         echo $platesEngine->render('hansard/transcript', [
             'items' => $plates_items,
