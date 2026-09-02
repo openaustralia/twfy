@@ -193,4 +193,33 @@ class FrontPageView {
         return $firstSpeechBySpeaker;
     }
 
+    /**
+     * One "Latest Activity" item, from values www/docs/index.php's own
+     * latest_activity_items() has already resolved (some via real DB lookups,
+     * eg $speakers) - moreSpeakersCount here so the caller doesn't also have to
+     * import its "count($speakers), not count($shownSpeakerIds)" reasoning
+     * (see that function's own comment on why).
+     *
+     * @param string $title
+     *   Already-safe HTML (same source as summarizeTopics()'s own subsection
+     *   titles) - not re-escaped here.
+     * @param array<int, HansardSpeakerRosterEntry> $speakers
+     *   Only the ones actually resolved/shown - see firstSpeechBySpeaker()'s
+     *   caller for why a lookup can come back short of $totalSpeakers.
+     * @param int $totalSpeakers
+     *   Every distinct speaker in the section, whether or not their lookup
+     *   made it into $speakers - count($firstSpeechBySpeaker) at the call site.
+     * @param array{topics: array<int, array{title: string, url: string}>, moreCount: int} $topicsSummary
+     *   summarizeTopics()'s own return shape.
+     */
+    public static function buildActivityItem(string $title, array $speakers, int $totalSpeakers, array $topicsSummary): array {
+        return [
+            'title' => $title,
+            'speakers' => $speakers,
+            'moreSpeakersCount' => max(0, $totalSpeakers - count($speakers)),
+            'topics' => $topicsSummary['topics'],
+            'moreTopicsCount' => $topicsSummary['moreCount'],
+        ];
+    }
+
 }

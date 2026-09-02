@@ -273,19 +273,11 @@ function latest_activity_items($LIST, $major, $date) {
             $entry->firstSpeechUrl = $speechURL->generate('none') . '#g' . gid_to_anchor(fix_gid_from_db($firstSpeech['speech_gid']));
             $speakers[] = $entry;
         }
-        // count($speakers), not count($shownSpeakerIds): the latter is attempted
-        // lookups, not what's actually rendered - _get_speaker() can come back empty
-        // for one of them (skipped above), which would otherwise undercount "+N more"
-        // by however many lookups failed.
-        $moreSpeakersCount = max(0, count($firstSpeechBySpeaker) - count($speakers));
-
-        $items[] = [
-            'title' => $q->field($i, 'body'),
-            'speakers' => $speakers,
-            'moreSpeakersCount' => $moreSpeakersCount,
-            'topics' => $topics['topics'],
-            'moreTopicsCount' => $topics['moreCount'],
-        ];
+        // See FrontPageView::buildActivityItem() for the "+N more" maths
+        // (count($speakers), not count($shownSpeakerIds) - the latter is
+        // attempted lookups, not what's actually rendered) - directly
+        // unit-tested there, unlike this file.
+        $items[] = FrontPageView::buildActivityItem($q->field($i, 'body'), $speakers, count($firstSpeechBySpeaker), $topics);
     }
 
     return $items;

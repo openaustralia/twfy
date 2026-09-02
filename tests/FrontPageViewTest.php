@@ -324,6 +324,34 @@ class FrontPageViewTest extends TestCase {
     }
 
     /**
+     *
+     */
+    public function test_buildActivityItem_assembles_the_item_from_already_resolved_values() {
+        $topicsSummary = ['topics' => [['title' => 'Migration Amendment Bill', 'url' => '/x']], 'moreCount' => 2];
+
+        $item = FrontPageView::buildActivityItem('Bills', ['speaker-a'], 1, $topicsSummary);
+
+        $this->assertSame('Bills', $item['title']);
+        $this->assertSame(['speaker-a'], $item['speakers']);
+        $this->assertSame($topicsSummary['topics'], $item['topics']);
+        $this->assertSame(2, $item['moreTopicsCount']);
+    }
+
+    /**
+     * count($speakers), not $totalSpeakers - $totalSpeakers - the latter is attempted
+     * lookups, not what's actually shown: a speaker lookup can come back empty and
+     * get skipped, which would otherwise undercount "+N more" by however many
+     * lookups failed. See www/docs/index.php's own latest_activity_items().
+     */
+    public function test_buildActivityItem_counts_more_speakers_against_the_shown_speakers_not_the_attempted_lookups() {
+        $topicsSummary = ['topics' => [], 'moreCount' => 0];
+
+        $item = FrontPageView::buildActivityItem('Bills', ['speaker-a'], 3, $topicsSummary);
+
+        $this->assertSame(2, $item['moreSpeakersCount']);
+    }
+
+    /**
      * @return array{speaker_id: int, speech_gid: string, subsection_gid: string}
      */
     private function speechRow(int $speakerId, string $speechGid, string $subsectionGid): array {
