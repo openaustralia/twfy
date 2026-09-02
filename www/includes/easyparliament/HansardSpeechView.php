@@ -5,9 +5,12 @@
  * Plain view models for the Plates-rendered debate transcript (House representatives
  * and Senate only - major 1 and 101, see hansard_gid.php). Each one takes the existing
  * $row HansardObjectData array (documented at the bottom of hansard_gid.php) and turns
- * it into a finished, escaping-agnostic set of fields - no HTML strings, no direct
- * echo/print, no $PAGE-> calls. The Plates template is the only thing that turns these
- * into markup; this class is the only thing that reads $row's raw fields.
+ * it into a finished, escaping-agnostic set of fields - some (bodyHtml,
+ * contextLinkHtml, commentTeaserHtml) do carry pre-built, pre-sanitised HTML through
+ * from existing helpers, but this class builds no markup structure of its own: no
+ * direct echo/print, no $PAGE-> calls. The Plates template is the only thing that
+ * turns these into a finished page; this class is the only thing that reads $row's
+ * raw fields.
  *
  * See openaustralia/openaustralia#939 for why this split exists.
  */

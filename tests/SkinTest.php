@@ -3,9 +3,10 @@
 /**
  * @file
  * SKIN::output_stylesheets() - no DB, no $PAGE, just the stylesheet <link> tags for
- * whichever skin is selected. Constructed directly rather than via `new SKIN()` (its
- * constructor reads a global $this_page and a cookie) so the test controls the skin
- * outright.
+ * whichever skin is selected. `new SKIN()` itself is harmless (its constructor's
+ * $this_page/cookie branches just resolve to the default skin here) - $skin is
+ * overwritten directly afterwards, bypassing set_skin()'s validation, so the test
+ * controls the skin outright.
  */
 
 use PHPUnit\Framework\TestCase;
