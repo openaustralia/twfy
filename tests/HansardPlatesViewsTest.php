@@ -270,7 +270,7 @@ class HansardPlatesViewsTest extends TestCase {
 
         $html = $this->engine->render('hansard/speech', ['speech' => $speech]);
 
-        $this->assertStringNotContainsString('mt-3 text-sm text-slate-500 space-x-3', $html);
+        $this->assertStringNotContainsString('mt-3 flex flex-wrap items-baseline gap-x-3 gap-y-1 text-sm text-slate-500', $html);
     }
 
     /**
