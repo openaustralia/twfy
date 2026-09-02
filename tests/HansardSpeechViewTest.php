@@ -283,6 +283,23 @@ class HansardSpeechViewTest extends TestCase {
     }
 
     /**
+     * A named MP's own speech can legitimately mention the word "interjecting" in
+     * its prose (eg quoting or describing someone else) - only the anonymous,
+     * unresolved-speaker case should get the interjection treatment. Copilot
+     * finding on #227.
+     */
+    public function test_forSpeech_does_not_flag_a_named_speakers_speech_as_an_interjection() {
+        $row = $this->speechRow([
+            'speaker' => $this->speaker(),
+            'body' => '<p>The member opposite was interjecting throughout my speech.</p>',
+        ]);
+
+        $view = HansardSpeechView::forSpeech($row, $this->info(), true);
+
+        $this->assertFalse($view->isInterjection);
+    }
+
+    /**
      *
      */
     public function test_forSpeech_handles_a_null_body_without_a_typeerror() {
@@ -503,6 +520,39 @@ class HansardSpeechViewTest extends TestCase {
         $roster = HansardSpeechView::buildRoster($items);
 
         $this->assertSame('KG', $roster[0]->initials);
+    }
+
+    /**
+     * The plain case: prev/up/next all present, 'up' relabelled to point at the
+     * day-listing page instead of $DATA->page_metadata()'s own "See the whole
+     * debate" (the parent subsection/section's page).
+     */
+    public function test_buildNextPrev_relabels_the_up_link_to_the_day_listing_page() {
+        $nextPrev = HansardSpeechView::buildNextPrev([
+            'prev' => ['body' => 'Motions', 'url' => '/debates/?id=1', 'title' => 'Previous debate'],
+            'up' => ['body' => 'See the whole debate', 'url' => '/debates/?id=2'],
+            'next' => ['body' => 'Adjournment', 'url' => '/debates/?id=3', 'title' => 'Next debate'],
+        ], 'House debates', '/debates/?d=2026-08-20');
+
+        $this->assertSame('Motions', $nextPrev['prev']['label']);
+        $this->assertSame('All House debates on this day', $nextPrev['up']['label']);
+        $this->assertSame('/debates/?d=2026-08-20', $nextPrev['up']['url']);
+        $this->assertSame('All House debates on this day', $nextPrev['up']['title']);
+        $this->assertSame('Adjournment', $nextPrev['next']['label']);
+    }
+
+    /**
+     * Each of prev/up/next is independently optional - the very first debate ever
+     * recorded has no 'prev' at all, for instance.
+     */
+    public function test_buildNextPrev_omits_directions_with_no_data() {
+        $nextPrev = HansardSpeechView::buildNextPrev([
+            'next' => ['body' => 'Adjournment', 'url' => '/debates/?id=3'],
+        ], 'House debates', '/debates/?d=2026-08-20');
+
+        $this->assertArrayNotHasKey('prev', $nextPrev);
+        $this->assertArrayNotHasKey('up', $nextPrev);
+        $this->assertArrayHasKey('next', $nextPrev);
     }
 
     /**

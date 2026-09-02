@@ -85,7 +85,11 @@ class HansardSpeechView {
         // Matches "interjecting" alone, not "interjecting" + a dash: real body text
         // stores the dash as the entity "&#8212;", not a literal em-dash/hyphen
         // character, so requiring one right after the word never matched anything.
-        $view->isInterjection = (bool) preg_match('/\binterjecting\b/i', $row['body'] ?? '');
+        // speakerName === null: without this, a named MP's own speech that merely
+        // mentions "interjecting" in its prose would wrongly get the amber
+        // interjection card too. Copilot finding on #227.
+        $view->isInterjection = $view->speakerName === null
+            && (bool) preg_match('/\binterjecting\b/i', $row['body'] ?? '');
 
         if (isset($row['source_url']) && $row['source_url'] != '') {
             $view->sourceUrl = $row['source_url'];
@@ -251,6 +255,32 @@ class HansardSpeechView {
         usort($roster, fn($a, $b) => $b->wordCount <=> $a->wordCount);
 
         return $roster;
+    }
+
+    /**
+     * The transcript card's prev/up/next pagination bar, from $DATA->page_metadata()'s
+     * 'nextprev' shape - each direction is optional. 'up' is relabelled from "See the
+     * whole debate" to "All House/Senate debates on this day", pointing at $dateUrl
+     * instead - label/url/title must all change together, or title (the hover
+     * tooltip) goes stale. Sentry finding on #227.
+     */
+    public static function buildNextPrev(array $nextprevdata, string $chamberTitle, string $dateUrl): array {
+        $nextPrev = [];
+        foreach (['prev', 'up', 'next'] as $direction) {
+            if (isset($nextprevdata[$direction]['body'])) {
+                $nextPrev[$direction] = [
+                    'label' => $nextprevdata[$direction]['body'],
+                    'url' => $nextprevdata[$direction]['url'] ?? null,
+                    'title' => $nextprevdata[$direction]['title'] ?? '',
+                ];
+            }
+        }
+        if (isset($nextPrev['up'])) {
+            $nextPrev['up']['label'] = 'All ' . $chamberTitle . ' on this day';
+            $nextPrev['up']['url'] = $dateUrl;
+            $nextPrev['up']['title'] = $nextPrev['up']['label'];
+        }
+        return $nextPrev;
     }
 
 }
