@@ -138,9 +138,10 @@ div.stripe-side {
 	background: #EBECCF; /* NAT */
 	}
 
-/* Only used by hansard_gid.php/hansard_gid_mobile.php (the debate page's title,
-   section heading and prev/next bar) - replaced the old khaki/pink (#EBECCF,
-   #FDF5F5) with the neutral slate used by the rest of the redesigned chrome. */
+/* Used by hansard_gid.php/hansard_gid_mobile.php (the debate page's title,
+   section heading and prev/next bar) and hansard/index.php's own header stripe -
+   replaced the old khaki/pink (#EBECCF, #FDF5F5) with the neutral slate used by
+   the rest of the redesigned chrome. */
 div.stripe-head-1,
 div.stripe-head-2,
 div.stripe-foot {

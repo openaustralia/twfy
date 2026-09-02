@@ -69,7 +69,8 @@ class HansardSpeechView {
 
             // $smallonly=false here (the old stripe rendering passed true): that 'S'
             // size is only 44x59px, fine floated at its natural size but blurry
-            // upscaled into a 48px circle. 'L' (88x118, same aspect ratio) downscales
+            // upscaled into the 64px/32px circles the templates use (speech.php,
+            // speaker-roster.php). 'L' (88x118, same aspect ratio) downscales
             // instead, which looks sharp - see speech.php for the matching object-top
             // crop, since these are head-and-shoulders portraits with more empty
             // space below the shoulders than above the head.
