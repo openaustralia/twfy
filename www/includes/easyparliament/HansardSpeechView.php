@@ -219,6 +219,11 @@ class HansardSpeechView {
         if (isset($nextPrev['up'])) {
             $nextPrev['up']['label'] = 'All ' . $chamberTitle . ' on this day';
             $nextPrev['up']['url'] = $dateUrl;
+            // Title (the hover tooltip, pagination.php) needs overwriting along with
+            // label/url - it otherwise keeps the parent subsection/section's name
+            // from HANSARDLIST::_get_nextprev_items(), stale against the new
+            // destination and label above.
+            $nextPrev['up']['title'] = $nextPrev['up']['label'];
         }
         return $nextPrev;
     }
