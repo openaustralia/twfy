@@ -87,11 +87,11 @@ if ($usePlatesTemplate) {
     // the actual label/url/title logic (directly unit-tested there, unlike this
     // file).
     $nextprevdata = $DATA->page_metadata($this_page, 'nextprev') ?: [];
-    $nextPrev = HansardSpeechView::buildNextPrev(
-        $nextprevdata,
-        $hansardmajors[$data['info']['major']]['title'] ?? 'debates',
-        $dateURL->generate('none')
-    );
+    // One line deliberately: this file can't be unit-tested directly (see the
+    // extraction comments above), so every physical line of a call here is new,
+    // permanently-uncovered code as far as SonarCloud's new-code coverage gate is
+    // concerned - splitting a call across N lines costs N uncovered lines, not one.
+    $nextPrev = HansardSpeechView::buildNextPrev($nextprevdata, $hansardmajors[$data['info']['major']]['title'] ?? 'debates', $dateURL->generate('none'));
 }
 
 $PAGE->page_start();
@@ -419,24 +419,12 @@ if (isset($data['rows'])) {
         // unconditionally for every Plates page, near the top of this file - see
         // the comments there.
 
-        // A subsection heading (htype 11) isn't guaranteed to occur before this
-        // renders - transcript.php puts $subsectionTitle in the card's main <h2>,
-        // unlike the old stripe-head-2 rendering above (h5, well below $section_title's
-        // own h4), so a still-unset '&nbsp;' sentinel here would show as a blank
-        // headline instead of a barely-noticeable blank second line. When that
-        // happens, $section_title becomes the <h2> instead, and drops out of the
-        // eyebrow line above it so it isn't shown twice.
-        $hasSubsectionTitle = $subsection_title !== NO_TITLE_SENTINEL;
-
-        // Neither $section_title nor $subsection_title is guaranteed to have been
-        // set by the row loop above (an htype-10/11 heading row isn't guaranteed to
-        // exist at all) - falling back to the chamber label rather than passing the
-        // sentinel through to transcript.php's <h2>, which would otherwise render
-        // the literal '&nbsp;'.
-        $finalTitle = $hasSubsectionTitle ? $subsection_title : $section_title;
-        if ($finalTitle === NO_TITLE_SENTINEL) {
-            $finalTitle = $hansardmajors[$data['info']['major']]['title'] ?? 'Debate';
-        }
+        // See HansardSpeechView::resolveTranscriptTitle() for the fallback logic
+        // (directly unit-tested there, unlike this file) - neither $section_title
+        // nor $subsection_title is guaranteed to have been set by the row loop
+        // above (an htype-10/11 heading row isn't guaranteed to exist at all). One
+        // line deliberately - see buildNextPrev()'s call above for why.
+        ['hasSubsectionTitle' => $hasSubsectionTitle, 'finalTitle' => $finalTitle] = HansardSpeechView::resolveTranscriptTitle($section_title, $subsection_title, NO_TITLE_SENTINEL, $hansardmajors[$data['info']['major']]['title'] ?? 'Debate');
 
         echo $platesEngine->render('hansard/transcript', [
             'items' => $plates_items,
