@@ -111,13 +111,13 @@
             <div class="mt-3 flex flex-wrap items-baseline gap-x-3 gap-y-1 text-sm text-slate-500 [&_p]:inline [&_p]:m-0">
                 <?php if ($speech->sourceUrl): ?>
                     <a href="<?php echo $this->e($speech->sourceUrl) ?>" class="!text-slate-500 hover:!text-teal-700 !no-underline"
-                        title="The source of this piece of text">📄 <?php echo $this->e($speech->sourceLabel) ?></a>
+                        title="The source of this piece of text"><span aria-hidden="true">📄</span> <?php echo $this->e($speech->sourceLabel) ?></a>
                 <?php endif; ?>
                 <?php echo $speech->contextLinkHtml ?>
                 <?php echo $speech->commentTeaserHtml ?>
                 <?php if ($speech->permalinkUrl): ?>
                     <a href="<?php echo $this->e($speech->permalinkUrl) ?>" class="!text-slate-500 hover:!text-teal-700 !no-underline"
-                        title="Copy this URL to link directly to this piece of text">🔗 Link to this</a>
+                        title="Copy this URL to link directly to this piece of text"><span aria-hidden="true">🔗</span> Link to this</a>
                 <?php endif; ?>
             </div>
         <?php endif; ?>
