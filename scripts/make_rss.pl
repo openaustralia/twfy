@@ -69,9 +69,9 @@ sub debates_rss {
         description => "<ul>\n\n$body\n\n</ul>\n"
     );
 
-    open(FP, '>' . mySociety::Config::get('BASEDIR') . "/$file") or die $!;
-    print FP $rss->as_string;
-    close FP;
+    open(my $fp, '>', mySociety::Config::get('BASEDIR') . "/$file") or die $!;
+    print $fp $rss->as_string;
+    close $fp;
 }
 
 sub wms_rss {
@@ -119,9 +119,9 @@ sub wms_rss {
             description => $result->{body}
         );
     }
-    open (FP, '>' . mySociety::Config::get('BASEDIR') . "/wms/wms.rss") or die $!;
-    print FP $rss->as_string;
-    close FP;
+    open(my $fp, '>', mySociety::Config::get('BASEDIR') . "/wms/wms.rss") or die $!;
+    print $fp $rss->as_string;
+    close $fp;
 }
 
 sub wrans_rss {
@@ -160,9 +160,9 @@ sub wrans_rss {
             description => $result->{body}
         );
     }
-    open (FP, '>' . mySociety::Config::get('BASEDIR') . "/wrans/wrans.rss") or die $!;
-    print FP $rss->as_string;
-    close FP;
+    open(my $fp, '>', mySociety::Config::get('BASEDIR') . "/wrans/wrans.rss") or die $!;
+    print $fp $rss->as_string;
+    close $fp;
 }
 
 sub pbc_rss {
@@ -189,9 +189,9 @@ sub pbc_rss {
                 link => "http://www.openaustralia.org/pbc/$session/$u_title",
         );
     }
-    open (FP, '>' . mySociety::Config::get('BASEDIR') . "/pbc/pbc.rss") or die $!;
-    print FP $rss->as_string;
-    close FP;
+    open(my $fp, '>', mySociety::Config::get('BASEDIR') . "/pbc/pbc.rss") or die $!;
+    print $fp $rss->as_string;
+    close $fp;
 }
 
 sub member_full_name {

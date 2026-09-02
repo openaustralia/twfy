@@ -4,12 +4,13 @@
 
 package Syllable;
 
+use strict;
+use vars qw/ $VERSION $REVISION @AddSyl @SubSyl @ISA @EXPORT @EXPORT_OK /;
+
 require Exporter;
 @ISA = qw/ Exporter /;
 @EXPORT = qw/ syllable /;
 @EXPORT_OK = qw/ @AddSyl @SubSyl /;
-use vars qw/ $VERSION $REVISION @AddSyl @SubSyl /;
-use strict;
 
 use FindBin;
 
@@ -17,12 +18,12 @@ $VERSION = '0.251';
 $REVISION = '$Id: Syllable.pm,v 1.2 2007/05/14 16:47:41 twfy-live Exp $ ';
 
 my %lookup;
-open(FP, "$FindBin::Bin/Syllable.txt") or die $!;
-while (<FP>) {
+open(my $fp, '<', "$FindBin::Bin/Syllable.txt") or die $!;
+while (<$fp>) {
 	my @row = split;
 	$lookup{$row[0]} = $row[1];
 }
-close FP;
+close $fp;
 
 # basic algortithm:
 # each vowel-group indicates a syllable, except for:
