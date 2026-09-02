@@ -23,7 +23,7 @@
     ?>">
     <?php if ($speech->avatarUrl): ?>
         <img src="<?php echo $this->e($speech->avatarUrl) ?>"
-            alt="Photo of <?php echo $this->e($speech->speakerName ?? '') ?>"
+            alt="<?php echo $this->e($speech->speakerName ?? '') ?>"
             class="w-16 h-16 rounded-full flex-shrink-0 object-cover object-top">
     <?php elseif ($speech->speakerInitials): ?>
         <div class="w-16 h-16 rounded-full flex-shrink-0 bg-slate-200 text-slate-600 flex items-center justify-center font-semibold text-lg">
