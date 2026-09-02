@@ -19,7 +19,12 @@
     <div class="lg:grid lg:grid-cols-3 lg:gap-6 lg:items-start">
     <div class="lg:col-span-2 bg-white rounded-2xl shadow-lg p-6 md:p-8 space-y-8">
         <div>
-            <h1 class="text-3xl md:text-4xl font-bold text-slate-900 leading-tight"><?php echo $subsectionTitle /* already-safe HTML, same source as the old stripe-head-2 heading */ ?></h1>
+            <?php
+            // h2, not h1: page.php's title_bar() already renders the site logo as
+            // the page's one <h1> on every page (page_body(), unconditional) - a
+            // second <h1> here breaks the document outline.
+            ?>
+            <h2 class="text-3xl md:text-4xl font-bold text-slate-900 leading-tight"><?php echo $subsectionTitle /* already-safe HTML, same source as the old stripe-head-2 heading */ ?></h2>
             <?php
             // "House debates"/"Senate debates" - was its own heading above the card
             // (see the $PAGE->heading_displayed suppression in hansard_gid.php); now
