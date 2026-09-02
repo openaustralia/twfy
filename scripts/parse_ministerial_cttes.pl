@@ -95,6 +95,20 @@ sub process {
 }
 
 
+sub _append_to_last {
+    # A "continuation" line belongs on the end of the last member entry, but
+    # there might not be one yet (eg an errant leading fragment before any
+    # real member line) - $members[$#members] on an empty array is index -1,
+    # which throws "Modification of non-creatable array value attempted"
+    # rather than autovivifying. Fall back to a new entry instead.
+    my ($arrayref, $text) = @_;
+    if (@$arrayref) {
+        $arrayref->[-1] .= " " . $text;
+    } else {
+        push @$arrayref, $text;
+    }
+}
+
 sub cleanup_members {
     my $ref= shift;
     foreach my $ctte (keys %{$ref}) {
@@ -104,12 +118,12 @@ sub cleanup_members {
             # pass 1 - rules. does most of the checkable cleanup.
             foreach my $member (@{$ref->{$ctte}->{$subctte}->{'composition'}}) {
                 if ($member =~ m#^[\(a-z]#) { #titles all start with a capital letter
-                    $members[$#members] .= " " . $member;
-                } elsif ($member =~ m#^[^(]+\)#) { # tings which have a closing bracket by no opening are continuations
-                    $members[$#members] .= " " . $member;
+                    _append_to_last(\@members, $member);
+                } elsif ($member =~ m#^[^(]+\)#) { # things which have a closing bracket but no opening are continuations
+                    _append_to_last(\@members, $member);
                 } elsif ($member =~ m#^\s+\d+\s*$#)  { # errant page numbers
                 } elsif ($member =~ m#^\S+\s*$#)  { # positions all have more than one word
-                    $members[$#members] .= " " . $member;
+                    _append_to_last(\@members, $member);
                 } else {
                     push @members, $member;
                 }
@@ -132,7 +146,7 @@ sub cleanup_members {
                     } elsif ($member =~ m#^Also has the right to attend$#) {
                         $attendance= "[Right to Attend] ";
                     } else {
-                        $members[$#members] .= " " . $member;
+                        _append_to_last(\@members, $member);
                     }
                     #$members[$#members] .= " " . $member;
                 }
