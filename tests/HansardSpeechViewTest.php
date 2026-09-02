@@ -563,6 +563,20 @@ class HansardSpeechViewTest extends TestCase {
 
         $this->assertTrue($result['hasSubsectionTitle']);
         $this->assertSame('Health Funding', $result['finalTitle']);
+        $this->assertSame('Motions', $result['eyebrowSectionTitle']);
+    }
+
+    /**
+     * An htype-11 row occurred with no preceding htype-10 row - $sectionTitle is
+     * still the sentinel even though $hasSubsectionTitle is true. transcript.php
+     * treats any non-empty sectionTitle as real and renders a "·" separator before
+     * it, so the sentinel itself must never reach there. Sentry finding on #227.
+     */
+    public function test_resolveTranscriptTitle_blanks_the_eyebrow_section_title_when_only_the_sentinel_is_set() {
+        $result = HansardSpeechView::resolveTranscriptTitle('&nbsp;', 'Health Funding', '&nbsp;', 'House debates');
+
+        $this->assertTrue($result['hasSubsectionTitle']);
+        $this->assertSame('', $result['eyebrowSectionTitle']);
     }
 
     /**

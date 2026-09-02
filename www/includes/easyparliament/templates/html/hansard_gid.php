@@ -397,20 +397,21 @@ if (isset($data['rows'])) {
 
     } // End cycling through rows.
 
-    if ($usePlatesTemplate && !empty($plates_items)) {
-        // stripe_start() below would otherwise auto-print $PAGE->heading() the first
-        // time it's called on the page - "House debates"/"Senate debates" plus the
-        // formatted date, sourced from page metadata set generically in
+    if ($usePlatesTemplate) {
+        // No !empty($plates_items) guard: transcript.php already handles a blank
+        // $items list gracefully (see the elseif ($usePlatesTemplate) branch
+        // further down, for when $data['rows'] is unset entirely). A Plates-major
+        // page whose rows are all headings (htype 10/11, no htype 12/13) used to
+        // reach here with $plates_items still empty and fall through to the
+        // legacy <h4>/<h5> stripe below instead of the new card. Sentry finding
+        // on #227.
+        //
+        // stripe_start() below would otherwise auto-print $PAGE->heading() the
+        // first time it's called on the page - "House debates"/"Senate debates"
+        // plus the formatted date, sourced from page metadata set generically in
         // set_hansard_headings(). The card (transcript.php) carries both instead -
-        // the chamber label next to the section title, the date in its own row below
-        // - so suppress the original to avoid showing either twice. Set only here,
-        // inside count($plates_items) > 0, not unconditionally on $usePlatesTemplate
-        // alone: every stripe_start() call in the row loop above is already gated
-        // behind $usePlatesTemplate (each takes an early continue instead), so
-        // nothing there needs this set early - and a Plates-major page with zero
-        // rows to show falls through to the plain $section_title/$subsection_title
-        // stripe_start('head-2') fallback further down, which does still need
-        // $PAGE->heading() to fire normally, or the page loses its heading entirely.
+        // the chamber label next to the section title, the date in its own row
+        // below - so suppress the original to avoid showing either twice.
         $PAGE->heading_displayed = true;
 
         // $chamberNames/$dateURL/$aboutBodyHtml/$nextPrev: computed once,
@@ -422,7 +423,7 @@ if (isset($data['rows'])) {
         // nor $subsection_title is guaranteed to have been set by the row loop
         // above (an htype-10/11 heading row isn't guaranteed to exist at all). One
         // line deliberately - see buildNextPrev()'s call above for why.
-        ['hasSubsectionTitle' => $hasSubsectionTitle, 'finalTitle' => $finalTitle] = HansardSpeechView::resolveTranscriptTitle($section_title, $subsection_title, NO_TITLE_SENTINEL, $hansardmajors[$data['info']['major']]['title'] ?? 'Debate');
+        ['hasSubsectionTitle' => $hasSubsectionTitle, 'finalTitle' => $finalTitle, 'eyebrowSectionTitle' => $eyebrowSectionTitle] = HansardSpeechView::resolveTranscriptTitle($section_title, $subsection_title, NO_TITLE_SENTINEL, $hansardmajors[$data['info']['major']]['title'] ?? 'Debate');
 
         echo $platesEngine->render('hansard/transcript', [
             'items' => $plates_items,
@@ -432,7 +433,7 @@ if (isset($data['rows'])) {
             // $PAGE->heading_displayed suppression below). Shown next to $section_title
             // in the card's eyebrow line instead, so it's not lost, just moved.
             'chamberLabel' => $hansardmajors[$data['info']['major']]['title'] ?? '',
-            'sectionTitle' => $hasSubsectionTitle ? $section_title : '',
+            'sectionTitle' => $eyebrowSectionTitle,
             'subsectionTitle' => $finalTitle,
             // Matches LONGERDATEFORMAT (what the suppressed old h3 used, eg "Tuesday, 18
             // August 2026") rather than the plain 'j F Y' this used before.
@@ -454,7 +455,11 @@ if (isset($data['rows'])) {
         ]);
     }
 
-    if (!$titles_displayed) {
+    if (!$titles_displayed && !$usePlatesTemplate) {
+        // The Plates block above now always renders for a Plates-major page
+        // (titles included, via resolveTranscriptTitle()'s fallback) - this
+        // legacy stripe is the non-Plates path's own equivalent, and would
+        // otherwise still fire for a Plates page whose rows are all headings.
         $PAGE->stripe_start('head-2');
         ?>
         <h4><?php echo $section_title; ?></h4>
