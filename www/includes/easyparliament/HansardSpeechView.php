@@ -102,7 +102,11 @@ class HansardSpeechView {
         // Matches "interjecting" alone, not "interjecting" + a dash: real body text
         // stores the dash as the entity "&#8212;", not a literal em-dash/hyphen
         // character, so requiring one right after the word never matched anything.
-        $view->isInterjection = (bool) preg_match('/\binterjecting\b/i', $row['body'] ?? '');
+        // speakerName === null: without this, a named MP's own speech that merely
+        // mentions "interjecting" in its prose would wrongly get the amber
+        // interjection card too. Copilot finding on #227.
+        $view->isInterjection = $view->speakerName === null
+            && (bool) preg_match('/\binterjecting\b/i', $row['body'] ?? '');
 
         if (isset($row['source_url']) && $row['source_url'] != '') {
             $view->sourceUrl = $row['source_url'];

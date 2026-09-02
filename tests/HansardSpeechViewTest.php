@@ -283,6 +283,23 @@ class HansardSpeechViewTest extends TestCase {
     }
 
     /**
+     * A named MP's own speech can legitimately mention the word "interjecting" in
+     * its prose (eg quoting or describing someone else) - only the anonymous,
+     * unresolved-speaker case should get the interjection treatment. Copilot
+     * finding on #227.
+     */
+    public function test_forSpeech_does_not_flag_a_named_speakers_speech_as_an_interjection() {
+        $row = $this->speechRow([
+            'speaker' => $this->speaker(),
+            'body' => '<p>The member opposite was interjecting throughout my speech.</p>',
+        ]);
+
+        $view = HansardSpeechView::forSpeech($row, $this->info(), true);
+
+        $this->assertFalse($view->isInterjection);
+    }
+
+    /**
      *
      */
     public function test_forSpeech_handles_a_null_body_without_a_typeerror() {
