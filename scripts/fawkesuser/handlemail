@@ -95,7 +95,7 @@ exit(0) unless defined($status); # Could not be parsed as an RFC1892/1894 DSN
 exit(0) if ($status !~ /^5\./ || $status eq '5.2.2');
 
 # Okay, so we have a permanent failure bounce, delete this person's alerts
-my $dbh = DBI->connect($config::dsn, $config::user, $config::pass, { RaiseError => 1, PrintError => 0 });
+my $dbh = DBI->connect($config::dsn, $config::user, $config::pass, { RaiseError => 1, PrintError => 0, mysql_enable_utf8mb4 => 1 });
 $dbh->do('update alerts set deleted=1 where email = (select email from alerts where alert_id=?)', {}, $id);
 $dbh->disconnect();
 exit(0);
