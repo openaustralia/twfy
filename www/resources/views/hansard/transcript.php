@@ -37,7 +37,12 @@
                     <?php endif; ?>
                 </p>
             <?php endif; ?>
-            <h1 class="text-3xl md:text-4xl font-bold text-slate-900 leading-tight"><?php echo $subsectionTitle /* already-safe HTML, same source as the old stripe-head-2 heading */ ?></h1>
+            <?php
+            // h2, not h1: page.php's title_bar() already renders the site logo as
+            // the page's one <h1> on every page (page_body(), unconditional) - a
+            // second <h1> here breaks the document outline.
+            ?>
+            <h2 class="text-3xl md:text-4xl font-bold text-slate-900 leading-tight"><?php echo $subsectionTitle /* already-safe HTML, same source as the old stripe-head-2 heading */ ?></h2>
             <div class="mt-3 flex items-center gap-4 text-sm text-slate-600">
                 <?php if ($dateUrl): ?>
                     <?php

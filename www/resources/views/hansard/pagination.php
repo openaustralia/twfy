@@ -54,14 +54,14 @@ $navLabel = $edge == 'top' ? 'Debate navigation' : 'Debate navigation, end of tr
             <?php if ($nextPrev['prev']['url']): ?>
                 <a href="<?php echo $this->e($nextPrev['prev']['url']) ?>"
                     class="group block rounded-lg px-4 py-2.5 !no-underline hover:bg-slate-50 transition-colors">
-                    <span class="block text-xs font-semibold uppercase tracking-wide text-slate-600 group-hover:text-teal-700">⬅️ <?php echo $this->e($nextPrev['prev']['label']) ?></span>
+                    <span class="block text-xs font-semibold uppercase tracking-wide text-slate-600 group-hover:text-teal-700"><span aria-hidden="true">⬅️</span> <?php echo $this->e($nextPrev['prev']['label']) ?></span>
                     <?php if ($nextPrev['prev']['title']): ?>
                         <span class="block text-sm font-medium !text-slate-900 truncate"><?php echo $this->e($nextPrev['prev']['title']) ?></span>
                     <?php endif; ?>
                 </a>
             <?php else: ?>
                 <div class="block rounded-lg px-4 py-2.5">
-                    <span class="block text-xs font-semibold uppercase tracking-wide text-slate-300">⬅️ <?php echo $this->e($nextPrev['prev']['label']) ?></span>
+                    <span class="block text-xs font-semibold uppercase tracking-wide text-slate-300"><span aria-hidden="true">⬅️</span> <?php echo $this->e($nextPrev['prev']['label']) ?></span>
                 </div>
             <?php endif; ?>
         <?php endif; ?>
@@ -81,14 +81,14 @@ $navLabel = $edge == 'top' ? 'Debate navigation' : 'Debate navigation, end of tr
             <?php if ($nextPrev['next']['url']): ?>
                 <a href="<?php echo $this->e($nextPrev['next']['url']) ?>"
                     class="group block rounded-lg px-4 py-2.5 sm:text-right !no-underline hover:bg-slate-50 transition-colors">
-                    <span class="block text-xs font-semibold uppercase tracking-wide text-slate-600 group-hover:text-teal-700"><?php echo $this->e($nextPrev['next']['label']) ?> ➡️</span>
+                    <span class="block text-xs font-semibold uppercase tracking-wide text-slate-600 group-hover:text-teal-700"><?php echo $this->e($nextPrev['next']['label']) ?> <span aria-hidden="true">➡️</span></span>
                     <?php if ($nextPrev['next']['title']): ?>
                         <span class="block text-sm font-medium !text-slate-900 truncate"><?php echo $this->e($nextPrev['next']['title']) ?></span>
                     <?php endif; ?>
                 </a>
             <?php else: ?>
                 <div class="block rounded-lg px-4 py-2.5 sm:text-right">
-                    <span class="block text-xs font-semibold uppercase tracking-wide text-slate-300"><?php echo $this->e($nextPrev['next']['label']) ?> ➡️</span>
+                    <span class="block text-xs font-semibold uppercase tracking-wide text-slate-300"><?php echo $this->e($nextPrev['next']['label']) ?> <span aria-hidden="true">➡️</span></span>
                 </div>
             <?php endif; ?>
         <?php endif; ?>
