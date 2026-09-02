@@ -153,12 +153,12 @@ lint-perl-ci lint-perl:
 	find -L www scripts search -iregex '.*\.pl$$' ! -path '*/archived/*' -print0 | xargs -0 -n 1 perl -c
 
 lint-perl-critic:
-	# -r (--no-run-if-empty) matters here. find's default regex mode treats
-	# the parentheses and pipe in -iregex as plain characters, not grouping
-	# or alternation (see openaustralia/openaustralia#936), so the -iregex
-	# below matches no files. Without -r, xargs would still run perlcritic
-	# once with no file argument, and its behaviour on empty stdin varies
-	# by environment.
+	# -r (--no-run-if-empty) stops xargs running perlcritic with no file
+	# argument when -iregex matches nothing. find's default regex mode
+	# treats -iregex's parentheses and pipe as plain characters, not
+	# grouping or alternation (see openaustralia/openaustralia#936), so it
+	# matches no files here. Without -r, perlcritic's behaviour on empty
+	# stdin varies by environment.
 	find -L scripts search -iregex '.*\.(pl|pm)$$' ! -path '*/archived/*' -print0 | xargs -0 -r -n 1 perlcritic --profile .perlcriticrc
 
 phpcs:
