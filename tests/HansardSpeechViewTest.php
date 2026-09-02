@@ -556,6 +556,38 @@ class HansardSpeechViewTest extends TestCase {
     }
 
     /**
+     *
+     */
+    public function test_resolveTranscriptTitle_prefers_the_subsection_title_when_set() {
+        $result = HansardSpeechView::resolveTranscriptTitle('Motions', 'Health Funding', '&nbsp;', 'House debates');
+
+        $this->assertTrue($result['hasSubsectionTitle']);
+        $this->assertSame('Health Funding', $result['finalTitle']);
+    }
+
+    /**
+     * No htype-11 row occurred, so $subsectionTitle is still the sentinel - falls
+     * back to the section title instead.
+     */
+    public function test_resolveTranscriptTitle_falls_back_to_the_section_title() {
+        $result = HansardSpeechView::resolveTranscriptTitle('Motions', '&nbsp;', '&nbsp;', 'House debates');
+
+        $this->assertFalse($result['hasSubsectionTitle']);
+        $this->assertSame('Motions', $result['finalTitle']);
+    }
+
+    /**
+     * Neither an htype-10 nor an htype-11 row occurred - both titles are still the
+     * sentinel, so the only thing left to show is the major's own label.
+     */
+    public function test_resolveTranscriptTitle_falls_back_to_the_major_title_when_neither_is_set() {
+        $result = HansardSpeechView::resolveTranscriptTitle('&nbsp;', '&nbsp;', '&nbsp;', 'House debates');
+
+        $this->assertFalse($result['hasSubsectionTitle']);
+        $this->assertSame('House debates', $result['finalTitle']);
+    }
+
+    /**
      * Two letters (eg "LT" for Lidia Thorpe), matching the mockup's own placeholder
      * avatars - not the single first-letter-of-the-full-name-string this used before,
      * which would also have wrongly included a title ("S" for "Senator ...", not the
