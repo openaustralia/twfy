@@ -212,9 +212,9 @@ function latest_activity_items($LIST, $major, $date) {
     $items = [];
     $q = parlDBQuery('SELECT hansard.epobject_id, body FROM hansard, epobject
 			WHERE hansard.epobject_id = epobject.epobject_id AND section_id=0
-			AND hdate="' . $date . '"
+			AND hdate=?
 			AND major=' . intval($major) . '
-			ORDER BY hpos ASC LIMIT ' . intval($maxItemsShown));
+			ORDER BY hpos ASC LIMIT ' . intval($maxItemsShown), $date);
 
     $LISTURL = new URL($hansardmajors[$major]['page_all']);
 
