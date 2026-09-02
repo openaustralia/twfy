@@ -125,6 +125,22 @@ class HansardSpeechViewTest extends TestCase {
     }
 
     /**
+     * member.party stores the raw code for a chair role (SPK/CWM/DCWM/PRES/DPRES -
+     * see dbtypes.php's $parties), not a display name - a Deputy Speaker still
+     * has a constituency on file, but showing it here would be misleading, since
+     * they're not speaking as their electorate's member while in the chair.
+     */
+    public function test_forSpeech_omits_the_constituency_for_a_chair_role() {
+        $row = $this->speechRow([
+            'speaker' => $this->speaker(['party' => 'CWM', 'constituency' => 'Queensland']),
+        ]);
+
+        $view = HansardSpeechView::forSpeech($row, $this->info(), true);
+
+        $this->assertSame('CWM', $view->speakerDescription);
+    }
+
+    /**
      * Every caller echoes speakerDescription raw, treating it as already-escaped -
      * a "&" in constituency or office needs to actually be escaped for that to be
      * true, not just one in $speaker['party'].
