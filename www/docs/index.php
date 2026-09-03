@@ -192,6 +192,10 @@ function latest_activity_items($LIST, $major, $date) {
             ORDER BY hpos ASC LIMIT ' . intval($maxItemsShown), $date);
 
     $LISTURL = new URL($hansardmajors[$major]['page_all']);
+    // Senate (major=101) reads this back as '?gid=', not '?id=' - see dbtypes.php's
+    // 'gidvar' and HANSARDLIST::_get_hansard_data()'s own use of it (the comments-url
+    // case). Sentry finding on #228.
+    $gidvar = $hansardmajors[$major]['gidvar'];
 
     for ($i = 0; $i < $q->rows(); $i++) {
         $section_epobject_id = $q->field($i, 'epobject_id');
@@ -207,7 +211,7 @@ function latest_activity_items($LIST, $major, $date) {
         $subsections = [];
         for ($t = 0; $t < $topicsQ->rows(); $t++) {
             $topicURL = clone $LISTURL;
-            $topicURL->insert(['id' => fix_gid_from_db($topicsQ->field($t, 'gid'))]);
+            $topicURL->insert([$gidvar => fix_gid_from_db($topicsQ->field($t, 'gid'))]);
             $subsections[] = ['title' => $topicsQ->field($t, 'body'), 'url' => $topicURL->generate('none')];
         }
         $topics = FrontPageView::summarizeTopics($subsections, $maxTopicsShown);
@@ -244,7 +248,7 @@ function latest_activity_items($LIST, $major, $date) {
             $entry = HansardSpeechView::speakerEntry($speakerData);
             $firstSpeech = $firstSpeechBySpeaker[$speakerId];
             $speechURL = clone $LISTURL;
-            $speechURL->insert(['id' => fix_gid_from_db($firstSpeech['subsection_gid'])]);
+            $speechURL->insert([$gidvar => fix_gid_from_db($firstSpeech['subsection_gid'])]);
             $entry->firstSpeechUrl = $speechURL->generate('none') . '#g' . gid_to_anchor(fix_gid_from_db($firstSpeech['speech_gid']));
             $speakers[] = $entry;
         }
