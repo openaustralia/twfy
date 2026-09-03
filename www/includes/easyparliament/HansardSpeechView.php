@@ -152,6 +152,16 @@ class HansardSpeechView {
      * to cover the whole assembled string in one pass, not just $speaker['party'],
      * or a "&"/"<" in $speaker['constituency'] or $speaker['office'][0]['pretty']
      * reaches the page unescaped.
+     *
+     * html_entity_decode() first: moffice.position sometimes already contains a
+     * named entity (eg "Minister for Veterans&rsquo; Affairs" - 7 rows in
+     * db/seeds/data/moffice.csv, confirmed the same in the live DB), which
+     * prettify_office() (utility.php) passes through unchanged into
+     * $speaker['office'][0]['pretty']. htmlentities() alone would then double-
+     * escape it to "&amp;rsquo;", rendering literally instead of a curly
+     * apostrophe - the legacy stripe path on main never hit this, since it echoes
+     * office raw with no escaping at all. Decoding first makes this correct either
+     * way: a no-op on plain text, and exactly-once escaping on pre-encoded text.
      */
     private static function speakerDescription(array $speaker): string {
         $desc = '';
@@ -172,7 +182,7 @@ class HansardSpeechView {
         if (!empty($speaker['office'])) {
             $desc .= ', ' . $speaker['office'][0]['pretty'];
         }
-        return htmlentities($desc);
+        return htmlentities(html_entity_decode($desc));
     }
 
     /**
@@ -211,6 +221,16 @@ class HansardSpeechView {
      * subsection/section's own page, labelled "See the whole debate" to match -
      * accurate for that URL, but a different destination to the day-listing page the
      * "All ... on this day" label promises. Sentry finding on #227/#228.
+     *
+     * 'title' (prev/next) is decoded here, not left for the template: for an
+     * htype-10/11 neighbour it's a heading's raw body, which can carry an entity
+     * already (eg "Survivors &amp; Mates Support Network" - epobject.body, confirmed
+     * the same in the live DB) - main only ever put this in a title="" tooltip
+     * attribute, where a browser decodes it either way, so it never mattered there.
+     * Cards that show it as visible text escape it once themselves - decoding first
+     * keeps that correct for both the pre-encoded heading case and the plain-text
+     * speaker-name case (htype 12/13), which needs no decoding but isn't harmed by a
+     * no-op one. Ben Fairless's review on #227.
      */
     public static function buildNextPrev(array $nextprevdata, string $chamberTitle, string $dateUrl): array {
         $nextPrev = [];
@@ -219,7 +239,7 @@ class HansardSpeechView {
                 $nextPrev[$direction] = [
                     'label' => $nextprevdata[$direction]['body'],
                     'url' => $nextprevdata[$direction]['url'] ?? null,
-                    'title' => $nextprevdata[$direction]['title'] ?? '',
+                    'title' => html_entity_decode($nextprevdata[$direction]['title'] ?? ''),
                 ];
             }
         }

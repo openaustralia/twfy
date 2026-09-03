@@ -195,6 +195,26 @@ class HansardSpeechViewTest extends TestCase {
     }
 
     /**
+     * moffice.position sometimes already contains a named entity (eg "Minister for
+     * Veterans&rsquo; Affairs" - 7 rows in db/seeds/data/moffice.csv, confirmed the
+     * same in the live DB) - escaping without decoding first renders the entity
+     * literally instead of the character it names. Ben Fairless's review on #227.
+     */
+    public function test_forSpeech_does_not_double_escape_an_office_holding_an_entity() {
+        $row = $this->speechRow([
+            'speaker' => $this->speaker([
+                'constituency' => 'Kingsford Smith',
+                'office' => [['dept' => '', 'position' => 'x', 'pretty' => 'Minister for Veterans&rsquo; Affairs']],
+            ]),
+        ]);
+
+        $view = HansardSpeechView::forSpeech($row, $this->info(), true);
+
+        $this->assertStringContainsString('Minister for Veterans&rsquo; Affairs', $view->speakerDescription);
+        $this->assertStringNotContainsString('&amp;rsquo;', $view->speakerDescription);
+    }
+
+    /**
      * A chair role like "The Deputy Speaker" can have a person_id but no
      * member_id (see buildRoster()'s own comment on this) - speakerId falls back
      * to person_id so the roster still has a stable dedup key for them.
@@ -557,6 +577,26 @@ class HansardSpeechViewTest extends TestCase {
         $this->assertSame('/debates/?d=2026-08-20', $nextPrev['up']['url']);
         $this->assertSame('All House debates on this day', $nextPrev['up']['title']);
         $this->assertSame('Adjournment', $nextPrev['next']['label']);
+    }
+
+    /**
+     * An htype-10/11 neighbour's title is a heading's raw body, which can already
+     * contain an entity (eg "Survivors &amp; Mates Support Network" -
+     * epobject.body, confirmed the same in the live DB) - main only ever put this
+     * in a title="" tooltip attribute (browser-decoded either way), but this card
+     * shows it as visible text, escaped once by pagination.php's $this->e(). Ben
+     * Fairless's review on #227.
+     */
+    public function test_buildNextPrev_decodes_an_entity_in_a_neighbouring_debate_title() {
+        $nextPrev = HansardSpeechView::buildNextPrev([
+            'prev' => [
+                'body' => 'Previous debate',
+                'url' => '/debates/?id=a',
+                'title' => 'Parragirls, Survivors &amp; Mates Support Network',
+            ],
+        ], 'House debates', '/debates/?d=2026-08-18');
+
+        $this->assertSame('Parragirls, Survivors & Mates Support Network', $nextPrev['prev']['title']);
     }
 
     /**
