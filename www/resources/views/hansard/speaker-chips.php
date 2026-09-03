@@ -36,7 +36,13 @@
 // how long the name next to it is - min-w-0 on the name below is what lets a long
 // name actually truncate to that fixed column width instead of stretching it.
 ?>
-<ul class="mt-2 grid grid-cols-2 gap-x-3 gap-y-1.5 list-none">
+<?php
+// [&>li]:!m-0: layout.css's bare "li { margin: 0 0 0.5em 1.2em }" rule
+// otherwise indents every chip and adds an extra bottom margin on top of
+// this grid's own gap-*, breaking the two-column alignment. Copilot review
+// on #228.
+?>
+<ul class="mt-2 grid grid-cols-2 gap-x-3 gap-y-1.5 list-none [&>li]:!m-0">
     <?php foreach ($speakers as $speaker): ?>
         <?php $titleAttr = $speaker->description ? ' title="' . $speaker->description /* already-escaped by HansardSpeechView */ . '"' : ''; ?>
         <li class="min-w-0"<?php echo $titleAttr ?>>
