@@ -128,6 +128,7 @@ sub wrans_rss {
     my $query = $dbh->prepare("SELECT hdate FROM hansard WHERE major=3 ORDER BY hdate DESC LIMIT 1");
     $query->execute();
     my ($date) = $query->fetchrow_array();
+    return unless $date;
 
     $query = $dbh->prepare("SELECT e.body, h.hdate, h.htype, h.gid, h.subsection_id, h.section_id, h.epobject_id
         FROM hansard h, epobject e
