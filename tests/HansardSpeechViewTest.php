@@ -57,29 +57,9 @@ if (!function_exists('member_full_name')) {
 
 }
 
-/**
- * hansard_gid.php defines these itself (see its context_link()/generate_commentteaser())
- * for the stripe-rendering path this file's classes don't use - they're plain HTML
- * strings built from DB-backed comment data, not something worth standing up a
- * database for here. Stubbed the same way tests/bootstrap.php already stubs
- * twfy_debug() etc: real enough to satisfy forSpeech()/forProcedural()'s calls,
- * with output distinct enough (the gid) to assert the right $row reached them.
- */
-if (!function_exists('context_link')) {
-
-    function context_link($row) {
-        return '<context-link:' . $row['gid'] . '>';
-    }
-
-}
-
-if (!function_exists('generate_commentteaser')) {
-
-    function generate_commentteaser($row, $major) {
-        return '<comment-teaser:' . $row['gid'] . ':' . $major . '>';
-    }
-
-}
+// context_link()/generate_commentteaser() (called by forSpeech()/forProcedural()
+// below) are stubbed in tests/bootstrap.php, not here - see that file's own
+// comment on why.
 
 /**
  * HansardSpeechView/HansardProceduralView/HansardSpeakerRosterEntry (see
