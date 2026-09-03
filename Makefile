@@ -13,7 +13,7 @@ SONAR_SCANNER ?= sonar-scanner
 XAPIANDB ?= /app/shared/search/searchdb
 XAPIANDB_LASTUPDATED ?= $(XAPIANDB)/../searchdb-lastupdated
 
-.PHONY: help docker-build docker-run docker xapian-index-docker lint lint-perl lint-perl-ci lint-php lint-php-ci phpcs phpcs-ci phpcs-verbose phpcs-sonar sonar-ci dependencies tailwind-build tailwind-watch playwright-update install setup test test-all install-xdebug test-coverage test-coverage-docker docker-test-db-create docker-test-db-migrate docker-db-shell docker-test-db-shell
+.PHONY: help docker-build docker-run docker xapian-index-docker lint lint-perl lint-perl-ci lint-perl-critic lint-php lint-php-ci phpcs phpcs-ci phpcs-verbose phpcs-sonar sonar-ci dependencies tailwind-build tailwind-watch playwright-update install setup test test-all install-xdebug test-coverage test-coverage-docker docker-test-db-create docker-test-db-migrate docker-db-shell docker-test-db-shell
 
 help:
 	@echo "Available targets:"
@@ -150,7 +150,17 @@ lint-php-ci lint-php:
 	find -L www scripts -iregex '.*\.php$$' -print0 | xargs -0 -n 1 -P 4 php -l
 
 lint-perl-ci lint-perl:
-	find -L www scripts -iregex '.*\.pl$$' ! -path '*/archived/*' -print0 | xargs -0 -n 1 perl -c
+	find -L www scripts search -iregex '.*\.pl$$' ! -path '*/archived/*' -print0 | xargs -0 -n 1 perl -c
+
+lint-perl-critic:
+	# \( \| \): find's default regex mode treats plain parentheses and pipe
+	# as literal characters, not grouping or alternation (see
+	# openaustralia/openaustralia#936) - escaping them is what makes this
+	# match .pl/.pm files at all, rather than silently matching nothing.
+	# -r (--no-run-if-empty) is a second, independent safety net: it stops
+	# xargs running perlcritic with no file argument if some future path
+	# change ever makes -iregex match nothing again.
+	find -L scripts search -iregex '.*\.\(pl\|pm\)$$' ! -path '*/archived/*' -print0 | xargs -0 -r -n 1 perlcritic --profile .perlcriticrc
 
 phpcs:
 	./vendor/bin/phpcs --standard=phpcs.xml --tab-width=4 --report=summary www scripts $(PHPCS_ARGS)
@@ -194,7 +204,7 @@ setup:
 	sudo apt install \
 	libmysqlclient-dev libssl-dev ghostscript imagemagick libdbd-mysql-perl libdbi-perl libmagickcore-dev \
 	libmagickwand-dev libmysqlclient-dev libsearch-xapian-perl libxapian-dev libxml-rss-perl libxml-twig-perl \
-	libxslt1-dev mysql-client libxml-simple-perl
+	libxslt1-dev mysql-client libxml-simple-perl libperl-critic-perl
 
 test: vendor/autoload.php
 	./vendor/bin/phpunit $(TEST_ARGS)

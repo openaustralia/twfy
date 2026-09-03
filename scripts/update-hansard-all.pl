@@ -1,5 +1,8 @@
 #! /usr/bin/perl
 # vim:sw=8:ts=8:et:nowrap
+
+# Updates Hansard timing fields for all relevant records in the database.
+
 use strict;
 
 use FindBin;
@@ -10,21 +13,21 @@ use lib "$FindBin::Bin/../../perllib";
 use mySociety::Config;
 mySociety::Config::set_file('../conf/general');
 
-use DBI; 
+use DBI;
 
 my $dsn = 'DBI:mysql:database=' . mySociety::Config::get('DB_NAME'). ':host=' . mySociety::Config::get('DB_HOST');
-my $dbh = DBI->connect($dsn, mySociety::Config::get('DB_USER'), mySociety::Config::get('DB_PASSWORD'), { RaiseError => 1, PrintError => 0 });
+my $dbh = DBI->connect($dsn, mySociety::Config::get('DB_USER'), mySociety::Config::get('DB_PASSWORD'), { RaiseError => 1, PrintError => 0, mysql_enable_utf8mb4 => 1 });
 
-my $sth = $dbh->prepare("update hansard set htime=? where gid = ?");
+my $sth = $dbh->prepare("UPDATE hansard SET htime=? WHERE gid = ?");
 for my $file (sort </home/fawkes/hansard-updates/h*>) {
-        open FP, $file;
-        while (<FP>) {
+        open my $fp, '<', $file or die "Unable to open '$file' for reading: $!";
+        while (<$fp>) {
                 next if /^--/;
                 my ($gid, $time) = split /\t/;
                 next unless $time;
                 $sth->execute($time, "uk.org.publicwhip/debate/$gid");
         }
-        close FP;
+        close $fp;
 }
 
 $dbh->disconnect();

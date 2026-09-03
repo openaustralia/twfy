@@ -193,9 +193,9 @@ sub process_type {
 
         my $process;
         my $xsince = 0;
-        if (open FH, '<' . $xdirs->[0] . 'xml2db-lastload') {
-                $xsince = readline FH;
-                close FH;
+        if (open my $fh, '<', $xdirs->[0] . 'xml2db-lastload') {
+                $xsince = readline $fh;
+                close $fh;
         }
         my @xmaxtime;
         my $xmaxfile = "";
@@ -266,9 +266,9 @@ sub process_type {
                         # the same second, and next time it might get the other)
                         #print "$xname since: $xsince new max $xmaxtime from changedates\n";
                         my $xdir = $xdirs->[0];
-                        open FH, ">${xdir}xml2db-lastload" or die "couldn't open ${xdir}xml2db-lastload for writing";
-                        print FH $xxmaxtime;
-                        close FH;
+                        open my $fh, '>', "${xdir}xml2db-lastload" or die "couldn't open ${xdir}xml2db-lastload for writing";
+                        print $fh $xxmaxtime;
+                        close $fh;
                 }
         }
 }
@@ -432,44 +432,44 @@ sub db_connect
         my $db_host = $ENV{DB_HOST} || mySociety::Config::get('DB_HOST');
         my $db_port = $ENV{DB_PORT} || 3306;
         my $dsn = 'DBI:mysql:database=' . mySociety::Config::get('DB_NAME') . ':host=' . $db_host . ':port=' . $db_port;
-        $dbh = DBI->connect($dsn, mySociety::Config::get('DB_USER'), mySociety::Config::get('DB_PASSWORD'), { RaiseError => 1, PrintError => 0 });
+        $dbh = DBI->connect($dsn, mySociety::Config::get('DB_USER'), mySociety::Config::get('DB_PASSWORD'), { RaiseError => 1, PrintError => 0, mysql_enable_utf8mb4 => 1 });
 
         # epobject queries
-        $epadd = $dbh->prepare("insert into epobject (title, body, type, created, modified)
-                values ('', ?, 1, NOW(), NOW())");
-        $epcheck = $dbh->prepare("select body from epobject where epobject_id = ?");
-        $epupdate = $dbh->prepare("update epobject set body = ?, modified = NOW() where epobject_id = ?");
+        $epadd = $dbh->prepare("INSERT INTO epobject (title, body, type, created, modified)
+                VALUES ('', ?, 1, NOW(), NOW())");
+        $epcheck = $dbh->prepare("SELECT body FROM epobject WHERE epobject_id = ?");
+        $epupdate = $dbh->prepare("UPDATE epobject SET body = ?, modified = NOW() WHERE epobject_id = ?");
 
         # hansard object queries
-        $hadd = $dbh->prepare("insert into hansard (epobject_id, gid, htype, speaker_id, major, minor, section_id, subsection_id, hpos, hdate, htime, source_url, created, modified)
-                values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())");
-        $hcheck = $dbh->prepare("select epobject_id, gid, htype, speaker_id, major, minor, section_id, subsection_id, hpos, hdate, htime, source_url from hansard where gid = ?");
-        $hupdate = $dbh->prepare("update hansard set gid = ?, htype = ?, speaker_id = ?, major = ?, minor = ?, section_id = ?, subsection_id = ?, hpos = ?, hdate = ?, htime = ?, source_url = ?, modified = NOW()
-                where epobject_id = ? and gid = ?");
-        $hdelete = $dbh->prepare("delete from hansard where gid = ? and epobject_id = ?");
-        $hdeletegid = $dbh->prepare("delete from hansard where gid = ?");
+        $hadd = $dbh->prepare("INSERT INTO hansard (epobject_id, gid, htype, speaker_id, major, minor, section_id, subsection_id, hpos, hdate, htime, source_url, created, modified)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())");
+        $hcheck = $dbh->prepare("SELECT epobject_id, gid, htype, speaker_id, major, minor, section_id, subsection_id, hpos, hdate, htime, source_url FROM hansard WHERE gid = ?");
+        $hupdate = $dbh->prepare("UPDATE hansard SET gid = ?, htype = ?, speaker_id = ?, major = ?, minor = ?, section_id = ?, subsection_id = ?, hpos = ?, hdate = ?, htime = ?, source_url = ?, modified = NOW()
+                WHERE epobject_id = ? AND gid = ?");
+        $hdelete = $dbh->prepare("DELETE FROM hansard WHERE gid = ? AND epobject_id = ?");
+        $hdeletegid = $dbh->prepare("DELETE FROM hansard WHERE gid = ?");
 
         # member (MP) queries
-        $constituencydel = $dbh->prepare("delete from constituency");
-        $constituencyadd = $dbh->prepare("insert into constituency
-                (cons_id, name, main_name, from_date, to_date) values
+        $constituencydel = $dbh->prepare("DELETE FROM constituency");
+        $constituencyadd = $dbh->prepare("INSERT INTO constituency
+                (cons_id, name, main_name, from_date, to_date) VALUES
                 (?, ?, ?, ?, ?)");
-        $memberadd = $dbh->prepare("replace into member (member_id, person_id, house, title, first_name, last_name,
+        $memberadd = $dbh->prepare("REPLACE INTO member (member_id, person_id, house, title, first_name, last_name,
                 constituency, party, entered_house, left_house, entered_reason, left_reason)
-                values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-        $memberexist = $dbh->prepare("select member_id from member where member_id = ?");
-        $membercheck = $dbh->prepare("select member_id from member where
-                member_id = ? and person_id = ? and house = ? and title = ? and first_name = ? and last_name = ?
-                and constituency = ? and party = ? and entered_house = ? and left_house = ?
-                and entered_reason = ? and left_reason = ?");
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+        $memberexist = $dbh->prepare("SELECT member_id FROM member WHERE member_id = ?");
+        $membercheck = $dbh->prepare("SELECT member_id FROM member WHERE
+                member_id = ? AND person_id = ? AND house = ? AND title = ? AND first_name = ? AND last_name = ?
+                AND constituency = ? AND party = ? AND entered_house = ? AND left_house = ?
+                AND entered_reason = ? AND left_reason = ?");
 
         # gidredirect entries
-        $gradd = $dbh->prepare("replace into gidredirect (gid_from, gid_to, hdate, major) values (?,?,?,?)");
-        $grcheck = $dbh->prepare("select gid_from, hdate, major from gidredirect where gid_to = ?");
-        $grdeletegid = $dbh->prepare("delete from gidredirect where gid_from = ?");
+        $gradd = $dbh->prepare("REPLACE INTO gidredirect (gid_from, gid_to, hdate, major) VALUES (?,?,?,?)");
+        $grcheck = $dbh->prepare("SELECT gid_from, hdate, major FROM gidredirect WHERE gid_to = ?");
+        $grdeletegid = $dbh->prepare("DELETE FROM gidredirect WHERE gid_from = ?");
 
         # other queries
-        $lastid = $dbh->prepare("select last_insert_id()");
+        $lastid = $dbh->prepare("SELECT last_insert_id()");
 
         # Clear any half made previous attempts.
         delete_lonely_epobjects()
@@ -495,13 +495,13 @@ sub delete_lonely_epobjects()
         return if $c2 == $c1;
 
         print "Fixing up lonely epobjects. Counts: $c1 $c2\n" unless $cronquiet;
-        my $q = $dbh->prepare("select epobject_id from epobject");
+        my $q = $dbh->prepare("SELECT epobject_id FROM epobject");
         $q->execute();
         my $left;
         while (my @row = $q->fetchrow_array) {
                 $left->{$row[0]} = 1;
         }
-        $q = $dbh->prepare("select epobject_id from hansard");
+        $q = $dbh->prepare("SELECT epobject_id FROM hansard");
         $q->execute();
         while (my @row = $q->fetchrow_array) {
                 delete($left->{$row[0]});
@@ -512,7 +512,7 @@ sub delete_lonely_epobjects()
         print "Lonely epobject count: $rows\n" unless $cronquiet;
         if ($rows > 0) {
                 my $delids = join(", ", @array);
-                my $qq = $dbh->prepare("delete from epobject where epobject_id in (" . $delids . ")");
+                my $qq = $dbh->prepare("DELETE FROM epobject WHERE epobject_id IN (" . $delids . ")");
                 my $delrows = $qq->execute();
                 $qq->finish();
                 die "deleted " . $delrows . " but thought " . $rows if $delrows != $rows;
@@ -527,11 +527,11 @@ sub check_extra_gids
         my $gidsref = shift;
         my $where = shift;
 
-        my $q = $dbh->prepare("select gid from hansard where hdate = ? and gid not like '%L' and $where");
+        my $q = $dbh->prepare("SELECT gid FROM hansard WHERE hdate = ? AND gid not LIKE '%L' AND $where");
         my $rows = $q->execute($date);
         my $array_ref1 = $q->fetchall_arrayref();
         $q->finish();
-        $q = $dbh->prepare("select gid_from from gidredirect where hdate = ? and $where");
+        $q = $dbh->prepare("SELECT gid_from FROM gidredirect WHERE hdate = ? AND $where");
         $rows = $q->execute($date);
         my $array_ref2 = $q->fetchall_arrayref();
         $q->finish();
@@ -563,8 +563,8 @@ sub check_extra_gids
                                            ["editqueue", "epobject_id_h",],
                                            ) {
                                 my ($table, $field) = @$entry;
-                                my $epuse_comments = $dbh->prepare("select count(*) from epobject, hansard, $table
-                                        where epobject.epobject_id = $table.$field and epobject.epobject_id = hansard.epobject_id and
+                                my $epuse_comments = $dbh->prepare("SELECT COUNT(*) FROM epobject, hansard, $table
+                                        WHERE epobject.epobject_id = $table.$field AND epobject.epobject_id = hansard.epobject_id AND
                                         hansard.gid = ?");
                                 $epuse_comments->execute($gid);
                                 my $num_rows = $epuse_comments->fetchrow_array();
@@ -573,11 +573,11 @@ sub check_extra_gids
                                         if ($gid =~ /wrans/ && !$cronquiet) {
                                                 my $search_gid = $gid;
                                                 $search_gid =~ s/(\d\d\d\d-\d)\d-\d\d\w(\.\d+\.)/$1%$2/;
-                                                my $daychange = $dbh->prepare('SELECT gid,epobject_id FROM hansard WHERE gid like ? AND gid != ?');
+                                                my $daychange = $dbh->prepare('SELECT gid,epobject_id FROM hansard WHERE gid LIKE ? AND gid != ?');
                                                 $daychange->execute($search_gid, $gid);
                                                 my ($new_gid, $new_epobjectid) = $daychange->fetchrow_array();
                                                 if ($new_epobjectid) {
-                                                        my $hgetid = $dbh->prepare("select epobject_id from hansard where gid = ?");
+                                                        my $hgetid = $dbh->prepare("SELECT epobject_id FROM hansard WHERE gid = ?");
                                                         $hgetid->execute($gid);
                                                         my $old_epobjectid = $hgetid->fetchrow_array();
                                                         $hgetid->finish();
@@ -621,8 +621,8 @@ sub check_extra_gids
 
 sub delete_redirected_gids {
         my ($date, $grdests) = @_;
-        my $q_redirect = $dbh->prepare('SELECT gid_to from gidredirect WHERE gid_from = ?');
-        my $hgetid = $dbh->prepare("select epobject_id from hansard where gid = ?");
+        my $q_redirect = $dbh->prepare('SELECT gid_to FROM gidredirect WHERE gid_from = ?');
+        my $hgetid = $dbh->prepare("SELECT epobject_id FROM hansard WHERE gid = ?");
         foreach my $from_gid (sort keys %$grdests) {
                 my $to_gid = $grdests->{$from_gid};
                 my $loop;
@@ -651,8 +651,8 @@ sub delete_redirected_gids {
                                    ["editqueue", "epobject_id_h",],
                                    ) {
                         my ($table, $field) = @$entry;
-                        my $epuse_comments = $dbh->prepare("select count(*) from epobject, hansard, $table
-                                where epobject.epobject_id = $table.$field and epobject.epobject_id = hansard.epobject_id and
+                        my $epuse_comments = $dbh->prepare("SELECT COUNT(*) FROM epobject, hansard, $table
+                                WHERE epobject.epobject_id = $table.$field AND epobject.epobject_id = hansard.epobject_id AND
                                 hansard.gid = ?");
                         $epuse_comments->execute($from_gid);
                         my $num_rows = $epuse_comments->fetchrow_array();
@@ -664,7 +664,7 @@ sub delete_redirected_gids {
 
                                 print "gid $from_gid has $num_rows " . ($num_rows==1?'entry':'entries') . " in table $table, new gid $to_gid\n" unless $cronquiet;
                                 update_eid($table, $field, $old_epobjectid, $new_epobjectid);
-                         }
+                        }
                 }
 
                 # delete the now obsolete "from record" (which is replaced by its "to record")
@@ -673,28 +673,28 @@ sub delete_redirected_gids {
                         print "deleted $from_gid which is now redirected to $to_gid\n" unless $cronquiet;
                 }
                 $hdeletegid->finish();
-         }
+        }
 }
 
 sub update_eid {
         my ($table, $field, $old_epobjectid, $new_epobjectid) = @_;
         print "updating epobject id from $old_epobjectid => $new_epobjectid\n" unless $cronquiet;
         if ($table eq 'anonvotes') {
-                my $epalready = $dbh->prepare("select epobject_id,yes_votes,no_votes from anonvotes where epobject_id=?");
+                my $epalready = $dbh->prepare("SELECT epobject_id,yes_votes,no_votes FROM anonvotes WHERE epobject_id=?");
                 $epalready->execute($new_epobjectid);
                 my @arr = $epalready->fetchrow_array();
                 if ($arr[0]) {
-                        my $epdelete = $dbh->prepare('delete from anonvotes where epobject_id=?');
+                        my $epdelete = $dbh->prepare('DELETE FROM anonvotes WHERE epobject_id=?');
                         $epdelete->execute($new_epobjectid);
                         $epdelete->finish();
-                        my $epuse_updateid = $dbh->prepare("update anonvotes set yes_votes=yes_votes+$arr[1],
-                                no_votes=no_votes+$arr[2], epobject_id=? where epobject_id = ?");
+                        my $epuse_updateid = $dbh->prepare("UPDATE anonvotes SET yes_votes=yes_votes+$arr[1],
+                                no_votes=no_votes+$arr[2], epobject_id=? WHERE epobject_id = ?");
                         $epuse_updateid->execute($new_epobjectid, $old_epobjectid);
                         $epuse_updateid->finish();
                         return;
                 }
         }
-        my $epuse_updateid = $dbh->prepare("update $table set $field = ? where $field = ?");
+        my $epuse_updateid = $dbh->prepare("UPDATE $table SET $field = ? WHERE $field = ?");
         $epuse_updateid->execute($new_epobjectid, $old_epobjectid);
         $epuse_updateid->finish();
 }
@@ -865,7 +865,7 @@ sub memory_test
                 $memmark = mem_use_begin();
                         add_debates_day("2004-04-01");
                 mem_use_end("add_debates_day", $memmark);
-                my $qq = $dbh->do('delete from hansard where hdate="2004-04-01"');
+                my $qq = $dbh->do('DELETE FROM hansard WHERE hdate="2004-04-01"');
                 delete_lonely_epobjects();
         }
         db_disconnect();
@@ -879,16 +879,16 @@ sub memory_test
 # MPs and Peers, also constituencies, people
 
 sub add_mps_and_peers {
-        $dbh->do("delete from moffice");
+        $dbh->do("DELETE FROM moffice");
         my $twig = XML::Twig->new(twig_handlers =>
                 { 'constituency' => \&loadconstituency,
-                  'member' => \&loadmember,
-                  'lord' => \&loadlord,
-                  'royal' => \&loadroyal,
-                  'member_ni' => \&loadni,
-                  'member_sp' => \&loadmsp,
-                  'person' => \&loadperson,
-                  'moffice' => \&loadmoffice },
+                    'member' => \&loadmember,
+                    'lord' => \&loadlord,
+                    'royal' => \&loadroyal,
+                    'member_ni' => \&loadni,
+                    'member_sp' => \&loadmsp,
+                    'person' => \&loadperson,
+                    'moffice' => \&loadmoffice },
                 output_filter => $outputfilter );
         $constituencydel->execute();
         $constituencydel->finish();
@@ -908,7 +908,7 @@ sub add_mps_and_peers {
 }
 
 sub check_member_ids {
-        my $q = $dbh->prepare("select member_id from member");
+        my $q = $dbh->prepare("SELECT member_id FROM member");
         $q->execute();
         while (my @row = $q->fetchrow_array) {
                 print "Member $row[0] in DB, not in XML\n" if (!$member_ids{$row[0]});
@@ -934,7 +934,7 @@ sub loadmoffices {
         }
         foreach my $row (@moffices) {
                 next unless $row;
-                my $sth = $dbh->do("insert into moffice (dept, position, from_date, to_date, person, source) values (?, ?, ?, ?, ?, ?)", {},
+                my $sth = $dbh->do("INSERT INTO moffice (dept, position, from_date, to_date, person, source) VALUES (?, ?, ?, ?, ?, ?)", {},
                 $row->[1], $row->[2], $row->[3], $row->[4], $row->[5], $row->[6]);
         }
 }
@@ -1007,11 +1007,11 @@ sub loadmember {
 
         my $house;
 		if ($member->att('house') eq "representatives") {
-	        $id =~ s:uk.org.publicwhip/member/::;
+            $id =~ s:uk.org.publicwhip/member/::;
 			$house = 1;
 		}
 		elsif ($member->att('house') eq "senate") {
-	        $id =~ s:uk.org.publicwhip/lord/::;
+            $id =~ s:uk.org.publicwhip/lord/::;
 			$house = 2;
 		}
         else {
@@ -1133,7 +1133,7 @@ sub loadmsp {
                 Encode::encode('iso-8859-1', $member->att('party')),
                 $member->att('fromdate'), $member->att('todate'),
                 $member->att('fromwhy'), $member->att('towhy'));
-        $dbh->do('replace into personinfo (person_id, data_key, data_value) values (?, ?, ?)', {},
+        $dbh->do('REPLACE INTO personinfo (person_id, data_key, data_value) VALUES (?, ?, ?)', {},
                 $person_id, 'sp_url', $member->att('spurl'));
 }
 
@@ -1571,12 +1571,12 @@ sub add_bill {
                 die "Couldn't get session out of $url, $bill, $date";
         }
         # Get bill ID
-        my $bill_id = $dbh->selectrow_array('select id from bills where url=?', {}, $url);
+        my $bill_id = $dbh->selectrow_array('SELECT id FROM bills WHERE url=?', {}, $url);
         if (!$bill_id) {
-                $bill_id = $dbh->selectrow_array('select id from bills where title=? and session=?', {}, $bill, $session);
+                $bill_id = $dbh->selectrow_array('SELECT id FROM bills WHERE title=? AND session=?', {}, $bill, $session);
         }
         if (!$bill_id) {
-                $dbh->do('insert into bills (session, title, lords, url, standingprefix) values (?,?,?,?,"")',
+                $dbh->do('INSERT INTO bills (session, title, lords, url, standingprefix) VALUES (?,?,?,?,"")',
                         {}, $session, $bill, $lords, $url);
                 $bill_id = last_id();
         }
@@ -1587,7 +1587,7 @@ sub add_standing_title {
         my ($heading, $bill, $bill_id, @preheadingspeech) = @_;
         $heading->att('id') =~ /^.*\/(.*?_.*?_)/;
         my $prefix = $1;
-        $dbh->do('update bills set standingprefix=? where id=?', {}, $prefix, $bill_id);
+        $dbh->do('UPDATE bills SET standingprefix=? WHERE id=?', {}, $prefix, $bill_id);
         do_load_heading($heading, 6, $bill, $bill_id);
         foreach (@preheadingspeech) {
                 do_load_speech($_, 6, $bill_id, $_->sprint(1));
@@ -1613,14 +1613,14 @@ sub add_standing_day {
                                 (my $member_id = $_->att('memberid')) =~ s:uk.org.publicwhip/member/::;
                                 $current_file =~ /_(\d\d-\d)_/;
                                 my $sitting = $1;
-                                if (my ($id, $curr_attending) = $dbh->selectrow_array('select id,attending from pbc_members where member_id=? and bill_id=?
-                                        and sitting=?', {}, $member_id, $bill_id, $sitting)) {
+                                if (my ($id, $curr_attending) = $dbh->selectrow_array('SELECT id,attending FROM pbc_members WHERE member_id=? AND bill_id=?
+                                        AND sitting=?', {}, $member_id, $bill_id, $sitting)) {
                                         if ($curr_attending != $attending) {
-                                                $dbh->do('update pbc_members set attending=? where id=?', {},
+                                                $dbh->do('UPDATE pbc_members SET attending=? WHERE id=?', {},
                                                         $attending, $id);
                                         }
                                 } else {
-                                        $dbh->do('insert into pbc_members (bill_id, sitting, member_id, attending, chairman) values
+                                        $dbh->do('INSERT INTO pbc_members (bill_id, sitting, member_id, attending, chairman) VALUES
                                                 (?, ?, ?, ?, ?)', {}, $bill_id, $sitting, $member_id, $attending, $chairman);
                                 }
                         }
@@ -1882,7 +1882,7 @@ sub do_load_gidredirect
         $gradd->finish();
 }
 
-sub encode_entities_noapos($) {
+sub encode_entities_noapos {
         my $s = shift;
         encode_entities($s);
         $s =~ s/&#39;/'/;
