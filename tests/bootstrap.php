@@ -31,6 +31,28 @@ if (!function_exists('get_cookie_var')) {
     }
 }
 
+/**
+ * hansard_row_helpers.php's real context_link()/generate_commentteaser() are
+ * DB/global-backed ($this_page, $THEUSER, $hansardmajors, a real 'comment' row
+ * shape) - not worth standing up all of that for the HansardSpeechViewTest
+ * cases that only need to confirm forSpeech()/forProcedural() pass $row/$major
+ * through correctly. Real enough to satisfy those calls, with output distinct
+ * enough (the gid) to assert the right $row reached them. Both are guarded the
+ * same way in hansard_row_helpers.php, so loading this bootstrap first (as
+ * phpunit.xml's own bootstrap=) is what makes these win over the real ones.
+ */
+if (!function_exists('context_link')) {
+    function context_link($row) {
+        return '<context-link:' . $row['gid'] . '>';
+    }
+}
+
+if (!function_exists('generate_commentteaser')) {
+    function generate_commentteaser($row, $major) {
+        return '<comment-teaser:' . $row['gid'] . ':' . $major . '>';
+    }
+}
+
 if (!defined('CONSTITUENCY_COOKIE')) {
     define('CONSTITUENCY_COOKIE', 'constituency');
 }
