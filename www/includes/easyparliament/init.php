@@ -74,11 +74,14 @@ if (defined('SENTRY_DSN') && SENTRY_DSN) {
     // sentry-ruby's auto-detection from Capistrano's own REVISION file (that's
     // a Rails-integration-specific convenience), so read it directly; absent
     // in local dev, where there's nothing to read.
-    $revisionFile = __DIR__ . '/../../../REVISION';
-    if (is_readable($revisionFile)) {
-        $revision = trim(file_get_contents($revisionFile));
-        if ($revision !== '') {
-            $sentryOptions['release'] = $revision;
+    $revision_file = __DIR__ . '/../../../REVISION';
+    if (is_readable($revision_file)) {
+        $revision_contents = file_get_contents($revision_file);
+        if ($revision_contents !== false) {
+            $revision = trim($revision_contents);
+            if ($revision !== '') {
+                $sentryOptions['release'] = $revision;
+            }
         }
     }
 
