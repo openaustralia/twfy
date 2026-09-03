@@ -242,6 +242,34 @@ class FrontPageViewTest extends TestCase {
     }
 
     /**
+     * A title can carry its own HTML entity (eg an "&amp;" in an organisation's
+     * name) with no real stage suffix at all - the entity's own closing ';' must
+     * not be mistaken for the separator, or the title gets truncated mid-entity
+     * (eg "Parragirls, Survivors &amp" - Sentry finding on #228).
+     */
+    public function test_summarizeTopics_does_not_split_on_the_semicolon_inside_an_entity() {
+        $topics = FrontPageView::summarizeTopics(
+            [$this->subsection('Parragirls, Survivors &amp; Mates Support Network')],
+            5
+        );
+
+        $this->assertSame('Parragirls, Survivors &amp; Mates Support Network', $topics['topics'][0]['title']);
+    }
+
+    /**
+     * A genuine stage-suffix semicolon must still be found (and everything after
+     * it stripped) even when the title also carries an unrelated entity earlier on.
+     */
+    public function test_summarizeTopics_still_strips_a_real_stage_suffix_after_an_entity() {
+        $topics = FrontPageView::summarizeTopics(
+            [$this->subsection('Parragirls, Survivors &amp; Mates Support Network Bill 2026; Second Reading')],
+            5
+        );
+
+        $this->assertSame('Parragirls, Survivors &amp; Mates Support Network Bill 2026', $topics['topics'][0]['title']);
+    }
+
+    /**
      * A bare procedural item (eg "Rearrangement"/"Withdrawal") has no "; <stage>"
      * suffix at all - kept whole, not mangled.
      */
