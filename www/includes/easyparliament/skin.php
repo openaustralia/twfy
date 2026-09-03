@@ -143,6 +143,12 @@ class SKIN {
         ?>
         <link rel="stylesheet" href="<?php echo WEBPATH; ?>style/tailwind/tailwind.css?v=8" type="text/css">
         <?php
+        // The canonical OAF footer (every page, via layout/footer.php) - vendored
+        // from openaustralia/oaf-standard-footer, unmodified. Bump ?v= only when
+        // that repo's own oaf-footer.css version comment changes.
+        ?>
+        <link rel="stylesheet" href="<?php echo WEBPATH; ?>style/default/oaf-footer.css?v=1" type="text/css">
+        <?php
 
         // The array of stylesheets to use for this skin.
         $skinstyles = $this->skins[$this->skin];
