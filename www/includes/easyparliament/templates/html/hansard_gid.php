@@ -9,10 +9,19 @@
 // The array $data will be packed full of luverly stuff about hansard objects.
 // See the bottom of this document for information about its structure and contents...
 
-global $PAGE, $this_page, $GLOSSARY, $hansardmajors;
+global $PAGE, $this_page, $GLOSSARY, $hansardmajors, $DATA;
+
+if (!defined('NO_TITLE_SENTINEL')) {
+    define('NO_TITLE_SENTINEL', '&nbsp;');
+}
 
 include_once __DIR__ . "/../../../easyparliament/searchengine.php";
 include_once __DIR__ . "/../../../easyparliament/member.php";
+include_once __DIR__ . "/../../../easyparliament/HansardSpeechView.php";
+// context_link()/generate_commentteaser(), called directly below (the old
+// stripe-based rendering) - included explicitly rather than relying on
+// HansardSpeechView.php's own include of the same file above.
+include_once __DIR__ . "/../../../easyparliament/hansard_row_helpers.php";
 
 twfy_debug("TEMPLATE", "hansard_gid.php");
 
@@ -27,18 +36,84 @@ if (!isset($data['info'])) {
     exit;
 }
 
+// House representatives (1) and Senate (101) - the two houses this fork actually
+// parses - get the new Plates-rendered transcript. Everything else (Wrans, WMS, and
+// the UK/NI/Scotland majors left over from the mySociety fork this codebase started
+// from, none of which are populated on this site) keeps the existing stripe-based
+// rendering below untouched. See openaustralia/openaustralia#939 and the debate-page
+// redesign plan for why. Reads $data['info']['major'], so this has to come after the
+// isset($data['info']) guard above, not before it - moving it here fixes a real
+// warning on the known bot-triggered no-data path that guard exists for.
+//
+// Mobile requests never reach this file at all - conf/httpd.conf.ubuntu rewrites
+// them to docs/*/mobile.php, which renders hansard_gid_mobile.php instead (a
+// separate legacy template, unaffected by $usePlatesTemplate here). That's
+// deliberate, not an oversight: mobile.php is slated for removal
+// (openaustralia/openaustralia#943), so it isn't getting the Plates redesign
+// either - see the note at the top of hansard_gid_mobile.php. Copilot finding on
+// #227.
+$usePlatesTemplate = in_array($data['info']['major'], [1, 101], true);
+$plates_items = [];
+if ($usePlatesTemplate) {
+    $platesEngine = new League\Plates\Engine(__DIR__ . "/../../../../resources/views");
+
+    // Computed here, unconditionally, rather than only inside the
+    // isset($data['rows']) branch below - a Plates page with $data['rows'] unset
+    // entirely (as opposed to set but empty) used to skip this and render with no
+    // navigation at all, just a bare "No data to display." dead end.
+    $chamberNames = [1 => 'House of Representatives', 101 => 'Senate'];
+
+    // Same "d=" listing link hansardlist.php itself builds for its own nextprev
+    // 'up' link ("All House debates on 20 August 2026") - $page_all is the
+    // internal page key ('debates'/'lordsdebates') the URL class maps to the
+    // real /debates/, /senate/ etc. path. remove(['id']) matters: without it
+    // this page's own ?id= survives into the generated URL alongside ?d=.
+    $dateURL = new URL($hansardmajors[$data['info']['major']]['page_all']);
+    $dateURL->insert(['d' => $data['info']['date']]);
+    $dateURL->remove(['id']);
+
+    // Same wording as sidebars/hocdebates.php / holdebates.php (the "What are
+    // Debates?" block shown on /debates/ and /senate/'s own calendar pages) -
+    // duplicated rather than shared, since those files also call
+    // $PAGE->block_start()/block_end() to draw their own box, which isn't what's
+    // wanted here. Keep the two in sync by hand if this wording ever changes.
+    $aboutBodyHtml = [
+        1 => '<p><strong>Debates</strong> in the House of Representatives are an opportunity for members from all parties to <strong>scrutinise</strong> government legislation and <strong>raise important local, national or topical issues</strong>.</p><p>And sometimes to shout at each other.</p>',
+        101 => '<p><strong>Debates</strong> in the Senate are an opportunity for Senators from all parties to <strong>scrutinise</strong> government legislation and <strong>raise important local, national or topical issues</strong>.</p><p>And sometimes to shout at each other.</p>',
+    ];
+
+    // "All Senate debates on 18 August 2026 / « Previous debate / Next debate »" -
+    // was the stripe-foot block at the bottom of the page (still is, for non-Plates
+    // majors - see the guarded stripe_start('foot') below); its own block in the
+    // right-hand column here instead. See HansardSpeechView::buildNextPrev() for
+    // the actual label/url/title logic (directly unit-tested there, unlike this
+    // file).
+    $nextprevdata = $DATA->page_metadata($this_page, 'nextprev') ?: [];
+    // One line deliberately: this file can't be unit-tested directly (see the
+    // extraction comments above), so every physical line of a call here is new,
+    // permanently-uncovered code as far as SonarCloud's new-code coverage gate is
+    // concerned - splitting a call across N lines costs N uncovered lines, not one.
+    $nextPrev = HansardSpeechView::buildNextPrev($nextprevdata, $hansardmajors[$data['info']['major']]['title'] ?? 'debates', $dateURL->generate('none'));
+}
+
 $PAGE->page_start();
 
-$PAGE->stripe_start('head-1');
+if (!$usePlatesTemplate) {
+    $PAGE->stripe_start('head-1');
 
-$sidebar = $hansardmajors[$data['info']['major']]['sidebar_short'];
+    $sidebar = $hansardmajors[$data['info']['major']]['sidebar_short'];
 
-$PAGE->stripe_end(array(
-    array(
-        'type' => 'include',
-        'content' => $sidebar
-    )
-));
+    $PAGE->stripe_end(array(
+        array(
+            'type' => 'include',
+            'content' => $sidebar
+        )
+    ));
+}
+// For Plates pages, sidebars/hocdebates_short.php / holdebates_short.php's "What are
+// House debates?"/"What are Senate debates?" link (to /debates/#help or /senate/#help)
+// becomes its own block in the right-hand column instead - see $aboutTitle/
+// $aboutBodyHtml below and resources/views/hansard/about-debates.php.
 
 if ($data['info']['date'] == date('Y-m-d')) { ?>
     <div style="padding: 4px; margin: 1em; color: #000000; background-color: #ffeeee; border: solid 2px #ff0000;">
@@ -97,8 +172,8 @@ if (isset($data['rows'])) {
     // When we get the first subsection, we put its text in $subsection_title.
     // When we get the first item that is neither section or subsection, we
     // print these titles.
-    $section_title = '&nbsp;';
-    $subsection_title = '&nbsp;';
+    $section_title = NO_TITLE_SENTINEL;
+    $subsection_title = NO_TITLE_SENTINEL;
 
     // So we don't keep on printing the titles!
     $titles_displayed = false;
@@ -110,21 +185,28 @@ if (isset($data['rows'])) {
 
         // DISPLAY SECTION AND SUBSECTION HEADINGS.
         if (!$titles_displayed && $row['htype'] != '10' && $row['htype'] != '11') {
-            // Output the titles we've got so far.
+            if ($usePlatesTemplate) {
+                // Rendered inside the card itself instead (see transcript.php) - no
+                // separate stripe-head-2 title bar above it, so there's only one
+                // title on the page, not two.
+                $titles_displayed = true;
+            } else {
+                // Output the titles we've got so far.
 
-            $PAGE->stripe_start('head-2');
-            ?>
-            <h4><?php echo $section_title; ?></h4>
-            <h5><?php echo $subsection_title; ?></h5>
-            <?php
+                $PAGE->stripe_start('head-2');
+                ?>
+                <h4><?php echo $section_title; ?></h4>
+                <h5><?php echo $subsection_title; ?></h5>
+                <?php
 
-            $PAGE->stripe_end(array(
-                array(
-                    'type' => 'nextprev'
-                )
-            ));
+                $PAGE->stripe_end(array(
+                    array(
+                        'type' => 'nextprev'
+                    )
+                ));
 
-            $titles_displayed = true;
+                $titles_displayed = true;
+            }
         }
 
         // NOW, depending on the contents of this row, we do something different...
@@ -136,6 +218,15 @@ if (isset($data['rows'])) {
         } elseif ($row['htype'] == '13') {
             // DEBATE PROCEDURAL.
 
+            if ($usePlatesTemplate) {
+                // No ob_flush() here (unlike line 342's, below, for the stripe path) -
+                // nothing's echoed for a Plates row at this point, it's just pushed
+                // onto $plates_items and rendered in one batch by $platesEngine->render()
+                // long after this loop ends, so there'd be nothing new to flush.
+                $plates_items[] = HansardProceduralView::forProcedural($row, $data['info']);
+                continue;
+            }
+
             $stripecount++;
             $style = $stripecount % 2 == 0 ? '1' : '2';
 
@@ -143,7 +234,7 @@ if (isset($data['rows'])) {
 
             echo $row['body'];
 
-            context_link($row);
+            echo context_link($row);
 
             $sidebarhtml = generate_commentteaser($row, $data['info']['major']);
 
@@ -157,6 +248,19 @@ if (isset($data['rows'])) {
 
         } elseif ($row['htype'] == '12') {
             // A STANDARD SPEECH OR WRANS TEXT.
+
+            if ($usePlatesTemplate) {
+                // Same "is this a new time?" check as the stripe path below, just
+                // without any of the stripe rendering that goes with it.
+                $showTimestamp = substr($row['htime'], 0, 5) != $timetracker && $row['htime'] != "00:00:00";
+                if ($showTimestamp) {
+                    $timetracker = substr($row['htime'], 0, 5);
+                }
+                // No ob_flush() here either - same reasoning as the procedural
+                // branch above.
+                $plates_items[] = HansardSpeechView::forSpeech($row, $data['info'], $showTimestamp);
+                continue;
+            }
 
             $stripecount++;
             $style = $stripecount % 2 == 0 ? '1' : '2';
@@ -268,7 +372,7 @@ if (isset($data['rows'])) {
             $body = str_replace('<a href="h', '<a rel="nofollow" href="h', $body); # As even sites in Hansard lapse and become spam-sites
             echo str_replace('</p><p', '</p> <p', $body); # NN4 font size bug
 
-            context_link($row);
+            echo context_link($row);
 
             $sidebarhtml = '';
             $extrahtml = '';
@@ -297,7 +401,69 @@ if (isset($data['rows'])) {
 
     } // End cycling through rows.
 
-    if (!$titles_displayed) {
+    if ($usePlatesTemplate) {
+        // No !empty($plates_items) guard: transcript.php already handles a blank
+        // $items list gracefully (see the elseif ($usePlatesTemplate) branch
+        // further down, for when $data['rows'] is unset entirely). A Plates-major
+        // page whose rows are all headings (htype 10/11, no htype 12/13) used to
+        // reach here with $plates_items still empty and fall through to the
+        // legacy <h4>/<h5> stripe below instead of the new card. Sentry finding
+        // on #227.
+        //
+        // stripe_start() below would otherwise auto-print $PAGE->heading() the
+        // first time it's called on the page - "House debates"/"Senate debates"
+        // plus the formatted date, sourced from page metadata set generically in
+        // set_hansard_headings(). The card (transcript.php) carries both instead -
+        // the chamber label next to the section title, the date in its own row
+        // below - so suppress the original to avoid showing either twice.
+        $PAGE->heading_displayed = true;
+
+        // $chamberNames/$dateURL/$aboutBodyHtml/$nextPrev: computed once,
+        // unconditionally for every Plates page, near the top of this file - see
+        // the comments there.
+
+        // See HansardSpeechView::resolveTranscriptTitle() for the fallback logic
+        // (directly unit-tested there, unlike this file) - neither $section_title
+        // nor $subsection_title is guaranteed to have been set by the row loop
+        // above (an htype-10/11 heading row isn't guaranteed to exist at all). One
+        // line deliberately - see buildNextPrev()'s call above for why.
+        ['finalTitle' => $finalTitle, 'eyebrowSectionTitle' => $eyebrowSectionTitle] = HansardSpeechView::resolveTranscriptTitle($section_title, $subsection_title, NO_TITLE_SENTINEL, $hansardmajors[$data['info']['major']]['title'] ?? 'Debate');
+
+        echo $platesEngine->render('hansard/transcript', [
+            'items' => $plates_items,
+            'speakers' => HansardSpeechView::buildRoster($plates_items),
+            // $hansardmajors[...]['title'] is "House debates"/"Senate debates" - the
+            // same text the old stripe-head-1 h2 printed above the card (see
+            // $PAGE->heading_displayed suppression below). Shown next to $section_title
+            // in the card's eyebrow line instead, so it's not lost, just moved.
+            'chamberLabel' => $hansardmajors[$data['info']['major']]['title'] ?? '',
+            'sectionTitle' => $eyebrowSectionTitle,
+            'subsectionTitle' => $finalTitle,
+            // Matches LONGERDATEFORMAT (what the suppressed old h3 used, eg "Tuesday, 18
+            // August 2026") rather than the plain 'j F Y' this used before.
+            'date' => date('l, j F Y', strtotime($data['info']['date'])),
+            // 'none': a plain URL, not pre-HTML-escaped - transcript.php's $this->e()
+            // does that itself, same as every other href here (see chamberLabel etc.).
+            // generate()'s default ('html') already returns "&amp;"-joined args, which
+            // $this->e() would then escape a second time into "&amp;amp;".
+            'dateUrl' => $dateURL->generate('none'),
+            'chamber' => $chamberNames[$data['info']['major']] ?? '',
+            // "What are House debates?"/"What are Senate debates?" - was a link-only
+            // sidebar block (sidebars/hocdebates_short.php etc.) above the card; now
+            // its own block in the right-hand column, with the explanation inline
+            // instead of behind a link to elsewhere. See resources/views/hansard/
+            // about-debates.php.
+            'aboutTitle' => 'What are ' . ($hansardmajors[$data['info']['major']]['title'] ?? 'debates') . '?',
+            'aboutBodyHtml' => $aboutBodyHtml[$data['info']['major']] ?? '',
+            'nextPrev' => $nextPrev,
+        ]);
+    }
+
+    if (!$titles_displayed && !$usePlatesTemplate) {
+        // The Plates block above now always renders for a Plates-major page
+        // (titles included, via resolveTranscriptTitle()'s fallback) - this
+        // legacy stripe is the non-Plates path's own equivalent, and would
+        // otherwise still fire for a Plates page whose rows are all headings.
         $PAGE->stripe_start('head-2');
         ?>
         <h4><?php echo $section_title; ?></h4>
@@ -351,6 +517,26 @@ if (isset($data['rows'])) {
         print '</ul>';
         $PAGE->stripe_end();
     }
+} elseif ($usePlatesTemplate) {
+    // $data['rows'] unset entirely (not just empty) still gets the card, empty -
+    // transcript.php already handles a blank $items list gracefully, and this is
+    // the only way this case gets pagination/"all debates on this day" at all,
+    // rather than a dead-end "No data to display." with no way to navigate on.
+    // Sentry finding on #227.
+    $PAGE->heading_displayed = true;
+    echo $platesEngine->render('hansard/transcript', [
+        'items' => [],
+        'speakers' => [],
+        'chamberLabel' => $hansardmajors[$data['info']['major']]['title'] ?? '',
+        'sectionTitle' => '',
+        'subsectionTitle' => $hansardmajors[$data['info']['major']]['title'] ?? 'Debate',
+        'date' => date('l, j F Y', strtotime($data['info']['date'])),
+        'dateUrl' => $dateURL->generate('none'),
+        'chamber' => $chamberNames[$data['info']['major']] ?? '',
+        'aboutTitle' => 'What are ' . ($hansardmajors[$data['info']['major']]['title'] ?? 'debates') . '?',
+        'aboutBodyHtml' => $aboutBodyHtml[$data['info']['major']] ?? '',
+        'nextPrev' => $nextPrev,
+    ]);
 } else {
     ?>
     <p>No data to display.</p>
@@ -359,7 +545,10 @@ if (isset($data['rows'])) {
 }
 
 
-if ($this_page == 'debates' || $this_page == 'whall' || $this_page == 'lordsdebates' || $this_page == 'nidebates') {
+if (
+    !$usePlatesTemplate
+    && ($this_page == 'debates' || $this_page == 'whall' || $this_page == 'lordsdebates' || $this_page == 'nidebates')
+) {
     // Previous / Index / Next links, if any.
 
     $PAGE->stripe_start('foot');
@@ -372,102 +561,11 @@ if ($this_page == 'debates' || $this_page == 'whall' || $this_page == 'lordsdeba
 }
 
 
-function context_link(&$row)
-{
-    global $this_page;
-
-    if ($this_page == 'debate') {
-        if ($row['htype'] == '12') {
-            $thing = 'speech';
-        } elseif ($row['htype'] == '13') {
-            $thing = 'item';
-        } else {
-            $thing = 'item';
-        }
-        ?>
-        <p><small><strong><a href="<?php echo $row['listurl']; ?>" class="permalink"
-                        title="See this <?php echo $thing; ?> within the entire debate">See this <?php echo $thing; ?> in
-                        context</a></strong></small></p>
-        <?php
-    }
-}
-
-
-//$totalcomments, $comment, $commenturl
-function generate_commentteaser($row, $major)
-{
-    // Returns HTML for the one fragment of comment and link for the sidebar.
-    // $totalcomments is the number of comments this item has on it.
-    // $comment is an array like:
-    /* $comment = array (
-        'comment_id' => 23,
-        'user_id'	=> 34,
-        'body'		=> 'Blah blah...',
-        'posted'	=> '2004-02-24 23:45:30',
-        'username'	=> 'phil'
-        )
-    */
-    // $url is the URL of the item's page, which contains comments.
-
-    global $this_page, $THEUSER, $hansardmajors;
-
-    $html = '';
-
-    if ($hansardmajors[$major]['type'] == 'debate' && $hansardmajors[$major]['page_all'] == $this_page) {
-
-        if ($row['totalcomments'] > 0) {
-            $comment = $row['comment'];
-
-            // If the comment is longer than the speech body, we want to trim it
-            // to be the same length so they fit next to each other.
-            // But the comment typeface is smaller, so we scale things slightly too...
-            $targetsize = round(strlen($row['body']) * 0.6);
-
-            if ($targetsize > strlen($comment['body'])) {
-                // This comment will fit in its entirety.
-                $commentbody = $comment['body'];
-
-                if ($row['totalcomments'] > 1) {
-                    $morecount = $row['totalcomments'] - 1;
-                    $plural = $morecount == 1 ? 'comment' : 'comments';
-                    $linktext = "Read $morecount more $plural";
-                }
-
-            } else {
-                // This comment needs trimming.
-                $commentbody = htmlentities(trim_characters($comment['body'], 0, $targetsize));
-                if ($row['totalcomments'] > 1) {
-                    $morecount = $row['totalcomments'] - 1;
-                    $plural = $morecount == 1 ? 'comment' : 'comments';
-                    $linktext = "Continue reading (and $morecount more $plural)";
-                } else {
-                    $linktext = 'Continue reading';
-                }
-            }
-
-            $html = '<em>' . htmlentities($comment['username']) . '</em>: ' . prepare_comment_for_display($commentbody);
-
-            if (isset($linktext)) {
-                $html .= ' <a href="' . $row['commentsurl'] . '#c' . $comment['comment_id'] . '" title="See any comments posted about this">' . $linktext . '</a>';
-            }
-
-            $html .= '<br><br>';
-        }
-
-        // 'Add a comment' link.
-        if (!$THEUSER->isloggedin()) {
-            $URL = new URL('userprompt');
-            $URL->insert(array('ret' => $row['commentsurl']));
-            $commentsurl = $URL->generate();
-        } else {
-            $commentsurl = $row['commentsurl'];
-        }
-
-        $html = "\t\t\t\t" . '<p class="comment-teaser">' . $html . "</p>\n";
-    }
-
-    return $html;
-}
+// context_link()/generate_commentteaser(): moved to hansard_row_helpers.php
+// (included by HansardSpeechView.php, which needed them without depending on
+// this template happening to be the one that loaded it first) - still used
+// directly below, in the old stripe-based rendering. Ben Fairless's review on
+// #227.
 
 $votelinks_so_far = 0;
 function generate_votes($votes, $major, $id, $gid)
