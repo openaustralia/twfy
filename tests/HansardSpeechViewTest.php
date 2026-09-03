@@ -813,6 +813,20 @@ class HansardSpeechViewTest extends TestCase {
     }
 
     /**
+     * $row['major'] should always be a real, configured major, but that's not
+     * enforced at the DB layer - an unknown one falls back to treating the
+     * subrow as a debate-style (not "other") major rather than warning on the
+     * array access. Sentry finding on #231.
+     */
+    public function test_fromSubrow_treats_an_unknown_major_as_not_other() {
+        $row = $this->subrow(['contentcount' => 1, 'major' => 999]);
+
+        $item = HansardSectionIndexItem::fromSubrow($row, $this->hansardmajors());
+
+        $this->assertSame('1 speech', $item->countLabel);
+    }
+
+    /**
      *
      */
     public function test_fromSubrow_with_no_content_leaves_the_url_and_count_label_null() {

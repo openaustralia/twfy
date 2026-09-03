@@ -521,10 +521,15 @@ class HansardSectionIndexItem {
         $item = new self();
         $item->titleHtml = $row['body'];
 
+        // ?? null: $row['major'] should always be a real, configured major, but
+        // isn't enforced at the DB layer - falls back to treating it as not
+        // "other" rather than warning on the array access. Sentry finding on #231.
+        $majorType = $hansardmajors[$row['major']]['type'] ?? null;
+
         $hasContent = false;
         if (isset($row['contentcount']) && $row['contentcount'] > 0) {
             $hasContent = true;
-        } elseif ($row['htype'] == '11' && $hansardmajors[$row['major']]['type'] == 'other') {
+        } elseif ($row['htype'] == '11' && $majorType == 'other') {
             $hasContent = true;
         }
 
@@ -532,7 +537,7 @@ class HansardSectionIndexItem {
             $item->url = $row['listurl'];
 
             $parts = [];
-            if ($hansardmajors[$row['major']]['type'] != 'other') {
+            if ($majorType != 'other') {
                 // All Wrans have 2 speeches, all WMS have 1 - no need to say so.
                 $plural = $row['contentcount'] == 1 ? 'speech' : 'speeches';
                 $parts[] = $row['contentcount'] . " $plural";
