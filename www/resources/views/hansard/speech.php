@@ -115,13 +115,21 @@
             // comment on that) override the inherited slate colour and render them
             // in the legacy blue/purple instead of matching the source/permalink
             // links either side. Copilot finding on #227.
+            //
+            // [&_small]:!text-sm [&_strong]:!font-normal: contextLinkHtml also
+            // arrives wrapped in the legacy <p><small><strong> it shares with the
+            // old stripe rendering (context_link() is called directly there too,
+            // so its own markup can't change) - without this it renders visibly
+            // smaller and bolder than the source/permalink links either side.
             ?>
-            <div class="mt-3 flex flex-wrap items-baseline gap-x-3 gap-y-1 text-sm text-slate-500 [&_p]:inline [&_p]:m-0 [&_a]:!text-slate-500 [&_a]:hover:!text-teal-700 [&_a]:!no-underline">
+            <div class="mt-3 flex flex-wrap items-baseline gap-x-3 gap-y-1 text-sm text-slate-500 [&_p]:inline [&_p]:m-0 [&_small]:!text-sm [&_strong]:!font-normal [&_a]:!text-slate-500 [&_a]:hover:!text-teal-700 [&_a]:!no-underline">
                 <?php if ($speech->sourceUrl): ?>
                     <a href="<?php echo $this->e($speech->sourceUrl) ?>" class="!text-slate-500 hover:!text-teal-700 !no-underline"
                         title="The source of this piece of text"><span aria-hidden="true">📄</span> <?php echo $this->e($speech->sourceLabel) ?></a>
                 <?php endif; ?>
-                <?php echo $speech->contextLinkHtml ?>
+                <?php if ($speech->contextLinkHtml): ?>
+                    <span aria-hidden="true">🔍</span> <?php echo $speech->contextLinkHtml ?>
+                <?php endif; ?>
                 <?php echo $speech->commentTeaserHtml ?>
                 <?php if ($speech->permalinkUrl): ?>
                     <a href="<?php echo $this->e($speech->permalinkUrl) ?>" class="!text-slate-500 hover:!text-teal-700 !no-underline"
