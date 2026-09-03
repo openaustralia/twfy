@@ -22,7 +22,13 @@
     --oaf-footer-donate-text:#475569; --oaf-footer-donate-button-bg:#0f766e; --oaf-footer-donate-button-text:#fff;">
     <div class="oaf-footer__inner">
 
-        <div class="oaf-footer__top">
+        <?php
+        // align-items:start: oaf-footer.css's .oaf-footer__top is a grid with no
+        // align-items set, so it defaults to stretch - the donate box (the
+        // shortest column) was stretching to match the Help/Developers links
+        // column's height, leaving a lot of blank white space under the button.
+        ?>
+        <div class="oaf-footer__top" style="align-items:start;">
             <div class="oaf-footer__site">
                 <?php
                 // !text-white: oaf-footer.css doesn't set a color for
