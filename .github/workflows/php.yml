@@ -181,9 +181,14 @@ jobs:
       - name: Install Chromium
         run: npx playwright install --with-deps chromium
       - name: Capture homepage screenshots
-        run: npx playwright test
+        # percy exec wraps the same Playwright run - percySnapshot() calls
+        # inside the spec no-op harmlessly when PERCY_TOKEN isn't set (eg on
+        # a fork PR without secrets access), so this degrades to a plain
+        # Playwright run rather than failing.
+        run: npx percy exec -- npx playwright test
         env:
           PLAYWRIGHT_BASE_URL: http://127.0.0.1:8080
+          PERCY_TOKEN: ${{ secrets.PERCY_TOKEN }}
       - name: Upload homepage screenshots
         if: always()
         uses: actions/upload-artifact@v4

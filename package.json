@@ -4,9 +4,12 @@
   "scripts": {
     "build:css": "tailwindcss -i ./www/docs/style/tailwind/input.css -o ./www/docs/style/tailwind/tailwind.css --minify",
     "watch:css": "tailwindcss -i ./www/docs/style/tailwind/input.css -o ./www/docs/style/tailwind/tailwind.css --watch",
-    "test:visual": "playwright test"
+    "test:visual": "playwright test",
+    "test:percy": "percy exec -- playwright test"
   },
   "devDependencies": {
+    "@percy/cli": "^1.32.7",
+    "@percy/playwright": "^1.1.2",
     "@playwright/test": "^1.55.0",
     "tailwindcss": "^3.4.0"
   }
