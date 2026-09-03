@@ -132,17 +132,22 @@ div.row span.formw {
 /**** The horizontal stripes. And/or the main column / sidebar structure.     */
 /**** A stripe* will probably contain main and sidebar divs. */
 
-div.stripe-side,
-div.stripe-head-1,
-div.stripe-head-2 {
+div.stripe-side {
 	margin: 0;
 	padding: 0;
 	background: #EBECCF; /* NAT */
 	}
 
+/* Used by hansard_gid.php/hansard_gid_mobile.php (the debate page's title,
+   section heading and prev/next bar) and hansard/index.php's own header stripe -
+   replaced the old khaki/pink (#EBECCF, #FDF5F5) with the neutral slate used by
+   the rest of the redesigned chrome. */
+div.stripe-head-1,
 div.stripe-head-2,
 div.stripe-foot {
-	background: #FDF5F5;
+	margin: 0;
+	padding: 0;
+	background: #f1f5f9;
 	}
 
 div.stripe-1,
@@ -179,7 +184,7 @@ div.stripe-head-1 div.main {
 div.stripe-head-2 div.main,
 div.stripe-foot div.main {
 	border-right: 1px solid #fff;
-	background: #FDF5F5;
+	background: #f1f5f9;
 	}
 
 div.stripe-1 div.main,

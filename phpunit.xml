@@ -17,6 +17,12 @@
     <source>
         <include>
             <directory suffix=".php">www/includes</directory>
+            <!-- The Plates view templates (resources/views/**) live outside
+                 www/includes - without this, HansardPlatesViewsTest.php's coverage of
+                 them (and any future view-snippet test) is silently dropped from the
+                 report, since PHPUnit's coverage.include filter is separate from
+                 which files Xdebug actually executes. -->
+            <directory suffix=".php">www/resources</directory>
         </include>
     </source>
 </phpunit>
