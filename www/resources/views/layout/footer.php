@@ -65,14 +65,16 @@
             // one button) is much narrower, leaving a lot of blank space on
             // its right.
             //
-            // max-width:15em: justify-self:start alone still sizes the box to
+            // max-width:200px: justify-self:start alone still sizes the box to
             // fit-content, which is the width of the paragraph's *unwrapped*
             // single line, capped at the column's own width when that's
             // narrower - here the unwrapped line is wider than the column, so
             // the cap wins and the box ends up column-width again anyway. An
-            // explicit cap forces a tighter wrap instead.
+            // explicit cap forces a tighter wrap instead. (A first attempt at
+            // 15em/240px was a no-op - close enough to the column's own ~236px
+            // natural width at this breakpoint to make no visible difference.)
             ?>
-            <div class="oaf-footer__donate" style="justify-self:start; max-width:15em;">
+            <div class="oaf-footer__donate" style="justify-self:start; max-width:200px;">
                 <p>Your donations keep this site and others like it running.</p>
                 <a class="oaf-footer__donate-button" href="https://donate.oaf.org.au/">Donate now ❤️</a>
             </div>
