@@ -45,12 +45,14 @@ class LayoutPlatesViewsTest extends TestCase {
     }
 
     /**
-     *
+     * The eyebrow label <li> for each list is always there - only the links
+     * themselves are conditional on $helpLinks/$devLinks.
      */
     public function test_footer_renders_no_link_items_when_both_lists_are_empty() {
         $html = $this->engine->render('layout/footer', ['helpLinks' => [], 'devLinks' => []]);
 
-        $this->assertStringNotContainsString('<li>', $html);
+        $this->assertStringNotContainsString('<li></li>', $html);
+        $this->assertSame(2, substr_count($html, '<li class="oaf-footer__eyebrow">'));
     }
 
     /**
@@ -62,9 +64,52 @@ class LayoutPlatesViewsTest extends TestCase {
         $this->assertStringContainsString('OpenAustralia.org.au', $html);
         $this->assertStringContainsString('OpenAustralia Foundation', $html);
         $this->assertStringContainsString('href="https://donate.oaf.org.au/"', $html);
-        $this->assertStringContainsString('They Vote For You', $html);
-        $this->assertStringContainsString('Right To Know', $html);
-        $this->assertStringContainsString('PlanningAlerts', $html);
+        $this->assertStringContainsString('They Vote for You', $html);
+        $this->assertStringContainsString('Right to Know', $html);
+        $this->assertStringContainsString('Planning Alerts', $html);
+    }
+
+    /**
+     * The canonical OAF footer's governed attribution block (openaustralia/
+     * oaf-standard-footer) - charity/ABN sentence and Acknowledgement of
+     * Country, byte-identical to the source repo. Do not edit this expected
+     * text without CEO sign-off on the wording change itself.
+     */
+    public function test_footer_renders_the_governed_attribution_block() {
+        $html = $this->engine->render('layout/footer', ['helpLinks' => [], 'devLinks' => []]);
+
+        $this->assertStringContainsString(
+            'is a public digital online library and a',
+            $html
+        );
+        $this->assertStringContainsString('ABN&nbsp;<a href="https://www.abr.business.gov.au/ABN/View/24138089942">24&nbsp;138&nbsp;089&nbsp;942</a>', $html);
+        $this->assertStringContainsString(
+            'OpenAustralia Foundation acknowledges the traditional Owners of Country throughout Australia',
+            $html
+        );
+    }
+
+    /**
+     * The ACNC Registered Charity Tick - used under a revocable licence that
+     * requires it to link to OAF's own Charity Register entry.
+     */
+    public function test_footer_renders_the_acnc_tick_linked_to_the_charity_register() {
+        $html = $this->engine->render('layout/footer', ['helpLinks' => [], 'devLinks' => []]);
+
+        $this->assertStringContainsString('acnc-registered-charity-colour.svg', $html);
+        $this->assertStringContainsString('href="https://www.acnc.gov.au/charity/charities/6bf25724-39af-e811-a960-000d3ad24282/profile"', $html);
+    }
+
+    /**
+     *
+     */
+    public function test_footer_renders_the_social_links() {
+        $html = $this->engine->render('layout/footer', ['helpLinks' => [], 'devLinks' => []]);
+
+        $this->assertStringContainsString('href="https://github.com/openaustralia"', $html);
+        $this->assertStringContainsString('href="https://bsky.app/profile/oaf.org.au"', $html);
+        $this->assertStringContainsString('href="https://social.oaf.org.au/@oaf"', $html);
+        $this->assertStringContainsString('href="https://www.linkedin.com/company/openaustralia-foundation"', $html);
     }
 
 }
