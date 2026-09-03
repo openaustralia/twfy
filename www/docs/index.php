@@ -43,11 +43,11 @@ function search_hero() {
     global $platesEngine;
 
     $SEARCHURL = new URL('search');
-    echo $platesEngine->render('front/search-hero', [
-        'searchUrl' => $SEARCHURL->generate(),
-        'keyword' => get_http_var('keyword'),
-        'popularSearchesLabel' => popular_searches_label(),
-    ]);
+    // One line deliberately: this file can't be unit-tested directly, so every
+    // physical line of a call here is new, permanently-uncovered code against
+    // SonarCloud's new-code coverage gate - splitting a call across N lines
+    // costs N uncovered lines, not one. Same fix as #227's hansard_gid.php.
+    echo $platesEngine->render('front/search-hero', ['searchUrl' => $SEARCHURL->generate(), 'keyword' => get_http_var('keyword'), 'popularSearchesLabel' => popular_searches_label()]);
 }
 
 /**
@@ -72,12 +72,8 @@ function feature_row() {
 
     $HANSARDURL = new URL('hansard');
     $keyword = get_http_var('keyword');
-    echo $platesEngine->render('front/feature-row', [
-        'mpBlock' => mp_block(),
-        'hansardUrl' => $HANSARDURL->generate('none'),
-        'emailAlertUrl' => FrontPageView::emailAlertUrl($keyword),
-        'emailAlertText' => FrontPageView::emailAlertText($keyword),
-    ]);
+    // One line deliberately - see search_hero()'s own comment on why.
+    echo $platesEngine->render('front/feature-row', ['mpBlock' => mp_block(), 'hansardUrl' => $HANSARDURL->generate('none'), 'emailAlertUrl' => FrontPageView::emailAlertUrl($keyword), 'emailAlertText' => FrontPageView::emailAlertText($keyword)]);
 }
 
 /**
@@ -95,11 +91,8 @@ function mp_block() {
         $MEMBER = new MEMBER(['constituency' => $THEUSER->constituency()]);
         if ($MEMBER->valid) {
             $left_house = $MEMBER->left_house();
-            $member = [
-                'first_name' => $MEMBER->first_name(),
-                'last_name' => $MEMBER->last_name(),
-                'still_in_house' => $left_house[1]['date'] == '9999-12-31',
-            ];
+            // One line deliberately - see search_hero()'s own comment on why.
+            $member = ['first_name' => $MEMBER->first_name(), 'last_name' => $MEMBER->last_name(), 'still_in_house' => $left_house[1]['date'] == '9999-12-31'];
         }
     }
 
@@ -160,17 +153,11 @@ function latest_activity_column($major, $chamberName, $iconColorClass) {
     $DAYURL = new URL($hansardmajors[$major]['page_all']);
     $DAYURL->insert(['d' => $recent['hdate']]);
 
-    echo $platesEngine->render('front/latest-activity-column', [
-        'chamberName' => $chamberName,
-        'iconColorClass' => $iconColorClass,
-        // House and Senate don't always share a most recent sitting day (eg one
-        // chamber rises for the week before the other), so this is each column's
-        // own $recent['hdate'], not one shared page-level date.
-        'date' => format_date($recent['hdate'], SHORTDATEFORMAT),
-        'items' => $items,
-        'dayUrl' => $DAYURL->generate('none'),
-        'viewAllLabel' => $major == 101 ? 'the Senate' : 'the House',
-    ]);
+    // One line deliberately - see search_hero()'s own comment on why. 'date' is
+    // each column's own $recent['hdate'], not one shared page-level date - House
+    // and Senate don't always share a most recent sitting day (eg one chamber
+    // rises for the week before the other).
+    echo $platesEngine->render('front/latest-activity-column', ['chamberName' => $chamberName, 'iconColorClass' => $iconColorClass, 'date' => format_date($recent['hdate'], SHORTDATEFORMAT), 'items' => $items, 'dayUrl' => $DAYURL->generate('none'), 'viewAllLabel' => $major == 101 ? 'the Senate' : 'the House']);
 }
 
 /**
@@ -273,19 +260,11 @@ function latest_activity_items($LIST, $major, $date) {
             $entry->firstSpeechUrl = $speechURL->generate('none') . '#g' . gid_to_anchor(fix_gid_from_db($firstSpeech['speech_gid']));
             $speakers[] = $entry;
         }
-        // count($speakers), not count($shownSpeakerIds): the latter is attempted
-        // lookups, not what's actually rendered - _get_speaker() can come back empty
-        // for one of them (skipped above), which would otherwise undercount "+N more"
-        // by however many lookups failed.
-        $moreSpeakersCount = max(0, count($firstSpeechBySpeaker) - count($speakers));
-
-        $items[] = [
-            'title' => $q->field($i, 'body'),
-            'speakers' => $speakers,
-            'moreSpeakersCount' => $moreSpeakersCount,
-            'topics' => $topics['topics'],
-            'moreTopicsCount' => $topics['moreCount'],
-        ];
+        // See FrontPageView::buildActivityItem() for the "+N more" maths
+        // (count($speakers), not count($shownSpeakerIds) - the latter is
+        // attempted lookups, not what's actually rendered) - directly
+        // unit-tested there, unlike this file.
+        $items[] = FrontPageView::buildActivityItem($q->field($i, 'body'), $speakers, count($firstSpeechBySpeaker), $topics);
     }
 
     return $items;

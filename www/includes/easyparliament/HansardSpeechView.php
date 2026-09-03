@@ -5,9 +5,12 @@
  * Plain view models for the Plates-rendered debate transcript (House representatives
  * and Senate only - major 1 and 101, see hansard_gid.php). Each one takes the existing
  * $row HansardObjectData array (documented at the bottom of hansard_gid.php) and turns
- * it into a finished, escaping-agnostic set of fields - no HTML strings, no direct
- * echo/print, no $PAGE-> calls. The Plates template is the only thing that turns these
- * into markup; this class is the only thing that reads $row's raw fields.
+ * it into a finished, escaping-agnostic set of fields - some (bodyHtml,
+ * contextLinkHtml, commentTeaserHtml) do carry pre-built, pre-sanitised HTML through
+ * from existing helpers, but this class builds no markup structure of its own: no
+ * direct echo/print, no $PAGE-> calls. The Plates template is the only thing that
+ * turns these into a finished page; this class is the only thing that reads $row's
+ * raw fields.
  *
  * See openaustralia/openaustralia#939 for why this split exists.
  */
@@ -85,7 +88,11 @@ class HansardSpeechView {
         // Matches "interjecting" alone, not "interjecting" + a dash: real body text
         // stores the dash as the entity "&#8212;", not a literal em-dash/hyphen
         // character, so requiring one right after the word never matched anything.
-        $view->isInterjection = (bool) preg_match('/\binterjecting\b/i', $row['body'] ?? '');
+        // speakerName === null: without this, a named MP's own speech that merely
+        // mentions "interjecting" in its prose would wrongly get the amber
+        // interjection card too. Copilot finding on #227.
+        $view->isInterjection = $view->speakerName === null
+            && (bool) preg_match('/\binterjecting\b/i', $row['body'] ?? '');
 
         if (isset($row['source_url']) && $row['source_url'] != '') {
             $view->sourceUrl = $row['source_url'];
@@ -387,6 +394,30 @@ class HansardSpeechView {
         usort($roster, fn($a, $b) => $b->wordCount <=> $a->wordCount);
 
         return $roster;
+    }
+
+    /**
+     * Falls back subsection title -> section title -> the major's own label
+     * ("House debates"/"Senate debates") when neither heading row occurred on the
+     * page - a still-unset $sentinel title would otherwise reach transcript.php's
+     * <h2> literally. eyebrowSectionTitle is the same section title shown in the
+     * card's eyebrow line, but blanked instead of left at $sentinel when only a
+     * subsection heading (htype 11, no htype 10) occurred - transcript.php treats
+     * any non-empty sectionTitle as real and renders a "·" separator before it.
+     * Sentry finding on #227.
+     */
+    public static function resolveTranscriptTitle(string $sectionTitle, string $subsectionTitle, string $sentinel, string $majorTitle): array {
+        $hasSubsectionTitle = $subsectionTitle !== $sentinel;
+        $finalTitle = $hasSubsectionTitle ? $subsectionTitle : $sectionTitle;
+        if ($finalTitle === $sentinel) {
+            $finalTitle = $majorTitle;
+        }
+        $eyebrowSectionTitle = ($hasSubsectionTitle && $sectionTitle !== $sentinel) ? $sectionTitle : '';
+        return [
+            'hasSubsectionTitle' => $hasSubsectionTitle,
+            'finalTitle' => $finalTitle,
+            'eyebrowSectionTitle' => $eyebrowSectionTitle,
+        ];
     }
 
 }

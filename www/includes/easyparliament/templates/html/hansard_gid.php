@@ -40,6 +40,14 @@ if (!isset($data['info'])) {
 // redesign plan for why. Reads $data['info']['major'], so this has to come after the
 // isset($data['info']) guard above, not before it - moving it here fixes a real
 // warning on the known bot-triggered no-data path that guard exists for.
+//
+// Mobile requests never reach this file at all - conf/httpd.conf.ubuntu rewrites
+// them to docs/*/mobile.php, which renders hansard_gid_mobile.php instead (a
+// separate legacy template, unaffected by $usePlatesTemplate here). That's
+// deliberate, not an oversight: mobile.php is slated for removal
+// (openaustralia/openaustralia#943), so it isn't getting the Plates redesign
+// either - see the note at the top of hansard_gid_mobile.php. Copilot finding on
+// #227.
 $usePlatesTemplate = in_array($data['info']['major'], [1, 101], true);
 $plates_items = [];
 if ($usePlatesTemplate) {
@@ -53,7 +61,11 @@ if ($usePlatesTemplate) {
     // first and its "chamber" row the second. Both the transcript card and the
     // section-index page (below) show one or the other somewhere on the page - see
     // openaustralia/openaustralia's own "which house was this?" feedback on the
-    // section-index page, which had neither.
+    // section-index page, which had neither. Computed here, unconditionally, rather
+    // than only inside the isset($data['rows']) branch below - a Plates page with
+    // $data['rows'] unset entirely (as opposed to set but empty) used to skip this
+    // and render with no navigation at all, just a bare "No data to display." dead
+    // end.
     $chamberNames = [1 => 'House of Representatives', 101 => 'Senate'];
     $chamberLabel = $hansardmajors[$data['info']['major']]['title'] ?? '';
 
@@ -78,13 +90,14 @@ if ($usePlatesTemplate) {
     // earlier by HANSARDLIST::_get_nextprev_items() - each of prev/up/next is
     // optional (eg no "prev" on the very first debate ever recorded), and a present
     // one isn't always a link (nextprevlinks() falls back to plain text with no
-    // 'url' in some cases too).
+    // 'url' in some cases too). See HansardSpeechView::buildNextPrev() for the
+    // actual label/url/title logic (directly unit-tested there, unlike this file).
     $nextprevdata = $DATA->page_metadata($this_page, 'nextprev') ?: [];
-    $nextPrev = HansardSpeechView::buildNextPrev(
-        $nextprevdata,
-        $hansardmajors[$data['info']['major']]['title'] ?? 'debates',
-        $dateURL->generate('none')
-    );
+    // One line deliberately: this file can't be unit-tested directly, so every
+    // physical line of a call here is new, permanently-uncovered code as far as
+    // SonarCloud's new-code coverage gate is concerned - splitting a call across N
+    // lines costs N uncovered lines, not one.
+    $nextPrev = HansardSpeechView::buildNextPrev($nextprevdata, $hansardmajors[$data['info']['major']]['title'] ?? 'debates', $dateURL->generate('none'));
 }
 
 $PAGE->page_start();
@@ -407,20 +420,21 @@ if (isset($data['rows'])) {
         $aboutBodyHtml = $about['bodyHtml'];
     }
 
-    if ($usePlatesTemplate && !empty($plates_items)) {
-        // stripe_start() below would otherwise auto-print $PAGE->heading() the first
-        // time it's called on the page - "House debates"/"Senate debates" plus the
-        // formatted date, sourced from page metadata set generically in
+    if ($usePlatesTemplate) {
+        // No !empty($plates_items) guard: transcript.php already handles a blank
+        // $items list gracefully (see the elseif ($usePlatesTemplate) branch
+        // further down, for when $data['rows'] is unset entirely). A Plates-major
+        // page whose rows are all headings (htype 10/11, no htype 12/13) used to
+        // reach here with $plates_items still empty and fall through to the
+        // legacy <h4>/<h5> stripe below instead of the new card. Sentry finding
+        // on #227.
+        //
+        // stripe_start() below would otherwise auto-print $PAGE->heading() the
+        // first time it's called on the page - "House debates"/"Senate debates"
+        // plus the formatted date, sourced from page metadata set generically in
         // set_hansard_headings(). The card (transcript.php) carries both instead -
-        // the chamber label next to the section title, the date in its own row below
-        // - so suppress the original to avoid showing either twice. Set only here,
-        // inside count($plates_items) > 0, not unconditionally on $usePlatesTemplate
-        // alone: every stripe_start() call in the row loop above is already gated
-        // behind $usePlatesTemplate (each takes an early continue instead), so
-        // nothing there needs this set early - and a Plates-major page with zero
-        // rows to show falls through to the plain $section_title/$subsection_title
-        // stripe_start('head-2') fallback further down, which does still need
-        // $PAGE->heading() to fire normally, or the page loses its heading entirely.
+        // the chamber label next to the section title, the date in its own row
+        // below - so suppress the original to avoid showing either twice.
         $PAGE->heading_displayed = true;
 
         // $chamberNames/$dateURL/$aboutTitle/$aboutBodyHtml/$nextPrev: computed once,
@@ -433,24 +447,13 @@ if (isset($data['rows'])) {
         // 20 August 2026" trail above the title would only be repeating links that
         // are already on the page, one click away either way.
 
-        // A subsection heading (htype 11) isn't guaranteed to occur before this
-        // renders - transcript.php puts $subsectionTitle in the card's main <h2>,
-        // unlike the old stripe-head-2 rendering above (h5, well below $section_title's
-        // own h4), so a still-unset '&nbsp;' sentinel here would show as a blank
-        // headline instead of a barely-noticeable blank second line. When that
-        // happens, $section_title becomes the <h2> instead, and drops out of the
-        // eyebrow line above it so it isn't shown twice.
-        $hasSubsectionTitle = $subsection_title !== NO_TITLE_SENTINEL;
-
-        // Neither $section_title nor $subsection_title is guaranteed to have been
+        // See HansardSpeechView::resolveTranscriptTitle() for the section/subsection
+        // title fallback logic (directly unit-tested there, unlike this file) -
+        // neither $section_title nor $subsection_title is guaranteed to have been
         // set by the row loop above (an htype-10/11 heading row isn't guaranteed to
-        // exist at all) - falling back to the chamber label rather than passing the
-        // sentinel through to transcript.php's <h2>, which would otherwise render
-        // the literal '&nbsp;'.
-        $finalTitle = $hasSubsectionTitle ? $subsection_title : $section_title;
-        if ($finalTitle === NO_TITLE_SENTINEL) {
-            $finalTitle = $hansardmajors[$data['info']['major']]['title'] ?? 'Debate';
-        }
+        // exist at all). One line deliberately - see buildNextPrev()'s call above
+        // for why.
+        ['finalTitle' => $finalTitle, 'eyebrowSectionTitle' => $eyebrowSectionTitle] = HansardSpeechView::resolveTranscriptTitle($section_title, $subsection_title, NO_TITLE_SENTINEL, $hansardmajors[$data['info']['major']]['title'] ?? 'Debate');
 
         echo $platesEngine->render('hansard/transcript', [
             'items' => $plates_items,
@@ -460,7 +463,7 @@ if (isset($data['rows'])) {
             // $PAGE->heading_displayed suppression below). Shown next to $section_title
             // in the card's eyebrow line instead, so it's not lost, just moved.
             'chamberLabel' => $hansardmajors[$data['info']['major']]['title'] ?? '',
-            'sectionTitle' => $hasSubsectionTitle ? $section_title : '',
+            'sectionTitle' => $eyebrowSectionTitle,
             'subsectionTitle' => $finalTitle,
             // Matches LONGERDATEFORMAT (what the suppressed old h3 used, eg "Tuesday, 18
             // August 2026") rather than the plain 'j F Y' this used before.
@@ -481,28 +484,25 @@ if (isset($data['rows'])) {
         ]);
     }
 
-    if (!$titles_displayed) {
-        if ($usePlatesTemplate) {
-            // Same reasoning as the identical check earlier in this file: rendered
-            // inside the card below instead, so skip the old stripe-head-2 title bar
-            // to avoid showing it twice. Section-index pages like an Adjournment
-            // debate's summary (see the $data['subrows'] branch just below) can reach
-            // here with $titles_displayed still false, since their $data['rows'] never
-            // hits a non-10/11 row to set it true.
-            $titles_displayed = true;
-        } else {
-            $PAGE->stripe_start('head-2');
-            ?>
-            <h4><?php echo $section_title; ?></h4>
-            <h5><?php echo $subsection_title; ?></h5>
-            <?php
-            $PAGE->stripe_end(array(
-                array(
-                    'type' => 'nextprev'
-                )
-            ));
-            $titles_displayed = true;
-        }
+    if (!$titles_displayed && !$usePlatesTemplate) {
+        // The Plates block above now always renders for a Plates-major page
+        // (titles included, via resolveTranscriptTitle()'s fallback) - this legacy
+        // stripe is the non-Plates path's own equivalent, and would otherwise still
+        // fire for a Plates page whose rows are all headings, or a section-index
+        // page like an Adjournment debate's summary (see the $data['subrows']
+        // branch just below), whose $data['rows'] never hits a non-10/11 row to
+        // set $titles_displayed true on its own.
+        $PAGE->stripe_start('head-2');
+        ?>
+        <h4><?php echo $section_title; ?></h4>
+        <h5><?php echo $subsection_title; ?></h5>
+        <?php
+        $PAGE->stripe_end(array(
+            array(
+                'type' => 'nextprev'
+            )
+        ));
+        $titles_displayed = true;
     }
 
     if (isset($data['subrows']) && $usePlatesTemplate) {
@@ -576,6 +576,32 @@ if (isset($data['rows'])) {
         print '</ul>';
         $PAGE->stripe_end();
     }
+} elseif ($usePlatesTemplate) {
+    // $data['rows'] unset entirely (not just empty) still gets the card, empty -
+    // transcript.php already handles a blank $items list gracefully, and this is
+    // the only way this case gets pagination/"all debates on this day" at all,
+    // rather than a dead-end "No data to display." with no way to navigate on.
+    // Sentry finding on #227.
+    $PAGE->heading_displayed = true;
+    // No real section title available here - $data['rows'] was never set at all,
+    // so the row loop above never ran and $section_title was never assigned.
+    // NO_TITLE_SENTINEL never matches a known section, so aboutSection() falls
+    // straight through to its generic per-major explainer, same as before this
+    // branch used aboutSection() at all.
+    $about = HansardSpeechView::aboutSection(NO_TITLE_SENTINEL, $data['info']['major'], $hansardmajors[$data['info']['major']]['title'] ?? null);
+    echo $platesEngine->render('hansard/transcript', [
+        'items' => [],
+        'speakers' => [],
+        'chamberLabel' => $hansardmajors[$data['info']['major']]['title'] ?? '',
+        'sectionTitle' => '',
+        'subsectionTitle' => $hansardmajors[$data['info']['major']]['title'] ?? 'Debate',
+        'date' => date('l, j F Y', strtotime($data['info']['date'])),
+        'dateUrl' => $dateURL->generate('none'),
+        'chamber' => $chamberNames[$data['info']['major']] ?? '',
+        'aboutTitle' => $about['title'],
+        'aboutBodyHtml' => $about['bodyHtml'],
+        'nextPrev' => $nextPrev,
+    ]);
 } else {
     ?>
     <p>No data to display.</p>
@@ -613,19 +639,14 @@ function context_link($row)
         return '';
     }
 
-    if ($row['htype'] == '12') {
-        $thing = 'speech';
-    } else {
-        $thing = 'item';
-    }
+    $thing = $row['htype'] == '12' ? 'speech' : 'item';
 
-    ob_start();
-    ?>
-    <p><small><strong><a href="<?php echo $row['listurl']; ?>" class="permalink"
-                    title="See this <?php echo $thing; ?> within the entire debate">See this <?php echo $thing; ?> in
-                    context</a></strong></small></p>
-    <?php
-    return ob_get_clean();
+    // Plain concatenation, not ob_start()/ob_get_clean(): this runs once per row on
+    // a transcript page, which can run to dozens of rows - avoidable buffering
+    // overhead for a string this simple. Copilot finding on #227.
+    return '<p><small><strong><a href="' . $row['listurl'] . '" class="permalink"'
+        . ' title="See this ' . $thing . ' within the entire debate">See this ' . $thing . ' in'
+        . ' context</a></strong></small></p>';
 }
 
 

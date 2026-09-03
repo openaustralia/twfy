@@ -108,16 +108,24 @@
         </div>
 
         <?php if ($speech->sourceUrl || $speech->contextLinkHtml || $speech->commentTeaserHtml || $speech->permalinkUrl): ?>
-            <div class="mt-3 flex flex-wrap items-baseline gap-x-3 gap-y-1 text-sm text-slate-500 [&_p]:inline [&_p]:m-0">
+            <?php
+            // [&_a]:...: contextLinkHtml/commentTeaserHtml are bare <a> tags from
+            // legacy helpers, with no colour classes of their own - without this,
+            // layout.css's global a:link/a:visited rules (see this file's other
+            // comment on that) override the inherited slate colour and render them
+            // in the legacy blue/purple instead of matching the source/permalink
+            // links either side. Copilot finding on #227.
+            ?>
+            <div class="mt-3 flex flex-wrap items-baseline gap-x-3 gap-y-1 text-sm text-slate-500 [&_p]:inline [&_p]:m-0 [&_a]:!text-slate-500 [&_a]:hover:!text-teal-700 [&_a]:!no-underline">
                 <?php if ($speech->sourceUrl): ?>
                     <a href="<?php echo $this->e($speech->sourceUrl) ?>" class="!text-slate-500 hover:!text-teal-700 !no-underline"
-                        title="The source of this piece of text">📄 <?php echo $this->e($speech->sourceLabel) ?></a>
+                        title="The source of this piece of text"><span aria-hidden="true">📄</span> <?php echo $this->e($speech->sourceLabel) ?></a>
                 <?php endif; ?>
                 <?php echo $speech->contextLinkHtml ?>
                 <?php echo $speech->commentTeaserHtml ?>
                 <?php if ($speech->permalinkUrl): ?>
                     <a href="<?php echo $this->e($speech->permalinkUrl) ?>" class="!text-slate-500 hover:!text-teal-700 !no-underline"
-                        title="Copy this URL to link directly to this piece of text">🔗 Link to this</a>
+                        title="Copy this URL to link directly to this piece of text"><span aria-hidden="true">🔗</span> Link to this</a>
                 <?php endif; ?>
             </div>
         <?php endif; ?>

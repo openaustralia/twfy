@@ -301,6 +301,23 @@ class HansardSpeechViewTest extends TestCase {
     }
 
     /**
+     * A named MP's own speech can legitimately mention the word "interjecting" in
+     * its prose (eg quoting or describing someone else) - only the anonymous,
+     * unresolved-speaker case should get the interjection treatment. Copilot
+     * finding on #227.
+     */
+    public function test_forSpeech_does_not_flag_a_named_speakers_speech_as_an_interjection() {
+        $row = $this->speechRow([
+            'speaker' => $this->speaker(),
+            'body' => '<p>The member opposite was interjecting throughout my speech.</p>',
+        ]);
+
+        $view = HansardSpeechView::forSpeech($row, $this->info(), true);
+
+        $this->assertFalse($view->isInterjection);
+    }
+
+    /**
      *
      */
     public function test_forSpeech_handles_a_null_body_without_a_typeerror() {
@@ -521,6 +538,85 @@ class HansardSpeechViewTest extends TestCase {
         $roster = HansardSpeechView::buildRoster($items);
 
         $this->assertSame('KG', $roster[0]->initials);
+    }
+
+    /**
+     * The plain case: prev/up/next all present, 'up' relabelled to point at the
+     * day-listing page instead of $DATA->page_metadata()'s own "See the whole
+     * debate" (the parent subsection/section's page).
+     */
+    public function test_buildNextPrev_relabels_the_up_link_to_the_day_listing_page() {
+        $nextPrev = HansardSpeechView::buildNextPrev([
+            'prev' => ['body' => 'Motions', 'url' => '/debates/?id=1', 'title' => 'Previous debate'],
+            'up' => ['body' => 'See the whole debate', 'url' => '/debates/?id=2'],
+            'next' => ['body' => 'Adjournment', 'url' => '/debates/?id=3', 'title' => 'Next debate'],
+        ], 'House debates', '/debates/?d=2026-08-20');
+
+        $this->assertSame('Motions', $nextPrev['prev']['label']);
+        $this->assertSame('All House debates on this day', $nextPrev['up']['label']);
+        $this->assertSame('/debates/?d=2026-08-20', $nextPrev['up']['url']);
+        $this->assertSame('All House debates on this day', $nextPrev['up']['title']);
+        $this->assertSame('Adjournment', $nextPrev['next']['label']);
+    }
+
+    /**
+     * Each of prev/up/next is independently optional - the very first debate ever
+     * recorded has no 'prev' at all, for instance.
+     */
+    public function test_buildNextPrev_omits_directions_with_no_data() {
+        $nextPrev = HansardSpeechView::buildNextPrev([
+            'next' => ['body' => 'Adjournment', 'url' => '/debates/?id=3'],
+        ], 'House debates', '/debates/?d=2026-08-20');
+
+        $this->assertArrayNotHasKey('prev', $nextPrev);
+        $this->assertArrayNotHasKey('up', $nextPrev);
+        $this->assertArrayHasKey('next', $nextPrev);
+    }
+
+    /**
+     *
+     */
+    public function test_resolveTranscriptTitle_prefers_the_subsection_title_when_set() {
+        $result = HansardSpeechView::resolveTranscriptTitle('Motions', 'Health Funding', '&nbsp;', 'House debates');
+
+        $this->assertTrue($result['hasSubsectionTitle']);
+        $this->assertSame('Health Funding', $result['finalTitle']);
+        $this->assertSame('Motions', $result['eyebrowSectionTitle']);
+    }
+
+    /**
+     * An htype-11 row occurred with no preceding htype-10 row - $sectionTitle is
+     * still the sentinel even though $hasSubsectionTitle is true. transcript.php
+     * treats any non-empty sectionTitle as real and renders a "·" separator before
+     * it, so the sentinel itself must never reach there. Sentry finding on #227.
+     */
+    public function test_resolveTranscriptTitle_blanks_the_eyebrow_section_title_when_only_the_sentinel_is_set() {
+        $result = HansardSpeechView::resolveTranscriptTitle('&nbsp;', 'Health Funding', '&nbsp;', 'House debates');
+
+        $this->assertTrue($result['hasSubsectionTitle']);
+        $this->assertSame('', $result['eyebrowSectionTitle']);
+    }
+
+    /**
+     * No htype-11 row occurred, so $subsectionTitle is still the sentinel - falls
+     * back to the section title instead.
+     */
+    public function test_resolveTranscriptTitle_falls_back_to_the_section_title() {
+        $result = HansardSpeechView::resolveTranscriptTitle('Motions', '&nbsp;', '&nbsp;', 'House debates');
+
+        $this->assertFalse($result['hasSubsectionTitle']);
+        $this->assertSame('Motions', $result['finalTitle']);
+    }
+
+    /**
+     * Neither an htype-10 nor an htype-11 row occurred - both titles are still the
+     * sentinel, so the only thing left to show is the major's own label.
+     */
+    public function test_resolveTranscriptTitle_falls_back_to_the_major_title_when_neither_is_set() {
+        $result = HansardSpeechView::resolveTranscriptTitle('&nbsp;', '&nbsp;', '&nbsp;', 'House debates');
+
+        $this->assertFalse($result['hasSubsectionTitle']);
+        $this->assertSame('House debates', $result['finalTitle']);
     }
 
     /**
