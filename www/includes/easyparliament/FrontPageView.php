@@ -149,8 +149,21 @@ class FrontPageView {
         $topics = [];
         $seenTitles = [];
         foreach ($subsections as $subsection) {
-            $lastSemicolon = strrpos($subsection['title'], ';');
-            $topicTitle = $lastSemicolon === false ? $subsection['title'] : trim(substr($subsection['title'], 0, $lastSemicolon));
+            $title = $subsection['title'];
+            // $title is pre-escaped HTML and can carry an entity of its own (eg
+            // "Survivors &amp; Mates Support Network" - epobject.body, confirmed the
+            // same in the live DB) - a bare strrpos() for the stage-suffix separator
+            // can find that entity's own closing ';' instead of a real one, truncating
+            // mid-entity ("Survivors &amp"). Masking entities out first (same length,
+            // so offsets into $title still line up) makes strrpos() only ever find a
+            // genuine separator. Sentry finding on #228.
+            $maskedTitle = preg_replace_callback(
+                '/&(?:#\d+|#x[0-9a-fA-F]+|[a-zA-Z][a-zA-Z0-9]*);/',
+                fn($m) => str_repeat('#', strlen($m[0])),
+                $title
+            );
+            $lastSemicolon = strrpos($maskedTitle, ';');
+            $topicTitle = $lastSemicolon === false ? $title : trim(substr($title, 0, $lastSemicolon));
             if (isset($seenTitles[$topicTitle])) {
                 continue;
             }
