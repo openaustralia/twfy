@@ -425,6 +425,16 @@ if (isset($data['rows'])) {
     }
 
     if ($usePlatesTemplate) {
+        // stripe_start() below would otherwise auto-print $PAGE->heading() the
+        // first time it's called on the page - "House debates"/"Senate debates"
+        // plus the formatted date, sourced from page metadata set generically in
+        // set_hansard_headings(). The transcript card and the section-index page
+        // below both carry an equivalent heading of their own, so suppress the
+        // original either way, to avoid showing either twice.
+        $PAGE->heading_displayed = true;
+    }
+
+    if ($usePlatesTemplate && !isset($data['subrows'])) {
         // No !empty($plates_items) guard: transcript.php already handles a blank
         // $items list gracefully (see the elseif ($usePlatesTemplate) branch
         // further down, for when $data['rows'] is unset entirely). A Plates-major
@@ -433,14 +443,12 @@ if (isset($data['rows'])) {
         // legacy <h4>/<h5> stripe below instead of the new card. Sentry finding
         // on #227.
         //
-        // stripe_start() below would otherwise auto-print $PAGE->heading() the
-        // first time it's called on the page - "House debates"/"Senate debates"
-        // plus the formatted date, sourced from page metadata set generically in
-        // set_hansard_headings(). The card (transcript.php) carries both instead -
-        // the chamber label next to the section title, the date in its own row
-        // below - so suppress the original to avoid showing either twice.
-        $PAGE->heading_displayed = true;
-
+        // !isset($data['subrows']): a section-index page (eg "Bills", "Adjournment")
+        // has $data['rows'] set too, but to just its own htype-10/11 heading row(s) -
+        // $plates_items stays empty, and without this guard this card rendered
+        // anyway, empty, directly above the real section-index-page.php card below,
+        // reading as duplicated content. Reported directly against a live page.
+        //
         // $chamberNames/$dateURL/$aboutTitle/$aboutBodyHtml/$nextPrev: computed once,
         // unconditionally for every Plates page, near the top of this file / just
         // above - see the comments there.
