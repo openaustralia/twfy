@@ -24,7 +24,13 @@
 
         <div class="oaf-footer__top">
             <div class="oaf-footer__site">
-                <h2 class="oaf-footer__site-name">OpenAustralia.org.au</h2>
+                <?php
+                // !text-white: oaf-footer.css doesn't set a color for
+                // .oaf-footer__site-name (it's meant to inherit --oaf-footer-text),
+                // so with nothing to win the specificity tie it fell straight
+                // through to layout.css's bare "h2 { color: #B82E00 }" instead.
+                ?>
+                <h2 class="oaf-footer__site-name !text-white">OpenAustralia.org.au</h2>
                 <div class="oaf-footer__site-description">
                     <p>Keeping tabs on your representatives in the Australian Parliament.</p>
                 </div>
