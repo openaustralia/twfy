@@ -18,6 +18,10 @@ if (!defined('NO_TITLE_SENTINEL')) {
 include_once __DIR__ . "/../../../easyparliament/searchengine.php";
 include_once __DIR__ . "/../../../easyparliament/member.php";
 include_once __DIR__ . "/../../../easyparliament/HansardSpeechView.php";
+// context_link()/generate_commentteaser(), called directly below (the old
+// stripe-based rendering) - included explicitly rather than relying on
+// HansardSpeechView.php's own include of the same file above.
+include_once __DIR__ . "/../../../easyparliament/hansard_row_helpers.php";
 
 twfy_debug("TEMPLATE", "hansard_gid.php");
 
@@ -626,110 +630,11 @@ if (
 }
 
 
-// Returns the "See this X in context" link's HTML, or '' outside a single-debate
-// page. Used to echo directly inline in the old stripe-based rendering below, and
-// to build a HansardSpeechView/HansardProceduralView field in the Plates-rendered
-// path (see HansardSpeechView.php) - kept as one function, not duplicated, since
-// both paths want exactly the same link.
-function context_link($row)
-{
-    global $this_page;
-
-    if ($this_page != 'debate') {
-        return '';
-    }
-
-    $thing = $row['htype'] == '12' ? 'speech' : 'item';
-
-    // Plain concatenation, not ob_start()/ob_get_clean(): this runs once per row on
-    // a transcript page, which can run to dozens of rows - avoidable buffering
-    // overhead for a string this simple. Copilot finding on #227.
-    return '<p><small><strong><a href="' . $row['listurl'] . '" class="permalink"'
-        . ' title="See this ' . $thing . ' within the entire debate">See this ' . $thing . ' in'
-        . ' context</a></strong></small></p>';
-}
-
-
-//$totalcomments, $comment, $commenturl
-function generate_commentteaser($row, $major)
-{
-    // Returns HTML for the one fragment of comment and link for the sidebar.
-    // $totalcomments is the number of comments this item has on it.
-    // $comment is an array like:
-    /* $comment = array (
-        'comment_id' => 23,
-        'user_id'	=> 34,
-        'body'		=> 'Blah blah...',
-        'posted'	=> '2004-02-24 23:45:30',
-        'username'	=> 'phil'
-        )
-    */
-    // $url is the URL of the item's page, which contains comments.
-
-    global $this_page, $THEUSER, $hansardmajors;
-
-    $html = '';
-
-    if ($hansardmajors[$major]['type'] == 'debate' && $hansardmajors[$major]['page_all'] == $this_page) {
-
-        if ($row['totalcomments'] > 0) {
-            $comment = $row['comment'];
-
-            // If the comment is longer than the speech body, we want to trim it
-            // to be the same length so they fit next to each other.
-            // But the comment typeface is smaller, so we scale things slightly too...
-            $targetsize = round(strlen($row['body']) * 0.6);
-
-            if ($targetsize > strlen($comment['body'])) {
-                // This comment will fit in its entirety.
-                $commentbody = $comment['body'];
-
-                if ($row['totalcomments'] > 1) {
-                    $morecount = $row['totalcomments'] - 1;
-                    $plural = $morecount == 1 ? 'comment' : 'comments';
-                    $linktext = "Read $morecount more $plural";
-                }
-
-            } else {
-                // This comment needs trimming.
-                $commentbody = htmlentities(trim_characters($comment['body'], 0, $targetsize));
-                if ($row['totalcomments'] > 1) {
-                    $morecount = $row['totalcomments'] - 1;
-                    $plural = $morecount == 1 ? 'comment' : 'comments';
-                    $linktext = "Continue reading (and $morecount more $plural)";
-                } else {
-                    $linktext = 'Continue reading';
-                }
-            }
-
-            $html = '<em>' . htmlentities($comment['username']) . '</em>: ' . prepare_comment_for_display($commentbody);
-
-            if (isset($linktext)) {
-                $html .= ' <a href="' . $row['commentsurl'] . '#c' . $comment['comment_id'] . '" title="See any comments posted about this">' . $linktext . '</a>';
-            }
-
-            $html .= '<br><br>';
-        }
-
-        // 'Add a comment' link.
-        if (!$THEUSER->isloggedin()) {
-            $URL = new URL('userprompt');
-            $URL->insert(array('ret' => $row['commentsurl']));
-            $commentsurl = $URL->generate();
-        } else {
-            $commentsurl = $row['commentsurl'];
-        }
-
-        // No wrapping <p> when there's nothing inside it - speech.php's footer row
-        // puts this next to "Hansard source"/"Link to this" on one line, and an
-        // empty <p> (block-level even with no content) breaks that.
-        if ($html !== '') {
-            $html = "\t\t\t\t" . '<p class="comment-teaser">' . $html . "</p>\n";
-        }
-    }
-
-    return $html;
-}
+// context_link()/generate_commentteaser(): moved to hansard_row_helpers.php
+// (included by HansardSpeechView.php, which needed them without depending on
+// this template happening to be the one that loaded it first) - still used
+// directly below, in the old stripe-based rendering. Ben Fairless's review on
+// #227.
 
 $votelinks_so_far = 0;
 function generate_votes($votes, $major, $id, $gid)
