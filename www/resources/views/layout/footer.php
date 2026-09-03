@@ -57,7 +57,15 @@
                 </ul>
             </nav>
 
-            <div class="oaf-footer__donate">
+            <?php
+            // justify-self:start: a grid item stretches to fill its column's
+            // full width by default - .oaf-footer__donate has no width/
+            // justify-self of its own, so the white box was stretching across
+            // the whole 3fr column even though its own content (one short line,
+            // one button) is much narrower, leaving a lot of blank space on
+            // its right.
+            ?>
+            <div class="oaf-footer__donate" style="justify-self:start;">
                 <p>Your donations keep this site and others like it running.</p>
                 <a class="oaf-footer__donate-button" href="https://donate.oaf.org.au/">Donate now ❤️</a>
             </div>
