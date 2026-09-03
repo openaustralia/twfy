@@ -17,8 +17,12 @@
                 digital online library; independent and strictly non-partisan. As a <a href="https://www.acnc.gov.au/charity/55c2c06e21ac71e9359a0590b9fc100e" class="!text-teal-800 hover:!text-teal-600">registered
                     charity</a>, it is powered by donations from people like you.</p>
         </div>
+        <?php
+        // hover:bg-teal-800, not teal-600 - white-on-teal-600 is 3.74:1, below the
+        // 4.5:1 AA threshold for normal-weight text. Copilot review on #228.
+        ?>
         <div class="mt-6">
-            <a class="inline-block rounded bg-teal-700 px-6 py-3 font-semibold !text-white !no-underline shadow-sm hover:bg-teal-600" href="https://donate.oaf.org.au/">Support OpenAustralia.org</a>
+            <a class="inline-block rounded bg-teal-700 px-6 py-3 font-semibold !text-white !no-underline shadow-sm hover:bg-teal-800" href="https://donate.oaf.org.au/">Support OpenAustralia.org</a>
         </div>
     </div>
 </section>

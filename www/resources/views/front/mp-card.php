@@ -23,7 +23,11 @@
         <label for="pc" class="sr-only">Enter your Australian postcode here</label>
         <input type="text" name="pc" id="pc" size="8" maxlength="10" placeholder="Postcode"
             class="!m-0 w-24 rounded border border-solid border-slate-300 px-3 py-2 text-slate-900">
+        <?php
+        // hover:bg-teal-800, not teal-600 - white-on-teal-600 is 3.74:1, below the
+        // 4.5:1 AA threshold for normal-weight text. Copilot review on #228.
+        ?>
         <input type="submit" value="Go"
-            class="!m-0 rounded bg-teal-700 px-4 py-2 font-semibold text-white hover:bg-teal-600">
+            class="!m-0 rounded bg-teal-700 px-4 py-2 font-semibold text-white hover:bg-teal-800">
     </form>
 <?php endif;

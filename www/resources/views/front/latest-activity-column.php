@@ -42,12 +42,17 @@
         ?>
         <span class="text-sm font-normal text-slate-500">&middot; <?php echo $this->e($date) ?></span>
     </h3>
-    <ul class="list-none divide-y divide-solid divide-slate-100 border-y border-solid border-slate-100">
+    <?php
+    // [&>li]:!m-0: layout.css's bare "li { margin: 0 0 0.5em 1.2em }" rule
+    // otherwise indents every row and adds an extra bottom margin on top of
+    // this list's own divide-y/space-y-* spacing. Copilot review on #228.
+    ?>
+    <ul class="list-none divide-y divide-solid divide-slate-100 border-y border-solid border-slate-100 [&>li]:!m-0">
         <?php foreach ($items as $item): ?>
             <li class="px-2 py-2.5">
                 <p class="font-semibold text-slate-900"><?php echo $item['title'] /* already-safe HTML, same source as the old rendering */ ?></p>
                 <?php if ($item['topics']): ?>
-                    <ul class="mt-1 list-none space-y-0.5">
+                    <ul class="mt-1 list-none space-y-0.5 [&>li]:!m-0">
                         <?php foreach ($item['topics'] as $topic): ?>
                             <li class="text-sm">
                                 <?php

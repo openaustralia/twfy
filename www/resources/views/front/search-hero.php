@@ -22,8 +22,10 @@
         <?php
         // bg-teal-700, not teal-600: white-on-teal-600 is 3.74:1 (axe-core
         // color-contrast, needs 4.5:1 for normal-weight text) - teal-700 clears it.
+        // hover:bg-teal-800, not teal-600 - the hover state was reintroducing the
+        // same failing contrast the base colour avoids. Copilot review on #228.
         ?>
-        <button type="submit" class="rounded bg-teal-700 px-6 py-3 font-semibold text-white shadow-sm hover:bg-teal-600">Search</button>
+        <button type="submit" class="rounded bg-teal-700 px-6 py-3 font-semibold text-white shadow-sm hover:bg-teal-800">Search</button>
     </form>
     <?php if ($popularSearchesLabel !== null): ?>
         <p class="!mb-0 !mt-4 text-sm text-slate-200 [&_a]:!text-teal-200 [&_a:hover]:!text-white">Popular searches today: <?php echo $popularSearchesLabel /* already-safe HTML, same source as the old rendering - see FrontPageView::popularSearchesLabel() */ ?></p>
