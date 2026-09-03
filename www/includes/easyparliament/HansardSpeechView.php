@@ -15,6 +15,11 @@
  * See openaustralia/openaustralia#939 for why this split exists.
  */
 
+// context_link()/generate_commentteaser(), used by forSpeech()/forProcedural()
+// below - included directly rather than assumed already loaded by whichever
+// template happened to include this class first. Ben Fairless's review on #227.
+include_once __DIR__ . '/hansard_row_helpers.php';
+
 /**
  *
  */
