@@ -1,21 +1,5 @@
 <?php
 
-/**
- * @file
- * Front page. Restructured to borrow the layout of Donna's homepage mockup
- * (https://kattekrab.github.io/openausmockup.html) - hero + search, a 3-feature row,
- * a "Latest Activity in Parliament" two-column feed, and a charity/about callout at
- * the bottom (where "What's all this about?" moved to - see about_this_site_card())
- * - kept in our own navy/teal/slate palette (PR #225) rather than the mockup's blue.
- *
- * Markup lives in Plates templates under resources/views/front/ - see
- * FrontPageView.php for the plain-data-in-plain-data-out logic that feeds them
- * (mirrors HansardSpeechView.php's split for the debate transcript page). The
- * functions below are orchestration only: DB/global access and building the data
- * each template needs, no HTML of their own beyond what's still directly
- * DB-coupled (latest_activity_items()) and hasn't been worth pulling out on its own.
- */
-
 $this_page = "home";
 
 include_once __DIR__ . "/../includes/easyparliament/init.php";
