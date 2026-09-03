@@ -4,6 +4,8 @@
  * @file
  */
 
+use OpenAustralia\TWFY\Models\Hansard;
+
 $this_page = "home";
 
 include_once __DIR__ . "/../includes/easyparliament/init.php";
@@ -221,21 +223,14 @@ function latest_activity_items($LIST, $major, $date) {
         // by FrontPageView::firstSpeechBySpeaker(), which the raw rows are handed
         // to below - is genuinely their first speech), then only resolve full
         // member data for the ones actually shown.
-        $speechRowsQ = parlDBQuery('SELECT hansard.speaker_id, hansard.gid AS speech_gid, sub.gid AS subsection_gid
-                FROM hansard
-                JOIN hansard AS sub ON hansard.subsection_id = sub.epobject_id
-                WHERE hansard.section_id=' . intval($section_epobject_id) . '
-                AND hansard.htype=12 AND hansard.speaker_id != 0
-                ORDER BY hansard.hpos ASC');
-
-        $speechRows = [];
-        for ($r = 0; $r < $speechRowsQ->rows(); $r++) {
-            $speechRows[] = [
-                'speaker_id' => $speechRowsQ->field($r, 'speaker_id'),
-                'speech_gid' => $speechRowsQ->field($r, 'speech_gid'),
-                'subsection_gid' => $speechRowsQ->field($r, 'subsection_gid'),
-            ];
-        }
+        $speechRows = Hansard::query()
+          ->join('hansard as sub', 'hansard.subsection_id', '=', 'sub.epobject_id')
+          ->where('hansard.section_id', $section_epobject_id)
+          ->where('hansard.htype', 12)
+          ->where('hansard.speaker_id', '!=', 0)
+          ->orderBy('hansard.hpos')
+          ->get(['hansard.speaker_id', 'hansard.gid as speech_gid', 'sub.gid as subsection_gid'])
+          ->toArray();
         $firstSpeechBySpeaker = FrontPageView::firstSpeechBySpeaker($speechRows);
 
         $speakers = [];
