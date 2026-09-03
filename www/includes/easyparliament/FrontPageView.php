@@ -90,7 +90,7 @@ class FrontPageView {
      *   The character budget - matches the old hardcoded 32.
      */
     public static function popularSearchesLabel(array $popularSearches, int $maxChars = 32): ?string {
-        if (count($popularSearches) == 0) {
+        if (empty($popularSearches)) {
             return null;
         }
 
@@ -111,7 +111,7 @@ class FrontPageView {
         // empty "Popular searches today: " line with nothing after the colon
         // (Sentry caught this - www/resources/views/front/search-hero.php checks
         // !== null, which is true for '').
-        if (count($correctAmount) == 0) {
+        if (empty($correctAmount)) {
             return null;
         }
 

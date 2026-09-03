@@ -198,10 +198,10 @@ function latest_activity_items($LIST, $major, $date) {
     $maxTopicsShown = 5;
     $items = [];
     $q = parlDBQuery('SELECT hansard.epobject_id, body FROM hansard, epobject
-			WHERE hansard.epobject_id = epobject.epobject_id AND section_id=0
-			AND hdate=?
-			AND major=' . intval($major) . '
-			ORDER BY hpos ASC LIMIT ' . intval($maxItemsShown), $date);
+            WHERE hansard.epobject_id = epobject.epobject_id AND section_id=0
+            AND hdate=?
+            AND major=' . intval($major) . '
+            ORDER BY hpos ASC LIMIT ' . intval($maxItemsShown), $date);
 
     $LISTURL = new URL($hansardmajors[$major]['page_all']);
 
@@ -212,10 +212,10 @@ function latest_activity_items($LIST, $major, $date) {
         // unlike a speech, the subsection itself IS the whole page) - same as
         // HANSARDLIST::_get_listurl()'s own htype=11 branch.
         $topicsQ = parlDBQuery('SELECT epobject.body, hansard.gid FROM hansard, epobject
-				WHERE hansard.epobject_id = epobject.epobject_id
-				AND hansard.section_id=' . intval($section_epobject_id) . '
-				AND hansard.htype=11
-				ORDER BY hansard.hpos ASC');
+                WHERE hansard.epobject_id = epobject.epobject_id
+                AND hansard.section_id=' . intval($section_epobject_id) . '
+                AND hansard.htype=11
+                ORDER BY hansard.hpos ASC');
         $subsections = [];
         for ($t = 0; $t < $topicsQ->rows(); $t++) {
             $topicURL = clone $LISTURL;
@@ -230,11 +230,11 @@ function latest_activity_items($LIST, $major, $date) {
         // to below - is genuinely their first speech), then only resolve full
         // member data for the ones actually shown.
         $speechRowsQ = parlDBQuery('SELECT hansard.speaker_id, hansard.gid AS speech_gid, sub.gid AS subsection_gid
-				FROM hansard
-				JOIN hansard AS sub ON hansard.subsection_id = sub.epobject_id
-				WHERE hansard.section_id=' . intval($section_epobject_id) . '
-				AND hansard.htype=12 AND hansard.speaker_id != 0
-				ORDER BY hansard.hpos ASC');
+                FROM hansard
+                JOIN hansard AS sub ON hansard.subsection_id = sub.epobject_id
+                WHERE hansard.section_id=' . intval($section_epobject_id) . '
+                AND hansard.htype=12 AND hansard.speaker_id != 0
+                ORDER BY hansard.hpos ASC');
 
         $speechRows = [];
         for ($r = 0; $r < $speechRowsQ->rows(); $r++) {
