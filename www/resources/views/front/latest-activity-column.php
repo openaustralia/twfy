@@ -42,7 +42,7 @@
         ?>
         <span class="text-sm font-normal text-slate-500">&middot; <?php echo $this->e($date) ?></span>
     </h3>
-    <ul class="list-none divide-y divide-slate-100 border-y border-slate-100">
+    <ul class="list-none divide-y divide-solid divide-slate-100 border-y border-solid border-slate-100">
         <?php foreach ($items as $item): ?>
             <li class="px-2 py-2.5">
                 <p class="font-semibold text-slate-900"><?php echo $item['title'] /* already-safe HTML, same source as the old rendering */ ?></p>

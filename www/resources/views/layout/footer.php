@@ -63,7 +63,7 @@
                 <a class="mt-3 inline-block rounded bg-teal-700 px-4 py-2 font-semibold !text-white !no-underline shadow-sm hover:bg-teal-600" href="https://donate.oaf.org.au/">Donate now ❤️</a>
             </div>
         </div>
-        <div class="mt-10 border-t border-slate-600 pt-6 text-center text-sm text-slate-400 [&_a]:!text-teal-300 [&_a:hover]:!text-white">
+        <div class="mt-10 border-t border-solid border-slate-600 pt-6 text-center text-sm text-slate-400 [&_a]:!text-teal-300 [&_a:hover]:!text-white">
             <p>Other Wonderful Projects from the OpenAustralia Foundation:
                 <a href="https://theyvoteforyou.org.au/">They Vote For You</a> |
                 <a href="https://www.righttoknow.org.au/">Right To Know</a> |
