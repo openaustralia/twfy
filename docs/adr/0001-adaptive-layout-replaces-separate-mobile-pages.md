@@ -1,7 +1,8 @@
 # Adaptive layout replaces separate mobile pages
 
 The site's original mobile support is a second, parallel set of templates - `mobile.php`, `hansard_gid_mobile.php`
-and friends - reached via a device-detecting rewrite in `conf/httpd.conf.ubuntu` (`mobile=1`). Each one duplicates
+and friends - reached via a device-detecting rewrite in `conf/httpd.conf.ubuntu` to the `mobile.php` entry points,
+which then pass `mobile => 1` internally (eg to `DEBATELIST::display()`, selecting the mobile template). Each one duplicates
 its desktop equivalent's logic with its own markup, so a change to page behaviour has to be made twice or it drifts
 (see `docs/agents/issue-tracker.md`'s tracked debt, openaustralia/openaustralia#943). The redesign starting with
 the debate transcript page (#939, PR #227) and continuing with the front page (PR #228) instead builds one
@@ -13,8 +14,9 @@ serving different PHP entirely.
 - Keep maintaining the separate `*_mobile.php` templates alongside each redesigned page: no new work up front, but
   permanently doubles the maintenance cost of every future change to a redesigned page, and the mobile templates
   would still be stuck on the pre-redesign look.
-- Adaptive layout, one template per page (chosen): a single Plates template (eg `resources/views/hansard/
-  transcript.php`) renders for every device, with Tailwind responsive classes handling the layout differences -
+- Adaptive layout, one template per page (chosen): a single Plates template
+  (eg `resources/views/hansard/transcript.php`) renders for every device, with Tailwind responsive classes
+  handling the layout differences -
   matches how the rest of the modern web works, and means there's only ever one place to fix a bug or land a
   design change.
 
