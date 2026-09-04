@@ -5,7 +5,9 @@
  * First some things to help make our PHP nicer and betterer.
  */
 
+use Sentry\SentrySdk;
 use Sentry\State\Scope;
+use Sentry\Tracing\TransactionContext;
 
 error_reporting(E_ALL);
 ini_set('memory_limit', 32 * 1024 * 1024);
@@ -78,6 +80,7 @@ if (defined('SENTRY_DSN') && SENTRY_DSN) {
         // conf/general by the infrastructure repo.
         'environment' => defined('SENTRY_ENVIRONMENT') ? SENTRY_ENVIRONMENT : 'development',
         'release' => $sentry_release,
+        // send_email() samples its own transactions in full, whatever this is.
         'traces_sample_rate' => 0.1,
         // Include IP addresses and request headers for debugging context.
         // sentry_scrub_event() drops cookies and credential headers, and
@@ -87,6 +90,22 @@ if (defined('SENTRY_DSN') && SENTRY_DSN) {
         'before_send' => 'sentry_scrub_event',
         'before_send_transaction' => 'sentry_scrub_event',
     ]);
+
+    // One transaction per request (web page or CLI script - alertmailer.php
+    // and other scripts/*.php all include this file too), so DB query spans
+    // have a parent to attach to; \Sentry\trace() is a no-op with no active
+    // transaction. SCRIPT_NAME (eg "/mp/index.php"), not REQUEST_URI: the
+    // latter includes query strings/IDs, which would give every request its
+    // own transaction *name* instead of grouping same-page requests together.
+    $sentryTransactionContext = new TransactionContext(
+        PHP_SAPI === 'cli' ? ($_SERVER['argv'][0] ?? 'cli') : ($_SERVER['SCRIPT_NAME'] ?? 'unknown')
+    );
+    $sentryTransactionContext->setOp(PHP_SAPI === 'cli' ? 'cli.script' : 'http.server');
+    $sentryRequestTransaction = \Sentry\startTransaction($sentryTransactionContext);
+    SentrySdk::getCurrentHub()->setSpan($sentryRequestTransaction);
+    register_shutdown_function(function () use ($sentryRequestTransaction) {
+        $sentryRequestTransaction->finish();
+    });
 }
 
 // The time the page starts, so we can display the total at the end.
