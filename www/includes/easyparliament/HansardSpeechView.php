@@ -119,6 +119,7 @@ class HansardSpeechView {
      * (the shape HANSARDLIST::_get_speaker() returns), as a HansardSpeakerRosterEntry
      * - the same fields forSpeech() above builds for a single speech's speaker, but
      * factored out so a list of speakers with no per-speech data of their own (eg
+     * HansardSectionIndexItem::fromSubrow()'s "who spoke on this topic" line, or
      * www/docs/index.php's own latest_activity_items()) can build the same shape
      * without going via a fake speech row.
      */
@@ -207,6 +208,151 @@ class HansardSpeechView {
     }
 
     /**
+     * The pagination bar's prev/all/next data (resources/views/hansard/pagination.php),
+     * built from the same page metadata $PAGE->nextprevlinks() itself reads (set by
+     * HANSARDLIST::_get_nextprev_items()) - each of prev/up/next is optional (eg no
+     * "prev" on the very first debate ever recorded), and a present one isn't always a
+     * link (nextprevlinks() falls back to plain text with no 'url' in some cases too).
+     *
+     * $chamberTitle is $hansardmajors[major]['title'] ("House debates"/"Senate
+     * debates") - used to replace the server-built 'up' label ("All Senate debates on
+     * 18 Aug 2026", or sometimes just "See the whole debate", depending which branch
+     * of _get_nextprev_items() fired) with "All Senate debates on this day": the date
+     * is already shown in the card's own header, so repeating it here was redundant.
+     *
+     * $dateUrl has to overwrite 'up''s URL along with the label, not just the label:
+     * HANSARDLIST::_get_nextprev_items()'s ordinary-item branch (the one that reaches
+     * here for an individual speech/procedural page) points 'up' at the parent
+     * subsection/section's own page, labelled "See the whole debate" to match -
+     * accurate for that URL, but a different destination to the day-listing page the
+     * "All ... on this day" label promises. Sentry finding on #227/#228.
+     *
+     * 'title' (prev/next) is decoded here, not left for the template: for an
+     * htype-10/11 neighbour it's a heading's raw body, which can carry an entity
+     * already (eg "Survivors &amp; Mates Support Network" - epobject.body, confirmed
+     * the same in the live DB) - main only ever put this in a title="" tooltip
+     * attribute, where a browser decodes it either way, so it never mattered there.
+     * Cards that show it as visible text escape it once themselves - decoding first
+     * keeps that correct for both the pre-encoded heading case and the plain-text
+     * speaker-name case (htype 12/13), which needs no decoding but isn't harmed by a
+     * no-op one. Ben Fairless's review on #227.
+     */
+    public static function buildNextPrev(array $nextprevdata, string $chamberTitle, string $dateUrl): array {
+        $nextPrev = [];
+        foreach (['prev', 'up', 'next'] as $direction) {
+            if (isset($nextprevdata[$direction]['body'])) {
+                $nextPrev[$direction] = [
+                    'label' => $nextprevdata[$direction]['body'],
+                    'url' => $nextprevdata[$direction]['url'] ?? null,
+                    'title' => html_entity_decode($nextprevdata[$direction]['title'] ?? ''),
+                ];
+            }
+        }
+        if (isset($nextPrev['up'])) {
+            $nextPrev['up']['label'] = 'All ' . $chamberTitle . ' on this day';
+            $nextPrev['up']['url'] = $dateUrl;
+            // Title (the hover tooltip, pagination.php) needs overwriting along with
+            // label/url - it otherwise keeps the parent subsection/section's name
+            // from HANSARDLIST::_get_nextprev_items(), stale against the new
+            // destination and label above.
+            $nextPrev['up']['title'] = $nextPrev['up']['label'];
+        }
+        return $nextPrev;
+    }
+
+    /**
+     * "What is X?" - a short explainer for the specific kind of parliamentary
+     * business this section is (a Bill, the Adjournment, a Committee reference,
+     * Question Time, ...), for the page's right-hand sidebar (resources/views/
+     * hansard/about-debates.php). Keyed on the section's own title (exact match -
+     * these are a small, fairly fixed vocabulary the chamber itself uses, not free
+     * text) rather than major/htype, so the same lookup applies to a transcript
+     * page's eyebrow-line section title and a section-index page's own h1 alike.
+     * Not an exhaustive list of every section title this site will ever show - just
+     * the ones seen/asked about so far. Falls back to generic, chamber-level wording
+     * (was a link-only sidebar block - sidebars/hocdebates_short.php etc. - now
+     * inlined here instead) for anything not in this list, so every page still gets
+     * *something* rather than nothing.
+     *
+     * $chamberTitle is $hansardmajors[major]['title'] ("House debates"/"Senate
+     * debates"), used only for the ultimate fallback when $major itself isn't one of
+     * the two known ones either.
+     *
+     * @return array{title: string, bodyHtml: string}
+     *   The sidebar's heading and body HTML.
+     */
+    public static function aboutSection(string $sectionTitle, int $major, ?string $chamberTitle): array {
+        // Nowdoc (not a concatenation chain) for each bodyHtml deliberately: SonarCloud's
+        // duplication check normalises string literals, so five entries built the same
+        // way ('title' => STRING, 'bodyHtml' => STRING . STRING . STRING . ...) read as
+        // one repeated structural block regardless of what the strings actually say.
+        // One string token per entry instead of five removes that false positive
+        // without changing what's on the page.
+        $adjournmentBodyHtml = <<<'HTML'
+            <p>At the end of most sitting days, before the House formally adjourns, individual
+            members get a few minutes each to speak on almost anything &#8212; a local issue, a
+            national one, a tribute to a constituent.</p><p>Topics don&rsquo;t need to relate to
+            any bill before the House, which is why each one is its own separate item rather than
+            one continuous debate.</p>
+            HTML;
+        $billsBodyHtml = <<<'HTML'
+            <p>A <strong>Bill</strong> is a proposed law. Most go through several stages in each
+            chamber &#8212; typically a First Reading, a Second Reading (the main debate on what
+            the bill does and why), and a Third Reading &#8212; before a vote.</p><p>A Bill only
+            becomes law once both the House and the Senate have passed the same version and it
+            receives Royal Assent.</p>
+            HTML;
+        $committeesBodyHtml = <<<'HTML'
+            <p>Parliamentary <strong>committees</strong> look into a bill, an area of government
+            spending, or a particular issue in more depth than the whole chamber has time for
+            &#8212; hearing evidence, taking submissions, and reporting back with findings.</p>
+            <p>This section is members moving to set one up, refer something to it, or deal with
+            its report.</p>
+            HTML;
+        $mpiBodyHtml = <<<'HTML'
+            <p>A <strong>Matter of Public Importance</strong> is a debate on one topical issue a
+            member has specifically proposed, separate from the day&rsquo;s other business
+            &#8212; a chance to put a case on record on something that isn&rsquo;t already before
+            the House as a bill or motion.</p>
+            HTML;
+        $questionTimeBodyHtml = <<<'HTML'
+            <p><strong>Questions without Notice</strong> &#8212; Question Time &#8212; is where
+            members put questions directly to Ministers with no advance notice, and Ministers
+            answer on the spot.</p>
+            HTML;
+
+        $sectionExplanations = [
+            'Adjournment' => ['title' => 'What is the Adjournment?', 'bodyHtml' => $adjournmentBodyHtml],
+            'Bills' => ['title' => 'What is a Bill?', 'bodyHtml' => $billsBodyHtml],
+            'Committees' => ['title' => 'What are Committees?', 'bodyHtml' => $committeesBodyHtml],
+            'Matters of Public Importance' => ['title' => 'What is a Matter of Public Importance?', 'bodyHtml' => $mpiBodyHtml],
+            // Lower-case "without" - matches the section title as this fork's own
+            // data actually has it (verified against both a House and a Senate
+            // sitting day), not the more conventional-looking capitalised form.
+            'Questions without Notice' => ['title' => 'What is Question Time?', 'bodyHtml' => $questionTimeBodyHtml],
+        ];
+        $sectionExplanation = $sectionExplanations[$sectionTitle] ?? null;
+
+        $aboutTitleByMajor = [
+            1 => 'What are House debates?',
+            101 => 'What are Senate debates?',
+        ];
+        // Same wording as sidebars/hocdebates.php / holdebates.php - duplicated
+        // rather than shared, since those files also call
+        // $PAGE->block_start()/block_end() to draw their own box, which isn't what's
+        // wanted here. Keep the two in sync by hand if this wording ever changes.
+        $aboutBodyHtmlByMajor = [
+            1 => '<p><strong>Debates</strong> in the House of Representatives are an opportunity for members from all parties to <strong>scrutinise</strong> government legislation and <strong>raise important local, national or topical issues</strong>.</p><p>And sometimes to shout at each other.</p>',
+            101 => '<p><strong>Debates</strong> in the Senate are an opportunity for Senators from all parties to <strong>scrutinise</strong> government legislation and <strong>raise important local, national or topical issues</strong>.</p><p>And sometimes to shout at each other.</p>',
+        ];
+
+        return [
+            'title' => $sectionExplanation['title'] ?? ($aboutTitleByMajor[$major] ?? 'What are ' . ($chamberTitle ?: 'debates') . '?'),
+            'bodyHtml' => $sectionExplanation['bodyHtml'] ?? ($aboutBodyHtmlByMajor[$major] ?? ''),
+        ];
+    }
+
+    /**
      * cleanBody() applies the same body-cleanup steps hansard_gid.php's old
      * rendering path already applied (search highlighting/glossarising already ran
      * earlier, on $data['rows'], before either rendering path runs) - it keeps them
@@ -273,42 +419,6 @@ class HansardSpeechView {
         usort($roster, fn($a, $b) => $b->wordCount <=> $a->wordCount);
 
         return $roster;
-    }
-
-    /**
-     * The transcript card's prev/up/next pagination bar, from $DATA->page_metadata()'s
-     * 'nextprev' shape - each direction is optional. 'up' is relabelled from "See the
-     * whole debate" to "All House/Senate debates on this day", pointing at $dateUrl
-     * instead - label/url/title must all change together, or title (the hover
-     * tooltip) goes stale. Sentry finding on #227.
-     *
-     * 'title' (prev/next) is decoded here, not left for pagination.php: for an
-     * htype-10/11 neighbour it's a heading's raw body, which can carry an entity
-     * already (eg "Survivors &amp; Mates Support Network" - epobject.body, confirmed
-     * the same in the live DB) - main only ever put this in a title="" tooltip
-     * attribute, where a browser decodes it either way, so it never mattered there.
-     * This card shows it as visible text instead, escaped once by pagination.php's
-     * $this->e() - decoding first keeps that correct for both the pre-encoded
-     * heading case and the plain-text speaker-name case (htype 12/13), which needs
-     * no decoding but isn't harmed by a no-op one.
-     */
-    public static function buildNextPrev(array $nextprevdata, string $chamberTitle, string $dateUrl): array {
-        $nextPrev = [];
-        foreach (['prev', 'up', 'next'] as $direction) {
-            if (isset($nextprevdata[$direction]['body'])) {
-                $nextPrev[$direction] = [
-                    'label' => $nextprevdata[$direction]['body'],
-                    'url' => $nextprevdata[$direction]['url'] ?? null,
-                    'title' => html_entity_decode($nextprevdata[$direction]['title'] ?? ''),
-                ];
-            }
-        }
-        if (isset($nextPrev['up'])) {
-            $nextPrev['up']['label'] = 'All ' . $chamberTitle . ' on this day';
-            $nextPrev['up']['url'] = $dateUrl;
-            $nextPrev['up']['title'] = $nextPrev['up']['label'];
-        }
-        return $nextPrev;
     }
 
     /**
@@ -381,6 +491,78 @@ class HansardProceduralView {
         $view->contextLinkHtml = context_link($row);
         $view->commentTeaserHtml = generate_commentteaser($row, $info['major']);
         return $view;
+    }
+
+}
+
+/**
+ * One entry in a section-index page (resources/views/hansard/section-index.php) - eg
+ * an Adjournment debate's own gid page, which lists each MP's separate, unrelated
+ * topic ("Climate Change", "Humanitarian and Refugee Visas", ...) as its own entry.
+ * Unlike HansardSpeechView/HansardProceduralView, each entry here is a link to a
+ * completely separate debate (its own gid, its own already-Plates-rendered
+ * transcript page) - not content living on the section-index page itself.
+ */
+class HansardSectionIndexItem {
+    public string $titleHtml;
+    public ?string $url = null;
+    public ?string $countLabel = null;
+    public ?string $excerptHtml = null;
+    /** @var HansardSpeakerRosterEntry[] Who spoke on this topic, in speaking order. */
+    public array $speakers = [];
+
+    /**
+     * $row is one of $data['subrows'] (see the bottom of hansard_gid.php) -
+     * $hansardmajors is the global config array (dbtypes.php), needed to tell a
+     * "Wrans"/"WMS"-style major (where $row['contentcount'] doesn't mean "speeches",
+     * see the 'other' check below) apart from a debate-style one.
+     */
+    public static function fromSubrow(array $row, array $hansardmajors): self {
+        $item = new self();
+        $item->titleHtml = $row['body'];
+
+        // ?? null: $row['major'] should always be a real, configured major, but
+        // isn't enforced at the DB layer - falls back to treating it as not
+        // "other" rather than warning on the array access. Sentry finding on #231.
+        $majorType = $hansardmajors[$row['major']]['type'] ?? null;
+
+        $hasContent = false;
+        if (isset($row['contentcount']) && $row['contentcount'] > 0) {
+            $hasContent = true;
+        } elseif ($row['htype'] == '11' && $majorType == 'other') {
+            $hasContent = true;
+        }
+
+        if ($hasContent) {
+            $item->url = $row['listurl'];
+
+            $parts = [];
+            if ($majorType != 'other') {
+                // All Wrans have 2 speeches, all WMS have 1 - no need to say so.
+                $plural = $row['contentcount'] == 1 ? 'speech' : 'speeches';
+                $parts[] = $row['contentcount'] . " $plural";
+            }
+            if (($row['totalcomments'] ?? 0) > 0) {
+                $plural = $row['totalcomments'] == 1 ? 'comment' : 'comments';
+                $parts[] = $row['totalcomments'] . " $plural";
+            }
+            if (count($parts) > 0) {
+                $item->countLabel = implode(', ', $parts);
+            }
+        }
+
+        if (isset($row['excerpt']) && $row['excerpt'] != '') {
+            $item->excerptHtml = trim_characters($row['excerpt'], 0, 200);
+        }
+
+        if (!empty($row['speakers'])) {
+            $item->speakers = array_map(
+                fn($speaker) => HansardSpeechView::speakerEntry($speaker),
+                $row['speakers']
+            );
+        }
+
+        return $item;
     }
 
 }
