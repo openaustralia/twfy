@@ -4,10 +4,14 @@
  * @file
  */
 
+use OpenAustralia\TWFY\Models\Hansard;
+
 $this_page = "home";
 
 include_once __DIR__ . "/../includes/easyparliament/init.php";
 include_once __DIR__ . "/../includes/easyparliament/member.php";
+include_once __DIR__ . "/../includes/easyparliament/FrontPageView.php";
+include_once __DIR__ . "/../includes/easyparliament/HansardSpeechView.php";
 
 $PAGE->page_start();
 
@@ -18,209 +22,264 @@ if ($message != '') {
     print '<p id="warning" class="!box-border !w-[calc(100vw-2rem)]">' . $message . '</p>';
 }
 
+// get_plates_engine() (utility.php): shared with page.php's own every-page footer
+// render, rather than a second, identically-configured Engine here.
+$platesEngine = get_plates_engine();
+
 /**
  * Display the homepage Hansard search form.
  */
 function search_hero() {
+    global $platesEngine;
+
     $SEARCHURL = new URL('search');
+    // One line deliberately: this file can't be unit-tested directly, so every
+    // physical line of a call here is new, permanently-uncovered code against
+    // SonarCloud's new-code coverage gate - splitting a call across N lines
+    // costs N uncovered lines, not one. Same fix as #227's hansard_gid.php.
+    echo $platesEngine->render('front/search-hero', ['searchUrl' => $SEARCHURL->generate(), 'keyword' => get_http_var('keyword'), 'popularSearchesLabel' => popular_searches_label()]);
+}
+
+/**
+ * FrontPageView::popularSearchesLabel()'s input - the SEARCHLOG DB lookup itself,
+ * kept here rather than in FrontPageView.php since that class is DB-free by design.
+ */
+function popular_searches_label() {
+    global $SEARCHLOG;
+    return FrontPageView::popularSearchesLabel($SEARCHLOG->popular_recent(10));
+}
+
+/**
+ * The mockup's 3-icon feature row ("Track Your Reps" / "Read the Debates" / "Get
+ * Free Email Alerts") - same three things the old "At OpenAustralia.org you can:"
+ * bullet list offered (find-your-MP, search, email alerts), just laid out as the
+ * mockup's icon-circle columns instead of a plain <ol>. The postcode-lookup and
+ * logged-in/keyword-aware branching are unchanged, still resolved here (mp_block()
+ * below) - only the surrounding markup moved to resources/views/front/.
+ */
+function feature_row() {
+    global $platesEngine;
+
+    $HANSARDURL = new URL('hansard');
     $keyword = get_http_var('keyword');
+    // One line deliberately - see search_hero()'s own comment on why.
+    echo $platesEngine->render('front/feature-row', ['mpBlock' => mp_block(), 'hansardUrl' => $HANSARDURL->generate('none'), 'emailAlertUrl' => FrontPageView::emailAlertUrl($keyword), 'emailAlertText' => FrontPageView::emailAlertText($keyword)]);
+}
+
+/**
+ * Resolves $THEUSER's constituency (a real DB lookup via MEMBER, when set) into the
+ * plain array FrontPageView::mpBlock() expects - null when there's no MP to show
+ * (no constituency set, or the resolved MEMBER wasn't valid).
+ */
+function mp_block() {
+    global $THEUSER, $MPURL;
+
+    $member = null;
+    if ($THEUSER->constituency_is_set()) {
+        // (We don't allow the user to search for a postcode if they
+        // already have one set in their prefs.)
+        $MEMBER = new MEMBER(['constituency' => $THEUSER->constituency()]);
+        if ($MEMBER->valid) {
+            $left_house = $MEMBER->left_house();
+            // One line deliberately - see search_hero()'s own comment on why.
+            $member = ['first_name' => $MEMBER->first_name(), 'last_name' => $MEMBER->last_name(), 'still_in_house' => $left_house[1]['date'] == '9999-12-31'];
+        }
+    }
+
+    $CHANGEURL = new URL('userchangepc');
+    return FrontPageView::mpBlock($member, $MPURL->generate(), $CHANGEURL->generate());
+}
+
+/**
+ * "Latest Activity in Australian Parliament" - the two-column (House/Senate) full
+ * agenda for the most recent sitting day: every top-level section (a Bill, a
+ * Committee's report, Question Time, ...), in the order they actually happened -
+ * start of the day first, not the mockup's own "last few things said" feed. Closer
+ * to the original TWFY homepage's major_summary() (utility.php, still used as-is by
+ * mobile.php/hansard/index.php - no LIMIT there either) than to the mockup itself;
+ * each item also shows its first speaker (avatar/name/party-electorate), which
+ * major_summary() never did.
+ */
+function latest_activity() {
     ?>
-    <section class="!mx-4 !box-border !w-[calc(100vw-2rem)] mb-8 rounded-lg bg-[#26343b] p-6 text-white shadow-md md:p-8">
-        <h2 class="!text-white mb-2 text-2xl font-semibold">🔎 Search Hansard</h2>
-        <p class="mb-5 text-slate-200">Find speeches, debates and decisions from Australia's Federal Parliament.</p>
-        <form action="<?php echo $SEARCHURL->generate(); ?>" method="get" class="flex flex-col gap-3 sm:flex-row">
-            <label for="hero-search" class="sr-only">Search Hansard</label>
-            <input type="text" name="s" id="hero-search" maxlength="100" class="!m-0 !min-w-0 !w-full box-border rounded border-0 px-4 py-3 text-base text-slate-900 shadow-sm" value="<?php echo htmlspecialchars($keyword); ?>" placeholder="Search by topic, person or phrase">
-            <button type="submit" class="rounded bg-teal-600 px-6 py-3 font-semibold text-white shadow-sm hover:bg-teal-500">Search</button>
-        </form>
-        <?php popular_searches(); ?>
+    <?php
+    // max-w-5xl mx-auto: the mockup caps this section at its own container class
+    // (responsive, ~1280px at this width) rather than letting it run the full content
+    // width the way this section did before - matches the cap already used on the
+    // feature row above and keeps the two columns from stretching so wide the cards
+    // read as sparse.
+    ?>
+    <section class="mx-4 mb-12 md:mx-8">
+        <h2 class="mb-1 text-center text-3xl font-bold text-slate-900">Latest Activity in Australian Parliament</h2>
+        <p class="mb-8 text-center text-slate-600">The full day's business from the House and the Senate.</p>
+        <div class="mx-auto grid max-w-5xl grid-cols-1 gap-8 md:grid-cols-2">
+            <?php
+            // text-green-700/text-red-700: the House and Senate chambers' own actual
+            // colours (green benches, red benches) - a real, recognisable Australian
+            // parliamentary convention, not an arbitrary choice.
+            ?>
+            <?php latest_activity_column(1, 'House of Representatives', 'text-green-700'); ?>
+            <?php latest_activity_column(101, 'Senate', 'text-red-700'); ?>
+        </div>
     </section>
     <?php
 }
 
 /**
- * Display popular searches that fit in the homepage search hero.
+ * One "Latest Activity" column for a single hansard major (1 = House, 101 = Senate -
+ * the two this fork actually parses, same pair the debate transcript page's own
+ * $usePlatesTemplate check uses).
  */
-function popular_searches() {
-    global $SEARCHLOG;
-    $popular_searches = $SEARCHLOG->popular_recent(10);
-    if (count($popular_searches) == 0) {
+function latest_activity_column($major, $chamberName, $iconColorClass) {
+    global $hansardmajors, $platesEngine;
+
+    $LIST = $major == 101 ? new LORDSDEBATELIST() : new DEBATELIST();
+    $recent = $LIST->most_recent_day();
+    if (!isset($recent['hdate'])) {
         return;
     }
 
-    $lentotal = 0;
-    $correct_amount = [];
-    foreach ($popular_searches as $popular_search) {
-        $len = strlen($popular_search['visible_name']);
-        if ($lentotal + $len > 32) {
-            continue;
-        }
-        $lentotal += $len;
-        $correct_amount[] = $popular_search['display'];
-    }
-    print '<p class="!mb-0 !mt-4 text-sm text-slate-200 [&_a]:!text-teal-200 [&_a:hover]:!text-white">Popular searches today: ' . implode(', ', $correct_amount) . '</p>';
+    $items = latest_activity_items($LIST, $major, $recent['hdate']);
+    $DAYURL = new URL($hansardmajors[$major]['page_all']);
+    $DAYURL->insert(['d' => $recent['hdate']]);
+
+    // One line deliberately - see search_hero()'s own comment on why. 'date' is
+    // each column's own $recent['hdate'], not one shared page-level date - House
+    // and Senate don't always share a most recent sitting day (eg one chamber
+    // rises for the week before the other).
+    echo $platesEngine->render('front/latest-activity-column', ['chamberName' => $chamberName, 'iconColorClass' => $iconColorClass, 'date' => format_date($recent['hdate'], SHORTDATEFORMAT), 'items' => $items, 'dayUrl' => $DAYURL->generate('none'), 'viewAllLabel' => $major == 101 ? 'the Senate' : 'the House']);
 }
 
-search_hero();
+/**
+ * The first $maxItemsShown top-level debate sections for one hansard major on one
+ * date, in the order they happened (start of day first) - same section_id=0 query
+ * major_summary() (utility.php) itself runs (unlimited there, just scoped to one
+ * major instead of the House's whole 1/2/3/4/5 group), capped here since a busy
+ * sitting day can run to 20-30 sections and the column's own "View all from the
+ * House/Senate" link (see latest_activity_column()) already exists as the place
+ * to see the rest - showing literally everything on the homepage read as far too
+ * busy to scan (real feedback after seeing it live, not a guess). $LIST is the
+ * DEBATELIST/LORDSDEBATELIST latest_activity_column() already built - reusing its
+ * own _get_speaker() (hansardlist.php) for each item's speakers means a speaker
+ * who appears in several sections in one day (eg the Speaker themself) is only
+ * queried once, not once per section.
+ *
+ * There's no single "item url" any more - the section heading itself
+ * ("Bills"/"Committees"/...) is just a label now, not a link. Every actual link
+ * is on something specific: each topic to its own subsection page (see
+ * FrontPageView::summarizeTopics()), each speaker chip to where they first speak
+ * (same #anchor convention as HANSARDLIST::_get_listurl()'s own htype=12 branch -
+ * the parent subsection's own gid as the page, the speech's own gid as a
+ * fragment).
+ *
+ * A section can have many distinct speakers (a whole day's Bills debate, say) -
+ * capped at $maxSpeakersShown, same "+N more" convention as
+ * resources/views/hansard/speaker-chips.php's own $moreCount. Only the capped
+ * speakers are actually resolved to full member data - the "how many more" count
+ * comes from the id list itself, cheap to fetch in full. Not every section has a
+ * speaker at all (eg a bare procedural heading with no htype=12 rows under it) -
+ * 'speakers' stays [] for those.
+ */
+function latest_activity_items($LIST, $major, $date) {
+    global $hansardmajors;
 
-//
-// SEARCH AND RECENT HANSARD.
+    $maxItemsShown = 10;
+    $maxSpeakersShown = 1;
+    $maxTopicsShown = 5;
+    $items = [];
+    $q = parlDBQuery('SELECT hansard.epobject_id, body FROM hansard, epobject
+            WHERE hansard.epobject_id = epobject.epobject_id AND section_id=0
+            AND hdate=?
+            AND major=' . intval($major) . '
+            ORDER BY hpos ASC LIMIT ' . intval($maxItemsShown), $date);
 
-$HANSARDURL = new URL('hansard');
+    $LISTURL = new URL($hansardmajors[$major]['page_all']);
+    // Senate (major=101) reads this back as '?gid=', not '?id=' - see dbtypes.php's
+    // 'gidvar' and HANSARDLIST::_get_hansard_data()'s own use of it (the comments-url
+    // case). Sentry finding on #228.
+    $gidvar = $hansardmajors[$major]['gidvar'];
+
+    for ($i = 0; $i < $q->rows(); $i++) {
+        $section_epobject_id = $q->field($i, 'epobject_id');
+
+        // Topics: a subsection links straight to its own page (no #anchor needed -
+        // unlike a speech, the subsection itself IS the whole page) - same as
+        // HANSARDLIST::_get_listurl()'s own htype=11 branch.
+        $topicsQ = parlDBQuery('SELECT epobject.body, hansard.gid FROM hansard, epobject
+                WHERE hansard.epobject_id = epobject.epobject_id
+                AND hansard.section_id=' . intval($section_epobject_id) . '
+                AND hansard.htype=11
+                ORDER BY hansard.hpos ASC');
+        $subsections = [];
+        for ($t = 0; $t < $topicsQ->rows(); $t++) {
+            $topicURL = clone $LISTURL;
+            $topicURL->insert([$gidvar => fix_gid_from_db($topicsQ->field($t, 'gid'))]);
+            $subsections[] = ['title' => $topicsQ->field($t, 'body'), 'url' => $topicURL->generate('none')];
+        }
+        $topics = FrontPageView::summarizeTopics($subsections, $maxTopicsShown);
+
+        // Speakers: fetch every htype=12 row's speaker_id/gid/parent-subsection gid
+        // up front (ordered by hpos, so the first occurrence per speaker_id - kept
+        // by FrontPageView::firstSpeechBySpeaker(), which the raw rows are handed
+        // to below - is genuinely their first speech), then only resolve full
+        // member data for the ones actually shown.
+        $speechRows = Hansard::query()
+          ->join('hansard as sub', 'hansard.subsection_id', '=', 'sub.epobject_id')
+          ->where('hansard.section_id', $section_epobject_id)
+          ->where('hansard.htype', 12)
+          ->where('hansard.speaker_id', '!=', 0)
+          ->orderBy('hansard.hpos')
+          ->get(['hansard.speaker_id', 'hansard.gid as speech_gid', 'sub.gid as subsection_gid'])
+          ->toArray();
+        $firstSpeechBySpeaker = FrontPageView::firstSpeechBySpeaker($speechRows);
+
+        $speakers = [];
+        $shownSpeakerIds = array_slice(array_keys($firstSpeechBySpeaker), 0, $maxSpeakersShown);
+        foreach ($shownSpeakerIds as $speakerId) {
+            $speakerData = $LIST->_get_speaker($speakerId, $date);
+            if (empty($speakerData)) {
+                continue;
+            }
+            $entry = HansardSpeechView::speakerEntry($speakerData);
+            $firstSpeech = $firstSpeechBySpeaker[$speakerId];
+            $speechURL = clone $LISTURL;
+            $speechURL->insert([$gidvar => fix_gid_from_db($firstSpeech['subsection_gid'])]);
+            $entry->firstSpeechUrl = $speechURL->generate('none') . '#g' . gid_to_anchor(fix_gid_from_db($firstSpeech['speech_gid']));
+            $speakers[] = $entry;
+        }
+        // See FrontPageView::buildActivityItem() for the "+N more" maths
+        // (count($speakers), not count($shownSpeakerIds) - the latter is
+        // attempted lookups, not what's actually rendered) - directly
+        // unit-tested there, unlike this file.
+        $items[] = FrontPageView::buildActivityItem($q->field($i, 'body'), $speakers, count($firstSpeechBySpeaker), $topics);
+    }
+
+    return $items;
+}
+
+/**
+ * "We're a small charity with a big mission." - the mockup's own bottom-of-page
+ * charity callout, using the content of sidebars/whatisthissite.php's shared khaki
+ * "What's all this about?" block (also used on 404.php, index-election.php,
+ * gadget/index.php and mobile.php, so left untouched there - see the note on
+ * latest_activity() above: duplicate short, static content into new-design markup
+ * rather than restyle a template several unrelated pages still rely on) - this site's
+ * donate/about messaging was already basically that card, just under a different
+ * heading.
+ */
+function about_this_site_card() {
+    global $platesEngine;
+
+    $URL = new URL('about');
+    echo $platesEngine->render('front/about-this-site', ['aboutUrl' => $URL->generate()]);
+}
+
 $MPURL = new URL('yourmp');
 
-// Explain what the site is before offering the search tools.
-$PAGE->include_sidebar_template('whatisthissite');
-
-$PAGE->block_start(['id' => 'intro', 'title' => 'At OpenAustralia.org you can:']);
-?>
-<ol class="!list-none [&>li]:!ml-0">
-
-    <?php
-
-    /**
-     * Find out more about your MP / Find out more about David Howarth, your MP.
-     */
-    function your_mp_bullet_point() {
-        global $THEUSER, $MPURL;
-        print "<li>";
-        $pc_form = true;
-        if ($THEUSER->constituency_is_set()) {
-            // (We don't allow the user to search for a postcode if they
-            // already have one set in their prefs.)
-
-            $MEMBER = new MEMBER(['constituency' => $THEUSER->constituency()]);
-            if ($MEMBER->valid) {
-                $pc_form = false;
-                $CHANGEURL = new URL('userchangepc');
-                $mpname = $MEMBER->first_name() . ' ' . $MEMBER->last_name();
-                $former = "";
-                $left_house = $MEMBER->left_house();
-                if ($left_house[1]['date'] != '9999-12-31') {
-                    $former = 'former';
-                }
-                ?>
-                <p><a href="<?php echo $MPURL->generate(); ?>"><strong>Find out more about <?php echo $mpname; ?>, your
-                            <?php echo $former ?> Federal Representative</strong></a>
-                    (<a href="<?php echo $CHANGEURL->generate(); ?>">Change</a>)</p>
-                <?php
-            }
-        }
-
-        if ($pc_form) { ?>
-            <form action="<?php echo $MPURL->generate(); ?>" method="get">
-                <p><strong>Find out more about your Federal Representative</strong><br>
-                    <label for="pc">Enter your Australian postcode here:</label>&nbsp; <input type="text" name="pc" id="pc"
-                        size="8" maxlength="10" class="text">&nbsp;&nbsp;<input type="submit" value=" GO " class="submit">
-                </p>
-            </form>
-            <?php
-        }
-        print "</li>";
-    }
-
-    /**
-     * Search / Search for 'mouse'.
-     */
-    function search_bullet_point() {
-        global $SEARCHURL;
-        ?>
-        <li>
-            <?php
-            $SEARCHURL = new URL('search');
-            ?>
-            <form action="<?php echo $SEARCHURL->generate(); ?>" method="get">
-                <p><strong><label
-                            for="s">Search<?php echo get_http_var("keyword") ? ' Hansard for \'' . htmlspecialchars(get_http_var("keyword")) . '\'' : '' ?>:</label></strong>
-                    <input type="text" name="s" id="s" size="15" maxlength="100" class="text"
-                        value="<?php echo htmlspecialchars(get_http_var("keyword")) ?>">&nbsp;&nbsp;<input type="submit"
-                        value="SEARCH" class="submit">
-                </p>
-            </form>
-        </li>
-        <?php
-    }
-
-    /**
-     * Sign up to be emailed when something relevant to you happens in Parliament
-     * Sign up to be emailed when 'mouse' is mentioned in Parliament.
-     */
-    function email_alert_bullet_point() {
-        if (get_http_var("keyword")) { ?>
-            <li class="list-none">
-                <p class="mb-0"><a class="font-semibold !text-teal-800 hover:!text-teal-600" href="<?php echo WEBPATH . "alert?keyword=" . htmlspecialchars(get_http_var('keyword')) ?>&only=1">Create and manage email alerts</a><br>
-                    <span class="text-sm text-slate-600">Get notified when '<?php echo htmlspecialchars(get_http_var('keyword')) ?>' is mentioned in Parliament.</span>
-                </p>
-            </li>
-        <?php } else { ?>
-            <li class="list-none">
-                <p class="mb-0"><a class="font-semibold !text-teal-800 hover:!text-teal-600" href="<?php echo WEBPATH . "alert/" ?>">Create and manage email alerts</a><br>
-                    <span class="text-sm text-slate-600">Stay informed when something relevant happens in Parliament.</span>
-                </p>
-            </li>
-        <?php }
-    }
-
-    /**
-     * Comment on (recent debates)
-     */
-    function comment_on_recent_bullet_point() {
-        global $hansardmajors;
-        ?>
-        <li>
-            <p><strong>Read and comment on:</strong></p>
-
-            <?php
-            $DEBATELIST = new DEBATELIST();
-            $data[1] = $DEBATELIST->most_recent_day();
-            $WRANSLIST = new WRANSLIST();
-            $data[3] = $WRANSLIST->most_recent_day();
-            $WHALLLIST = new WHALLLIST();
-            $data[2] = $WHALLLIST->most_recent_day();
-            $WMSLIST = new WMSLIST();
-            $data[4] = $WMSLIST->most_recent_day();
-            $LORDSDEBATELIST = new LORDSDEBATELIST();
-            $data[101] = $LORDSDEBATELIST->most_recent_day();
-            $NILIST = new NILIST();
-            $data[5] = $NILIST->most_recent_day();
-            foreach (array_keys($hansardmajors) as $major) {
-                if (array_key_exists($major, $data)) {
-                    unset($data[$major]['listurl']);
-                    if (count($data[$major]) == 0) {
-                        unset($data[$major]);
-                    }
-                }
-            }
-            ?>
-            <div class="!box-border !w-[calc(100vw-2rem)] max-md:!-ml-[27px] grid grid-cols-1 gap-5 md:grid-cols-2 md:gap-6">
-                <div class="rounded-lg border border-slate-200 border-t-4 border-t-teal-700 bg-white p-5 shadow-[0_3px_10px_rgba(0,0,0,0.08)]">
-                    <?php major_summary($data, "", [101], '🏛️ Senate debates'); ?>
-                </div>
-                <div class="rounded-lg border border-slate-200 border-t-4 border-t-teal-700 bg-white p-5 shadow-[0_3px_10px_rgba(0,0,0,0.08)]">
-                    <?php major_summary($data, "", [1, 2, 3, 4, 5], '🏛️ House debates'); ?>
-                </div>
-            </div>
-        </li>
-        <?php
-    }
-
-    if (get_http_var('keyword')) {
-        // This is for links from Google adverts, where we want to
-        // promote the features relating to their original search higher
-        // than "your MP".
-        email_alert_bullet_point();
-        your_mp_bullet_point();
-        comment_on_recent_bullet_point();
-    } else {
-        your_mp_bullet_point();
-        email_alert_bullet_point();
-        comment_on_recent_bullet_point();
-    }
-
-    ?>
-</ol>
-<?php
-$PAGE->block_end();
+search_hero();
+feature_row();
+latest_activity();
+about_this_site_card();
 
 $PAGE->stripe_end();
 $PAGE->page_end();
