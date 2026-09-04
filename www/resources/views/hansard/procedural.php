@@ -27,7 +27,11 @@
         ?>
         <div class="mt-2 flex flex-wrap items-baseline gap-x-3 gap-y-1 not-italic text-slate-500 [&_p]:inline [&_p]:m-0 [&_small]:!text-sm [&_strong]:!font-normal [&_a]:!text-slate-500 [&_a]:hover:!text-teal-700 [&_a]:!no-underline">
             <?php if ($item->contextLinkHtml): ?>
-                <span aria-hidden="true">🔍</span> <?php echo $item->contextLinkHtml ?>
+                <?php
+                // Wrapped together, not left as two flex siblings - see
+                // speech.php's own footer comment on why.
+                ?>
+                <span><span aria-hidden="true">🔍</span> <?php echo $item->contextLinkHtml ?></span>
             <?php endif; ?>
             <?php echo $item->commentTeaserHtml ?>
         </div>

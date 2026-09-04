@@ -128,7 +128,15 @@
                         title="The source of this piece of text"><span aria-hidden="true">📄</span> <?php echo $this->e($speech->sourceLabel) ?></a>
                 <?php endif; ?>
                 <?php if ($speech->contextLinkHtml): ?>
-                    <span aria-hidden="true">🔍</span> <?php echo $speech->contextLinkHtml ?>
+                    <?php
+                    // Wrapped together in one span, not left as two flex siblings:
+                    // gap-x-3 on the row above applies between flex items, so the
+                    // emoji and the (inline-ified) <p> either side of it would
+                    // otherwise sit a full gap-x-3 apart instead of one plain space,
+                    // unlike the emoji+text pairs inside the source/permalink <a>s
+                    // either side, which are a single flex item each.
+                    ?>
+                    <span><span aria-hidden="true">🔍</span> <?php echo $speech->contextLinkHtml ?></span>
                 <?php endif; ?>
                 <?php echo $speech->commentTeaserHtml ?>
                 <?php if ($speech->permalinkUrl): ?>
