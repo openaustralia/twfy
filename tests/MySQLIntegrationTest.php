@@ -191,4 +191,32 @@ class MySQLIntegrationTest extends DatabaseIntegrationTestCase
         $this->assertSame(1, $q->rows());
         $this->assertSame('Ivy', $q->field(0, 'name'));
     }
+
+    // -------------------------------------------------------------------------
+    // Sentry span wrapping (mysql.php) - both branches of "is there an
+    // active transaction to attach a span to".
+    // -------------------------------------------------------------------------
+
+    public function test_query_works_with_no_active_sentry_span(): void
+    {
+        $this->assertNull(\Sentry\SentrySdk::getCurrentHub()->getSpan());
+
+        $q = $this->db->query("INSERT INTO test_users (name) VALUES (?)", 'Jack');
+
+        $this->assertTrue($q->success());
+    }
+
+    public function test_query_works_with_an_active_sentry_span(): void
+    {
+        $hub = \Sentry\SentrySdk::getCurrentHub();
+        $transaction = new \Sentry\Tracing\Transaction(new \Sentry\Tracing\TransactionContext('test'), $hub);
+        $hub->setSpan($transaction);
+
+        try {
+            $q = $this->db->query("INSERT INTO test_users (name) VALUES (?)", 'Kate');
+            $this->assertTrue($q->success());
+        } finally {
+            $hub->setSpan(null);
+        }
+    }
 }
