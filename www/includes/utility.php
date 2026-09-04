@@ -173,7 +173,6 @@ function error_handler(string $errno, string $errmsg, string $filename, int $lin
         } else {
             print "<p>Oops, sorry, an error has occurred!</p>\n";
         }
-        // TODO add honey badger.
     }
 
     // Do we need to exit?
