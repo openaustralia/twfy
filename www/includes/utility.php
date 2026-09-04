@@ -5,6 +5,7 @@
  * General utility functions v1.1 (well, it was). *
  */
 
+use Sentry\Severity;
 use Sentry\Tracing\SpanStatus;
 use Sentry\SentrySdk;
 use Sentry\Tracing\TransactionContext;
@@ -921,6 +922,13 @@ function send_email($to, $subject, $message, $bulk = false, $kind = 'notice', $u
 
     try {
         $success = call_user_func(mail_transport(), $to, $subject, $message, $headers);
+
+        if (!$success) {
+            \Sentry\withScope(function ($scope) use ($bulk) {
+                $scope->setTag('bulk', $bulk ? 'true' : 'false');
+                \Sentry\captureMessage('mail() failed', Severity::warning());
+            });
+        }
     } finally {
         $transaction->setTags(['bulk' => $bulk ? 'true' : 'false']);
         $transaction->setStatus($success ?? false ? SpanStatus::ok() : SpanStatus::internalError());
