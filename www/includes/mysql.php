@@ -399,6 +399,26 @@ class MySQL {
     }
 
     /**
+     * Sentry span description: query shape only (verb + table), never the
+     * literal SQL - $sql may already contain real parameter values.
+     */
+    protected function sql_span_description(string $sql): string {
+        if (preg_match('/^\s*SELECT\b.*?\bFROM\s+`?(\w+)`?/is', $sql, $matches)) {
+            return 'SELECT ' . $matches[1];
+        }
+        if (preg_match('/^\s*(INSERT|REPLACE)\s+INTO\s+`?(\w+)`?/i', $sql, $matches)) {
+            return strtoupper($matches[1]) . ' ' . $matches[2];
+        }
+        if (preg_match('/^\s*UPDATE\s+`?(\w+)`?/i', $sql, $matches)) {
+            return 'UPDATE ' . $matches[1];
+        }
+        if (preg_match('/^\s*DELETE\s+FROM\s+`?(\w+)`?/i', $sql, $matches)) {
+            return 'DELETE ' . $matches[1];
+        }
+        return preg_match('/^\s*(\w+)/', $sql, $matches) ? strtoupper($matches[1]) : 'query';
+    }
+
+    /**
      *
      */
     public function query($sql, ...$params) {
@@ -415,12 +435,10 @@ class MySQL {
         $q = new MySQLQuery($this->conn);
 
         // \Sentry\trace() is a no-op without an active transaction (see
-        // init.php's per-request transaction, sampled at 10%) - kept here
-        // rather than at each call site so every query is covered regardless
-        // of entry point.
+        // init.php's per-request transaction, sampled at 10%).
         $spanContext = new SpanContext();
         $spanContext->setOp('db.query');
-        $spanContext->setDescription($sql);
+        $spanContext->setDescription($this->sql_span_description($sql));
         \Sentry\trace(function () use ($q, $sql) {
             $q->query($sql);
         }, $spanContext);
