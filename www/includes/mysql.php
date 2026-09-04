@@ -100,6 +100,8 @@
  * $q->affected_rows() returns NULL.
  */
 
+use Sentry\Tracing\SpanContext;
+
 // We'll add up the times of each query so we can output the page total at the end.
 global $mysqltotalduration;
 $mysqltotalduration = 0.0;
@@ -411,7 +413,17 @@ class MySQL {
 
         $start = getmicrotime();
         $q = new MySQLQuery($this->conn);
-        $q->query($sql);
+
+        // \Sentry\trace() is a no-op without an active transaction (see
+        // init.php's per-request transaction, sampled at 10%) - kept here
+        // rather than at each call site so every query is covered regardless
+        // of entry point.
+        $spanContext = new SpanContext();
+        $spanContext->setOp('db.query');
+        $spanContext->setDescription($sql);
+        \Sentry\trace(function () use ($q, $sql) {
+            $q->query($sql);
+        }, $spanContext);
 
         $duration = getmicrotime() - $start;
         global $mysqltotalduration;
