@@ -797,22 +797,25 @@ function send_email($to, $subject, $message, $bulk = false) {
      */
     twfy_debug('EMAIL', "Sending email to $to with subject of '$subject'");
 
-    // A standalone transaction, not a \Sentry\trace() child span of
-    // init.php's per-request one: that transaction is only 10% sampled, and
-    // may not exist at all outside a request (eg a script that calls this
-    // directly). Email sending is comparatively rare - every send should be
-    // counted, not a sample of them - so this starts and finishes its own
-    // transaction regardless, visible in Sentry's Insights/Trace Explorer.
+    // Standalone transaction, explicitly sampled (every send counted, not a
+    // 10% sample), restoring the previous span afterward.
     $transactionContext = new TransactionContext('email.send');
     $transactionContext->setOp('email.send');
+    $transactionContext->setSampled(true);
     $transaction = \Sentry\startTransaction($transactionContext);
-    SentrySdk::getCurrentHub()->setSpan($transaction);
 
-    $success = mail($to, $subject, $message, $headers);
+    $hub = SentrySdk::getCurrentHub();
+    $previousSpan = $hub->getSpan();
+    $hub->setSpan($transaction);
 
-    $transaction->setTags(['bulk' => $bulk ? 'true' : 'false']);
-    $transaction->setStatus($success ? SpanStatus::ok() : SpanStatus::internalError());
-    $transaction->finish();
+    try {
+        $success = mail($to, $subject, $message, $headers);
+    } finally {
+        $transaction->setTags(['bulk' => $bulk ? 'true' : 'false']);
+        $transaction->setStatus($success ?? false ? SpanStatus::ok() : SpanStatus::internalError());
+        $transaction->finish();
+        $hub->setSpan($previousSpan);
+    }
 
     return $success;
 }
