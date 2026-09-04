@@ -5,6 +5,10 @@
  * General utility functions v1.1 (well, it was). *
  */
 
+use Sentry\Tracing\SpanStatus;
+use Sentry\SentrySdk;
+use Sentry\Tracing\TransactionContext;
+
 include_once __DIR__ . '/strptime.php';
 
 /**
@@ -793,7 +797,22 @@ function send_email($to, $subject, $message, $bulk = false) {
      */
     twfy_debug('EMAIL', "Sending email to $to with subject of '$subject'");
 
+    // A standalone transaction, not a \Sentry\trace() child span of
+    // init.php's per-request one: that transaction is only 10% sampled, and
+    // may not exist at all outside a request (eg a script that calls this
+    // directly). Email sending is comparatively rare - every send should be
+    // counted, not a sample of them - so this starts and finishes its own
+    // transaction regardless, visible in Sentry's Insights/Trace Explorer.
+    $transactionContext = new TransactionContext('email.send');
+    $transactionContext->setOp('email.send');
+    $transaction = \Sentry\startTransaction($transactionContext);
+    SentrySdk::getCurrentHub()->setSpan($transaction);
+
     $success = mail($to, $subject, $message, $headers);
+
+    $transaction->setTags(['bulk' => $bulk ? 'true' : 'false']);
+    $transaction->setStatus($success ? SpanStatus::ok() : SpanStatus::internalError());
+    $transaction->finish();
 
     return $success;
 }
