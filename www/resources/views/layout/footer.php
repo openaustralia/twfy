@@ -11,15 +11,22 @@
  * the library's light oaf-footer--openaustralia preset, which would clash
  * with the rest of this redesign's dark nav/hero.
  *
+ * The palette is set in layout.css's own "@media screen { #footer.oaf-footer
+ * {...} }" rule, not a plain style="" attribute here - an inline style has
+ * higher specificity than any stylesheet rule (short of !important), so it
+ * would also have beaten oaf-footer.css's own "@media print { .oaf-footer {
+ * --oaf-footer-bg: #ffffff; ... } }" reset. Browsers strip background
+ * colours when printing by default, so that would have meant our white text
+ * staying white with no navy background behind it any more - invisible on
+ * the page. See layout.css's own comment on why it has to be #footer.oaf-
+ * footer (an ID, for specificity), not just a second .oaf-footer class.
+ * CodeRabbit finding on #228.
+ *
  * $helpLinks/$devLinks are already-safe HTML (a title, or an <a> already
  * built by content_end()).
  */
 ?>
-<footer id="footer" role="contentinfo" class="oaf-footer !box-border !m-0 !mt-auto max-md:!w-screen"
-    style="--oaf-footer-bg:#26343b; --oaf-footer-text:#fff; --oaf-footer-muted:#cbd5e1;
-    --oaf-footer-rule:#475569; --oaf-footer-link:#5eead4; --oaf-footer-link-hover:#fff;
-    --oaf-footer-focus-ring:#5eead4; --oaf-footer-wordmark:#fff; --oaf-footer-donate-bg:#fff;
-    --oaf-footer-donate-text:#475569; --oaf-footer-donate-button-bg:#0f766e; --oaf-footer-donate-button-text:#fff;">
+<footer id="footer" role="contentinfo" class="oaf-footer !box-border !m-0 !mt-auto max-md:!w-screen">
     <div class="oaf-footer__inner">
 
         <?php

@@ -852,3 +852,36 @@ acronym {
 #advert_thin a {
 	font-weight: bold;
 }
+
+/* This site's navy/teal palette for the vendored OAF footer
+   (resources/views/layout/footer.php, style/default/oaf-footer.css) - not
+   the library's own light oaf-footer--openaustralia preset, which would
+   clash with the rest of this redesign's dark nav/hero.
+
+   @media screen, not unscoped: oaf-footer.css has its own
+   "@media print { .oaf-footer { --oaf-footer-bg: #ffffff; ... } }" reset,
+   dropped in here so it stays untouched and still applies when printing.
+   #footer.oaf-footer, not plain .oaf-footer: needs higher specificity than
+   oaf-footer.css's own ".oaf-footer { --oaf-footer-bg: #f4f1eb; ... }"
+   default, which is the same class selector, and oaf-footer.css itself
+   loads after this file (see skin.php - deliberately, so its own
+   a:link/a:visited-beating rules elsewhere in this file win their own
+   specificity ties). A style="" attribute on the element would have beaten
+   the default too, but would have also beaten the print reset, which
+   nothing here should. CodeRabbit finding on #228. */
+@media screen {
+	#footer.oaf-footer {
+		--oaf-footer-bg: #26343b;
+		--oaf-footer-text: #fff;
+		--oaf-footer-muted: #cbd5e1;
+		--oaf-footer-rule: #475569;
+		--oaf-footer-link: #5eead4;
+		--oaf-footer-link-hover: #fff;
+		--oaf-footer-focus-ring: #5eead4;
+		--oaf-footer-wordmark: #fff;
+		--oaf-footer-donate-bg: #fff;
+		--oaf-footer-donate-text: #475569;
+		--oaf-footer-donate-button-bg: #0f766e;
+		--oaf-footer-donate-button-text: #fff;
+	}
+}
