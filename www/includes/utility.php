@@ -5,6 +5,11 @@
  * General utility functions v1.1 (well, it was). *
  */
 
+use Sentry\Severity;
+use Sentry\Tracing\SpanStatus;
+use Sentry\SentrySdk;
+use Sentry\Tracing\TransactionContext;
+
 include_once __DIR__ . '/strptime.php';
 
 /**
@@ -173,7 +178,6 @@ function error_handler(string $errno, string $errmsg, string $filename, int $lin
         } else {
             print "<p>Oops, sorry, an error has occurred!</p>\n";
         }
-        // TODO add honey badger.
     }
 
     // Do we need to exit?
@@ -794,7 +798,32 @@ function send_email($to, $subject, $message, $bulk = false) {
      */
     twfy_debug('EMAIL', "Sending email to $to with subject of '$subject'");
 
-    $success = mail($to, $subject, $message, $headers);
+    // Standalone transaction, explicitly sampled (every send counted, not a
+    // 10% sample), restoring the previous span afterward.
+    $transactionContext = new TransactionContext('email.send');
+    $transactionContext->setOp('email.send');
+    $transactionContext->setSampled(true);
+    $transaction = \Sentry\startTransaction($transactionContext);
+
+    $hub = SentrySdk::getCurrentHub();
+    $previousSpan = $hub->getSpan();
+    $hub->setSpan($transaction);
+
+    try {
+        $success = mail($to, $subject, $message, $headers);
+
+        if (!$success) {
+            \Sentry\withScope(function ($scope) use ($bulk) {
+                $scope->setTag('bulk', $bulk ? 'true' : 'false');
+                \Sentry\captureMessage('mail() failed', Severity::warning());
+            });
+        }
+    } finally {
+        $transaction->setTags(['bulk' => $bulk ? 'true' : 'false']);
+        $transaction->setStatus($success ?? false ? SpanStatus::ok() : SpanStatus::internalError());
+        $transaction->finish();
+        $hub->setSpan($previousSpan);
+    }
 
     return $success;
 }

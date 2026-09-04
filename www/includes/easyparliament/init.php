@@ -5,6 +5,9 @@
  * First some things to help make our PHP nicer and betterer.
  */
 
+use Sentry\SentrySdk;
+use Sentry\Tracing\TransactionContext;
+
 error_reporting(E_ALL);
 ini_set('memory_limit', 32 * 1024 * 1024);
 
@@ -64,7 +67,32 @@ if (defined('SENTRY_DSN') && SENTRY_DSN) {
     \Sentry\init([
         'dsn' => SENTRY_DSN,
         'environment' => defined('SENTRY_ENVIRONMENT') ? SENTRY_ENVIRONMENT : 'development',
+        // Off (0) by default in this SDK. 10%, not 100%: this is a public,
+        // fairly high-traffic site, and a transaction is sent to Sentry on
+        // every sampled request - full sampling risks the account's
+        // transaction quota. 10% still gives a representative statistical
+        // view of DB query volume/latency (mysql.php's MySQL::query()).
+        // send_email() (utility.php) starts its own transaction regardless
+        // of this rate - email sending is comparatively rare, and we want
+        // every send counted, not a sample of them.
+        'traces_sample_rate' => 0.1,
     ]);
+
+    // One transaction per request (web page or CLI script - alertmailer.php
+    // and other scripts/*.php all include this file too), so DB query spans
+    // have a parent to attach to; \Sentry\trace() is a no-op with no active
+    // transaction. SCRIPT_NAME (eg "/mp/index.php"), not REQUEST_URI: the
+    // latter includes query strings/IDs, which would give every request its
+    // own transaction *name* instead of grouping same-page requests together.
+    $sentryTransactionContext = new TransactionContext(
+        PHP_SAPI === 'cli' ? ($_SERVER['argv'][0] ?? 'cli') : ($_SERVER['SCRIPT_NAME'] ?? 'unknown')
+    );
+    $sentryTransactionContext->setOp(PHP_SAPI === 'cli' ? 'cli.script' : 'http.server');
+    $sentryRequestTransaction = \Sentry\startTransaction($sentryTransactionContext);
+    SentrySdk::getCurrentHub()->setSpan($sentryRequestTransaction);
+    register_shutdown_function(function () use ($sentryRequestTransaction) {
+        $sentryRequestTransaction->finish();
+    });
 }
 
 // The time the page starts, so we can display the total at the end.
