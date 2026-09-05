@@ -1147,7 +1147,8 @@ function sentry_browser_script() {
     // region-specific and our org is in Sentry's EU region: the US host
     // (js.sentry-cdn.com) answers 200 with a no-op stub, which would leave
     // every browser signal silently inert.
-    $public_key = parse_url($options->getDsn(), PHP_URL_USER);
+    $dsn = $options->getDsn();
+    $public_key = $dsn ? $dsn->getPublicKey() : null;
     if (!$public_key) {
         return;
     }
