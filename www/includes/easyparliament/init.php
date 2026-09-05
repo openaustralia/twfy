@@ -67,10 +67,10 @@ $old_error_handler = set_error_handler("error_handler");
 // This is the canonical OAF Sentry configuration (see docs/monitoring.md in
 // the infrastructure repo; change it there first, then update every copy).
 if (defined('SENTRY_DSN') && SENTRY_DSN) {
-    // Scrubs email addresses out of breadcrumbs (e.g. log lines that mention
-    // a person's email address), in line with the Australian Privacy
-    // Principles. The pattern matches most email addresses.
-    $sentry_scrub_breadcrumbs = function (Event $event) {
+    // Scrubs email-address-shaped strings from breadcrumbs and request query
+    // strings, cookies, headers, and bodies, in line with the Australian
+    // Privacy Principles. The pattern matches common email address formats.
+    $sentry_scrub_event = function (Event $event) {
         $pattern = '/[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}/';
         $scrub = function ($value) use (&$scrub, $pattern) {
             if (is_string($value)) {
@@ -92,6 +92,15 @@ if (defined('SENTRY_DSN') && SENTRY_DSN) {
             $breadcrumbs[] = $crumb;
         }
         $event->setBreadcrumb($breadcrumbs);
+
+        $request = $event->getRequest();
+        foreach (['query_string', 'cookies', 'headers', 'data'] as $field) {
+            if (array_key_exists($field, $request)) {
+                $request[$field] = $scrub($request[$field]);
+            }
+        }
+        $event->setRequest($request);
+
         return $event;
     };
 
@@ -109,10 +118,11 @@ if (defined('SENTRY_DSN') && SENTRY_DSN) {
         'release' => $sentry_release,
         'traces_sample_rate' => 0.1,
         // Include IP addresses and request headers for debugging context;
-        // emails are scrubbed from breadcrumbs above.
+        // email-address-shaped strings in selected event fields are scrubbed.
         'send_default_pii' => true,
-        'before_send' => $sentry_scrub_breadcrumbs,
-        'before_send_transaction' => $sentry_scrub_breadcrumbs,
+        'max_request_body_size' => 'never',
+        'before_send' => $sentry_scrub_event,
+        'before_send_transaction' => $sentry_scrub_event,
     ]);
 }
 
