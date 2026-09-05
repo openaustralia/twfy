@@ -13,12 +13,19 @@ require_once __DIR__ . '/../www/includes/easyparliament/page.php';
 
 // utility.php can't be required here - it redeclares twfy_debug(), already
 // stubbed in bootstrap.php for the rest of the unit suite. get_http_var()
-// (SKIN's constructor calls it) is the one function from there page_header()
-// actually needs, so it's stubbed the same way bootstrap.php stubs the rest.
+// and sentry_browser_script() (both called by page_header()) are stubbed
+// the same way bootstrap.php stubs the rest.
 if (!function_exists('get_http_var')) {
 
     function get_http_var($name, $default = '') {
         return $_GET[$name] ?? $_POST[$name] ?? $default;
+    }
+
+}
+
+if (!function_exists('sentry_browser_script')) {
+
+    function sentry_browser_script() {
     }
 
 }
