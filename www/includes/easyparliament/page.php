@@ -330,6 +330,8 @@ class PAGE {
             }
 
             echo $this->analytics_tag();
+
+            sentry_browser_script();
             ?>
 
         </head>
@@ -467,6 +469,8 @@ class PAGE {
             }
 
             echo $this->analytics_tag();
+
+            sentry_browser_script();
             ?>
 
         </head>
