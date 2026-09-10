@@ -21,9 +21,18 @@
         // commentTeaserHtml are bare <a> tags from legacy helpers, overridden to
         // the legacy blue/purple by layout.css's global a:link/a:visited rules
         // without this. Copilot finding on #227.
+        //
+        // [&_small]:!text-sm [&_strong]:!font-normal + the emoji: same fix as
+        // speech.php's own footer, see that file's comment.
         ?>
-        <div class="mt-2 flex flex-wrap items-baseline gap-x-3 gap-y-1 not-italic text-slate-500 [&_p]:inline [&_p]:m-0 [&_a]:!text-slate-500 [&_a]:hover:!text-teal-700 [&_a]:!no-underline">
-            <?php echo $item->contextLinkHtml ?>
+        <div class="mt-2 flex flex-wrap items-baseline gap-x-3 gap-y-1 not-italic text-slate-500 [&_p]:inline [&_p]:m-0 [&_small]:!text-sm [&_strong]:!font-normal [&_a]:!text-slate-500 [&_a]:hover:!text-teal-700 [&_a]:!no-underline">
+            <?php if ($item->contextLinkHtml): ?>
+                <?php
+                // Wrapped together, not left as two flex siblings - see
+                // speech.php's own footer comment on why.
+                ?>
+                <span><span aria-hidden="true">🔍</span> <?php echo $item->contextLinkHtml ?></span>
+            <?php endif; ?>
             <?php echo $item->commentTeaserHtml ?>
         </div>
     <?php endif; ?>

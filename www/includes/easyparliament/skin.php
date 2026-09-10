@@ -156,6 +156,17 @@ class SKIN {
                 type="text/css">
             <?php
         }
+        // The canonical OAF footer (every page, via layout/footer.php) - vendored
+        // from openaustralia/oaf-standard-footer, unmodified. Bump ?v= only when
+        // that repo's own oaf-footer.css version comment changes. Loaded after
+        // global.css/layout.css deliberately: layout.css's legacy a:link/a:visited
+        // rules are the same specificity (0,1,1) as this file's own ".oaf-footer a"
+        // rule, and a tie goes to whichever stylesheet loads last - loading this
+        // first meant every footer link fell back to layout.css's blue/purple
+        // instead of the footer's own teal.
+        ?>
+        <link rel="stylesheet" href="<?php echo WEBPATH; ?>style/default/oaf-footer.css?v=1" type="text/css">
+        <?php
         if (isset($skinstyles["screen"]) && $skinstyles["screen"] != "") {
             ?>
             <link rel="stylesheet" href="<?php echo WEBPATH; ?>style/<?php echo $skinstyles['screen']; ?>/screen.css"

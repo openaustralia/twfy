@@ -7,52 +7,78 @@
 
 include_once __DIR__ . '/strptime.php';
 
+use League\Plates\Engine;
+
+if (!function_exists('get_plates_engine')) {
+
+/**
+ * get_plates_engine() returns one League\Plates\Engine shared for the rest of this
+ * request, not a fresh instance per caller - page.php's every-page footer render and
+ * whichever page-specific template (hansard_gid.php, www/docs/index.php, ...) also
+ * renders Plates views both used to construct their own, so a single Hansard page
+ * request built two identically-configured Engines. Cheap either way (no I/O, just
+ * a views-directory string), but there's no reason not to share it.
+ */
+    function get_plates_engine(): Engine {
+        static $engine = null;
+        if ($engine === null) {
+            $engine = new Engine(__DIR__ . '/../resources/views');
+        }
+        return $engine;
+    }
+
+}
+
+if (!function_exists('twfy_debug')) {
+
 /**
  *
  */
-function twfy_debug($header, $text = "") {
-    // Pass it a brief header word and some debug text and it'll be output.
+    function twfy_debug($header, $text = "") {
+        // Pass it a brief header word and some debug text and it'll be output.
 
-    // We set ?DEBUGTAG=n in the URL.
-    // (DEBUGTAG is set in config.php).
-    // n is a number from (currently) 1 to 4.
-    // This sets what amount of debug information is shown.
-    // For level '1' we show anything that is passed to this function
-    // with a $header in $levels[1].
-    // For level '2', anything with a $header in $levels[1] AND $levels[2].
-    // Level '4' shows everything.
+        // We set ?DEBUGTAG=n in the URL.
+        // (DEBUGTAG is set in config.php).
+        // n is a number from (currently) 1 to 4.
+        // This sets what amount of debug information is shown.
+        // For level '1' we show anything that is passed to this function
+        // with a $header in $levels[1].
+        // For level '2', anything with a $header in $levels[1] AND $levels[2].
+        // Level '4' shows everything.
 
-    $debug_level = get_http_var(DEBUGTAG);
-    // $debug_level = 1;
+        $debug_level = get_http_var(DEBUGTAG);
+        // $debug_level = 1;
 
-    if ($debug_level != '') {
+        if ($debug_level != '') {
 
-        // Set which level shows which types of debug info.
-        $levels = [
-            1 => ['SKIN', 'THEUSER', 'TIME', 'SQLERROR', 'PAGE', 'TEMPLATE', 'SEARCH', 'ALERTS', 'MP'],
-            2 => ['SQL', 'EMAIL', 'WIKIPEDIA', 'hansardlist', 'debatelist', 'wranslist', 'whalllist'],
-            3 => ['SQLRESULT']
-            // Higher than this: 'DATA', etc.
-        ];
+            // Set which level shows which types of debug info.
+            $levels = [
+                1 => ['SKIN', 'THEUSER', 'TIME', 'SQLERROR', 'PAGE', 'TEMPLATE', 'SEARCH', 'ALERTS', 'MP'],
+                2 => ['SQL', 'EMAIL', 'WIKIPEDIA', 'hansardlist', 'debatelist', 'wranslist', 'whalllist'],
+                3 => ['SQLRESULT']
+                // Higher than this: 'DATA', etc.
+            ];
 
-        // Store which headers we are allowed to show.
-        $allowed_headers = [];
+            // Store which headers we are allowed to show.
+            $allowed_headers = [];
 
-        if ($debug_level > count($levels)) {
-            $max_level_to_show = count($levels);
-        } else {
-            $max_level_to_show = $debug_level;
-        }
+            if ($debug_level > count($levels)) {
+                $max_level_to_show = count($levels);
+            } else {
+                $max_level_to_show = $debug_level;
+            }
 
-        for ($n = 1; $n <= $max_level_to_show; $n++) {
-            $allowed_headers = array_merge($allowed_headers, $levels[$n]);
-        }
+            for ($n = 1; $n <= $max_level_to_show; $n++) {
+                $allowed_headers = array_merge($allowed_headers, $levels[$n]);
+            }
 
-        // If we can show this header, then, er, show it.
-        if (in_array($header, $allowed_headers) || $debug_level >= 4) {
-            print "<p><span style=\"color:#039;\"><strong>" . htmlspecialchars($header, ENT_QUOTES, 'UTF-8') . "</strong></span> " . htmlspecialchars($text, ENT_QUOTES, 'UTF-8') . "</p>\n";
+            // If we can show this header, then, er, show it.
+            if (in_array($header, $allowed_headers) || $debug_level >= 4) {
+                print "<p><span style=\"color:#039;\"><strong>" . htmlspecialchars($header, ENT_QUOTES, 'UTF-8') . "</strong></span> " . htmlspecialchars($text, ENT_QUOTES, 'UTF-8') . "</p>\n";
+            }
         }
     }
+
 }
 
 /**
@@ -262,83 +288,103 @@ function validate_email($string) {
     }
 }
 
+if (!function_exists('validate_postcode')) {
+
 /**
  *
  */
-function validate_postcode($postcode) {
-    $postcode = trim($postcode);
+    function validate_postcode($postcode) {
+        $postcode = trim($postcode);
 
-    $num = '0123456789';
-    if (preg_match("/^[$num][$num][$num][$num]/", $postcode)) {
-        return true;
-    } else {
-        return false;
+        $num = '0123456789';
+        if (preg_match("/^[$num][$num][$num][$num]/", $postcode)) {
+            return true;
+        } else {
+            return false;
+        }
     }
+
 }
+
+if (!function_exists('getmicrotime')) {
 
 /**
  * Returns the unixtime in microseconds.
  */
-function getmicrotime() {
-    $mtime = microtime();
-    $mtime = explode(" ", $mtime);
-    $mtime = $mtime[1] + $mtime[0];
+    function getmicrotime() {
+        $mtime = microtime();
+        $mtime = explode(" ", $mtime);
+        $mtime = $mtime[1] + $mtime[0];
 
-    return $mtime;
+        return $mtime;
+    }
+
 }
 
 /* twfy_debug_timestamp
  * Output a timestamp since the page was started. */
 $timestamp_last = $timestamp_start = getmicrotime();
 
-/**
- *
- */
-function twfy_debug_timestamp($label = "") {
-    global $timestamp_last, $timestamp_start;
-    $t = getmicrotime();
-    twfy_debug("TIME", sprintf(
-        "%f msecs since start; %f msecs since last; %s",
-        ($t - $timestamp_start) * 1000.0,
-        ($t - $timestamp_last) * 1000.0,
-        $label
-    ));
-    $timestamp_last = $t;
-}
+if (!function_exists('twfy_debug_timestamp')) {
 
 /**
  *
  */
-function format_date($date, $format) {
-    // Pass it a date (YYYY-MM-DD) and a
-    // PHP date format string (eg, "Y-m-d H:i:s")
-    // and it returns a nicely formatted string according to requirements.
-
-    if (preg_match("/^(\d\d\d\d)-(\d\d?)-(\d\d?)$/", $date, $matches)) {
-        [$string, $year, $month, $day] = $matches;
-
-        return gmdate($format, gmmktime(0, 0, 0, $month, $day, $year));
-    } else {
-        return "";
+    function twfy_debug_timestamp($label = "") {
+        global $timestamp_last, $timestamp_start;
+        $t = getmicrotime();
+        twfy_debug("TIME", sprintf(
+            "%f msecs since start; %f msecs since last; %s",
+            ($t - $timestamp_start) * 1000.0,
+            ($t - $timestamp_last) * 1000.0,
+            $label
+        ));
+        $timestamp_last = $t;
     }
 
 }
 
+if (!function_exists('format_date')) {
+
 /**
  *
  */
-function format_time($time, $format) {
-    // Pass it a time (HH:MM:SS) and a
-    // PHP date format string (eg, "H:i")
-    // and it returns a nicely formatted string according to requirements.
+    function format_date($date, $format) {
+        // Pass it a date (YYYY-MM-DD) and a
+        // PHP date format string (eg, "Y-m-d H:i:s")
+        // and it returns a nicely formatted string according to requirements.
 
-    if (preg_match("/^(\d\d):(\d\d):(\d\d)$/", $time, $matches)) {
-        [$string, $hour, $min, $sec] = $matches;
+        if (preg_match("/^(\d\d\d\d)-(\d\d?)-(\d\d?)$/", $date, $matches)) {
+            [$string, $year, $month, $day] = $matches;
 
-        return gmdate($format, gmmktime($hour, $min, $sec));
-    } else {
-        return "";
+            return gmdate($format, gmmktime(0, 0, 0, $month, $day, $year));
+        } else {
+            return "";
+        }
+
     }
+
+}
+
+if (!function_exists('format_time')) {
+
+/**
+ *
+ */
+    function format_time($time, $format) {
+        // Pass it a time (HH:MM:SS) and a
+        // PHP date format string (eg, "H:i")
+        // and it returns a nicely formatted string according to requirements.
+
+        if (preg_match("/^(\d\d):(\d\d):(\d\d)$/", $time, $matches)) {
+            [$string, $hour, $min, $sec] = $matches;
+
+            return gmdate($format, gmmktime($hour, $min, $sec));
+        } else {
+            return "";
+        }
+    }
+
 }
 
 /**
@@ -484,60 +530,64 @@ function strip_tags_tospaces($text) {
     return strip_tags(trim($text));
 }
 
+if (!function_exists('trim_characters')) {
+
 /**
  *
  */
-function trim_characters($text, $start, $length) {
-    // Pass it a string, a numeric start position and a numeric length.
-    // If the start position is > 0, the string will be trimmed to start at the
-    // nearest word boundary after (or at) that position.
-    // If the string is then longer than $length, it will be trimmed to the nearest
-    // word boundary below (or at) that length.
-    // If either end is trimmed, ellipses will be added.
-    // The modified string is then returned - its *maximum* length is $length.
-    // HTML is always stripped (must be for trimming to prevent broken tags).
+    function trim_characters($text, $start, $length) {
+        // Pass it a string, a numeric start position and a numeric length.
+        // If the start position is > 0, the string will be trimmed to start at the
+        // nearest word boundary after (or at) that position.
+        // If the string is then longer than $length, it will be trimmed to the nearest
+        // word boundary below (or at) that length.
+        // If either end is trimmed, ellipses will be added.
+        // The modified string is then returned - its *maximum* length is $length.
+        // HTML is always stripped (must be for trimming to prevent broken tags).
 
-    $text = strip_tags_tospaces($text);
+        $text = strip_tags_tospaces($text);
 
-    // Split long strings up so they don't go too long.
-    // Mainly for URLs which are displayed, but aren't links when trimmed.
-    $text = preg_replace("/(\S{60})/", "\$1 ", $text);
+        // Split long strings up so they don't go too long.
+        // Mainly for URLs which are displayed, but aren't links when trimmed.
+        $text = preg_replace("/(\S{60})/", "\$1 ", $text);
 
-    // Otherwise the word boundary matching goes odd...
-    $text = preg_replace("/[\n\r]/", " ", $text);
+        // Otherwise the word boundary matching goes odd...
+        $text = preg_replace("/[\n\r]/", " ", $text);
 
-    // Trim start.
-    if ($start > 0) {
-        $text = substr($text, $start);
+        // Trim start.
+        if ($start > 0) {
+            $text = substr($text, $start);
 
-        // Word boundary.
-        if (preg_match("/.+?\b(.*)/", $text, $matches)) {
-            $text = $matches[1];
-            // Strip spare space at the start.
-            $text = preg_replace("/^\s/", '', $text);
+            // Word boundary.
+            if (preg_match("/.+?\b(.*)/", $text, $matches)) {
+                $text = $matches[1];
+                // Strip spare space at the start.
+                $text = preg_replace("/^\s/", '', $text);
+            }
+            $text = '...' . $text;
         }
-        $text = '...' . $text;
+
+        // Trim end.
+        if (strlen($text) > $length) {
+
+            // Allow space for ellipsis.
+            $text = substr($text, 0, $length - 3);
+
+            // Word boundary.
+            if (preg_match("/(.*)\s.+/", $text, $matches)) {
+                $text = $matches[1];
+                // Strip spare space at the end.
+                $text = preg_replace("/\s$/", '', $text);
+            }
+            // We don't want to use the HTML entity for an ellipsis (&#8230;), because then
+            // it screws up when we subsequently use htmlentities() to print the returned
+            // string!
+            $text .= '...';
+        }
+
+        return $text;
     }
 
-    // Trim end.
-    if (strlen($text) > $length) {
-
-        // Allow space for ellipsis.
-        $text = substr($text, 0, $length - 3);
-
-        // Word boundary.
-        if (preg_match("/(.*)\s.+/", $text, $matches)) {
-            $text = $matches[1];
-            // Strip spare space at the end.
-            $text = preg_replace("/\s$/", '', $text);
-        }
-        // We don't want to use the HTML entity for an ellipsis (&#8230;), because then
-        // it screws up when we subsequently use htmlentities() to print the returned
-        // string!
-        $text .= '...';
-    }
-
-    return $text;
 }
 
 /**
@@ -664,17 +714,21 @@ function fix_gid_from_db($gid, $keepmajor = false) {
 
 }
 
+if (!function_exists('gid_to_anchor')) {
+
 /**
  *
  */
-function gid_to_anchor($gid) {
-    // For trimming gids to be used as #anchors in pages.
-    // Extracted here so we keep it consistent.
-    // The gid should already be truncated using fix_gid_from_db(), so it
-    // will be like 2003-11-20.966.0
-    // This function returns 966.0.
+    function gid_to_anchor($gid) {
+        // For trimming gids to be used as #anchors in pages.
+        // Extracted here so we keep it consistent.
+        // The gid should already be truncated using fix_gid_from_db(), so it
+        // will be like 2003-11-20.966.0
+        // This function returns 966.0.
 
-    return substr($gid, (strpos($gid, '.') + 1));
+        return substr($gid, (strpos($gid, '.') + 1));
+    }
+
 }
 
 /**
@@ -803,17 +857,21 @@ function send_email($to, $subject, $message, $bulk = false) {
 // Cal's functions from
 // https://www.iamcal.com/publish/article.php?id=13
 
+if (!function_exists('get_http_var')) {
+
 /**
  * Call this with a key name to get a GET or POST variable.
  */
-function get_http_var($name, $default = '') {
-    if (array_key_exists($name, $_GET)) {
-        return clean_var($_GET[$name]);
+    function get_http_var($name, $default = '') {
+        if (array_key_exists($name, $_GET)) {
+            return clean_var($_GET[$name]);
+        }
+        if (array_key_exists($name, $_POST)) {
+            return clean_var($_POST[$name]);
+        }
+        return $default;
     }
-    if (array_key_exists($name, $_POST)) {
-        return clean_var($_POST[$name]);
-    }
-    return $default;
+
 }
 
 /**
@@ -837,14 +895,18 @@ function recursive_strip($a) {
     return $a;
 }
 
+if (!function_exists('get_cookie_var')) {
+
 /**
  * Call this with a key name to get a COOKIE variable.
  */
-function get_cookie_var($name, $default = '') {
-    if (array_key_exists($name, $_COOKIE)) {
-        return clean_var($_COOKIE[$name]);
+    function get_cookie_var($name, $default = '') {
+        if (array_key_exists($name, $_COOKIE)) {
+            return clean_var($_COOKIE[$name]);
+        }
+        return $default;
     }
-    return $default;
+
 }
 
 /**
@@ -911,37 +973,45 @@ function entities_to_numbers($string) {
     return $string;
 }
 
-/**
- *
- */
-function make_member_url($name, $const = '', $house = 1) {
-    $s = [' ', '&amp;', '&ocirc;', '&ouml;', '&acirc;', '&iacute;', '&aacute;', '&uacute;'];
-    $r = ['_', 'and', 'o', 'o', 'a', 'i', 'a', 'u'];
-    $name = preg_replace('#^the #', '', strtolower($name));
-    $out = urlencode(str_replace($s, $r, $name));
-    if ($const && ($house == 1 || $house == 2)) {
-        $out .= '/' . urlencode(str_replace($s, $r, strtolower($const)));
-    } elseif ($house == 0) {
-        $out = 'elizabeth_the_second';
-    }
-    return $out;
-}
+if (!function_exists('make_member_url')) {
 
 /**
  *
  */
-function member_full_name($house, $title, $first_name, $last_name, $constituency) {
-    $s = 'ERROR';
-    if ($house == 1 || $house == 2 || $house == 3 || $house == 4) {
-        $s = $first_name . ' ' . $last_name;
-        if ($title) {
-            $s = $title . ' ' . $s;
+    function make_member_url($name, $const = '', $house = 1) {
+        $s = [' ', '&amp;', '&ocirc;', '&ouml;', '&acirc;', '&iacute;', '&aacute;', '&uacute;'];
+        $r = ['_', 'and', 'o', 'o', 'a', 'i', 'a', 'u'];
+        $name = preg_replace('#^the #', '', strtolower($name));
+        $out = urlencode(str_replace($s, $r, $name));
+        if ($const && ($house == 1 || $house == 2)) {
+            $out .= '/' . urlencode(str_replace($s, $r, strtolower($const)));
+        } elseif ($house == 0) {
+            $out = 'elizabeth_the_second';
         }
-    } elseif ($house == 0) {
-        // Queen.
-        $s = "$first_name $last_name";
+        return $out;
     }
-    return $s;
+
+}
+
+if (!function_exists('member_full_name')) {
+
+/**
+ *
+ */
+    function member_full_name($house, $title, $first_name, $last_name, $constituency) {
+        $s = 'ERROR';
+        if ($house == 1 || $house == 2 || $house == 3 || $house == 4) {
+            $s = $first_name . ' ' . $last_name;
+            if ($title) {
+                $s = $title . ' ' . $s;
+            }
+        } elseif ($house == 0) {
+            // Queen.
+            $s = "$first_name $last_name";
+        }
+        return $s;
+    }
+
 }
 
 /**
