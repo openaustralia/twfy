@@ -5,7 +5,7 @@
 <p>We aim to help bridge this growing democratic disconnect, in the belief that there is
     little wrong with Parliament that a healthy mixture of transparency and public engagement won't fix.</p>
 
-<p>Hence this collection website.</p>
+<p>Hence this library.</p>
 
 <h3>Who runs this site?</h3>
 
