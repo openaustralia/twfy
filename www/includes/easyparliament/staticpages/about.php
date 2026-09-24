@@ -5,11 +5,11 @@
 <p>We aim to help bridge this growing democratic disconnect, in the belief that there is
     little wrong with Parliament that a healthy mixture of transparency and public engagement won't fix.</p>
 
-<p>Hence this website.</p>
+<p>Hence this collection website.</p>
 
 <h3>Who runs this site?</h3>
 
-<p>OpenAustralia is a website run by a charity, the <a href="https://www.oaf.org.au">OpenAustralia
+<p>OpenAustralia is a library collection, on the web, run by a charity, the <a href="https://www.oaf.org.au">OpenAustralia
         Foundation</a>.
     OpenAustralia Foundation is a public digital online library.
     We owe a great debt to a UK charity, mySociety, which built <a
