@@ -28,8 +28,8 @@ $featureIconView = 'front/feature-icon';
             class="block rounded-2xl bg-white p-6 text-center shadow-md !text-inherit !no-underline hover:shadow-lg md:p-8">
             <?php echo $this->fetch($featureIconView, ['emoji' => '📜']) ?>
             <h3 class="mb-2 text-lg font-semibold text-slate-900">Read the Debates</h3>
-            <p class="text-slate-600">Access and search the complete record of what's said in the House of
-                Representatives and the Senate.</p>
+            <p class="text-slate-600">Access and search a library with the complete record of what's said in the
+                House of Representatives and the Senate.</p>
         </a>
         <a href="<?php echo $this->e($emailAlertUrl) ?>"
             class="block rounded-2xl bg-white p-6 text-center shadow-md !text-inherit !no-underline hover:shadow-lg md:p-8">
