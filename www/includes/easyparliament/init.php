@@ -61,10 +61,31 @@ $old_error_handler = set_error_handler("error_handler");
 // by default chains to whatever was already registered, so error_handler
 // above still runs as before - this adds reporting, it doesn't replace it.
 if (defined('SENTRY_DSN') && SENTRY_DSN) {
-    \Sentry\init([
+    $sentryOptions = [
         'dsn' => SENTRY_DSN,
         'environment' => defined('SENTRY_ENVIRONMENT') ? SENTRY_ENVIRONMENT : 'development',
-    ]);
+    ];
+
+    // 'release': the exact commit SHA of this deploy, so Sentry can tell which
+    // version introduced/fixed an error and group events accordingly. Written
+    // by the umbrella repo's Capfile (git:create_release) as this submodule's
+    // own HEAD, not the umbrella repo's own commit - the two can differ, and
+    // it's this repo's code that actually runs. No PHP equivalent of
+    // sentry-ruby's auto-detection from Capistrano's own REVISION file (that's
+    // a Rails-integration-specific convenience), so read it directly; absent
+    // in local dev, where there's nothing to read.
+    $revision_file = __DIR__ . '/../../../REVISION';
+    if (is_readable($revision_file)) {
+        $revision_contents = file_get_contents($revision_file);
+        if ($revision_contents !== false) {
+            $revision = trim($revision_contents);
+            if ($revision !== '') {
+                $sentryOptions['release'] = $revision;
+            }
+        }
+    }
+
+    \Sentry\init($sentryOptions);
 }
 
 // The time the page starts, so we can display the total at the end.
