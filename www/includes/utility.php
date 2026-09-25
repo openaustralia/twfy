@@ -1185,3 +1185,5 @@ function _major_summary_title($major, $data, $LISTURL, $daytext, $card_mode = fa
     }
     print '</strong> <ul' . ($card_mode ? ' class="!list-none"' : '') . '>';
 }
+
+include_once __DIR__ . '/SentryBrowserScript.php';
