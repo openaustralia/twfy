@@ -34,6 +34,13 @@ class TestableMySQL extends MySQL {
         return $this->build_parameterized_sql($sql, $params);
     }
 
+    /**
+     *
+     */
+    public function span_description(string $sql): string {
+        return $this->sql_span_description($sql);
+    }
+
 }
 
 /**
@@ -129,7 +136,7 @@ class MySQLTest extends TestCase {
         $badness = "' OR '1'='1";
         $sql = $this->db->interpolate('WHERE email=?', [$badness]);
         $expected_escaped = "\' OR \'1\'=\'1";
-        $this->assertSame("WHERE email='".$expected_escaped."'", $sql);
+        $this->assertSame("WHERE email='" . $expected_escaped . "'", $sql);
     }
 
     /**
@@ -186,6 +193,76 @@ class MySQLTest extends TestCase {
     public function test_sql_with_no_placeholders_is_unchanged(): void {
         $sql = $this->db->interpolate('SELECT 1', []);
         $this->assertSame('SELECT 1', $sql);
+    }
+
+    // -------------------------------------------------------------------------
+    // sql_span_description() - must never leak literal query values into the
+    // Sentry span it labels.
+
+    /**
+     *
+     */
+    public function test_span_description_for_select_names_the_table(): void {
+        $sql = "SELECT * FROM member WHERE email='alice@example.com'";
+        $this->assertSame('SELECT member', $this->db->span_description($sql));
+    }
+
+    /**
+     * A literal value containing the word "FROM" must not be mistaken for
+     * the real FROM clause.
+     */
+    public function test_span_description_ignores_from_inside_a_literal_value(): void {
+        $sql = "SELECT id FROM comments WHERE body='FROM the heart, I love you'";
+        $this->assertSame('SELECT comments', $this->db->span_description($sql));
+    }
+
+    /**
+     *
+     */
+    public function test_span_description_for_insert_names_the_table(): void {
+        $sql = "INSERT INTO hansard (epobject_id, gid) VALUES (1, '2026-01-01.1.1')";
+        $this->assertSame('INSERT hansard', $this->db->span_description($sql));
+    }
+
+    /**
+     *
+     */
+    public function test_span_description_for_replace_names_the_table(): void {
+        $sql = 'REPLACE INTO postcode_lookup (postcode, name) VALUES (1, 2)';
+        $this->assertSame('REPLACE postcode_lookup', $this->db->span_description($sql));
+    }
+
+    /**
+     *
+     */
+    public function test_span_description_for_update_names_the_table(): void {
+        $sql = "UPDATE alerts SET email='foo@bar.com' WHERE alert_id=5";
+        $this->assertSame('UPDATE alerts', $this->db->span_description($sql));
+    }
+
+    /**
+     *
+     */
+    public function test_span_description_for_delete_names_the_table(): void {
+        $sql = "DELETE FROM search_query_log WHERE ip_address='1.2.3.4'";
+        $this->assertSame('DELETE search_query_log', $this->db->span_description($sql));
+    }
+
+    /**
+     *
+     */
+    public function test_span_description_for_unrecognised_verb_falls_back_to_the_verb(): void {
+        $this->assertSame('SHOW', $this->db->span_description('SHOW TABLES'));
+    }
+
+    /**
+     *
+     */
+    public function test_span_description_never_contains_a_literal_parameter_value(): void {
+        $secret = 'super-secret-search-term@example.com';
+        $sql = $this->db->interpolate('SELECT * FROM search_query_log WHERE query_string=?', [$secret]);
+
+        $this->assertStringNotContainsString($secret, $this->db->span_description($sql));
     }
 
 }
