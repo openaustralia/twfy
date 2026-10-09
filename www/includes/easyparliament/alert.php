@@ -480,6 +480,57 @@ class ALERT {
     }
 
     /**
+     * The https link that one-click unsubscribe uses, authorised by the
+     * registration token of one of an address's alerts.
+     */
+    public static function unsubscribe_url($alert_id, $registrationtoken) {
+        return 'https://' . DOMAIN . WEBPATH . 'alert/unsubscribe/?t=' . $alert_id . '-' . $registrationtoken;
+    }
+
+    /**
+     * The address of the alert a token belongs to, or null if the token
+     * doesn't match an alert. Changes nothing.
+     */
+    public function email_for_token($token) {
+        // get_http_var() hands back an array for ?t[]=x.
+        if (!is_string($token)) {
+            return null;
+        }
+        $bits = explode(strstr($token, '::') ? '::' : '-', $token);
+        if (count($bits) < 2 || !is_numeric($bits[0]) || $bits[1] == '') {
+            return null;
+        }
+
+        $q = parlDBQuery("SELECT email FROM alerts WHERE alert_id = ? AND registrationtoken = ?", $bits[0], $bits[1]);
+        return $q->rows() == 1 ? $q->field(0, 'email') : null;
+    }
+
+    /**
+     * Remove every alert at an address, authorised by the token of one of
+     * them, so no login is needed. Each goes through delete(), the same
+     * deletion as the link at the foot of an alert.
+     *
+     * @return int|false
+     *   How many alerts were removed (0 if they were already gone), or false
+     *   if the token doesn't match an alert.
+     */
+    public function delete_all_at_address($token) {
+        $email = $this->email_for_token($token);
+        if ($email === null) {
+            return false;
+        }
+
+        $alerts = parlDBQuery("SELECT alert_id, registrationtoken FROM alerts WHERE email = ? AND deleted = 0", $email);
+        $removed = 0;
+        for ($i = 0; $i < $alerts->rows(); $i++) {
+            if ($this->delete($alerts->field($i, 'alert_id') . '-' . $alerts->field($i, 'registrationtoken'))) {
+                $removed++;
+            }
+        }
+        return $removed;
+    }
+
+    /**
      * Functions for accessing the user's variables.
      */
     public function alert_id() {
