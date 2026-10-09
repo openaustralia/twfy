@@ -8,6 +8,7 @@
 include_once __DIR__ . '/strptime.php';
 
 use League\Plates\Engine;
+use OpenAustralia\TWFY\EmailSuppressions;
 
 if (!function_exists('get_plates_engine')) {
 
@@ -876,6 +877,14 @@ function send_email($to, $subject, $message, $bulk = false, $kind = 'notice') {
     $headers .= "\r\nBcc: " . BCCADDRESS;
     }
      */
+    // Alert mail to an address that has hard-bounced is skipped. Mail the
+    // person has just asked for (confirmations, passwords) is still sent.
+    // A skip is not a failure, so it reports success.
+    if ($kind === 'alert' && EmailSuppressions::isSuppressed($to)) {
+        twfy_debug('EMAIL', "Not sending alert email to a suppressed address");
+        return true;
+    }
+
     twfy_debug('EMAIL', "Sending email to $to with subject of '$subject'");
 
     $success = call_user_func(mail_transport(), $to, $subject, $message, $headers);
