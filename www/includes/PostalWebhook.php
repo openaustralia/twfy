@@ -112,7 +112,7 @@ class PostalWebhook {
         }
 
         $output = is_string($payload['output'] ?? null) ? $payload['output'] : null;
-        if ($event === 'MessageDeliveryFailed' && $output !== null && preg_match(self::SENDER_SIDE_REFUSAL, $output)) {
+        if ($event === 'MessageDeliveryFailed' && self::blamesOurServer($output)) {
             $this->log("postal webhook: $event ignored, refusal blames our server");
             return 200;
         }
@@ -120,6 +120,21 @@ class PostalWebhook {
         $created = EmailSuppressions::suppress($to, 'hard_bounce', $event, $output);
         $this->log("postal webhook: $event " . ($created ? 'suppressed' : 'already suppressed'));
         return 200;
+    }
+
+    /**
+     * Whether the receiving server's reply says it refused us for a policy or
+     * reputation reason (5.7.x), not because the address doesn't work. The
+     * one-off import of past failures uses the same rule.
+     *
+     * @param string|null $reply
+     *   The receiving server's reply, as Postal stored it.
+     *
+     * @return bool
+     *   True for a 5.7.x refusal.
+     */
+    public static function blamesOurServer(?string $reply): bool {
+        return $reply !== null && preg_match(self::SENDER_SIDE_REFUSAL, trim($reply)) === 1;
     }
 
     /**
