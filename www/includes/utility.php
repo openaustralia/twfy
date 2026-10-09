@@ -817,16 +817,46 @@ function send_template_email($data, $merge, $bulk = false) {
     $emailtext = preg_replace($search, $replace, $emailtext);
 
     // Send it!
-    $success = send_email($data['to'], $subject, $emailtext, $bulk);
+    $success = send_email($data['to'], $subject, $emailtext, $bulk, mail_kind_for_template($data['template']));
 
     return $success;
 
 }
 
 /**
+ * Which kind of email a template produces: 'alert' (the daily mailout),
+ * 'confirmation' (an alert or account sign-up), 'password' (a new password),
+ * or 'notice' (everything else).
+ */
+function mail_kind_for_template($template) {
+    $kinds = [
+        'alert_mailout' => 'alert',
+        'alert_confirmation' => 'confirmation',
+        'join_confirmation' => 'confirmation',
+        'new_password' => 'password',
+    ];
+    return $kinds[$template] ?? 'notice';
+}
+
+/**
+ * The function that hands a finished message to the mail system, so tests can
+ * capture what would be sent. Pass null to go back to PHP's mail().
+ */
+function set_mail_transport(?callable $transport) {
+    $GLOBALS['mail_transport'] = $transport;
+}
+
+/**
  *
  */
-function send_email($to, $subject, $message, $bulk = false) {
+function mail_transport() {
+    return $GLOBALS['mail_transport'] ?? 'mail';
+}
+
+/**
+ *
+ */
+function send_email($to, $subject, $message, $bulk = false, $kind = 'notice') {
     // Use this rather than PHP's mail() direct, so we can make alterations
     // easily to all the emails we send out from the site.
 
@@ -848,7 +878,7 @@ function send_email($to, $subject, $message, $bulk = false) {
      */
     twfy_debug('EMAIL', "Sending email to $to with subject of '$subject'");
 
-    $success = mail($to, $subject, $message, $headers);
+    $success = call_user_func(mail_transport(), $to, $subject, $message, $headers);
 
     return $success;
 }
