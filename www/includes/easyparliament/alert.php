@@ -36,6 +36,24 @@
  */
 
 /**
+ * The notice for a signed-in person whose address is suppressed, or an empty
+ * string if it isn't. Plain and neutral, with the date emails started
+ * returning and how to resume. It never shows the receiving server's reply.
+ */
+function alert_suppression_notice($email) {
+    $suppression = EmailSuppressions::current($email);
+    if ($suppression === null) {
+        return '';
+    }
+
+    $since = date(LONGDATEFORMAT, strtotime($suppression->suppressed_at));
+    return '<p class="alert-suppression-notice">'
+        . 'Emails to this address have been returning as undeliverable since ' . htmlspecialchars($since) . ', so your alerts are paused. '
+        . 'To resume them, you can change the email address on your account, or '
+        . '<a href="' . WEBPATH . 'alert/">sign up for an alert again</a> and confirm it from the email we send.</p>';
+}
+
+/**
  * CLASS:  ALERT.
  */
 function suggest_alerts($email, $criteria, $maxresults) {
