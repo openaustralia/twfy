@@ -14,6 +14,8 @@ function mlog($message): void {
     print $message;
 }
 
+use OpenAustralia\TWFY\EmailSuppressions;
+
 include '../www/includes/easyparliament//init.php';
 ini_set('memory_limit', -1);
 include_once INCLUDESPATH . 'easyparliament/member.php';
@@ -81,6 +83,8 @@ $queries = 0;
 $unregistered = 0;
 $registered = 0;
 $sentemails = 0;
+$suppressed = 0;
+$skip_current = false;
 
 $LIVEALERTS = new ALERT();
 
@@ -126,6 +130,14 @@ foreach ($alertdata as $alertitem) {
         }
         $current_email = $email;
         $email_text = '';
+        // Skip an address that has hard-bounced before doing any search work.
+        // Its alerts stay confirmed, so lifting the suppression resumes them.
+        $skip_current = EmailSuppressions::isSuppressed($email);
+        if ($skip_current) {
+            $suppressed++;
+            mlog("\nEMAIL: suppressed address, skipping its alerts\n");
+            continue;
+        }
         $q = parlDBQuery('SELECT user_id FROM users WHERE email = ?', $email);
         if ($q->rows() > 0) {
             $user_id = $q->field(0, 'user_id');
@@ -135,6 +147,9 @@ foreach ($alertdata as $alertitem) {
             $unregistered++;
         }
         mlog("\nEMAIL: $email, uid $user_id; memory usage : " . memory_get_usage() . "\n");
+    }
+    if ($skip_current) {
+        continue;
     }
 
     $data = null;
@@ -236,7 +251,7 @@ if ($email_text) {
 
 mlog("\n");
 
-$sss = "Active alerts: $active\nEmail lookups: $registered registered, $unregistered unregistered\nQuery lookups: $queries\nSent emails: $sentemails\n";
+$sss = "Active alerts: $active\nEmail lookups: $registered registered, $unregistered unregistered\nQuery lookups: $queries\nSent emails: $sentemails\nSuppressed addresses skipped: $suppressed\n";
 if ($globalsuccess) {
     $sss .= 'Everything went swimmingly, in ';
 } else {
