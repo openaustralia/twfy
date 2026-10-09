@@ -95,6 +95,74 @@ class SendEmailTest extends TestCase {
     }
 
     /**
+     * RFC 8058 one-click unsubscribe, so a person can stop alerts from their
+     * mail app instead of reporting them as spam.
+     */
+    public function test_alert_email_carries_one_click_unsubscribe_headers() {
+        send_email('alice@example.invalid', 'Alerts', 'Body', true, 'alert', 'https://example.invalid/alert/unsubscribe/?t=1-abc');
+
+        $headers = $this->sent[0]['headers'];
+        $this->assertStringContainsString("List-Unsubscribe: <https://example.invalid/alert/unsubscribe/?t=1-abc>\n", $headers);
+        $this->assertStringContainsString("List-Unsubscribe-Post: List-Unsubscribe=One-Click\n", $headers);
+    }
+
+    /**
+     * Mail the person asked for isn't a mailing list, so it carries no
+     * unsubscribe header even if a link is offered.
+     */
+    public function test_other_kinds_of_email_carry_no_unsubscribe_header() {
+        foreach (['confirmation', 'password', 'notice'] as $kind) {
+            send_email('alice@example.invalid', 'Hello', 'Body', false, $kind, 'https://example.invalid/alert/unsubscribe/?t=1-abc');
+        }
+
+        foreach ($this->sent as $mail) {
+            $this->assertStringNotContainsString('List-Unsubscribe', $mail['headers']);
+        }
+    }
+
+    /**
+     * An alert email with no link to offer is sent without the headers rather
+     * than with an empty one.
+     */
+    public function test_an_alert_email_without_a_link_has_no_unsubscribe_header() {
+        send_email('alice@example.invalid', 'Alerts', 'Body', true, 'alert');
+        $this->assertStringNotContainsString('List-Unsubscribe', $this->sent[0]['headers']);
+    }
+
+    /**
+     * The link must be https for one-click unsubscribe, and must not be able
+     * to inject a header.
+     */
+    public function test_an_unsafe_or_insecure_unsubscribe_link_is_not_used() {
+        send_email('alice@example.invalid', 'Alerts', 'Body', true, 'alert', "http://example.invalid/x");
+        send_email('alice@example.invalid', 'Alerts', 'Body', true, 'alert', "https://example.invalid/x>\nBcc: someone@example.invalid");
+
+        foreach ($this->sent as $mail) {
+            $this->assertStringNotContainsString('List-Unsubscribe', $mail['headers']);
+            $this->assertStringNotContainsString('Bcc:', $mail['headers']);
+        }
+    }
+
+    /**
+     * The daily run offers a link through the template data.
+     */
+    public function test_templated_alert_mail_passes_its_unsubscribe_link_through() {
+        $GLOBALS['PAGE'] = new class {
+
+            /**
+             *
+             */
+            public function error_message($m) {
+                throw new RuntimeException($m);
+            }
+
+        };
+        send_template_email(['to' => 'alice@example.invalid', 'template' => 'alert_mailout', 'unsubscribe_url' => 'https://example.invalid/alert/unsubscribe/?t=1-abc'], ['DATA' => 'x'], true);
+
+        $this->assertStringContainsString('List-Unsubscribe: <https://example.invalid/alert/unsubscribe/?t=1-abc>', $this->sent[0]['headers']);
+    }
+
+    /**
      * Mail from the templates is tagged with the kind its template maps to.
      */
     public function test_templated_mail_is_tagged_with_its_templates_kind() {
