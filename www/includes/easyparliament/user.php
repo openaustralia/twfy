@@ -61,6 +61,7 @@
 require_once __DIR__ . '/../request.php';
 
 use Illuminate\Database\Capsule\Manager as DB;
+use OpenAustralia\TWFY\EmailSuppressions;
 use OpenAustralia\TWFY\Models\User as UserModel;
 
 /**
@@ -1150,6 +1151,9 @@ class THEUSER extends USER {
         }
 
         $this->confirmed = true;
+
+        // Following the link proves the address receives mail.
+        EmailSuppressions::lift($this->email);
 
         // Log the user in, redirecting them to the confirm page
         // where they should get a nice welcome message.
