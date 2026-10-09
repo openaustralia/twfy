@@ -331,3 +331,19 @@ appropriate:
 # Ignore 302 redirect http://creativecommons.org/licenses/by-nc-nd/3.0/au/ to https://creativecommons.org/licenses/by-nc-nd/3.0/au/ in files: www/docs/api/index.php
 # Ignore 302 redirect http://creativecommons.org/licenses/by-sa/2.5/ to https://creativecommons.org/licenses/by-sa/2.5/ in files: www/docs/api/index.php
 ```
+
+## Suppressed email addresses
+
+When mail to an address fails permanently, the site records a suppression in the `email_suppressions` table and stops
+sending alert emails to that address. Sign-up confirmations, password emails and notices are still sent, and the
+person's alerts are kept. A person lifts their own suppression by confirming a new alert or sign-up from the link in
+the email.
+
+To lift one by hand, for example when someone writes in after fixing their mailbox, run this from the `scripts`
+directory on the server:
+
+```
+php lift-suppression.php person@example.org
+```
+
+The suppression row is kept with the time it was lifted, so the history of why alerts stopped stays available.
