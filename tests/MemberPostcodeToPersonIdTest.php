@@ -20,10 +20,11 @@ if (!function_exists('twfy_debug_timestamp')) {
 if (!function_exists('validate_postcode')) {
 
     /**
-     * Test stub matching postcode validation contract used by postcode.php.
+     * Test stub matching postcode validation contract used by postcode.php
+     * (utility.php's real one, which may be loaded first, takes four digits).
      */
     function validate_postcode($postcode): int {
-        return preg_match('/^[A-Z]{1,2}\d[A-Z\d]? ?\d[ABD-HJLNP-UW-Z]{2}$/i', (string) $postcode);
+        return preg_match('/^\d{4}/', trim((string) $postcode));
     }
 
 }
@@ -70,7 +71,7 @@ class MemberPostcodeToPersonIdTest extends TransactionalTestCase {
      * Method should lowercase postcode-derived constituency before delegating.
      */
     public function test_postcode_to_person_id_lowercases_constituency_before_lookup(): void {
-        $postcode = 'ZZ1 1ZZ';
+        $postcode = '2999';
         parlDBQuery('DELETE FROM postcode_lookup WHERE postcode = ?', $postcode);
         parlDBQuery(
             'INSERT INTO postcode_lookup (postcode, name) VALUES (?, ?)',
@@ -83,7 +84,7 @@ class MemberPostcodeToPersonIdTest extends TransactionalTestCase {
 
         $member = $this->makeMemberDouble();
 
-        $result = $member->postcode_to_person_id('zz11zz');
+        $result = $member->postcode_to_person_id(' 2999 ');
 
         $this->assertSame(12345, $result);
         $this->assertSame(['mixed case constituency'], $member->seenConstituencies);

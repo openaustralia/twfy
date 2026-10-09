@@ -172,6 +172,24 @@ CREATE TABLE `editqueue` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `email_suppressions` (
+  `suppression_id` int unsigned NOT NULL AUTO_INCREMENT,
+  `email` varchar(255) NOT NULL,
+  `reason` varchar(32) NOT NULL,
+  `postal_event` varchar(64) DEFAULT NULL,
+  `reply_excerpt` varchar(255) DEFAULT NULL,
+  `suppressed_at` datetime NOT NULL,
+  `lifted_at` datetime DEFAULT NULL,
+  `active_email` varchar(255) GENERATED ALWAYS AS (if((`lifted_at` is null),`email`,NULL)) VIRTUAL,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`suppression_id`),
+  UNIQUE KEY `active_email` (`active_email`),
+  KEY `email` (`email`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `epobject` (
   `epobject_id` int NOT NULL AUTO_INCREMENT,
   `title` varchar(255) DEFAULT NULL,
