@@ -35,6 +35,8 @@
  * etc.
  */
 
+use OpenAustralia\TWFY\EmailSuppressions;
+
 /**
  * CLASS:  ALERT.
  */
@@ -413,6 +415,8 @@ class ALERT {
 
             if ($r->success()) {
                 $this->confirmed = true;
+                // Following the link proves the address receives mail.
+                EmailSuppressions::lift($this->email);
                 return true;
             } else {
                 return false;
