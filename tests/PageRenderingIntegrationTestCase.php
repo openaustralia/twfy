@@ -107,6 +107,67 @@ abstract class PageRenderingIntegrationTestCase extends TestCase {
     }
 
     /**
+     * Run a page script in a separate process with the given request method
+     * and query string, and report what it did.
+     *
+     * Unlike assertPageRenders() this makes no assertions about the output, so
+     * it suits error pages and non-GET requests. The page runs against the
+     * committed database, not any transaction held by the test process.
+     *
+     * @return array
+     *   Keys output, stderr, status (the HTTP response code the page set) and
+     *   exit.
+     */
+    protected function renderPage(string $script, string $method = 'GET', array $query = []): array {
+        $config = getTestDbConfig();
+        $env = [
+            'DB_HOST' => $config['host'],
+            'DB_USER' => $config['user'],
+            'DB_PASSWORD' => $config['pass'],
+            'DB_NAME' => $config['name'],
+        ];
+
+        $cmd = sprintf(
+            'php -d display_errors=stderr -r %s',
+            escapeshellarg(
+                '$_SERVER["DEVICE_TYPE"] = "desktop";' .
+                '$_SERVER["REQUEST_METHOD"] = ' . var_export($method, true) . ';' .
+                '$_SERVER["REQUEST_URI"] = "/";' .
+                '$_SERVER["HTTP_HOST"] = "localhost";' .
+                '$_GET = ' . var_export($query, true) . '; $_POST = [];' .
+                'register_shutdown_function(function () { fwrite(STDERR, "\nSTATUS=" . (http_response_code() ?: 200) . "\n"); });' .
+                'chdir(dirname(' . var_export($script, true) . '));' .
+                'include ' . var_export($script, true) . ';'
+            )
+        );
+
+        $descriptors = [
+            0 => ['pipe', 'r'],
+            1 => ['pipe', 'w'],
+            2 => ['pipe', 'w'],
+        ];
+
+        $process = proc_open($cmd, $descriptors, $pipes, dirname($script), $env + getenv());
+        $this->assertIsResource($process);
+
+        fclose($pipes[0]);
+        $output = stream_get_contents($pipes[1]);
+        $stderr = stream_get_contents($pipes[2]);
+        fclose($pipes[1]);
+        fclose($pipes[2]);
+        $exitCode = proc_close($process);
+
+        preg_match('/STATUS=(\d+)/', $stderr, $matches);
+
+        return [
+            'output' => $output,
+            'stderr' => $stderr,
+            'status' => isset($matches[1]) ? (int) $matches[1] : null,
+            'exit' => $exitCode,
+        ];
+    }
+
+    /**
      * Ensure conf/general exists so init.php can load.
      */
     private static function ensureConfGeneral(): void {
