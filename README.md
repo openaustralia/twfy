@@ -336,11 +336,11 @@ appropriate:
 
 When mail to an address fails permanently, the site records a suppression in the `email_suppressions` table and stops
 sending alert emails to that address. Sign-up confirmations, password emails and notices are still sent, and the
-person's alerts are kept. A person lifts their own suppression by confirming a new alert or sign-up from the link in
-the email.
+person's alerts are kept. Following a confirmation link does not lift a suppression, because those links are reused
+and survive email changes, so they are not fresh proof that the address receives mail.
 
-To lift one by hand, for example when someone writes in after fixing their mailbox, run this from the `scripts`
-directory on the server:
+To lift one, for example when someone writes in after fixing their mailbox, run this from the `scripts` directory on
+the server:
 
 ```
 php lift-suppression.php person@example.org
