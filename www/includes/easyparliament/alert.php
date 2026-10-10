@@ -35,6 +35,8 @@
  * etc.
  */
 
+use OpenAustralia\TWFY\EmailSuppressions;
+
 /**
  * The notice for a signed-in person whose address is suppressed, or an empty
  * string if it isn't. Plain and neutral, with the date emails started
@@ -49,8 +51,8 @@ function alert_suppression_notice($email) {
     $since = date(LONGDATEFORMAT, strtotime($suppression->suppressed_at));
     return '<p class="alert-suppression-notice">'
         . 'Emails to this address have been returning as undeliverable since ' . htmlspecialchars($since) . ', so your alerts are paused. '
-        . 'To resume them, you can change the email address on your account, or '
-        . '<a href="' . WEBPATH . 'alert/">sign up for an alert again</a> and confirm it from the email we send.</p>';
+        . 'To resume them, you can change the email address on your account, or, once the problem is fixed, '
+        . '<a href="' . WEBPATH . 'contact/">contact us</a> and we will turn them back on.</p>';
 }
 
 /**
