@@ -374,6 +374,7 @@ class PostalWebhookIntegrationTest extends TransactionalTestCase {
         $cachePath ??= tempnam(sys_get_temp_dir(), 'twfy-keys-test');
         unlink($cachePath);
         $this->cleanup[] = $cachePath;
+        $this->cleanup[] = $cachePath . '.lock';
         $now ??= 1790000000;
         return new PostalSigningKeys(
             new Client(['handler' => $stack]),
@@ -551,6 +552,39 @@ class PostalWebhookIntegrationTest extends TransactionalTestCase {
         $keys->pems();
 
         $this->assertCount(2, $history);
+    }
+
+    /**
+     * Webhooks that found the cache stale while another request was fetching
+     * must not fetch again once that request has written the result.
+     */
+    public function test_the_cache_is_read_again_after_taking_the_lock() {
+        $history = [];
+        $stack = HandlerStack::create(new MockHandler([]));
+        $stack->push(Middleware::history($history));
+        $cachePath = tempnam(sys_get_temp_dir(), 'twfy-keys-test');
+        unlink($cachePath);
+        $this->cleanup[] = $cachePath;
+        $this->cleanup[] = $cachePath . '.lock';
+
+        // The second reading of the clock is inside the lock, so the other
+        // request "finishes" writing the cache just before this one looks.
+        $clockCalls = 0;
+        $keys = new PostalSigningKeys(
+            new Client(['handler' => $stack]),
+            'https://postal.example.invalid/.well-known/jwks.json',
+            $cachePath,
+            function () use (&$clockCalls, $cachePath) {
+                $clockCalls++;
+                if ($clockCalls === 2) {
+                    file_put_contents($cachePath, json_encode(['expires' => 1790000900, 'fetched' => 1790000000, 'pems' => ['fetched by the other request']]));
+                }
+                return 1790000000;
+            }
+        );
+
+        $this->assertSame(['fetched by the other request'], $keys->pems());
+        $this->assertCount(0, $history);
     }
 
 }

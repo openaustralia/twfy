@@ -83,28 +83,82 @@ class PostalSigningKeys {
      *   The keys, or null if they can't be determined.
      */
     public function pems(bool $refresh = false): ?array {
-        $now = (int) call_user_func($this->clock);
-        $cached = $this->readCache();
-
-        if ($cached !== null) {
-            if (!$refresh && $cached['expires'] > $now) {
-                return $cached['pems'];
-            }
-            if ($refresh && $now - $cached['fetched'] < self::REFRESH_INTERVAL) {
-                return $cached['pems'];
-            }
+        $answer = $this->cachedAnswer($refresh, (int) call_user_func($this->clock), $this->readCache());
+        if ($answer !== null) {
+            return $answer['pems'];
         }
 
-        $pems = $this->fetch();
-        if ($pems === null && $refresh && $cached !== null && $cached['pems'] !== null) {
-            // Keep the keys we have. The failure only has to hold off the next
-            // refresh.
-            $this->writeCache($cached['pems'], $cached['expires'], $now);
-            return $cached['pems'];
-        }
+        // Concurrent webhooks that all find the cache stale queue here, and
+        // each looks again once it has the lock, so only the first fetches.
+        $lock = $this->lock();
+        try {
+            $now = (int) call_user_func($this->clock);
+            $cached = $this->readCache();
+            $answer = $this->cachedAnswer($refresh, $now, $cached);
+            if ($answer !== null) {
+                return $answer['pems'];
+            }
 
-        $this->writeCache($pems, $now + ($pems === null ? self::FAILURE_TTL : self::CACHE_TTL), $now);
-        return $pems;
+            $pems = $this->fetch();
+            if ($pems === null && $refresh && $cached !== null && $cached['pems'] !== null) {
+                // Keep the keys we have. The failure only has to hold off the
+                // next refresh.
+                $this->writeCache($cached['pems'], $cached['expires'], $now);
+                return $cached['pems'];
+            }
+
+            $this->writeCache($pems, $now + ($pems === null ? self::FAILURE_TTL : self::CACHE_TTL), $now);
+            return $pems;
+        } finally {
+            if ($lock !== null) {
+                flock($lock, LOCK_UN);
+                fclose($lock);
+            }
+        }
+    }
+
+    /**
+     * What the cache says to return without fetching, wrapped in an array
+     * because a cached failure legitimately returns null keys. Null means the
+     * cache has no answer and the keys have to be fetched.
+     *
+     * @return array|null
+     *   Key pems, or null.
+     */
+    private function cachedAnswer(bool $refresh, int $now, ?array $cached): ?array {
+        if ($cached === null) {
+            return null;
+        }
+        if (!$refresh && $cached['expires'] > $now) {
+            return ['pems' => $cached['pems']];
+        }
+        if ($refresh && $now - $cached['fetched'] < self::REFRESH_INTERVAL) {
+            return ['pems' => $cached['pems']];
+        }
+        return null;
+    }
+
+    /**
+     * An exclusive lock on a file beside the cache, or null when there is no
+     * cache to protect or no lock file can be opened. Without a lock requests
+     * only lose the once-a-minute limit during a burst, they still work.
+     *
+     * @return resource|null
+     *   The open lock file, to unlock and close, or null.
+     */
+    private function lock() {
+        if ($this->cachePath === null || !is_writable(dirname($this->cachePath))) {
+            return null;
+        }
+        $handle = fopen($this->cachePath . '.lock', 'c');
+        if ($handle === false) {
+            return null;
+        }
+        if (!flock($handle, LOCK_EX)) {
+            fclose($handle);
+            return null;
+        }
+        return $handle;
     }
 
     /**
