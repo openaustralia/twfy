@@ -42,7 +42,10 @@ class AlertSuppressionNoticeIntegrationTest extends TransactionalTestCase {
         $this->assertStringContainsString('returning as undeliverable since 4 March 2026', $notice);
         $this->assertStringContainsString('your alerts are paused', $notice);
         $this->assertStringContainsString('change the email address on your account', $notice);
-        $this->assertStringContainsString('href="/alert/"', $notice);
+        $this->assertStringContainsString('href="/contact/"', $notice);
+        // Signing up again would send a signed-in person no confirmation and
+        // lift nothing, so the notice must not point there.
+        $this->assertStringNotContainsString('href="/alert/"', $notice);
     }
 
     /**
