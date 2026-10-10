@@ -45,6 +45,8 @@ if (!defined('DOMAIN')) {
     define('DOMAIN', 'example.org');
 }
 
+use OpenAustralia\TWFY\EmailSuppressions;
+use OpenAustralia\TWFY\Models\EmailSuppression;
 use OpenAustralia\TWFY\Models\Member as MemberModel;
 use OpenAustralia\TWFY\Models\User as UserModel;
 
@@ -102,6 +104,9 @@ protected function tearDown(): void {
         if ($this->createdEmails !== []) {
             parlDBQuery('DELETE FROM alerts WHERE email IN (' . implode(',', array_fill(0, count($this->createdEmails), '?')) . ')', ...$this->createdEmails);
             UserModel::whereIn('email', $this->createdEmails)->delete();
+            // This class turns transactions off, so remove suppression rows
+            // that tests leave behind.
+            EmailSuppression::whereIn('email', array_map('strtolower', $this->createdEmails))->delete();
         }
         if ($this->createdMemberIds !== []) {
             MemberModel::whereIn('member_id', $this->createdMemberIds)->delete();
@@ -426,6 +431,23 @@ public function test_confirm_succeeds_for_existing_unconfirmed_user(): void {
         $this->assertTrue($THEUSER->confirmed());
         $this->assertSame(1, $THEUSER->loginCallCount());
 }
+
+    /**
+     * Confirmation tokens survive email changes, so following one is not
+     * fresh proof that the address receives mail.
+     */
+    public function test_confirm_leaves_a_suppression_on_the_users_address_in_place(): void {
+        $uniq = (string) microtime(true);
+        $email = 'confirm.suppressed.' . $uniq . '@example.com';
+        $token = substr(sha1('suppressed-' . $uniq), 0, 16);
+        $userId = $this->insertConfirmUser($email, $token, 0);
+        EmailSuppressions::suppress($email, 'hard_bounce');
+
+        $THEUSER = $this->makeMockTheUser();
+        $THEUSER->confirm($userId . '-' . $token);
+
+        $this->assertTrue(EmailSuppressions::isSuppressed($email));
+    }
 
     /**
      *
