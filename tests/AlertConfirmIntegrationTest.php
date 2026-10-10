@@ -9,7 +9,9 @@ require_once __DIR__ . '/bootstrap.php';
 use OpenAustralia\TWFY\EmailSuppressions;
 
 /**
- * Confirming an alert lifts a suppression on its address.
+ * Confirming an alert does not lift a suppression. Confirmation tokens are
+ * reused in other links and survive email changes, so following one is not
+ * fresh proof that the address receives mail. Suppressions are lifted by hand.
  */
 class AlertConfirmIntegrationTest extends TransactionalTestCase {
 
@@ -30,40 +32,27 @@ class AlertConfirmIntegrationTest extends TransactionalTestCase {
     /**
      *
      */
-    public function test_confirming_an_alert_lifts_a_suppression_on_its_address() {
+    public function test_confirming_an_alert_leaves_a_suppression_in_place() {
         $alertId = $this->insertAlert('alice@example.invalid', 'tokenexample1');
         EmailSuppressions::suppress('alice@example.invalid', 'hard_bounce');
 
         $alert = new ALERT();
         $this->assertTrue($alert->confirm($alertId . '-tokenexample1'));
 
-        $this->assertFalse(EmailSuppressions::isSuppressed('alice@example.invalid'));
-    }
-
-    /**
-     *
-     */
-    public function test_a_wrong_token_does_not_lift_the_suppression() {
-        $alertId = $this->insertAlert('alice@example.invalid', 'tokenexample2');
-        EmailSuppressions::suppress('alice@example.invalid', 'hard_bounce');
-
-        $alert = new ALERT();
-        $this->assertFalse($alert->confirm($alertId . '-wrongtoken'));
-
         $this->assertTrue(EmailSuppressions::isSuppressed('alice@example.invalid'));
     }
 
     /**
-     * Resuming leaves the person's other suppressed neighbours alone.
+     * An old link saved before the address was suppressed.
      */
-    public function test_confirming_lifts_only_that_address() {
-        $alertId = $this->insertAlert('alice@example.invalid', 'tokenexample3');
+    public function test_reusing_a_confirmation_link_after_a_suppression_does_not_lift_it() {
+        $alertId = $this->insertAlert('alice@example.invalid', 'tokenexample2');
+        (new ALERT())->confirm($alertId . '-tokenexample2');
         EmailSuppressions::suppress('alice@example.invalid', 'hard_bounce');
-        EmailSuppressions::suppress('bob@example.invalid', 'hard_bounce');
 
-        (new ALERT())->confirm($alertId . '-tokenexample3');
+        (new ALERT())->confirm($alertId . '-tokenexample2');
 
-        $this->assertTrue(EmailSuppressions::isSuppressed('bob@example.invalid'));
+        $this->assertTrue(EmailSuppressions::isSuppressed('alice@example.invalid'));
     }
 
 }

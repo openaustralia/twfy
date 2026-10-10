@@ -104,8 +104,8 @@ protected function tearDown(): void {
         if ($this->createdEmails !== []) {
             parlDBQuery('DELETE FROM alerts WHERE email IN (' . implode(',', array_fill(0, count($this->createdEmails), '?')) . ')', ...$this->createdEmails);
             UserModel::whereIn('email', $this->createdEmails)->delete();
-            // This class turns transactions off, and lifting a suppression
-            // keeps its row, so remove what tests leave behind.
+            // This class turns transactions off, so remove suppression rows
+            // that tests leave behind.
             EmailSuppression::whereIn('email', array_map('strtolower', $this->createdEmails))->delete();
         }
         if ($this->createdMemberIds !== []) {
@@ -433,9 +433,10 @@ public function test_confirm_succeeds_for_existing_unconfirmed_user(): void {
 }
 
     /**
-     * Clicking the sign-up confirmation link proves the address receives mail.
+     * Confirmation tokens survive email changes, so following one is not
+     * fresh proof that the address receives mail.
      */
-    public function test_confirm_lifts_a_suppression_on_the_users_address(): void {
+    public function test_confirm_leaves_a_suppression_on_the_users_address_in_place(): void {
         $uniq = (string) microtime(true);
         $email = 'confirm.suppressed.' . $uniq . '@example.com';
         $token = substr(sha1('suppressed-' . $uniq), 0, 16);
@@ -445,7 +446,7 @@ public function test_confirm_succeeds_for_existing_unconfirmed_user(): void {
         $THEUSER = $this->makeMockTheUser();
         $THEUSER->confirm($userId . '-' . $token);
 
-        $this->assertFalse(EmailSuppressions::isSuppressed($email));
+        $this->assertTrue(EmailSuppressions::isSuppressed($email));
     }
 
     /**
