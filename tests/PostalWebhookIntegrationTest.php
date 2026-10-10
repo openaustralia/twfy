@@ -362,6 +362,15 @@ class PostalWebhookIntegrationTest extends TransactionalTestCase {
         $this->assertSame(403, $this->post($this->failed(), $handler));
     }
 
+    /**
+     *
+     */
+    public function test_a_reply_with_leading_whitespace_still_counts_as_blaming_our_server() {
+        $this->assertTrue(PostalWebhook::blamesOurServer("  550 5.7.1 blocked\n"));
+        $this->assertSame(200, $this->post($this->failed('alice@example.invalid', ' 550 5.7.1 sender blocked')));
+        $this->assertFalse(EmailSuppressions::isSuppressed('alice@example.invalid'));
+    }
+
     // Key fetching.
 
     /**
