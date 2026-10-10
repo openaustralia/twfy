@@ -871,6 +871,10 @@ function send_email($to, $subject, $message, $bulk = false, $kind = 'notice') {
         "Content-Type: text/plain; charset=iso-8859-1\n" .
         "Content-Transfer-Encoding: 8bit\n" .
         ($bulk ? "Precedence: bulk\n" : "") .
+        // Postal echoes this tag back in its delivery webhooks, so we can tell
+        // which mail an event is about. It is only ever the kind, never an
+        // address or an id.
+        "X-Postal-Tag: $kind\n" .
         "X-Mailer: PHP/" . phpversion();
     /*
     if ($to != REPORTLIST) {

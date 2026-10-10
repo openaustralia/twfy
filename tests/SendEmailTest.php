@@ -80,6 +80,40 @@ class SendEmailTest extends TestCase {
     }
 
     /**
+     * Postal echoes the tag back in its webhooks. It carries only the kind.
+     */
+    public function test_every_email_carries_a_postal_tag_with_only_its_kind() {
+        foreach (['alert', 'confirmation', 'password', 'notice'] as $kind) {
+            send_email('alice@example.invalid', 'Hello', 'Body text', false, $kind);
+        }
+
+        $this->assertCount(4, $this->sent);
+        foreach (['alert', 'confirmation', 'password', 'notice'] as $i => $kind) {
+            $this->assertStringContainsString("X-Postal-Tag: $kind\n", $this->sent[$i]['headers']);
+            $this->assertStringNotContainsString('alice', $this->sent[$i]['headers']);
+        }
+    }
+
+    /**
+     * Mail from the templates is tagged with the kind its template maps to.
+     */
+    public function test_templated_mail_is_tagged_with_its_templates_kind() {
+        $GLOBALS['PAGE'] = new class {
+
+            /**
+             *
+             */
+            public function error_message($m) {
+                throw new RuntimeException($m);
+            }
+
+        };
+        send_template_email(['to' => 'alice@example.invalid', 'template' => 'new_password'], ['EMAIL' => 'a', 'LOGINURL' => 'b', 'PASSWORD' => 'c']);
+
+        $this->assertStringContainsString("X-Postal-Tag: password\n", $this->sent[0]['headers']);
+    }
+
+    /**
      *
      */
     public function test_bulk_mail_is_marked_with_a_precedence_header() {
