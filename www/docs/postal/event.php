@@ -32,7 +32,13 @@ $jwks_url = defined('POSTAL_JWKS_URL') ? POSTAL_JWKS_URL : 'https://postal.oaf.o
 $uid = function_exists('posix_geteuid') ? posix_geteuid() : getmyuid();
 $cache_dir = sys_get_temp_dir() . '/twfy-postal-' . $uid;
 if (!is_dir($cache_dir)) {
+    // Two requests can both get here before either creates the directory, and
+    // the second mkdir() then warns "File exists". That is expected, and the
+    // site's error_handler() would print it into the response and report it.
+    // Whoever made the directory, the checks below decide whether we use it.
+    set_error_handler(static fn() => true);
     mkdir($cache_dir, 0700);
+    restore_error_handler();
 }
 $cache_path = null;
 if (is_dir($cache_dir) && !is_link($cache_dir) && fileowner($cache_dir) === $uid && (fileperms($cache_dir) & 0077) === 0) {
