@@ -21,6 +21,7 @@
  */
 
 use OpenAustralia\TWFY\SuppressionImport;
+use OpenAustralia\TWFY\SuppressionImportException;
 
 include_once '../www/includes/easyparliament/init.php';
 
@@ -31,8 +32,13 @@ if ($argc != 2) {
 
 try {
     $counts = SuppressionImport::fromFile($argv[1]);
-} catch (RuntimeException $e) {
+} catch (SuppressionImportException $e) {
     fwrite(STDERR, $e->getMessage() . "\n");
+    exit(1);
+} catch (Throwable $e) {
+    // A failed query's message carries its SQL and values, which include the
+    // address being imported, so print only what kind of failure it was.
+    fwrite(STDERR, 'Import failed: ' . get_class($e) . "\n");
     exit(1);
 }
 
