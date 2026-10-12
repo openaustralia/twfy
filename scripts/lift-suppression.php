@@ -15,7 +15,7 @@
 
 use OpenAustralia\TWFY\EmailSuppressions;
 
-include '../www/includes/easyparliament/init.php';
+include_once '../www/includes/easyparliament/init.php';
 
 if ($argc != 2) {
     fwrite(STDERR, "Usage: php lift-suppression.php person@example.org\n");
