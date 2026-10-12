@@ -47,10 +47,10 @@ class AlertConfirmIntegrationTest extends TransactionalTestCase {
      */
     public function test_reusing_a_confirmation_link_after_a_suppression_does_not_lift_it() {
         $alertId = $this->insertAlert('alice@example.invalid', 'tokenexample2');
-        (new ALERT())->confirm($alertId . '-tokenexample2');
+        $this->assertTrue((new ALERT())->confirm($alertId . '-tokenexample2'));
         EmailSuppressions::suppress('alice@example.invalid', 'hard_bounce');
 
-        (new ALERT())->confirm($alertId . '-tokenexample2');
+        $this->assertTrue((new ALERT())->confirm($alertId . '-tokenexample2'));
 
         $this->assertTrue(EmailSuppressions::isSuppressed('alice@example.invalid'));
     }

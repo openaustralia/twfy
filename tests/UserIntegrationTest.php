@@ -444,8 +444,10 @@ public function test_confirm_succeeds_for_existing_unconfirmed_user(): void {
         EmailSuppressions::suppress($email, 'hard_bounce');
 
         $THEUSER = $this->makeMockTheUser();
-        $THEUSER->confirm($userId . '-' . $token);
+        $result = $THEUSER->confirm($userId . '-' . $token);
 
+        $this->assertNotFalse($result);
+        $this->assertSame(1, (int) UserModel::where('user_id', $userId)->value('confirmed'));
         $this->assertTrue(EmailSuppressions::isSuppressed($email));
     }
 
