@@ -22,7 +22,7 @@
 
 use OpenAustralia\TWFY\SuppressionImport;
 
-include '../www/includes/easyparliament/init.php';
+include_once '../www/includes/easyparliament/init.php';
 
 if ($argc != 2) {
     fwrite(STDERR, "Usage: php import-suppressions.php export.csv\n");
