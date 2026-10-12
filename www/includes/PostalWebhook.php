@@ -217,21 +217,6 @@ class PostalWebhook {
     }
 
     /**
-     * Whether the receiving server's reply says it refused us for a policy or
-     * reputation reason (5.7.x), not because the address doesn't work. The
-     * one-off import of past failures uses the same rule.
-     *
-     * @param string|null $reply
-     *   The receiving server's reply, as Postal stored it.
-     *
-     * @return bool
-     *   True for a 5.7.x refusal.
-     */
-    public static function blamesOurServer(?string $reply): bool {
-        return $reply !== null && preg_match(self::SENDER_SIDE_REFUSAL, trim($reply)) === 1;
-    }
-
-    /**
      * True if the signature verifies against any of the published keys.
      *
      * @param string $rawBody
