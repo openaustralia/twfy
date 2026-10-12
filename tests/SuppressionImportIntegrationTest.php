@@ -9,6 +9,7 @@ require_once __DIR__ . '/bootstrap.php';
 use OpenAustralia\TWFY\EmailSuppressions;
 use OpenAustralia\TWFY\Models\EmailSuppression;
 use OpenAustralia\TWFY\SuppressionImport;
+use OpenAustralia\TWFY\SuppressionImportException;
 
 /**
  * The one-off import of addresses Postal's history says have hard-failed.
@@ -96,8 +97,8 @@ class SuppressionImportIntegrationTest extends TransactionalTestCase {
     }
 
     /**
-     * Someone whose suppression was lifted, by confirming a link or by staff,
-     * must not be suppressed again by re-running the import on the same file.
+     * An address whose suppression was lifted by staff must not be suppressed
+     * again by re-running the import on the same file.
      */
     public function test_a_lifted_address_is_not_suppressed_again_by_the_same_old_failure() {
         $file = $this->csv("address,date,reply\nalice@example.invalid,2026-03-04,550 5.1.1 no such user\n");
@@ -127,7 +128,7 @@ class SuppressionImportIntegrationTest extends TransactionalTestCase {
 
     /**
      * With no readable date we can't tell whether the failure came before the
-     * lift, so we leave an address someone restored alone.
+     * lift, so we leave an address whose suppression was lifted alone.
      */
     public function test_a_lifted_address_with_an_unreadable_date_is_left_alone() {
         EmailSuppressions::suppress('alice@example.invalid', 'hard_bounce');
@@ -178,7 +179,7 @@ class SuppressionImportIntegrationTest extends TransactionalTestCase {
      *
      */
     public function test_an_unreadable_file_is_an_error_not_an_empty_import() {
-        $this->expectException(RuntimeException::class);
+        $this->expectException(SuppressionImportException::class);
         SuppressionImport::fromFile('/no/such/file.csv');
     }
 
