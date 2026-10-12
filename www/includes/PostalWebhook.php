@@ -153,8 +153,34 @@ class PostalWebhook {
             return;
         }
 
-        $created = EmailSuppressions::suppress($to, 'hard_bounce', $event, $output);
+        // Postal retries events, so one can arrive long after it happened. If
+        // someone lifted the suppression since then, the failure is old news
+        // and mustn't stop their alerts again. A failure after the lift is
+        // new, and still counts. Without a time we can't tell which this is,
+        // so we leave an address that has ever been lifted alone, as the
+        // import does.
+        $failedAt = self::eventTime($body);
+        if (EmailSuppressions::liftedSince($to, $failedAt)) {
+            $this->log("postal webhook: $event ignored, failure is from before a lift");
+            return;
+        }
+
+        $created = EmailSuppressions::suppress($to, 'hard_bounce', $event, $output, $failedAt);
         $this->log("postal webhook: $event " . ($created ? 'suppressed' : 'already suppressed'));
+    }
+
+    /**
+     * When Postal says the event happened.
+     *
+     * @param array $body
+     *   The decoded request body.
+     *
+     * @return string|null
+     *   Y-m-d H:i:s, or null if the request has no usable time.
+     */
+    private static function eventTime(array $body): ?string {
+        $timestamp = $body['timestamp'] ?? null;
+        return is_numeric($timestamp) ? date('Y-m-d H:i:s', (int) $timestamp) : null;
     }
 
     /**

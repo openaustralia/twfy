@@ -85,7 +85,7 @@ class PostalWebhookIntegrationTest extends TransactionalTestCase {
     /**
      *
      */
-    private function failed(string $to = 'alice@example.invalid', string $output = '550 5.1.1 The email account does not exist', string $tag = 'alert'): string {
+    private function failed(string $to = 'alice@example.invalid', string $output = '550 5.1.1 The email account does not exist', string $tag = 'alert', int $timestamp = 1790000000): string {
         return json_encode([
             'event' => 'MessageDeliveryFailed',
             'payload' => [
@@ -94,9 +94,18 @@ class PostalWebhookIntegrationTest extends TransactionalTestCase {
                 'details' => 'Message for ' . $to . ' was rejected',
                 'output' => $output,
             ],
-            'timestamp' => 1790000000,
+            'timestamp' => $timestamp,
             'uuid' => 'example-uuid',
         ]);
+    }
+
+    /**
+     * A hard fail event whose request has no timestamp at all.
+     */
+    private function failedWithoutATime(): string {
+        $body = json_decode($this->failed(), true);
+        unset($body['timestamp']);
+        return json_encode($body);
     }
 
     /**
@@ -275,10 +284,56 @@ class PostalWebhookIntegrationTest extends TransactionalTestCase {
         $this->post($this->failed());
         EmailSuppressions::lift('alice@example.invalid');
 
-        $this->post($this->failed());
+        $this->post($this->failed('alice@example.invalid', '550 5.1.1 The email account does not exist', 'alert', time() + 3600));
 
         $this->assertTrue(EmailSuppressions::isSuppressed('alice@example.invalid'));
         $this->assertSame(2, EmailSuppression::where('email', 'alice@example.invalid')->count());
+    }
+
+    /**
+     * Postal retries events, so the one that caused a suppression can arrive
+     * again after someone has lifted it.
+     */
+    public function test_a_retried_failure_from_before_a_lift_does_not_suppress_again() {
+        $this->post($this->failed());
+        EmailSuppressions::lift('alice@example.invalid');
+
+        $this->assertSame(200, $this->post($this->failed()));
+
+        $this->assertFalse(EmailSuppressions::isSuppressed('alice@example.invalid'));
+        $this->assertSame(1, EmailSuppression::where('email', 'alice@example.invalid')->count());
+    }
+
+    /**
+     *
+     */
+    public function test_a_suppression_records_when_the_failure_happened() {
+        $this->post($this->failed());
+
+        $row = EmailSuppression::where('email', 'alice@example.invalid')->first();
+        $this->assertSame(date('Y-m-d H:i:s', 1790000000), (string) $row->suppressed_at);
+    }
+
+    /**
+     * Without a time we can't tell whether it is new, so an address that has
+     * been lifted is left alone, as the import does.
+     */
+    public function test_a_failure_with_no_time_does_not_suppress_a_lifted_address() {
+        $this->post($this->failed());
+        EmailSuppressions::lift('alice@example.invalid');
+
+        $this->assertSame(200, $this->post($this->failedWithoutATime()));
+
+        $this->assertFalse(EmailSuppressions::isSuppressed('alice@example.invalid'));
+    }
+
+    /**
+     *
+     */
+    public function test_a_failure_with_no_time_still_suppresses_an_address_never_lifted() {
+        $this->assertSame(200, $this->post($this->failedWithoutATime()));
+
+        $this->assertTrue(EmailSuppressions::isSuppressed('alice@example.invalid'));
     }
 
     /**
