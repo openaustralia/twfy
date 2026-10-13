@@ -145,6 +145,20 @@ class PostalWebhookIntegrationTest extends TransactionalTestCase {
     /**
      *
      */
+    public function test_an_event_whose_message_is_not_an_object_is_ignored() {
+        $body = json_encode([
+            'event' => 'MessageDeliveryFailed',
+            'payload' => ['message' => 'not an object', 'output' => '550 5.1.1 The email account does not exist'],
+            'timestamp' => 1790000000,
+        ]);
+
+        $this->assertSame(200, $this->post($body));
+        $this->assertSame(0, EmailSuppression::count());
+    }
+
+    /**
+     *
+     */
     public function test_a_signed_bounce_report_suppresses_the_recipient_of_the_original_message() {
         $this->assertSame(200, $this->post($this->bounced()));
 
