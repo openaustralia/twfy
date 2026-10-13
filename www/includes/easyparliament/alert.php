@@ -492,7 +492,7 @@ class ALERT {
      * The https link that one-click unsubscribe uses, authorised by the
      * registration token of one of an address's alerts.
      */
-    public static function unsubscribe_url($alert_id, $registrationtoken) {
+    public static function unsubscribe_url(int|string $alert_id, string $registrationtoken): string {
         return 'https://' . DOMAIN . WEBPATH . 'alert/unsubscribe/?t=' . $alert_id . '-' . $registrationtoken;
     }
 
@@ -500,7 +500,7 @@ class ALERT {
      * The address of the alert a token belongs to, or null if the token
      * doesn't match an alert. Changes nothing.
      */
-    public function email_for_token($token) {
+    public function email_for_token(mixed $token): ?string {
         // get_http_var() hands back an array for ?t[]=x.
         if (!is_string($token)) {
             return null;
@@ -524,7 +524,7 @@ class ALERT {
      *   How many alerts were removed (0 if they were already gone), or false
      *   if the token doesn't match an alert.
      */
-    public function delete_all_at_address($token) {
+    public function delete_all_at_address(mixed $token): int|false {
         $email = $this->email_for_token($token);
         if ($email === null) {
             return false;

@@ -40,7 +40,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 /**
  * Asks before removing, so a link followed by a machine changes nothing.
  */
-function unsubscribe_confirm($token) {
+function unsubscribe_confirm(string $token): void {
     global $PAGE, $this_page;
 
     $this_page = 'alertunsubscribeconfirm';
@@ -64,7 +64,7 @@ function unsubscribe_confirm($token) {
 /**
  * Confirms what happened, and links back to sign up again.
  */
-function unsubscribe_success() {
+function unsubscribe_success(): void {
     global $PAGE, $this_page;
 
     $this_page = 'alertunsubscribesucceeded';
@@ -84,7 +84,7 @@ function unsubscribe_success() {
 /**
  * A friendly error, not a normal one.
  */
-function unsubscribe_error() {
+function unsubscribe_error(): void {
     global $PAGE, $this_page;
 
     $this_page = 'alertunsubscribefailed';
