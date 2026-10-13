@@ -157,6 +157,22 @@ class SuppressionImportIntegrationTest extends TransactionalTestCase {
     }
 
     /**
+     * Blank lines, such as the one a spreadsheet leaves at the end, aren't
+     * rows and aren't counted as bad ones.
+     */
+    public function test_blank_lines_are_skipped_without_being_counted() {
+        $counts = SuppressionImport::fromFile($this->csv(
+            "address,date,reply\n" .
+            "\n" .
+            "alice@example.invalid,2026-03-04,550 5.1.1 no such user\n" .
+            "\n"
+        ));
+
+        $this->assertSame(1, $counts['imported']);
+        $this->assertSame(0, $counts['invalid']);
+    }
+
+    /**
      * A bad date shouldn't lose a suppression we know is right.
      */
     public function test_an_unreadable_date_falls_back_to_now() {
