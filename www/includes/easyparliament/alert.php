@@ -42,7 +42,7 @@ use OpenAustralia\TWFY\EmailSuppressions;
  * string if it isn't. Plain and neutral, with the date emails started
  * returning and how to resume. It never shows the receiving server's reply.
  */
-function alert_suppression_notice($email) {
+function alert_suppression_notice(string $email): string {
     $suppression = EmailSuppressions::current($email);
     if ($suppression === null) {
         return '';
