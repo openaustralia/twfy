@@ -10,6 +10,8 @@ Australia. PHP 8.3 (`composer.json`, `mise.toml`), MySQL 8.4, Apache, Xapian sea
 include-style PHP under `www/includes/easyparliament/` with globals and constants, plus a newer namespaced corner
 (`OpenAustralia\TWFY\` maps to `www/includes/`, Eloquent models in `www/includes/Models/`). Expect 2001-era idioms;
 match the file you're in, don't modernise in passing.
+The exception is types: new functions and methods should declare parameter and return type hints, even in a legacy
+file. Don't retrofit existing untyped code unless you're already changing its signature.
 
 It is consumed as a git submodule of [`openaustralia/openaustralia`](https://github.com/openaustralia/openaustralia)
 (the umbrella repository), which owns deployment. Sibling repos are wired in by **relative filesystem path**, not
@@ -17,6 +19,19 @@ Composer: `../phplib` (a handful of includes: auth, rabx, mapit, tracking), `../
 `search/index.pl` and the `scripts/*.pl` cron scripts), `../openaustralia-parser` (cron scripts and the postcode
 seeder), `../shlib` (shellcheck CI). Docker mounts `../phplib`; CI checks siblings out and symlinks them, matching
 your branch name in the sibling repo if one exists.
+
+## Database access
+
+The ORM is Eloquent (`illuminate/database` ^11). Each table has a model in `www/includes/Models/`, namespaced
+`OpenAustralia\TWFY\Models` (for example `Alert`, `Member`, `Hansard`, `EmailSuppression`). A model sets `$table` and
+`$primaryKey`, lists `$fillable` columns, declares `$casts` for booleans and dates, and documents its columns with
+`@property` tags. Copy `Models/Alert.php` for the shape.
+
+- New code uses these models for database access. Don't add new `parlDBQuery()` or raw SQL calls.
+- If a table has no model yet, add one in `Models/` rather than falling back to raw SQL.
+- When you modify code that uses `parlDBQuery()` or other raw SQL, convert that query to the ORM in the same
+  change, but as its own commit. This is how the legacy calls get removed over time.
+- Keep raw SQL only where Eloquent can't express the query, and say why in the commit message.
 
 ## Setup
 
