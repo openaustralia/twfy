@@ -24,26 +24,8 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 // server; conf/general can override it.
 $jwks_url = defined('POSTAL_JWKS_URL') ? POSTAL_JWKS_URL : 'https://postal.oaf.org.au/.well-known/jwks.json';
 
-// The key cache lives in a directory only this user can write. If another user
-// could plant a file there they could plant a key, so without a directory we
-// own and nobody else can touch, we skip the cache and fetch each time.
-// The user running PHP, not getmyuid(), which is the owner of this script file
-// and can differ.
 $uid = function_exists('posix_geteuid') ? posix_geteuid() : getmyuid();
-$cache_dir = sys_get_temp_dir() . '/twfy-postal-' . $uid;
-if (!is_dir($cache_dir)) {
-    // Two requests can both get here before either creates the directory, and
-    // the second mkdir() then warns "File exists". That is expected, and the
-    // site's error_handler() would print it into the response and report it.
-    // Whoever made the directory, the checks below decide whether we use it.
-    set_error_handler(static fn() => true);
-    mkdir($cache_dir, 0700);
-    restore_error_handler();
-}
-$cache_path = null;
-if (is_dir($cache_dir) && !is_link($cache_dir) && fileowner($cache_dir) === $uid && (fileperms($cache_dir) & 0077) === 0) {
-    $cache_path = $cache_dir . '/signing-keys.json';
-}
+$cache_path = PostalSigningKeys::cachePath(sys_get_temp_dir(), $uid);
 
 $signing_keys = new PostalSigningKeys(new Client(), $jwks_url, $cache_path);
 $webhook = new PostalWebhook([$signing_keys, 'pems']);

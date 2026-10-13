@@ -55,6 +55,38 @@ class PostalSigningKeys {
     private $clock;
 
     /**
+     * Where to cache the keys, or null if there is nowhere safe to.
+     *
+     * The cache lives in a directory only the given user can write. If another
+     * user could plant a file there they could plant a key, so without a
+     * directory we own and nobody else can touch, we skip the cache and fetch
+     * each time.
+     *
+     * @param string $tempDir
+     *   Where to put the directory, normally sys_get_temp_dir().
+     * @param int $uid
+     *   The user running PHP, not getmyuid(), which is the owner of the script
+     *   file and can differ.
+     */
+    public static function cachePath(string $tempDir, int $uid): ?string {
+        $dir = $tempDir . '/twfy-postal-' . $uid;
+        if (!is_dir($dir)) {
+            // Two requests can both get here before either creates the
+            // directory, and the second mkdir() then warns "File exists". That
+            // is expected, and the site's error_handler() would print it into
+            // the response and report it. Whoever made the directory, the
+            // checks below decide whether we use it.
+            set_error_handler(static fn() => true);
+            mkdir($dir, 0700);
+            restore_error_handler();
+        }
+        if (is_dir($dir) && !is_link($dir) && fileowner($dir) === $uid && (fileperms($dir) & 0077) === 0) {
+            return $dir . '/signing-keys.json';
+        }
+        return null;
+    }
+
+    /**
      * @param \GuzzleHttp\ClientInterface $http
      *   Used to fetch the key set.
      * @param string $url
