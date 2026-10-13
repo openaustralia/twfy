@@ -1876,6 +1876,16 @@ class HANSARDLIST {
                     $item['speaker'] = $this->_get_speaker($item['speaker_id'], $item['hdate']);
                 }
 
+                // Get the list of people who spoke within this subsection - only
+                // meaningful for a subsection heading row (htype 11), eg one topic
+                // within an Adjournment debate. See _get_subsection_speakers().
+                if (
+                    !empty($amount['speakers']) &&
+                    $item['htype'] == '11'
+                ) {
+                    $item['speakers'] = $this->_get_subsection_speakers($item['epobject_id']);
+                }
+
                 // Get comment count and (if any) most recent comment for each item.
                 if (!empty($amount['comment'])) {
 
@@ -2121,6 +2131,49 @@ class HANSARDLIST {
         } else {
             return [];
         }
+    }
+
+    /**
+     * The distinct people who spoke within one subsection (eg one topic within an
+     * Adjournment debate), in the order they first spoke - used for
+     * resources/views/hansard/section-index.php's "who's in this one" line. Each
+     * topic is its own separate debate/gid (see hansard_gid.php's $data['subrows']
+     * handling), so this is the only place that looks inside one from the
+     * section-index page itself, rather than the topic's own page.
+     */
+    public function _get_subsection_speakers($subsection_id) {
+        $speakers = [];
+
+        // One row per speaker_id, not per (speaker_id, hdate): a subsection that
+        // spans multiple sitting dates (Adjournment debates never do, but this is
+        // also used for Committees/Question Time now, which can) would otherwise
+        // list the same speaker twice. ROW_NUMBER() picks the row at their earliest
+        // hpos specifically, rather than an arbitrary/nondeterministic hdate for
+        // that speaker - a plain GROUP BY speaker_id can't do that and still return
+        // hdate, since MySQL's default ONLY_FULL_GROUP_BY rejects a non-aggregated
+        // column that isn't in the GROUP BY list.
+        $q = parlDBQuery("SELECT speaker_id, hdate, hpos AS firsthpos
+                            FROM (
+                                SELECT speaker_id, hdate, hpos,
+                                    ROW_NUMBER() OVER (
+                                        PARTITION BY speaker_id ORDER BY hpos ASC
+                                    ) AS rn
+                                FROM hansard
+                                WHERE subsection_id = ?
+                                AND htype = '12'
+                                AND speaker_id != '' AND speaker_id != 0
+                            ) AS first_appearance
+                            WHERE rn = 1
+                            ORDER BY firsthpos ASC", $subsection_id);
+
+        for ($n = 0; $n < $q->rows(); $n++) {
+            $speaker = $this->_get_speaker($q->field($n, 'speaker_id'), $q->field($n, 'hdate'));
+            if (count($speaker) > 0) {
+                $speakers[] = $speaker;
+            }
+        }
+
+        return $speakers;
     }
 
     /**
@@ -2387,7 +2440,13 @@ class HANSARDLIST {
                         'amount' => [
                             'body' => true,
                             'comment' => true,
-                            'excerpt' => true
+                            'excerpt' => true,
+                            // Who spoke on each topic (eg each Adjournment subrow) -
+                            // see _get_subsection_speakers(). Only the section-index
+                            // page (resources/views/hansard/section-index.php) uses
+                            // this; harmless extra work for the old stripe-rendered
+                            // majors that also reach this branch.
+                            'speakers' => true
                         ],
                         'where' => [
                             'section_id=' => $sectionrow['epobject_id'],
