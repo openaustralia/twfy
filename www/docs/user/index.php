@@ -39,6 +39,8 @@ display_user()  Displays a user's details.
 include_once __DIR__ . "/../../includes/easyparliament/init.php";
 include_once __DIR__ . "/../../includes/easyparliament/member.php";
 
+use OpenAustralia\TWFY\Models\Alert;
+
 // Which page we're on all depends on the value of the "pg" variable...
 switch (get_http_var("pg")) {
 
@@ -1088,11 +1090,14 @@ function display_user($user_id = "") {
             print '<h3>Your email alerts</h3>';
             print alert_suppression_notice($THEUSER->email());
 
-            $q = parlDBQuery('SELECT * FROM alerts WHERE email = ? ORDER BY confirmed,deleted,alert_id', $THEUSER->email());
+            $alerts = Alert::where('email', $THEUSER->email())
+              ->orderBy('confirmed')
+              ->orderBy('deleted')
+              ->orderBy('alert_id')
+              ->get();
             $out = '';
-            for ($i = 0; $i < $q->rows(); ++$i) {
-                $row = $q->row($i);
-                $alert_criteria_terms = explode(' ', $row['criteria']);
+            foreach ($alerts as $alert) {
+                $alert_criteria_terms = explode(' ', $alert->criteria);
                 $display_terms = [];
                 $search_keywords = [];
                 $search_url = WEBPATH . "search/?";
@@ -1115,10 +1120,10 @@ function display_user($user_id = "") {
                 }
 
                 $display_criteria = implode(' ', $display_terms);
-                $token = $row['alert_id'] . '-' . $row['registrationtoken'];
-                if (!$row['confirmed']) {
+                $token = $alert->alert_id . '-' . $alert->registrationtoken;
+                if (!$alert->confirmed) {
                     $action = '<a href="' . WEBPATH . 'A/' . $token . '">Confirm</a>';
-                } elseif ($row['deleted']) {
+                } elseif ($alert->deleted) {
                     $action = '<form action="' . WEBPATH . 'alert/undelete/" method="post"><input type="hidden" name="t" value="' . $token . '"><input type="submit" value="Resubscribe"></form>';
                 } else {
                     $action = '<form action="' . WEBPATH . 'alert/delete/" method="post"><input type="hidden" name="t" value="' . $token . '"><input type="submit" value="Unsubscribe"></form>';
