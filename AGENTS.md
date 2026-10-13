@@ -67,6 +67,8 @@ SonarCloud, then a **schema-check** job that migrates a fresh database and diffs
 
 ## Gotchas
 
+- **Lint after every edit.** Run `php -l` and `./vendor/bin/phpcs --standard=phpcs.xml` on each PHP file you change,
+  straight after changing it, and fix what they report before moving on. Don't leave it to CI.
 - **`make test-docker` doesn't exist** even though `README.md` and `make help` mention it; the real target is
   `make test-coverage-docker`.
 - **Migrations are dual-tracked.** After any Phinx migration, `db/schema.sql` must be regenerated
