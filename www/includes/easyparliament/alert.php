@@ -36,6 +36,7 @@
  */
 
 use OpenAustralia\TWFY\EmailSuppressions;
+use OpenAustralia\TWFY\Models\Alert as AlertModel;
 
 /**
  * The notice for a signed-in person whose address is suppressed, or an empty
@@ -468,35 +469,23 @@ class ALERT {
             return false;
         }
 
-        $q = parlDBQuery("SELECT email, criteria
-						FROM alerts
-                        WHERE alert_id = ?
-                        AND registrationtoken = ?
-						", $alert_id, $registrationtoken);
-
-        if ($q->rows() == 1) {
-
-            // Set that they're confirmed in the DB.
-            $r = parlDBQuery("UPDATE alerts
-						SET deleted = '1'
-                        WHERE	alert_id = ?
-						", $alert_id);
-
-            if ($r->success()) {
-
-                $this->deleted = true;
-                return true;
-
-            } else {
-                // Couldn't delete this alert in the DB.
-                return false;
-            }
-
-        } else {
+        $alert = AlertModel::where('alert_id', $alert_id)
+          ->where('registrationtoken', $registrationtoken)
+          ->first();
+        if ($alert === null) {
             // Couldn't find this alert in the DB. Maybe the token was
             // wrong or incomplete?
             return false;
         }
+
+        $alert->deleted = true;
+        if (!$alert->save()) {
+            // Couldn't delete this alert in the DB.
+            return false;
+        }
+
+        $this->deleted = true;
+        return true;
     }
 
     /**
@@ -521,8 +510,9 @@ class ALERT {
             return null;
         }
 
-        $q = parlDBQuery("SELECT email FROM alerts WHERE alert_id = ? AND registrationtoken = ?", $bits[0], $bits[1]);
-        return $q->rows() == 1 ? $q->field(0, 'email') : null;
+        return AlertModel::where('alert_id', $bits[0])
+          ->where('registrationtoken', $bits[1])
+          ->value('email');
     }
 
     /**
@@ -540,10 +530,10 @@ class ALERT {
             return false;
         }
 
-        $alerts = parlDBQuery("SELECT alert_id, registrationtoken FROM alerts WHERE email = ? AND deleted = 0", $email);
+        $alerts = AlertModel::where('email', $email)->where('deleted', false)->get();
         $removed = 0;
-        for ($i = 0; $i < $alerts->rows(); $i++) {
-            if ($this->delete($alerts->field($i, 'alert_id') . '-' . $alerts->field($i, 'registrationtoken'))) {
+        foreach ($alerts as $alert) {
+            if ($this->delete($alert->alert_id . '-' . $alert->registrationtoken)) {
                 $removed++;
             }
         }

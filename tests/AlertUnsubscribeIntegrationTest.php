@@ -6,6 +6,8 @@
 
 require_once __DIR__ . '/bootstrap.php';
 
+use OpenAustralia\TWFY\Models\Alert as AlertModel;
+
 /**
  * One-click unsubscribe: every alert at an address, authorised by the token of
  * one of them, so no login is needed.
@@ -29,21 +31,21 @@ class AlertUnsubscribeIntegrationTest extends TransactionalTestCase {
      *
      */
     private function insertAlert(string $email, string $criteria, string $token, int $deleted = 0): int {
-        $q = parlDBQuery(
-            "INSERT INTO alerts (email, criteria, registrationtoken, confirmed, deleted, created) VALUES (?, ?, ?, 1, ?, NOW())",
-            $email,
-            $criteria,
-            $token,
-            $deleted
-        );
-        return (int) $q->insert_id();
+        return AlertModel::create([
+            'email' => $email,
+            'criteria' => $criteria,
+            'registrationtoken' => $token,
+            'confirmed' => true,
+            'deleted' => (bool) $deleted,
+            'created' => date('Y-m-d H:i:s'),
+        ])->alert_id;
     }
 
     /**
      *
      */
     private function deleted(int $id): bool {
-        return (int) parlDBQuery('SELECT deleted FROM alerts WHERE alert_id = ?', $id)->field(0, 'deleted') === 1;
+        return AlertModel::findOrFail($id)->deleted;
     }
 
     /**
