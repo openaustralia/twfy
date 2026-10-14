@@ -211,6 +211,10 @@ foreach ($alertdata as $alertitem) {
             if ($row['hdate'] < '2008-01-14') {
                 continue;
             }
+            // Skip items too old to be news, such as a day that was re-fetched weeks later.
+            if (!AlertMailedItems::isWithinMaxAge($row['hdate'])) {
+                continue;
+            }
             $gid_to = "uk.org.publicwhip/{$sects_short[$major]}/{$row['gid']}";
             if (Gidredirect::where('gid_to', $gid_to)->exists()) {
                 continue;
