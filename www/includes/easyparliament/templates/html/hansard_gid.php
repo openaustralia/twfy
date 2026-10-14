@@ -100,6 +100,10 @@ if ($usePlatesTemplate) {
 
 $PAGE->page_start();
 
+if (!empty($data['info']['proof'])) {
+    echo get_plates_engine()->render('hansard/proof-notice');
+}
+
 if (!$usePlatesTemplate) {
     $PAGE->stripe_start('head-1');
 
