@@ -56,6 +56,16 @@ class HansardPlatesViewsTest extends TestCase {
     /**
      *
      */
+    public function test_proof_notice_says_the_hansard_is_not_final() {
+        $html = $this->engine->render('hansard/proof-notice');
+
+        $this->assertStringContainsString('proof (draft) Hansard', $html);
+        $this->assertStringContainsString('not the final version', $html);
+    }
+
+    /**
+     *
+     */
     public function test_about_debates_renders_the_title_and_body() {
         $html = $this->engine->render('hansard/about-debates', [
             'title' => 'What are House debates?',

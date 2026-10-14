@@ -252,6 +252,7 @@ CREATE TABLE `hansard` (
   `modified` datetime DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `proof` tinyint(1) DEFAULT NULL COMMENT 'true = proof (draft) Hansard, not the final version; false = final; NULL = unknown',
   PRIMARY KEY (`epobject_id`),
   UNIQUE KEY `gid` (`gid`),
   KEY `epobject_id` (`epobject_id`),
