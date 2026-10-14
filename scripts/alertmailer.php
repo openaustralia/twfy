@@ -14,7 +14,9 @@ function mlog($message): void {
     print $message;
 }
 
+use OpenAustralia\TWFY\AlertMailedItems;
 use OpenAustralia\TWFY\EmailSuppressions;
+use OpenAustralia\TWFY\Models\Gidredirect;
 
 include '../www/includes/easyparliament//init.php';
 ini_set('memory_limit', -1);
@@ -210,8 +212,11 @@ foreach ($alertdata as $alertitem) {
                 continue;
             }
             $gid_to = "uk.org.publicwhip/{$sects_short[$major]}/{$row['gid']}";
-            $q = parlDBQuery('SELECT gid_from FROM gidredirect WHERE gid_to = ?', $gid_to);
-            if ($q->rows() > 0) {
+            if (Gidredirect::where('gid_to', $gid_to)->exists()) {
+                continue;
+            }
+            // Skip rows the mailer already sent, such as a day that was re-imported.
+            if (!AlertMailedItems::shouldMail($gid_to)) {
                 continue;
             }
             --$k;
@@ -264,6 +269,7 @@ if ($globalsuccess) {
 $sss .= (getmicrotime() - $global_start) . "\n\n";
 mlog($sss);
 if (!$nomail && !$onlyemail) {
+    AlertMailedItems::markMailedThroughBatch((int) $max_batch_id);
     $fp = fopen('alerts-lastsent', 'w');
     fwrite($fp, time() . "\n");
     fwrite($fp, $max_batch_id);
