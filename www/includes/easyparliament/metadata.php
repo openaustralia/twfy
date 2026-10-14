@@ -203,6 +203,18 @@ class Metadata {
             'track' => true,
             'url' => 'alert/delete/'
         ],
+        'alertunsubscribeconfirm' => [
+            'title' => 'Unsubscribe from all alerts?',
+            'url' => 'alert/unsubscribe/'
+        ],
+        'alertunsubscribesucceeded' => [
+            'title' => 'Alerts Unsubscribed!',
+            'url' => 'alert/unsubscribe/'
+        ],
+        'alertunsubscribefailed' => [
+            'title' => 'Oops!',
+            'url' => 'alert/unsubscribe/'
+        ],
         'alertundeletesucceeded' => [
             'title' => 'Alert Resubscribed!',
             'track' => true,

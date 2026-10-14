@@ -8,6 +8,7 @@
 include_once __DIR__ . '/strptime.php';
 
 use League\Plates\Engine;
+use OpenAustralia\TWFY\EmailSuppressions;
 
 if (!function_exists('get_plates_engine')) {
 
@@ -817,10 +818,23 @@ function send_template_email($data, $merge, $bulk = false) {
     $emailtext = preg_replace($search, $replace, $emailtext);
 
     // Send it!
-    $success = send_email($data['to'], $subject, $emailtext, $bulk, mail_kind_for_template($data['template']));
+    $success = send_email($data['to'], $subject, $emailtext, $bulk, mail_kind_for_template($data['template']), $data['unsubscribe_url'] ?? null);
 
     return $success;
 
+}
+
+/**
+ * RFC 8058 one-click unsubscribe headers, for alert mail only. Mail a person
+ * has just asked for isn't a mailing list, so it never carries them. The link
+ * must be https, and is refused if it could break out of the header.
+ */
+function unsubscribe_headers($kind, $unsubscribe_url) {
+    if ($kind !== 'alert' || $unsubscribe_url === null || !preg_match('#^https://[^\s<>]+$#', $unsubscribe_url)) {
+        return '';
+    }
+    return "List-Unsubscribe: <$unsubscribe_url>\n" .
+        "List-Unsubscribe-Post: List-Unsubscribe=One-Click\n";
 }
 
 /**
@@ -856,7 +870,7 @@ function mail_transport() {
 /**
  *
  */
-function send_email($to, $subject, $message, $bulk = false, $kind = 'notice') {
+function send_email($to, $subject, $message, $bulk = false, $kind = 'notice', $unsubscribe_url = null) {
     // Use this rather than PHP's mail() direct, so we can make alterations
     // easily to all the emails we send out from the site.
 
@@ -870,12 +884,25 @@ function send_email($to, $subject, $message, $bulk = false, $kind = 'notice') {
         "Content-Type: text/plain; charset=iso-8859-1\n" .
         "Content-Transfer-Encoding: 8bit\n" .
         ($bulk ? "Precedence: bulk\n" : "") .
+        // Postal echoes this tag back in its delivery webhooks, so we can tell
+        // which mail an event is about. It is only ever the kind, never an
+        // address or an id.
+        "X-Postal-Tag: $kind\n" .
+        unsubscribe_headers($kind, $unsubscribe_url) .
         "X-Mailer: PHP/" . phpversion();
     /*
     if ($to != REPORTLIST) {
     $headers .= "\r\nBcc: " . BCCADDRESS;
     }
      */
+    // Alert mail to an address that has hard-bounced is skipped. Mail the
+    // person has just asked for (confirmations, passwords) is still sent.
+    // A skip is not a failure, so it reports success.
+    if ($kind === 'alert' && EmailSuppressions::isSuppressed($to)) {
+        twfy_debug('EMAIL', "Not sending alert email to a suppressed address");
+        return true;
+    }
+
     twfy_debug('EMAIL', "Sending email to $to with subject of '$subject'");
 
     $success = call_user_func(mail_transport(), $to, $subject, $message, $headers);

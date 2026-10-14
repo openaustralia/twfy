@@ -35,6 +35,27 @@
  * etc.
  */
 
+use OpenAustralia\TWFY\EmailSuppressions;
+use OpenAustralia\TWFY\Models\Alert as AlertModel;
+
+/**
+ * The notice for a signed-in person whose address is suppressed, or an empty
+ * string if it isn't. Plain and neutral, with the date emails started
+ * returning and how to resume. It never shows the receiving server's reply.
+ */
+function alert_suppression_notice(string $email): string {
+    $suppression = EmailSuppressions::current($email);
+    if ($suppression === null) {
+        return '';
+    }
+
+    $since = date(LONGDATEFORMAT, strtotime($suppression->suppressed_at));
+    return '<p class="alert-suppression-notice">'
+        . 'Emails to this address have been returning as undeliverable since ' . htmlspecialchars($since) . ', so your alerts are paused. '
+        . 'To resume them, you can change the email address on your account, or, once the problem is fixed, '
+        . '<a href="' . WEBPATH . 'contact/">contact us</a> and we will turn them back on.</p>';
+}
+
 /**
  * CLASS:  ALERT.
  */
@@ -448,35 +469,75 @@ class ALERT {
             return false;
         }
 
-        $q = parlDBQuery("SELECT email, criteria
-						FROM alerts
-                        WHERE alert_id = ?
-                        AND registrationtoken = ?
-						", $alert_id, $registrationtoken);
-
-        if ($q->rows() == 1) {
-
-            // Set that they're confirmed in the DB.
-            $r = parlDBQuery("UPDATE alerts
-						SET deleted = '1'
-                        WHERE	alert_id = ?
-						", $alert_id);
-
-            if ($r->success()) {
-
-                $this->deleted = true;
-                return true;
-
-            } else {
-                // Couldn't delete this alert in the DB.
-                return false;
-            }
-
-        } else {
+        $alert = AlertModel::where('alert_id', $alert_id)
+          ->where('registrationtoken', $registrationtoken)
+          ->first();
+        if ($alert === null) {
             // Couldn't find this alert in the DB. Maybe the token was
             // wrong or incomplete?
             return false;
         }
+
+        $alert->deleted = true;
+        if (!$alert->save()) {
+            // Couldn't delete this alert in the DB.
+            return false;
+        }
+
+        $this->deleted = true;
+        return true;
+    }
+
+    /**
+     * The https link that one-click unsubscribe uses, authorised by the
+     * registration token of one of an address's alerts.
+     */
+    public static function unsubscribe_url(int|string $alert_id, string $registrationtoken): string {
+        return 'https://' . DOMAIN . WEBPATH . 'alert/unsubscribe/?t=' . $alert_id . '-' . $registrationtoken;
+    }
+
+    /**
+     * The address of the alert a token belongs to, or null if the token
+     * doesn't match an alert. Changes nothing.
+     */
+    public function email_for_token(mixed $token): ?string {
+        // get_http_var() hands back an array for ?t[]=x.
+        if (!is_string($token)) {
+            return null;
+        }
+        $bits = explode(strstr($token, '::') ? '::' : '-', $token);
+        if (count($bits) < 2 || !is_numeric($bits[0]) || $bits[1] == '') {
+            return null;
+        }
+
+        return AlertModel::where('alert_id', $bits[0])
+          ->where('registrationtoken', $bits[1])
+          ->value('email');
+    }
+
+    /**
+     * Remove every alert at an address, authorised by the token of one of
+     * them, so no login is needed. Each goes through delete(), the same
+     * deletion as the link at the foot of an alert.
+     *
+     * @return int|false
+     *   How many alerts were removed (0 if they were already gone), or false
+     *   if the token doesn't match an alert.
+     */
+    public function delete_all_at_address(mixed $token): int|false {
+        $email = $this->email_for_token($token);
+        if ($email === null) {
+            return false;
+        }
+
+        $alerts = AlertModel::where('email', $email)->where('deleted', false)->get();
+        $removed = 0;
+        foreach ($alerts as $alert) {
+            if ($this->delete($alert->alert_id . '-' . $alert->registrationtoken)) {
+                $removed++;
+            }
+        }
+        return $removed;
     }
 
     /**

@@ -37,6 +37,10 @@ if (!isset($data['info'])) {
 
 $PAGE->page_start_mobile();
 
+if (!empty($data['info']['proof'])) {
+    echo get_plates_engine()->render('hansard/proof-notice');
+}
+
 $PAGE->stripe_start('head-1');
 
 $sidebar = $hansardmajors[$data['info']['major']]['sidebar_short'];

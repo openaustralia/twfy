@@ -14,6 +14,8 @@ function mlog($message): void {
     print $message;
 }
 
+use OpenAustralia\TWFY\EmailSuppressions;
+
 include '../www/includes/easyparliament//init.php';
 ini_set('memory_limit', -1);
 include_once INCLUDESPATH . 'easyparliament/member.php';
@@ -81,10 +83,13 @@ $queries = 0;
 $unregistered = 0;
 $registered = 0;
 $sentemails = 0;
+$suppressed = 0;
+$skip_current = false;
 
 $LIVEALERTS = new ALERT();
 
 $current_email = '';
+$current_unsubscribe_url = null;
 $email_text = '';
 $globalsuccess = 1;
 
@@ -122,10 +127,21 @@ foreach ($alertdata as $alertitem) {
 
     if ($email != $current_email) {
         if ($email_text) {
-            write_and_send_email($current_email, $user_id, $email_text);
+            write_and_send_email($current_email, $user_id, $email_text, $current_unsubscribe_url);
         }
         $current_email = $email;
+        // The one-click unsubscribe link in the headers removes every alert
+        // at this address, authorised by any one of their tokens.
+        $current_unsubscribe_url = ALERT::unsubscribe_url($alertitem['alert_id'], $alertitem['registrationtoken']);
         $email_text = '';
+        // Skip an address that has hard-bounced before doing any search work.
+        // Its alerts stay confirmed, so lifting the suppression resumes them.
+        $skip_current = EmailSuppressions::isSuppressed($email);
+        if ($skip_current) {
+            $suppressed++;
+            mlog("\nEMAIL: suppressed address, skipping its alerts\n");
+            continue;
+        }
         $q = parlDBQuery('SELECT user_id FROM users WHERE email = ?', $email);
         if ($q->rows() > 0) {
             $user_id = $q->field(0, 'user_id');
@@ -135,6 +151,9 @@ foreach ($alertdata as $alertitem) {
             $unregistered++;
         }
         mlog("\nEMAIL: $email, uid $user_id; memory usage : " . memory_get_usage() . "\n");
+    }
+    if ($skip_current) {
+        continue;
     }
 
     $data = null;
@@ -231,12 +250,12 @@ foreach ($alertdata as $alertitem) {
     }
 }
 if ($email_text) {
-    write_and_send_email($current_email, $user_id, $email_text);
+    write_and_send_email($current_email, $user_id, $email_text, $current_unsubscribe_url);
 }
 
 mlog("\n");
 
-$sss = "Active alerts: $active\nEmail lookups: $registered registered, $unregistered unregistered\nQuery lookups: $queries\nSent emails: $sentemails\n";
+$sss = "Active alerts: $active\nEmail lookups: $registered registered, $unregistered unregistered\nQuery lookups: $queries\nSent emails: $sentemails\nSuppressed addresses skipped: $suppressed\n";
 if ($globalsuccess) {
     $sss .= 'Everything went swimmingly, in ';
 } else {
@@ -280,7 +299,7 @@ function sort_by_stuff($a, $b) {
 /**
  *
  */
-function write_and_send_email($email, $user_id, $data) {
+function write_and_send_email($email, $user_id, $data, $unsubscribe_url = null) {
     global $globalsuccess, $sentemails, $nomail, $start_time;
 
     $data .= '====================' . "\n\n";
@@ -291,7 +310,7 @@ function write_and_send_email($email, $user_id, $data) {
     }
     $sentemails++;
     mlog("SEND $sentemails : Sending email to $email ... ");
-    $d = ['to' => $email, 'template' => 'alert_mailout'];
+    $d = ['to' => $email, 'template' => 'alert_mailout', 'unsubscribe_url' => $unsubscribe_url];
     $m = ['DATA' => $data];
     if (!$nomail) {
         // True = "Precedence: bulk".
