@@ -16,16 +16,15 @@ use OpenAustralia\TWFY\Models\Indexbatch;
  */
 class AlertMailedItemsIntegrationTest extends TransactionalTestCase {
 
-    private const GID = 'uk.org.publicwhip/debate/2026-03-01.1.1';
-
     /**
      *
      */
-    private function makeRow(int $id, ?string $created, ?string $mailedAt = null): void {
+    private function makeRow(int $id, ?string $created, ?string $mailedAt = null, int $major = 1): void {
+        $prefix = $major === 101 ? 'lords' : 'debate';
         Hansard::create([
             'epobject_id' => $id,
-            'gid' => "uk.org.publicwhip/debate/2026-03-01.$id.1",
-            'major' => 1,
+            'gid' => "uk.org.publicwhip/$prefix/2026-03-01.$id.1",
+            'major' => $major,
             'hdate' => '2026-03-01',
             'created' => $created,
             'alert_mailed_at' => $mailedAt,
@@ -48,7 +47,7 @@ class AlertMailedItemsIntegrationTest extends TransactionalTestCase {
     public function test_an_unsent_row_should_be_mailed() {
         $this->makeRow(910001, '2026-03-01 09:00:00');
 
-        $this->assertTrue(AlertMailedItems::shouldMail('uk.org.publicwhip/debate/2026-03-01.910001.1'));
+        $this->assertTrue(AlertMailedItems::shouldMail(1, '2026-03-01.910001.1'));
     }
 
     /**
@@ -57,14 +56,39 @@ class AlertMailedItemsIntegrationTest extends TransactionalTestCase {
     public function test_a_row_that_was_already_sent_is_not_mailed_again() {
         $this->makeRow(910001, '2026-03-01 09:00:00', '2026-03-01 10:00:00');
 
-        $this->assertFalse(AlertMailedItems::shouldMail('uk.org.publicwhip/debate/2026-03-01.910001.1'));
+        $this->assertFalse(AlertMailedItems::shouldMail(1, '2026-03-01.910001.1'));
+    }
+
+    /**
+     * Senate gids are stored with a lords prefix.
+     */
+    public function test_an_unsent_senate_row_should_be_mailed() {
+        $this->makeRow(910001, '2026-03-01 09:00:00', null, 101);
+
+        $this->assertTrue(AlertMailedItems::shouldMail(101, '2026-03-01.910001.1'));
+    }
+
+    /**
+     *
+     */
+    public function test_a_senate_row_that_was_already_sent_is_not_mailed_again() {
+        $this->makeRow(910001, '2026-03-01 09:00:00', '2026-03-01 10:00:00', 101);
+
+        $this->assertFalse(AlertMailedItems::shouldMail(101, '2026-03-01.910001.1'));
+    }
+
+    /**
+     *
+     */
+    public function test_a_house_we_do_not_store_gids_for_is_always_mailed() {
+        $this->assertTrue(AlertMailedItems::shouldMail(3, '2026-03-01.1.1'));
     }
 
     /**
      *
      */
     public function test_a_row_that_does_not_exist_is_not_mailed() {
-        $this->assertFalse(AlertMailedItems::shouldMail(self::GID));
+        $this->assertFalse(AlertMailedItems::shouldMail(1, '2026-03-01.1.1'));
     }
 
     /**

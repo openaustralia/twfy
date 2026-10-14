@@ -35,10 +35,28 @@ class AlertMailedItems {
     }
 
     /**
-     * True when the row exists and the mailer has not sent it yet.
+     * The gid prefix hansard.gid stores for each house. The Senate's is "lords",
+     * not "senate", because the parser inherited the Lords naming.
      */
-    public static function shouldMail(string $gid): bool {
-        return Hansard::where('gid', $gid)->whereNull('alert_mailed_at')->exists();
+    public const GID_PREFIXES = [
+        1 => 'uk.org.publicwhip/debate/',
+        101 => 'uk.org.publicwhip/lords/',
+    ];
+
+    /**
+     * True when the mailer has not sent the item yet. $gid is the short form the
+     * site uses in URLs, such as 2026-03-01.3.1. A house we do not store gids for
+     * is always mailed, as it was before this check existed, and a missing row is not.
+     */
+    public static function shouldMail(int $major, string $gid): bool {
+        if (!isset(self::GID_PREFIXES[$major])) {
+            return true;
+        }
+
+        return Hansard::where('gid', self::GID_PREFIXES[$major] . $gid)
+          ->where('major', $major)
+          ->whereNull('alert_mailed_at')
+          ->exists();
     }
 
     /**

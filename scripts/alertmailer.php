@@ -220,7 +220,7 @@ foreach ($alertdata as $alertitem) {
                 continue;
             }
             // Skip rows the mailer already sent, such as a day that was re-imported.
-            if (!AlertMailedItems::shouldMail($gid_to)) {
+            if (!AlertMailedItems::shouldMail((int) $major, $row['gid'])) {
                 continue;
             }
             --$k;
