@@ -23,6 +23,8 @@ use Illuminate\Database\Eloquent\Model;
  * @property int|null $minor
  * @property string|null $created
  * @property string|null $modified
+ * @property string|null $alert_mailed_at When the alert mailer emailed this item. A value means it was already
+ *   emailed, so the mailer must not send it again, even if the day is re-imported. Null means not emailed yet.
  * @property bool|null $proof True means the row comes from a proof (draft) Hansard, so the text is NOT final.
  *   False means the Parliament has published the final version. Null means we do not know yet.
  */
@@ -44,6 +46,8 @@ class Hansard extends Model {
         'modified' => 'datetime',
         // A true proof value means the Parliament has not published the final text yet.
         'proof' => 'boolean',
+        // Set once the item has been emailed, so the mailer knows not to send it again.
+        'alert_mailed_at' => 'datetime',
     ];
 
     // Fillable fields for mass assignment.
@@ -63,6 +67,7 @@ class Hansard extends Model {
         'created',
         'modified',
         'proof',
+        'alert_mailed_at',
     ];
 
 }
