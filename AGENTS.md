@@ -75,6 +75,10 @@ SonarCloud, then a **schema-check** job that migrates a fresh database and diffs
   (`make docker-dump-schema`) and committed, or the schema-check CI job fails. `make docker-db-migrate` does this
   for you. Keep MySQL pinned at 8.4 everywhere - `mysqldump` output is version-sensitive and drift shows up as
   spurious schema diffs.
+- **Senate gids are stored with a `lords` prefix.** `hansard.gid` holds `uk.org.publicwhip/lords/...` for the Senate
+  (major 101) and `uk.org.publicwhip/debate/...` for the House (major 1), because the parser inherited the Lords
+  naming. `$sects_short[101]` in `scripts/alertmailer.php` is `senate`, so a gid built from it matches no row. Look
+  gids up through `AlertMailedItems::GID_PREFIXES` and never build one from `$sects_short`.
 - **Three sets of DB credentials** exist (`conf/general-example.local-dev`, `docker-compose.yml`,
   `conf/general-docker`); the `docker-*` targets pass `DB_*` env vars so migrations work regardless, but don't
   "unify" them.
