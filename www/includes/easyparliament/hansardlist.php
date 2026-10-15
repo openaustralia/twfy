@@ -7,6 +7,8 @@
 include_once __DIR__ . "/searchengine.php";
 include_once __DIR__ . "/searchlog.php";
 
+use OpenAustralia\TWFY\Models\Hansard;
+
 /**
  * The HANSARDLIST class and its children, DEBATELIST and WRANSLIST, display data about
  * Hansard objects. You call display things by doing something like:
@@ -202,6 +204,17 @@ class HANSARDLIST {
         }
         return true;
 
+    }
+
+    /**
+     * Whether any of this house's Hansard on a date is known to be a proof (draft), not yet final.
+     * False also covers unknown (null), so only a known proof shows the notice.
+     */
+    public function day_is_proof(string $date): bool {
+        return Hansard::where('hdate', $date)
+          ->where('major', $this->major)
+          ->where('proof', true)
+          ->exists();
     }
 
     /**
@@ -905,6 +918,7 @@ class HANSARDLIST {
             // For page headings etc.
             $data['info']['date'] = $date;
             $data['info']['major'] = $this->major;
+            $data['info']['proof'] = $this->day_is_proof($date);
         }
 
         return $data;
@@ -2302,6 +2316,7 @@ class HANSARDLIST {
             $data['info']['date'] = $itemdata['hdate'];
             $data['info']['text'] = $itemdata['body'];
             $data['info']['major'] = $this->major;
+            $data['info']['proof'] = $this->day_is_proof($itemdata['hdate']);
             if (isset($itemdata['redirected_gid'])) {
                 $data['info']['redirected_gid'] = $itemdata['redirected_gid'];
             }

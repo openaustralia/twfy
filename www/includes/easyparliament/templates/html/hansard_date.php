@@ -14,6 +14,10 @@ twfy_debug("TEMPLATE", "hansard_date.php");
 
 $PAGE->page_start();
 
+if (!empty($data['info']['proof'])) {
+    echo get_plates_engine()->render('hansard/proof-notice');
+}
+
 $PAGE->stripe_start();
 
 if (isset($data['info']) && isset($data['info']['date']) && $data['info']['date'] == date('Y-m-d')) { ?>

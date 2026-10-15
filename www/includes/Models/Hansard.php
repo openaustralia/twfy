@@ -23,6 +23,8 @@ use Illuminate\Database\Eloquent\Model;
  * @property int|null $minor
  * @property string|null $created
  * @property string|null $modified
+ * @property bool|null $proof True means the row comes from a proof (draft) Hansard, so the text is NOT final.
+ *   False means the Parliament has published the final version. Null means we do not know yet.
  */
 class Hansard extends Model {
 
@@ -40,6 +42,8 @@ class Hansard extends Model {
         'hdate' => 'date',
         'created' => 'datetime',
         'modified' => 'datetime',
+        // A true proof value means the Parliament has not published the final text yet.
+        'proof' => 'boolean',
     ];
 
     // Fillable fields for mass assignment.
@@ -58,6 +62,7 @@ class Hansard extends Model {
         'minor',
         'created',
         'modified',
+        'proof',
     ];
 
 }

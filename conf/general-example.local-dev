@@ -47,6 +47,11 @@ define ("DEVSITE", true);
 // Add this and a number to the URL (eg '?debug=1') to view debug info.
 define ("DEBUGTAG", 'debug');
 
+// Where Postal publishes the public key it signs its delivery webhooks with.
+// Optional: the default is the production Postal server. Only /postal/event
+// uses it, and only Postal's real signed requests are ever accepted.
+// define ("POSTAL_JWKS_URL", "https://postal.oaf.org.au/.well-known/jwks.json");
+
 // Sentry DSN for error/exception reporting. Empty by default in local dev, so
 // the SDK stays disabled (see init.php). Staging/production get the real
 // value templated in from infrastructure's sentry_dsn (group_vars/all.yml).

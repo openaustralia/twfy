@@ -89,6 +89,7 @@ $skip_current = false;
 $LIVEALERTS = new ALERT();
 
 $current_email = '';
+$current_unsubscribe_url = null;
 $email_text = '';
 $globalsuccess = 1;
 
@@ -126,9 +127,12 @@ foreach ($alertdata as $alertitem) {
 
     if ($email != $current_email) {
         if ($email_text) {
-            write_and_send_email($current_email, $user_id, $email_text);
+            write_and_send_email($current_email, $user_id, $email_text, $current_unsubscribe_url);
         }
         $current_email = $email;
+        // The one-click unsubscribe link in the headers removes every alert
+        // at this address, authorised by any one of their tokens.
+        $current_unsubscribe_url = ALERT::unsubscribe_url($alertitem['alert_id'], $alertitem['registrationtoken']);
         $email_text = '';
         // Skip an address that has hard-bounced before doing any search work.
         // Its alerts stay confirmed, so lifting the suppression resumes them.
@@ -246,7 +250,7 @@ foreach ($alertdata as $alertitem) {
     }
 }
 if ($email_text) {
-    write_and_send_email($current_email, $user_id, $email_text);
+    write_and_send_email($current_email, $user_id, $email_text, $current_unsubscribe_url);
 }
 
 mlog("\n");
@@ -295,7 +299,7 @@ function sort_by_stuff($a, $b) {
 /**
  *
  */
-function write_and_send_email($email, $user_id, $data) {
+function write_and_send_email($email, $user_id, $data, $unsubscribe_url = null) {
     global $globalsuccess, $sentemails, $nomail, $start_time;
 
     $data .= '====================' . "\n\n";
@@ -306,7 +310,7 @@ function write_and_send_email($email, $user_id, $data) {
     }
     $sentemails++;
     mlog("SEND $sentemails : Sending email to $email ... ");
-    $d = ['to' => $email, 'template' => 'alert_mailout'];
+    $d = ['to' => $email, 'template' => 'alert_mailout', 'unsubscribe_url' => $unsubscribe_url];
     $m = ['DATA' => $data];
     if (!$nomail) {
         // True = "Precedence: bulk".
