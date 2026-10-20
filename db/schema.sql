@@ -266,7 +266,8 @@ CREATE TABLE `hansard` (
   KEY `htype` (`htype`),
   KEY `majorhdate` (`major`,`hdate`),
   KEY `modified` (`modified`),
-  KEY `source_url` (`source_url`)
+  KEY `source_url` (`source_url`),
+  KEY `alert_mailed_at_created` (`alert_mailed_at`,`created`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
