@@ -16,6 +16,9 @@ function mlog($message): void {
 
 use OpenAustralia\TWFY\AlertMaxAge;
 use OpenAustralia\TWFY\EmailSuppressions;
+use OpenAustralia\TWFY\Models\Gidredirect;
+use OpenAustralia\TWFY\Models\Indexbatch;
+use OpenAustralia\TWFY\Models\User;
 
 include '../www/includes/easyparliament//init.php';
 ini_set('memory_limit', -1);
@@ -25,8 +28,7 @@ include_once INCLUDESPATH . 'alertmailer_sanitize.php';
 $global_start = getmicrotime();
 
 // Get current value of latest batch.
-$q = parlDBQuery('SELECT max(indexbatch_id) as max_batch_id FROM indexbatch');
-$max_batch_id = $q->field(0, 'max_batch_id');
+$max_batch_id = Indexbatch::max('indexbatch_id');
 mlog("max_batch_id: " . $max_batch_id . "\n");
 
 // Last sent is timestamp of last alerts gone out.
@@ -143,9 +145,8 @@ foreach ($alertdata as $alertitem) {
             mlog("\nEMAIL: suppressed address, skipping its alerts\n");
             continue;
         }
-        $q = parlDBQuery('SELECT user_id FROM users WHERE email = ?', $email);
-        if ($q->rows() > 0) {
-            $user_id = $q->field(0, 'user_id');
+        $user_id = User::where('email', $email)->value('user_id');
+        if ($user_id !== null) {
             $registered++;
         } else {
             $user_id = 0;
@@ -215,8 +216,7 @@ foreach ($alertdata as $alertitem) {
                 continue;
             }
             $gid_to = "uk.org.publicwhip/{$sects_short[$major]}/{$row['gid']}";
-            $q = parlDBQuery('SELECT gid_from FROM gidredirect WHERE gid_to = ?', $gid_to);
-            if ($q->rows() > 0) {
+            if (Gidredirect::where('gid_to', $gid_to)->exists()) {
                 continue;
             }
             --$k;
