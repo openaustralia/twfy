@@ -14,6 +14,7 @@ function mlog($message): void {
     print $message;
 }
 
+use OpenAustralia\TWFY\AlertMaxAge;
 use OpenAustralia\TWFY\EmailSuppressions;
 
 include '../www/includes/easyparliament//init.php';
@@ -207,6 +208,10 @@ foreach ($alertdata as $alertitem) {
             }
             // mlog($row['major'] . " " . $row['gid'] ."\n");.
             if ($row['hdate'] < '2008-01-14') {
+                continue;
+            }
+            // Skip items too old to be news, such as a day that was re-fetched weeks later.
+            if (!AlertMaxAge::isWithinMaxAge($row['hdate'])) {
                 continue;
             }
             $gid_to = "uk.org.publicwhip/{$sects_short[$major]}/{$row['gid']}";
