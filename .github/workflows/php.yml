@@ -39,6 +39,22 @@ jobs:
         run: make lint-php-ci
       - name: phpcs
         run: make phpcs-ci
+
+  audit:
+    name: Audit dependencies
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Setup PHP 8.3
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: mbstring, pdo, sqlite
+          coverage: none
+          tools: composer
+      - name: composer install packages
+        run: composer install
       - name: audit dependencies
         run: composer audit
 
