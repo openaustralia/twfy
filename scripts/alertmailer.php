@@ -272,7 +272,8 @@ if ($globalsuccess) {
 }
 $sss .= (getmicrotime() - $global_start) . "\n\n";
 mlog($sss);
-if (!$nomail && !$onlyemail) {
+if (!$nomail && !$onlyemail && !$fromemail && !$toemail) {
+    // A --from/--to run only mails some of the recipients, so it must not stamp rows as sent for everyone.
     AlertMailedItems::markMailedThroughBatch((int) $max_batch_id);
     $fp = fopen('alerts-lastsent', 'w');
     fwrite($fp, time() . "\n");
