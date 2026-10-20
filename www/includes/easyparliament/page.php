@@ -1728,10 +1728,10 @@ class PAGE {
             $HANSARDLIST = new HANSARDLIST();
 
             $searchstring = "speaker:$member[person_id]";
-            global $SEARCHENGINE;
-            $SEARCHENGINE = new SEARCHENGINE($searchstring);
+            $searchEngine = new SEARCHENGINE($searchstring);
             $args = [
                 's' => $searchstring,
+                'search_engine' => $searchEngine,
                 'p' => 1,
                 'num' => 3,
                 'pop' => 1,
@@ -2383,7 +2383,6 @@ class PAGE {
      *
      */
     public function search_form($value = '') {
-        global $SEARCHENGINE;
         // Search box on the search page.
         // If $value is set then it will be displayed in the form.
         // Otherwise the value of 's' in the URL will be displayed.

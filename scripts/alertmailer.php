@@ -160,11 +160,11 @@ foreach ($alertdata as $alertitem) {
     if (!isset($results[$criteria_batch])) {
         mlog("  ALERT $active/$outof QUERY $queries : Xapian query '$criteria_batch'");
         $start = getmicrotime();
-        $SEARCHENGINE = new SEARCHENGINE($criteria_batch);
-        // mlog("query_remade: " . $SEARCHENGINE->query_remade() . "\n");.
+        $searchEngine = new SEARCHENGINE($criteria_batch);
         $args = [
             // Note: use raw here for URLs, whereas search engine has batch.
             's' => $criteria_raw,
+            'search_engine' => $searchEngine,
             // Return everything added since last time this script was run.
             'threshold' => $lastupdated,
             'o' => 'c',
@@ -180,7 +180,6 @@ foreach ($alertdata as $alertitem) {
             mlog(", caching");
             $results[$criteria_batch] = $data;
         }
-        // unset($SEARCHENGINE);
         $total_results = $data['info']['total_results'];
         $queries++;
         mlog(", hits " . $total_results . ", time " . (getmicrotime() - $start) . "\n");
