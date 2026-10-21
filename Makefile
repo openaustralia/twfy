@@ -204,7 +204,9 @@ setup:
 	sudo apt install \
 	libmysqlclient-dev libssl-dev ghostscript imagemagick libdbd-mysql-perl libdbi-perl libmagickcore-dev \
 	libmagickwand-dev libmysqlclient-dev libsearch-xapian-perl libxapian-dev libxml-rss-perl libxml-twig-perl \
-	libxslt1-dev mysql-client libxml-simple-perl libperl-critic-perl
+	libxslt1-dev mysql-client libxml-simple-perl libperl-critic-perl \
+	build-essential autoconf bison re2c pkg-config libicu-dev libonig-dev libzip-dev libpq-dev \
+	libreadline-dev libgd-dev libcurl4-openssl-dev libsqlite3-dev libxml2-dev libjpeg-dev libpng-dev
 
 test: vendor/autoload.php
 	./vendor/bin/phpunit $(TEST_ARGS)
