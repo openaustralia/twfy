@@ -1,0 +1,76 @@
+# The development stack, shared by `make`, plain `docker compose` (via ../compose.yaml) and the dev container.
+# See "Docker development environment" in AGENTS.md.
+networks:
+  twfy:
+services:
+  webhost:
+    build:
+      context: ..
+      dockerfile: .devcontainer/Dockerfile
+    image: twfy-app
+    platform: linux/amd64 # matches `make docker-build`
+    networks:
+      - twfy
+    # Host ports are overridable to avoid clashes, see "Port clashes" in AGENTS.md.
+    ports:
+      - "${TWFY_HTTP_PORT:-80}:80"
+    volumes:
+      - ..:/app
+      - ../www:/var/www #not sure yet why it needs to be here, i got 403s when it /app instead
+      - ../vendor:/var/vendor
+      - ../conf/general-docker:/var/conf/general
+      - ../conf/httpd-docker.conf:/etc/apache2/sites-available/000-default.conf
+      - ${PHPLIB_PATH:-../../phplib}:/phplib # the sibling phplib checkout; set PHPLIB_PATH in .env for a worktree
+      - ../_xapiandb:/app/shared/search
+    environment:
+      START_LIMIT: &start_limit ${START_LIMIT:-5m} # how long startup may take before it counts as failed; see "If the app won't start" in the README
+      # Used by phinx and the scripts; the site itself reads conf/general-docker
+      DB_HOST: mysql
+      DB_USER: twfyuser
+      DB_PASSWORD: twfypass
+      DB_NAME: twfy
+    # Installs PHP and npm dependencies and builds tailwind.css if they're missing, and applies any pending migrations,
+    # so a fresh checkout comes up working. What it installs, and the mount points Docker creates as root, are handed
+    # to whoever owns the checkout, so host tools can still change them. Any failure stops the container.
+    # Seed data is separate: make docker-db-seed.
+    command: >
+      sh -c 'cd /app && owner=$$(stat -c %u:%g /app) &&
+             chown "$$owner" shared shared/search data &&
+             { [ -f vendor/autoload.php ] ||
+               { composer install --no-interaction --prefer-dist && chown -R "$$owner" vendor; }; } &&
+             { [ -f www/docs/style/tailwind/tailwind.css ] ||
+               { npm ci && npm run build:css && chown -R "$$owner" node_modules www/docs/style/tailwind/tailwind.css; }; } &&
+             vendor/bin/phinx migrate -c phinx.php &&
+             exec apache2ctl -D FOREGROUND'
+    depends_on:
+      mysql:
+        condition: service_healthy
+    # Any HTTP response counts, as pages can fail on an unseeded database.
+    healthcheck:
+      test: ["CMD", "curl", "-s", "-o", "/dev/null", "http://localhost/"]
+      interval: 5s
+      start_period: *start_limit
+  mysql:
+    image: mysql:8.4.9 # production's RDS version
+    ports:
+      - "${TWFY_MYSQL_PORT:-3306}:3306"
+    networks:
+      - twfy
+    environment:
+      MYSQL_ROOT_PASSWORD: examplepassword
+      MYSQL_DATABASE: twfy
+      MYSQL_USER: twfyuser
+      MYSQL_PASSWORD: twfypass
+    volumes:
+      # Will be owned by dnsmasq (uid 999)
+      - ../_mysqldata:/var/lib/mysql
+      # Will be owned by root (uid 0)
+      - ../data:/app/data
+      # Creates the test_twfy database on first container initialisation.
+      # For existing containers use: make docker-test-db-create
+      - ../db/test-db-init.sql:/docker-entrypoint-initdb.d/test-db-init.sql:ro
+    # Over TCP, so it only passes once first-run setup has finished and the real server is listening.
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-uroot", "-pexamplepassword"]
+      interval: 2s
+      retries: 60

@@ -33,25 +33,64 @@ The ORM is Eloquent (`illuminate/database` ^11). Each table has a model in `www/
   change, but as its own commit. This is how the legacy calls get removed over time.
 - Keep raw SQL only where Eloquent can't express the query, and say why in the commit message.
 
-## Setup
+## Docker development environment
+
+One stack, defined in `.devcontainer/compose.yaml`, serves every way of working: `make`, plain `docker compose`
+(through the root `compose.yaml`), and the dev container in VS Code, RubyMine, Codespaces or
+`devcontainer up --workspace-folder .`. They all share the same containers and data.
 
 ```
-cp conf/general-example.local-dev conf/general
-make dependencies         # composer install
-make docker               # build (slow, --no-cache, amd64) and start webhost + mysql:8.4
-make docker-db-migrate
-make docker-db-seed
-make xapian-index-docker
+make up           # everything, including the app at http://localhost, once it's ready
+make services-up  # MySQL only, for host-side tools
+make status       # each container's health and host ports
+make logs         # follow the logs (SERVICE=<name> for one container)
+make shell        # a shell in the app container, or a fresh one if it has stopped
+make down         # stop and remove the containers, keeping the data
+make clean        # also remove built images and dependencies, so the next start rebuilds; keeps the data
+make clobber      # also remove the data, and prune unused Docker images and cache machine-wide
 ```
 
-`conf/general` is gitignored and required. Note the container reads `conf/general-docker`, not your `conf/general`;
-host-side tools (phinx, phpunit) read `conf/general` or the `DB_*` environment variables, which win over the
-constants (`phinx.php`). Ports are overridable with `TWFY_HTTP_PORT` / `TWFY_MYSQL_PORT`.
+`make up` and `make services-up` return once every service passes its healthcheck. Run `make` for the full list.
+A start that takes longer than `START_LIMIT` (in `.devcontainer/compose.yaml`) counts as failed and is reported loudly on purpose;
+see "If the app won't start" in the README.
+
+`conf/general` is gitignored, and only host-side tools need it (`cp conf/general-example.local-dev conf/general`):
+the container reads `conf/general-docker`, and its `DB_*` environment variables win over both (`phinx.php`). On start,
+the `webhost` container installs `vendor/` and builds `tailwind.css` if they're missing, then applies pending
+migrations. Seed data and the search index are separate steps:
+
+```
+make docker-db-seed       # sample members, hansard, postcodes, ...
+make xapian-index-docker  # build the Xapian search index
+```
+
+`_mysqldata/` and `_xapiandb/` hold the database and index on the host, so `make clobber` removes them from inside a
+container, as some files are owned by container users.
+
+### Port clashes
+
+| Variable          | Default         | Publishes or points at                                                  |
+|-------------------|-----------------|-------------------------------------------------------------------------|
+| `TWFY_HTTP_PORT`  | 80              | the site                                                                |
+| `TWFY_MYSQL_PORT` | 3306            | MySQL. `Makefile.dev` passes it on to host-side scripts as `DB_PORT`    |
+| `PHPLIB_PATH`     | `../../phplib`  | the sibling phplib checkout. Relative to `.devcontainer/`, so an absolute path is simplest in a worktree |
+| `PERLLIB_PATH`    | `../perllib`    | the sibling perllib checkout, for `make xapian-index-docker`. Relative to the repo root |
+| `PARSER_PATH`     | `../openaustralia-parser` | the sibling parser checkout, for `make docker-db-seed`. Relative to the repo root |
+
+Put overrides in `.env` at the repo root, which is gitignored, with different values in each worktree. Compose reads
+it however you start the stack. Containers and data are named `twfy` (`name:` in `compose.yaml`), so a second checkout of
+this repo, such as a worktree, shares them unless its `.env` also sets its own `COMPOSE_PROJECT_NAME`. For
+host-side commands to see the same values, put `dotenv` in a gitignored `.envrc` if you use direnv, or
+run `set -a; . ./.env; set +a`. Variables already set in your shell win over `.env`, and a worktree inside the main
+checkout (such as under `.claude/worktrees/`) picks up the main checkout's `.envrc`, so give each worktree its own
+`.envrc`. Services you rarely need from the host get a random port, which `make status` shows.
+To see what holds a port, use `ss -ltnp | grep 3306` (Linux) or `lsof -iTCP:3306 -sTCP:LISTEN` (macOS); a database
+server installed on the host is the usual culprit.
 
 ## Commands
 
 ```
-make help                 # target list (but see gotcha below)
+make help                 # target list
 make lint                 # php -l and perl -c sweeps
 make phpcs                # phpcs (Drupal standard, phpcs.xml) over www and scripts
 ./vendor/bin/phpcbf <files>
@@ -69,13 +108,11 @@ SonarCloud, then a **schema-check** job that migrates a fresh database and diffs
 
 - **Lint after every edit.** Run `php -l` and `./vendor/bin/phpcs --standard=phpcs.xml` on each PHP file you change,
   straight after changing it, and fix what they report before moving on. Don't leave it to CI.
-- **`make test-docker` doesn't exist** even though `README.md` and `make help` mention it; the real target is
-  `make test-coverage-docker`.
 - **Migrations are dual-tracked.** After any Phinx migration, `db/schema.sql` must be regenerated
   (`make docker-dump-schema`) and committed, or the schema-check CI job fails. `make docker-db-migrate` does this
   for you. Keep MySQL pinned at 8.4 everywhere - `mysqldump` output is version-sensitive and drift shows up as
   spurious schema diffs.
-- **Three sets of DB credentials** exist (`conf/general-example.local-dev`, `docker-compose.yml`,
+- **Three sets of DB credentials** exist (`conf/general-example.local-dev`, `.devcontainer/compose.yaml`,
   `conf/general-docker`); the `docker-*` targets pass `DB_*` env vars so migrations work regardless, but don't
   "unify" them.
 - **`INSTALL.txt` is mostly 2008-vintage** (PHP 4, Apache 1.3); only its Phinx section is current. Its one live

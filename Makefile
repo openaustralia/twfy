@@ -1,9 +1,6 @@
 # PLATFORM=linux/arm64,linux/amd64
 PLATFORM=linux/amd64
 
-TWFY_HTTP_PORT ?= 80
-TWFY_MYSQL_PORT ?= 3306
-
 TEST_DB_HOST ?= 127.0.0.1
 TEST_DB_USER ?= twfyuser
 TEST_DB_PASSWORD ?= twfypass
@@ -12,14 +9,22 @@ DEV_DB_NAME ?= twfy
 SONAR_SCANNER ?= sonar-scanner
 XAPIANDB ?= /app/shared/search/searchdb
 XAPIANDB_LASTUPDATED ?= $(XAPIANDB)/../searchdb-lastupdated
+PERLLIB_PATH ?= ../perllib
+PARSER_PATH ?= ../openaustralia-parser
 
-.PHONY: help docker-build docker-run docker xapian-index-docker lint lint-perl lint-perl-ci lint-perl-critic lint-php lint-php-ci phpcs phpcs-ci phpcs-verbose phpcs-sonar sonar-ci dependencies tailwind-build tailwind-watch playwright-update install setup test test-all install-xdebug test-coverage test-coverage-docker docker-test-db-create docker-test-db-migrate docker-db-shell docker-test-db-shell
+.PHONY: help up services-up down clean clobber status logs shell docker-build xapian-index-docker lint lint-perl lint-perl-ci lint-perl-critic lint-php lint-php-ci phpcs phpcs-ci phpcs-verbose phpcs-sonar sonar-ci dependencies tailwind-build tailwind-watch playwright-update install setup test test-all install-xdebug test-coverage test-coverage-docker docker-test-db-create docker-test-db-migrate docker-db-shell docker-test-db-shell
 
 help:
 	@echo "Available targets:"
-	@echo "  docker                              Build docker image then run docker container"
-	@echo "  docker-build                        Build the Docker image for the application"
-	@echo "  docker-run                          Run the Docker container for the application"
+	@echo "  up                                  Start everything, including the site at http://localhost, once it's ready"
+	@echo "  services-up                         Start MySQL only, once ready (for host-side tools)"
+	@echo "  down                                Stop and remove the containers, keeping the database"
+	@echo "  clean                               Remove containers, built images (VS Code's too) and dependencies, keeping the data"
+	@echo "  clobber                             Also remove the database and index, then prune Docker machine-wide"
+	@echo "  status                              Show each container's health and the host ports it's published on"
+	@echo "  logs [SERVICE=<name>]               Follow the container logs"
+	@echo "  shell                               Open a shell in the webhost container (a fresh one if it has stopped)"
+	@echo "  docker-build                        Rebuild the Docker image from scratch (no cache)"
 	@echo "  docker-db-migrate                   Run pending Phinx migrations against the docker mysql"
 	@echo "  docker-db-migrate-down [MIGRATION_TARGET=<version>]  Roll back last migration (or to version)"
 	@echo "  docker-db-seed [SEEDER=<Name>]      Run Phinx seeders against the docker mysql (all, or a specific one)"
@@ -38,9 +43,8 @@ help:
 	@echo "  setup                               Install ubuntu packages required for development"
 	@echo "  test [TEST_ARGS=...]                Run PHPUnit tests"
 	@echo "  test-all [TEST_ARGS=...]            Run all PHPUnit tests including DB integration"
-	@echo "  test-docker [TEST_ARGS=...]         Run all tests in Docker with DB (simplest method)"
 	@echo "  test-coverage [TEST_ARGS=...]       Run all tests with code coverage reports"
-	@echo "  test-coverage-docker [TEST_ARGS=...] Run coverage inside Docker (no host PHP extensions needed)"
+	@echo "  test-coverage-docker [TEST_ARGS=...] Run all tests with coverage in Docker (simplest method)"
 	@echo "  phpcs [PHPCS_ARGS=...]              Run coding standards check (summary)"
 	@echo "  phpcs-verbose [PHPCS_ARGS=...]      Run coding standards check (verbose)"
 	@echo "  phpcs-sonar [PHPCS_ARGS=...]        Generate PHPCS checkstyle report for SonarQube"
@@ -57,7 +61,7 @@ help:
 	@echo "  PHPCS_ARGS     Extra args for phpcs targets e.g."
 	@echo "                   --report=full          show each violation in context"
 	@echo "                   www/path/to/file.php   check a specific file"
-	@echo " TWFY_HTTP_PORT, TWFY_MYSQL_PORT - override default host ports used in docker-compose.yml (80 and 3306)"
+	@echo "  TWFY_HTTP_PORT, TWFY_MYSQL_PORT, PHPLIB_PATH, PERLLIB_PATH, PARSER_PATH - see \"Port clashes\" in AGENTS.md"
 	@echo "  XAPIANDB, XAPIANDB_LASTUPDATED - override index and timestamp paths for xapian-index-docker"
 
 docker-build:
@@ -69,18 +73,52 @@ docker-build:
 		--load \
 		--platform=$(PLATFORM) \
 		-t twfy-app \
+		-f .devcontainer/Dockerfile \
 		.
 
-docker-run:
-	docker compose up -d $(DOCKER_ARGS)
+# The stack is defined in .devcontainer/compose.yaml (see "Docker development environment" in AGENTS.md).
+# --wait returns once every service passes its healthcheck, so the next command can use them straight away.
+up:
+	docker compose up --build --wait -d
 
-docker: tailwind-build docker-build docker-run
-	@echo "Site should now be available at http://localhost:$(TWFY_HTTP_PORT) and MySQL at http://localhost:$(TWFY_MYSQL_PORT)"
+services-up:
+	docker compose up --wait -d mysql
+
+down:
+	docker compose down --remove-orphans
+
+# Everything this checkout built, so the next `make up` rebuilds from scratch. The database and index are kept.
+# VS Code's dev container builds its own images on top of compose's. Only this project's containers say which
+# they are, so they're noted before `down` removes them. Dependencies are bind mounts, partly owned by container
+# users, so they're removed from inside a container rather than needing sudo.
+clean:
+	p=$$(docker compose config | sed -n 's/^name: //p'); \
+	vsc=$$(docker ps -a --filter "label=com.docker.compose.project=$$p" --format '{{.Image}}' | grep '^vsc-' | sort -u); \
+	docker compose down --remove-orphans && \
+	{ [ -z "$$vsc" ] || docker rmi --force $$vsc; }
+	-docker image rm twfy-app
+	docker run --rm -v "$(CURDIR)":/work --entrypoint sh mysql:8.4.9 -c 'cd /work && rm -rf vendor node_modules www/docs/style/tailwind/tailwind.css'
+
+# Reaches past this checkout, for after switching branches or changing dependencies. Other projects lose only
+# download and build time, as volumes (where their databases live) are never pruned.
+clobber: clean
+	docker run --rm -v "$(CURDIR)":/work --entrypoint sh mysql:8.4.9 -c 'cd /work && rm -rf _mysqldata/* _mysqldata/.[!.]* _xapiandb/* shared'
+	@echo "Pruning stopped containers, unused images and build cache from ALL projects (volumes are kept)"
+	docker system prune --all --force
+
+status:
+	@docker compose ps -a --format 'table {{.Service}}\t{{.Status}}\t{{.Ports}}'
+
+logs:
+	docker compose logs -f $(SERVICE)
+
+shell:
+	@if [ -n "$$(docker compose ps -q --status running webhost)" ]; then docker compose exec webhost bash; else docker compose run --rm webhost bash; fi
 
 # Run pending Phinx migrations against the docker mysql service via the webhost container.
 # Always dumps the resulting schema to db/schema.sql so it can be committed alongside the migration.
 docker-db-migrate: vendor/autoload.php
-	docker compose up -d mysql
+	docker compose up --wait -d mysql
 	docker compose run --rm \
 		-e DB_HOST=mysql -e DB_USER=$(TEST_DB_USER) -e DB_PASSWORD=$(TEST_DB_PASSWORD) -e DB_NAME=$(DEV_DB_NAME) \
 		-v $(CURDIR):/app -w /app webhost ./vendor/bin/phinx migrate -c phinx.php
@@ -89,7 +127,7 @@ docker-db-migrate: vendor/autoload.php
 # Roll back the last Phinx migration (or pass MIGRATION_TARGET=<version> to roll back to a specific version).
 # Always dumps the resulting schema to db/schema.sql.
 docker-db-migrate-down: vendor/autoload.php
-	docker compose up -d mysql
+	docker compose up --wait -d mysql
 	docker compose run --rm \
 		-e DB_HOST=mysql -e DB_USER=$(TEST_DB_USER) -e DB_PASSWORD=$(TEST_DB_PASSWORD) -e DB_NAME=$(DEV_DB_NAME) \
 		-v $(CURDIR):/app -w /app webhost ./vendor/bin/phinx rollback -c phinx.php $(if $(MIGRATION_TARGET),-t $(MIGRATION_TARGET))
@@ -97,18 +135,18 @@ docker-db-migrate-down: vendor/autoload.php
 
 # Run Phinx seeders against the docker mysql. Pass SEEDER=<Name> to run just one,
 # e.g. `make docker-db-seed SEEDER=MemberSeeder`. With no SEEDER, all seeders run.
-# Mounts the parent directory so seeders can read fixtures from the sibling
-# openaustralia-parser checkout (used by PostcodeLookupSeeder).
+# Mounts the sibling openaustralia-parser checkout (PARSER_PATH) at /work so seeders can read its fixtures
+# (used by PostcodeLookupSeeder).
 docker-db-seed: vendor/autoload.php
-	docker compose up -d mysql
+	docker compose up --wait -d mysql
 	docker compose run --rm \
 		-e DB_HOST=mysql -e DB_USER=$(TEST_DB_USER) -e DB_PASSWORD=$(TEST_DB_PASSWORD) -e DB_NAME=$(DEV_DB_NAME) \
-		-v $(CURDIR)/..:/work -v $(CURDIR):/app -w /app webhost \
+		-v $(abspath $(PARSER_PATH)):/work/openaustralia-parser:ro -v $(CURDIR):/app -w /app webhost \
 		./vendor/bin/phinx seed:run -c phinx.php $(if $(SEEDER),-s $(SEEDER))
 
 # Dump the current docker mysql schema (no data) to db/schema.sql.
 docker-dump-schema:
-	docker compose up -d mysql
+	docker compose up --wait -d mysql
 	docker compose exec -T mysql mysqldump \
 		--user=$(TEST_DB_USER) --password=$(TEST_DB_PASSWORD) \
 		--no-data --skip-comments --skip-add-drop-table --skip-set-charset \
@@ -120,9 +158,9 @@ docker-dump-schema:
 # Create the test database in the running Docker MySQL container.
 # Only needed for existing containers where db/test-db-init.sql was not yet
 # present at first-start time.  New containers pick it up automatically via
-# the /docker-entrypoint-initdb.d/ mount in docker-compose.yml.
+# the /docker-entrypoint-initdb.d/ mount in .devcontainer/compose.yaml.
 docker-test-db-create:
-	docker compose up -d mysql
+	docker compose up --wait -d mysql
 	docker compose exec mysql mysql -uroot -pexamplepassword \
 		-e "CREATE DATABASE IF NOT EXISTS test_twfy CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci; GRANT ALL ON test_twfy.* TO 'twfyuser'@'%'; FLUSH PRIVILEGES;"
 	@echo "test_twfy database ready"
@@ -131,18 +169,23 @@ docker-test-db-migrate:
 	DB_HOST=$(TEST_DB_HOST) DB_USER=$(TEST_DB_USER) DB_PASSWORD=$(TEST_DB_PASSWORD) DB_NAME=$(TEST_DB_NAME) ./vendor/bin/phinx migrate -c phinx.php
 
 docker-db-shell:
-	docker compose up -d mysql
+	docker compose up --wait -d mysql
 	docker compose exec mysql mysql -u$(TEST_DB_USER) -p$(TEST_DB_PASSWORD) -h mysql $(DEV_DB_NAME)
 
 docker-test-db-shell:
-	docker compose up -d mysql
+	docker compose up --wait -d mysql
 	docker compose exec mysql env MYSQL_PWD=$(TEST_DB_PASSWORD) mysql -u$(TEST_DB_USER) -h mysql $(TEST_DB_NAME)
 
+# index.pl reads ../conf/general and ../../perllib, so running it from /search gives it the docker config and
+# perllib without touching the host's conf/general. The index is handed back to whoever owns the checkout, as the
+# container runs as root.
 xapian-index-docker:
-	docker compose up -d
+	docker compose up --wait -d
 	docker compose run --rm \
-		-v $(CURDIR)/..:/work \
-		webhost bash -lc "mkdir -p /app/shared/search && cd /work/twfy/scripts && ../search/index.pl $(XAPIANDB) sincefile $(XAPIANDB_LASTUPDATED)"
+		-v $(CURDIR)/search:/search:ro \
+		-v $(CURDIR)/conf/general-docker:/conf/general:ro \
+		-v $(abspath $(PERLLIB_PATH)):/perllib:ro \
+		webhost bash -lc "/search/index.pl $(XAPIANDB) sincefile $(XAPIANDB_LASTUPDATED) && chown -R $(shell id -u):$(shell id -g) /app/shared/search"
 
 lint: lint-php lint-perl
 
@@ -231,9 +274,11 @@ test-coverage: vendor/autoload.php
 	DB_HOST=$(TEST_DB_HOST) DB_USER=$(TEST_DB_USER) DB_PASSWORD=$(TEST_DB_PASSWORD) DB_NAME=$(TEST_DB_NAME) XDEBUG_MODE=coverage ./vendor/bin/phpunit --coverage-text --coverage-clover=coverage/clover.xml --coverage-html=coverage/html && \
 	echo && echo "Open coverage/html/index.html to see the detailed coverage report"
 
+# Migrates the test database first, as a fresh one is empty. The report is handed back to whoever owns the checkout,
+# as the container runs as root.
 test-coverage-docker:
-	docker compose up -d
-	docker compose run --rm -e DB_HOST=mysql -e DB_USER=$(TEST_DB_USER) -e DB_PASSWORD=$(TEST_DB_PASSWORD) -e DB_NAME=$(TEST_DB_NAME) -e XDEBUG_MODE=coverage -v $(CURDIR):/app -w /app webhost bash -lc "php -m | grep -qi xdebug || { echo 'xdebug is missing in twfy-app. Run make docker-build first.'; exit 1; }; ./vendor/bin/phpunit --coverage-text --coverage-clover=coverage/clover.xml --coverage-html=coverage/html $(TEST_ARGS)"
+	docker compose up --wait -d
+	docker compose run --rm -e DB_HOST=mysql -e DB_USER=$(TEST_DB_USER) -e DB_PASSWORD=$(TEST_DB_PASSWORD) -e DB_NAME=$(TEST_DB_NAME) -e XDEBUG_MODE=coverage -v $(CURDIR):/app -w /app webhost bash -lc "php -m | grep -qi xdebug || { echo 'xdebug is missing in twfy-app. Run make docker-build first.'; exit 1; }; ./vendor/bin/phinx migrate -c phinx.php || exit 1; ./vendor/bin/phpunit --coverage-text --coverage-clover=coverage/clover.xml --coverage-html=coverage/html $(TEST_ARGS); status=\$$?; chown -R $(shell id -u):$(shell id -g) coverage; exit \$$status"
 
 
 scripts/run-with-lockfile: scripts/run-with-lockfile.c
