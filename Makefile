@@ -1,9 +1,6 @@
 # PLATFORM=linux/arm64,linux/amd64
 PLATFORM=linux/amd64
 
-TWFY_HTTP_PORT ?= 80
-TWFY_MYSQL_PORT ?= 3306
-
 TEST_DB_HOST ?= 127.0.0.1
 TEST_DB_USER ?= twfyuser
 TEST_DB_PASSWORD ?= twfypass
@@ -12,6 +9,8 @@ DEV_DB_NAME ?= twfy
 SONAR_SCANNER ?= sonar-scanner
 XAPIANDB ?= /app/shared/search/searchdb
 XAPIANDB_LASTUPDATED ?= $(XAPIANDB)/../searchdb-lastupdated
+PERLLIB_PATH ?= ../perllib
+PARSER_PATH ?= ../openaustralia-parser
 
 .PHONY: help up services-up down clean clobber status logs shell docker-build xapian-index-docker lint lint-perl lint-perl-ci lint-perl-critic lint-php lint-php-ci phpcs phpcs-ci phpcs-verbose phpcs-sonar sonar-ci dependencies tailwind-build tailwind-watch playwright-update install setup test test-all install-xdebug test-coverage test-coverage-docker docker-test-db-create docker-test-db-migrate docker-db-shell docker-test-db-shell
 
@@ -63,7 +62,7 @@ help:
 	@echo "  PHPCS_ARGS     Extra args for phpcs targets e.g."
 	@echo "                   --report=full          show each violation in context"
 	@echo "                   www/path/to/file.php   check a specific file"
-	@echo "  TWFY_HTTP_PORT, TWFY_MYSQL_PORT, PHPLIB_PATH - see \"Port clashes\" in AGENTS.md"
+	@echo "  TWFY_HTTP_PORT, TWFY_MYSQL_PORT, PHPLIB_PATH, PERLLIB_PATH, PARSER_PATH - see \"Port clashes\" in AGENTS.md"
 	@echo "  XAPIANDB, XAPIANDB_LASTUPDATED - override index and timestamp paths for xapian-index-docker"
 
 docker-build:
@@ -104,7 +103,6 @@ clean:
 # Reaches past this checkout, for after switching branches or changing dependencies. Other projects lose only
 # download and build time, as volumes (where their databases live) are never pruned.
 clobber: clean
-	docker compose down --volumes
 	docker run --rm -v "$(CURDIR)":/work --entrypoint sh mysql:8.4.9 -c 'cd /work && rm -rf _mysqldata/* _mysqldata/.[!.]* _xapiandb/* shared'
 	@echo "Pruning stopped containers, unused images and build cache from ALL projects (volumes are kept)"
 	docker system prune --all --force
@@ -138,13 +136,13 @@ docker-db-migrate-down: vendor/autoload.php
 
 # Run Phinx seeders against the docker mysql. Pass SEEDER=<Name> to run just one,
 # e.g. `make docker-db-seed SEEDER=MemberSeeder`. With no SEEDER, all seeders run.
-# Mounts the parent directory so seeders can read fixtures from the sibling
-# openaustralia-parser checkout (used by PostcodeLookupSeeder).
+# Mounts the sibling openaustralia-parser checkout (PARSER_PATH) at /work so seeders can read its fixtures
+# (used by PostcodeLookupSeeder).
 docker-db-seed: vendor/autoload.php
 	docker compose up --wait -d mysql
 	docker compose run --rm \
 		-e DB_HOST=mysql -e DB_USER=$(TEST_DB_USER) -e DB_PASSWORD=$(TEST_DB_PASSWORD) -e DB_NAME=$(DEV_DB_NAME) \
-		-v $(CURDIR)/..:/work -v $(CURDIR):/app -w /app webhost \
+		-v $(abspath $(PARSER_PATH)):/work/openaustralia-parser:ro -v $(CURDIR):/app -w /app webhost \
 		./vendor/bin/phinx seed:run -c phinx.php $(if $(SEEDER),-s $(SEEDER))
 
 # Dump the current docker mysql schema (no data) to db/schema.sql.
@@ -161,7 +159,7 @@ docker-dump-schema:
 # Create the test database in the running Docker MySQL container.
 # Only needed for existing containers where db/test-db-init.sql was not yet
 # present at first-start time.  New containers pick it up automatically via
-# the /docker-entrypoint-initdb.d/ mount in docker-compose.yml.
+# the /docker-entrypoint-initdb.d/ mount in .devcontainer/compose.yaml.
 docker-test-db-create:
 	docker compose up --wait -d mysql
 	docker compose exec mysql mysql -uroot -pexamplepassword \
@@ -179,11 +177,16 @@ docker-test-db-shell:
 	docker compose up --wait -d mysql
 	docker compose exec mysql env MYSQL_PWD=$(TEST_DB_PASSWORD) mysql -u$(TEST_DB_USER) -h mysql $(TEST_DB_NAME)
 
+# index.pl reads ../conf/general and ../../perllib, so running it from /search gives it the docker config and
+# perllib without touching the host's conf/general. The index is handed back to whoever owns the checkout, as the
+# container runs as root.
 xapian-index-docker:
-	docker compose up -d
+	docker compose up --wait -d
 	docker compose run --rm \
-		-v $(CURDIR)/..:/work \
-		webhost bash -lc "mkdir -p /app/shared/search && cd /work/twfy/scripts && ../search/index.pl $(XAPIANDB) sincefile $(XAPIANDB_LASTUPDATED)"
+		-v $(CURDIR)/search:/search:ro \
+		-v $(CURDIR)/conf/general-docker:/conf/general:ro \
+		-v $(abspath $(PERLLIB_PATH)):/perllib:ro \
+		webhost bash -lc "/search/index.pl $(XAPIANDB) sincefile $(XAPIANDB_LASTUPDATED) && chown -R $(shell id -u):$(shell id -g) /app/shared/search"
 
 lint: lint-php lint-perl
 
@@ -272,9 +275,11 @@ test-coverage: vendor/autoload.php
 	DB_HOST=$(TEST_DB_HOST) DB_USER=$(TEST_DB_USER) DB_PASSWORD=$(TEST_DB_PASSWORD) DB_NAME=$(TEST_DB_NAME) XDEBUG_MODE=coverage ./vendor/bin/phpunit --coverage-text --coverage-clover=coverage/clover.xml --coverage-html=coverage/html && \
 	echo && echo "Open coverage/html/index.html to see the detailed coverage report"
 
+# Migrates the test database first, as a fresh one is empty. The report is handed back to whoever owns the checkout,
+# as the container runs as root.
 test-coverage-docker:
-	docker compose up -d
-	docker compose run --rm -e DB_HOST=mysql -e DB_USER=$(TEST_DB_USER) -e DB_PASSWORD=$(TEST_DB_PASSWORD) -e DB_NAME=$(TEST_DB_NAME) -e XDEBUG_MODE=coverage -v $(CURDIR):/app -w /app webhost bash -lc "php -m | grep -qi xdebug || { echo 'xdebug is missing in twfy-app. Run make docker-build first.'; exit 1; }; ./vendor/bin/phpunit --coverage-text --coverage-clover=coverage/clover.xml --coverage-html=coverage/html $(TEST_ARGS)"
+	docker compose up --wait -d
+	docker compose run --rm -e DB_HOST=mysql -e DB_USER=$(TEST_DB_USER) -e DB_PASSWORD=$(TEST_DB_PASSWORD) -e DB_NAME=$(TEST_DB_NAME) -e XDEBUG_MODE=coverage -v $(CURDIR):/app -w /app webhost bash -lc "php -m | grep -qi xdebug || { echo 'xdebug is missing in twfy-app. Run make docker-build first.'; exit 1; }; ./vendor/bin/phinx migrate -c phinx.php || exit 1; ./vendor/bin/phpunit --coverage-text --coverage-clover=coverage/clover.xml --coverage-html=coverage/html $(TEST_ARGS); status=\$$?; chown -R $(shell id -u):$(shell id -g) coverage; exit \$$status"
 
 
 scripts/run-with-lockfile: scripts/run-with-lockfile.c

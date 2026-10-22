@@ -115,12 +115,13 @@ cloned next to this one.
 ### If the app won't start
 
 Startup fails loudly on purpose, so a broken setup gets noticed instead of hiding behind a container that looks fine.
-If setup fails, or takes longer than `START_LIMIT` (5 minutes here, set in `.devcontainer/compose.yaml`), the `webhost`
-container stops, `make up` reports the failure, and the dev container shows an error instead of opening.
+If setup fails, the `webhost` container stops. If it takes longer than `START_LIMIT` (5 minutes here, set in
+`.devcontainer/compose.yaml`), the container is marked unhealthy, though setup carries on in the background. Either way
+`make up` reports the failure, and the dev container shows an error instead of opening.
 
 To fix it:
 
-1. `make status` shows which container stopped, and `make logs SERVICE=webhost` shows why.
+1. `make status` shows which container stopped or is unhealthy, and `make logs SERVICE=webhost` shows why.
 2. `make shell` opens a shell in a fresh `webhost` container even when it has stopped, so you can rerun the setup by hand
    and fix the problem.
 3. `make up`, or reopen the dev container, to start again.

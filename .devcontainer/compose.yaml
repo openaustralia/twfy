@@ -29,14 +29,17 @@ services:
       DB_USER: twfyuser
       DB_PASSWORD: twfypass
       DB_NAME: twfy
-    # Installs PHP and npm dependencies and builds tailwind.css if they're missing, hands them to whoever owns the
-    # checkout (so host tools can still change them), and applies any pending migrations, so a fresh checkout comes up
-    # working. Seed data is separate: make docker-db-seed.
+    # Installs PHP and npm dependencies and builds tailwind.css if they're missing, and applies any pending migrations,
+    # so a fresh checkout comes up working. What it installs, and the mount points Docker creates as root, are handed
+    # to whoever owns the checkout, so host tools can still change them. Any failure stops the container.
+    # Seed data is separate: make docker-db-seed.
     command: >
-      sh -c 'cd /app &&
-             { [ -f vendor/autoload.php ] || composer install --no-interaction --prefer-dist; } &&
-             { [ -f www/docs/style/tailwind/tailwind.css ] || { npm ci && npm run build:css; }; } &&
-             chown -R "$$(stat -c %u:%g /app)" vendor node_modules www/docs/style/tailwind/tailwind.css _xapiandb shared data 2>/dev/null;
+      sh -c 'cd /app && owner=$$(stat -c %u:%g /app) &&
+             chown "$$owner" shared shared/search data &&
+             { [ -f vendor/autoload.php ] ||
+               { composer install --no-interaction --prefer-dist && chown -R "$$owner" vendor; }; } &&
+             { [ -f www/docs/style/tailwind/tailwind.css ] ||
+               { npm ci && npm run build:css && chown -R "$$owner" node_modules www/docs/style/tailwind/tailwind.css; }; } &&
              vendor/bin/phinx migrate -c phinx.php &&
              exec apache2ctl -D FOREGROUND'
     depends_on:

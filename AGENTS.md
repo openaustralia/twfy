@@ -51,7 +51,7 @@ make clobber      # also remove the data, and prune unused Docker images and cac
 ```
 
 `make up` and `make services-up` return once every service passes its healthcheck. Run `make` for the full list.
-A start that takes longer than `START_LIMIT` (in `.devcontainer/compose.yaml`) counts as failed, and stops loudly on purpose;
+A start that takes longer than `START_LIMIT` (in `.devcontainer/compose.yaml`) counts as failed and is reported loudly on purpose;
 see "If the app won't start" in the README.
 
 `conf/general` is gitignored, and only host-side tools need it (`cp conf/general-example.local-dev conf/general`):
@@ -73,13 +73,17 @@ container, as some files are owned by container users.
 |-------------------|-----------------|-------------------------------------------------------------------------|
 | `TWFY_HTTP_PORT`  | 80              | the site                                                                |
 | `TWFY_MYSQL_PORT` | 3306            | MySQL. `Makefile.dev` passes it on to host-side scripts as `DB_PORT`    |
-| `PHPLIB_PATH`     | `../phplib`     | the sibling phplib checkout, which a worktree has to point at by hand  |
+| `PHPLIB_PATH`     | `../../phplib`  | the sibling phplib checkout. Relative to `.devcontainer/`, so an absolute path is simplest in a worktree |
+| `PERLLIB_PATH`    | `../perllib`    | the sibling perllib checkout, for `make xapian-index-docker`. Relative to the repo root |
+| `PARSER_PATH`     | `../openaustralia-parser` | the sibling parser checkout, for `make docker-db-seed`. Relative to the repo root |
 
 Put overrides in `.env` at the repo root, which is gitignored, with different values in each worktree. Compose reads
 it however you start the stack. Containers and data are named `twfy` (`name:` in `compose.yaml`), so a second checkout of
 this repo, such as a worktree, shares them unless its `.env` also sets its own `COMPOSE_PROJECT_NAME`. For
 host-side commands to see the same values, put `dotenv` in a gitignored `.envrc` if you use direnv, or
-run `set -a; . ./.env; set +a`. Services you rarely need from the host get a random port, which `make status` shows.
+run `set -a; . ./.env; set +a`. Variables already set in your shell win over `.env`, and a worktree inside the main
+checkout (such as under `.claude/worktrees/`) picks up the main checkout's `.envrc`, so give each worktree its own
+`.envrc`. Services you rarely need from the host get a random port, which `make status` shows.
 To see what holds a port, use `ss -ltnp | grep 3306` (Linux) or `lsof -iTCP:3306 -sTCP:LISTEN` (macOS); a database
 server installed on the host is the usual culprit.
 
