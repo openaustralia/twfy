@@ -217,46 +217,31 @@ make test
 ./vendor/bin/phpunit tests/
 ```
 
-To run tests with database integration, start MySQL first:
+To run tests with database integration on the host, start MySQL and migrate the test database first:
 
 ```bash
-make docker-run
-```
-
-This starts both the webserver and MySQL container. Wait a few seconds for MySQL to be ready, then run:
-
-```bash
+make services-up
+make docker-test-db-migrate
 make test-all
 ```
 
 ### Running tests in Docker (simplest method)
 
-To run all tests inside Docker with automatic database setup:
-
-```bash
-make test-docker
-```
-
-This will:
-- Start the MySQL container
-- Load the database schema
-- Run all tests with database integration
-
-No need to manually start containers or set environment variables.
-
-### Running tests with coverage
-
-To generate code coverage reports (requires Xdebug or PCOV):
-
-```bash
-make docker-run
-make test-coverage
-```
-
-Or run coverage inside Docker (no host PHP extensions needed):
+To run all tests inside Docker, with coverage and no host PHP extensions needed:
 
 ```bash
 make test-coverage-docker
+```
+
+This starts the stack, migrates the test database and runs every test, including the database integration tests.
+
+### Running tests with coverage on the host
+
+To generate code coverage reports on the host (requires Xdebug or PCOV), start MySQL and migrate the test database as
+above, then run:
+
+```bash
+make test-coverage
 ```
 
 Coverage reports are generated in `coverage/clover.xml` (for SonarCloud) and `coverage/html/` (browsable HTML).

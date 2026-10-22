@@ -90,7 +90,7 @@ server installed on the host is the usual culprit.
 ## Commands
 
 ```
-make help                 # target list (but see gotcha below)
+make help                 # target list
 make lint                 # php -l and perl -c sweeps
 make phpcs                # phpcs (Drupal standard, phpcs.xml) over www and scripts
 ./vendor/bin/phpcbf <files>
@@ -108,8 +108,6 @@ SonarCloud, then a **schema-check** job that migrates a fresh database and diffs
 
 - **Lint after every edit.** Run `php -l` and `./vendor/bin/phpcs --standard=phpcs.xml` on each PHP file you change,
   straight after changing it, and fix what they report before moving on. Don't leave it to CI.
-- **`make test-docker` doesn't exist** even though `README.md` and `make help` mention it; the real target is
-  `make test-coverage-docker`.
 - **Migrations are dual-tracked.** After any Phinx migration, `db/schema.sql` must be regenerated
   (`make docker-dump-schema`) and committed, or the schema-check CI job fails. `make docker-db-migrate` does this
   for you. Keep MySQL pinned at 8.4 everywhere - `mysqldump` output is version-sensitive and drift shows up as
