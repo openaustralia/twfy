@@ -89,20 +89,21 @@ The easiest way to run the whole stack (Apache + PHP + MySQL) is via Docker.
 
 ### First-time setup
 
-From a fresh checkout:
+From a fresh checkout, with `phplib` and `openaustralia-parser` cloned alongside this repo:
 
 ```bash
-cp conf/general-example.local-dev conf/general   # local dev config
-make dependencies                                # composer install (needed by db targets)
-make docker                                      # build image + start webhost & mysql containers
-make docker-db-migrate                           # create schema via Phinx migrations
-make docker-db-seed                              # load sample dev data (members, hansard, postcodes, ...)
-make xapian-index-docker                         # build the Xapian search index
+make up                  # build, install dependencies, migrate, then start the site at http://localhost
+make docker-db-seed      # load sample dev data (members, hansard, postcodes, ...)
+make xapian-index-docker # build the Xapian search index
 ```
 
-The site is then available at <http://localhost> and MySQL at
-`127.0.0.1:3306`. Override the host ports with `TWFY_HTTP_PORT` and
-`TWFY_MYSQL_PORT`, e.g. `TWFY_HTTP_PORT=8080 make docker-run`.
+The first `make up` takes a while, as the image builds Xapian's PHP bindings from source. Or open the repo as a dev
+container, which runs the same stack. `make` lists the other targets, such as `make status`, `make down`,
+`make clean` and `make clobber`. If a port is already in use, or you run more than one worktree at once, see
+[Port clashes](AGENTS.md#port-clashes) in AGENTS.md.
+
+For host-side tools such as phpunit and phinx, also run `cp conf/general-example.local-dev conf/general` and
+`make dependencies`.
 
 `make docker-db-seed` runs every seeder in `db/seeds/`. To load just one,
 pass `SEEDER=<Name>`, e.g. `make docker-db-seed SEEDER=PostcodeLookupSeeder`.
@@ -111,22 +112,27 @@ re-running is safe. `PostcodeLookupSeeder` reads a fixture from the
 sibling `../openaustralia-parser` checkout, so make sure that repo is
 cloned next to this one.
 
+### If the app won't start
+
+Startup fails loudly on purpose, so a broken setup gets noticed instead of hiding behind a container that looks fine.
+If setup fails, the `webhost` container stops. If it takes longer than `START_LIMIT` (5 minutes here, set in
+`.devcontainer/compose.yaml`), the container is marked unhealthy, though setup carries on in the background. Either way
+`make up` reports the failure, and the dev container shows an error instead of opening.
+
+To fix it:
+
+1. `make status` shows which container stopped or is unhealthy, and `make logs SERVICE=webhost` shows why.
+2. `make shell` opens a shell in a fresh `webhost` container even when it has stopped, so you can rerun the setup by hand
+   and fix the problem.
+3. `make up`, or reopen the dev container, to start again.
+
+On a slow machine, a longer limit can go in `.env`, for example `START_LIMIT=20m`.
+
 ### Day-to-day
 
-Once the image is built and the database has been seeded, restart the
-stack with:
-
-```bash
-make docker-run                  # start containers in the background
-```
-
-Apply any new migrations after pulling:
-
-```bash
-make docker-db-migrate           # apply pending Phinx migrations
-```
-
-Stop everything with `docker compose down`.
+`make up` applies any new migrations each time it starts the site. `make down`
+stops everything and keeps the database; `make clean` also forces a rebuild, still keeping it; `make clobber`
+deletes it too and prunes unused Docker images machine-wide.
 
 ### Homepage screenshots with Playwright
 
@@ -156,7 +162,7 @@ artifact rather than comparing them with local data baselines.
 ### MySQL version
 
 We run **MySQL 8.4** in production. The `mysql:8.4`
-image is pinned in [`docker-compose.yml`](docker-compose.yml) and in the
+image is pinned in [`.devcontainer/compose.yaml`](.devcontainer/compose.yaml) and in the
 GitHub Actions workflow (`.github/workflows/php.yml`) so local
 development, CI and production stay aligned. Schema dumps from
 `mysqldump` are sensitive to the server version, so keep these in sync —
@@ -211,46 +217,31 @@ make test
 ./vendor/bin/phpunit tests/
 ```
 
-To run tests with database integration, start MySQL first:
+To run tests with database integration on the host, start MySQL and migrate the test database first:
 
 ```bash
-make docker-run
-```
-
-This starts both the webserver and MySQL container. Wait a few seconds for MySQL to be ready, then run:
-
-```bash
+make services-up
+make docker-test-db-migrate
 make test-all
 ```
 
 ### Running tests in Docker (simplest method)
 
-To run all tests inside Docker with automatic database setup:
-
-```bash
-make test-docker
-```
-
-This will:
-- Start the MySQL container
-- Load the database schema
-- Run all tests with database integration
-
-No need to manually start containers or set environment variables.
-
-### Running tests with coverage
-
-To generate code coverage reports (requires Xdebug or PCOV):
-
-```bash
-make docker-run
-make test-coverage
-```
-
-Or run coverage inside Docker (no host PHP extensions needed):
+To run all tests inside Docker, with coverage and no host PHP extensions needed:
 
 ```bash
 make test-coverage-docker
+```
+
+This starts the stack, migrates the test database and runs every test, including the database integration tests.
+
+### Running tests with coverage on the host
+
+To generate code coverage reports on the host (requires Xdebug or PCOV), start MySQL and migrate the test database as
+above, then run:
+
+```bash
+make test-coverage
 ```
 
 Coverage reports are generated in `coverage/clover.xml` (for SonarCloud) and `coverage/html/` (browsable HTML).
