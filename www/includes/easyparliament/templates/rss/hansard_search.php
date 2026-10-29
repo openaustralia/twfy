@@ -4,15 +4,14 @@
  * @file
  */
 
-global $SEARCHENGINE;
 header("Content-Type: text/xml; charset=iso-8859-1");
 print '<?xml version="1.0" encoding="iso-8859-1"?>'; ?>
 
 <rss version="2.0" xmlns:openSearch="http://a9.com/-/spec/opensearchrss/1.0/">
 <channel>
-<title>Search: <?php echo $SEARCHENGINE->query_description_short() ?> (OpenAustralia.org)</title>
+<title>Search: <?php echo $data['searchdescription_short'] ?> (OpenAustralia.org)</title>
 <link>http://www.openaustralia.org<?php echo htmlentities(str_replace('rss/', '', $_SERVER['REQUEST_URI'])) ?></link>
-<description>Search results for <?php echo $SEARCHENGINE->query_description_short() ?> at OpenAustralia.org</description>
+<description>Search results for <?php echo $data['searchdescription_short'] ?> at OpenAustralia.org</description>
 <language>en-gb</language>
 <copyright>Parliamentary Copyright.</copyright>
 <?php if (isset($data['info']['total_results'])) { ?>
