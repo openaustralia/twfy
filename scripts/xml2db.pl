@@ -48,13 +48,12 @@ use Uncapitalise;
 my $outputfilter = 'safe';
 #DBI->trace(1);
 
-use vars qw($all $recent $date $datefrom $dateto $debates $westminhall $wms $lordsdebates $ni $members $force $quiet $cronquiet $memtest $standing $scotland $scotwrans);
+use vars qw($all $recent $date $datefrom $dateto $debates $wms $lordsdebates $ni $members $force $quiet $cronquiet $memtest $standing $scotland $scotwrans);
 my $result = GetOptions ( "all" => \$all,
                         "recent" => \$recent,
                         "date=s" => \$date,
                         "from=s" => \$datefrom,
                         "to=s" => \$dateto,
-                        "westminhall" => \$westminhall,
                         "debates" => \$debates,
                         "wms" => \$wms,
                         "lordsdebates" => \$lordsdebates,
@@ -76,7 +75,7 @@ $c++ if $date;
 $c++ if ($datefrom || $dateto);
 $c = 1 if $memtest;
 
-if ((!$result) || ($c != 1) || (!$debates && !$westminhall && !$wms && !$members && !$memtest && !$lordsdebates && !$ni && !$standing && !$scotland && !$scotwrans))
+if ((!$result) || ($c != 1) || (!$debates && !$wms && !$members && !$memtest && !$lordsdebates && !$ni && !$standing && !$scotland && !$scotwrans))
 {
 print <<END;
 
@@ -88,7 +87,6 @@ database id.
 
 --debates - process Commons Debates
 --members - process Members
---westminhall - process Westminster Hall
 --wms - process Written Ministerial Statements (C&L)
 --lordsdebates - process Lords Debates
 --ni - process Northern Ireland Assembly debates
@@ -143,9 +141,8 @@ use vars qw(%gids %grdests %ignorehistorygids $tallygidsmode $tallygidsmodedummy
 use vars qw(%membertoperson);
 use vars qw($current_file);
 
-use vars qw($debatesdir $westminhalldir $wmsdir $lordswmsdir $lordsdebatesdir $nidir $standingdir $scotlanddir $scotwransdir);
+use vars qw($debatesdir $wmsdir $lordswmsdir $lordsdebatesdir $nidir $standingdir $scotlanddir $scotwransdir);
 $debatesdir = $parldata . "scrapedxml/representatives_debates/";
-$westminhalldir = $parldata . "scrapedxml/westminhall/";
 $wmsdir = $parldata . "scrapedxml/wms/";
 $lordswmsdir = $parldata . "scrapedxml/lordswms/";
 $lordsdebatesdir = $parldata . "scrapedxml/senate_debates/";
@@ -271,7 +268,6 @@ sub process_type {
 
 # Process main data
 process_type([""], [$debatesdir], \&add_debates_day) if ($debates) ;
-process_type(["westminster"], [$westminhalldir], \&add_westminhall_day) if ($westminhall);
 process_type(["ministerial", "lordswms"], [$wmsdir, $lordswmsdir], \&add_wms_day) if ($wms);
 process_type([""], [$lordsdebatesdir], \&add_lordsdebates_day) if ($lordsdebates);
 process_type(['ni'], [$nidir], \&add_ni_day) if ($ni);
@@ -1238,41 +1234,6 @@ sub add_lordsdebates_day
         $hpos = 0; $currsection = 0; $currsubsection = 0; $promotedheading = 0; $inoralanswers = 0;
         $tallygidsmode = 0; %gids = ();
         parsefile_glob($twig, $parldata . "scrapedxml/senate_debates/" . $curdate. "*.xml");
-
-        # and delete anything that has been redirected (moving comments etc)
-        delete_redirected_gids($date, \%grdests);
-
-        undef $twig;
-}
-
-##########################################################################
-# Westminster Hall (as a stream of headings and paragraphs)
-
-sub add_westminhall_day
-{
-        my ($date) = @_;
-        my $twig = XML::Twig->new(twig_handlers => {
-                'speech' => sub { do_load_speech($_, 2, 0, $_->sprint(1)) },
-                'minor-heading' => sub { do_load_subheading($_, 2, strip_string($_->sprint(1))) },
-                'major-heading' => sub { load_debate_heading($_, 2) },
-                'oral-heading' => sub { $inoralanswers = 1; },
-                'division' => sub { die "Division in Westminter Hall, not handled yet!" },
-                'gidredirect' => sub { do_load_gidredirect($_, 2) },
-                }, output_filter => $outputfilter );
-        $curdate = $date;
-
-        # find out what gids there are (using tallygidsmode)
-        $hpos = 0; $currsection = 0; $currsubsection = 0; $promotedheading = 0; $inoralanswers = 0;
-        $tallygidsmode = 1; %gids = (); %grdests = (); $tallygidsmodedummycount = 10;
-        parsefile_glob($twig, $parldata . "scrapedxml/westminhall/westminster" . $curdate. "*.xml");
-        # see if there are deleted gids
-        my @gids = keys %gids;
-        check_extra_gids($date, \@gids, "major = 2");
-
-        # make the modifications
-        $hpos = 0; $currsection = 0; $currsubsection = 0; $promotedheading = 0; $inoralanswers = 0;
-        $tallygidsmode = 0; %gids = ();
-        parsefile_glob($twig, $parldata . "scrapedxml/westminhall/westminster" . $curdate. "*.xml");
 
         # and delete anything that has been redirected (moving comments etc)
         delete_redirected_gids($date, \%grdests);
