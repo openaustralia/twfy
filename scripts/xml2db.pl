@@ -139,7 +139,7 @@ if ($memtest)
 
 ##########################################################################
 
-use vars qw($hpos $curdate);
+use vars qw($hpos $curdate $curproof);
 use vars qw($currsection $currsubsection $inoralanswers $promotedheading);
 use vars qw(%gids %grdests %ignorehistorygids $tallygidsmode $tallygidsmodedummycount);
 use vars qw(%membertoperson);
@@ -409,6 +409,7 @@ sub parsefile_glob {
         %ignorehistorygids = ();
         foreach (@files) {
                 $current_file = $_;
+                $curproof = undef;
                 #print "twigging: $_\n";
                 $twig->parsefile($_);
         }
@@ -419,7 +420,7 @@ sub parsefile_glob {
 
 my ($dbh,
         $epadd, $epcheck, $epupdate,
-        $hadd, $hcheck, $hupdate, $hdelete, $hdeletegid,
+        $hadd, $hcheck, $hupdate, $hproofupdate, $hdelete, $hdeletegid,
         $constituencyadd, $constituencydel, $memberadd, $memberexist, $membercheck,
         $gradd, $grcheck, $grdeletegid,
         $lastid);
@@ -441,11 +442,12 @@ sub db_connect
         $epupdate = $dbh->prepare("UPDATE epobject SET body = ?, modified = NOW() WHERE epobject_id = ?");
 
         # hansard object queries
-        $hadd = $dbh->prepare("INSERT INTO hansard (epobject_id, gid, htype, speaker_id, major, minor, section_id, subsection_id, hpos, hdate, htime, source_url, created, modified)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())");
-        $hcheck = $dbh->prepare("SELECT epobject_id, gid, htype, speaker_id, major, minor, section_id, subsection_id, hpos, hdate, htime, source_url FROM hansard WHERE gid = ?");
-        $hupdate = $dbh->prepare("UPDATE hansard SET gid = ?, htype = ?, speaker_id = ?, major = ?, minor = ?, section_id = ?, subsection_id = ?, hpos = ?, hdate = ?, htime = ?, source_url = ?, modified = NOW()
+        $hadd = $dbh->prepare("INSERT INTO hansard (epobject_id, gid, htype, speaker_id, major, minor, section_id, subsection_id, hpos, hdate, htime, source_url, proof, created, modified)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())");
+        $hcheck = $dbh->prepare("SELECT epobject_id, gid, htype, speaker_id, major, minor, section_id, subsection_id, hpos, hdate, htime, source_url, proof FROM hansard WHERE gid = ?");
+        $hupdate = $dbh->prepare("UPDATE hansard SET gid = ?, htype = ?, speaker_id = ?, major = ?, minor = ?, section_id = ?, subsection_id = ?, hpos = ?, hdate = ?, htime = ?, source_url = ?, proof = ?, modified = NOW()
                 WHERE epobject_id = ? AND gid = ?");
+        $hproofupdate = $dbh->prepare("UPDATE hansard SET proof = ? WHERE epobject_id = ?");
         $hdelete = $dbh->prepare("DELETE FROM hansard WHERE gid = ? AND epobject_id = ?");
         $hdeletegid = $dbh->prepare("DELETE FROM hansard WHERE gid = ?");
 
@@ -745,7 +747,17 @@ sub db_addpair
                         die "Deleted " . $delcount . " rows when expected to delete one for " . $gid if $delcount != 1;
                 } else {
                         # Check to see if the existing hansard object and new one are the same
-                        if (!compare_arrays(\@hvals, $hparams))
+                        my @hvals_noproof = @hvals[0 .. $#hvals - 1];
+                        my @hparams_noproof = @$hparams[0 .. $#$hparams - 1];
+                        if (compare_arrays(\@hvals_noproof, \@hparams_noproof))
+                        {
+                                # Only proof can differ. Leave modified alone, so the search index and alerts see no change.
+                                if (!compare_arrays([$hvals[-1]], [$$hparams[-1]])) {
+                                        $hproofupdate->execute($$hparams[-1], $epid);
+                                        $hproofupdate->finish();
+                                }
+                        }
+                        elsif (!compare_arrays(\@hvals, $hparams))
                         {
                                 # They differ - update the existing hansard object
                                 die "Sizes incompatible when comparing hansard objects (in " . $gid . ")" if $#hvals != $#$hparams;
@@ -1226,6 +1238,8 @@ sub add_debates_day
                 'oral-heading' => sub { $inoralanswers = 1 },
                 'division' => sub { load_debate_division($_, 1) },
                 'gidredirect' => sub { do_load_gidredirect($_, 1) },
+                }, start_tag_handlers => {
+                'debates' => sub { $curproof = $_[1]->att('proof') },
                 }, output_filter => $outputfilter );
         $curdate = $date;
 
@@ -1292,6 +1306,8 @@ sub add_lordsdebates_day
                 'major-heading' => sub { load_debate_heading($_, 101) },
                 'division' => sub { load_debate_division($_, 101) },
                 'gidredirect' => sub { do_load_gidredirect($_, 101) },
+                }, start_tag_handlers => {
+                'debates' => sub { $curproof = $_[1]->att('proof') },
                 }, output_filter => $outputfilter );
         $curdate = $date;
 
@@ -1775,7 +1791,7 @@ sub do_load_speech
         }
 
         my @epparam = ($pretext . $text);
-        my @hparam = ($id, $type, $speaker, $major, $minor, $currsection, $currsubsection, $hpos, $curdate, $htime, $url);
+        my @hparam = ($id, $type, $speaker, $major, $minor, $currsection, $currsubsection, $hpos, $curdate, $htime, $url, $curproof);
         my $epid = db_addpair(\@epparam, \@hparam);
 }
 
@@ -1801,7 +1817,7 @@ sub do_load_heading
         my $speaker = 0;
 
         my @epparam = (fix_case($text));
-        my @hparam = ($speech->att('id'), $type, $speaker, $major, $minor, 0, 0, $hpos, $curdate, $htime, $url);
+        my @hparam = ($speech->att('id'), $type, $speaker, $major, $minor, 0, 0, $hpos, $curdate, $htime, $url, $curproof);
         my $epid = db_addpair(\@epparam, \@hparam);
 
         $currsubsection = $epid;
@@ -1848,7 +1864,7 @@ sub do_load_subheading
         my $speaker = 0;
 
         my @epparam = (fix_case($text));
-        my @hparam = ($speech->att('id'), $type, $speaker, $major, $minor, $currsection, 0, $hpos, $curdate, $htime, $url);
+        my @hparam = ($speech->att('id'), $type, $speaker, $major, $minor, $currsection, 0, $hpos, $curdate, $htime, $url, $curproof);
         my $epid = db_addpair(\@epparam, \@hparam);
 
         $currsubsection = $epid;
