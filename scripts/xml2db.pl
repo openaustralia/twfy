@@ -432,8 +432,12 @@ sub db_connect
         # the docker-compose service name, only resolvable from inside the docker network).
         my $db_host = $ENV{DB_HOST} || mySociety::Config::get('DB_HOST');
         my $db_port = $ENV{DB_PORT} || 3306;
-        my $dsn = 'DBI:mysql:database=' . mySociety::Config::get('DB_NAME') . ':host=' . $db_host . ':port=' . $db_port;
-        $dbh = DBI->connect($dsn, mySociety::Config::get('DB_USER'), mySociety::Config::get('DB_PASSWORD'), { RaiseError => 1, PrintError => 0, mysql_enable_utf8mb4 => 1 });
+        # DB_NAME/DB_USER/DB_PASSWORD env vars win over conf/general in the same way.
+        my $db_name = $ENV{DB_NAME} || mySociety::Config::get('DB_NAME');
+        my $db_user = $ENV{DB_USER} || mySociety::Config::get('DB_USER');
+        my $db_password = defined $ENV{DB_PASSWORD} ? $ENV{DB_PASSWORD} : mySociety::Config::get('DB_PASSWORD');
+        my $dsn = 'DBI:mysql:database=' . $db_name . ':host=' . $db_host . ':port=' . $db_port;
+        $dbh = DBI->connect($dsn, $db_user, $db_password, { RaiseError => 1, PrintError => 0, mysql_enable_utf8mb4 => 1 });
 
         # epobject queries
         $epadd = $dbh->prepare("INSERT INTO epobject (title, body, type, created, modified)
