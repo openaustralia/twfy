@@ -5,6 +5,9 @@
  * First some things to help make our PHP nicer and betterer.
  */
 
+use Sentry\State\Scope;
+use Sentry\Event;
+
 error_reporting(E_ALL);
 ini_set('memory_limit', 32 * 1024 * 1024);
 
@@ -60,10 +63,66 @@ $old_error_handler = set_error_handler("error_handler");
 // Sentry::init() registers its own error/exception/shutdown handlers, and
 // by default chains to whatever was already registered, so error_handler
 // above still runs as before - this adds reporting, it doesn't replace it.
+//
+// This is the canonical OAF Sentry configuration (see docs/monitoring.md in
+// the infrastructure repo; change it there first, then update every copy).
 if (defined('SENTRY_DSN') && SENTRY_DSN) {
+    // Scrubs email-address-shaped strings from breadcrumbs and request query
+    // strings, cookies, headers, and bodies, in line with the Australian
+    // Privacy Principles. The pattern matches common email address formats.
+    $sentry_scrub_event = function (Event $event) {
+        $pattern = '/[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}/';
+        $scrub = function ($value) use (&$scrub, $pattern) {
+            if (is_string($value)) {
+                return preg_replace($pattern, '[FILTERED]', $value);
+            }
+            if (is_array($value)) {
+                return array_map($scrub, $value);
+            }
+            return $value;
+        };
+        $breadcrumbs = [];
+        foreach ($event->getBreadcrumbs() as $crumb) {
+            if ($crumb->getMessage() !== null) {
+                $crumb = $crumb->withMessage($scrub($crumb->getMessage()));
+            }
+            foreach ($crumb->getMetadata() as $name => $value) {
+                $crumb = $crumb->withMetadata($name, $scrub($value));
+            }
+            $breadcrumbs[] = $crumb;
+        }
+        $event->setBreadcrumb($breadcrumbs);
+
+        $request = $event->getRequest();
+        foreach (['query_string', 'cookies', 'headers', 'data'] as $field) {
+            if (array_key_exists($field, $request)) {
+                $request[$field] = $scrub($request[$field]);
+            }
+        }
+        $event->setRequest($request);
+
+        return $event;
+    };
+
+    // The full git SHA of the deployed umbrella openaustralia repo, from the
+    // REVISION file Capistrano writes at the deploy root (one level above
+    // this twfy submodule). Absent in local development.
+    $sentry_revision_file = dirname(__DIR__, 4) . '/REVISION';
+    $sentry_release = is_readable($sentry_revision_file) ? trim(file_get_contents($sentry_revision_file)) : null;
+
     \Sentry\init([
         'dsn' => SENTRY_DSN,
+        // The Sentry environment is always the stage name, templated into
+        // conf/general by the infrastructure repo.
         'environment' => defined('SENTRY_ENVIRONMENT') ? SENTRY_ENVIRONMENT : 'development',
+        'release' => $sentry_release,
+        'traces_sample_rate' => 0.1,
+        // Include IP addresses and request headers for debugging context;
+        // email-address-shaped strings in selected event fields are scrubbed.
+        'send_default_pii' => true,
+        'max_request_body_size' => 'never',
+        'before_send' => $sentry_scrub_event,
+        'before_send_transaction' => $sentry_scrub_event,
     ]);
 }
 
@@ -123,6 +182,18 @@ include_once __DIR__ . '/../url.php';
 include_once __DIR__ . '/../lib_filter.php';
 include_once __DIR__ . '/../easyparliament/skin.php';
 include_once __DIR__ . '/../easyparliament/user.php';
+
+// Attach the signed-in user to Sentry events so errors show who was
+// affected. The id only, never email or name - look the id up in the admin
+// backend if you need to contact someone about an error (Australian Privacy
+// Principles, and the canonical configuration in the infrastructure repo's
+// docs/monitoring.md).
+if (defined('SENTRY_DSN') && SENTRY_DSN && $THEUSER->isloggedin()) {
+    \Sentry\configureScope(function (Scope $scope) use ($THEUSER) {
+        $scope->setUser(['id' => (string) $THEUSER->user_id()]);
+    });
+}
+
 include_once __DIR__ . '/../easyparliament/page.php';
 include_once __DIR__ . '/../easyparliament/hansardlist.php';
 include_once __DIR__ . '/../easyparliament/commentlist.php';
