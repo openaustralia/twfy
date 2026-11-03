@@ -48,7 +48,7 @@ use Uncapitalise;
 my $outputfilter = 'safe';
 #DBI->trace(1);
 
-use vars qw($all $recent $date $datefrom $dateto $debates $lordsdebates $members $force $quiet $cronquiet $memtest $standing $scotland $scotwrans);
+use vars qw($all $recent $date $datefrom $dateto $debates $lordsdebates $members $force $quiet $cronquiet $memtest $standing);
 my $result = GetOptions ( "all" => \$all,
                         "recent" => \$recent,
                         "date=s" => \$date,
@@ -56,8 +56,6 @@ my $result = GetOptions ( "all" => \$all,
                         "to=s" => \$dateto,
                         "debates" => \$debates,
                         "lordsdebates" => \$lordsdebates,
-                        "scotland" => \$scotland,
-                        "scotwrans" => \$scotwrans,
                         "standing" => \$standing,
                         "members" => \$members,
                         "force" => \$force,
@@ -73,7 +71,7 @@ $c++ if $date;
 $c++ if ($datefrom || $dateto);
 $c = 1 if $memtest;
 
-if ((!$result) || ($c != 1) || (!$debates && !$members && !$memtest && !$lordsdebates && !$standing && !$scotland && !$scotwrans))
+if ((!$result) || ($c != 1) || (!$debates && !$members && !$memtest && !$lordsdebates && !$standing))
 {
 print <<END;
 
@@ -86,8 +84,6 @@ database id.
 --debates - process Commons Debates
 --members - process Members
 --lordsdebates - process Lords Debates
---scotland  - process Scottish Parliament debates
---scotwrans - process Scottish Parliament written answers
 --standing - process Public Bill Commitees (Standing Committees as were)
 
 --recent - acts incrementally, using xml2db-lastload files
@@ -137,11 +133,9 @@ use vars qw(%gids %grdests %ignorehistorygids $tallygidsmode $tallygidsmodedummy
 use vars qw(%membertoperson);
 use vars qw($current_file);
 
-use vars qw($debatesdir $lordsdebatesdir $standingdir $scotlanddir $scotwransdir);
+use vars qw($debatesdir $lordsdebatesdir $standingdir);
 $debatesdir = $parldata . "scrapedxml/representatives_debates/";
 $lordsdebatesdir = $parldata . "scrapedxml/senate_debates/";
-$scotlanddir = $parldata . 'scrapedxml/sp/';
-$scotwransdir = $parldata . 'scrapedxml/sp-written/';
 $standingdir = $parldata . 'scrapedxml/standing/';
 
 my @wrans_major_headings = (
@@ -262,8 +256,6 @@ sub process_type {
 # Process main data
 process_type([""], [$debatesdir], \&add_debates_day) if ($debates) ;
 process_type([""], [$lordsdebatesdir], \&add_lordsdebates_day) if ($lordsdebates);
-process_type(['sp'], [$scotlanddir], \&add_scotland_day) if $scotland;
-process_type(['spwa'], [$scotwransdir], \&add_scotwrans_day) if $scotwrans;
 process_type(['standing'], [$standingdir], \&add_standing_day) if $standing;
 
 # Process members
@@ -1228,81 +1220,6 @@ sub add_lordsdebates_day
 
         # and delete anything that has been redirected (moving comments etc)
         delete_redirected_gids($date, \%grdests);
-
-        undef $twig;
-}
-
-##########################################################################
-# Scottish Parliament
-
-sub add_scotland_day {
-        my ($date) = @_;
-        my $twig = XML::Twig->new(twig_handlers => {
-                'speech'        => sub { do_load_speech($_, 7, 0, $_->sprint(1)) },
-                'minor-heading' => sub { do_load_subheading($_, 7, strip_string($_->sprint(1))) },
-                'major-heading' => sub { do_load_heading($_, 7, strip_string($_->sprint(1))) },
-                'division' => sub { load_scotland_division($_) },
-                }, output_filter => $outputfilter );
-        $curdate = $date;
-
-        # find out what gids there are (using tallygidsmode)
-        $hpos = 0; $currsection = 0; $currsubsection = 0; $promotedheading = 0;
-        $tallygidsmode = 1; %gids = (); $tallygidsmodedummycount = 10;
-        parsefile_glob($twig, $parldata . "scrapedxml/sp/sp" . $curdate. "*.xml");
-        # see if there are deleted gids
-        my @gids = keys %gids;
-        check_extra_gids($date, \@gids, "major = 7");
-
-        # make the modifications
-        $hpos = 0; $currsection = 0; $currsubsection = 0; $promotedheading = 0;
-        $tallygidsmode = 0; %gids = ();
-        parsefile_glob($twig, $parldata . "scrapedxml/sp/sp" . $curdate. "*.xml");
-
-        undef $twig;
-}
-
-# load <division> tags
-sub load_scotland_division {
-        my ($division) = @_;
-        my $divnumber = $division->att('divnumber') + 1; # Own internal numbering from 0, per day
-        my $text = $division->sprint(1);
-        my %out;
-        while ($text =~ m#<mspname id="uk\.org\.publicwhip/member/([^"]*)" vote="([^"]*)">(.*?)\s\(.*?</mspname>#g) {
-                push @{$out{$2}}, '<a href="/msp/?m=' . $1 . '">' . $3 . '</a>';
-        }
-        $text = "<p class='divisionheading'>Division number $divnumber</p> <p class='divisionbody'>";
-        foreach ('for','against','abstentions','spoiled votes') {
-                next unless $out{$_};
-                $text .= "<strong>\u$_:</strong> ";
-                $text .= join(', ', @{$out{$_}});
-                $text .= '<br />';
-        }
-        $text .= '</p>';
-        do_load_speech($division, 7, 0, $text);
-}
-
-sub add_scotwrans_day {
-        my ($date) = @_;
-        my $twig = XML::Twig->new(twig_handlers => {
-                'ques' => sub { do_load_speech($_, 8, 1, $_->sprint(1)) },
-                'reply' => sub { do_load_speech($_, 8, 2, $_->sprint(1)) },
-                'minor-heading' => sub { do_load_heading($_, 8, strip_string($_->sprint(1))) },
-                #'major-heading' => sub { do_load_heading($_, 8, strip_string($_->sprint(1))) },
-                }, output_filter => $outputfilter );
-        $curdate = $date;
-
-        # find out what gids there are (using tallygidsmode)
-        $hpos = 0; $currsection = 0; $currsubsection = 0; $promotedheading = 0;
-        $tallygidsmode = 1; %gids = (); $tallygidsmodedummycount = 10;
-        parsefile_glob($twig, $parldata . "scrapedxml/sp-written/spwa" . $curdate. "*.xml");
-        # see if there are deleted gids
-        my @gids = keys %gids;
-        check_extra_gids($date, \@gids, "major = 8");
-
-        # make the modifications
-        $hpos = 0; $currsection = 0; $currsubsection = 0; $promotedheading = 0;
-        $tallygidsmode = 0; %gids = ();
-        parsefile_glob($twig, $parldata . "scrapedxml/sp-written/spwa" . $curdate. "*.xml");
 
         undef $twig;
 }
