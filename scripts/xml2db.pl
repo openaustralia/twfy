@@ -48,14 +48,13 @@ use Uncapitalise;
 my $outputfilter = 'safe';
 #DBI->trace(1);
 
-use vars qw($all $recent $date $datefrom $dateto $debates $wms $lordsdebates $ni $members $force $quiet $cronquiet $memtest $standing $scotland $scotwrans);
+use vars qw($all $recent $date $datefrom $dateto $debates $lordsdebates $ni $members $force $quiet $cronquiet $memtest $standing $scotland $scotwrans);
 my $result = GetOptions ( "all" => \$all,
                         "recent" => \$recent,
                         "date=s" => \$date,
                         "from=s" => \$datefrom,
                         "to=s" => \$dateto,
                         "debates" => \$debates,
-                        "wms" => \$wms,
                         "lordsdebates" => \$lordsdebates,
                         "ni" => \$ni,
                         "scotland" => \$scotland,
@@ -75,7 +74,7 @@ $c++ if $date;
 $c++ if ($datefrom || $dateto);
 $c = 1 if $memtest;
 
-if ((!$result) || ($c != 1) || (!$debates && !$wms && !$members && !$memtest && !$lordsdebates && !$ni && !$standing && !$scotland && !$scotwrans))
+if ((!$result) || ($c != 1) || (!$debates && !$members && !$memtest && !$lordsdebates && !$ni && !$standing && !$scotland && !$scotwrans))
 {
 print <<END;
 
@@ -87,7 +86,6 @@ database id.
 
 --debates - process Commons Debates
 --members - process Members
---wms - process Written Ministerial Statements (C&L)
 --lordsdebates - process Lords Debates
 --ni - process Northern Ireland Assembly debates
 --scotland  - process Scottish Parliament debates
@@ -141,10 +139,8 @@ use vars qw(%gids %grdests %ignorehistorygids $tallygidsmode $tallygidsmodedummy
 use vars qw(%membertoperson);
 use vars qw($current_file);
 
-use vars qw($debatesdir $wmsdir $lordswmsdir $lordsdebatesdir $nidir $standingdir $scotlanddir $scotwransdir);
+use vars qw($debatesdir $lordsdebatesdir $nidir $standingdir $scotlanddir $scotwransdir);
 $debatesdir = $parldata . "scrapedxml/representatives_debates/";
-$wmsdir = $parldata . "scrapedxml/wms/";
-$lordswmsdir = $parldata . "scrapedxml/lordswms/";
 $lordsdebatesdir = $parldata . "scrapedxml/senate_debates/";
 $nidir = $parldata . 'scrapedxml/ni/';
 $scotlanddir = $parldata . 'scrapedxml/sp/';
@@ -268,7 +264,6 @@ sub process_type {
 
 # Process main data
 process_type([""], [$debatesdir], \&add_debates_day) if ($debates) ;
-process_type(["ministerial", "lordswms"], [$wmsdir, $lordswmsdir], \&add_wms_day) if ($wms);
 process_type([""], [$lordsdebatesdir], \&add_lordsdebates_day) if ($lordsdebates);
 process_type(['ni'], [$nidir], \&add_ni_day) if ($ni);
 process_type(['sp'], [$scotlanddir], \&add_scotland_day) if $scotland;
@@ -1239,90 +1234,6 @@ sub add_lordsdebates_day
         delete_redirected_gids($date, \%grdests);
 
         undef $twig;
-}
-
-sub add_wms_day {
-        my ($date) = @_;
-        use vars qw($heading $subheading $overhead);
-        my $twig = XML::Twig->new(twig_handlers => {
-                        'minor-heading' => sub { $subheading = $_; },
-                        'major-heading' => sub { $heading = $_; },
-                        'gidredirect' => sub { do_load_gidredirect($_, 4) },
-                }, output_filter => $outputfilter );
-        $curdate = $date;
-
-        $hpos = 0; $currsection = 0; $currsubsection = 0; $promotedheading = 0; $inoralanswers = 0;
-        $tallygidsmode = 1; %gids = (); %grdests = (); $tallygidsmodedummycount = 10;
-        $twig->setTwigHandler('speech', \&load_lords_wms_speech);
-        $heading = ''; $subheading = '';
-        parsefile_glob($twig, $parldata . "scrapedxml/lordswms/lordswms" . $curdate . "*.xml");
-        $twig->setTwigHandler('speech', \&load_wms_speech);
-        $heading = ''; $subheading = '';
-        parsefile_glob($twig, $parldata . "scrapedxml/wms/ministerial" . $curdate . "*.xml");
-        # see if there are deleted gids
-        my @gids = keys %gids;
-        check_extra_gids($date, \@gids, "major = 4");
-
-        # make the modifications
-        $hpos = 0; $currsection = 0; $currsubsection = 0; $promotedheading = 0; $inoralanswers = 0;
-        $tallygidsmode = 0; %gids = (); $overhead = undef;
-        $twig->setTwigHandler('speech', \&load_lords_wms_speech);
-        $heading = ''; $subheading = '';
-        parsefile_glob($twig, $parldata . "scrapedxml/lordswms/lordswms" . $curdate . "*.xml");
-        $twig->setTwigHandler('speech', \&load_wms_speech);
-        $heading = ''; $subheading = '';
-        parsefile_glob($twig, $parldata . "scrapedxml/wms/ministerial" . $curdate . "*.xml");
-
-        # and delete anything that has been redirected
-        delete_redirected_gids($date, \%grdests);
-
-        undef $twig;
-}
-
-sub is_dupe {
-        return 1 if $_[0] =~ /My (?:right )?(?:hon(\.|ourable) )?(?:and )?(?:noble )?friend\s*.*? (?:has )?(?:today )?(?:(?:made|issued) the following (?:Written )?Ministerial Statement|published a report)/i;
-        return 0;
-}
-sub load_wms_speech {
-        my ($twig, $speech) = @_;
-        my $text = $speech->sprint(1);
-        if (is_dupe($text)) {
-                $text = "<p class=\"italic\">Probably duplicate of Commons Statement</p> $text";
-                return 1;
-        }
-        do_load_heading($heading, 4, strip_string($heading->sprint(1))) if $heading;
-        do_load_subheading($subheading, 4, strip_string($subheading->sprint(1))) if $subheading;
-        do_load_speech($speech, 4, 0, $text);
-}
-sub load_lords_wms_speech {
-        my ($twig, $speech) = @_;
-        my $text = $speech->sprint(1);
-        if (is_dupe($text)) {
-                $text = "<p class=\"italic\">Probably duplicate of Commons Statement</p> $text";
-                return 1;
-        }
-        my $firsthead = $heading || $subheading;
-        if (!$overhead && $firsthead) {
-                my $ohgid = $firsthead->att('id');
-                $ohgid =~ s/\d+\.\d+$//;
-                my ($lett) = $ohgid =~ /\d\d\d\d-\d\d-\d\d(.)/;
-                for ('a'..$lett) {
-                        next if $_ eq $lett;
-                        (my $oldgid = $ohgid) =~ s/$lett\.$/$_\./;
-                        $hdeletegid->execute($oldgid.'L') unless $tallygidsmode;
-                }
-                my $ohcolnum = $firsthead->att('colnum');
-                my $ohurl = $firsthead->att('url');
-                $overhead = XML::Twig::Elt->new('major-heading',
-                        {       id=>$ohgid . 'L',
-                                colnum=> $ohcolnum,
-                                url=> $ohurl,
-                                nospeaker=>'true'
-                        }, 'HOUSE OF LORDS');
-                do_load_heading($overhead, 4, strip_string($overhead->sprint(1)));
-        }
-        do_load_subheading($firsthead, 4, strip_string($firsthead->sprint(1))) if $firsthead;
-        do_load_speech($speech, 4, 0, $text);
 }
 
 ##########################################################################
