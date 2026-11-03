@@ -48,7 +48,7 @@ use Uncapitalise;
 my $outputfilter = 'safe';
 #DBI->trace(1);
 
-use vars qw($all $recent $date $datefrom $dateto $debates $lordsdebates $members $force $quiet $cronquiet $memtest $standing);
+use vars qw($all $recent $date $datefrom $dateto $debates $lordsdebates $members $force $quiet $cronquiet $memtest);
 my $result = GetOptions ( "all" => \$all,
                         "recent" => \$recent,
                         "date=s" => \$date,
@@ -56,7 +56,6 @@ my $result = GetOptions ( "all" => \$all,
                         "to=s" => \$dateto,
                         "debates" => \$debates,
                         "lordsdebates" => \$lordsdebates,
-                        "standing" => \$standing,
                         "members" => \$members,
                         "force" => \$force,
                         "memtest" => \$memtest,
@@ -71,7 +70,7 @@ $c++ if $date;
 $c++ if ($datefrom || $dateto);
 $c = 1 if $memtest;
 
-if ((!$result) || ($c != 1) || (!$debates && !$members && !$memtest && !$lordsdebates && !$standing))
+if ((!$result) || ($c != 1) || (!$debates && !$members && !$memtest && !$lordsdebates))
 {
 print <<END;
 
@@ -84,7 +83,6 @@ database id.
 --debates - process Commons Debates
 --members - process Members
 --lordsdebates - process Lords Debates
---standing - process Public Bill Commitees (Standing Committees as were)
 
 --recent - acts incrementally, using xml2db-lastload files
 --all - reprocess every single date back in time
@@ -133,10 +131,9 @@ use vars qw(%gids %grdests %ignorehistorygids $tallygidsmode $tallygidsmodedummy
 use vars qw(%membertoperson);
 use vars qw($current_file);
 
-use vars qw($debatesdir $lordsdebatesdir $standingdir);
+use vars qw($debatesdir $lordsdebatesdir);
 $debatesdir = $parldata . "scrapedxml/representatives_debates/";
 $lordsdebatesdir = $parldata . "scrapedxml/senate_debates/";
-$standingdir = $parldata . 'scrapedxml/standing/';
 
 my @wrans_major_headings = (
 "ADVOCATE-GENERAL", "ADVOCATE GENERAL", "ADVOCATE-GENERAL FOR SCOTLAND", "AGRICULTURE, FISHERIES AND FOOD",
@@ -256,7 +253,6 @@ sub process_type {
 # Process main data
 process_type([""], [$debatesdir], \&add_debates_day) if ($debates) ;
 process_type([""], [$lordsdebatesdir], \&add_lordsdebates_day) if ($lordsdebates);
-process_type(['standing'], [$standingdir], \&add_standing_day) if $standing;
 
 # Process members
 if ($members) {
@@ -1222,164 +1218,6 @@ sub add_lordsdebates_day
         delete_redirected_gids($date, \%grdests);
 
         undef $twig;
-}
-
-##########################################################################
-# Standing/Public Bill Committees
-
-sub add_bill {
-        my ($bill, $url) = @_;
-        my $lords = $bill =~ s/\s*\[Lords\]//;
-        my $session;
-        if ($url =~ /(\d\d\d\d)(\d\d)/) {
-                $session = "$1-$2";
-        } else {
-                die "Couldn't get session out of $url, $bill, $date";
-        }
-        # Get bill ID
-        my $bill_id = $dbh->selectrow_array('SELECT id FROM bills WHERE url=?', {}, $url);
-        if (!$bill_id) {
-                $bill_id = $dbh->selectrow_array('SELECT id FROM bills WHERE title=? AND session=?', {}, $bill, $session);
-        }
-        if (!$bill_id) {
-                $dbh->do('INSERT INTO bills (session, title, lords, url, standingprefix) VALUES (?,?,?,?,"")',
-                        {}, $session, $bill, $lords, $url);
-                $bill_id = last_id();
-        }
-        return $bill_id;
-}
-
-sub add_standing_title {
-        my ($heading, $bill, $bill_id, @preheadingspeech) = @_;
-        $heading->att('id') =~ /^.*\/(.*?_.*?_)/;
-        my $prefix = $1;
-        $dbh->do('UPDATE bills SET standingprefix=? WHERE id=?', {}, $prefix, $bill_id);
-        do_load_heading($heading, 6, $bill, $bill_id);
-        foreach (@preheadingspeech) {
-                do_load_speech($_, 6, $bill_id, $_->sprint(1));
-        }
-}
-
-sub add_standing_day {
-        my ($date) = @_;
-        use vars qw($bill $bill_id $majorheadingstate @preheadingspeech);
-        $majorheadingstate = 0;
-        my $twig = XML::Twig->new(twig_handlers => {
-                'bill' => sub {
-                        $bill = strip_string($_->att('title'));
-                        my $url = $_->att('url');
-                        $bill_id = add_bill($bill, $url);
-                        $majorheadingstate = 1; # Got a <bill>
-                },
-                'committee' => sub {
-                        my @names = $_->descendants('mpname');
-                        foreach (@names) {
-                                my $chairman = ($_->parent()->tag() eq 'chairmen');
-                                my $attending = ($_->att('attending') eq 'true');
-                                (my $member_id = $_->att('memberid')) =~ s:uk.org.publicwhip/member/::;
-                                $current_file =~ /_(\d\d-\d)_/;
-                                my $sitting = $1;
-                                if (my ($id, $curr_attending) = $dbh->selectrow_array('SELECT id,attending FROM pbc_members WHERE member_id=? AND bill_id=?
-                                        AND sitting=?', {}, $member_id, $bill_id, $sitting)) {
-                                        if ($curr_attending != $attending) {
-                                                $dbh->do('UPDATE pbc_members SET attending=? WHERE id=?', {},
-                                                        $attending, $id);
-                                        }
-                                } else {
-                                        $dbh->do('INSERT INTO pbc_members (bill_id, sitting, member_id, attending, chairman) VALUES
-                                                (?, ?, ?, ?, ?)', {}, $bill_id, $sitting, $member_id, $attending, $chairman);
-                                }
-                        }
-                },
-                'major-heading' => sub {
-                        my $commhead = $_->sprint(1) =~ /(Standing Committee [A-H]|Special Standing Committee|Second Reading Committee)\s*$/;
-                        if ($_->sprint(1) =~ /^\s*Public Bill Commit?tee\s*$/) {
-                                # All PBCs have a <bill>
-                                add_standing_title($_, $bill, $bill_id, @preheadingspeech);
-                                $majorheadingstate = 9; # No more headings
-                        } elsif ($majorheadingstate==1 && $commhead) {
-                                # A <bill>, an old SC heading, the bill title will come again
-                                add_standing_title($_, $bill, $bill_id, @preheadingspeech);
-                                $majorheadingstate = 3;
-                        } elsif ($majorheadingstate==3) {
-                                # Ignore this heading of the bill title
-                                $majorheadingstate = 9;
-                        } elsif ($commhead) {
-                                # No <bill>, we're going to get another major-heading with the bill title in it...
-                                $majorheadingstate = 2;
-                        } elsif ($majorheadingstate==2) {
-                                $bill = strip_string($_->sprint(1));
-                                my $url = $_->att('url');
-                                $bill_id = add_bill($bill, $url);
-                                add_standing_title($_, $bill, $bill_id, @preheadingspeech);
-                                $majorheadingstate = 9;
-                        } elsif ($majorheadingstate==0 || $majorheadingstate==1) {
-                                die "Odd first major heading: " . $_->sprint(1);
-                        } else {
-                                # Any major heading other than the ones above I'm assuming is part of an amendment
-                                # So load as a normal speech!
-                                do_load_speech($_, 6, $bill_id, $_->sprint(1));
-                        }
-                },
-                'speech' => sub {
-                        if ($currsection==0) {
-                                push @preheadingspeech, $_;
-                        } else {
-                                do_load_speech($_, 6, $bill_id, Encode::encode('iso-8859-1', $_->sprint(1)))
-                        }
-                },
-                'publicwhip' => sub {
-                        # Clear variables for next file
-                        $majorheadingstate = 0; $bill = ''; $bill_id = 0;
-                        @preheadingspeech = ();
-                },
-                'minor-heading' => sub { do_load_subheading($_, 6, strip_string($_->sprint(1)), $bill_id) },
-                'divisioncount' => sub { load_standing_division($_, $bill_id) },
-                'gidredirect' => sub { do_load_gidredirect($_, 6) },
-                }, output_filter => $outputfilter );
-        $curdate = $date;
-
-        # find out what gids there are (using tallygidsmode)
-        $hpos = 0; $currsection = 0; $currsubsection = 0; $promotedheading = 0;
-        $tallygidsmode = 1; %gids = (); %grdests = (); $tallygidsmodedummycount = 10;
-        parsefile_glob($twig, $parldata . "scrapedxml/standing/standing*_*_*_" . $curdate. "*.xml");
-        # see if there are deleted gids
-        my @gids = keys %gids;
-        check_extra_gids($date, \@gids, "major = 6");
-
-        # make the modifications
-        $hpos = 0; $currsection = 0; $currsubsection = 0; $promotedheading = 0;
-        $tallygidsmode = 0; %gids = ();
-        parsefile_glob($twig, $parldata . "scrapedxml/standing/standing*_*_*_" . $curdate. "*.xml");
-
-        # and delete anything that has been redirected (moving comments etc)
-        delete_redirected_gids($date, \%grdests);
-
-        undef $twig;
-}
-
-sub load_standing_division {
-	my ($division, $id) = @_;
-	my $divnumber = $division->att('divnumber');
-        my $ayes = $division->att('ayes');
-        my $noes = $division->att('noes');
-        my @names = $division->descendants('mpname');
-        my %out = ();
-        foreach (@names) {
-                my $id = $_->att('memberid');
-                $id =~ s/.*\///;
-                my $name = $_->att('membername');
-                my $v = $_->att('vote');
-                $out{$v} .= '<a href="/mp/?m=' . $id . '">' . $name . '</a>, ';
-        }
-        $out{aye} =~ s/, $//;
-        $out{no} =~ s/, $//;
-        my $text = "<p class=\"divisionheading\">Division number $divnumber - $ayes yes, $noes no</p>
-<p class=\"divisionbody_yes\">Voting yes: $out{aye}</p>
-<p class=\"divisionbody_no\">Voting no: $out{no}</p>
-";
-        # Standing XML is UTF-8, so transcode
-        do_load_speech($division, 6, $id, Encode::encode('iso-8859-1', $text));
 }
 
 sub canon_time {
