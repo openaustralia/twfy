@@ -48,7 +48,7 @@ use Uncapitalise;
 my $outputfilter = 'safe';
 #DBI->trace(1);
 
-use vars qw($all $recent $date $datefrom $dateto $debates $lordsdebates $ni $members $force $quiet $cronquiet $memtest $standing $scotland $scotwrans);
+use vars qw($all $recent $date $datefrom $dateto $debates $lordsdebates $members $force $quiet $cronquiet $memtest $standing $scotland $scotwrans);
 my $result = GetOptions ( "all" => \$all,
                         "recent" => \$recent,
                         "date=s" => \$date,
@@ -56,7 +56,6 @@ my $result = GetOptions ( "all" => \$all,
                         "to=s" => \$dateto,
                         "debates" => \$debates,
                         "lordsdebates" => \$lordsdebates,
-                        "ni" => \$ni,
                         "scotland" => \$scotland,
                         "scotwrans" => \$scotwrans,
                         "standing" => \$standing,
@@ -74,7 +73,7 @@ $c++ if $date;
 $c++ if ($datefrom || $dateto);
 $c = 1 if $memtest;
 
-if ((!$result) || ($c != 1) || (!$debates && !$members && !$memtest && !$lordsdebates && !$ni && !$standing && !$scotland && !$scotwrans))
+if ((!$result) || ($c != 1) || (!$debates && !$members && !$memtest && !$lordsdebates && !$standing && !$scotland && !$scotwrans))
 {
 print <<END;
 
@@ -87,7 +86,6 @@ database id.
 --debates - process Commons Debates
 --members - process Members
 --lordsdebates - process Lords Debates
---ni - process Northern Ireland Assembly debates
 --scotland  - process Scottish Parliament debates
 --scotwrans - process Scottish Parliament written answers
 --standing - process Public Bill Commitees (Standing Committees as were)
@@ -139,10 +137,9 @@ use vars qw(%gids %grdests %ignorehistorygids $tallygidsmode $tallygidsmodedummy
 use vars qw(%membertoperson);
 use vars qw($current_file);
 
-use vars qw($debatesdir $lordsdebatesdir $nidir $standingdir $scotlanddir $scotwransdir);
+use vars qw($debatesdir $lordsdebatesdir $standingdir $scotlanddir $scotwransdir);
 $debatesdir = $parldata . "scrapedxml/representatives_debates/";
 $lordsdebatesdir = $parldata . "scrapedxml/senate_debates/";
-$nidir = $parldata . 'scrapedxml/ni/';
 $scotlanddir = $parldata . 'scrapedxml/sp/';
 $scotwransdir = $parldata . 'scrapedxml/sp-written/';
 $standingdir = $parldata . 'scrapedxml/standing/';
@@ -265,7 +262,6 @@ sub process_type {
 # Process main data
 process_type([""], [$debatesdir], \&add_debates_day) if ($debates) ;
 process_type([""], [$lordsdebatesdir], \&add_lordsdebates_day) if ($lordsdebates);
-process_type(['ni'], [$nidir], \&add_ni_day) if ($ni);
 process_type(['sp'], [$scotlanddir], \&add_scotland_day) if $scotland;
 process_type(['spwa'], [$scotwransdir], \&add_scotwrans_day) if $scotwrans;
 process_type(['standing'], [$standingdir], \&add_standing_day) if $standing;
@@ -1234,56 +1230,6 @@ sub add_lordsdebates_day
         delete_redirected_gids($date, \%grdests);
 
         undef $twig;
-}
-
-##########################################################################
-# Northern Ireland Assembly
-
-sub add_ni_day {
-        my ($date) = @_;
-        my $twig = XML::Twig->new(twig_handlers => {
-                'speech' => sub {
-                        my $speech = $_;
-                        if (!$currsection && !$currsubsection) {
-                                my $overhead = XML::Twig::Elt->new('major-heading',
-                                        {       id=>'uk.org.publicwhip/ni/'.$date.'.0.0',
-                                                url=>'',
-                                                nospeaker=>'true'
-                                        }, 'Northern Ireland Assembly');
-                                do_load_heading($overhead, 5, strip_string($overhead->sprint(1)));
-                        }
-                        do_load_speech($speech, 5, 0, $speech->sprint(1))
-                },
-                'minor-heading' => sub { do_load_subheading($_, 5, strip_string($_->sprint(1))) },
-                'oral-heading/major-heading' => sub { load_ni_heading($_, 1) },
-                'major-heading' => sub { load_ni_heading($_, 0) },
-                }, output_filter => $outputfilter );
-        $curdate = $date;
-
-        # find out what gids there are (using tallygidsmode)
-        $hpos = 0; $currsection = 0; $currsubsection = 0; $promotedheading = 0;
-        $tallygidsmode = 1; %gids = (); $tallygidsmodedummycount = 10;
-        parsefile_glob($twig, $parldata . "scrapedxml/ni/ni" . $curdate. "*.xml");
-        # see if there are deleted gids
-        my @gids = keys %gids;
-        check_extra_gids($date, \@gids, "major = 5");
-
-        # make the modifications
-        $hpos = 0; $currsection = 0; $currsubsection = 0; $promotedheading = 0;
-        $tallygidsmode = 0; %gids = ();
-        parsefile_glob($twig, $parldata . "scrapedxml/ni/ni" . $curdate. "*.xml");
-
-        undef $twig;
-}
-
-sub load_ni_heading {
-        my ($speech, $inoralanswers) = @_;
-        my $text = strip_string($speech->sprint(1));
-        if ($inoralanswers) {
-                $text = "Oral Answers to Questions &#8212; " . fix_case($text);
-        }
-        do_load_heading($speech, 5, $text);
-        return 0; # Do not chain handlers
 }
 
 ##########################################################################
