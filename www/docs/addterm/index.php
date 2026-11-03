@@ -39,8 +39,8 @@ if (
 
 // Do a quick searchengine count.
 if ($GLOSSARY->query != "") {
-    $SEARCHENGINE = new SEARCHENGINE('"' . $args['s'] . '"');
-    $args['count'] = $SEARCHENGINE->run_count();
+    $searchEngine = new SEARCHENGINE('"' . $args['s'] . '"');
+    $args['count'] = $searchEngine->run_count();
     if (!$args['count']) {
         $GLOSSARY->query = "";
         $args['blankform'] = 1;

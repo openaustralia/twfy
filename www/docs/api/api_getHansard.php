@@ -101,9 +101,6 @@ function _api_getHansard_search($array) {
         return;
     }
 
-    global $SEARCHENGINE;
-    $SEARCHENGINE = new SEARCHENGINE($search);
-    // $query_desc_short = $SEARCHENGINE->query_description_short();
     $pagenum = get_http_var('page');
     $args = [
         's' => $search,

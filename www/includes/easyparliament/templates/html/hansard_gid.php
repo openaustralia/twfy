@@ -130,9 +130,9 @@ if ($data['info']['date'] == date('Y-m-d')) { ?>
 
 if (isset($data['rows'])) {
     // For highlighting
-    $SEARCHENGINE = null;
+    $searchEngine = null;
     if (isset($data['info']['searchstring']) && $data['info']['searchstring'] != '') {
-        $SEARCHENGINE = new SEARCHENGINE($data['info']['searchstring']);
+        $searchEngine = new SEARCHENGINE($data['info']['searchstring']);
     }
 
     // Before we print the body text we need to insert glossary links
@@ -151,9 +151,9 @@ if (isset($data['rows'])) {
         // And glossary phrases
         $bodies = $GLOSSARY->glossarise($bodies, 1);
     }
-    if ($SEARCHENGINE) {
+    if ($searchEngine) {
         // We have some search terms to highlight.
-        $bodies = $SEARCHENGINE->highlight($bodies);
+        $bodies = $searchEngine->highlight($bodies);
     }
     if (isset($data['info']['glossarise']) && ($data['info']['glossarise'] == 1)) {
         // Now we replace the title attributes for the glossarised links

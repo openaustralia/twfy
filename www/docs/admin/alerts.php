@@ -73,7 +73,7 @@ function generate_rows($q) {
     for ($row = 0; $row < $q->rows(); $row++) {
         $email = $q->field($row, 'email');
         $criteria = $q->field($row, 'criteria');
-        $SEARCHENGINE = new SEARCHENGINE($criteria);
+        $searchEngine = new SEARCHENGINE($criteria);
         $r = parlDBQuery("SELECT user_id,firstname,lastname FROM users WHERE email = ?", $email);
         if ($r->rows() > 0) {
             $user_id = $r->field(0, 'user_id');
@@ -86,7 +86,7 @@ function generate_rows($q) {
         if ($created == '0000-00-00 00:00:00') {
             $created = '&nbsp;';
         }
-        $rows[] = [$name, $SEARCHENGINE->query_description_long(), $created];
+        $rows[] = [$name, $searchEngine->query_description_long(), $created];
     }
     return $rows;
 }
