@@ -6,14 +6,8 @@ use strict;
 #
 # Loads XML debate and member files into the fawkes database.
 #
-# Magic numbers, and other properties of the destination schema
-# are documented here:
-#        http://parl.stand.org.uk/cgi-bin/moin.cgi/DataSchema
-#
-# The XML files for Hansard objects come from the Public Whip parser:
-#       http://scm.kforge.net/plugins/scmsvn/cgi-bin/viewcvs.cgi/trunk/parlparse/pyscraper/?root=ukparse
-# And those for MPs are in (semi-)manually updated files here:
-#       http://scm.kforge.net/plugins/scmsvn/cgi-bin/viewcvs.cgi/trunk/parlparse/members/?root=ukparse
+# The XML files come from openaustralia-parser:
+#       https://github.com/openaustralia/openaustralia-parser
 
 use FindBin;
 chdir $FindBin::Bin;
@@ -75,8 +69,8 @@ if ((!$result) || ($c != 1) || (!$debates && !$members && !$memtest && !$lordsde
 print <<END;
 
 Loads XML files from the parldata (pwdata) directory into the fawkes database.
-The input files contain debates and so on, and were generated
-by pyscraper from parlparse. This script synchronises the database to the
+The input files contain debates and members, and were generated
+by openaustralia-parser. This script synchronises the database to the
 files, so existing entries with the same gid are updated preserving their
 database id.
 
@@ -164,7 +158,7 @@ sub revsort {
         return reverse sort @_;
 }
 
-# Process debates or wrans etc
+# Process debates and Lords debates
 sub process_type {
         my ($xnames, $xdirs, $xdayfunc) = @_;
 
@@ -401,7 +395,7 @@ sub db_connect
         # the docker-compose service name, only resolvable from inside the docker network).
         my $db_host = $ENV{DB_HOST} || mySociety::Config::get('DB_HOST');
         my $db_port = $ENV{DB_PORT} || 3306;
-        # DB_NAME/DB_USER/DB_PASSWORD env vars win over conf/general in the same way.
+        # DB_NAME and DB_USER env vars win over conf/general when non-empty. DB_PASSWORD wins whenever it is set, so it can be empty.
         my $db_name = $ENV{DB_NAME} || mySociety::Config::get('DB_NAME');
         my $db_user = $ENV{DB_USER} || mySociety::Config::get('DB_USER');
         my $db_password = defined $ENV{DB_PASSWORD} ? $ENV{DB_PASSWORD} : mySociety::Config::get('DB_PASSWORD');
@@ -417,6 +411,7 @@ sub db_connect
         # hansard object queries
         $hadd = $dbh->prepare("INSERT INTO hansard (epobject_id, gid, htype, speaker_id, major, minor, section_id, subsection_id, hpos, hdate, htime, source_url, proof, created, modified)
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())");
+        # proof must stay the last column here and in every @hparam, because db_addpair compares it by position
         $hcheck = $dbh->prepare("SELECT epobject_id, gid, htype, speaker_id, major, minor, section_id, subsection_id, hpos, hdate, htime, source_url, proof FROM hansard WHERE gid = ?");
         $hupdate = $dbh->prepare("UPDATE hansard SET gid = ?, htype = ?, speaker_id = ?, major = ?, minor = ?, section_id = ?, subsection_id = ?, hpos = ?, hdate = ?, htime = ?, source_url = ?, proof = ?, modified = NOW()
                 WHERE epobject_id = ? AND gid = ?");
@@ -1223,14 +1218,13 @@ sub canon_time {
         my $t = shift;
         $t = "$t";
         $t = substr($t, 1) if $t =~ /^0\d\d:/;
-        $t .= ":00" if $t =~ /^\d\d?:\d\d$/; # Standing
-        $t = "0$t" if $t =~ /^\d:/; # Standing
+        $t .= ":00" if $t =~ /^\d\d?:\d\d$/; # add seconds to a HH:MM time
+        $t = "0$t" if $t =~ /^\d:/; # pad a single-digit hour
         return $t;
 }
 
 ##########################################################################
-# Handlers for speech/heading elements which are in debates, wrans and
-# westminhall
+# Handlers for speech/heading elements in debates and Lords debates
 
 sub do_load_speech
 {
