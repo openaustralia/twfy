@@ -225,12 +225,11 @@ sub process_type {
                 my $xxmaxtime = 0;
                 for (my $i=0; $i<@$xdirs; $i++) {
                         my $xdir = $xdirs->[$i];
-                        (my $sxdir = $xdir) =~ s/lordswms/lordspages/;
                         # Find last update time
-                        my @stat = stat($sxdir . "changedates.txt");
-                        die "couldn't stat[9] $sxdir/changedates.txt" if (!$stat[9]);
+                        my @stat = stat($xdir . "changedates.txt");
+                        die "couldn't stat[9] $xdir/changedates.txt" if (!$stat[9]);
                         die "xmaxtime[$i] not initialised" if (!$xmaxtime[$i]);
-                        die "$sxdir : $stat[9] vs $xmaxtime[$i] : changedates.txt time isn't greater or equal than largest file" unless ($stat[9] >= $xmaxtime[$i]);
+                        die "$xdir : $stat[9] vs $xmaxtime[$i] : changedates.txt time isn't greater or equal than largest file" unless ($stat[9] >= $xmaxtime[$i]);
                         if ($xxmaxtime < $stat[9]) {
                                 $xxmaxtime = $stat[9];
                         }
