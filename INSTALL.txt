@@ -158,9 +158,9 @@ the Data".
 
 4. now run xml2db.pl as follows:
 
-$ ./xml2db.pl --wrans --debates --members --all
+$ ./xml2db.pl --debates --members --all
 
-That will process all written answers, debates and members. Running
+That will process all debates and members. Running
 the script with no args gives usage.
 
 **** You should now have a working ****
