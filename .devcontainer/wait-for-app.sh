@@ -12,6 +12,7 @@ while [ -n "$rest" ]; do
   n=${rest%%[!0-9]*} && rest=${rest#"$n"}
   unit=${rest%%[0-9]*} && rest=${rest#"$unit"}
   [ -n "$n" ] || unit=none
+  n=${n#"${n%%[!0]*}"} && n=${n:-0} # drop leading zeros, which shell arithmetic reads as octal
   case $unit in
     h) seconds=$((seconds + n * 3600)) ;;
     m) seconds=$((seconds + n * 60)) ;;
