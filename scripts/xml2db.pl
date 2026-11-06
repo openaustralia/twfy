@@ -4,16 +4,10 @@ use strict;
 
 # $Id: xml2db.pl,v 1.23 2008/01/26 09:34:42 twfy-staging Exp $
 #
-# Loads XML written answer, debate and member files into the fawkes database.
+# Loads XML debate and member files into the fawkes database.
 #
-# Magic numbers, and other properties of the destination schema
-# are documented here:
-#        http://parl.stand.org.uk/cgi-bin/moin.cgi/DataSchema
-#
-# The XML files for Hansard objects come from the Public Whip parser:
-#       http://scm.kforge.net/plugins/scmsvn/cgi-bin/viewcvs.cgi/trunk/parlparse/pyscraper/?root=ukparse
-# And those for MPs are in (semi-)manually updated files here:
-#       http://scm.kforge.net/plugins/scmsvn/cgi-bin/viewcvs.cgi/trunk/parlparse/members/?root=ukparse
+# The XML files come from openaustralia-parser:
+#       https://github.com/openaustralia/openaustralia-parser
 
 use FindBin;
 chdir $FindBin::Bin;
@@ -48,21 +42,14 @@ use Uncapitalise;
 my $outputfilter = 'safe';
 #DBI->trace(1);
 
-use vars qw($all $recent $date $datefrom $dateto $wrans $debates $westminhall $wms $lordsdebates $ni $members $force $quiet $cronquiet $memtest $standing $scotland $scotwrans);
+use vars qw($all $recent $date $datefrom $dateto $debates $lordsdebates $members $force $quiet $cronquiet $memtest);
 my $result = GetOptions ( "all" => \$all,
                         "recent" => \$recent,
                         "date=s" => \$date,
                         "from=s" => \$datefrom,
                         "to=s" => \$dateto,
-                        "wrans" => \$wrans,
-                        "westminhall" => \$westminhall,
                         "debates" => \$debates,
-                        "wms" => \$wms,
                         "lordsdebates" => \$lordsdebates,
-                        "ni" => \$ni,
-                        "scotland" => \$scotland,
-                        "scotwrans" => \$scotwrans,
-                        "standing" => \$standing,
                         "members" => \$members,
                         "force" => \$force,
                         "memtest" => \$memtest,
@@ -77,26 +64,19 @@ $c++ if $date;
 $c++ if ($datefrom || $dateto);
 $c = 1 if $memtest;
 
-if ((!$result) || ($c != 1) || (!$debates && !$wrans && !$westminhall && !$wms && !$members && !$memtest && !$lordsdebates && !$ni && !$standing && !$scotland && !$scotwrans))
+if ((!$result) || ($c != 1) || (!$debates && !$members && !$memtest && !$lordsdebates))
 {
 print <<END;
 
 Loads XML files from the parldata (pwdata) directory into the fawkes database.
-The input files contain debates, written answers and so on, and were generated
-by pyscraper from parlparse. This script synchronises the database to the
+The input files contain debates and members, and were generated
+by openaustralia-parser. This script synchronises the database to the
 files, so existing entries with the same gid are updated preserving their
 database id.
 
---wrans - process Written Answers (C&L)
 --debates - process Commons Debates
 --members - process Members
---westminhall - process Westminster Hall
---wms - process Written Ministerial Statements (C&L)
 --lordsdebates - process Lords Debates
---ni - process Northern Ireland Assembly debates
---scotland  - process Scottish Parliament debates
---scotwrans - process Scottish Parliament written answers
---standing - process Public Bill Commitees (Standing Committees as were)
 
 --recent - acts incrementally, using xml2db-lastload files
 --all - reprocess every single date back in time
@@ -145,18 +125,9 @@ use vars qw(%gids %grdests %ignorehistorygids $tallygidsmode $tallygidsmodedummy
 use vars qw(%membertoperson);
 use vars qw($current_file);
 
-use vars qw($debatesdir $wransdir $lordswransdir $westminhalldir $wmsdir $lordswmsdir $lordsdebatesdir $nidir $standingdir $scotlanddir $scotwransdir);
+use vars qw($debatesdir $lordsdebatesdir);
 $debatesdir = $parldata . "scrapedxml/representatives_debates/";
-$wransdir = $parldata . "scrapedxml/wrans/";
-$lordswransdir = $parldata . "scrapedxml/lordswrans/";
-$westminhalldir = $parldata . "scrapedxml/westminhall/";
-$wmsdir = $parldata . "scrapedxml/wms/";
-$lordswmsdir = $parldata . "scrapedxml/lordswms/";
 $lordsdebatesdir = $parldata . "scrapedxml/senate_debates/";
-$nidir = $parldata . 'scrapedxml/ni/';
-$scotlanddir = $parldata . 'scrapedxml/sp/';
-$scotwransdir = $parldata . 'scrapedxml/sp-written/';
-$standingdir = $parldata . 'scrapedxml/standing/';
 
 my @wrans_major_headings = (
 "ADVOCATE-GENERAL", "ADVOCATE GENERAL", "ADVOCATE-GENERAL FOR SCOTLAND", "AGRICULTURE, FISHERIES AND FOOD",
@@ -187,7 +158,7 @@ sub revsort {
         return reverse sort @_;
 }
 
-# Process debates or wrans etc
+# Process debates and Lords debates
 sub process_type {
         my ($xnames, $xdirs, $xdayfunc) = @_;
 
@@ -248,12 +219,11 @@ sub process_type {
                 my $xxmaxtime = 0;
                 for (my $i=0; $i<@$xdirs; $i++) {
                         my $xdir = $xdirs->[$i];
-                        (my $sxdir = $xdir) =~ s/lords(wrans|wms)/lordspages/;
                         # Find last update time
-                        my @stat = stat($sxdir . "changedates.txt");
-                        die "couldn't stat[9] $sxdir/changedates.txt" if (!$stat[9]);
+                        my @stat = stat($xdir . "changedates.txt");
+                        die "couldn't stat[9] $xdir/changedates.txt" if (!$stat[9]);
                         die "xmaxtime[$i] not initialised" if (!$xmaxtime[$i]);
-                        die "$sxdir : $stat[9] vs $xmaxtime[$i] : changedates.txt time isn't greater or equal than largest file" unless ($stat[9] >= $xmaxtime[$i]);
+                        die "$xdir : $stat[9] vs $xmaxtime[$i] : changedates.txt time isn't greater or equal than largest file" unless ($stat[9] >= $xmaxtime[$i]);
                         if ($xxmaxtime < $stat[9]) {
                                 $xxmaxtime = $stat[9];
                         }
@@ -275,14 +245,7 @@ sub process_type {
 
 # Process main data
 process_type([""], [$debatesdir], \&add_debates_day) if ($debates) ;
-process_type(["answers", "lordswrans"], [$wransdir, $lordswransdir], \&add_wrans_day) if ($wrans);
-process_type(["westminster"], [$westminhalldir], \&add_westminhall_day) if ($westminhall);
-process_type(["ministerial", "lordswms"], [$wmsdir, $lordswmsdir], \&add_wms_day) if ($wms);
 process_type([""], [$lordsdebatesdir], \&add_lordsdebates_day) if ($lordsdebates);
-process_type(['ni'], [$nidir], \&add_ni_day) if ($ni);
-process_type(['sp'], [$scotlanddir], \&add_scotland_day) if $scotland;
-process_type(['spwa'], [$scotwransdir], \&add_scotwrans_day) if $scotwrans;
-process_type(['standing'], [$standingdir], \&add_standing_day) if $standing;
 
 # Process members
 if ($members) {
@@ -432,8 +395,12 @@ sub db_connect
         # the docker-compose service name, only resolvable from inside the docker network).
         my $db_host = $ENV{DB_HOST} || mySociety::Config::get('DB_HOST');
         my $db_port = $ENV{DB_PORT} || 3306;
-        my $dsn = 'DBI:mysql:database=' . mySociety::Config::get('DB_NAME') . ':host=' . $db_host . ':port=' . $db_port;
-        $dbh = DBI->connect($dsn, mySociety::Config::get('DB_USER'), mySociety::Config::get('DB_PASSWORD'), { RaiseError => 1, PrintError => 0, mysql_enable_utf8mb4 => 1 });
+        # DB_NAME and DB_USER env vars win over conf/general when non-empty. DB_PASSWORD wins whenever it is set, so it can be empty.
+        my $db_name = $ENV{DB_NAME} || mySociety::Config::get('DB_NAME');
+        my $db_user = $ENV{DB_USER} || mySociety::Config::get('DB_USER');
+        my $db_password = defined $ENV{DB_PASSWORD} ? $ENV{DB_PASSWORD} : mySociety::Config::get('DB_PASSWORD');
+        my $dsn = 'DBI:mysql:database=' . $db_name . ':host=' . $db_host . ':port=' . $db_port;
+        $dbh = DBI->connect($dsn, $db_user, $db_password, { RaiseError => 1, PrintError => 0, mysql_enable_utf8mb4 => 1 });
 
         # epobject queries
         $epadd = $dbh->prepare("INSERT INTO epobject (title, body, type, created, modified)
@@ -444,6 +411,7 @@ sub db_connect
         # hansard object queries
         $hadd = $dbh->prepare("INSERT INTO hansard (epobject_id, gid, htype, speaker_id, major, minor, section_id, subsection_id, hpos, hdate, htime, source_url, proof, created, modified)
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())");
+        # proof must stay the last column here and in every @hparam, because db_addpair compares it by position
         $hcheck = $dbh->prepare("SELECT epobject_id, gid, htype, speaker_id, major, minor, section_id, subsection_id, hpos, hdate, htime, source_url, proof FROM hansard WHERE gid = ?");
         $hupdate = $dbh->prepare("UPDATE hansard SET gid = ?, htype = ?, speaker_id = ?, major = ?, minor = ?, section_id = ?, subsection_id = ?, hpos = ?, hdate = ?, htime = ?, source_url = ?, proof = ?, modified = NOW()
                 WHERE epobject_id = ? AND gid = ?");
@@ -572,25 +540,6 @@ sub check_extra_gids
                                 my $num_rows = $epuse_comments->fetchrow_array();
                                 $epuse_comments->finish();
                                 if ($num_rows > 0) {
-                                        if ($gid =~ /wrans/ && !$cronquiet) {
-                                                my $search_gid = $gid;
-                                                $search_gid =~ s/(\d\d\d\d-\d)\d-\d\d\w(\.\d+\.)/$1%$2/;
-                                                my $daychange = $dbh->prepare('SELECT gid,epobject_id FROM hansard WHERE gid LIKE ? AND gid != ?');
-                                                $daychange->execute($search_gid, $gid);
-                                                my ($new_gid, $new_epobjectid) = $daychange->fetchrow_array();
-                                                if ($new_epobjectid) {
-                                                        my $hgetid = $dbh->prepare("SELECT epobject_id FROM hansard WHERE gid = ?");
-                                                        $hgetid->execute($gid);
-                                                        my $old_epobjectid = $hgetid->fetchrow_array();
-                                                        $hgetid->finish();
-                                                        print "POSSIBLE FIX: $gid -> $new_gid, $old_epobjectid -> $new_epobjectid ?\n";
-                                                        my $yes = <STDIN>;
-                                                        if ($yes =~ /^y$/i) {
-                                                                update_eid($table, $field, $old_epobjectid, $new_epobjectid);
-                                                                next;
-                                                        }
-                                                }
-                                        }
                                         print "VITAL ERROR! gid $gid needs deleting, has an entry in table $table, but no gid redirect\n";
                                         $vital++;
                                 }
@@ -1161,71 +1110,6 @@ sub loadperson {
 }
 
 ##########################################################################
-# Written Answers
-
-sub add_wrans_day
-{
-        my ($date) = @_;
-
-        use vars qw($lordshead);
-        my $twig = XML::Twig->new(twig_handlers => {
-                        'ques' => sub { do_load_speech($_, 3, 1, $_->sprint(1)) },
-                        'reply' => sub { do_load_speech($_, 3, 2, $_->sprint(1)) },
-                        'minor-heading' => sub {
-                                my $subheading = $_;
-                                if ($lordshead==1) {
-                                        my $ohgid = $_->att('id');
-                                        $ohgid =~ s/\d+\.\d+$//;
-                                        my ($lett) = $ohgid =~ /\d\d\d\d-\d\d-\d\d(.)/;
-                                        for ('a'..$lett) {
-                                                next if $_ eq $lett;
-                                                (my $oldgid = $ohgid) =~ s/$lett\.$/$_\./;
-                                                $hdeletegid->execute($oldgid.'L') unless $tallygidsmode;
-                                        }
-                                        my $ohcolnum = $_->att('colnum');
-                                        my $ohurl = $_->att('url');
-                                        my $overhead = XML::Twig::Elt->new('major-heading',
-                                                {       id=>$ohgid . 'L',
-                                                        colnum=> $ohcolnum,
-                                                        url=> $ohurl,
-                                                        nospeaker=>'true'
-                                                }, 'HOUSE OF LORDS');
-                                        do_load_heading($overhead, 3, strip_string($overhead->sprint(1)));
-                                        $lordshead = 2;
-                                }
-                                do_load_subheading($subheading, 3, strip_string($subheading->sprint(1)))
-                        },
-                        'major-heading' => sub { do_load_heading($_, 3, strip_string($_->sprint(1))) },
-                        'gidredirect' => sub { do_load_gidredirect($_, 3) },
-                        }, output_filter => $outputfilter );
-        $curdate = $date;
-
-        # find out what gids there are (using tallygidsmode)
-        $hpos = 0; $currsection = 0; $currsubsection = 0; $promotedheading = 0; $inoralanswers = 0;
-        $tallygidsmode = 1; %gids = (); %grdests = (); $tallygidsmodedummycount = 10;
-        $lordshead = 0;
-        parsefile_glob($twig, $parldata . "scrapedxml/wrans/answers" . $curdate. "*.xml");
-        $lordshead = 1;
-        parsefile_glob($twig, $parldata . "scrapedxml/lordswrans/lordswrans" . $curdate. "*.xml");
-        # see if there are deleted gids
-        my @gids = keys %gids;
-        check_extra_gids($date, \@gids, "major = 3");
-
-        # make the modifications
-        $hpos = 0; $currsection = 0; $currsubsection = 0; $promotedheading = 0; $inoralanswers = 0;
-        $tallygidsmode = 0; %gids = ();
-        $lordshead = 0;
-        parsefile_glob($twig, $parldata . "scrapedxml/wrans/answers" . $curdate. "*.xml");
-        $lordshead = 1;
-        parsefile_glob($twig, $parldata . "scrapedxml/lordswrans/lordswrans" . $curdate. "*.xml");
-
-        # and delete anything that has been redirected (moving comments etc)
-        delete_redirected_gids($date, \%grdests);
-
-        undef $twig;
-}
-
-##########################################################################
 # Debates (as a stream of headings and paragraphs)
 
 sub add_debates_day
@@ -1330,420 +1214,17 @@ sub add_lordsdebates_day
         undef $twig;
 }
 
-##########################################################################
-# Westminster Hall (as a stream of headings and paragraphs)
-
-sub add_westminhall_day
-{
-        my ($date) = @_;
-        my $twig = XML::Twig->new(twig_handlers => {
-                'speech' => sub { do_load_speech($_, 2, 0, $_->sprint(1)) },
-                'minor-heading' => sub { do_load_subheading($_, 2, strip_string($_->sprint(1))) },
-                'major-heading' => sub { load_debate_heading($_, 2) },
-                'oral-heading' => sub { $inoralanswers = 1; },
-                'division' => sub { die "Division in Westminter Hall, not handled yet!" },
-                'gidredirect' => sub { do_load_gidredirect($_, 2) },
-                }, output_filter => $outputfilter );
-        $curdate = $date;
-
-        # find out what gids there are (using tallygidsmode)
-        $hpos = 0; $currsection = 0; $currsubsection = 0; $promotedheading = 0; $inoralanswers = 0;
-        $tallygidsmode = 1; %gids = (); %grdests = (); $tallygidsmodedummycount = 10;
-        parsefile_glob($twig, $parldata . "scrapedxml/westminhall/westminster" . $curdate. "*.xml");
-        # see if there are deleted gids
-        my @gids = keys %gids;
-        check_extra_gids($date, \@gids, "major = 2");
-
-        # make the modifications
-        $hpos = 0; $currsection = 0; $currsubsection = 0; $promotedheading = 0; $inoralanswers = 0;
-        $tallygidsmode = 0; %gids = ();
-        parsefile_glob($twig, $parldata . "scrapedxml/westminhall/westminster" . $curdate. "*.xml");
-
-        # and delete anything that has been redirected (moving comments etc)
-        delete_redirected_gids($date, \%grdests);
-
-        undef $twig;
-}
-
-sub add_wms_day {
-        my ($date) = @_;
-        use vars qw($heading $subheading $overhead);
-        my $twig = XML::Twig->new(twig_handlers => {
-                        'minor-heading' => sub { $subheading = $_; },
-                        'major-heading' => sub { $heading = $_; },
-                        'gidredirect' => sub { do_load_gidredirect($_, 4) },
-                }, output_filter => $outputfilter );
-        $curdate = $date;
-
-        $hpos = 0; $currsection = 0; $currsubsection = 0; $promotedheading = 0; $inoralanswers = 0;
-        $tallygidsmode = 1; %gids = (); %grdests = (); $tallygidsmodedummycount = 10;
-        $twig->setTwigHandler('speech', \&load_lords_wms_speech);
-        $heading = ''; $subheading = '';
-        parsefile_glob($twig, $parldata . "scrapedxml/lordswms/lordswms" . $curdate . "*.xml");
-        $twig->setTwigHandler('speech', \&load_wms_speech);
-        $heading = ''; $subheading = '';
-        parsefile_glob($twig, $parldata . "scrapedxml/wms/ministerial" . $curdate . "*.xml");
-        # see if there are deleted gids
-        my @gids = keys %gids;
-        check_extra_gids($date, \@gids, "major = 4");
-
-        # make the modifications
-        $hpos = 0; $currsection = 0; $currsubsection = 0; $promotedheading = 0; $inoralanswers = 0;
-        $tallygidsmode = 0; %gids = (); $overhead = undef;
-        $twig->setTwigHandler('speech', \&load_lords_wms_speech);
-        $heading = ''; $subheading = '';
-        parsefile_glob($twig, $parldata . "scrapedxml/lordswms/lordswms" . $curdate . "*.xml");
-        $twig->setTwigHandler('speech', \&load_wms_speech);
-        $heading = ''; $subheading = '';
-        parsefile_glob($twig, $parldata . "scrapedxml/wms/ministerial" . $curdate . "*.xml");
-
-        # and delete anything that has been redirected
-        delete_redirected_gids($date, \%grdests);
-
-        undef $twig;
-}
-
-sub is_dupe {
-        return 1 if $_[0] =~ /My (?:right )?(?:hon(\.|ourable) )?(?:and )?(?:noble )?friend\s*.*? (?:has )?(?:today )?(?:(?:made|issued) the following (?:Written )?Ministerial Statement|published a report)/i;
-        return 0;
-}
-sub load_wms_speech {
-        my ($twig, $speech) = @_;
-        my $text = $speech->sprint(1);
-        if (is_dupe($text)) {
-                $text = "<p class=\"italic\">Probably duplicate of Commons Statement</p> $text";
-                return 1;
-        }
-        do_load_heading($heading, 4, strip_string($heading->sprint(1))) if $heading;
-        do_load_subheading($subheading, 4, strip_string($subheading->sprint(1))) if $subheading;
-        do_load_speech($speech, 4, 0, $text);
-}
-sub load_lords_wms_speech {
-        my ($twig, $speech) = @_;
-        my $text = $speech->sprint(1);
-        if (is_dupe($text)) {
-                $text = "<p class=\"italic\">Probably duplicate of Commons Statement</p> $text";
-                return 1;
-        }
-        my $firsthead = $heading || $subheading;
-        if (!$overhead && $firsthead) {
-                my $ohgid = $firsthead->att('id');
-                $ohgid =~ s/\d+\.\d+$//;
-                my ($lett) = $ohgid =~ /\d\d\d\d-\d\d-\d\d(.)/;
-                for ('a'..$lett) {
-                        next if $_ eq $lett;
-                        (my $oldgid = $ohgid) =~ s/$lett\.$/$_\./;
-                        $hdeletegid->execute($oldgid.'L') unless $tallygidsmode;
-                }
-                my $ohcolnum = $firsthead->att('colnum');
-                my $ohurl = $firsthead->att('url');
-                $overhead = XML::Twig::Elt->new('major-heading',
-                        {       id=>$ohgid . 'L',
-                                colnum=> $ohcolnum,
-                                url=> $ohurl,
-                                nospeaker=>'true'
-                        }, 'HOUSE OF LORDS');
-                do_load_heading($overhead, 4, strip_string($overhead->sprint(1)));
-        }
-        do_load_subheading($firsthead, 4, strip_string($firsthead->sprint(1))) if $firsthead;
-        do_load_speech($speech, 4, 0, $text);
-}
-
-##########################################################################
-# Northern Ireland Assembly
-
-sub add_ni_day {
-        my ($date) = @_;
-        my $twig = XML::Twig->new(twig_handlers => {
-                'speech' => sub {
-                        my $speech = $_;
-                        if (!$currsection && !$currsubsection) {
-                                my $overhead = XML::Twig::Elt->new('major-heading',
-                                        {       id=>'uk.org.publicwhip/ni/'.$date.'.0.0',
-                                                url=>'',
-                                                nospeaker=>'true'
-                                        }, 'Northern Ireland Assembly');
-                                do_load_heading($overhead, 5, strip_string($overhead->sprint(1)));
-                        }
-                        do_load_speech($speech, 5, 0, $speech->sprint(1))
-                },
-                'minor-heading' => sub { do_load_subheading($_, 5, strip_string($_->sprint(1))) },
-                'oral-heading/major-heading' => sub { load_ni_heading($_, 1) },
-                'major-heading' => sub { load_ni_heading($_, 0) },
-                }, output_filter => $outputfilter );
-        $curdate = $date;
-
-        # find out what gids there are (using tallygidsmode)
-        $hpos = 0; $currsection = 0; $currsubsection = 0; $promotedheading = 0;
-        $tallygidsmode = 1; %gids = (); $tallygidsmodedummycount = 10;
-        parsefile_glob($twig, $parldata . "scrapedxml/ni/ni" . $curdate. "*.xml");
-        # see if there are deleted gids
-        my @gids = keys %gids;
-        check_extra_gids($date, \@gids, "major = 5");
-
-        # make the modifications
-        $hpos = 0; $currsection = 0; $currsubsection = 0; $promotedheading = 0;
-        $tallygidsmode = 0; %gids = ();
-        parsefile_glob($twig, $parldata . "scrapedxml/ni/ni" . $curdate. "*.xml");
-
-        undef $twig;
-}
-
-sub load_ni_heading {
-        my ($speech, $inoralanswers) = @_;
-        my $text = strip_string($speech->sprint(1));
-        if ($inoralanswers) {
-                $text = "Oral Answers to Questions &#8212; " . fix_case($text);
-        }
-        do_load_heading($speech, 5, $text);
-        return 0; # Do not chain handlers
-}
-
-##########################################################################
-# Scottish Parliament
-
-sub add_scotland_day {
-        my ($date) = @_;
-        my $twig = XML::Twig->new(twig_handlers => {
-                'speech'        => sub { do_load_speech($_, 7, 0, $_->sprint(1)) },
-                'minor-heading' => sub { do_load_subheading($_, 7, strip_string($_->sprint(1))) },
-                'major-heading' => sub { do_load_heading($_, 7, strip_string($_->sprint(1))) },
-                'division' => sub { load_scotland_division($_) },
-                }, output_filter => $outputfilter );
-        $curdate = $date;
-
-        # find out what gids there are (using tallygidsmode)
-        $hpos = 0; $currsection = 0; $currsubsection = 0; $promotedheading = 0;
-        $tallygidsmode = 1; %gids = (); $tallygidsmodedummycount = 10;
-        parsefile_glob($twig, $parldata . "scrapedxml/sp/sp" . $curdate. "*.xml");
-        # see if there are deleted gids
-        my @gids = keys %gids;
-        check_extra_gids($date, \@gids, "major = 7");
-
-        # make the modifications
-        $hpos = 0; $currsection = 0; $currsubsection = 0; $promotedheading = 0;
-        $tallygidsmode = 0; %gids = ();
-        parsefile_glob($twig, $parldata . "scrapedxml/sp/sp" . $curdate. "*.xml");
-
-        undef $twig;
-}
-
-# load <division> tags
-sub load_scotland_division {
-        my ($division) = @_;
-        my $divnumber = $division->att('divnumber') + 1; # Own internal numbering from 0, per day
-        my $text = $division->sprint(1);
-        my %out;
-        while ($text =~ m#<mspname id="uk\.org\.publicwhip/member/([^"]*)" vote="([^"]*)">(.*?)\s\(.*?</mspname>#g) {
-                push @{$out{$2}}, '<a href="/msp/?m=' . $1 . '">' . $3 . '</a>';
-        }
-        $text = "<p class='divisionheading'>Division number $divnumber</p> <p class='divisionbody'>";
-        foreach ('for','against','abstentions','spoiled votes') {
-                next unless $out{$_};
-                $text .= "<strong>\u$_:</strong> ";
-                $text .= join(', ', @{$out{$_}});
-                $text .= '<br />';
-        }
-        $text .= '</p>';
-        do_load_speech($division, 7, 0, $text);
-}
-
-sub add_scotwrans_day {
-        my ($date) = @_;
-        my $twig = XML::Twig->new(twig_handlers => {
-                'ques' => sub { do_load_speech($_, 8, 1, $_->sprint(1)) },
-                'reply' => sub { do_load_speech($_, 8, 2, $_->sprint(1)) },
-                'minor-heading' => sub { do_load_heading($_, 8, strip_string($_->sprint(1))) },
-                #'major-heading' => sub { do_load_heading($_, 8, strip_string($_->sprint(1))) },
-                }, output_filter => $outputfilter );
-        $curdate = $date;
-
-        # find out what gids there are (using tallygidsmode)
-        $hpos = 0; $currsection = 0; $currsubsection = 0; $promotedheading = 0;
-        $tallygidsmode = 1; %gids = (); $tallygidsmodedummycount = 10;
-        parsefile_glob($twig, $parldata . "scrapedxml/sp-written/spwa" . $curdate. "*.xml");
-        # see if there are deleted gids
-        my @gids = keys %gids;
-        check_extra_gids($date, \@gids, "major = 8");
-
-        # make the modifications
-        $hpos = 0; $currsection = 0; $currsubsection = 0; $promotedheading = 0;
-        $tallygidsmode = 0; %gids = ();
-        parsefile_glob($twig, $parldata . "scrapedxml/sp-written/spwa" . $curdate. "*.xml");
-
-        undef $twig;
-}
-
-##########################################################################
-# Standing/Public Bill Committees
-
-sub add_bill {
-        my ($bill, $url) = @_;
-        my $lords = $bill =~ s/\s*\[Lords\]//;
-        my $session;
-        if ($url =~ /(\d\d\d\d)(\d\d)/) {
-                $session = "$1-$2";
-        } else {
-                die "Couldn't get session out of $url, $bill, $date";
-        }
-        # Get bill ID
-        my $bill_id = $dbh->selectrow_array('SELECT id FROM bills WHERE url=?', {}, $url);
-        if (!$bill_id) {
-                $bill_id = $dbh->selectrow_array('SELECT id FROM bills WHERE title=? AND session=?', {}, $bill, $session);
-        }
-        if (!$bill_id) {
-                $dbh->do('INSERT INTO bills (session, title, lords, url, standingprefix) VALUES (?,?,?,?,"")',
-                        {}, $session, $bill, $lords, $url);
-                $bill_id = last_id();
-        }
-        return $bill_id;
-}
-
-sub add_standing_title {
-        my ($heading, $bill, $bill_id, @preheadingspeech) = @_;
-        $heading->att('id') =~ /^.*\/(.*?_.*?_)/;
-        my $prefix = $1;
-        $dbh->do('UPDATE bills SET standingprefix=? WHERE id=?', {}, $prefix, $bill_id);
-        do_load_heading($heading, 6, $bill, $bill_id);
-        foreach (@preheadingspeech) {
-                do_load_speech($_, 6, $bill_id, $_->sprint(1));
-        }
-}
-
-sub add_standing_day {
-        my ($date) = @_;
-        use vars qw($bill $bill_id $majorheadingstate @preheadingspeech);
-        $majorheadingstate = 0;
-        my $twig = XML::Twig->new(twig_handlers => {
-                'bill' => sub {
-                        $bill = strip_string($_->att('title'));
-                        my $url = $_->att('url');
-                        $bill_id = add_bill($bill, $url);
-                        $majorheadingstate = 1; # Got a <bill>
-                },
-                'committee' => sub {
-                        my @names = $_->descendants('mpname');
-                        foreach (@names) {
-                                my $chairman = ($_->parent()->tag() eq 'chairmen');
-                                my $attending = ($_->att('attending') eq 'true');
-                                (my $member_id = $_->att('memberid')) =~ s:uk.org.publicwhip/member/::;
-                                $current_file =~ /_(\d\d-\d)_/;
-                                my $sitting = $1;
-                                if (my ($id, $curr_attending) = $dbh->selectrow_array('SELECT id,attending FROM pbc_members WHERE member_id=? AND bill_id=?
-                                        AND sitting=?', {}, $member_id, $bill_id, $sitting)) {
-                                        if ($curr_attending != $attending) {
-                                                $dbh->do('UPDATE pbc_members SET attending=? WHERE id=?', {},
-                                                        $attending, $id);
-                                        }
-                                } else {
-                                        $dbh->do('INSERT INTO pbc_members (bill_id, sitting, member_id, attending, chairman) VALUES
-                                                (?, ?, ?, ?, ?)', {}, $bill_id, $sitting, $member_id, $attending, $chairman);
-                                }
-                        }
-                },
-                'major-heading' => sub {
-                        my $commhead = $_->sprint(1) =~ /(Standing Committee [A-H]|Special Standing Committee|Second Reading Committee)\s*$/;
-                        if ($_->sprint(1) =~ /^\s*Public Bill Commit?tee\s*$/) {
-                                # All PBCs have a <bill>
-                                add_standing_title($_, $bill, $bill_id, @preheadingspeech);
-                                $majorheadingstate = 9; # No more headings
-                        } elsif ($majorheadingstate==1 && $commhead) {
-                                # A <bill>, an old SC heading, the bill title will come again
-                                add_standing_title($_, $bill, $bill_id, @preheadingspeech);
-                                $majorheadingstate = 3;
-                        } elsif ($majorheadingstate==3) {
-                                # Ignore this heading of the bill title
-                                $majorheadingstate = 9;
-                        } elsif ($commhead) {
-                                # No <bill>, we're going to get another major-heading with the bill title in it...
-                                $majorheadingstate = 2;
-                        } elsif ($majorheadingstate==2) {
-                                $bill = strip_string($_->sprint(1));
-                                my $url = $_->att('url');
-                                $bill_id = add_bill($bill, $url);
-                                add_standing_title($_, $bill, $bill_id, @preheadingspeech);
-                                $majorheadingstate = 9;
-                        } elsif ($majorheadingstate==0 || $majorheadingstate==1) {
-                                die "Odd first major heading: " . $_->sprint(1);
-                        } else {
-                                # Any major heading other than the ones above I'm assuming is part of an amendment
-                                # So load as a normal speech!
-                                do_load_speech($_, 6, $bill_id, $_->sprint(1));
-                        }
-                },
-                'speech' => sub {
-                        if ($currsection==0) {
-                                push @preheadingspeech, $_;
-                        } else {
-                                do_load_speech($_, 6, $bill_id, Encode::encode('iso-8859-1', $_->sprint(1)))
-                        }
-                },
-                'publicwhip' => sub {
-                        # Clear variables for next file
-                        $majorheadingstate = 0; $bill = ''; $bill_id = 0;
-                        @preheadingspeech = ();
-                },
-                'minor-heading' => sub { do_load_subheading($_, 6, strip_string($_->sprint(1)), $bill_id) },
-                'divisioncount' => sub { load_standing_division($_, $bill_id) },
-                'gidredirect' => sub { do_load_gidredirect($_, 6) },
-                }, output_filter => $outputfilter );
-        $curdate = $date;
-
-        # find out what gids there are (using tallygidsmode)
-        $hpos = 0; $currsection = 0; $currsubsection = 0; $promotedheading = 0;
-        $tallygidsmode = 1; %gids = (); %grdests = (); $tallygidsmodedummycount = 10;
-        parsefile_glob($twig, $parldata . "scrapedxml/standing/standing*_*_*_" . $curdate. "*.xml");
-        # see if there are deleted gids
-        my @gids = keys %gids;
-        check_extra_gids($date, \@gids, "major = 6");
-
-        # make the modifications
-        $hpos = 0; $currsection = 0; $currsubsection = 0; $promotedheading = 0;
-        $tallygidsmode = 0; %gids = ();
-        parsefile_glob($twig, $parldata . "scrapedxml/standing/standing*_*_*_" . $curdate. "*.xml");
-
-        # and delete anything that has been redirected (moving comments etc)
-        delete_redirected_gids($date, \%grdests);
-
-        undef $twig;
-}
-
-sub load_standing_division {
-	my ($division, $id) = @_;
-	my $divnumber = $division->att('divnumber');
-        my $ayes = $division->att('ayes');
-        my $noes = $division->att('noes');
-        my @names = $division->descendants('mpname');
-        my %out = ();
-        foreach (@names) {
-                my $id = $_->att('memberid');
-                $id =~ s/.*\///;
-                my $name = $_->att('membername');
-                my $v = $_->att('vote');
-                $out{$v} .= '<a href="/mp/?m=' . $id . '">' . $name . '</a>, ';
-        }
-        $out{aye} =~ s/, $//;
-        $out{no} =~ s/, $//;
-        my $text = "<p class=\"divisionheading\">Division number $divnumber - $ayes yes, $noes no</p>
-<p class=\"divisionbody_yes\">Voting yes: $out{aye}</p>
-<p class=\"divisionbody_no\">Voting no: $out{no}</p>
-";
-        # Standing XML is UTF-8, so transcode
-        do_load_speech($division, 6, $id, Encode::encode('iso-8859-1', $text));
-}
-
 sub canon_time {
         my $t = shift;
         $t = "$t";
         $t = substr($t, 1) if $t =~ /^0\d\d:/;
-        $t .= ":00" if $t =~ /^\d\d?:\d\d$/; # Standing
-        $t = "0$t" if $t =~ /^\d:/; # Standing
+        $t .= ":00" if $t =~ /^\d\d?:\d\d$/; # add seconds to a HH:MM time
+        $t = "0$t" if $t =~ /^\d:/; # pad a single-digit hour
         return $t;
 }
 
 ##########################################################################
-# Handlers for speech/heading elements which are in debates, wrans and
-# westminhall
+# Handlers for speech/heading elements in debates and Lords debates
 
 sub do_load_speech
 {
