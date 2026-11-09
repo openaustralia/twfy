@@ -7,6 +7,9 @@
 include_once __DIR__ . '/../../../../phplib/rabx.php';
 include_once __DIR__ . '/../../includes/request.php';
 
+use Illuminate\Database\Capsule\Manager as DB;
+use OpenAustralia\TWFY\Models\ApiStat;
+
 /**
  * The METHODS.
  */
@@ -59,16 +62,16 @@ function api_get_methods() {
 /**
  * Key-related functions.
  */
-function api_log_call($key) {
+function api_log_call(string $key): void {
     if ($key == 'DOCS') {
         return;
     }
-    $ip = ip_address();
-    $query = $_SERVER['REQUEST_URI'];
-    $query = preg_replace('#key=[A-Za-z0-9]+&?#', '', $query);
-    // FIXME handle timezones.
-    parlDBQuery("INSERT INTO api_stats (api_key, ip_address, query_time, query)
-		VALUES (?, ?, NOW(), ?)", $key, $ip, $query);
+    ApiStat::create([
+        'api_key' => $key,
+        'ip_address' => ip_address(),
+        'query_time' => DB::raw('NOW()'),
+        'query' => preg_replace('#key=[A-Za-z0-9]+&?#', '', $_SERVER['REQUEST_URI']),
+    ]);
 }
 
 /**
