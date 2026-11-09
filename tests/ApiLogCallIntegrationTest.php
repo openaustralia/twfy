@@ -163,6 +163,31 @@ class ApiLogCallIntegrationTest extends TransactionalTestCase {
     }
 
     /**
+     * The site sets PHP to Sydney time while MySQL sessions run in UTC, so
+     * the database, not PHP, must fill created_at and updated_at.
+     */
+    public function test_row_timestamps_match_the_database_clock_whatever_the_php_time_zone(): void {
+        $id = $this->createKey(self::KEY);
+        $previousZone = date_default_timezone_get();
+        date_default_timezone_set('Australia/Sydney');
+        try {
+            $this->callApi(self::KEY);
+            $this->callApi(self::KEY);
+        } finally {
+            date_default_timezone_set($previousZone);
+        }
+        $ages = 'ABS(TIMESTAMPDIFF(SECOND, created_at, NOW())) AS created_age, '
+            . 'ABS(TIMESTAMPDIFF(SECOND, updated_at, NOW())) AS updated_age';
+        foreach ([
+            ApiStat::where('api_key', self::KEY)->selectRaw($ages)->first(),
+            ApiDailyUsage::where('api_key_id', $id)->selectRaw($ages)->first(),
+        ] as $row) {
+            $this->assertLessThan(60, $row->created_age);
+            $this->assertLessThan(60, $row->updated_age);
+        }
+    }
+
+    /**
      * Creates a fictional API key and returns its id.
      */
     private function createKey(string $key): int {
