@@ -8,6 +8,8 @@ include_once __DIR__ . '/../../../../phplib/rabx.php';
 include_once __DIR__ . '/../../includes/request.php';
 
 use Illuminate\Database\Capsule\Manager as DB;
+use OpenAustralia\TWFY\Models\ApiDailyUsage;
+use OpenAustralia\TWFY\Models\ApiKey;
 use OpenAustralia\TWFY\Models\ApiStat;
 
 /**
@@ -72,6 +74,17 @@ function api_log_call(string $key): void {
         'query_time' => DB::raw('NOW()'),
         'query' => preg_replace('#key=[A-Za-z0-9]+&?#', '', $_SERVER['REQUEST_URI']),
     ]);
+
+    // Count the call for today (UTC) in the same request, with one upsert,
+    // so the daily count stays in step with api_stats without a queue.
+    $apiKeyId = ApiKey::where('api_key', $key)->value('id');
+    if ($apiKeyId !== null) {
+        ApiDailyUsage::upsert(
+            [['api_key_id' => $apiKeyId, 'date' => gmdate('Y-m-d'), 'count' => 1]],
+            ['api_key_id', 'date'],
+            ['count' => DB::raw('count + 1')]
+        );
+    }
 }
 
 /**
