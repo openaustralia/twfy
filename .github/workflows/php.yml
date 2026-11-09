@@ -123,6 +123,8 @@ jobs:
           DB_PASSWORD: root
           DB_NAME: test_twfy
       - name: SonarQube Scan
+        # Dependabot runs get no repository secrets, so the scan can't sign in
+        if: github.actor != 'dependabot[bot]'
         uses: SonarSource/sonarqube-scan-action@v8.1.0
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
