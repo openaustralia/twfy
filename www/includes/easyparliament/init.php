@@ -79,8 +79,9 @@ if (defined('SENTRY_DSN') && SENTRY_DSN) {
         'environment' => defined('SENTRY_ENVIRONMENT') ? SENTRY_ENVIRONMENT : 'development',
         'release' => $sentry_release,
         'traces_sample_rate' => 0.1,
-        // Include IP addresses and request headers for debugging context;
-        // email-address-shaped strings in selected event fields are scrubbed.
+        // Include IP addresses and request headers for debugging context.
+        // sentry_scrub_event() drops cookies and credential headers, and
+        // scrubs email addresses from the rest.
         'send_default_pii' => true,
         'max_request_body_size' => 'never',
         'before_send' => 'sentry_scrub_event',
