@@ -6,7 +6,6 @@
  */
 
 use Sentry\State\Scope;
-use Sentry\Event;
 
 error_reporting(E_ALL);
 ini_set('memory_limit', 32 * 1024 * 1024);
@@ -67,43 +66,6 @@ $old_error_handler = set_error_handler("error_handler");
 // This is the canonical OAF Sentry configuration (see docs/monitoring.md in
 // the infrastructure repo; change it there first, then update every copy).
 if (defined('SENTRY_DSN') && SENTRY_DSN) {
-    // Scrubs email-address-shaped strings from breadcrumbs and request query
-    // strings, cookies, headers, and bodies, in line with the Australian
-    // Privacy Principles. The pattern matches common email address formats.
-    $sentry_scrub_event = function (Event $event) {
-        $pattern = '/[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}/';
-        $scrub = function ($value) use (&$scrub, $pattern) {
-            if (is_string($value)) {
-                return preg_replace($pattern, '[FILTERED]', $value);
-            }
-            if (is_array($value)) {
-                return array_map($scrub, $value);
-            }
-            return $value;
-        };
-        $breadcrumbs = [];
-        foreach ($event->getBreadcrumbs() as $crumb) {
-            if ($crumb->getMessage() !== null) {
-                $crumb = $crumb->withMessage($scrub($crumb->getMessage()));
-            }
-            foreach ($crumb->getMetadata() as $name => $value) {
-                $crumb = $crumb->withMetadata($name, $scrub($value));
-            }
-            $breadcrumbs[] = $crumb;
-        }
-        $event->setBreadcrumb($breadcrumbs);
-
-        $request = $event->getRequest();
-        foreach (['query_string', 'cookies', 'headers', 'data'] as $field) {
-            if (array_key_exists($field, $request)) {
-                $request[$field] = $scrub($request[$field]);
-            }
-        }
-        $event->setRequest($request);
-
-        return $event;
-    };
-
     // The full git SHA of the deployed umbrella openaustralia repo, from the
     // REVISION file Capistrano writes at the deploy root (one level above
     // this twfy submodule). Absent in local development.
@@ -121,8 +83,8 @@ if (defined('SENTRY_DSN') && SENTRY_DSN) {
         // email-address-shaped strings in selected event fields are scrubbed.
         'send_default_pii' => true,
         'max_request_body_size' => 'never',
-        'before_send' => $sentry_scrub_event,
-        'before_send_transaction' => $sentry_scrub_event,
+        'before_send' => 'sentry_scrub_event',
+        'before_send_transaction' => 'sentry_scrub_event',
     ]);
 }
 
