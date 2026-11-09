@@ -1244,3 +1244,4 @@ function _major_summary_title($major, $data, $LISTURL, $daytext, $card_mode = fa
 }
 
 include_once __DIR__ . '/SentryBrowserScript.php';
+include_once __DIR__ . '/SentryScrubber.php';
