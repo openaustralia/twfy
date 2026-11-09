@@ -1118,10 +1118,10 @@ class HANSARDLIST {
         }
 
         // Fetch count of number of matches.
-        global $SEARCHENGINE;
-
-        $data['searchdescription'] = $SEARCHENGINE->query_description_long();
-        $count = $SEARCHENGINE->run_count();
+        $searchEngine = $args['search_engine'] ?? new SEARCHENGINE($searchstring);
+        $data['searchdescription'] = $searchEngine->query_description_long();
+        $data['searchdescription_short'] = $searchEngine->query_description_short();
+        $count = $searchEngine->run_count();
         $data['info']['total_results'] = $count;
         // Log this query so we can improve them - if it wasn't a "popular
         // query" link.
@@ -1158,12 +1158,12 @@ class HANSARDLIST {
             }
         }
 
-        $SEARCHENGINE->run_search($first_result, $results_per_page, $sort_order);
-        $gids = $SEARCHENGINE->get_gids();
+        $searchEngine->run_search($first_result, $results_per_page, $sort_order);
+        $gids = $searchEngine->get_gids();
         if ($sort_order == 'created') {
-            $createds = $SEARCHENGINE->get_createds();
+            $createds = $searchEngine->get_createds();
         }
-        $relevances = $SEARCHENGINE->get_relevances();
+        $relevances = $searchEngine->get_relevances();
         if (count($gids) <= 0) {
             // No results.
             $data['rows'] = [];
@@ -1243,7 +1243,7 @@ class HANSARDLIST {
             $extract = strip_tags_tospaces($body);
 
             // $bestpos is the position of the first search word
-            $bestpos = $SEARCHENGINE->position_of_first_word($extract);
+            $bestpos = $searchEngine->position_of_first_word($extract);
 
             // Where do we want to extract from the $body to start?
             // characters.
@@ -1257,7 +1257,7 @@ class HANSARDLIST {
             $extract = trim_characters($extract, $startpos, $length_of_extract);
 
             // Highlight search words.
-            $extract = $SEARCHENGINE->highlight($extract);
+            $extract = $searchEngine->highlight($extract);
 
             $itemdata['body'] = $extract;
 

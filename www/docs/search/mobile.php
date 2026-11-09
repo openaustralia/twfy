@@ -40,9 +40,6 @@ if (get_http_var('s') != '' || get_http_var('pid') != '') {
         $searchstring .= " groupby:$searchgroupby";
     }
 
-    // We have only one of these, rather than one in HANSARDLIST also
-    global $SEARCHENGINE;
-
     if (get_http_var('o') == 'p') {
         $q_house = '';
         if (ctype_digit(get_http_var('house'))) {
@@ -52,6 +49,7 @@ if (get_http_var('s') != '' || get_http_var('pid') != '') {
         # Fetch the results
         $data = search_by_usage($searchstring, $q_house);
 
+        $DATA->set_page_metadata($this_page, 'search_description', $data['searchdescription']);
 
         $pagetitle = 'Who says ' . $data['pagetitle'] . ' the most?';
         $DATA->set_page_metadata($this_page, 'title', $pagetitle);
@@ -142,8 +140,8 @@ if (get_http_var('s') != '' || get_http_var('pid') != '') {
             print '</table>';
 
     } else {
-        $SEARCHENGINE = new SEARCHENGINE($searchstring);
-        $pagetitle = "Search: " . $SEARCHENGINE->query_description_short();
+        $searchEngine = new SEARCHENGINE($searchstring);
+        $pagetitle = "Search: " . $searchEngine->query_description_short();
         $pagenum = get_http_var('p');
         if (is_numeric($pagenum) && $pagenum > 1) {
             $pagetitle .= " page $pagenum";
@@ -151,6 +149,7 @@ if (get_http_var('s') != '' || get_http_var('pid') != '') {
 
         $DATA->set_page_metadata($this_page, 'title', $pagetitle);
         $DATA->set_page_metadata($this_page, 'rss', 'search/rss/?s=' . urlencode($searchstring));
+        $DATA->set_page_metadata($this_page, 'search_description', $searchEngine->query_description_long());
         $PAGE->page_start_mobile();
         $PAGE->stripe_start();
         $PAGE->search_form();
@@ -170,7 +169,9 @@ if (get_http_var('s') != '' || get_http_var('pid') != '') {
             find_members($args);
         }
 
-        $LIST->display('search', $args);
+        $searchArgs = $args;
+        $searchArgs['search_engine'] = $searchEngine;
+        $LIST->display('search', $searchArgs);
 
         if ($args['s']) {
             find_constituency($args);

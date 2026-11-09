@@ -32,11 +32,10 @@ if (get_http_var('s') != '' or get_http_var('maj') != '' or get_http_var('pid') 
     $searchgroupby = trim(get_http_var('groupby'));
     if ($searchgroupby) {
         $searchstring .= " groupby:" . $searchgroupby;
-    } // We have only one of these, rather than one in HANSARDLIST also
-    global $SEARCHENGINE;
-    $SEARCHENGINE = new SEARCHENGINE($searchstring);
+    }
+    $searchEngine = new SEARCHENGINE($searchstring);
 
-    $pagetitle = "Search: " . $SEARCHENGINE->query_description_short();
+    $pagetitle = "Search: " . $searchEngine->query_description_short();
 
     $pagenum = get_http_var('p');
     if (is_numeric($pagenum) && $pagenum > 1) {
@@ -50,6 +49,7 @@ if (get_http_var('s') != '' or get_http_var('maj') != '' or get_http_var('pid') 
 
     $args = array(
         's' => $searchstring,
+        'search_engine' => $searchEngine,
         'p' => $pagenum,
         'pop' => '1', // Doesn't count RSS searches in popular searches list
         'o' => get_http_var('o'),

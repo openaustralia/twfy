@@ -562,24 +562,22 @@ class SEARCHENGINE {
 
 }
 
-global $SEARCHENGINE;
-$SEARCHENGINE = null;
-
 /**
  *
  */
 function search_by_usage($search, $house = 0) {
     $data = [];
-    $SEARCHENGINE = new SEARCHENGINE($search);
-    $data['pagetitle'] = $SEARCHENGINE->query_description_short();
-    $SEARCHENGINE = new SEARCHENGINE($search . ' groupby:speech');
-    $count = $SEARCHENGINE->run_count();
+    $searchEngine = new SEARCHENGINE($search);
+    $data['pagetitle'] = $searchEngine->query_description_short();
+    $searchEngine = new SEARCHENGINE($search . ' groupby:speech');
+    $data['searchdescription'] = $searchEngine->query_description_long();
+    $count = $searchEngine->run_count();
     if ($count <= 0) {
         $data['error'] = 'No results';
         return $data;
     }
-    $SEARCHENGINE->run_search(0, 10000, 'date');
-    $gids = $SEARCHENGINE->get_gids();
+    $searchEngine->run_search(0, 10000, 'date');
+    $gids = $searchEngine->get_gids();
     if (count($gids) <= 0) {
         $data['error'] = 'No results';
         return $data;
