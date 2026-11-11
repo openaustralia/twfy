@@ -23,6 +23,10 @@
                  report, since PHPUnit's coverage.include filter is separate from
                  which files Xdebug actually executes. -->
             <directory suffix=".php">www/resources</directory>
+            <!-- The API code under www/docs/api is tested too (for example
+                 ApiLogCallIntegrationTest.php); without this, SonarCloud counts
+                 its new lines as uncovered. -->
+            <directory suffix=".php">www/docs/api</directory>
         </include>
     </source>
 </phpunit>
