@@ -1201,10 +1201,10 @@ class HANSARDLIST {
 
             // Get the data for the gid from the database.
             $rows_found = Hansard::query()
-                ->toBase()
-                ->join('epobject', 'hansard.epobject_id', '=', 'epobject.epobject_id')
-                ->where('hansard.gid', $gid)
-                ->get(['hansard.gid', 'hansard.hdate', 'hansard.section_id', 'hansard.subsection_id', 'hansard.htype', 'hansard.major', 'hansard.speaker_id', 'hansard.hpos', 'hansard.proof', 'epobject.body']);
+              ->toBase()
+              ->join('epobject', 'hansard.epobject_id', '=', 'epobject.epobject_id')
+              ->where('hansard.gid', $gid)
+              ->get(['hansard.gid', 'hansard.hdate', 'hansard.section_id', 'hansard.subsection_id', 'hansard.htype', 'hansard.major', 'hansard.speaker_id', 'hansard.hpos', 'hansard.proof', 'epobject.body']);
 
             if ($rows_found->count() > 1) {
                 $PAGE->error_message("Got more than one row getting data for $gid");
