@@ -34,6 +34,11 @@ function api_getDebates_front() {
         <dd>Number of results to return.</dd>
     </dl>
 
+    <h4>Proof (draft) Hansard</h4>
+    <p>Each item has a <kbd>proof</kbd> field. It is <kbd>true</kbd> when the Parliament had not yet published the final text when we fetched it, so the text may differ from the final version.
+    It is <kbd>false</kbd> when the text was final when we fetched it, and <kbd>null</kbd> when we do not know.
+    In XML output, <kbd>proof</kbd> contains <kbd>true</kbd> or <kbd>false</kbd>, and is empty when we do not know.</p>
+
     <h4>Example Response (search)</h4>
     <pre>{
             "info" : {
@@ -54,6 +59,7 @@ function api_getDebates_front() {
                 "relevance" : 99,
                 "speaker_id" : "100114",
                 "hpos" : "221",
+                "proof" : false,
                 "body" : "Shut the door. I can hear the <span class=\"hi\">cows</span> coming home!",
                 "listurl" : "/senate/?id=2009-02-11.66.2&amp;s=cows+section%3Alords#g70.21",
                 "speaker" : {
