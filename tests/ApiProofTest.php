@@ -19,7 +19,7 @@ class ApiProofTest extends TestCase {
     /**
      *
      */
-    public function test_proof_from_db_maps_each_state() {
+    public function test_proof_from_db_maps_each_state(): void {
         $this->assertTrue(HANSARDLIST::proof_from_db('1'));
         $this->assertTrue(HANSARDLIST::proof_from_db(1));
         $this->assertFalse(HANSARDLIST::proof_from_db('0'));
@@ -31,7 +31,7 @@ class ApiProofTest extends TestCase {
     /**
      *
      */
-    public function test_xml_output_keeps_final_and_unknown_apart() {
+    public function test_xml_output_keeps_final_and_unknown_apart(): void {
         $this->assertSame('<proof>true</proof>', api_output_xml(['proof' => true]));
         $this->assertSame('<proof>false</proof>', api_output_xml(['proof' => false]));
         $this->assertSame('<proof></proof>', api_output_xml(['proof' => null]));
@@ -40,7 +40,7 @@ class ApiProofTest extends TestCase {
     /**
      *
      */
-    public function test_json_output_writes_real_booleans_and_null() {
+    public function test_json_output_writes_real_booleans_and_null(): void {
         $this->assertSame('{"proof":true}', api_output_js(['proof' => true]));
         $this->assertSame('{"proof":false}', api_output_js(['proof' => false]));
         $this->assertSame('{"proof":null}', api_output_js(['proof' => null]));
