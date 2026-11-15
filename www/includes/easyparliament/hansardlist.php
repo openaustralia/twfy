@@ -1200,49 +1200,39 @@ class HANSARDLIST {
             }
 
             // Get the data for the gid from the database.
-            $q = parlDBQuery(
-                "SELECT hansard.gid,
-                                    hansard.hdate,
-                                    hansard.section_id,
-                                    hansard.subsection_id,
-                                    hansard.htype,
-                                    hansard.major,
-                                    hansard.speaker_id,
-				    hansard.hpos,
-                                    hansard.proof,
-                                    epobject.body
-                            FROM hansard, epobject
-                            WHERE hansard.gid = ?
-                            AND hansard.epobject_id = epobject.epobject_id",
-                $gid
-            );
+            $rows_found = Hansard::query()
+                ->toBase()
+                ->join('epobject', 'hansard.epobject_id', '=', 'epobject.epobject_id')
+                ->where('hansard.gid', $gid)
+                ->get(['hansard.gid', 'hansard.hdate', 'hansard.section_id', 'hansard.subsection_id', 'hansard.htype', 'hansard.major', 'hansard.speaker_id', 'hansard.hpos', 'hansard.proof', 'epobject.body']);
 
-            if ($q->rows() > 1) {
+            if ($rows_found->count() > 1) {
                 $PAGE->error_message("Got more than one row getting data for $gid");
             }
-            if ($q->rows() == 0) {
+            if ($rows_found->isEmpty()) {
                 // This error message is totally spurious, so don't show it
                 // $PAGE->error_message("Unexpected missing gid $gid while searching");.
                 continue;
             }
+            $found = $rows_found->first();
 
             $itemdata = [];
 
-            $itemdata['gid'] = fix_gid_from_db($q->field(0, 'gid'));
-            $itemdata['hdate'] = $q->field(0, 'hdate');
-            $itemdata['htype'] = $q->field(0, 'htype');
-            $itemdata['major'] = $q->field(0, 'major');
-            $itemdata['section_id'] = $q->field(0, 'section_id');
-            $itemdata['subsection_id'] = $q->field(0, 'subsection_id');
+            $itemdata['gid'] = fix_gid_from_db($found->gid);
+            $itemdata['hdate'] = $found->hdate;
+            $itemdata['htype'] = $found->htype;
+            $itemdata['major'] = $found->major;
+            $itemdata['section_id'] = $found->section_id;
+            $itemdata['subsection_id'] = $found->subsection_id;
             $itemdata['relevance'] = $relevances[$n];
-            $itemdata['speaker_id'] = $q->field(0, 'speaker_id');
-            $itemdata['hpos'] = $q->field(0, 'hpos');
-            $itemdata['proof'] = self::proof_from_db($q->field(0, 'proof'));
+            $itemdata['speaker_id'] = $found->speaker_id;
+            $itemdata['hpos'] = $found->hpos;
+            $itemdata['proof'] = self::proof_from_db($found->proof);
 
             //
             // 1. Trim and highlight the body text.
 
-            $body = $q->field(0, 'body');
+            $body = $found->body;
 
             // We want to trim the body to an extract that is centered
             // around the position of the first search word.
@@ -1734,38 +1724,36 @@ class HANSARDLIST {
                 $fieldsarr2[] = "$table.$field";
             }
         }
-        $fields = implode(', ', $fieldsarr2);
-
-        $wherearr2 = [];
-        // Construct the $where clause.
-        foreach ($wherearr as $key => $val) {
-            $wherearr2[] = "$key'" . getParlDB()->escape($val) . "'";
+        // Finally, do the query. Each 'where' key is a column plus an operator, eg 'hdate>' or 'gid LIKE '.
+        $query = Hansard::query()->toBase()->select($fieldsarr2);
+        if ($join != '') {
+            $query->leftJoin('epobject', 'hansard.epobject_id', '=', 'epobject.epobject_id');
         }
-        $where = implode(" AND ", $wherearr2);
-
+        foreach ($wherearr as $key => $val) {
+            if (!preg_match('/^\s*([\w.]+)\s*(=|<>|!=|<=|>=|<|>|LIKE)\s*$/i', $key, $m)) {
+                throw new InvalidArgumentException("Unsupported where clause '$key'");
+            }
+            $query->where($m[1], $m[2], $val);
+        }
         if ($order != '') {
-            $order = "ORDER BY $order";
+            $query->orderByRaw($order);
         }
         if ($limit != '') {
-            $limit = "LIMIT $limit";
+            $parts = array_map('intval', explode(',', (string) $limit));
+            if (count($parts) == 2) {
+                $query->offset($parts[0])->limit($parts[1]);
+            } else {
+                $query->limit($parts[0]);
+            }
         }
-
-        // FIXME: convert to parameters.
-        // Finally, do the query!
-        $q = parlDBQuery("SELECT $fields
-						FROM 	hansard
-						$join
-						WHERE $where
-						$order
-						$limit
-						");
+        $result_rows = $query->get()->values();
 
         // Format the data into an array for returning.
         $data = [];
 
-        if ($q->rows() > 0) {
+        if ($result_rows->isNotEmpty()) {
 
-            for ($n = 0; $n < $q->rows(); $n++) {
+            for ($n = 0; $n < $result_rows->count(); $n++) {
 
                 // Where we'll store the data for this item before adding
                 // it to $data.
@@ -1774,7 +1762,7 @@ class HANSARDLIST {
                 // Put each row returned into its own array in $data.
                 foreach ($fieldsarr as $table => $tablesfields) {
                     foreach ($tablesfields as $m => $field) {
-                        $item[$field] = $q->field($n, $field);
+                        $item[$field] = $result_rows[$n]->$field;
                     }
                 }
 
