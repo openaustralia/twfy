@@ -234,6 +234,10 @@ function api_output_xml($v, $k = null) {
             $out .= "</$k>$verbose";
         }
         return $out;
+    } elseif (is_bool($v)) {
+        return $v ? 'true' : 'false';
+    } elseif (is_null($v)) {
+        return '';
     } else {
         return htmlspecialchars($v);
     }

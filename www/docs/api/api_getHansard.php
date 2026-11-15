@@ -28,6 +28,11 @@ function api_getHansard_front() {
         <dd>Number of results to return.</dd>
     </dl>
 
+    <h4>Proof (draft) Hansard</h4>
+    <p>Each item has a <kbd>proof</kbd> field. It is <kbd>true</kbd> when the Parliament had not yet published the final text when we fetched it, so the text may differ from the final version.
+    It is <kbd>false</kbd> when the text was final when we fetched it, and <kbd>null</kbd> when we do not know.
+    In XML output, <kbd>proof</kbd> contains <kbd>true</kbd> or <kbd>false</kbd>, and is empty when we do not know.</p>
+
     <?php
 }
 

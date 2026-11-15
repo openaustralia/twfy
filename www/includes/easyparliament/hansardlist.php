@@ -207,6 +207,13 @@ class HANSARDLIST {
     }
 
     /**
+     * A hansard.proof value as the API returns it: true for a proof (draft), false for final, null for unknown.
+     */
+    public static function proof_from_db(string|int|bool|null $value): ?bool {
+        return $value === null || $value === '' ? null : (bool) (int) $value;
+    }
+
+    /**
      * Whether any of this house's Hansard on a date is known to be a proof (draft), not yet final.
      * False also covers unknown (null), so only a known proof shows the notice.
      */
@@ -1202,6 +1209,7 @@ class HANSARDLIST {
                                     hansard.major,
                                     hansard.speaker_id,
 				    hansard.hpos,
+                                    hansard.proof,
                                     epobject.body
                             FROM hansard, epobject
                             WHERE hansard.gid = ?
@@ -1229,6 +1237,7 @@ class HANSARDLIST {
             $itemdata['relevance'] = $relevances[$n];
             $itemdata['speaker_id'] = $q->field(0, 'speaker_id');
             $itemdata['hpos'] = $q->field(0, 'hpos');
+            $itemdata['proof'] = self::proof_from_db($q->field(0, 'proof'));
 
             //
             // 1. Trim and highlight the body text.
@@ -1701,7 +1710,7 @@ class HANSARDLIST {
 
         // The fields to fetch from db. 'table' => array ('field1', 'field2').
         $fieldsarr = [
-            'hansard' => ['epobject_id', 'htype', 'gid', 'hpos', 'section_id', 'subsection_id', 'hdate', 'htime', 'source_url', 'major']
+            'hansard' => ['epobject_id', 'htype', 'gid', 'hpos', 'section_id', 'subsection_id', 'hdate', 'htime', 'source_url', 'major', 'proof']
         ];
 
         if (!empty($amount['speaker'])) {
@@ -1768,6 +1777,8 @@ class HANSARDLIST {
                         $item[$field] = $q->field($n, $field);
                     }
                 }
+
+                $item['proof'] = self::proof_from_db($item['proof']);
 
                 if (isset($item['gid'])) {
                     // Remove the "uk.org.publicwhip/blah/" from the gid:
