@@ -15,7 +15,7 @@ file. Don't retrofit existing untyped code unless you're already changing its si
 
 It is consumed as a git submodule of [`openaustralia/openaustralia`](https://github.com/openaustralia/openaustralia)
 (the umbrella repository), which owns deployment. Sibling repos are wired in by **relative filesystem path**, not
-Composer: `../phplib` (a handful of includes: auth, rabx, mapit, tracking), `../perllib` (`use lib` in
+Composer: `../phplib` (a handful of includes: auth, rabx, tracking), `../perllib` (`use lib` in
 `search/index.pl` and the `scripts/*.pl` cron scripts), `../openaustralia-parser` (cron scripts and the postcode
 seeder), `../shlib` (shellcheck CI). Docker mounts `../phplib`; CI checks siblings out and symlinks them, matching
 your branch name in the sibling repo if one exists.

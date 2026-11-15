@@ -63,7 +63,6 @@ define('OPTION_TRACKING_SECRET', '');
 // Auth / external services
 define('OPTION_AUTH_SHARED_SECRET', '');
 define('OPTION_HEARFROMYOURMP_BASE_URL', '');
-define('OPTION_MAPIT_URL', '');
 define('OPTION_GAZE_URL', '');
 define('OPTION_PHP_DEBUG_LEVEL', 0);
 
