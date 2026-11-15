@@ -61,6 +61,7 @@ class HansardPlatesViewsTest extends TestCase {
 
         $this->assertStringContainsString('proof (draft) Hansard', $html);
         $this->assertStringContainsString('not the final version', $html);
+        $this->assertStringContainsString('Parliament House staff may still edit it', $html);
     }
 
     /**
