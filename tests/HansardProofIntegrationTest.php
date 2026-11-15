@@ -19,7 +19,7 @@ class HansardProofIntegrationTest extends TransactionalTestCase {
     /**
      *
      */
-    private function makeRow(int $id, string $date, int $major, bool $proof): void {
+    private function makeRow(int $id, string $date, int $major, ?bool $proof): void {
         Hansard::create([
             'epobject_id' => $id,
             'gid' => "uk.org.publicwhip/debate/$date.$id.1",
@@ -32,7 +32,7 @@ class HansardProofIntegrationTest extends TransactionalTestCase {
     /**
      *
      */
-    public function test_rows_default_to_unknown() {
+    public function test_rows_default_to_unknown(): void {
         Hansard::create(['epobject_id' => 900001, 'gid' => 'uk.org.publicwhip/debate/2026-03-01.1.1', 'major' => 1, 'hdate' => '2026-03-01']);
 
         $this->assertNull(Hansard::find(900001)->proof);
@@ -41,7 +41,7 @@ class HansardProofIntegrationTest extends TransactionalTestCase {
     /**
      *
      */
-    public function test_day_is_proof_when_any_row_is_proof() {
+    public function test_day_is_proof_when_any_row_is_proof(): void {
         $this->makeRow(900001, '2026-03-01', 1, false);
         $this->makeRow(900002, '2026-03-01', 1, true);
 
@@ -51,7 +51,7 @@ class HansardProofIntegrationTest extends TransactionalTestCase {
     /**
      *
      */
-    public function test_day_is_not_proof_when_every_row_is_final() {
+    public function test_day_is_not_proof_when_every_row_is_final(): void {
         $this->makeRow(900001, '2026-03-02', 1, false);
 
         $this->assertFalse((new DEBATELIST())->day_is_proof('2026-03-02'));
@@ -60,7 +60,7 @@ class HansardProofIntegrationTest extends TransactionalTestCase {
     /**
      *
      */
-    public function test_day_is_not_proof_when_proof_is_unknown() {
+    public function test_day_is_not_proof_when_proof_is_unknown(): void {
         Hansard::create(['epobject_id' => 900001, 'gid' => 'uk.org.publicwhip/debate/2026-03-04.1.1', 'major' => 1, 'hdate' => '2026-03-04']);
 
         $this->assertFalse((new DEBATELIST())->day_is_proof('2026-03-04'));
@@ -69,7 +69,7 @@ class HansardProofIntegrationTest extends TransactionalTestCase {
     /**
      *
      */
-    public function test_proof_in_the_other_house_does_not_count() {
+    public function test_proof_in_the_other_house_does_not_count(): void {
         $this->makeRow(900001, '2026-03-03', 101, true);
 
         $this->assertFalse((new DEBATELIST())->day_is_proof('2026-03-03'));
@@ -78,17 +78,13 @@ class HansardProofIntegrationTest extends TransactionalTestCase {
     /**
      *
      */
-    public function test_hansard_data_rows_carry_proof_as_true_false_or_null() {
+    public function test_hansard_data_rows_carry_proof_as_true_false_or_null(): void {
         // The legacy list code reads these globals and the shared mysqli connection, so set up both.
         global $hansardmajors;
         include __DIR__ . '/../www/includes/dbtypes.php';
 
-        foreach ([900001 => '1', 900002 => '0', 900003 => 'NULL'] as $id => $proof) {
-            parlDBQuery(
-                "INSERT INTO hansard (epobject_id, gid, major, hdate, proof) VALUES (?, ?, 1, '2026-03-05', $proof)",
-                $id,
-                "uk.org.publicwhip/debate/2026-03-05.$id.1"
-            );
+        foreach ([900001 => true, 900002 => false, 900003 => null] as $id => $proof) {
+            $this->makeRow($id, '2026-03-05', 1, $proof);
         }
 
         $proofs = [];
