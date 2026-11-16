@@ -38,4 +38,7 @@ class Alert extends Model {
         'recommended' => 'bool',
     ];
 
+    // PHP's clock is not the database's (#1040); the column defaults keep created_at and updated_at correct.
+    public $timestamps = false;
+
 }
