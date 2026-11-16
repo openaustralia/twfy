@@ -46,6 +46,7 @@
         "phpunit/phpunit": "^11.5.56",
         "squizlabs/php_codesniffer": "^3.13",
         "vimeo/psalm": "^6.16",
-        "pestphp/pest": "^3.8.7"
+        "pestphp/pest": "^3.8.7",
+        "phpunit/phpcov": "^10"
     }
 }

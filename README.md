@@ -263,6 +263,12 @@ Tests are split into two types:
 1. **Unit tests** (no database required): Tests logic, parsing, and conditional logic. Located in `tests/*Test.php`.
 2. **Integration tests** (database required): Tests database queries and interactions. Located in `tests/*IntegrationTest.php`.
 
+Tests are moving from PHPUnit classes to [Pest](https://pestphp.com) specs
+([#1049](https://github.com/openaustralia/openaustralia/issues/1049)). Pest specs live in `tests/Pest/`; every other
+test under `tests/` is still a PHPUnit class. `phpunit.xml` defines a `PHPUnit` and a `Pest` suite, and
+`./vendor/bin/pest --testsuite=Pest` runs just the specs. To convert a test, rewrite it as a spec and move it into
+`tests/Pest/`.
+
 Integration tests automatically skip if the database is not available, so the test suite will still pass in CI environments.
 
 ### Stopping Docker

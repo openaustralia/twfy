@@ -59,11 +59,22 @@ jobs:
         run: composer audit
 
   test:
+    name: Tests (${{ matrix.suite }})
     runs-on: ubuntu-latest
     needs: lint
     permissions:
       contents: read
-      pull-requests: write
+    strategy:
+      fail-fast: false
+      matrix:
+        # Suites are defined in phpunit.xml. Pest's launcher rewrites the JUnit file paths of
+        # PHPUnit classes, which Sonar needs to match tests to files, so that suite runs under
+        # phpunit. Remove this leg once every test is a Pest spec.
+        include:
+          - suite: PHPUnit
+            runner: phpunit
+          - suite: Pest
+            runner: pest
     services:
       mysql:
         image: mysql:8.4
@@ -80,8 +91,6 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0  # Needed for SonarCloud analysis
       - name: Checkout phplib
         uses: actions/checkout@v4
         with:
@@ -109,19 +118,59 @@ jobs:
           DB_USER: root
           DB_PASSWORD: root
           DB_NAME: test_twfy
-      - name: Run tests with coverage
+      - name: Run ${{ matrix.suite }} tests with coverage
         run: |
-          set -o pipefail
-          XDEBUG_MODE=coverage ./vendor/bin/pest \
+          XDEBUG_MODE=coverage ./vendor/bin/${{ matrix.runner }} \
+            --testsuite=${{ matrix.suite }} \
             --coverage-text \
-            --coverage-clover=coverage/clover.xml \
-            --coverage-html=coverage/html \
-            --log-junit=coverage/junit.xml | tee phpunit-coverage.out
+            --coverage-php=coverage/${{ matrix.suite }}.cov \
+            --log-junit=coverage/junit-${{ matrix.suite }}.xml
         env:
           DB_HOST: 127.0.0.1
           DB_USER: root
           DB_PASSWORD: root
           DB_NAME: test_twfy
+      - name: Upload coverage for merging
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-${{ matrix.suite }}
+          path: |
+            coverage/${{ matrix.suite }}.cov
+            coverage/junit-${{ matrix.suite }}.xml
+          if-no-files-found: error
+
+  coverage:
+    name: Merge coverage and scan with Sonar
+    runs-on: ubuntu-latest
+    needs: test
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Needed for SonarCloud analysis
+      - name: Setup PHP 8.3
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: mbstring
+          coverage: none
+          tools: composer
+      - name: Install dependencies
+        run: composer install --no-interaction --prefer-dist
+      - name: Download coverage from each suite
+        uses: actions/download-artifact@v4
+        with:
+          pattern: coverage-*
+          path: coverage
+          merge-multiple: true
+      # Sonar reads one JUnit file, and it merges nothing for us, so combine both here.
+      - name: Merge coverage and test reports
+        run: |
+          ./vendor/bin/phpcov merge --clover=coverage/clover.xml --text=php://stdout coverage
+          php scripts/merge-junit.php coverage/junit.xml coverage/junit-*.xml
       - name: SonarQube Scan
         # Dependabot runs get no repository secrets, so the scan can't sign in
         if: github.actor != 'dependabot[bot]'
