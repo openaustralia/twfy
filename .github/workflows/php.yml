@@ -170,7 +170,7 @@ jobs:
       - name: Merge coverage and test reports
         run: |
           ./vendor/bin/phpcov merge --clover=coverage/clover.xml --text=php://stdout coverage
-          php scripts/merge-junit.php coverage/junit.xml coverage/junit-*.xml
+          php .github/scripts/merge-junit.php coverage/junit.xml coverage/junit-*.xml
       - name: SonarQube Scan
         # Dependabot runs get no repository secrets, so the scan can't sign in
         if: github.actor != 'dependabot[bot]'

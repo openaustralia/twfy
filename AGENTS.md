@@ -102,7 +102,7 @@ make docker-dump-schema   # regenerate db/schema.sql after migrating
 
 CI (`.github/workflows/php.yml`) runs lint + phpcs + `composer audit`, then the `PHPUnit` and `Pest` suites as separate
 jobs against MySQL 8.4. A **coverage** job then merges their coverage (`phpcov`) and JUnit reports
-(`scripts/merge-junit.php`) and sends the result to SonarCloud, which reads one JUnit file. A **schema-check** job
+(`.github/scripts/merge-junit.php`) and sends the result to SonarCloud, which reads one JUnit file. A **schema-check** job
 migrates a fresh database and diffs the dump against `db/schema.sql`.
 `perl.yml` and `shellcheck.yml` lint the Perl and cron-shell scripts against the sibling checkouts.
 

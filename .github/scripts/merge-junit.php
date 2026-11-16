@@ -4,7 +4,7 @@
  * @file
  * Merges JUnit XML reports into one, for tools that read a single report.
  *
- * Usage: php scripts/merge-junit.php <output.xml> <input.xml> [<input.xml> ...]
+ * Usage: php .github/scripts/merge-junit.php <output.xml> <input.xml> [<input.xml> ...]
  */
 
 if ($argc < 3) {
