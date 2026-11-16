@@ -386,9 +386,7 @@ class ALERT {
 
         $alert->confirmed = true;
         $alert->deleted = false;
-        if (!$alert->save()) {
-            return false;
-        }
+        $alert->save();
 
         $this->confirmed = true;
         return true;
