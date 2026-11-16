@@ -94,8 +94,8 @@ make help                 # target list
 make lint                 # php -l and perl -c sweeps
 make phpcs                # phpcs (Drupal standard, phpcs.xml) over www and scripts
 ./vendor/bin/phpcbf <files>
-make test                 # phpunit unit tests (*Test.php)
-make test-all             # phpunit including *IntegrationTest.php - needs the docker MySQL up
+make test                 # pest unit tests (*Test.php)
+make test-all             # pest including *IntegrationTest.php - needs the docker MySQL up
 make test-coverage-docker # tests with coverage inside docker
 make docker-dump-schema   # regenerate db/schema.sql after migrating
 ```

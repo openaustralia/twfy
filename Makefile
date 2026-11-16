@@ -52,7 +52,7 @@ help:
 	@echo "  scripts/run-with-lockfile           Compile lockfile utility (dev only)"
 	@echo ""
 	@echo "Extra args:"
-	@echo "  TEST_ARGS      Extra args for phpunit targets e.g."
+	@echo "  TEST_ARGS      Extra args for pest targets e.g."
 	@echo "                   --display-skipped      show skip reasons"
 	@echo "                   --display-all-issues   show all issues (deprecations, notices etc)"
 	@echo "                   --debug                show each test as it runs"
@@ -252,10 +252,10 @@ setup:
 	libreadline-dev libgd-dev libcurl4-openssl-dev libsqlite3-dev libxml2-dev libjpeg-dev libpng-dev
 
 test: vendor/autoload.php
-	./vendor/bin/phpunit $(TEST_ARGS)
+	./vendor/bin/pest $(TEST_ARGS)
 
 test-all: vendor/autoload.php
-	DB_HOST=$(TEST_DB_HOST) DB_USER=$(TEST_DB_USER) DB_PASSWORD=$(TEST_DB_PASSWORD) DB_NAME=$(TEST_DB_NAME) ./vendor/bin/phpunit $(TEST_ARGS)
+	DB_HOST=$(TEST_DB_HOST) DB_USER=$(TEST_DB_USER) DB_PASSWORD=$(TEST_DB_PASSWORD) DB_NAME=$(TEST_DB_NAME) ./vendor/bin/pest $(TEST_ARGS)
 
 install-xdebug:
 	@if mise exec -- php -m | grep -Eq 'xdebug|pcov'; then \
@@ -273,14 +273,14 @@ test-coverage: vendor/autoload.php
 		echo "For GitHub Actions, set setup-php coverage to 'xdebug'."; \
 		exit 1; \
 	fi
-	DB_HOST=$(TEST_DB_HOST) DB_USER=$(TEST_DB_USER) DB_PASSWORD=$(TEST_DB_PASSWORD) DB_NAME=$(TEST_DB_NAME) XDEBUG_MODE=coverage ./vendor/bin/phpunit --coverage-text --coverage-clover=coverage/clover.xml --coverage-html=coverage/html && \
+	DB_HOST=$(TEST_DB_HOST) DB_USER=$(TEST_DB_USER) DB_PASSWORD=$(TEST_DB_PASSWORD) DB_NAME=$(TEST_DB_NAME) XDEBUG_MODE=coverage ./vendor/bin/pest --coverage-text --coverage-clover=coverage/clover.xml --coverage-html=coverage/html && \
 	echo && echo "Open coverage/html/index.html to see the detailed coverage report"
 
 # Migrates the test database first, as a fresh one is empty. The report is handed back to whoever owns the checkout,
 # as the container runs as root.
 test-coverage-docker:
 	docker compose up --wait -d
-	docker compose run --rm -e DB_HOST=mysql -e DB_USER=$(TEST_DB_USER) -e DB_PASSWORD=$(TEST_DB_PASSWORD) -e DB_NAME=$(TEST_DB_NAME) -e XDEBUG_MODE=coverage -v $(CURDIR):/app -w /app webhost bash -lc "php -m | grep -qi xdebug || { echo 'xdebug is missing in twfy-app. Run make docker-build first.'; exit 1; }; ./vendor/bin/phinx migrate -c phinx.php || exit 1; ./vendor/bin/phpunit --coverage-text --coverage-clover=coverage/clover.xml --coverage-html=coverage/html $(TEST_ARGS); status=\$$?; chown -R $(shell id -u):$(shell id -g) coverage; exit \$$status"
+	docker compose run --rm -e DB_HOST=mysql -e DB_USER=$(TEST_DB_USER) -e DB_PASSWORD=$(TEST_DB_PASSWORD) -e DB_NAME=$(TEST_DB_NAME) -e XDEBUG_MODE=coverage -v $(CURDIR):/app -w /app webhost bash -lc "php -m | grep -qi xdebug || { echo 'xdebug is missing in twfy-app. Run make docker-build first.'; exit 1; }; ./vendor/bin/phinx migrate -c phinx.php || exit 1; ./vendor/bin/pest --coverage-text --coverage-clover=coverage/clover.xml --coverage-html=coverage/html $(TEST_ARGS); status=\$$?; chown -R $(shell id -u):$(shell id -g) coverage; exit \$$status"
 
 
 scripts/run-with-lockfile: scripts/run-with-lockfile.c

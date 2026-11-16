@@ -102,7 +102,7 @@ container, which runs the same stack. `make` lists the other targets, such as `m
 `make clean` and `make clobber`. If a port is already in use, or you run more than one worktree at once, see
 [Port clashes](AGENTS.md#port-clashes) in AGENTS.md.
 
-For host-side tools such as phpunit and phinx, also run `cp conf/general-example.local-dev conf/general` and
+For host-side tools such as pest and phinx, also run `cp conf/general-example.local-dev conf/general` and
 `make dependencies`.
 
 `make docker-db-seed` runs every seeder in `db/seeds/`. To load just one,
@@ -214,7 +214,7 @@ Unit tests run without a database:
 
 ```bash
 make test
-./vendor/bin/phpunit tests/
+./vendor/bin/pest tests/
 ```
 
 To run tests with database integration on the host, start MySQL and migrate the test database first:

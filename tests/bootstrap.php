@@ -4,6 +4,12 @@
  * @file
  */
 
+// Pest's launcher doesn't define this, so #[RunInSeparateProcess] children
+// start without an autoloader.
+if (!defined('PHPUNIT_COMPOSER_INSTALL')) {
+    define('PHPUNIT_COMPOSER_INSTALL', __DIR__ . '/../vendor/autoload.php');
+}
+
 /**
  * Stub functions that mysql.php depends on at include-time and at runtime.
  * These are replaced by real implementations in the live application.

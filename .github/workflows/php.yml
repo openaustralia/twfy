@@ -112,7 +112,7 @@ jobs:
       - name: Run tests with coverage
         run: |
           set -o pipefail
-          XDEBUG_MODE=coverage ./vendor/bin/phpunit \
+          XDEBUG_MODE=coverage ./vendor/bin/pest \
             --coverage-text \
             --coverage-clover=coverage/clover.xml \
             --coverage-html=coverage/html \
