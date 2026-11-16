@@ -13,6 +13,7 @@ include '/data/vhost/staging.openaustralia.org/includes/easyparliament/init.php'
 include INCLUDESPATH . 'easyparliament/member.php';
 
 use OpenAustralia\TWFY\Models\Member;
+use OpenAustralia\TWFY\Models\User as UserModel;
 
 $nomail = 1;
 
@@ -72,9 +73,8 @@ foreach ($alertdata as $alertitem) {
         }
         $current_email = $email;
         $email_text = '';
-        $q = parlDBQuery('SELECT user_id FROM users WHERE email = ?', $email);
-        if ($q->rows() > 0) {
-            $user_id = $q->field(0, 'user_id');
+        $user_id = UserModel::where('email', $email)->value('user_id');
+        if ($user_id !== null) {
             $registered++;
         } else {
             $user_id = 0;
