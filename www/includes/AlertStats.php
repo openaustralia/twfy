@@ -5,11 +5,129 @@ namespace OpenAustralia\TWFY;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use OpenAustralia\TWFY\Models\Alert;
+use OpenAustralia\TWFY\Models\User;
 
 /**
  * The figures behind the admin alert statistics page.
  */
 class AlertStats {
+
+    /**
+     * How many alerts there are in each state.
+     *
+     * @return list<array{string, int}>
+     *   A label and a count for each state.
+     */
+    public static function totals(): array {
+        return [
+            ['Total', Alert::count()],
+            ['Active', Alert::active()->count()],
+            ['Deleted', Alert::deletedAlerts()->count()],
+            ['Unconfirmed', Alert::unconfirmedAlerts()->count()],
+        ];
+    }
+
+    /**
+     * The rows of an admin list of alerts, with each person's name linked to
+     * their user page when they have an account.
+     *
+     * @param \Illuminate\Database\Eloquent\Builder<Alert> $alerts
+     *   The alerts to list.
+     * @param string $order
+     *   The word "created" to list oldest first, anything else to sort by email.
+     * @param callable(string): string $describe
+     *   Given criteria, returns a description of what they search for.
+     * @param callable(int): string $user_url
+     *   Given a user id, returns the address of that user's page.
+     *
+     * @return list<array{string, string, string}>
+     *   The name or email, the description and the created time of each alert.
+     */
+    public static function listRows(Builder $alerts, string $order, callable $describe, callable $user_url): array {
+        $alerts = $alerts->orderBy($order === 'created' ? 'created' : 'email')
+          ->orderBy('alert_id')
+          ->get(['email', 'criteria', 'created']);
+        $users = User::whereIn('email', $alerts->pluck('email')->unique())
+          ->get(['user_id', 'email', 'firstname', 'lastname'])
+          ->keyBy(fn (User $user): string => strtolower($user->email));
+
+        $rows = [];
+        foreach ($alerts as $alert) {
+            $user = $users->get(strtolower($alert->email));
+            $created = (string) $alert->created;
+            $rows[] = [
+                $user === null ? $alert->email : '<a href="' . $user_url($user->user_id) . '">' . $user->firstname . ' ' . $user->lastname . '</a>',
+                $describe($alert->criteria),
+                str_starts_with($created, '0000-') ? '&nbsp;' : $created,
+            ];
+        }
+        return $rows;
+    }
+
+    /**
+     * A table with every cell escaped.
+     *
+     * @param list<string> $header
+     *   The column headings, or none for a table without a heading row.
+     * @param list<list<string|int>> $rows
+     *   The cells of each row.
+     *
+     * @return string
+     *   The table's HTML.
+     */
+    public static function htmlTable(array $header, array $rows): string {
+        $html = '<table>';
+        if ($header) {
+            $html .= '<tr><th>' . implode('</th><th>', array_map('htmlspecialchars', $header)) . '</th></tr>';
+        }
+        foreach ($rows as $row) {
+            $html .= '<tr><td>' . implode('</td><td>', array_map(fn ($cell): string => htmlspecialchars((string) $cell), $row)) . '</td></tr>';
+        }
+        return $html . '</table>';
+    }
+
+    /**
+     * The probably-separate signups as table rows.
+     *
+     * @return list<array{int, string}>
+     *   The id and criteria of each alert.
+     */
+    public static function probablySeparateSignupRows(): array {
+        return self::probablySeparateSignups()
+          ->map(fn (Alert $alert): array => [$alert->alert_id, $alert->criteria])
+          ->values()
+          ->all();
+    }
+
+    /**
+     * The follower counts for each person as table rows.
+     *
+     * @param callable(int): ?string $name_for
+     *   Given a person id, returns that person's name, or null if there is no
+     *   such person.
+     *
+     * @return list<array{string, int, int}>
+     *   The name, confirmed count and unconfirmed count for each person.
+     */
+    public static function speakerRows(callable $name_for): array {
+        return array_map(
+            fn (array $row): array => [$row['name'], $row['confirmed'], $row['unconfirmed']],
+            self::bySpeaker($name_for)
+        );
+    }
+
+    /**
+     * The shared keyword counts as table rows.
+     *
+     * @return list<array{string, int, int}>
+     *   The criteria, confirmed count and unconfirmed count for each keyword.
+     */
+    public static function keywordRows(): array {
+        return array_map(
+            fn (array $row): array => [$row['criteria'], $row['confirmed'], $row['unconfirmed']],
+            self::byKeyword()
+        );
+    }
 
     /**
      * Active alerts that list several keywords separated by commas, which
@@ -37,7 +155,7 @@ class AlertStats {
      */
     public static function bySpeaker(callable $name_for): array {
         $confirmed = self::countsByPerson(Alert::active());
-        $unconfirmed = self::countsByPerson(Alert::where('confirmed', false));
+        $unconfirmed = self::countsByPerson(Alert::unconfirmedAlerts());
 
         $rows = [];
         foreach ($confirmed as $person_id => $count) {
@@ -64,7 +182,7 @@ class AlertStats {
      */
     public static function byKeyword(): array {
         $confirmed = self::countsByCriteria(Alert::active());
-        $unconfirmed = self::countsByCriteria(Alert::where('confirmed', false));
+        $unconfirmed = self::countsByCriteria(Alert::unconfirmedAlerts());
 
         $rows = [];
         foreach (array_unique([...array_keys($confirmed), ...array_keys($unconfirmed)]) as $criteria) {

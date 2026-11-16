@@ -56,6 +56,32 @@ class Alert extends Model {
     }
 
     /**
+     * Alerts that were deleted, confirmed or not.
+     *
+     * @param \Illuminate\Database\Eloquent\Builder<Alert> $query
+     *   The query to narrow.
+     *
+     * @return \Illuminate\Database\Eloquent\Builder<Alert>
+     *   The same query, limited to deleted alerts.
+     */
+    public function scopeDeletedAlerts(Builder $query): Builder {
+        return $query->where('deleted', true);
+    }
+
+    /**
+     * Alerts nobody has confirmed, deleted or not.
+     *
+     * @param \Illuminate\Database\Eloquent\Builder<Alert> $query
+     *   The query to narrow.
+     *
+     * @return \Illuminate\Database\Eloquent\Builder<Alert>
+     *   The same query, limited to unconfirmed alerts.
+     */
+    public function scopeUnconfirmedAlerts(Builder $query): Builder {
+        return $query->where('confirmed', false);
+    }
+
+    /**
      * Alerts for one person, whose criteria start with "speaker:".
      *
      * @param \Illuminate\Database\Eloquent\Builder<Alert> $query
