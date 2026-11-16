@@ -37,6 +37,26 @@ describe('Alert::active()', function () {
     });
 });
 
+describe('Alert::deletedAlerts()', function () {
+    it('keeps deleted alerts, confirmed or not', function () {
+        AlertFixtures::alert('gone@example.invalid', 'budget', true, true);
+        AlertFixtures::alert('goneunconfirmed@example.invalid', 'budget', false, true);
+        AlertFixtures::alert('live@example.invalid', 'budget');
+
+        expect(emails_in(AlertModel::deletedAlerts()))->toBe(['gone@example.invalid', 'goneunconfirmed@example.invalid']);
+    });
+});
+
+describe('Alert::unconfirmedAlerts()', function () {
+    it('keeps unconfirmed alerts, deleted or not', function () {
+        AlertFixtures::alert('new@example.invalid', 'budget', false);
+        AlertFixtures::alert('newgone@example.invalid', 'budget', false, true);
+        AlertFixtures::alert('live@example.invalid', 'budget');
+
+        expect(emails_in(AlertModel::unconfirmedAlerts()))->toBe(['new@example.invalid', 'newgone@example.invalid']);
+    });
+});
+
 describe('Alert::speakerAlerts()', function () {
     beforeEach(function () {
         AlertFixtures::alert('speaker@example.invalid', 'speaker:10001');
