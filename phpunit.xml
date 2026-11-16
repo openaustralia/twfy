@@ -10,8 +10,15 @@
         <env name="DB_NAME" value="test_twfy"/>
     </php>
     <testsuites>
-        <testsuite name="Unit">
+        <!-- Pest specs live in tests/Pest, everything else is still a PHPUnit class.
+             Converting a test means moving it into tests/Pest. CI runs the suites as
+             separate jobs and merges their coverage for Sonar. -->
+        <testsuite name="PHPUnit">
             <directory>tests</directory>
+            <exclude>tests/Pest</exclude>
+        </testsuite>
+        <testsuite name="Pest">
+            <directory>tests/Pest</directory>
         </testsuite>
     </testsuites>
     <source>

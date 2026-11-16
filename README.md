@@ -102,7 +102,7 @@ container, which runs the same stack. `make` lists the other targets, such as `m
 `make clean` and `make clobber`. If a port is already in use, or you run more than one worktree at once, see
 [Port clashes](AGENTS.md#port-clashes) in AGENTS.md.
 
-For host-side tools such as phpunit and phinx, also run `cp conf/general-example.local-dev conf/general` and
+For host-side tools such as pest and phinx, also run `cp conf/general-example.local-dev conf/general` and
 `make dependencies`.
 
 `make docker-db-seed` runs every seeder in `db/seeds/`. To load just one,
@@ -214,7 +214,7 @@ Unit tests run without a database:
 
 ```bash
 make test
-./vendor/bin/phpunit tests/
+./vendor/bin/pest tests/
 ```
 
 To run tests with database integration on the host, start MySQL and migrate the test database first:
@@ -262,6 +262,12 @@ Tests are split into two types:
 
 1. **Unit tests** (no database required): Tests logic, parsing, and conditional logic. Located in `tests/*Test.php`.
 2. **Integration tests** (database required): Tests database queries and interactions. Located in `tests/*IntegrationTest.php`.
+
+Tests are moving from PHPUnit classes to [Pest](https://pestphp.com) specs
+([#1049](https://github.com/openaustralia/openaustralia/issues/1049)). Pest specs live in `tests/Pest/`; every other
+test under `tests/` is still a PHPUnit class. `phpunit.xml` defines a `PHPUnit` and a `Pest` suite, and
+`./vendor/bin/pest --testsuite=Pest` runs just the specs. To convert a test, rewrite it as a spec and move it into
+`tests/Pest/`.
 
 Integration tests automatically skip if the database is not available, so the test suite will still pass in CI environments.
 

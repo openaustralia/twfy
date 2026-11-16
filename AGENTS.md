@@ -94,14 +94,16 @@ make help                 # target list
 make lint                 # php -l and perl -c sweeps
 make phpcs                # phpcs (Drupal standard, phpcs.xml) over www and scripts
 ./vendor/bin/phpcbf <files>
-make test                 # phpunit unit tests (*Test.php)
-make test-all             # phpunit including *IntegrationTest.php - needs the docker MySQL up
+make test                 # pest unit tests (*Test.php)
+make test-all             # pest including *IntegrationTest.php - needs the docker MySQL up
 make test-coverage-docker # tests with coverage inside docker
 make docker-dump-schema   # regenerate db/schema.sql after migrating
 ```
 
-CI (`.github/workflows/php.yml`) runs lint + phpcs + `composer audit`, then the test suite against MySQL 8.4 with
-SonarCloud, then a **schema-check** job that migrates a fresh database and diffs the dump against `db/schema.sql`.
+CI (`.github/workflows/php.yml`) runs lint + phpcs + `composer audit`, then the `PHPUnit` and `Pest` suites as separate
+jobs against MySQL 8.4. A **coverage** job then merges their coverage (`phpcov`) and JUnit reports
+(`.github/scripts/merge-junit.php`) and sends the result to SonarCloud, which reads one JUnit file. A **schema-check** job
+migrates a fresh database and diffs the dump against `db/schema.sql`.
 `perl.yml` and `shellcheck.yml` lint the Perl and cron-shell scripts against the sibling checkouts.
 
 ## Gotchas
@@ -120,6 +122,12 @@ SonarCloud, then a **schema-check** job that migrates a fresh database and diffs
 - `_mysqldata/` and `_xapiandb/` are live Docker volume data on the host, gitignored - don't clean them out to fix
   a problem. Xapian search is only active when `XAPIANDB` is non-empty in `conf/general` (the local-dev example
   leaves it off, falling back to MySQL search).
+- Tests are mid-move from PHPUnit classes to Pest specs (openaustralia/openaustralia#1049). Specs go in `tests/Pest/`
+  and follow [betterspecs.org](https://betterspecs.org): `describe()` per function, `when`/`with`/`without` contexts,
+  descriptions under 40 characters, one `expect()` per `it()`, datasets for repeated cases. Everything else under
+  `tests/` is a PHPUnit class. Run everything with `./vendor/bin/pest`; a bare `phpunit` refuses to load the specs,
+  but `phpunit --testsuite=PHPUnit` works and CI uses it, as Pest rewrites the JUnit file paths Sonar needs.
+- Keep one test class per file. With several, PHPUnit and Pest each run a different one and skip the rest silently.
 - Tests: `*Test.php` are unit tests, `*IntegrationTest.php` need the database; `tests/bootstrap.php` wraps each
   test in mysqli and Eloquent transactions rolled back in `tearDown`, and defines the constants the legacy code
   expects. Seeders are idempotent and `SEEDER=<Name>` runs one.
