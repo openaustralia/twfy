@@ -214,6 +214,19 @@ class HANSARDLIST {
     }
 
     /**
+     * The hansard columns MySQL stores as integers. The API has always returned them as strings.
+     */
+    private const API_STRING_COLUMNS = ['epobject_id', 'htype', 'hpos', 'section_id', 'subsection_id', 'major', 'speaker_id'];
+
+    /**
+     * A hansard column value as the API returns it. Eloquent returns the integer columns as PHP integers, but parlDBQuery()
+     * returned every value as a string, so cast them back to keep the API output the same. Null stays null.
+     */
+    public static function api_value(string $column, mixed $value): mixed {
+        return $value !== null && in_array($column, self::API_STRING_COLUMNS, true) ? (string) $value : $value;
+    }
+
+    /**
      * Whether any of this house's Hansard on a date is known to be a proof (draft), not yet final.
      * False also covers unknown (null), so only a known proof shows the notice.
      */
@@ -1220,13 +1233,13 @@ class HANSARDLIST {
 
             $itemdata['gid'] = fix_gid_from_db($found->gid);
             $itemdata['hdate'] = $found->hdate;
-            $itemdata['htype'] = $found->htype;
-            $itemdata['major'] = $found->major;
-            $itemdata['section_id'] = $found->section_id;
-            $itemdata['subsection_id'] = $found->subsection_id;
+            $itemdata['htype'] = self::api_value('htype', $found->htype);
+            $itemdata['major'] = self::api_value('major', $found->major);
+            $itemdata['section_id'] = self::api_value('section_id', $found->section_id);
+            $itemdata['subsection_id'] = self::api_value('subsection_id', $found->subsection_id);
             $itemdata['relevance'] = $relevances[$n];
-            $itemdata['speaker_id'] = $found->speaker_id;
-            $itemdata['hpos'] = $found->hpos;
+            $itemdata['speaker_id'] = self::api_value('speaker_id', $found->speaker_id);
+            $itemdata['hpos'] = self::api_value('hpos', $found->hpos);
             $itemdata['proof'] = self::proof_from_db($found->proof);
 
             //
@@ -1762,7 +1775,7 @@ class HANSARDLIST {
                 // Put each row returned into its own array in $data.
                 foreach ($fieldsarr as $table => $tablesfields) {
                     foreach ($tablesfields as $m => $field) {
-                        $item[$field] = $result_rows[$n]->$field;
+                        $item[$field] = self::api_value($field, $result_rows[$n]->$field);
                     }
                 }
 
