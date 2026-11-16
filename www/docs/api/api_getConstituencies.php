@@ -4,8 +4,6 @@
  * @file
  */
 
-include_once __DIR__ . '/api_getGeometry.php';
-
 /**
  *
  */
@@ -97,86 +95,4 @@ function api_getConstituencies($date = null) {
         ];
     }
     api_output($output);
-}
-
-/* RADIUS_OF_EARTH
- * Radius of the earth, in km. This is something like 6372.8 km:
- * http://en.wikipedia.org/wiki/Earth_radius
- */
-define('RADIUS_OF_EARTH', 6372.8);
-
-/**
- *
- */
-function api_getConstituencies_latitude($lat) {
-    $lon = get_http_var('longitude') + 0;
-    $d = get_http_var('distance') + 0;
-    if (!$lat) {
-        api_error('You must supply a latitude and longitude');
-        return;
-    }
-    $out = _api_getConstituencies_latitude($lat, $lon, $d);
-    api_output($out);
-}
-
-/**
- *
- */
-function _api_getConstituencies_latitude($lat, $lon, $d) {
-    $geometry = _api_getGeometry();
-    $out = [];
-    foreach ($geometry['data'] as $name => $data) {
-        if (!isset($data['centre_lat']) || !isset($data['centre_lon'])) {
-            continue;
-        }
-        $distance = RADIUS_OF_EARTH * acos(
-            sin(deg2rad($lat)) * sin(deg2rad($data['centre_lat']))
-            + cos(deg2rad($lat)) * cos(deg2rad($data['centre_lat']))
-            * cos(deg2rad($lon - $data['centre_lon']))
-        );
-        if (
-            deg2rad($data['centre_lat']) > deg2rad($lat) - ($d / RADIUS_OF_EARTH)
-            && deg2rad($data['centre_lat']) < deg2rad($lat) + ($d / RADIUS_OF_EARTH)
-            // Case where search pt is near pole.
-            && (abs(deg2rad($lat)) + ($d / RADIUS_OF_EARTH) > M_PI_2
-                || _api_angle_between(deg2rad($data['centre_lon']), deg2rad($lon))
-                < $d / (RADIUS_OF_EARTH * cos(deg2rad($lat + $d / RADIUS_OF_EARTH))))
-            && $distance < $d
-        ) {
-            $out[] = array_merge(
-                $data,
-                ['distance' => $distance, 'name' => $name]
-            );
-        }
-    }
-    usort($out, function ($a, $b) {
-        return $a['distance'] <=> $b['distance'];
-    });
-    return $out;
-}
-
-/**
- *
- */
-function api_getConstituencies_longitude($lon) {
-    api_error('You must supply a latitude');
-}
-
-/**
- *
- */
-function api_getConstituencies_distance($d) {
-    api_error('You must supply a latitude and longitude');
-}
-
-/**
- * _api_angle_between A1 A2
- * Given two angles A1 and A2 on a circle expressed in radians, return the
- * smallest angle between them.
- */
-function _api_angle_between($a1, $a2) {
-    if (abs($a1 - $a2) > M_PI) {
-        return 2 * M_PI - abs($a1 - $a2);
-    }
-    return abs($a1 - $a2);
 }

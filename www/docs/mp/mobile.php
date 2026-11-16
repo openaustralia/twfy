@@ -37,8 +37,6 @@ include_once __DIR__ . '/../../includes/easyparliament/member.php';
 
 // From http://cvs.sourceforge.net/viewcvs.py/publicwhip/publicwhip/website/
 include_once __DIR__ . '/../../includes/postcode.php';
-include_once __DIR__ . '/../api/api_getGeometry.php';
-include_once __DIR__ . '/../api/api_getConstituencies.php';
 
 twfy_debug_timestamp("after includes");
 
@@ -364,36 +362,6 @@ if (isset($MEMBER) && is_array($MEMBER->person_id())) {
                 'type' => 'html',
                 'content' => '<div class="block"><h4>Succeeding Representatives in this constituency</h4><div class="blockbody"><ul>' . $future_people . '</ul></div></div>'
             ];
-        }
-    }
-
-    if ($MEMBER->house(1)) {
-        $lat = null;
-        $lon = null;
-        $geometry = _api_getGeometry_name($MEMBER->constituency());
-        if (isset($geometry['centre_lat'])) {
-            $lat = $geometry['centre_lat'];
-            $lon = $geometry['centre_lon'];
-        }
-        if ($lat && $lon) {
-            $nearby_consts = _api_getConstituencies_latitude($lat, $lon, 300);
-            if ($nearby_consts) {
-                $out = '<ul><!-- ' . $lat . ',' . $lon . ' -->';
-                for ($k = 1; $k <= min(5, count($nearby_consts) - 1); $k++) {
-                    $name = $nearby_consts[$k]['name'];
-                    $dist = $nearby_consts[$k]['distance'];
-                    $out .= '<li><a href="' . WEBPATH . 'mp/?c=' . urlencode($name) . '">';
-                    $out .= $nearby_consts[$k]['name'] . '</a>';
-                    $dist_miles = round($dist / 1.609344, 0);
-                    $out .= ' <small title="Centre to centre">(' . $dist_miles . ' miles)</small>';
-                    $out .= '</li>';
-                }
-                $out .= '</ul>';
-                $sidebars[] = [
-                    'type' => 'html',
-                    'content' => '<div class="block"><h4>Nearby constituencies</h4><div class="blockbody">' . $out . ' </div></div>'
-                ];
-            }
         }
     }
 
