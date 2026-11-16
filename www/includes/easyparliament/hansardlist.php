@@ -128,7 +128,6 @@ class HANSARDLIST {
         // 'date' is all items on a date,
         // 'person' is a person's recent debates/wrans,
         // 'recent' is a number of recent dates with items in.
-        // 'recent_mostvotes' is the speeches with the most votes in the last x days.
         // 'search' is all debates/wrans that match a search term.
         // 'biggest_debates' is biggest recent debates (obviously only for DEBATESLIST).
         // 'recent_wrans' is some recent written answers (obv only for WRANSLIST).
@@ -145,7 +144,7 @@ class HANSARDLIST {
 
         global $PAGE;
 
-        $validviews = ['calendar', 'date', 'gid', 'person', 'search', 'search_min', 'recent', 'recent_mostvotes', 'biggest_debates', 'recent_wrans', 'recent_wms', 'column', 'mp', 'bill', 'session', 'recent_debates'];
+        $validviews = ['calendar', 'date', 'gid', 'person', 'search', 'search_min', 'recent', 'biggest_debates', 'recent_wrans', 'recent_wms', 'column', 'mp', 'bill', 'session', 'recent_debates'];
         if (in_array($view, $validviews)) {
 
             // What function do we call for this view?
@@ -719,8 +718,7 @@ class HANSARDLIST {
             'amount' => [
                 'body' => true,
                 'speaker' => true,
-                'comment' => true,
-                'votes' => true
+                'comment' => true
             ],
             'where' => [
                 // Need to add the 'uk.org.publicwhip/debate/' or whatever on before
@@ -841,8 +839,7 @@ class HANSARDLIST {
             'amount' => [
                 'body' => true,
                 'speaker' => true,
-                'comment' => true,
-                'votes' => true
+                'comment' => true
             ]
         ];
         if (strstr($gid, $from)) {
@@ -1695,7 +1692,6 @@ class HANSARDLIST {
         $input['amount'] can have any or all these keys:
             'body'      - Get the body text from the epobject table.
             'comment'   - Get the first comment (and totalcomments count) for this item.
-            'votes'     - Get the user votes for this item.
             'speaker'   - Get the speaker for this item, where applicable.
             'excerpt'   - For sub/sections get the body text for the first item within them.
 
@@ -1883,16 +1879,6 @@ class HANSARDLIST {
                     }
                 }
 
-                // Get the user/anon votes items that have them.
-                if (
-                    ($this->major == 3 || $this->major == 8) && !empty($amount['votes']) &&
-                    $item['htype'] == '12'
-                ) {
-                    // Debate speech or written answers (not questions).
-
-                    $item['votes'] = $this->_get_votes($item['epobject_id']);
-                }
-
                 // Get the speaker for this item, if applicable.
                 if (
                     !empty($amount['speaker']) &&
@@ -1922,60 +1908,6 @@ class HANSARDLIST {
         }
 
         return $data;
-    }
-
-    /**
-     *
-     */
-    public function _get_votes($epobject_id) {
-        // Called from _get_hansard_data().
-        // Separated out here just for clarity.
-        // Returns an array of user and anon yes/no votes for an epobject.
-
-        $votes = [];
-
-        // YES user votes.
-        $q = parlDBQuery("SELECT COUNT(vote) AS totalvotes
-						FROM	uservotes
-						WHERE	epobject_id = ?
-						AND 	vote = '1'
-						GROUP BY epobject_id", $epobject_id);
-
-        if ($q->rows() > 0) {
-            $votes['user']['yes'] = $q->field(0, 'totalvotes');
-        } else {
-            $votes['user']['yes'] = '0';
-        }
-
-        // NO user votes.
-        $q = parlDBQuery("SELECT COUNT(vote) AS totalvotes
-						FROM	uservotes
-						WHERE	epobject_id = ?
-						AND 	vote = '0'
-						GROUP BY epobject_id", $epobject_id);
-
-        if ($q->rows() > 0) {
-            $votes['user']['no'] = $q->field(0, 'totalvotes');
-        } else {
-            $votes['user']['no'] = '0';
-        }
-
-        // Get the anon votes for each item.
-
-        $q = parlDBQuery("SELECT yes_votes,
-								no_votes
-						FROM	anonvotes
-						WHERE	epobject_id = ?", $epobject_id);
-
-        if ($q->rows() > 0) {
-            $votes['anon']['yes'] = $q->field(0, 'yes_votes');
-            $votes['anon']['no'] = $q->field(0, 'no_votes');
-        } else {
-            $votes['anon']['yes'] = '0';
-            $votes['anon']['no'] = '0';
-        }
-
-        return $votes;
     }
 
     /**
@@ -2390,8 +2322,7 @@ class HANSARDLIST {
             $amount = [
                 'body' => true,
                 'speaker' => true,
-                'comment' => true,
-                'votes' => true
+                'comment' => true
             ];
 
             if ($itemdata['htype'] == '10') {
@@ -2639,99 +2570,6 @@ class DEBATELIST extends HANSARDLIST {
         // Sets $db.
         parent::__construct();
         $this->gidprefix .= 'debate/';
-    }
-
-    /**
-     *
-     */
-    public function _get_data_by_recent_mostvotes($args) {
-        // Get the most highly voted recent speeches.
-        // $args may have 'days'=>7 and/or 'num'=>5
-        // or something like that.
-
-        // The most voted on things during how many recent days?
-        if (isset($args['days']) && is_numeric($args['days'])) {
-            $days = $args['days'];
-        } else {
-            $days = 7;
-        }
-
-        // How many results?
-        if (isset($args['num']) && is_numeric($args['num'])) {
-            $items_to_list = $args['num'];
-        } else {
-            $items_to_list = 5;
-        }
-
-        $q = parlDBQuery("SELECT subsection_id,
-								section_id,
-								htype,
-								gid,
-								major,
-								hdate,
-								speaker_id,
-								epobject.body,
-								SUM(uservotes.vote) + anonvotes.yes_votes AS total_vote
-						FROM	hansard,
-								epobject
-								LEFT OUTER JOIN uservotes ON epobject.epobject_id = uservotes.epobject_id
-								LEFT OUTER JOIN anonvotes ON epobject.epobject_id = anonvotes.epobject_id
-						WHERE		major = ?
-						AND		hansard.epobject_id = epobject.epobject_id
-						AND		hdate >= DATE_SUB(CURDATE(), INTERVAL ? DAY)
-						GROUP BY epobject.epobject_id
-						HAVING 	total_vote > 0
-						ORDER BY total_vote DESC
-						LIMIT	?
-						", $this->major, $days, $items_to_list);
-
-        // What we return.
-        $data = [];
-        $speeches = [];
-
-        if ($q->rows() > 0) {
-
-            for ($n = 0; $n < $q->rows(); $n++) {
-
-                $speech = [
-                    'subsection_id' => $q->field($n, 'subsection_id'),
-                    'section_id' => $q->field($n, 'section_id'),
-                    'htype' => $q->field($n, 'htype'),
-                    'major' => $q->field($n, 'major'),
-                    'hdate' => $q->field($n, 'hdate'),
-                    'body' => $q->field($n, 'body'),
-                    'votes' => $q->field($n, 'total_vote')
-                ];
-
-                // Remove the "uk.org.publicwhip/blah/" from the gid:
-                // (In includes/utility.php)
-                $speech['gid'] = fix_gid_from_db($q->field($n, 'gid'));
-
-                $speech['listurl'] = $this->_get_listurl($speech);
-
-                $speech['speaker'] = $this->_get_speaker($q->field($n, 'speaker_id'), $q->field($n, 'hdate'));
-
-                $speeches[] = $speech;
-            }
-        }
-
-        if (count($speeches) > 0) {
-            // Get the subsection texts.
-
-            for ($n = 0; $n < count($speeches); $n++) {
-                $parent = $this->_get_subsection($speeches[$n]);
-                $speeches[$n]['parent']['body'] = $parent['body'];
-
-            }
-
-            $data['rows'] = $speeches;
-        } else {
-            $data['rows'] = [];
-        }
-
-        $data['info']['days'] = $days;
-
-        return $data;
     }
 
     /**

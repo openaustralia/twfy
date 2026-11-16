@@ -528,7 +528,6 @@ sub check_extra_gids
                         # check no comments, votes etc.
                         for my $entry (["comments", "epobject_id",],
                                            ["anonvotes", "epobject_id",],
-                                           ["uservotes", "epobject_id",],
                                            ["editqueue", "epobject_id_l",],
                                            ["editqueue", "epobject_id_h",],
                                            ) {
@@ -597,7 +596,6 @@ sub delete_redirected_gids {
                 # move comments and votes and so forth to redirected gid destination
                 for my $entry (["comments", "epobject_id",],
                                    ["anonvotes", "epobject_id",],
-                                   ["uservotes", "epobject_id",],
                                    ["editqueue", "epobject_id_l",],
                                    ["editqueue", "epobject_id_h",],
                                    ) {

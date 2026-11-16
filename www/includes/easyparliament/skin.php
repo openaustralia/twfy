@@ -152,7 +152,7 @@ class SKIN {
             <link rel="stylesheet" href="<?php echo WEBPATH; ?>style/<?php echo $skinstyles['global']; ?>/global.css?v=6"
                 type="text/css">
             <link rel="stylesheet"
-                href="<?php echo WEBPATH; ?>style/<?php echo $skinstyles['global']; ?>/layout.css?v=2"
+                href="<?php echo WEBPATH; ?>style/<?php echo $skinstyles['global']; ?>/layout.css?v=3"
                 type="text/css">
             <?php
         }
@@ -175,7 +175,7 @@ class SKIN {
         }
         if (isset($skinstyles["mobile"]) && $skinstyles["mobile"] != "") {
             ?>
-            <link rel="stylesheet" href="<?php echo WEBPATH; ?>style/<?php echo $skinstyles['mobile']; ?>/layout_mobile.css?v=2"
+            <link rel="stylesheet" href="<?php echo WEBPATH; ?>style/<?php echo $skinstyles['mobile']; ?>/layout_mobile.css?v=3"
                 type="text/css">
             <link rel="stylesheet" href="<?php echo WEBPATH; ?>style/<?php echo $skinstyles['mobile']; ?>/mobile.css?v=3"
                 type="text/css">

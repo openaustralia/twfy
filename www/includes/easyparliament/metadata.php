@@ -313,10 +313,6 @@ class Metadata {
             'title' => 'Debates for ',
             'url' => 'debates/'
         ],
-        'epvote' => [
-            'url' => 'vote/'
-        ],
-
         'gadget' => [
             'url' => 'gadget/',
             'title' => 'OpenAustralia Google gadget',

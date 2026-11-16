@@ -41,8 +41,8 @@ class SkinTest extends TestCase {
         $skin->output_stylesheets();
         $html = ob_get_clean();
 
-        $this->assertStringContainsString('layout_mobile.css?v=2', $html);
-        $this->assertStringContainsString('mobile.css?v=3', $html);
+        $this->assertMatchesRegularExpression('#/layout_mobile\.css\?v=\d+#', $html);
+        $this->assertMatchesRegularExpression('#/mobile\.css\?v=\d+#', $html);
     }
 
 }
