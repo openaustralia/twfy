@@ -55,4 +55,47 @@ class Alert extends Model {
         return $query->where('confirmed', true)->where('deleted', false);
     }
 
+    /**
+     * Alerts for one person, whose criteria start with "speaker:".
+     *
+     * @param \Illuminate\Database\Eloquent\Builder<Alert> $query
+     *   The query to narrow.
+     *
+     * @return \Illuminate\Database\Eloquent\Builder<Alert>
+     *   The same query, limited to speaker alerts.
+     */
+    public function scopeSpeakerAlerts(Builder $query): Builder {
+        return $query->where('criteria', 'like', 'speaker:%');
+    }
+
+    /**
+     * Alerts whose criteria never mention a speaker.
+     *
+     * @param \Illuminate\Database\Eloquent\Builder<Alert> $query
+     *   The query to narrow.
+     *
+     * @return \Illuminate\Database\Eloquent\Builder<Alert>
+     *   The same query, limited to keyword alerts.
+     */
+    public function scopeKeywordAlerts(Builder $query): Builder {
+        return $query->where('criteria', 'not like', '%speaker:%');
+    }
+
+    /**
+     * One row per distinct criteria, with how many alerts share it as `c`,
+     * most shared first.
+     *
+     * @param \Illuminate\Database\Eloquent\Builder<Alert> $query
+     *   The query to group.
+     *
+     * @return \Illuminate\Database\Eloquent\Builder<Alert>
+     *   The same query, grouped by criteria.
+     */
+    public function scopeCountedByCriteria(Builder $query): Builder {
+        return $query->select('criteria')
+          ->selectRaw('COUNT(*) AS c')
+          ->groupBy('criteria')
+          ->orderByDesc('c');
+    }
+
 }
