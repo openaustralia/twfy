@@ -72,16 +72,12 @@ function suggest_alerts($email, $criteria, $maxresults) {
         $followers = AlertModel::where('criteria', 'like', "%$criteria%")->select('email');
         // Any alert of this emailer (already following).
         $already_following = AlertModel::where('email', $email)->select('criteria');
-        $suggestions = AlertModel::select('criteria')
-          ->selectRaw('count(*) AS c')
+        $suggestions = AlertModel::countedByCriteria()
           ->whereIn('email', $followers)
           // Filter in simple speaker alerts 'speaker:nnnnn'.
           ->whereRaw('LENGTH(criteria) = 13')
-          ->where('criteria', 'like', 'speaker:%')
+          ->speakerAlerts()
           ->whereNotIn('criteria', $already_following)
-          ->groupBy('criteria')
-          // Most common first.
-          ->orderByDesc('c')
           ->get();
         // If something was returned.
         if ($suggestions->isNotEmpty()) {
