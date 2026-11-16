@@ -35,6 +35,8 @@
  * etc.
  */
 
+use Illuminate\Database\Capsule\Manager as DB;
+use Illuminate\Database\QueryException;
 use OpenAustralia\TWFY\EmailSuppressions;
 use OpenAustralia\TWFY\Models\Alert as AlertModel;
 
@@ -66,33 +68,32 @@ function suggest_alerts($email, $criteria, $maxresults) {
         // Find emails who follow this speaker
         // find the speakers followed by those email
         // return their most frequently followed speakers, not followed by the searcher.
-        // Select and count criteria.
-        $sql = "SELECT count(*) AS c, criteria FROM alerts ";
-        // From emails which have the provided criteria/pid.
-        $sql .= "WHERE email = any (SELECT email FROM alerts WHERE criteria like ?) ";
-        // Filter in simple speaker alerts 'speaker:nnnnn'.
-        $sql .= "AND LENGTH(criteria)=13 AND LEFT(criteria,8)='speaker:' ";
-        // Disregard any alert of this emailer (already following)
-        $sql .= "AND NOT(criteria=ANY(SELECT criteria FROM alerts WHERE email= ?)) ";
-        // Most common first.
-        $sql .= "GROUP BY criteria ORDER BY c DESC";
-        $q = parlDBQuery($sql, "%$criteria%", $email);
-        $resultcount = $q->rows();
+        // Emails which have the provided criteria/pid.
+        $followers = AlertModel::where('criteria', 'like', "%$criteria%")->select('email');
+        // Any alert of this emailer (already following).
+        $already_following = AlertModel::where('email', $email)->select('criteria');
+        $suggestions = AlertModel::select('criteria')
+          ->selectRaw('count(*) AS c')
+          ->whereIn('email', $followers)
+          // Filter in simple speaker alerts 'speaker:nnnnn'.
+          ->whereRaw('LENGTH(criteria) = 13')
+          ->where('criteria', 'like', 'speaker:%')
+          ->whereNotIn('criteria', $already_following)
+          ->groupBy('criteria')
+          // Most common first.
+          ->orderByDesc('c')
+          ->get();
         // If something was returned.
-        if ($resultcount > 0) {
+        if ($suggestions->isNotEmpty()) {
             print "<p>You may also be interested in being alerted when these people speak too.</p>";
         }
-        if ($resultcount > $maxresults) {
-            // Cap results.
-            $resultcount = $maxresults;
-        }
 
-        // Iterate through results.
-        for ($i = 0; $i < $resultcount; $i++) {
+        // Iterate through results, capped.
+        foreach ($suggestions->take($maxresults) as $suggestion) {
             // Ignore suggestion where only one other has an alert for.
-            if ($q->field($i, 'c') > 1) {
+            if ($suggestion->c > 1) {
                 // Extract members PID.
-                $pid = substr($q->field($i, 'criteria'), -5);
+                $pid = substr($suggestion->criteria, -5);
                 $member = new MEMBER(['person_id' => $pid]);
                 print '<p><a href="' . WEBPATH . 'alert/?r=1&only=1&amp;pid=' . $member->person_id() . '"><strong>Email me whenever ' . $member->full_name() . ' speaks</strong></a></p>';
             }
@@ -179,30 +180,12 @@ class ALERT {
         // so that only live confirmed alerts are chosen.
 
         // Look for this alert_id's details.
-        $q = parlDBQuery("SELECT alert_id,
-						email,
-						criteria,
-						registrationtoken,
-						deleted,
-						confirmed
-						FROM alerts
-						WHERE confirmed =" . $confirmed .
-            " AND deleted=" . $deleted .
-            ' ORDER BY email');
+        $alerts = AlertModel::where('confirmed', (bool) $confirmed)
+          ->where('deleted', (bool) $deleted)
+          ->orderBy('email')
+          ->get(['alert_id', 'email', 'criteria', 'registrationtoken', 'deleted', 'confirmed']);
 
-        $data = [];
-
-        for ($row = 0; $row < $q->rows(); $row++) {
-            $contents = [
-                'alert_id' => $q->field($row, 'alert_id'),
-                'email' => $q->field($row, 'email'),
-                'criteria' => $q->field($row, 'criteria'),
-                'registrationtoken' => $q->field($row, 'registrationtoken'),
-                'confirmed' => $q->field($row, 'confirmed'),
-                'deleted' => $q->field($row, 'deleted')
-            ];
-            $data[] = $contents;
-        }
+        $data = $alerts->toArray();
         $info = "Alert";
         $data = ['info' => $info, 'data' => $data];
 
@@ -246,85 +229,65 @@ class ALERT {
 
         $criteria = alert_details_to_criteria($details);
 
-        $q = parlDBQuery("SELECT * FROM alerts WHERE email = ? AND criteria = ? AND confirmed = 1", $details['email'], $criteria);
-        if ($q->rows() > 0) {
-            $deleted = $q->field(0, 'deleted');
-            if ($deleted) {
-                parlDBQuery("UPDATE alerts SET deleted = 0 WHERE email = ? AND criteria = ? AND confirmed = 1", $details['email'], $criteria);
+        $existing = AlertModel::where('email', $details['email'])
+          ->where('criteria', $criteria)
+          ->where('confirmed', true);
+        $first = (clone $existing)->first();
+        if ($first !== null) {
+            if ($first->deleted) {
+                $existing->update(['deleted' => false]);
                 return 1;
             } else {
                 return -2;
             }
         }
 
-        $sql = "INSERT INTO alerts (email, criteria, deleted, confirmed, recommended, created) ";
-        $sql .= "VALUES (?, ?, '0', '0', ";
-        // MJ OA-437 add as recommendation.
-        if ($details['recommended'] == 1) {
-            $sql .= "'1',";
-        } else {
-            $sql .= "'0',";
-        }
-        $sql .= "NOW() )";
+        // We have to generate an alert's unique registration token.
+        // This will be sent to them via email, so we can confirm they exist.
+        // The token will be 22 characters of a random base63 string.
 
-        $q = parlDBQuery($sql, $details['email'], $criteria);
+        // We upgraded from 16 to 22 chars in the 2026 move to php 8.0 (still fits in varchar(34) DB field)
+        // Uses cryptographically secure random bytes;
+        // both +/ are changed to '_' as we use '-' elsewhere as a separator so it's technically base63.
+        $token = rtrim(strtr(base64_encode(random_bytes(16)), '+/', '__'), '=');
 
-        if ($q->success()) {
-
-            // Get the alert id so that we can perform the updates for confirmation.
-
-            $this->alert_id = $q->insert_id();
-            $this->criteria = $criteria;
-
-            // We have to generate an alert's unique registration token.
-            // This will be sent to them via email, so we can confirm they exist.
-            // The token will be 22 characters of a random base63 string.
-
-            // We upgraded from 16 to 22 chars in the 2026 move to php 8.0 (still fits in varchar(34) DB field)
-            // Uses cryptographically secure random bytes;
-            // both +/ are changed to '_' as we use '-' elsewhere as a separator so it's technically base63.
-            $token = rtrim(strtr(base64_encode(random_bytes(16)), '+/', '__'), '=');
-
-            // We won't be doing anything clever with the crypt stuff, just need to match this token.
-            $this->registrationtoken = $token;
-
-            // Add that to the database.
-
-            $r = parlDBQuery("UPDATE alerts
-                        SET registrationtoken = ?
-                        WHERE alert_id = ?
-						", $this->registrationtoken, $this->alert_id);
-
-            if ($r->success()) {
-                // Updated DB OK.
-
-                if ($confirmation_email) {
-                    // Right, send the email...
-                    $success = $this->send_confirmation_email($details);
-
-                    if ($success) {
-                        // Email sent OK.
-                        return 1;
-                    } else {
-                        // Couldn't send the email.
-                        return -1;
-                    }
-                } elseif ($instantly_confirm) {
-                    // No confirmation email needed.
-                    $s = parlDBQuery("UPDATE alerts
-						SET confirmed = '1'
-                        WHERE alert_id = ?
-						", $this->alert_id);
-                    return 1;
-                }
-            } else {
-                // Couldn't add the registration token to the DB.
-                return -1;
-            }
-
-        } else {
+        try {
+            $alert = AlertModel::create([
+                'email' => $details['email'],
+                'criteria' => $criteria,
+                'deleted' => false,
+                // Confirmed straight away only when no confirmation email is wanted.
+                'confirmed' => !$confirmation_email && $instantly_confirm,
+                // MJ OA-437 add as recommendation.
+                'recommended' => $details['recommended'] == 1,
+                // The database's clock, not PHP's (#1040).
+                'created' => DB::raw('NOW()'),
+                // We won't be doing anything clever with the crypt stuff, just need to match this token.
+                'registrationtoken' => $token,
+            ]);
+        } catch (QueryException $e) {
             // Couldn't add the user's data to the DB.
             return -1;
+        }
+
+        $this->alert_id = $alert->alert_id;
+        $this->criteria = $criteria;
+        $this->registrationtoken = $token;
+
+        if ($confirmation_email) {
+            // Right, send the email...
+            $success = $this->send_confirmation_email($details);
+
+            if ($success) {
+                // Email sent OK.
+                return 1;
+            } else {
+                // Couldn't send the email.
+                return -1;
+            }
+        } elseif ($instantly_confirm) {
+            // No confirmation email needed.
+            return 1;
         }
     }
 
@@ -381,12 +344,7 @@ class ALERT {
         // Returns true if there's a user with this email address.
 
         if ($email != "") {
-            $q = parlDBQuery("SELECT alert_id FROM alerts WHERE email = ?", $email);
-            if ($q->rows() > 0) {
-                return true;
-            } else {
-                return false;
-            }
+            return AlertModel::where('email', $email)->exists();
         } else {
             return false;
         }
@@ -418,31 +376,26 @@ class ALERT {
             return false;
         }
 
-        $q = parlDBQuery("SELECT email, criteria
-						FROM alerts
-                        WHERE alert_id = ?
-                        AND registrationtoken = ?
-						", $alert_id, $registrationtoken);
-
-        if ($q->rows() == 1) {
-            $this->criteria = $q->field(0, 'criteria');
-            $this->email = $q->field(0, 'email');
-            $r = parlDBQuery("UPDATE alerts
-						SET confirmed = '1', deleted = '0'
-                        WHERE	alert_id = ?
-						", $alert_id);
-
-            if ($r->success()) {
-                $this->confirmed = true;
-                return true;
-            } else {
-                return false;
-            }
-        } else {
+        $alert = AlertModel::where('alert_id', $alert_id)
+          ->where('registrationtoken', $registrationtoken)
+          ->first();
+        if ($alert === null) {
             // Couldn't find this alert in the DB. Maybe the token was
             // wrong or incomplete?
             return false;
         }
+
+        $this->criteria = $alert->criteria;
+        $this->email = $alert->email;
+
+        $alert->confirmed = true;
+        $alert->deleted = false;
+        if (!$alert->save()) {
+            return false;
+        }
+
+        $this->confirmed = true;
+        return true;
     }
 
     /**

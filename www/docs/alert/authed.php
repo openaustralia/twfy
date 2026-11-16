@@ -16,6 +16,8 @@
 include_once __DIR__ . '/../../includes/easyparliament/init.php';
 include_once __DIR__ . '/../../../../phplib/auth.php';
 
+use OpenAustralia\TWFY\Models\Alert as AlertModel;
+
 header("Content-Type: text/plain");
 
 $email = get_http_var('email');
@@ -28,8 +30,7 @@ if (!$pid || !ctype_digit($pid)) {
     if ($authed) {
 
         $criteria = "speaker:$pid";
-        $q = parlDBQuery('SELECT alert_id from alerts WHERE email=? AND criteria=? AND confirmed AND NOT deleted', $email, $criteria);
-        $already_signed = $q->rows();
+        $already_signed = AlertModel::active()->where('email', $email)->where('criteria', $criteria)->exists();
         if ($already_signed) {
             print "already signed";
         } else {

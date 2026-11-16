@@ -2,6 +2,7 @@
 
 namespace OpenAustralia\TWFY\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -40,5 +41,18 @@ class Alert extends Model {
 
     // PHP's clock is not the database's (#1040); the column defaults keep created_at and updated_at correct.
     public $timestamps = false;
+
+    /**
+     * Alerts that are confirmed and not deleted.
+     *
+     * @param \Illuminate\Database\Eloquent\Builder<Alert> $query
+     *   The query to narrow.
+     *
+     * @return \Illuminate\Database\Eloquent\Builder<Alert>
+     *   The same query, limited to active alerts.
+     */
+    public function scopeActive(Builder $query): Builder {
+        return $query->where('confirmed', true)->where('deleted', false);
+    }
 
 }

@@ -7,6 +7,7 @@
 require_once __DIR__ . '/bootstrap.php';
 
 use OpenAustralia\TWFY\EmailSuppressions;
+use OpenAustralia\TWFY\Models\Alert as AlertModel;
 
 /**
  * Confirming an alert does not lift a suppression. Confirmation tokens are
@@ -19,14 +20,14 @@ class AlertConfirmIntegrationTest extends TransactionalTestCase {
      *
      */
     private function insertAlert(string $email, string $token): int {
-        // The legacy ALERT class reads over the mysqli connection, so insert
-        // over that same connection.
-        $q = parlDBQuery(
-            "INSERT INTO alerts (email, criteria, registrationtoken, confirmed, deleted, created) VALUES (?, 'speaker:10001', ?, 0, 0, NOW())",
-            $email,
-            $token
-        );
-        return (int) $q->insert_id();
+        return AlertModel::create([
+            'email' => $email,
+            'criteria' => 'speaker:10001',
+            'registrationtoken' => $token,
+            'confirmed' => false,
+            'deleted' => false,
+            'created' => date('Y-m-d H:i:s'),
+        ])->alert_id;
     }
 
     /**
