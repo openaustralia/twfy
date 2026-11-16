@@ -173,16 +173,6 @@ $PAGE->block_end();
 
 
 //
-// MOST INTERESTING DEBATES.
-
-// $DEBATELIST = new DEBATELIST;
-
-// Num is how many to display.
-// days is over what period we're looking for the most interesting debates.
-// $DEBATELIST->display('recent_mostvotes', array('num'=>5, 'days'=>21));.
-
-
-//
 // MOST RECENT GLOSSARY ENTRY.
 
 // Temporary HTML...

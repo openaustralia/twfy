@@ -298,10 +298,6 @@ if (isset($data['rows'])) {
             $sidebarhtml = '';
             $extrahtml = '';
 
-            if (isset($row['votes']) && (!strstr($row['gid'], 'q'))) {
-                $sidebarhtml .= generate_votes($row['votes'], $row['major'], $row['epobject_id'], $row['gid']);
-            }
-
             # Do the logic for this in the function; plus why shouldn't
 # you be able to comment on speeches with unknown speakers?
 #			if (($hansardmajors[$data['info']['major']]['type'] == 'debate') && isset($row['speaker']) && count($row['speaker']) > 0) {
@@ -508,78 +504,6 @@ function generate_commentteaser($row, $major)
     return $html;
 }
 
-$votelinks_so_far = 0;
-function generate_votes($votes, $major, $id, $gid)
-{
-    /*
-    Returns HTML for the 'Interesting?' links (debates) or the 'Does this answer
-    the question?' links (wrans) in the sidebar.
-
-    We have yes/no, even for debates, for which we only allow people to say 'yes'.
-
-    $votes = => array (
-        'user'	=> array (
-            'yes'	=> '21',
-            'no'	=> '3'
-        ),
-        'anon'	=> array (
-            'yes'	=> '132',
-            'no'	=> '30'
-        )
-    )
-
-    $major is the htype of this item (eg, 12 or 13 for debates, 61 or 62 for wrans).
-    $id is an epobject_id.
-    */
-
-    global $this_page, $votelinks_so_far;
-
-    // What we return.
-    $html = '';
-
-    $URL = new URL($this_page);
-    $returl = $URL->generate();
-
-    $VOTEURL = new URL('epvote');
-    $VOTEURL->insert(array('v' => '1', 'id' => $id, 'ret' => $returl));
-
-    if (($major == 3 || $major == 8) && ($votelinks_so_far > 0 || preg_match('#r#', $gid))) { # XXX
-        // Wrans.
-        $yesvotes = $votes['user']['yes'] + $votes['anon']['yes'];
-        $novotes = $votes['user']['no'] + $votes['anon']['no'];
-
-        $yesplural = $yesvotes == 1 ? 'person thinks' : 'people think';
-        $noplural = $novotes == 1 ? 'person thinks' : 'people think';
-
-        $html .= '<strong>Does this answer the above question?</strong><br>';
-
-        $html .= '<span class="wransvote"><a href="' . $VOTEURL->generate() . '" title="Rate this as answering the question">Yes!</a> ' . $yesvotes . ' ' . $yesplural . ' so!<br>';
-
-        $VOTEURL->insert(array('v' => '0'));
-
-        $html .= '<a href="' . $VOTEURL->generate() . '" title="Rate this as NOT answering the question">No!</a> ' . $novotes . ' ' . $noplural . ' not!</span>';
-
-    } elseif ($major == 1) {
-        // Debates.
-
-        /*
-        We aren't putting Interesting? buttons in for now...
-
-        $VOTEURL->insert(array('v'=>'1'));
-        $totalvotes = $votes['user']['yes'] + $votes['anon']['yes'];
-        $plural = $totalvotes == 1 ? 'person thinks' : 'people think';
-
-        $html .= '<a href="' . $VOTEURL->generate() . '" title="Rate this as being interesting">Interesting?</a> ' . $totalvotes . ' ' . $plural . ' so!';
-        */
-
-    }
-
-    $votelinks_so_far++;
-    $html = "\t\t\t\t<p class=\"vote\">$html</p>\n";
-    return $html;
-
-}
-
 /*
 
 Structure of the $data array.
@@ -614,16 +538,6 @@ pairs along the lines of:
         'body'			=> 'Comment text here...',
         'posted'		=> '2003-12-31 23:00:00',
         'username'		=> 'William Thornton',
-    ),
-    'votes'	=> array (
-        'user'	=> array (
-            'yes'	=> '21',
-            'no'	=> '3'
-        ),
-        'anon'	=> array (
-            'yes'	=> '132',
-            'no'	=> '30'
-        )
     ),
     etc.
 

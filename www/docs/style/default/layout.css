@@ -385,23 +385,6 @@ div.sidebar p {
 	margin-top: 0.5em;
 	margin-bottom: 1em;
 	}
-div.sidebar p.vote {
-	margin: 0.2em 14px 0 10px;
-	}
-div.sidebar p.vote a {
-	background-color: #4D6C25;
-	padding: 2px 4px;
-	border-top: 2px solid #EAECE7;
-	border-right: 2px solid #F0F1ED;
-	border-bottom: 2px solid #3C541D;
-	border-left: 2px solid #324518;
-	color: #fff;
-	font-weight: bold;
-	text-decoration: none;
-	}
-span.wransvote {
-	line-height: 2.2em;
-	}
 
 div.sidebar p.comment-teaser {
 	margin: 0 14px 0 10px;
