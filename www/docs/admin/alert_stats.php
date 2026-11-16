@@ -21,7 +21,7 @@ $alerts = AlertModel::active()
   ->get(['alert_id', 'criteria']);
 print '<h3>People who probably wanted separate signups</h3> <table>';
 foreach ($alerts as $alert) {
-    print "<tr><td>{$alert->alert_id}</td><td>{$alert->criteria}</td></tr>";
+    print "<tr><td>{$alert->alert_id}</td><td>" . htmlspecialchars($alert->criteria) . "</td></tr>";
 }
 print '</table>';
 
@@ -112,7 +112,7 @@ print '<h3>Alert signups by keyword</h3> <table><tr><th>Criteria</th><th>Confirm
 foreach ($total as $criteria => $tot) {
     $c = $confirmed[$criteria] ?? 0;
     $u = $unconfirmed[$criteria] ?? 0;
-    print "<tr><td>$criteria</td><td>$c</td><td>$u</tr>";
+    print "<tr><td>" . htmlspecialchars($criteria) . "</td><td>$c</td><td>$u</tr>";
 }
 print '</table>';
 $PAGE->block_end();
