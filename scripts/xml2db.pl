@@ -265,24 +265,6 @@ sub describe_compare_arrays {
 }
 
 
-sub array_difference
-{
-        my $array1 = shift;
-        my $array2 = shift;
-
-        my @union = ();
-        my @intersection = ();
-        my @difference = ();
-
-        my %count = ();
-        foreach my $element (@$array1, @$array2) { $count{$element}++ }
-        foreach my $element (keys %count) {
-                push @union, $element;
-                push @{ $count{$element} > 1 ? \@intersection : \@difference }, $element;
-        }
-        return \@difference;
-}
-
 sub strip_string {
         my $s = shift;
         $s =~ s/^\s+//;
@@ -406,11 +388,6 @@ sub db_connect
 
         # Clear any half made previous attempts.
         delete_lonely_epobjects()
-}
-
-sub db_disconnect
-{
-        $dbh->disconnect();
 }
 
 sub delete_lonely_epobjects()
