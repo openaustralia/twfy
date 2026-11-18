@@ -842,10 +842,6 @@ sub add_mps_and_peers {
         my $twig = XML::Twig->new(twig_handlers =>
                 { 'constituency' => \&loadconstituency,
                     'member' => \&loadmember,
-                    'lord' => \&loadlord,
-                    'royal' => \&loadroyal,
-                    'member_ni' => \&loadni,
-                    'member_sp' => \&loadmsp,
                     'person' => \&loadperson,
                     'moffice' => \&loadmoffice },
                 output_filter => $outputfilter );
@@ -992,108 +988,6 @@ sub loadmember {
                 $member->att('party'),
                 $member->att('fromdate'), $member->att('todate'),
                 $member->att('fromwhy'), $member->att('towhy'));
-}
-
-# Add members of parliament (from all-lords*.xml file)
-sub loadlord {
-        my ($twig, $member) = @_;
-
-        my $id = $member->att('id');
-        my $person_id = $membertoperson{$id};
-        $id =~ s:uk.org.publicwhip/lord/::;
-        $person_id =~ s:uk.org.publicwhip/person/::;
-#        print "$id $person_id ".$member->att('title').' '.$member->att('lordname')."\n";
-
-        my $house = 2;
-        if ($member->att('house') ne "lords") {
-                die "Unknown house";
-        }
-
-        my $fromdate = $member->att('fromdate');
-        $fromdate = "$fromdate-01-01" if length($fromdate)==4;
-        $fromdate = '0000-00-00' unless $fromdate;
-        my $affiliation = $member->att('affiliation') || '';
-        my $towhy = $member->att('towhy') || '';
-        # We encode entities as e.g. &Ouml;, as otherwise non-ASCII characters
-        # get lost somewhere between Perl, the database and the browser.
-        # Just done for names (not constituency and party) as they are the
-        # only place to have accents, and constituencies have & signs and
-        # the postcode search matching system uses them.
-        db_memberadd($id,
-                $person_id,
-                $house,
-                encode_entities_noapos($member->att('title')),
-                $member->att('forenames'),
-                $member->att('lordname'),
-                encode_entities_noapos($member->att('lordofname')),
-                $affiliation,
-                $fromdate, $member->att('todate'),
-                '', $towhy);
-}
-
-# Load the Queen
-sub loadroyal {
-        my ($twig, $member) = @_;
-
-        my $id = $member->att('id');
-        my $person_id = $membertoperson{$id};
-        $id =~ s:uk.org.publicwhip/royal/::;
-        $person_id =~ s:uk.org.publicwhip/person/::;
-
-        my $house = 0;
-        my $fromdate = $member->att('fromdate');
-        my $towhy = $member->att('towhy') || '';
-        db_memberadd($id,
-                $person_id,
-                $house,
-                encode_entities_noapos($member->att('title')),
-                encode_entities_noapos($member->att('firstname')),
-                encode_entities_noapos($member->att('lastname')),
-                '', # No constituency, all land is "held of the Crown"
-                '', # No party, constitutionally
-                $member->att('fromdate'), $member->att('todate'),
-                $member->att('fromwhy'), $member->att('towhy')
-        );
-}
-
-sub loadni {
-        my ($twig, $member) = @_;
-        my $id = $member->att('id');
-        my $person_id = $membertoperson{$id};
-        $id =~ s:uk.org.publicwhip/member/::;
-        $person_id =~ s:uk.org.publicwhip/person/::;
-        my $house = 3;
-        db_memberadd($id,
-                $person_id,
-                $house,
-                encode_entities_noapos($member->att('title')),
-                encode_entities_noapos($member->att('firstname')),
-                encode_entities_noapos($member->att('lastname')),
-                encode_entities_noapos($member->att('constituency')),
-                Encode::encode('iso-8859-1', $member->att('party')),
-                $member->att('fromdate'), $member->att('todate'),
-                $member->att('fromwhy'), $member->att('towhy'));
-}
-
-sub loadmsp {
-        my ($twig, $member) = @_;
-        my $id = $member->att('id');
-        my $person_id = $membertoperson{$id};
-        $id =~ s:uk.org.publicwhip/member/::;
-        $person_id =~ s:uk.org.publicwhip/person/::;
-        my $house = 4;
-        db_memberadd($id,
-                $person_id,
-                $house,
-                encode_entities_noapos($member->att('title')),
-                encode_entities_noapos($member->att('firstname')),
-                encode_entities_noapos($member->att('lastname')),
-                encode_entities_noapos($member->att('constituency')),
-                Encode::encode('iso-8859-1', $member->att('party')),
-                $member->att('fromdate'), $member->att('todate'),
-                $member->att('fromwhy'), $member->att('towhy'));
-        $dbh->do('REPLACE INTO personinfo (person_id, data_key, data_value) VALUES (?, ?, ?)', {},
-                $person_id, 'sp_url', $member->att('spurl'));
 }
 
 sub loadperson {
