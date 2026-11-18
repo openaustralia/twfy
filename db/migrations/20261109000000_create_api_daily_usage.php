@@ -11,11 +11,16 @@ use Phinx\Migration\AbstractMigration;
  *
  * Making api_key.api_key unique guarantees each key string has one id, so
  * the counter can't be split across duplicates. Production had none.
+ *
+ * MySQL can't roll back schema changes, so the steps run in an order that
+ * is safe to retry: the unique key first, which fails before anything else
+ * changes if duplicates exist, and re-adds itself cleanly on a re-run.
  */
 final class CreateApiDailyUsage extends AbstractMigration
 {
     public function up(): void
     {
+        $this->execute('ALTER TABLE api_key DROP INDEX api_key, ADD UNIQUE KEY api_key (api_key)');
         $this->execute(
             "CREATE TABLE api_daily_usage (
                 api_key_id int NOT NULL,
@@ -27,7 +32,6 @@ final class CreateApiDailyUsage extends AbstractMigration
                 KEY date (date)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci"
         );
-        $this->execute('ALTER TABLE api_key DROP INDEX api_key, ADD UNIQUE KEY api_key (api_key)');
     }
 
     public function down(): void
