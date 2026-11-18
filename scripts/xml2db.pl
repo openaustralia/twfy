@@ -30,11 +30,6 @@ use HTML::Entities;
 
 use Uncapitalise;
 
-# Memory profiling (used to have a problem with long runs of this script eating all system memory)
-#use GTop ();
-#my $gtop = GTop->new;
-#my @attrs = qw(size vsize resident share rss);
-
 # output_filter 'safe' uses entities &#nnnn; to encode characters, this is
 # the easiest/most reliable way to get the encodings correct for content
 # output with Twig's ->sprint (attributes are different, see use of
@@ -42,7 +37,7 @@ use Uncapitalise;
 my $outputfilter = 'safe';
 #DBI->trace(1);
 
-use vars qw($all $recent $date $datefrom $dateto $debates $lordsdebates $members $force $quiet $cronquiet $memtest);
+use vars qw($all $recent $date $datefrom $dateto $debates $lordsdebates $members $force $quiet $cronquiet);
 my $result = GetOptions ( "all" => \$all,
                         "recent" => \$recent,
                         "date=s" => \$date,
@@ -52,7 +47,6 @@ my $result = GetOptions ( "all" => \$all,
                         "lordsdebates" => \$lordsdebates,
                         "members" => \$members,
                         "force" => \$force,
-                        "memtest" => \$memtest,
                         "quiet" => \$quiet,
                         "cronquiet" => \$cronquiet,
                         );
@@ -62,9 +56,8 @@ $c++ if $all;
 $c++ if $recent;
 $c++ if $date;
 $c++ if ($datefrom || $dateto);
-$c = 1 if $memtest;
 
-if ((!$result) || ($c != 1) || (!$debates && !$members && !$memtest && !$lordsdebates))
+if ((!$result) || ($c != 1) || (!$debates && !$members && !$lordsdebates))
 {
 print <<END;
 
@@ -110,12 +103,6 @@ if ($date)
 }
 
 db_connect();
-
-if ($memtest)
-{
-        print "Mem test not enabled - need lib GTop and uncomment the code\n";
-        #memory_test();
-}
 
 ##########################################################################
 
@@ -789,50 +776,6 @@ sub last_id
         $lastid->finish();
         return $arr[0];
 }
-
-##########################################################################
-# Testing / debugging
-
-=doc
-sub mem_use_begin
-{
-        my $before = $gtop->proc_mem($$);
-        return $before;
-}
-
-sub mem_use_end
-{
-        my $desc = shift;
-        my $before = shift;
-        my $after = $gtop->proc_mem($$);
-
-        my %after = map {$_ => $after->$_()} @attrs;
-        my %before = map { $_ => $before->$_() } @attrs;
-        warn $desc . "\n";
-        warn sprintf "%-10s : %-5s\n", $_,
-                GTop::size_string($after{$_} - $before{$_}),
-             for sort @attrs;
-}
-
-sub memory_test
-{
-        print "Memory test";
-
-        my $memmark;
-        for (my $i = 0; $i < 10; ++$i)
-        {
-                $memmark = mem_use_begin();
-                        add_debates_day("2004-04-01");
-                mem_use_end("add_debates_day", $memmark);
-                my $qq = $dbh->do('DELETE FROM hansard WHERE hdate="2004-04-01"');
-                delete_lonely_epobjects();
-        }
-        db_disconnect();
-        exit(0);
-}
-
-=cut
-
 
 ##########################################################################
 # MPs and Peers, also constituencies, people
