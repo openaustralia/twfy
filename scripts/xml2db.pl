@@ -107,7 +107,7 @@ db_connect();
 ##########################################################################
 
 use vars qw($hpos $curdate $curproof);
-use vars qw($currsection $currsubsection $inoralanswers $promotedheading);
+use vars qw($currsection $currsubsection $promotedheading);
 use vars qw(%gids %grdests %ignorehistorygids $tallygidsmode $tallygidsmodedummycount);
 use vars qw(%membertoperson);
 use vars qw($current_file);
@@ -115,30 +115,6 @@ use vars qw($current_file);
 use vars qw($debatesdir $lordsdebatesdir);
 $debatesdir = $parldata . "scrapedxml/representatives_debates/";
 $lordsdebatesdir = $parldata . "scrapedxml/senate_debates/";
-
-my @wrans_major_headings = (
-"ADVOCATE-GENERAL", "ADVOCATE GENERAL", "ADVOCATE-GENERAL FOR SCOTLAND", "AGRICULTURE, FISHERIES AND FOOD",
-"ATTORNEY-GENERAL", "CABINET OFFICE", "CABINET", "CULTURE MEDIA AND SPORT", "CULTURE, MEDIA AND SPORT",
-"CULTURE, MEDIA AND SPORTA", "CULTURE, MEDIA, SPORT", "CHURCH COMMISSIONERS", "CHURCH COMMISSIONER",
-"COMMUNITIES AND LOCAL GOVERNMENT", "CONSTITUTIONAL AFFAIRS", "CONSTITIONAL AFFAIRS", "CONSTITUTIONAL AFFFAIRS",
-"DEFENCE", "DEPUTY PRIME MINISTER", "DUCHY OF LANCASTER", "EDUCATION AND EMPLOYMENT", "ENVIRONMENT FOOD AND RURAL AFFAIRS",
-"ENVIRONMENT, FOOD AND RURAL AFFAIRS", "DEFRA", "ENVIRONMENT, FOOD AND THE REGIONS", "ENVIRONMENT",
-"EDUCATION AND SKILLS", "EDUCATION", "ELECTORAL COMMISSION COMMITTEE", "ELECTORAL COMMISSION",
-"SPEAKER'S COMMITTEE ON THE ELECTORAL COMMISSION", "FOREIGN AND COMMONWEALTH AFFAIRS", "FOREIGN AND COMMONWEALTH",
-"FOREIGN AND COMMONWEALTH OFFICE", "HOME DEPARTMENT", "HOME OFFICE", "HOME", "HEALTH", "HOUSE OF COMMONS",
-"HOUSE OF COMMONS COMMISSION", "HOUSE OF COMMMONS COMMISSION", "INTERNATIONAL DEVELOPMENT", "INTERNATIONAL DEVEOPMENT",
-"JUSTICE", "LEADER OF THE HOUSE", "LEADER OF THE COUNCIL", "LORD CHANCELLOR", "LORD CHANCELLOR'S DEPARTMENT",
-"LORD CHANCELLORS DEPARTMENT", "LORD CHANCELLOR'S DEPT", "CHANCELLOR OF THE DUCHY OF LANCASTER",
-"LORD PRESIDENT OF THE COUNCIL", "MINISTER FOR WOMEN",
-"WOMEN", "NATIONAL HERITAGE", "NORTHERN IRELAND", "OVERSEAS DEVELOPMENT ADMINISTRATION", "PRIME MINISTER",
-"PRIVY COUNCIL", "PRIVY COUNCIL OFFICE", "PRESIDENT OF THE COUNCIL", "PUBLIC ACCOUNTS COMMISSION",
-"PUBLIC ACCOUNTS COMMITTEE", "SOLICITOR-GENERAL", "SOLICITOR GENERAL", "SCOTLAND", "SOCIAL SECURITY", "TRANSPORT",
-"TRANSPORT, LOCAL GOVERNMENT AND THE REGIONS", "TRADE AND INDUSTRY", "TREASURY", "WALES", "WORK AND PENSIONS",
-"INNOVATION, UNIVERSITIES AND SKILLS", "CHILDREN, SCHOOLS AND FAMILIES",
-"BUSINESS, ENTERPRISE AND REGULATORY REFORM"
-);
-use vars qw($wrans_major_headings);
-$wrans_major_headings = ',' . join(',', @wrans_major_headings) . ',';
 
 # Do dates in reverse order
 sub revsort {
@@ -954,7 +930,6 @@ sub add_debates_day
                 'speech' => sub { do_load_speech($_, 1, 0, $_->sprint(1)) },
                 'minor-heading' => sub { do_load_subheading($_, 1, strip_string($_->sprint(1))) },
                 'major-heading' => sub { load_debate_heading($_, 1) },
-                'oral-heading' => sub { $inoralanswers = 1 },
                 'division' => sub { load_debate_division($_, 1) },
                 'gidredirect' => sub { do_load_gidredirect($_, 1) },
                 }, start_tag_handlers => {
@@ -963,7 +938,7 @@ sub add_debates_day
         $curdate = $date;
 
         # find out what gids there are (using tallygidsmode)
-        $hpos = 0; $currsection = 0; $currsubsection = 0; $promotedheading = 0; $inoralanswers = 0;
+        $hpos = 0; $currsection = 0; $currsubsection = 0; $promotedheading = 0;
         $tallygidsmode = 1; %gids = (); %grdests = (); $tallygidsmodedummycount = 10;
         parsefile_glob($twig, $parldata . "scrapedxml/representatives_debates/" . $curdate. "*.xml");
         # see if there are deleted gids
@@ -971,7 +946,7 @@ sub add_debates_day
         check_extra_gids($date, \@gids, "major = 1");
 
         # make the modifications
-        $hpos = 0; $currsection = 0; $currsubsection = 0; $promotedheading = 0; $inoralanswers = 0;
+        $hpos = 0; $currsection = 0; $currsubsection = 0; $promotedheading = 0;
         $tallygidsmode = 0; %gids = ();
         parsefile_glob($twig, $parldata . "scrapedxml/representatives_debates/" . $curdate. "*.xml");
 
@@ -984,17 +959,7 @@ sub add_debates_day
 # load <major-heading> tags
 sub load_debate_heading {
         my ($speech, $major) = @_;
-        # we merge together the Oral Answers to Questions major heading with the
-        # major headings "under" it.
         my $text = strip_string($speech->sprint(1));
-        if ($inoralanswers) {
-                if ($wrans_major_headings !~ /,$text,/) { # $text =~ m/[a-z]/ || $text eq 'BILL PRESENTED' || $text eq 'NEW MEMBER' || $text eq 'POINT OF ORDER') {
-                        $inoralanswers = 0;
-                } else {
-                        # &#8212; is mdash (apparently some browsers don't know &mdash;)
-                        $text = "Oral Answers to Questions &#8212; " . fix_case($text);
-                }
-        }
         do_load_heading($speech, $major, $text);
 }
 
@@ -1031,7 +996,7 @@ sub add_lordsdebates_day
         $curdate = $date;
 
         # find out what gids there are (using tallygidsmode)
-        $hpos = 0; $currsection = 0; $currsubsection = 0; $promotedheading = 0; $inoralanswers = 0;
+        $hpos = 0; $currsection = 0; $currsubsection = 0; $promotedheading = 0;
         $tallygidsmode = 1; %gids = (); %grdests = (); $tallygidsmodedummycount = 10;
         parsefile_glob($twig, $parldata . "scrapedxml/senate_debates/" . $curdate. "*.xml");
         # see if there are deleted gids
@@ -1039,7 +1004,7 @@ sub add_lordsdebates_day
         check_extra_gids($date, \@gids, "major = 101");
 
         # make the modifications
-        $hpos = 0; $currsection = 0; $currsubsection = 0; $promotedheading = 0; $inoralanswers = 0;
+        $hpos = 0; $currsection = 0; $currsubsection = 0; $promotedheading = 0;
         $tallygidsmode = 0; %gids = ();
         parsefile_glob($twig, $parldata . "scrapedxml/senate_debates/" . $curdate. "*.xml");
 
