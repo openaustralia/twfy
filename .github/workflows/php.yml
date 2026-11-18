@@ -118,6 +118,30 @@ jobs:
           DB_USER: root
           DB_PASSWORD: root
           DB_NAME: test_twfy
+      # tests/Pest/Xml2dbIntegrationTest.php runs scripts/xml2db.pl, which needs perllib and these Perl modules
+      - name: Checkout perllib
+        if: matrix.suite == 'Pest'
+        uses: actions/checkout@v4
+        with:
+          repository: openaustralia/perllib
+          path: perllib-checkout
+          ref: main
+      - name: Switch perllib to PR branch if it exists
+        if: matrix.suite == 'Pest'
+        run: git fetch origin ${{ github.head_ref || github.ref_name }} && git checkout ${{ github.head_ref || github.ref_name }} || echo "No PR branch found, using main"
+        working-directory: perllib-checkout
+      - name: Link perllib as sibling
+        if: matrix.suite == 'Pest'
+        run: ln -s ${{ github.workspace }}/perllib-checkout ../perllib
+      - name: Install Perl dependencies
+        if: matrix.suite == 'Pest'
+        run: |
+          sudo apt-get install -y \
+            libdbd-mysql-perl \
+            libdbi-perl \
+            libhtml-parser-perl \
+            libxml-twig-perl
+          perl -I../perllib -MmySociety::Config -MDBD::mysql -MXML::Twig -MHTML::Entities -e 'print "Perl modules OK\n"'
       - name: Run ${{ matrix.suite }} tests with coverage
         run: |
           XDEBUG_MODE=coverage ./vendor/bin/${{ matrix.runner }} \
