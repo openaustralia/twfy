@@ -68,23 +68,27 @@ function api_log_call(string $key): void {
     if ($key == 'DOCS') {
         return;
     }
-    ApiStat::create([
-        'api_key' => $key,
-        'ip_address' => ip_address(),
-        'query_time' => DB::raw('NOW()'),
-        'query' => preg_replace('#key=[A-Za-z0-9]+&?#', '', $_SERVER['REQUEST_URI']),
-    ]);
+    // Log and count the call together, so a failure leaves neither written
+    // and the daily count always matches api_stats.
+    DB::transaction(function () use ($key) {
+        ApiStat::create([
+            'api_key' => $key,
+            'ip_address' => ip_address(),
+            'query_time' => DB::raw('NOW()'),
+            'query' => preg_replace('#key=[A-Za-z0-9]+&?#', '', $_SERVER['REQUEST_URI']),
+        ]);
 
-    // Count the call for today (UTC) in the same request, with one upsert,
-    // so the daily count stays in step with api_stats without a queue.
-    $apiKeyId = ApiKey::where('api_key', $key)->value('id');
-    if ($apiKeyId !== null) {
-        ApiDailyUsage::upsert(
-            [['api_key_id' => $apiKeyId, 'date' => gmdate('Y-m-d'), 'count' => 1]],
-            ['api_key_id', 'date'],
-            ['count' => DB::raw('count + 1')]
-        );
-    }
+        // Count the call for today (UTC) with an upsert, so the daily count
+        // keeps up without a queue.
+        $apiKeyId = ApiKey::where('api_key', $key)->value('id');
+        if ($apiKeyId !== null) {
+            ApiDailyUsage::upsert(
+                [['api_key_id' => $apiKeyId, 'date' => gmdate('Y-m-d'), 'count' => 1]],
+                ['api_key_id', 'date'],
+                ['count' => DB::raw('count + 1')]
+            );
+        }
+    });
 }
 
 /**
