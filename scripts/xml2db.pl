@@ -70,8 +70,10 @@ synchronises the database to the files, so existing entries with the same gid
 are updated preserving their database id.
 
 --debates - process House of Representatives debates
---senatedebates - process Senate debates (--lordsdebates is the old name)
+--senatedebates - process Senate debates (both do the same)
+--lordsdebates  - Alias for senatedebates (historical compatibility)
 --members - process members
+
 
 --recent - acts incrementally, using xml2db-lastload files
 --all - reprocess every single date back in time
