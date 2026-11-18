@@ -37,14 +37,14 @@ use Uncapitalise;
 my $outputfilter = 'safe';
 #DBI->trace(1);
 
-use vars qw($all $recent $date $datefrom $dateto $debates $lordsdebates $members $force $quiet $cronquiet);
+use vars qw($all $recent $date $datefrom $dateto $debates $senatedebates $members $force $quiet $cronquiet);
 my $result = GetOptions ( "all" => \$all,
                         "recent" => \$recent,
                         "date=s" => \$date,
                         "from=s" => \$datefrom,
                         "to=s" => \$dateto,
                         "debates" => \$debates,
-                        "lordsdebates" => \$lordsdebates,
+                        "senatedebates|lordsdebates" => \$senatedebates,
                         "members" => \$members,
                         "force" => \$force,
                         "quiet" => \$quiet,
@@ -57,7 +57,7 @@ $c++ if $recent;
 $c++ if $date;
 $c++ if ($datefrom || $dateto);
 
-if ((!$result) || ($c != 1) || (!$debates && !$members && !$lordsdebates))
+if ((!$result) || ($c != 1) || (!$debates && !$members && !$senatedebates))
 {
 print <<END;
 
@@ -70,7 +70,7 @@ synchronises the database to the files, so existing entries with the same gid
 are updated preserving their database id.
 
 --debates - process House of Representatives debates
---lordsdebates - process Senate debates
+--senatedebates - process Senate debates (--lordsdebates is the old name)
 --members - process members
 
 --recent - acts incrementally, using xml2db-lastload files
@@ -114,16 +114,16 @@ use vars qw(%gids %grdests %ignorehistorygids $tallygidsmode $tallygidsmodedummy
 use vars qw(%membertoperson);
 use vars qw($current_file);
 
-use vars qw($debatesdir $lordsdebatesdir);
+use vars qw($debatesdir $senatedebatesdir);
 $debatesdir = $parldata . "scrapedxml/representatives_debates/";
-$lordsdebatesdir = $parldata . "scrapedxml/senate_debates/";
+$senatedebatesdir = $parldata . "scrapedxml/senate_debates/";
 
 # Do dates in reverse order
 sub revsort {
         return reverse sort @_;
 }
 
-# Process debates and Lords debates
+# Process debates and Senate debates
 sub process_type {
         my ($xnames, $xdirs, $xdayfunc) = @_;
 
@@ -210,7 +210,7 @@ sub process_type {
 
 # Process main data
 process_type([""], [$debatesdir], \&add_debates_day) if ($debates) ;
-process_type([""], [$lordsdebatesdir], \&add_lordsdebates_day) if ($lordsdebates);
+process_type([""], [$senatedebatesdir], \&add_senatedebates_day) if ($senatedebates);
 
 # Process members
 if ($members) {
@@ -958,9 +958,9 @@ list of votes</a> (From <a href=\"" . mySociety::Config::get('PUBLICWHIP_HOST') 
 }
 
 ##########################################################################
-# Lords Debates (as a stream of headings and paragraphs)
+# Senate debates (as a stream of headings and paragraphs)
 
-sub add_lordsdebates_day
+sub add_senatedebates_day
 {
         my ($date) = @_;
         my $twig = XML::Twig->new(twig_handlers => {
@@ -1003,7 +1003,7 @@ sub canon_time {
 }
 
 ##########################################################################
-# Handlers for speech/heading elements in debates and Lords debates
+# Handlers for speech/heading elements in debates and Senate debates
 
 sub do_load_speech
 {
