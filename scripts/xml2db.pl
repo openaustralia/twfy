@@ -70,8 +70,8 @@ synchronises the database to the files, so existing entries with the same gid
 are updated preserving their database id.
 
 --debates - process House of Representatives debates
---senatedebates - process Senate debates (both do the same)
---lordsdebates  - Alias for senatedebates (historical compatibility)
+--senatedebates - process Senate debates
+--lordsdebates - old name for --senatedebates
 --members - process members
 
 
