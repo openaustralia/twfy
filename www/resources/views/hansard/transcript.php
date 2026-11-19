@@ -20,12 +20,19 @@
     <div class="lg:col-span-2 bg-white rounded-2xl shadow-lg p-6 md:p-8 space-y-8">
         <div>
             <?php
+            // h2, not h1: page.php's title_bar() already renders the site logo as
+            // the page's one <h1> on every page (page_body(), unconditional) - a
+            // second <h1> here breaks the document outline.
+            ?>
+            <h2 class="text-3xl md:text-4xl font-bold text-slate-900 leading-tight"><?php echo $subsectionTitle /* already-safe HTML, same source as the old stripe-head-2 heading */ ?></h2>
+            <?php
             // "House debates"/"Senate debates" - was its own heading above the card
             // (see the $PAGE->heading_displayed suppression in hansard_gid.php); now
-            // sits next to the section title instead.
+            // sits under the debate's own title instead, as a small eyebrow line
+            // giving the chamber/section context rather than leading with it.
             ?>
             <?php if ($chamberLabel || $sectionTitle): ?>
-                <p class="text-sm font-semibold uppercase tracking-wide text-teal-700">
+                <p class="mt-1 text-sm font-semibold uppercase tracking-wide text-teal-700">
                     <?php if ($chamberLabel): ?>
                         <?php echo $this->e($chamberLabel) ?>
                     <?php endif; ?>
@@ -37,12 +44,6 @@
                     <?php endif; ?>
                 </p>
             <?php endif; ?>
-            <?php
-            // h2, not h1: page.php's title_bar() already renders the site logo as
-            // the page's one <h1> on every page (page_body(), unconditional) - a
-            // second <h1> here breaks the document outline.
-            ?>
-            <h2 class="text-3xl md:text-4xl font-bold text-slate-900 leading-tight"><?php echo $subsectionTitle /* already-safe HTML, same source as the old stripe-head-2 heading */ ?></h2>
             <div class="mt-3 flex items-center gap-4 text-sm text-slate-600">
                 <?php if ($dateUrl): ?>
                     <?php
