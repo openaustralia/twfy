@@ -131,10 +131,12 @@ migrates a fresh database and diffs the dump against `db/schema.sql`.
 - Tests: `*Test.php` are unit tests, `*IntegrationTest.php` need the database; `tests/bootstrap.php` wraps each
   test in mysqli and Eloquent transactions rolled back in `tearDown`, and defines the constants the legacy code
   expects. Seeders are idempotent and `SEEDER=<Name>` runs one.
-- `tests/Pest/Xml2dbIntegrationTest.php` runs `scripts/xml2db.pl` as a subprocess with invented XML, so it cannot use
-  the transactional case: the script commits on its own connection. It empties the tables the script writes before and
-  after each test, and only runs when `DB_NAME` contains "test". It needs `perllib` beside the repo and the Perl
-  modules `DBD::mysql`, `XML::Twig` and `HTML::Entities`; without them it skips locally and fails when `CI` is set.
+- `tests/Pest/Xml2dbIntegrationTest.php` runs every spec against both loaders, `scripts/xml2db.pl` (Perl) and
+  `scripts/importxml.php` (PHP, classes in `www/includes/XmlImport/`), as subprocesses with invented XML. A final spec
+  loads each scenario with both and requires the same rows. The loaders commit on their own connection, so the specs
+  cannot use the transactional case: they empty the tables the loaders write before and after each test, and only
+  run when `DB_NAME` contains "test". Perl needs `perllib` beside the repo and the modules `DBD::mysql`, `XML::Twig`
+  and `HTML::Entities`; without them the specs skip locally and fail when `CI` is set.
 - Psalm is configured (`psalm.xml`) but nothing runs it; phpcs (Drupal standard with K&R braces and lowercase
   constants) is the enforced style gate.
 
