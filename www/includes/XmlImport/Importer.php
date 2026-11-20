@@ -36,7 +36,7 @@ class Importer {
      * Runs the load the options ask for.
      */
     public function run(): void {
-        self::deleteLonelyEpobjects($this->messages, $this->options);
+        self::deleteLonelyEpobjects($this->messages);
 
         if ($this->options->debates) {
             $this->loadHouse('representatives_debates', 1);
@@ -63,7 +63,7 @@ class Importer {
     /**
      * Deletes epobject rows that no hansard row uses, which a failed or forced load can leave behind.
      */
-    public static function deleteLonelyEpobjects(Messages $messages, Options $options): void {
+    public static function deleteLonelyEpobjects(Messages $messages): void {
         if (Epobject::query()->toBase()->where('type', '<>', 1)->count() > 0) {
             throw new \RuntimeException('Unknown type not 1 entries in epobject table, lots of code needs fixing');
         }
