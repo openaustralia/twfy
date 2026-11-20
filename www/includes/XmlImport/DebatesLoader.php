@@ -515,7 +515,7 @@ class DebatesLoader {
             if (!$this->options->force) {
                 throw new \RuntimeException('Died');
             }
-            Importer::deleteLonelyEpobjects($this->messages, $this->options);
+            Importer::deleteLonelyEpobjects($this->messages);
         }
     }
 
