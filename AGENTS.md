@@ -122,7 +122,8 @@ migrates a fresh database and diffs the dump against `db/schema.sql`.
 - `_mysqldata/` and `_xapiandb/` are live Docker volume data on the host, gitignored - don't clean them out to fix
   a problem. Xapian search is only active when `XAPIANDB` is non-empty in `conf/general` (the local-dev example
   leaves it off, falling back to MySQL search).
-- Tests are mid-move from PHPUnit classes to Pest specs (openaustralia/openaustralia#1049). Specs go in `tests/Pest/`
+- Tests are mid-move from PHPUnit classes to Pest specs (openaustralia/openaustralia#1049). **Write every new test as a
+  Pest spec, never a new PHPUnit class.** Specs go in `tests/Pest/`
   and follow [betterspecs.org](https://betterspecs.org): `describe()` per function, `when`/`with`/`without` contexts,
   descriptions under 40 characters, one `expect()` per `it()`, datasets for repeated cases. Everything else under
   `tests/` is a PHPUnit class. Run everything with `./vendor/bin/pest`; a bare `phpunit` refuses to load the specs,
@@ -135,7 +136,9 @@ migrates a fresh database and diffs the dump against `db/schema.sql`.
   `scripts/importxml.php` (PHP, classes in `www/includes/XmlImport/`), as subprocesses with invented XML. A final spec
   loads each scenario with both and requires the same rows. The loaders commit on their own connection, so the specs
   cannot use the transactional case: they empty the tables the loaders write before and after each test, and only
-  run when `DB_NAME` contains "test". Perl needs `perllib` beside the repo and the modules `DBD::mysql`, `XML::Twig`
+  run when `DB_NAME` contains "test". The PHP loader's coverage comes from `tests/Pest/Support/subprocess-coverage.php`,
+  which `Xml2dbRunner` prepends when `SUBPROCESS_COVERAGE_DIR` is set (CI sets it); it writes `.cov` files that
+  `phpcov merge` combines with the parent's. Perl needs `perllib` beside the repo and the modules `DBD::mysql`, `XML::Twig`
   and `HTML::Entities`; without them the specs skip locally and fail when `CI` is set.
 - Psalm is configured (`psalm.xml`) but nothing runs it; phpcs (Drupal standard with K&R braces and lowercase
   constants) is the enforced style gate.
