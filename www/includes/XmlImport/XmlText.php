@@ -122,7 +122,7 @@ class XmlText {
      * Strips whitespace from both ends.
      */
     public static function strip(string $text): string {
-        return preg_replace('/^\s+|\s+$/', '', $text);
+        return preg_replace('/(^\s+)|(\s+$)/', '', $text);
     }
 
     /**
@@ -160,7 +160,7 @@ class XmlText {
      * One part of a heading.
      */
     private static function fixCasePart(string $part): string {
-        $part = preg_replace('/\s+/', ' ', preg_replace('/^\s+|\s+$/', '', $part));
+        $part = preg_replace('/\s+/', ' ', preg_replace('/(^\s+)|(\s+$)/', '', $part));
         if (preg_match('/^[^a-z]+(&amp;[^a-z]+)*$/', $part)) {
             if ($part === '' || $part === '0') {
                 throw new \RuntimeException('undefined part title');
