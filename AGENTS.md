@@ -73,6 +73,7 @@ container, as some files are owned by container users.
 |-------------------|-----------------|-------------------------------------------------------------------------|
 | `TWFY_HTTP_PORT`  | 80              | the site                                                                |
 | `TWFY_MYSQL_PORT` | 3306            | MySQL. `Makefile.dev` passes it on to host-side scripts as `DB_PORT`    |
+| `TWFY_MAILPIT_PORT` | 8025          | Mailpit's web interface, where the site's outgoing mail is caught       |
 | `PHPLIB_PATH`     | `../../phplib`  | the sibling phplib checkout. Relative to `.devcontainer/`, so an absolute path is simplest in a worktree |
 | `PERLLIB_PATH`    | `../perllib`    | the sibling perllib checkout, for `make xapian-index-docker`. Relative to the repo root |
 | `PARSER_PATH`     | `../openaustralia-parser` | the sibling parser checkout, for `make docker-db-seed`. Relative to the repo root |
