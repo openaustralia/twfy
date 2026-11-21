@@ -52,7 +52,7 @@ describe('ProofReportView::overview()', function () {
     });
 
     it('shows where you are', function () {
-        expect($this->html)->toContain('aria-current="page">Proof');
+        expect($this->html)->toContain('aria-current="page">Import status');
     });
 });
 
@@ -138,5 +138,103 @@ describe('ProofReportView::year()', function () {
 
     it('says when a month has no days', function () {
         expect(ProofReportView::year(2026, 7))->toContain('We hold no sitting days in this month.');
+    });
+});
+
+describe('ProofReportView::year() days with errors', function () {
+    beforeEach(function () {
+        proof_view_row(995001, '2026-03-01', 1, true);
+        proof_view_row(995002, '2026-03-02', 1, false);
+        ImportErrors::record('2026-03-01', 1, 'loader', 'Bad time');
+        ImportErrors::record('2026-03-01', 1, 'parser', 'Bad entity');
+        ImportErrors::record('2026-03-10', 101, 'parser', 'Failed before loading');
+        $this->html = ProofReportView::year(2026, 3);
+    });
+
+    it('links a day to its errors', function () {
+        expect($this->html)->toContain('href="/admin/proof_errors.php?date=2026-03-01&amp;house=representatives"');
+    });
+
+    it('counts a day\'s errors in the link', function () {
+        expect($this->html)->toContain('2 errors</a>');
+    });
+
+    it('says one error in the singular', function () {
+        expect($this->html)->toContain('1 error</a>');
+    });
+
+    it('marks a day with errors with an icon', function () {
+        expect($this->html)->toContain('<svg class="inline-block align-text-bottom mr-1"');
+    });
+
+    it('tints a row with errors pale red', function () {
+        expect($this->html)->toContain('bg-rose-50 hover:bg-rose-100');
+    });
+
+    it('leaves a row without errors striped', function () {
+        expect($this->html)->toContain('even:bg-slate-50 hover:bg-teal-50');
+    });
+
+    it('lists a day with errors and no rows', function () {
+        expect($this->html)->toContain('house=senate');
+    });
+
+    it('labels a day with no rows as not loaded', function () {
+        expect($this->html)->toContain('>Not loaded</span>');
+    });
+});
+
+describe('ProofReportView::errors()', function () {
+    beforeEach(function () {
+        ImportErrors::record('2022-03-29', 1, 'loader', 'Incorrect <b>time</b> value');
+        $this->html = ProofReportView::errors('2022-03-29', 'representatives');
+    });
+
+    it('names the day and house', function () {
+        expect($this->html)->toContain('Import errors for 2022-03-29, Representatives');
+    });
+
+    it('shows the message', function () {
+        expect($this->html)->toContain('Incorrect &lt;b&gt;time&lt;/b&gt; value');
+    });
+
+    it('says who found it', function () {
+        expect($this->html)->toContain('>Loader</td>');
+    });
+
+    it('links back to the month', function () {
+        expect($this->html)->toContain('href="/admin/proof_year.php?year=2022&amp;month=3#days"');
+    });
+
+    it('links the day on Parliament House', function () {
+        expect($this->html)->toContain('Dataset%3Ahansardr,hansardr80%20Date%3A29%2F3%2F2022;');
+    });
+
+    it('links the original XML', function () {
+        expect($this->html)->toContain('href="https://data.openaustralia.org.au/origxml/representatives_debates/2022-03-29.xml"');
+    });
+
+    it('links the parsed XML', function () {
+        expect($this->html)->toContain('href="https://data.openaustralia.org.au/scrapedxml/representatives_debates/2022-03-29.xml"');
+    });
+
+    it('links a Senate day to the Senate files', function () {
+        expect(ProofReportView::errors('2022-03-29', 'senate'))->toContain('/origxml/senate_debates/2022-03-29.xml');
+    });
+
+    it('says when a day has no errors', function () {
+        expect(ProofReportView::errors('2022-03-30', 'senate'))->toContain('No errors are recorded for this day.');
+    });
+
+    it('turns away a date that is not a day', function () {
+        expect(ProofReportView::errors('2022-02-30', 'senate'))->toContain('That is not a day and house');
+    });
+
+    it('turns away an unknown house', function () {
+        expect(ProofReportView::errors('2022-03-29', 'lords'))->toContain('That is not a day and house');
+    });
+
+    it('turns away text in place of a date', function () {
+        expect(ProofReportView::errors('<script>', 'senate'))->not->toContain('<script>');
     });
 });

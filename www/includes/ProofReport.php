@@ -36,31 +36,59 @@ class ProofReport {
      * @param int|null $month
      *   The month of that year to list, from 1 to 12, or null for the whole year.
      *
-     * @return list<array{date: string, major: int, proof: int, final: int, unknown: int, last_changed: ?string}>
-     *   The date, house, the number of rows that are proof, final and unknown, and when a row last changed.
+     * @return list<array{date: string, major: int, proof: int, final: int, unknown: int, errors: int, last_changed: ?string}>
+     *   The date, house, the number of rows that are proof, final and unknown, how many import errors the day has, and
+     *   when a row last changed.
      */
     public static function days(?int $year = null, ?int $month = null): array {
+        $range = $year === null ? null : self::dateRange($year, $month);
+
         // Eloquent can't count rows by condition within a group, so the counts are raw SQL.
+        $rows = [];
         $query = Hansard::query()
           ->whereIn('major', array_keys(self::HOUSES))
-          ->when($year !== null, fn ($query) => $query->whereBetween('hdate', self::dateRange($year, $month)))
+          ->when($range !== null, fn ($query) => $query->whereBetween('hdate', $range))
           ->selectRaw('hdate, major, SUM(proof = 1) AS proof_rows, SUM(proof = 0) AS final_rows, SUM(proof IS NULL) AS unknown_rows, MAX(modified) AS last_changed')
-          ->groupBy('hdate', 'major')
-          ->orderByDesc('hdate')
-          ->orderBy('major');
-
-        $rows = [];
+          ->groupBy('hdate', 'major');
         foreach ($query->toBase()->get() as $row) {
-            $rows[] = [
+            $rows[$row->hdate . '|' . $row->major] = [
                 'date' => (string) $row->hdate,
                 'major' => (int) $row->major,
                 'proof' => (int) $row->proof_rows,
                 'final' => (int) $row->final_rows,
                 'unknown' => (int) $row->unknown_rows,
+                'errors' => 0,
                 'last_changed' => $row->last_changed === null ? null : (string) $row->last_changed,
             ];
         }
+
+        // A day that failed before any of it loaded has errors and no rows, and still gets a row of its own.
+        $errors = ImportError::query()
+          ->when($range !== null, fn ($query) => $query->whereBetween('hdate', $range))
+          ->selectRaw('hdate, major, COUNT(*) AS error_count')
+          ->groupBy('hdate', 'major');
+        foreach ($errors->toBase()->get() as $row) {
+            $key = $row->hdate . '|' . $row->major;
+            $rows[$key] ??= ['date' => (string) $row->hdate, 'major' => (int) $row->major, 'proof' => 0, 'final' => 0, 'unknown' => 0, 'errors' => 0, 'last_changed' => null];
+            $rows[$key]['errors'] = (int) $row->error_count;
+        }
+
+        usort($rows, fn (array $a, array $b): int => [$b['date'], $a['major']] <=> [$a['date'], $b['major']]);
         return $rows;
+    }
+
+    /**
+     * The import errors recorded for a day and house, parser errors first.
+     *
+     * @return list<array{source: string, message: string, created_at: ?string}>
+     *   Where each came from, what it said, and when it was recorded.
+     */
+    public static function errorsForDay(string $date, int $major): array {
+        $errors = [];
+        foreach (ImportError::where('hdate', $date)->where('major', $major)->orderByDesc('source')->orderBy('id')->get() as $error) {
+            $errors[] = ['source' => $error->source, 'message' => $error->message, 'created_at' => $error->created_at];
+        }
+        return $errors;
     }
 
     /**
@@ -205,9 +233,12 @@ class ProofReport {
     }
 
     /**
-     * Whether a day is proof, final, unknown or a mix, from the number of rows in each state.
+     * Whether a day is proof, final, unknown, a mix or not loaded at all, from the number of rows in each state.
      */
     public static function status(int $proof, int $final, int $unknown): string {
+        if ($proof + $final + $unknown === 0) {
+            return 'Not loaded';
+        }
         if ($proof > 0 && $final === 0 && $unknown === 0) {
             return 'Proof';
         }
