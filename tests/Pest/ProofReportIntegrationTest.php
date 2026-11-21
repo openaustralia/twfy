@@ -142,13 +142,23 @@ describe('Import errors in the counts', function () {
     it('counts a day that has errors and no rows', function () {
         ImportErrors::record('2026-06-10', 1, 'parser', 'Failed before loading');
 
-        expect(array_column(ProofReport::months(2026), null, 'month')[6])->toMatchArray(['total' => 0, 'errors' => 1]);
+        expect(array_column(ProofReport::months(2026), null, 'month')[6])->toMatchArray(['total' => 1, 'errors' => 1]);
     });
 
     it('counts an errors-only year', function () {
         ImportErrors::record('2012-05-08', 1, 'loader', 'Failed before loading');
 
-        expect(array_column(ProofReport::years(), null, 'year')[2012])->toMatchArray(['total' => 0, 'errors' => 1]);
+        expect(array_column(ProofReport::years(), null, 'year')[2012])->toMatchArray(['total' => 1, 'errors' => 1]);
+    });
+
+    it('counts a day with errors as an error day only', function () {
+        expect(array_column(ProofReport::months(2026), null, 'month')[3])->toMatchArray(['proof' => 1, 'final' => 0, 'errors' => 2, 'total' => 3]);
+    });
+
+    it('leaves the days without errors in their states', function () {
+        proof_report_row(990003, '2026-03-05', 1, false);
+
+        expect(array_column(ProofReport::months(2026), null, 'month')[3])->toMatchArray(['proof' => 1, 'final' => 1, 'errors' => 2, 'total' => 4]);
     });
 });
 
@@ -239,6 +249,10 @@ describe('ProofReport::percent()', function () {
 });
 
 describe('ProofReport::status()', function () {
+    it('calls a day with errors Errors', function () {
+        expect(ProofReport::status(3, 0, 0, 1))->toBe('Errors');
+    });
+
     it('gives each state a label', function (int $proof, int $final, int $unknown, string $label) {
         expect(ProofReport::status($proof, $final, $unknown))->toBe($label);
     })->with([
@@ -247,5 +261,6 @@ describe('ProofReport::status()', function () {
         'unknown' => [0, 0, 3, 'Unknown'],
         'mixed' => [1, 2, 0, 'Mixed'],
         'not loaded' => [0, 0, 0, 'Not loaded'],
+
     ]);
 });

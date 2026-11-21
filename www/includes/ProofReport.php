@@ -168,7 +168,8 @@ class ProofReport {
      *   Only the days of this year, or null for every year.
      *
      * @return list<array{period: int, proof: int, final: int, unknown: int, mixed: int, total: int, errors: int, last_changed: ?string}>
-     *   The period, the number of days that are proof, final, unknown and mixed, and how many days had import errors.
+     *   The period, the number of days that are proof, final, unknown and mixed, how many days had import errors, and
+     *   the total of all of them. A day with errors counts as an error day, whatever its rows say.
      */
     private static function summaries(string $period, ?int $year = null): array {
         // Eloquent can't count rows by condition within a group, so the counts are raw SQL. The null-safe <=>
@@ -176,14 +177,17 @@ class ProofReport {
         $days = Hansard::query()
           ->whereIn('major', array_keys(self::HOUSES))
           ->when($year !== null, fn ($query) => $query->whereBetween('hdate', self::dateRange($year, null)))
-          ->selectRaw('hdate, SUM(proof <=> 1) AS p, SUM(proof <=> 0) AS f, SUM(proof IS NULL) AS u, MAX(modified) AS changed')
+          ->selectRaw('hdate, major, SUM(proof <=> 1) AS p, SUM(proof <=> 0) AS f, SUM(proof IS NULL) AS u, MAX(modified) AS changed')
           ->groupBy('hdate', 'major');
+        $failed = ImportError::query()->selectRaw('DISTINCT hdate AS error_date, major AS error_major');
         $rows = $days->getConnection()->query()
           ->fromSub($days->toBase(), 'days')
+          ->leftJoinSub($failed->toBase(), 'failed', fn ($join) => $join->on('failed.error_date', '=', 'days.hdate')->on('failed.error_major', '=', 'days.major'))
           ->selectRaw("$period AS period, COUNT(*) AS total, "
-            . 'SUM(p > 0 AND f = 0 AND u = 0) AS proof_days, '
-            . 'SUM(f > 0 AND p = 0 AND u = 0) AS final_days, '
-            . 'SUM(u > 0 AND p = 0 AND f = 0) AS unknown_days, '
+            . 'SUM(failed.error_date IS NOT NULL) AS error_days, '
+            . 'SUM(failed.error_date IS NULL AND p > 0 AND f = 0 AND u = 0) AS proof_days, '
+            . 'SUM(failed.error_date IS NULL AND f > 0 AND p = 0 AND u = 0) AS final_days, '
+            . 'SUM(failed.error_date IS NULL AND u > 0 AND p = 0 AND f = 0) AS unknown_days, '
             . 'MAX(changed) AS last_changed')
           ->groupBy('period')
           ->orderByDesc('period')
@@ -201,15 +205,18 @@ class ProofReport {
             $proof = (int) $row->proof_days;
             $final = (int) $row->final_days;
             $unknown = (int) $row->unknown_days;
-            $total = (int) $row->total;
+            $with_rows = (int) $row->error_days;
+            $errored = (int) ($errors[$row->period] ?? 0);
+            // Days with errors and no rows of their own are in the error count but not in the rows counted above.
+            $total = (int) $row->total + $errored - $with_rows;
             $summaries[] = [
                 'period' => (int) $row->period,
                 'proof' => $proof,
                 'final' => $final,
                 'unknown' => $unknown,
-                'mixed' => $total - $proof - $final - $unknown,
+                'mixed' => (int) $row->total - $with_rows - $proof - $final - $unknown,
                 'total' => $total,
-                'errors' => (int) ($errors[$row->period] ?? 0),
+                'errors' => $errored,
                 'last_changed' => $row->last_changed === null ? null : (string) $row->last_changed,
             ];
         }
@@ -218,7 +225,7 @@ class ProofReport {
         $listed = array_column($summaries, 'period');
         foreach ($errors as $error_period => $error_days) {
             if (!in_array((int) $error_period, $listed, true)) {
-                $summaries[] = ['period' => (int) $error_period, 'proof' => 0, 'final' => 0, 'unknown' => 0, 'mixed' => 0, 'total' => 0, 'errors' => (int) $error_days, 'last_changed' => null];
+                $summaries[] = ['period' => (int) $error_period, 'proof' => 0, 'final' => 0, 'unknown' => 0, 'mixed' => 0, 'total' => (int) $error_days, 'errors' => (int) $error_days, 'last_changed' => null];
             }
         }
         usort($summaries, fn (array $a, array $b): int => $b['period'] <=> $a['period']);
@@ -233,9 +240,13 @@ class ProofReport {
     }
 
     /**
-     * Whether a day is proof, final, unknown, a mix or not loaded at all, from the number of rows in each state.
+     * Whether a day has errors, is proof, final, unknown, a mix or not loaded at all, from the number of rows in each
+     * state. A day with import errors is an error day, whatever its rows say.
      */
-    public static function status(int $proof, int $final, int $unknown): string {
+    public static function status(int $proof, int $final, int $unknown, int $errors = 0): string {
+        if ($errors > 0) {
+            return 'Errors';
+        }
         if ($proof + $final + $unknown === 0) {
             return 'Not loaded';
         }
