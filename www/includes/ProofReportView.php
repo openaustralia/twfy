@@ -40,7 +40,7 @@ class ProofReportView {
         $segments = self::segments($years);
 
         $html = self::breadcrumbs([['Admin', '/admin/'], ['Proof', null]]);
-        $html .= '<p class="text-sm text-slate-600 max-w-3xl">Each bar shows the share of the days we hold for a year. A day is one house\'s sitting. '
+        $html .= '<p class="text-sm text-slate-600 max-w-3xl">Each bar shows the share of the sitting days we hold for a year. A sitting day is one house\'s sitting, so a date when both houses sat counts twice. '
             . 'Choose a year to see its months and days.</p>';
         $html .= self::legend($segments);
         $html .= '<ol class="max-w-4xl !m-0 p-0 list-none">';
@@ -83,7 +83,7 @@ class ProofReportView {
             . self::finalShare($year_row)
             . '</div>';
         $html .= self::legend(self::segments($months));
-        $html .= '<p class="text-sm text-slate-600 max-w-3xl">Each row is a month. A day is one house\'s sitting. Choose a month to see its days. '
+        $html .= '<p class="text-sm text-slate-600 max-w-3xl">Each row is a month. A sitting day is one house\'s sitting, so a date when both houses sat counts twice. Choose a month to see its days. '
             . '"Last changed" is when a row last changed in our database, not when we last read it from Parliament House.</p>';
         $html .= self::monthsTable($months, $year, $month);
 
@@ -137,7 +137,7 @@ class ProofReportView {
      */
     public static function bar(array $row, array $segments, string $name): string {
         if ($row['total'] === 0) {
-            return '<div class="flex flex-1 h-3 rounded bg-slate-100" role="img" aria-label="' . htmlspecialchars($name) . ': no days"></div>';
+            return '<div class="flex flex-1 h-3 rounded bg-slate-100" role="img" aria-label="' . htmlspecialchars($name) . ': no sitting days"></div>';
         }
         $parts = [];
         $html = '';
@@ -192,7 +192,7 @@ class ProofReportView {
      * A count of days, with the right plural.
      */
     public static function days(int $count): string {
-        return number_format($count) . ($count === 1 ? ' day' : ' days');
+        return number_format($count) . ($count === 1 ? ' sitting day' : ' sitting days');
     }
 
     /**
@@ -261,11 +261,11 @@ class ProofReportView {
     private static function monthsTable(array $months, int $year, ?int $selected): string {
         $segments = self::segments($months);
         $html = '<div class="overflow-x-auto">' . self::TABLE . self::HEADING_ROW
-            . '<th class="px-3 py-2 font-semibold">Month</th><th class="px-3 py-2 font-semibold">Share of days</th>';
+            . '<th class="px-3 py-2 font-semibold">Month</th><th class="px-3 py-2 font-semibold">Share of sitting days</th>';
         foreach ($segments as $segment) {
             $html .= '<th class="px-3 py-2 font-semibold text-right">' . $segment['label'] . '</th>';
         }
-        $html .= '<th class="px-3 py-2 font-semibold text-right">Days</th><th class="px-3 py-2 font-semibold">Last changed</th></tr></thead><tbody>';
+        $html .= '<th class="px-3 py-2 font-semibold text-right">Sitting days</th><th class="px-3 py-2 font-semibold">Last changed</th></tr></thead><tbody>';
 
         foreach ($months as $row) {
             $is_selected = $row['month'] === $selected;
@@ -312,7 +312,7 @@ class ProofReportView {
             . '</div>';
 
         if (!$days) {
-            return $html . '<p class="text-sm text-slate-600">' . ($total === 0 ? 'We hold no days in this month.' : 'Every day in this month is final.') . '</p>';
+            return $html . '<p class="text-sm text-slate-600">' . ($total === 0 ? 'We hold no sitting days in this month.' : 'Every sitting day in this month is final.') . '</p>';
         }
 
         $html .= '<div class="overflow-x-auto">' . self::TABLE . self::HEADING_ROW;

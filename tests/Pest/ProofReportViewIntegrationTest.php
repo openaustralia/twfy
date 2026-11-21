@@ -120,10 +120,10 @@ describe('ProofReportView::year()', function () {
     });
 
     it('says when a month is all final', function () {
-        expect(ProofReportView::year(2026, 4, false))->toContain('Every day in this month is final.');
+        expect(ProofReportView::year(2026, 4, false))->toContain('Every sitting day in this month is final.');
     });
 
     it('says when a month has no days', function () {
-        expect(ProofReportView::year(2026, 7, false))->toContain('We hold no days in this month.');
+        expect(ProofReportView::year(2026, 7, false))->toContain('We hold no sitting days in this month.');
     });
 });
