@@ -324,27 +324,27 @@ class DebatesLoader {
         $now = Capsule::raw('NOW()');
         $epobjectId = (int) Epobject::query()->toBase()->insertGetId([
             'title' => '',
-'body' => $body,
-'type' => 1,
-'created' => $now,
-'modified' => $now,
+            'body' => $body,
+            'type' => 1,
+            'created' => $now,
+            'modified' => $now,
         ]);
         Hansard::query()->toBase()->insert([
             'epobject_id' => $epobjectId,
-'gid' => $row[0],
-'htype' => $row[1],
-'speaker_id' => $row[2],
+            'gid' => $row[0],
+            'htype' => $row[1],
+            'speaker_id' => $row[2],
             'major' => $row[3],
-'minor' => $row[4],
-'section_id' => $row[5],
-'subsection_id' => $row[6],
+            'minor' => $row[4],
+            'section_id' => $row[5],
+            'subsection_id' => $row[6],
             'hpos' => $row[7],
-'hdate' => $row[8],
-'htime' => $row[9],
-'source_url' => $row[10],
+            'hdate' => $row[8],
+            'htime' => $row[9],
+            'source_url' => $row[10],
             'proof' => $row[11],
-'created' => $now,
-'modified' => $now,
+            'created' => $now,
+            'modified' => $now,
         ]);
         return $epobjectId;
     }
@@ -386,18 +386,18 @@ class DebatesLoader {
             }
             Hansard::query()->toBase()->where('epobject_id', $epobjectId)->where('gid', $gid)->update([
                 'gid' => $row[0],
-'htype' => $row[1],
-'speaker_id' => $row[2],
-'major' => $row[3],
-'minor' => $row[4],
+                'htype' => $row[1],
+                'speaker_id' => $row[2],
+                'major' => $row[3],
+                'minor' => $row[4],
                 'section_id' => $row[5],
-'subsection_id' => $row[6],
-'hpos' => $row[7],
-'hdate' => $row[8],
+                'subsection_id' => $row[6],
+                'hpos' => $row[7],
+                'hdate' => $row[8],
                 'htime' => $row[9],
-'source_url' => $row[10],
-'proof' => $row[11],
-'modified' => Capsule::raw('NOW()'),
+                'source_url' => $row[10],
+                'proof' => $row[11],
+                'modified' => Capsule::raw('NOW()'),
             ]);
         }
 
