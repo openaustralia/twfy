@@ -79,6 +79,52 @@ describe('ProofReport::days() with many days', function () {
     });
 });
 
+describe('ProofReport::years()', function () {
+    beforeEach(function () {
+        proof_report_row(930001, '2026-03-01', 1, true);
+        proof_report_row(930002, '2026-03-02', 1, false);
+        proof_report_row(930003, '2026-03-03', 1, null);
+        proof_report_row(930004, '2026-03-04', 1, true);
+        proof_report_row(930005, '2026-03-04', 1, false);
+        proof_report_row(930006, '2025-01-01', 101, false);
+        proof_report_row(930007, '2025-01-01', 1, false);
+    });
+
+    it('counts the days in each state for a year', function () {
+        expect(ProofReport::years()[0])->toBe(['year' => 2026, 'proof' => 1, 'final' => 1, 'unknown' => 1, 'mixed' => 1, 'total' => 4]);
+    });
+
+    it('counts each house on a date as a day', function () {
+        expect(ProofReport::years()[1])->toMatchArray(['year' => 2025, 'final' => 2, 'total' => 2]);
+    });
+
+    it('lists the newest year first', function () {
+        expect(array_column(ProofReport::years(), 'year'))->toBe([2026, 2025]);
+    });
+});
+
+describe('ProofReport::days() for a year', function () {
+    beforeEach(function () {
+        proof_report_row(940001, '2026-03-01', 1, true);
+        proof_report_row(940002, '2025-12-31', 1, true);
+        proof_report_row(940003, '2025-01-01', 1, true);
+    });
+
+    it('lists only that year', function () {
+        expect(array_column(ProofReport::days(true, 1, 2025), 'date'))->toBe(['2025-12-31', '2025-01-01']);
+    });
+});
+
+describe('ProofReport::percent()', function () {
+    it('gives a share of the whole', function (int $part, int $total, float $percent) {
+        expect(ProofReport::percent($part, $total))->toBe($percent);
+    })->with([
+        'a quarter' => [1, 4, 25.0],
+        'a third' => [1, 3, 33.33],
+        'nothing held' => [0, 0, 0.0],
+    ]);
+});
+
 describe('ProofReport::status()', function () {
     it('gives each state a label', function (int $proof, int $final, int $unknown, string $label) {
         expect(ProofReport::status($proof, $final, $unknown))->toBe($label);
