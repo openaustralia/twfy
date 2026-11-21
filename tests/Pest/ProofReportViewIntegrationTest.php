@@ -123,7 +123,7 @@ describe('ProofReportView::year()', function () {
     });
 
     it('shows a day of mixed rows as mixed', function () {
-        expect(ProofReportView::year(2026, 5))->toContain('bg-rose-100');
+        expect(ProofReportView::year(2026, 5))->toContain('bg-fuchsia-100');
     });
 
     it('has a column for days with errors', function () {
@@ -138,6 +138,15 @@ describe('ProofReportView::year()', function () {
 
     it('says when a month has no days', function () {
         expect(ProofReportView::year(2026, 7))->toContain('We hold no sitting days in this month.');
+    });
+});
+
+describe('ProofReportView::year() months table', function () {
+    it('has no second errors column', function () {
+        proof_view_row(996001, '2026-03-01', 1, true);
+        ImportErrors::record('2026-03-01', 1, 'loader', 'Bad time');
+
+        expect(ProofReportView::year(2026, 0))->not->toContain('>Errors</th>');
     });
 });
 
@@ -164,7 +173,7 @@ describe('ProofReportView::year() days with errors', function () {
     });
 
     it('marks a day with errors with an icon', function () {
-        expect($this->html)->toContain('<svg class="inline-block align-text-bottom mr-1"');
+        expect($this->html)->toContain('!no-underline hover:!underline" href="/admin/proof_errors.php?date=2026-03-01&amp;house=representatives"><svg');
     });
 
     it('tints a row with errors pale red', function () {
@@ -179,8 +188,12 @@ describe('ProofReportView::year() days with errors', function () {
         expect($this->html)->toContain('house=senate');
     });
 
-    it('labels a day with no rows as not loaded', function () {
-        expect($this->html)->toContain('>Not loaded</span>');
+    it('labels a day with errors as Errors', function () {
+        expect($this->html)->toContain('bg-rose-100 text-rose-800"><svg');
+    });
+
+    it('labels a day with no rows or errors as not loaded', function () {
+        expect(ProofReportView::year(2026, 3))->not->toContain('>Not loaded</span>');
     });
 });
 

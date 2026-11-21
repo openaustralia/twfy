@@ -18,13 +18,26 @@ class ProofReportView {
     public const LINK_CLASSES = '!text-teal-700 !no-underline hover:!underline';
 
     /**
-     * The segments of a bar, in the order they are drawn. The colours are checked for colour-blind separation.
+     * The segments of a bar, in the order they are drawn. The colours are checked for colour-blind separation across
+     * every pair, and each also has an icon, so colour is never the only way to tell them apart.
      */
     private const SEGMENTS = [
         'final' => ['label' => 'Final', 'bar' => 'bg-[#0d9488]', 'pill' => 'bg-teal-100 text-teal-800'],
         'proof' => ['label' => 'Proof', 'bar' => 'bg-[#d97706]', 'pill' => 'bg-amber-100 text-amber-800'],
-        'mixed' => ['label' => 'Mixed', 'bar' => 'bg-[#e11d48]', 'pill' => 'bg-rose-100 text-rose-800'],
+        'mixed' => ['label' => 'Mixed', 'bar' => 'bg-[#a21caf]', 'pill' => 'bg-fuchsia-100 text-fuchsia-800'],
         'unknown' => ['label' => 'Unknown', 'bar' => 'bg-[#7c6fd0]', 'pill' => 'bg-violet-100 text-violet-800'],
+        'errors' => ['label' => 'Errors', 'bar' => 'bg-[#e11d48]', 'pill' => 'bg-rose-100 text-rose-800'],
+    ];
+
+    /**
+     * The inside of a 16 by 16 outline icon for each segment, drawn in the colour of the text around it.
+     */
+    private const ICONS = [
+        'final' => '<circle cx="8" cy="8" r="6.5"/><path d="M5 8.2l2 2 4-4.4" stroke-linecap="round" stroke-linejoin="round"/>',
+        'proof' => '<path d="M3 13l.6-2.8L10.8 3l2.2 2.2-7.2 7.2L3 13z" stroke-linejoin="round"/><path d="M9.6 4.2l2.2 2.2"/>',
+        'mixed' => '<circle cx="8" cy="8" r="6.5"/><path d="M8 1.5a6.5 6.5 0 0 1 0 13z" fill="currentColor"/>',
+        'unknown' => '<circle cx="8" cy="8" r="6.5"/><path d="M6.2 6.3a1.9 1.9 0 1 1 2.7 1.7c-.6.3-.9.7-.9 1.3M8 11.3v.01" stroke-linecap="round"/>',
+        'errors' => '<circle cx="8" cy="8" r="6.5"/><path d="M8 4.5v4M8 11v.01" stroke-linecap="round"/>',
     ];
 
     private const TABLE = '<table class="w-full max-w-4xl !m-0 text-sm border-collapse">';
@@ -91,20 +104,35 @@ class ProofReportView {
     }
 
     /**
-     * The segments to draw for some rows: Mixed only when one of them has a mixed day.
+     * The segments to draw for some rows: Mixed and Errors only when one of them has such a day.
      *
      * @param list<array<string, mixed>> $rows
-     *   Rows that each have a "mixed" count.
+     *   Rows that each have a "mixed" and an "errors" count.
      *
      * @return array<string, array{label: string, bar: string, pill: string}>
      *   The segments, keyed by the row key that holds their count.
      */
     public static function segments(array $rows): array {
         $segments = self::SEGMENTS;
-        if (!array_filter($rows, fn (array $row): bool => $row['mixed'] > 0)) {
-            unset($segments['mixed']);
+        foreach (['mixed', 'errors'] as $key) {
+            if (!array_filter($rows, fn (array $row): bool => $row[$key] > 0)) {
+                unset($segments[$key]);
+            }
         }
         return $segments;
+    }
+
+    /**
+     * The icon for a segment at a size, as an inline SVG that screen readers skip.
+     *
+     * @param string $key
+     *   A key of SEGMENTS.
+     * @param int $size
+     *   Width and height in pixels.
+     */
+    public static function icon(string $key, int $size): string {
+        return '<svg class="inline-block shrink-0" width="' . $size . '" height="' . $size . '" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">'
+            . self::ICONS[$key] . '</svg>';
     }
 
     /**
@@ -115,8 +143,9 @@ class ProofReportView {
      */
     public static function legend(array $segments): string {
         $html = '<ul class="flex flex-wrap gap-x-5 gap-y-1 my-4 p-0 list-none text-sm text-slate-700">';
-        foreach ($segments as $segment) {
-            $html .= '<li class="flex items-center gap-2"><span class="inline-block w-3 h-3 rounded-sm ' . $segment['bar'] . '"></span>' . $segment['label'] . '</li>';
+        foreach ($segments as $key => $segment) {
+            $html .= '<li class="flex items-center gap-2"><span class="inline-flex items-center justify-center w-5 h-5 rounded text-white ' . $segment['bar'] . '">'
+                . self::icon($key, 14) . '</span>' . $segment['label'] . '</li>';
         }
         return $html . '</ul>';
     }
@@ -288,10 +317,8 @@ class ProofReportView {
         }
         $house = (string) array_search($day['major'], ImportErrors::HOUSES, true);
         $label = $day['errors'] === 1 ? '1 error' : $day['errors'] . ' errors';
-        $icon = '<svg class="inline-block align-text-bottom mr-1" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">'
-            . '<circle cx="8" cy="8" r="6.5"/><path d="M8 4.5v4M8 11v.01" stroke-linecap="round"/></svg>';
-        return '<a class="whitespace-nowrap font-semibold !text-rose-700 !no-underline hover:!underline" href="'
-            . htmlspecialchars(self::link('proof_errors.php', ['date' => $day['date'], 'house' => $house])) . '">' . $icon . $label . '</a>';
+        return '<a class="inline-flex items-center gap-1 whitespace-nowrap font-semibold !text-rose-700 !no-underline hover:!underline" href="'
+            . htmlspecialchars(self::link('proof_errors.php', ['date' => $day['date'], 'house' => $house])) . '">' . self::icon('errors', 16) . $label . '</a>';
     }
 
     /**
@@ -362,7 +389,8 @@ class ProofReportView {
         $segments = self::segments($months);
         $html = '<div class="overflow-x-auto">' . self::TABLE . self::HEADING_ROW
             . '<th class="px-3 py-2 font-semibold">Month</th><th class="px-3 py-2 font-semibold">Share of sitting days</th>';
-        foreach ($segments as $segment) {
+        // Errors has its own column below, which is there even for a year with none.
+        foreach (array_diff_key($segments, ['errors' => true]) as $segment) {
             $html .= '<th class="px-3 py-2 font-semibold text-right">' . $segment['label'] . '</th>';
         }
         $html .= '<th class="px-3 py-2 font-semibold text-right">Sitting days</th><th class="px-3 py-2 font-semibold text-right">Days with errors</th><th class="px-3 py-2 font-semibold">Last changed</th></tr></thead><tbody>';
@@ -379,7 +407,7 @@ class ProofReportView {
                     . htmlspecialchars(self::link('proof_year.php', ['year' => $year, 'month' => $row['month']])) . '#days">' . $name . '</a>';
             }
             $html .= '</td><td class="px-3 py-2 w-48"><div class="flex">' . self::bar($row, $segments, $name . ' ' . $year) . '</div></td>';
-            foreach (array_keys($segments) as $key) {
+            foreach (array_keys(array_diff_key($segments, ['errors' => true])) as $key) {
                 $html .= '<td class="px-3 py-2 text-right tabular-nums">' . $row[$key] . '</td>';
             }
             $html .= '<td class="px-3 py-2 text-right tabular-nums">' . $row['total'] . '</td>'
@@ -415,15 +443,17 @@ class ProofReportView {
         }
         $html .= '<th class="px-3 py-2 font-semibold">Last changed</th></tr></thead><tbody>';
         foreach ($days as $day) {
-            $status = ProofReport::status($day['proof'], $day['final'], $day['unknown']);
+            $status = ProofReport::status($day['proof'], $day['final'], $day['unknown'], $day['errors']);
             $path = $day['major'] === 1 ? '/debates/' : '/senate/';
             $date = htmlspecialchars($day['date']);
-            $pill = self::SEGMENTS[strtolower($status)]['pill'] ?? 'bg-slate-100 text-slate-700';
+            $key = strtolower($status);
+            $pill = self::SEGMENTS[$key]['pill'] ?? 'bg-slate-100 text-slate-700';
+            $pill_icon = isset(self::ICONS[$key]) ? self::icon($key, 12) : '';
             $row_colours = $day['errors'] > 0 ? 'bg-rose-50 hover:bg-rose-100' : 'even:bg-slate-50 hover:bg-teal-50';
             $html .= '<tr class="border-0 border-b border-solid border-slate-200 ' . $row_colours . '">'
                 . '<td class="px-3 py-2 whitespace-nowrap"><a class="' . self::LINK_CLASSES . '" href="' . $path . '?d=' . $date . '">' . $date . '</a></td>'
                 . '<td class="px-3 py-2 text-slate-700">' . htmlspecialchars(ProofReport::HOUSES[$day['major']]) . '</td>'
-                . '<td class="px-3 py-2"><span class="inline-block rounded-full px-2 py-0.5 text-xs font-semibold ' . $pill . '">' . $status . '</span></td>'
+                . '<td class="px-3 py-2"><span class="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-semibold ' . $pill . '">' . $pill_icon . $status . '</span></td>'
                 . '<td class="px-3 py-2 text-right tabular-nums">' . $day['proof'] . '</td>'
                 . '<td class="px-3 py-2 text-right tabular-nums">' . $day['final'] . '</td>'
                 . '<td class="px-3 py-2 text-right tabular-nums">' . $day['unknown'] . '</td>'
