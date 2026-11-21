@@ -11,7 +11,7 @@ use OpenAustralia\TWFY\Models\Member;
 use OpenAustralia\TWFY\Models\Moffice;
 
 /**
- * Runs scripts/xml2db.pl against the test database, with XML files from a temporary directory.
+ * Runs scripts/xml2db.pl or scripts/importxml.php against the test database, with XML files from a temporary directory.
  *
  * The script commits on its own connection, so these specs cannot use the
  * transactional test case. They empty the tables the script writes before and
@@ -23,6 +23,11 @@ final class Xml2dbRunner {
      * Temporary directory holding scrapedxml/ and members/.
      */
     public string $dir;
+
+    /**
+     * Which loader run() starts: "perl" for scripts/xml2db.pl, "php" for scripts/importxml.php.
+     */
+    public string $implementation = 'perl';
 
     /**
      * Tables the script writes, emptied around each test.
@@ -105,11 +110,27 @@ final class Xml2dbRunner {
             'DB_USER' => (string) getenv('DB_USER'),
             'DB_PASSWORD' => (string) getenv('DB_PASSWORD'),
         ]);
-        $command = array_merge(['perl', __DIR__ . '/../../../scripts/xml2db.pl'], $args);
+        $script = $this->implementation === 'php'
+            ? [PHP_BINARY, ...$this->coverageOptions(), __DIR__ . '/../../../scripts/importxml.php']
+            : ['perl', __DIR__ . '/../../../scripts/xml2db.pl'];
+        $command = array_merge($script, $args);
         $process = proc_open($command, [1 => ['pipe', 'w'], 2 => ['redirect', 1]], $pipes, null, $env);
         $output = stream_get_contents($pipes[1]);
         fclose($pipes[1]);
         return ['status' => proc_close($process), 'output' => $output];
+    }
+
+    /**
+     * PHP options that make the PHP loader write its coverage next to the parent's, or none outside a coverage run.
+     *
+     * @return list<string>
+     */
+    private function coverageOptions(): array {
+        $directory = getenv('SUBPROCESS_COVERAGE_DIR');
+        if ($directory === false || $directory === '') {
+            return [];
+        }
+        return ['-d', 'auto_prepend_file=' . __DIR__ . '/subprocess-coverage.php'];
     }
 
     /**
