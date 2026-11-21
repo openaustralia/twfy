@@ -58,7 +58,7 @@ describe('ProofReportView::bar()', function () {
 
 describe('ProofReportView::link()', function () {
     it('leaves out parameters with no value', function () {
-        expect(ProofReportView::link('proof_year.php', ['year' => 2026, 'month' => null, 'all' => '']))->toBe('/admin/proof_year.php?year=2026');
+        expect(ProofReportView::link('proof_year.php', ['year' => 2026, 'month' => null, 'extra' => '']))->toBe('/admin/proof_year.php?year=2026');
     });
 
     it('keeps several parameters', function () {
