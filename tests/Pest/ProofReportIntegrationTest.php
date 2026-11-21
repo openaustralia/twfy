@@ -7,6 +7,7 @@
 
 require_once __DIR__ . '/../bootstrap.php';
 
+use OpenAustralia\TWFY\ImportErrors;
 use OpenAustralia\TWFY\Models\Hansard;
 use OpenAustralia\TWFY\ProofReport;
 
@@ -70,7 +71,7 @@ describe('ProofReport::years()', function () {
     });
 
     it('counts days by state for a year', function () {
-        expect(array_column(ProofReport::years(), null, 'year')[2026])->toBe(['year' => 2026, 'proof' => 1, 'final' => 1, 'unknown' => 1, 'mixed' => 1, 'total' => 4]);
+        expect(array_column(ProofReport::years(), null, 'year')[2026])->toBe(['year' => 2026, 'proof' => 1, 'final' => 1, 'unknown' => 1, 'mixed' => 1, 'total' => 4, 'errors' => 0]);
     });
 
     it('counts each house on a date as a day', function () {
@@ -82,7 +83,7 @@ describe('ProofReport::years()', function () {
     });
 
     it('gives a year with no days zeros', function () {
-        expect(array_column(ProofReport::years(), null, 'year')[2010])->toBe(['year' => 2010, 'proof' => 0, 'final' => 0, 'unknown' => 0, 'mixed' => 0, 'total' => 0]);
+        expect(array_column(ProofReport::years(), null, 'year')[2010])->toBe(['year' => 2010, 'proof' => 0, 'final' => 0, 'unknown' => 0, 'mixed' => 0, 'total' => 0, 'errors' => 0]);
     });
 
     it('lists a pre - 2007 year if it has days', function () {
@@ -100,7 +101,7 @@ describe('ProofReport::months()', function () {
     });
 
     it('counts days by state for a month', function () {
-        expect(array_column(ProofReport::months(2026), null, 'month')[3])->toBe(['month' => 3, 'proof' => 1, 'final' => 1, 'unknown' => 0, 'mixed' => 0, 'total' => 2, 'last_changed' => '2026-03-09 09:00:00']);
+        expect(array_column(ProofReport::months(2026), null, 'month')[3])->toBe(['month' => 3, 'proof' => 1, 'final' => 1, 'unknown' => 0, 'mixed' => 0, 'total' => 2, 'errors' => 0, 'last_changed' => '2026-03-09 09:00:00']);
     });
 
     it('lists every month, December first', function () {
@@ -108,11 +109,46 @@ describe('ProofReport::months()', function () {
     });
 
     it('gives a month with no days zeros', function () {
-        expect(array_column(ProofReport::months(2026), null, 'month')[7])->toBe(['month' => 7, 'proof' => 0, 'final' => 0, 'unknown' => 0, 'mixed' => 0, 'total' => 0, 'last_changed' => null]);
+        expect(array_column(ProofReport::months(2026), null, 'month')[7])->toBe(['month' => 7, 'proof' => 0, 'final' => 0, 'unknown' => 0, 'mixed' => 0, 'total' => 0, 'errors' => 0, 'last_changed' => null]);
     });
 
     it('leaves out other years', function () {
         expect(array_sum(array_column(ProofReport::months(2026), 'total')))->toBe(3);
+    });
+});
+
+describe('Import errors in the counts', function () {
+    beforeEach(function () {
+        proof_report_row(990001, '2026-03-01', 1, true);
+        proof_report_row(990002, '2026-03-02', 1, true);
+        ImportErrors::record('2026-03-01', 1, 'parser', 'First');
+        ImportErrors::record('2026-03-01', 1, 'parser', 'Second');
+        ImportErrors::record('2026-03-01', 1, 'loader', 'Third');
+        ImportErrors::record('2026-03-02', 101, 'loader', 'Fourth');
+    });
+
+    it('counts a day once whatever its errors', function () {
+        expect(array_column(ProofReport::months(2026), null, 'month')[3]['errors'])->toBe(2);
+    });
+
+    it('counts the days with errors for a year', function () {
+        expect(array_column(ProofReport::years(), null, 'year')[2026]['errors'])->toBe(2);
+    });
+
+    it('counts none for a year without errors', function () {
+        expect(array_column(ProofReport::years(), null, 'year')[2025]['errors'])->toBe(0);
+    });
+
+    it('counts a day that has errors and no rows', function () {
+        ImportErrors::record('2026-06-10', 1, 'parser', 'Failed before loading');
+
+        expect(array_column(ProofReport::months(2026), null, 'month')[6])->toMatchArray(['total' => 0, 'errors' => 1]);
+    });
+
+    it('counts an errors-only year', function () {
+        ImportErrors::record('2012-05-08', 1, 'loader', 'Failed before loading');
+
+        expect(array_column(ProofReport::years(), null, 'year')[2012])->toMatchArray(['total' => 0, 'errors' => 1]);
     });
 });
 

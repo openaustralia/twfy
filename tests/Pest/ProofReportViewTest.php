@@ -114,3 +114,13 @@ describe('ProofReportView::monthName()', function () {
         'December' => [12, 'December'],
     ]);
 });
+
+describe('ProofReportView::errorDays()', function () {
+    it('says how many days had errors', function (int $count, string $text) {
+        expect(ProofReportView::errorDays($count))->toBe($text);
+    })->with([
+        'none' => [0, ''],
+        'one' => [1, '1 day with errors'],
+        'many' => [1234, '1,234 days with errors'],
+    ]);
+});

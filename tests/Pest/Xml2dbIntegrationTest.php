@@ -11,7 +11,9 @@ require_once __DIR__ . '/Support/Xml2dbFixtures.php';
 use Illuminate\Support\Collection;
 use OpenAustralia\TWFY\Models\Epobject;
 use OpenAustralia\TWFY\Models\Gidredirect;
+use OpenAustralia\TWFY\ImportErrors;
 use OpenAustralia\TWFY\Models\Hansard;
+use OpenAustralia\TWFY\Models\ImportError;
 use OpenAustralia\TWFY\Models\Member;
 use OpenAustralia\TWFY\Models\Moffice;
 
@@ -477,6 +479,10 @@ foreach (['perl', 'php'] as $implementation) {
                 it('loads nothing', function () {
                     expect(xml2dbRows())->toHaveCount(0);
                 });
+
+                it('records the error for the day', function () {
+                    expect(ImportError::where('hdate', $this->date)->where('source', 'loader')->count())->toBe(1);
+                });
             });
 
             describe('with the same gid twice in one file' . xml2dbLabel(), function () {
@@ -512,6 +518,145 @@ foreach (['perl', 'php'] as $implementation) {
                 });
             });
         });
+
+        describe('xml2db.pl recording days that fail' . xml2dbLabel(), function () {
+            beforeEach(function () {
+                $this->bad = '2024-03-18';
+                $this->good = '2024-03-19';
+                $speech = Xml2dbFixtures::speech('representatives', $this->bad, 3, '<p>Words.</p>');
+                $this->xml->writeDay('representatives', $this->bad, Xml2dbFixtures::wrap($speech));
+                $this->xml->writeDay('representatives', $this->good, Xml2dbFixtures::day('representatives', $this->good));
+                $this->result = $this->xml->run(['--debates', '--from=2024-03-18', '--to=2024-03-19', '--cronquiet']);
+            });
+
+            it('records the failure against the day and house', function () {
+                expect(ImportError::where('hdate', $this->bad)->where('major', 1)->where('source', 'loader')->count())->toBe(1);
+            });
+
+            it('records what went wrong', function () {
+                expect(ImportError::where('hdate', $this->bad)->value('message'))->toContain('speech without (sub)heading');
+            });
+
+            it('carries on and loads the next day', function () {
+                expect(xml2dbRows())->toHaveCount(3);
+            });
+
+            it('records nothing for a day that loaded', function () {
+                expect(ImportError::where('hdate', $this->good)->count())->toBe(0);
+            });
+
+            it('exits with an error status at the end', function () {
+                expect($this->result['status'])->toBe(1);
+            });
+
+            describe('when the day fails again' . xml2dbLabel(), function () {
+                beforeEach(function () {
+                    $this->xml->run(['--debates', "--date={$this->bad}", '--cronquiet']);
+                });
+
+                it('keeps one error for the day', function () {
+                    expect(ImportError::where('hdate', $this->bad)->count())->toBe(1);
+                });
+            });
+
+            describe('when the day is fixed and loaded again' . xml2dbLabel(), function () {
+                beforeEach(function () {
+                    $this->xml->writeDay('representatives', $this->bad, Xml2dbFixtures::day('representatives', $this->bad));
+                    $this->result = $this->xml->run(['--debates', "--date={$this->bad}", '--cronquiet']);
+                });
+
+                it('exits cleanly', function () {
+                    expect($this->result['status'])->toBe(0);
+                });
+
+                it('clears the day\'s error', function () {
+                    expect(ImportError::where('hdate', $this->bad)->count())->toBe(0);
+                });
+            });
+
+            describe('when the parser also recorded an error for the day' . xml2dbLabel(), function () {
+                beforeEach(function () {
+                    ImportErrors::record($this->bad, 1, 'parser', 'Unknown speaker');
+                    $this->xml->writeDay('representatives', $this->bad, Xml2dbFixtures::day('representatives', $this->bad));
+                    $this->xml->run(['--debates', "--date={$this->bad}", '--cronquiet']);
+                });
+
+                it('leaves the parser\'s error', function () {
+                    expect(ImportError::where('hdate', $this->bad)->where('source', 'parser')->count())->toBe(1);
+                });
+            });
+        });
+
+        describe('xml2db.pl recording a failed Senate day' . xml2dbLabel(), function () {
+            beforeEach(function () {
+                $speech = Xml2dbFixtures::speech('senate', $this->date, 3, '<p>Words.</p>');
+                $this->xml->writeDay('senate', $this->date, Xml2dbFixtures::wrap($speech));
+                $this->xml->run(['--senatedebates', "--date={$this->date}", '--cronquiet']);
+            });
+
+            it('records it against the Senate', function () {
+                expect(ImportError::where('hdate', $this->date)->value('major'))->toBe(101);
+            });
+        });
+
+        describe('xml2db.pl with gids in the database that the XML lacks' . xml2dbLabel(), function () {
+            beforeEach(function () {
+                $this->xml->writeDay('representatives', $this->date, Xml2dbFixtures::day());
+                $this->xml->run(['--debates', "--date={$this->date}", '--cronquiet']);
+                $this->xml->writeDay('representatives', $this->date, Xml2dbFixtures::wrap(Xml2dbFixtures::majorHeading('representatives', $this->date, 'TREASURY')));
+                $this->result = $this->xml->run(['--debates', "--date={$this->date}", '--cronquiet']);
+            });
+
+            it('stops that day with an error', function () {
+                expect($this->result['status'])->toBe(1);
+            });
+
+            it('records how many gids are missing', function () {
+                expect(ImportError::where('hdate', $this->date)->value('message'))->toContain('2 gids in the database are not in the XML');
+            });
+        });
+
+        // The PHP loader has no --recent, which #1029 removes.
+        if ($implementation === 'perl') {
+            describe('xml2db.pl --recent' . xml2dbLabel(), function () {
+                beforeEach(function () {
+                    $this->marker = $this->xml->dir . '/scrapedxml/representatives_debates/xml2db-lastload';
+                });
+
+                describe('when every day loads' . xml2dbLabel(), function () {
+                    beforeEach(function () {
+                        $this->xml->writeDay('representatives', $this->date, Xml2dbFixtures::day());
+                        file_put_contents($this->xml->dir . '/scrapedxml/representatives_debates/changedates.txt', '');
+                        $this->result = $this->xml->run(['--debates', '--recent', '--cronquiet']);
+                    });
+
+                    it('exits cleanly', function () {
+                        expect($this->result['status'])->toBe(0);
+                    });
+
+                    it('moves the marker on', function () {
+                        expect(file_exists($this->marker))->toBeTrue();
+                    });
+                });
+
+                describe('when a day fails' . xml2dbLabel(), function () {
+                    beforeEach(function () {
+                        $speech = Xml2dbFixtures::speech('representatives', $this->date, 3, '<p>Words.</p>');
+                        $this->xml->writeDay('representatives', $this->date, Xml2dbFixtures::wrap($speech));
+                        file_put_contents($this->xml->dir . '/scrapedxml/representatives_debates/changedates.txt', '');
+                        $this->result = $this->xml->run(['--debates', '--recent', '--cronquiet']);
+                    });
+
+                    it('exits with an error status', function () {
+                        expect($this->result['status'])->toBe(1);
+                    });
+
+                    it('leaves the marker so the day is tried again', function () {
+                        expect(file_exists($this->marker))->toBeFalse();
+                    });
+                });
+            });
+        }
 
         describe('xml2db.pl --members' . xml2dbLabel(), function () {
             $person = '<people><person id="uk.org.publicwhip/person/10001"><office id="uk.org.publicwhip/member/1"/><office id="uk.org.publicwhip/moffice/1"/><office id="uk.org.publicwhip/moffice/2"/></person>' .

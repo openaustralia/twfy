@@ -513,7 +513,7 @@ class DebatesLoader {
         }
         if ($missing > 0) {
             if (!$this->options->force) {
-                throw new \RuntimeException('Died');
+                throw new \RuntimeException("$missing gids in the database are not in the XML, run again with --force to delete them");
             }
             Importer::deleteLonelyEpobjects($this->messages);
         }
