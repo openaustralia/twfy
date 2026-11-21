@@ -37,29 +37,23 @@ describe('ProofReport::days()', function () {
     });
 
     it('counts the rows in each state', function () {
-        $days = ProofReport::days(true);
+        $days = ProofReport::days();
 
         expect($days[0])->toMatchArray(['date' => '2026-03-01', 'major' => 1, 'proof' => 1, 'final' => 1, 'unknown' => 1]);
     });
 
     it('reports when a row last changed', function () {
-        expect(ProofReport::days(true)[0]['last_changed'])->toBe('2026-03-05 09:00:00');
+        expect(ProofReport::days()[0]['last_changed'])->toBe('2026-03-05 09:00:00');
     });
 
     it('lists newest days first', function () {
-        $dates = array_column(ProofReport::days(true), 'date');
+        $dates = array_column(ProofReport::days(), 'date');
 
         expect($dates)->toBe(['2026-03-01', '2026-03-01', '2026-02-01']);
     });
 
-    it('omits all-final days by default', function () {
-        $keys = array_map(fn (array $day): string => $day['date'] . '/' . $day['major'], ProofReport::days(false));
-
-        expect($keys)->toBe(['2026-03-01/1', '2026-02-01/1']);
-    });
-
     it('omits other houses', function () {
-        expect(array_unique(array_column(ProofReport::days(true), 'major')))->toBe([1, 101]);
+        expect(array_unique(array_column(ProofReport::days(), 'major')))->toBe([1, 101]);
     });
 });
 
@@ -131,7 +125,7 @@ describe('ProofReport::days() for a month', function () {
     });
 
     it('lists only that month', function () {
-        expect(array_column(ProofReport::days(true, 2026, 3), 'date'))->toBe(['2026-03-31', '2026-03-01']);
+        expect(array_column(ProofReport::days(2026, 3), 'date'))->toBe(['2026-03-31', '2026-03-01']);
     });
 });
 
@@ -143,7 +137,7 @@ describe('ProofReport::days() for a year', function () {
     });
 
     it('lists only that year', function () {
-        expect(array_column(ProofReport::days(true, 2025), 'date'))->toBe(['2025-12-31', '2025-01-01']);
+        expect(array_column(ProofReport::days(2025), 'date'))->toBe(['2025-12-31', '2025-01-01']);
     });
 });
 

@@ -60,70 +60,66 @@ describe('ProofReportView::year()', function () {
     });
 
     it('lists every month', function () {
-        expect(ProofReportView::year(2026, 0, false))->toContain('>December</span>');
+        expect(ProofReportView::year(2026, 0))->toContain('>December</span>');
     });
 
     it('links a month that has days', function () {
-        expect(ProofReportView::year(2026, 0, false))->toContain('year=2026&amp;month=3#days');
+        expect(ProofReportView::year(2026, 0))->toContain('year=2026&amp;month=3#days');
     });
 
     it('greys out a month with no days', function () {
-        expect(ProofReportView::year(2026, 0, false))->toContain('<span class="text-slate-400">July</span>');
+        expect(ProofReportView::year(2026, 0))->toContain('<span class="text-slate-400">July</span>');
     });
 
     it('shows no days until a month is chosen', function () {
-        expect(ProofReportView::year(2026, 0, false))->not->toContain('id="days"');
+        expect(ProofReportView::year(2026, 0))->not->toContain('id="days"');
     });
 
     it('ignores a month outside 1 to 12', function () {
-        expect(ProofReportView::year(2026, 13, false))->not->toContain('id="days"');
+        expect(ProofReportView::year(2026, 13))->not->toContain('id="days"');
     });
 
     it('falls back to the newest year', function () {
-        expect(ProofReportView::year(1999, 0, false))->toContain('aria-current="page">' . max(2026, (int) date('Y')));
+        expect(ProofReportView::year(1999, 0))->toContain('aria-current="page">' . max(2026, (int) date('Y')));
     });
 
     it('links the newer year on the left', function () {
-        expect(ProofReportView::year(2020, 0, false))->toContain('&larr; 2021');
+        expect(ProofReportView::year(2020, 0))->toContain('&larr; 2021');
     });
 
     it('links the older year on the right', function () {
-        expect(ProofReportView::year(2020, 0, false))->toContain('2019 &rarr;');
+        expect(ProofReportView::year(2020, 0))->toContain('2019 &rarr;');
     });
 
     it('has no newer link for the newest year', function () {
-        expect(ProofReportView::year(max(2026, (int) date('Y')), 0, false))->toContain('<span></span>');
+        expect(ProofReportView::year(max(2026, (int) date('Y')), 0))->toContain('<span></span>');
     });
 
     it('marks the chosen month', function () {
-        expect(ProofReportView::year(2026, 3, false))->toContain('aria-current="true"');
+        expect(ProofReportView::year(2026, 3))->toContain('aria-current="true"');
     });
 
-    it('lists days not yet known to be final', function () {
-        expect(ProofReportView::year(2026, 3, false))->toContain('?d=2026-03-01');
+    it('lists the days not yet known to be final', function () {
+        expect(ProofReportView::year(2026, 3))->toContain('?d=2026-03-01');
     });
 
-    it('omits final days by default', function () {
-        expect(ProofReportView::year(2026, 3, false))->not->toContain('?d=2026-03-02');
+    it('lists the final days too', function () {
+        expect(ProofReportView::year(2026, 3))->toContain('?d=2026-03-02');
     });
 
-    it('lists every day on request', function () {
-        expect(ProofReportView::year(2026, 3, true))->toContain('?d=2026-03-02');
+    it('has no filter toggle', function () {
+        expect(ProofReportView::year(2026, 3))->not->toContain('Every day');
     });
 
     it('links a Senate day to the Senate', function () {
-        expect(ProofReportView::year(2026, 3, false))->toContain('/senate/?d=2026-03-03');
+        expect(ProofReportView::year(2026, 3))->toContain('/senate/?d=2026-03-03');
     });
 
     it('shows a day of mixed rows as mixed', function () {
-        expect(ProofReportView::year(2026, 5, false))->toContain('bg-rose-100');
-    });
-
-    it('says when a month is all final', function () {
-        expect(ProofReportView::year(2026, 4, false))->toContain('Every sitting day in this month is final.');
+        expect(ProofReportView::year(2026, 5))->toContain('bg-rose-100');
     });
 
     it('says when a month has no days', function () {
-        expect(ProofReportView::year(2026, 7, false))->toContain('We hold no sitting days in this month.');
+        expect(ProofReportView::year(2026, 7))->toContain('We hold no sitting days in this month.');
     });
 });

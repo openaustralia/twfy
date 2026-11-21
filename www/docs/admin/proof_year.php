@@ -14,11 +14,7 @@ $this_page = "admin_proof";
 $PAGE->page_start();
 $PAGE->stripe_start();
 $PAGE->block_start(['id' => 'proof', 'title' => 'Proof status by month']);
-print ProofReportView::year(
-    (int) get_http_var('year'),
-    (int) get_http_var('month'),
-    get_http_var('all') === '1'
-);
+print ProofReportView::year((int) get_http_var('year'), (int) get_http_var('month'));
 $PAGE->block_end();
 $PAGE->stripe_end();
 $PAGE->page_end();

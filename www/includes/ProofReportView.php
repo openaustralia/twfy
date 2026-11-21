@@ -22,12 +22,6 @@ class ProofReportView {
         'unknown' => ['label' => 'Unknown', 'bar' => 'bg-[#7c6fd0]', 'pill' => 'bg-violet-100 text-violet-800'],
     ];
 
-    private const TOGGLE_ON = 'bg-teal-700 !text-white border-teal-700';
-
-    private const TOGGLE_OFF = 'bg-white !text-slate-700 border-slate-300 hover:bg-slate-50';
-
-    private const TOGGLE_BASE = 'inline-block px-3 py-1.5 text-sm font-semibold border border-solid !no-underline';
-
     private const TABLE = '<table class="w-full max-w-4xl !m-0 text-sm border-collapse">';
 
     private const HEADING_ROW = '<thead><tr class="bg-slate-100 text-left text-xs uppercase tracking-wide text-slate-600">';
@@ -61,10 +55,8 @@ class ProofReportView {
      *   The year asked for. A year we don't list gives the newest.
      * @param int $requested_month
      *   The month asked for, from 1 to 12. Anything else shows no days.
-     * @param bool $all
-     *   True to list every day of the month, false for only the days not yet known to be final.
      */
-    public static function year(int $requested_year, int $requested_month, bool $all): string {
+    public static function year(int $requested_year, int $requested_month): string {
         $years = ProofReport::years();
         $held = array_column($years, 'year');
         $year = in_array($requested_year, $held, true) ? $requested_year : $held[0];
@@ -88,8 +80,7 @@ class ProofReportView {
         $html .= self::monthsTable($months, $year, $month);
 
         if ($month !== null) {
-            $total = array_column($months, 'total', 'month')[$month];
-            $html .= self::daysSection(ProofReport::days($all, $year, $month), $year, $month, $all, $total);
+            $html .= self::daysSection(ProofReport::days($year, $month), $year, $month);
         }
         return $html;
     }
@@ -289,7 +280,7 @@ class ProofReportView {
     }
 
     /**
-     * The days of one month: the heading, the toggle and the table. A month has at most 62, so there is no paging.
+     * The days of one month: the heading and the table. A month has at most 62, so there is no paging.
      *
      * @param list<array<string, mixed>> $days
      *   Rows from ProofReport::days().
@@ -297,22 +288,12 @@ class ProofReportView {
      *   The year of the month.
      * @param int $month
      *   The month, from 1 to 12.
-     * @param bool $all
-     *   Whether every day is listed, which decides which toggle is on.
-     * @param int $total
-     *   How many days we hold in the month, to tell a month with none from one that is all final.
      */
-    private static function daysSection(array $days, int $year, int $month, bool $all, int $total): string {
-        $params = ['year' => $year, 'month' => $month];
-
-        $html = '<h3 id="days" class="mt-8 mb-2 mx-0 text-base font-semibold text-slate-900">' . self::monthName($month) . ' ' . $year . '</h3>'
-            . '<div class="flex my-4">'
-            . '<a href="' . htmlspecialchars(self::link('proof_year.php', $params)) . '#days" class="' . self::TOGGLE_BASE . ' rounded-l ' . ($all ? self::TOGGLE_OFF : self::TOGGLE_ON) . '">Not yet known to be final</a>'
-            . '<a href="' . htmlspecialchars(self::link('proof_year.php', $params + ['all' => '1'])) . '#days" class="' . self::TOGGLE_BASE . ' rounded-r -ml-px ' . ($all ? self::TOGGLE_ON : self::TOGGLE_OFF) . '">Every day</a>'
-            . '</div>';
+    private static function daysSection(array $days, int $year, int $month): string {
+        $html = '<h3 id="days" class="mt-8 mb-4 mx-0 text-base font-semibold text-slate-900">' . self::monthName($month) . ' ' . $year . '</h3>';
 
         if (!$days) {
-            return $html . '<p class="text-sm text-slate-600">' . ($total === 0 ? 'We hold no sitting days in this month.' : 'Every sitting day in this month is final.') . '</p>';
+            return $html . '<p class="text-sm text-slate-600">We hold no sitting days in this month.</p>';
         }
 
         $html .= '<div class="overflow-x-auto">' . self::TABLE . self::HEADING_ROW;

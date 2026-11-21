@@ -30,8 +30,6 @@ class ProofReport {
     /**
      * One row for each day and house we hold, newest first.
      *
-     * @param bool $all
-     *   True to list every day, false for only the days not yet known to be final.
      * @param int|null $year
      *   The year to list, or null for every year.
      * @param int|null $month
@@ -40,7 +38,7 @@ class ProofReport {
      * @return list<array{date: string, major: int, proof: int, final: int, unknown: int, last_changed: ?string}>
      *   The date, house, the number of rows that are proof, final and unknown, and when a row last changed.
      */
-    public static function days(bool $all, ?int $year = null, ?int $month = null): array {
+    public static function days(?int $year = null, ?int $month = null): array {
         // Eloquent can't count rows by condition within a group, so the counts are raw SQL.
         $query = Hansard::query()
           ->whereIn('major', array_keys(self::HOUSES))
@@ -49,9 +47,6 @@ class ProofReport {
           ->groupBy('hdate', 'major')
           ->orderByDesc('hdate')
           ->orderBy('major');
-        if (!$all) {
-            $query->havingRaw('SUM(proof = 1 OR proof IS NULL) > 0');
-        }
 
         $rows = [];
         foreach ($query->toBase()->get() as $row) {
