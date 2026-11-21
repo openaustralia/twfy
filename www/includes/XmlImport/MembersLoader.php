@@ -51,12 +51,11 @@ class MembersLoader {
      * Replaces the offices and constituencies, and adds or updates the members.
      */
     public function load(): void {
-        Moffice::query()->toBase()->delete();
-        Constituency::query()->toBase()->delete();
-
         foreach (['divisions', 'people', 'representatives', 'senators', 'ministers'] as $file) {
             $this->parse($this->directory . $file . '.xml');
         }
+        Moffice::query()->toBase()->delete();
+        Constituency::query()->toBase()->delete();
         $this->saveOffices();
         $this->reportMissingMembers();
     }
