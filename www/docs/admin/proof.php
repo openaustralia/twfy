@@ -16,5 +16,13 @@ $PAGE->stripe_start();
 $PAGE->block_start(['id' => 'proof', 'title' => 'Import status of each year']);
 print ProofReportView::overview();
 $PAGE->block_end();
-$PAGE->stripe_end();
+
+$menu = $PAGE->admin_menu();
+$PAGE->stripe_end([
+    [
+        'type' => 'html',
+        'content' => $menu,
+    ],
+]);
+
 $PAGE->page_end();

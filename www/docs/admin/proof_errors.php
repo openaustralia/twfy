@@ -16,5 +16,13 @@ $PAGE->stripe_start();
 $PAGE->block_start(['id' => 'proof', 'title' => 'Import errors for a day']);
 print ProofReportView::errors((string) get_http_var('date'), (string) get_http_var('house'));
 $PAGE->block_end();
-$PAGE->stripe_end();
+
+$menu = $PAGE->admin_menu();
+$PAGE->stripe_end([
+    [
+        'type' => 'html',
+        'content' => $menu,
+    ],
+]);
+
 $PAGE->page_end();
