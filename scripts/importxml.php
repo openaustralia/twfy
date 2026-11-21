@@ -70,7 +70,8 @@ try {
       importxml_setting('RAWDATA'),
       $options->members ? importxml_setting('PWMEMBERS') : ''
     );
-    $importer->run();
+    // Some days failing is not a crash: they are in import_errors, and the rest loaded.
+    exit($importer->run() > 0 ? 1 : 0);
 }
 catch (Throwable $error) {
     fwrite(STDERR, $error->getMessage() . "\n");

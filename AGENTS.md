@@ -145,6 +145,11 @@ migrates a fresh database and diffs the dump against `db/schema.sql`.
   which `Xml2dbRunner` prepends when `SUBPROCESS_COVERAGE_DIR` is set (CI sets it); it writes `.cov` files that
   `phpcov merge` combines with the parent's. Perl needs `perllib` beside the repo and the modules `DBD::mysql`, `XML::Twig`
   and `HTML::Entities`; without them the specs skip locally and fail when `CI` is set.
+- `scripts/xml2db.pl` and `scripts/importxml.php` carry on after a day fails: each records the error in `import_errors`
+  (source `loader`), loads the next day, and exits 1 at the end. A day that loads clears its own earlier loader errors.
+  The Perl loader's `--recent` doesn't move its `xml2db-lastload` marker past a failed day. The parser records its own
+  errors (source `parser`) through `scripts/record-import-error.php` and `scripts/record-import-success.php`, and the
+  admin proof report counts the days with errors. Each stage clears only its own rows.
 - Psalm is configured (`psalm.xml`) but nothing runs it; phpcs (Drupal standard with K&R braces and lowercase
   constants) is the enforced style gate.
 

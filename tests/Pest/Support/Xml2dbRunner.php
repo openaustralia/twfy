@@ -7,6 +7,7 @@
 use OpenAustralia\TWFY\Models\Epobject;
 use OpenAustralia\TWFY\Models\Gidredirect;
 use OpenAustralia\TWFY\Models\Hansard;
+use OpenAustralia\TWFY\Models\ImportError;
 use OpenAustralia\TWFY\Models\Member;
 use OpenAustralia\TWFY\Models\Moffice;
 
@@ -32,7 +33,7 @@ final class Xml2dbRunner {
     /**
      * Tables the script writes, emptied around each test.
      */
-    private const TABLES = [Hansard::class, Epobject::class, Gidredirect::class, Member::class, Moffice::class];
+    private const TABLES = [Hansard::class, Epobject::class, Gidredirect::class, Member::class, Moffice::class, ImportError::class];
 
     /**
      * Creates the temporary directory tree.

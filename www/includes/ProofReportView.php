@@ -216,7 +216,15 @@ class ProofReportView {
     private static function finalShare(array $row): string {
         $share = $row['total'] === 0 ? '' : round(ProofReport::percent($row['final'], $row['total'])) . '% final';
         return '<span class="w-24 text-right text-sm tabular-nums text-slate-700">' . $share . '</span>'
-            . '<span class="w-24 text-right text-xs tabular-nums text-slate-500">' . self::days($row['total']) . '</span>';
+            . '<span class="w-24 text-right text-xs tabular-nums text-slate-500">' . self::days($row['total']) . '</span>'
+            . '<span class="w-28 text-right text-xs tabular-nums ' . ($row['errors'] > 0 ? 'font-semibold text-rose-700' : 'text-slate-400') . '">' . self::errorDays($row['errors']) . '</span>';
+    }
+
+    /**
+     * A count of days with import errors, empty when there are none.
+     */
+    public static function errorDays(int $count): string {
+        return $count === 0 ? '' : number_format($count) . ($count === 1 ? ' day with errors' : ' days with errors');
     }
 
     /**
@@ -256,7 +264,7 @@ class ProofReportView {
         foreach ($segments as $segment) {
             $html .= '<th class="px-3 py-2 font-semibold text-right">' . $segment['label'] . '</th>';
         }
-        $html .= '<th class="px-3 py-2 font-semibold text-right">Sitting days</th><th class="px-3 py-2 font-semibold">Last changed</th></tr></thead><tbody>';
+        $html .= '<th class="px-3 py-2 font-semibold text-right">Sitting days</th><th class="px-3 py-2 font-semibold text-right">Days with errors</th><th class="px-3 py-2 font-semibold">Last changed</th></tr></thead><tbody>';
 
         foreach ($months as $row) {
             $is_selected = $row['month'] === $selected;
@@ -274,6 +282,7 @@ class ProofReportView {
                 $html .= '<td class="px-3 py-2 text-right tabular-nums">' . $row[$key] . '</td>';
             }
             $html .= '<td class="px-3 py-2 text-right tabular-nums">' . $row['total'] . '</td>'
+                . '<td class="px-3 py-2 text-right tabular-nums ' . ($row['errors'] > 0 ? 'font-semibold text-rose-700' : 'text-slate-400') . '">' . $row['errors'] . '</td>'
                 . '<td class="px-3 py-2 text-slate-600 whitespace-nowrap tabular-nums">' . htmlspecialchars($row['last_changed'] ?? '') . '</td></tr>';
         }
         return $html . '</tbody></table></div>';

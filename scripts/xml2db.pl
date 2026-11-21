@@ -125,9 +125,12 @@ sub revsort {
         return reverse sort @_;
 }
 
-# Process debates and Senate debates
+# How many days failed to load. A failed day is recorded in import_errors and the run carries on.
+my $failed_days = 0;
+
+# Process debates and Senate debates. $xmajor is the hansard.major of the house, to record a failed day against.
 sub process_type {
-        my ($xnames, $xdirs, $xdayfunc) = @_;
+        my ($xnames, $xdirs, $xdayfunc, $xmajor) = @_;
 
         my $process;
         my $xsince = 0;
@@ -172,7 +175,12 @@ sub process_type {
                 if (!$cronquiet) {
                         print "db loading $xname $process_date\n";
                 }
-                &$xdayfunc($process_date);
+                if (eval { &$xdayfunc($process_date); 1 }) {
+                        clear_import_errors($process_date, $xmajor);
+                } else {
+                        record_import_error($process_date, $xmajor, $@);
+                        $failed_days++;
+                }
                 # So we don't do it again
                 # XXX Doesn't currently apply to any files
                 #my $xfile = "$process_date.xml";
@@ -181,8 +189,8 @@ sub process_type {
                 #}
         }
 
-        # Store that we've done
-        if ($recent) {
+        # Store that we've done, unless a day failed, so the next run tries it again
+        if ($recent && !$failed_days) {
                 my $xxmaxtime = 0;
                 for (my $i=0; $i<@$xdirs; $i++) {
                         my $xdir = $xdirs->[$i];
@@ -211,13 +219,16 @@ sub process_type {
 }
 
 # Process main data
-process_type([""], [$debatesdir], \&add_debates_day) if ($debates) ;
-process_type([""], [$senatedebatesdir], \&add_senatedebates_day) if ($senatedebates);
+process_type([""], [$debatesdir], \&add_debates_day, 1) if ($debates) ;
+process_type([""], [$senatedebatesdir], \&add_senatedebates_day, 101) if ($senatedebates);
 
 # Process members
 if ($members) {
         add_mps_and_peers();
 }
+
+# Tell cron, and anything watching it, that some days failed. They are in import_errors.
+exit 1 if $failed_days;
 
 ##########################################################################
 # Utility
@@ -336,6 +347,33 @@ my ($dbh,
         $constituencyadd, $constituencydel, $memberadd, $memberexist, $membercheck,
         $gradd, $grcheck, $grdeletegid,
         $lastid);
+
+##########################################################################
+# Import errors: what failed for a day, for the admin proof report
+
+# Records why a day failed to load, replacing what this stage recorded for the day before, so a day that keeps
+# failing has its latest error and not one for every run. Not being able to record it must never stop the run, as the
+# table may not exist yet on a server that has the new code before its migration.
+sub record_import_error {
+        my ($date, $major, $message) = @_;
+        chomp $message;
+        print STDERR "ERROR loading $date (major $major): $message\n";
+        eval {
+                $dbh->do("DELETE FROM import_errors WHERE hdate = ? AND major = ? AND source = 'loader'", undef, $date, $major);
+                $dbh->do("INSERT INTO import_errors (hdate, major, source, message) VALUES (?, ?, 'loader', ?)",
+                        undef, $date, $major, substr($message, 0, 5000));
+                1;
+        } or print STDERR "Could not record the error in import_errors: $@";
+}
+
+# A day loaded without error, so clear what this stage recorded for it before.
+sub clear_import_errors {
+        my ($date, $major) = @_;
+        eval {
+                $dbh->do("DELETE FROM import_errors WHERE hdate = ? AND major = ? AND source = 'loader'", undef, $date, $major);
+                1;
+        } or print STDERR "Could not clear import_errors: $@";
+}
 
 sub db_connect
 {
@@ -508,7 +546,7 @@ sub check_extra_gids
                 if ($force) {
                         delete_lonely_epobjects();
                 } else {
-                        die;
+                        die "$missing gids in the database are not in the XML, run again with --force to delete them\n";
                 }
         }
 }

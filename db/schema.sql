@@ -312,6 +312,19 @@ CREATE TABLE `hansard` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `import_errors` (
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
+  `hdate` date NOT NULL,
+  `major` int NOT NULL,
+  `source` varchar(10) NOT NULL,
+  `message` text NOT NULL,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `day` (`hdate`,`major`,`source`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `indexbatch` (
   `indexbatch_id` int NOT NULL AUTO_INCREMENT,
   `created` datetime DEFAULT NULL,

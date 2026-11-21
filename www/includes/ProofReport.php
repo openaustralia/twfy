@@ -3,6 +3,7 @@
 namespace OpenAustralia\TWFY;
 
 use OpenAustralia\TWFY\Models\Hansard;
+use OpenAustralia\TWFY\Models\ImportError;
 
 /**
  * The figures behind the admin report on the proof status of each day.
@@ -25,7 +26,7 @@ class ProofReport {
     /**
      * The counts for a period with no days.
      */
-    private const NO_DAYS = ['proof' => 0, 'final' => 0, 'unknown' => 0, 'mixed' => 0, 'total' => 0, 'last_changed' => null];
+    private const NO_DAYS = ['proof' => 0, 'final' => 0, 'unknown' => 0, 'mixed' => 0, 'total' => 0, 'errors' => 0, 'last_changed' => null];
 
     /**
      * One row for each day and house we hold, newest first.
@@ -68,8 +69,8 @@ class ProofReport {
      * A year with no days has zeros, and a year before FIRST_YEAR is listed only when we hold days in it.
      * A day is one house's sitting, so a date with both houses counts twice.
      *
-     * @return list<array{year: int, proof: int, final: int, unknown: int, mixed: int, total: int}>
-     *   The year and the number of days that are proof, final, unknown and mixed.
+     * @return list<array{year: int, proof: int, final: int, unknown: int, mixed: int, total: int, errors: int}>
+     *   The year, the number of days that are proof, final, unknown and mixed, and how many days had import errors.
      */
     public static function years(): array {
         $held = array_column(self::summaries('YEAR(hdate)'), null, 'period');
@@ -85,6 +86,7 @@ class ProofReport {
                 'unknown' => $row['unknown'],
                 'mixed' => $row['mixed'],
                 'total' => $row['total'],
+                'errors' => $row['errors'],
             ];
         }, $listed);
     }
@@ -92,8 +94,9 @@ class ProofReport {
     /**
      * How many days we hold in each state, for each month of a year, December first. A month with no days has zeros.
      *
-     * @return list<array{month: int, proof: int, final: int, unknown: int, mixed: int, total: int, last_changed: ?string}>
-     *   The month, the number of days that are proof, final, unknown and mixed, and when a row last changed.
+     * @return list<array{month: int, proof: int, final: int, unknown: int, mixed: int, total: int, errors: int, last_changed: ?string}>
+     *   The month, the number of days that are proof, final, unknown and mixed, how many days had import errors, and
+     *   when a row last changed.
      */
     public static function months(int $year): array {
         $held = array_column(self::summaries('MONTH(hdate)', $year), null, 'period');
@@ -107,6 +110,7 @@ class ProofReport {
                 'unknown' => $row['unknown'],
                 'mixed' => $row['mixed'],
                 'total' => $row['total'],
+                'errors' => $row['errors'],
                 'last_changed' => $row['last_changed'],
             ];
         }
@@ -135,8 +139,8 @@ class ProofReport {
      * @param int|null $year
      *   Only the days of this year, or null for every year.
      *
-     * @return list<array{period: int, proof: int, final: int, unknown: int, mixed: int, total: int, last_changed: ?string}>
-     *   The period and the number of days that are proof, final, unknown and mixed.
+     * @return list<array{period: int, proof: int, final: int, unknown: int, mixed: int, total: int, errors: int, last_changed: ?string}>
+     *   The period, the number of days that are proof, final, unknown and mixed, and how many days had import errors.
      */
     private static function summaries(string $period, ?int $year = null): array {
         // Eloquent can't count rows by condition within a group, so the counts are raw SQL. The null-safe <=>
@@ -157,6 +161,13 @@ class ProofReport {
           ->orderByDesc('period')
           ->get();
 
+        // A day with several errors, or errors from both stages, counts once.
+        $errors = ImportError::query()
+          ->when($year !== null, fn ($query) => $query->whereBetween('hdate', self::dateRange($year, null)))
+          ->selectRaw("$period AS period, COUNT(DISTINCT hdate, major) AS error_days")
+          ->groupBy('period')
+          ->pluck('error_days', 'period');
+
         $summaries = [];
         foreach ($rows as $row) {
             $proof = (int) $row->proof_days;
@@ -170,9 +181,19 @@ class ProofReport {
                 'unknown' => $unknown,
                 'mixed' => $total - $proof - $final - $unknown,
                 'total' => $total,
+                'errors' => (int) ($errors[$row->period] ?? 0),
                 'last_changed' => $row->last_changed === null ? null : (string) $row->last_changed,
             ];
         }
+
+        // A day that failed before any of it loaded has errors but no hansard rows, and still counts.
+        $listed = array_column($summaries, 'period');
+        foreach ($errors as $error_period => $error_days) {
+            if (!in_array((int) $error_period, $listed, true)) {
+                $summaries[] = ['period' => (int) $error_period, 'proof' => 0, 'final' => 0, 'unknown' => 0, 'mixed' => 0, 'total' => 0, 'errors' => (int) $error_days, 'last_changed' => null];
+            }
+        }
+        usort($summaries, fn (array $a, array $b): int => $b['period'] <=> $a['period']);
         return $summaries;
     }
 

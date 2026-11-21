@@ -7,6 +7,7 @@
 
 require_once __DIR__ . '/../bootstrap.php';
 
+use OpenAustralia\TWFY\ImportErrors;
 use OpenAustralia\TWFY\Models\Hansard;
 use OpenAustralia\TWFY\ProofReportView;
 
@@ -42,6 +43,12 @@ describe('ProofReportView::overview()', function () {
 
     it('lists years back to 2007', function () {
         expect($this->html)->toContain('>2007</span>');
+    });
+
+    it('shows a year\'s days with errors', function () {
+        ImportErrors::record('2026-03-01', 1, 'loader', 'Bad time');
+
+        expect(ProofReportView::overview())->toContain('1 day with errors');
     });
 
     it('shows where you are', function () {
@@ -117,6 +124,16 @@ describe('ProofReportView::year()', function () {
 
     it('shows a day of mixed rows as mixed', function () {
         expect(ProofReportView::year(2026, 5))->toContain('bg-rose-100');
+    });
+
+    it('has a column for days with errors', function () {
+        expect(ProofReportView::year(2026, 0))->toContain('>Days with errors</th>');
+    });
+
+    it('shows a month\'s days with errors in red', function () {
+        ImportErrors::record('2026-03-01', 1, 'loader', 'Bad time');
+
+        expect(ProofReportView::year(2026, 0))->toContain('font-semibold text-rose-700">1</td>');
     });
 
     it('says when a month has no days', function () {
