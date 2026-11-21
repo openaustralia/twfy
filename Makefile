@@ -61,7 +61,7 @@ help:
 	@echo "  PHPCS_ARGS     Extra args for phpcs targets e.g."
 	@echo "                   --report=full          show each violation in context"
 	@echo "                   www/path/to/file.php   check a specific file"
-	@echo "  TWFY_HTTP_PORT, TWFY_MYSQL_PORT, PHPLIB_PATH, PERLLIB_PATH, PARSER_PATH - see \"Port clashes\" in AGENTS.md"
+	@echo "  TWFY_HTTP_PORT, TWFY_MYSQL_PORT, TWFY_MAILPIT_PORT, PHPLIB_PATH, PERLLIB_PATH, PARSER_PATH - see \"Port clashes\" in AGENTS.md"
 	@echo "  XAPIANDB, XAPIANDB_LASTUPDATED - override index and timestamp paths for xapian-index-docker"
 
 docker-build:
