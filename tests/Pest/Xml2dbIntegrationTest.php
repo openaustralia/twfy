@@ -595,19 +595,19 @@ function xml2dbSnapshot(): array {
         $text = $texts[$row->epobject_id];
         $hansard[$row->gid] = [
             'htype' => $row->htype,
-'speaker_id' => $row->speaker_id,
-'major' => $row->major,
-'minor' => $row->minor,
+            'speaker_id' => $row->speaker_id,
+            'major' => $row->major,
+            'minor' => $row->minor,
             'section' => $gids[$row->section_id] ?? $row->section_id,
             'subsection' => $gids[$row->subsection_id] ?? $row->subsection_id,
             'hpos' => $row->hpos,
-'hdate' => $row->hdate,
-'htime' => $row->htime,
-'source_url' => $row->source_url,
+            'hdate' => $row->hdate,
+            'htime' => $row->htime,
+            'source_url' => $row->source_url,
             'proof' => $row->proof,
-'title' => $text->title,
-'body' => $text->body,
-'type' => $text->type,
+            'title' => $text->title,
+            'body' => $text->body,
+            'type' => $text->type,
         ];
     }
     $members = Member::query()->orderBy('member_id')->toBase()->get()->map(

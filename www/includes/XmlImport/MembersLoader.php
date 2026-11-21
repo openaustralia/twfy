@@ -214,11 +214,11 @@ class MembersLoader {
         foreach ($offices as $office) {
             Moffice::query()->toBase()->insert([
                 'dept' => $office[1],
-'position' => $office[2],
-'from_date' => $office[3],
+                'position' => $office[2],
+                'from_date' => $office[3],
                 'to_date' => $office[4],
-'person' => $office[5],
-'source' => $office[6],
+                'person' => $office[5],
+                'source' => $office[6],
             ]);
         }
     }
