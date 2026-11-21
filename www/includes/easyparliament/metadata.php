@@ -106,6 +106,11 @@ class Metadata {
             'parent' => 'admin',
             'url' => 'admin/alert_stats.php',
         ],
+        'admin_proof' => [
+            'title' => 'Proof status',
+            'parent' => 'admin',
+            'url' => 'admin/proof.php',
+        ],
         'admin_badusers' => [
             'title' => 'Bad users',
             'parent' => 'admin',
