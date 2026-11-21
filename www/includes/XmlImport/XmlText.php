@@ -127,8 +127,11 @@ class XmlText {
 
     /**
      * A time as the database wants it: HH:MM:SS, with seconds and a leading zero added when missing.
+     *
+     * Old files hold "unknown" or the speaker line's text, such as " (Dawson) (16:01):". That gives the time in it, or
+     * null when there is none.
      */
-    public static function canonTime(string $time): string {
+    public static function canonTime(string $time): ?string {
         if (preg_match('/^0\d\d:/', $time)) {
             $time = substr($time, 1);
         }
@@ -138,7 +141,13 @@ class XmlText {
         if (preg_match('/^\d:/', $time)) {
             $time = '0' . $time;
         }
-        return $time;
+        if (preg_match('/^\d\d:[0-5]\d:[0-5]\d$/', $time)) {
+            return $time;
+        }
+        if (preg_match('/(?<![\d:])([01]?\d|2[0-3]):([0-5]\d)(?!\d)/', $time, $found)) {
+            return self::canonTime($found[1] . ':' . $found[2]);
+        }
+        return null;
     }
 
     /**

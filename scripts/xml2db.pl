@@ -1001,7 +1001,10 @@ sub canon_time {
         $t = substr($t, 1) if $t =~ /^0\d\d:/;
         $t .= ":00" if $t =~ /^\d\d?:\d\d$/; # add seconds to a HH:MM time
         $t = "0$t" if $t =~ /^\d:/; # pad a single-digit hour
-        return $t;
+        return $t if $t =~ /^\d\d:[0-5]\d:[0-5]\d$/;
+        # Old files hold "unknown" or the speaker line's text here, such as " (Dawson) (16:01):". Use the time in it, if any.
+        return canon_time("$1:$2") if $t =~ /(?<![\d:])([01]?\d|2[0-3]):([0-5]\d)(?!\d)/;
+        return;
 }
 
 ##########################################################################

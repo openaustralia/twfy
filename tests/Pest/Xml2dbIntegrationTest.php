@@ -178,6 +178,46 @@ foreach (['perl', 'php'] as $implementation) {
                 });
             });
 
+            describe('with a time that is not a time' . xml2dbLabel(), function () {
+                beforeEach(function () {
+                    $this->load = function (string $time): void {
+                        $xml = str_replace('time="10:05"', 'time="' . $time . '"', Xml2dbFixtures::day());
+                        $this->xml->writeDay('representatives', $this->date, $xml);
+                        $this->result = $this->xml->run(['--debates', "--date={$this->date}", '--cronquiet']);
+                    };
+                });
+
+                it('loads the day when the time is unknown', function () {
+                    ($this->load)('unknown');
+
+                    expect($this->result['status'])->toBe(0);
+                });
+
+                it('stores no time when it is unknown', function () {
+                    ($this->load)('unknown');
+
+                    expect(xml2dbRows()[2]->htime)->toBeNull();
+                });
+
+                it('stores the time found in the speaker line', function () {
+                    ($this->load)(' (Example) (16:01):');
+
+                    expect(xml2dbRows()[2]->htime)->toBe('16:01:00');
+                });
+
+                it('stores no time when the text has none', function () {
+                    ($this->load)(' (Example):');
+
+                    expect(xml2dbRows()[2]->htime)->toBeNull();
+                });
+
+                it('still loads every item of the day', function () {
+                    ($this->load)('unknown');
+
+                    expect(xml2dbRows())->toHaveCount(3);
+                });
+            });
+
             describe('with accented text' . xml2dbLabel(), function () {
                 beforeEach(function () {
                     $this->xml->writeDay('representatives', $this->date, Xml2dbFixtures::day('representatives', $this->date, '<p>Caf&#233; &amp; more.</p>'));
