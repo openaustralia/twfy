@@ -110,7 +110,7 @@ class XmlText {
      * This matches xml2db.pl's encode_entities_noapos(), which replaces only the first "&#39;".
      */
     public static function entitiesNoApos(string $text): string {
-        $encoded = str_replace('&#039;', '&#39;', htmlentities($text, ENT_QUOTES | ENT_HTML401, 'UTF-8'));
+        $encoded = str_replace('&#039;', '&#39;', mb_encode_numericentity(htmlentities($text, ENT_QUOTES | ENT_HTML401, 'UTF-8'), [0x80, 0x10FFFF, 0, 0x10FFFF], 'UTF-8', true));
         $position = strpos($encoded, '&#39;');
         if ($position !== false) {
             $encoded = substr_replace($encoded, "'", $position, strlen('&#39;'));
