@@ -3228,6 +3228,7 @@ class PAGE {
             'admin_glossary_pending',
             'admin_badusers',
             'admin_alerts',
+            'admin_proof',
         ];
 
         $links = [];
