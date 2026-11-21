@@ -13,6 +13,8 @@
 
 include_once __DIR__ . '/../www/includes/easyparliament/init.php';
 
-[$status, $line] = OpenAustralia\TWFY\ImportErrors::execute('clear', getopt('', ['date:', 'house:', 'source:']));
+use OpenAustralia\TWFY\ImportErrors;
+
+[$status, $line] = ImportErrors::execute('clear', getopt('', ['date:', 'house:', 'source:']));
 fwrite($status === 0 ? STDOUT : STDERR, $line === '' ? '' : "$line\n");
 exit($status);
