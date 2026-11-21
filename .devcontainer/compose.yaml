@@ -46,6 +46,8 @@ services:
     depends_on:
       mysql:
         condition: service_healthy
+      mailpit:
+        condition: service_started
     # Any HTTP response counts, as pages can fail on an unseeded database.
     healthcheck:
       test: ["CMD", "curl", "-s", "-o", "/dev/null", "http://localhost/"]
@@ -91,3 +93,12 @@ services:
       test: ["CMD-SHELL", "curl -fs 'http://localhost:9200/_cluster/health?wait_for_status=yellow&timeout=1s'"]
       interval: 2s
       retries: 60
+
+  # Catches all mail the site sends, so password resets and alerts can be read at http://localhost:8025 and never leave.
+  mailpit:
+    image: axllent/mailpit:v1.31.3
+    networks:
+      - twfy
+    # Only the web interface is published. The site reaches SMTP on port 1025 inside the network.
+    ports:
+      - "127.0.0.1:${TWFY_MAILPIT_PORT:-8025}:8025"

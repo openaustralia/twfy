@@ -97,6 +97,12 @@ RUN set -eux; \
 RUN phpenmod pdo_mysql
 RUN phpenmod xdebug
 
+# Send mail through msmtp, as production does, but to the mailpit service instead of Postal (see compose.yaml).
+RUN apt-get update && apt-get install -y msmtp
+COPY .devcontainer/msmtprc /etc/msmtprc
+COPY .devcontainer/mail.ini /etc/php/${PHP_VERSION}/mods-available/twfy-mail.ini
+RUN phpenmod -v ${PHP_VERSION} twfy-mail
+
 # Enable apache modules.
 RUN a2enmod rewrite
 
