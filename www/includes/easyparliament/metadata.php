@@ -107,7 +107,7 @@ class Metadata {
             'url' => 'admin/alert_stats.php',
         ],
         'admin_proof' => [
-            'title' => 'Proof status',
+            'title' => 'Import status',
             'parent' => 'admin',
             'url' => 'admin/proof.php',
         ],

@@ -177,6 +177,57 @@ describe('ProofReport::days() for a year', function () {
     });
 });
 
+describe('ProofReport::days() with errors', function () {
+    beforeEach(function () {
+        proof_report_row(991001, '2026-03-01', 1, true);
+        proof_report_row(991002, '2026-03-02', 1, false);
+        ImportErrors::record('2026-03-01', 1, 'parser', 'First');
+        ImportErrors::record('2026-03-01', 1, 'loader', 'Second');
+        ImportErrors::record('2026-03-10', 101, 'parser', 'Failed before loading');
+        $this->days = array_column(ProofReport::days(2026, 3), null, 'date');
+    });
+
+    it('counts the errors on a day', function () {
+        expect($this->days['2026-03-01']['errors'])->toBe(2);
+    });
+
+    it('gives a day without errors none', function () {
+        expect($this->days['2026-03-02']['errors'])->toBe(0);
+    });
+
+    it('lists a day that has errors and no rows', function () {
+        expect($this->days['2026-03-10'])->toMatchArray(['major' => 101, 'proof' => 0, 'final' => 0, 'unknown' => 0, 'errors' => 1]);
+    });
+
+    it('leaves the errors of other months out', function () {
+        ImportErrors::record('2026-04-10', 1, 'parser', 'Another month');
+
+        expect(array_column(ProofReport::days(2026, 3), 'date'))->not->toContain('2026-04-10');
+    });
+});
+
+describe('ProofReport::errorsForDay()', function () {
+    beforeEach(function () {
+        ImportErrors::record('2026-03-01', 1, 'loader', 'From the loader');
+        ImportErrors::record('2026-03-01', 1, 'parser', 'From the parser');
+        ImportErrors::record('2026-03-01', 101, 'parser', 'Other house');
+        ImportErrors::record('2026-03-02', 1, 'parser', 'Other day');
+        $this->errors = ProofReport::errorsForDay('2026-03-01', 1);
+    });
+
+    it('gives the messages for that day and house', function () {
+        expect(array_column($this->errors, 'message'))->toBe(['From the parser', 'From the loader']);
+    });
+
+    it('says where each came from', function () {
+        expect(array_column($this->errors, 'source'))->toBe(['parser', 'loader']);
+    });
+
+    it('gives none for a day without errors', function () {
+        expect(ProofReport::errorsForDay('2026-03-05', 1))->toBe([]);
+    });
+});
+
 describe('ProofReport::percent()', function () {
     it('gives a share of the whole', function (int $part, int $total, float $percent) {
         expect(ProofReport::percent($part, $total))->toBe($percent);
@@ -195,5 +246,6 @@ describe('ProofReport::status()', function () {
         'final' => [0, 3, 0, 'Final'],
         'unknown' => [0, 0, 3, 'Unknown'],
         'mixed' => [1, 2, 0, 'Mixed'],
+        'not loaded' => [0, 0, 0, 'Not loaded'],
     ]);
 });

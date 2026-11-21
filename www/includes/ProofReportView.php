@@ -10,6 +10,11 @@ namespace OpenAustralia\TWFY;
  */
 class ProofReportView {
 
+    /**
+     * Where the parser's files are published, by folder then house folder, as the parser's pull-xml.rb reads them.
+     */
+    private const DATA_URL = 'https://data.openaustralia.org.au';
+
     public const LINK_CLASSES = '!text-teal-700 !no-underline hover:!underline';
 
     /**
@@ -33,7 +38,7 @@ class ProofReportView {
         $years = ProofReport::years();
         $segments = self::segments($years);
 
-        $html = self::breadcrumbs([['Admin', '/admin/'], ['Proof', null]]);
+        $html = self::breadcrumbs([['Admin', '/admin/'], ['Import status', null]]);
         $html .= '<p class="text-sm text-slate-600 max-w-3xl">Each bar shows the share of the sitting days we hold for a year. A sitting day is one house\'s sitting, so a date when both houses sat counts twice. '
             . 'Choose a year to see its months and days.</p>';
         $html .= self::legend($segments);
@@ -64,7 +69,7 @@ class ProofReportView {
         $months = ProofReport::months($year);
         $month = in_array($requested_month, array_column($months, 'month'), true) ? $requested_month : null;
 
-        $trail = [['Admin', '/admin/'], ['Proof', self::link('proof.php')], [(string) $year, self::link('proof_year.php', ['year' => $year])]];
+        $trail = [['Admin', '/admin/'], ['Import status', self::link('proof.php')], [(string) $year, self::link('proof_year.php', ['year' => $year])]];
         if ($month !== null) {
             $trail[] = [self::monthName($month), null];
         }
@@ -194,6 +199,102 @@ class ProofReportView {
     }
 
     /**
+     * The page listing the import errors recorded for one day and house.
+     *
+     * @param string $date
+     *   The day, as Y-m-d.
+     * @param string $house
+     *   Either representatives or senate.
+     */
+    public static function errors(string $date, string $house): string {
+        $valid = preg_match('/^(\d{4})-(\d{2})-(\d{2})$/', $date, $parts) && checkdate((int) $parts[2], (int) $parts[3], (int) $parts[1]) && isset(ImportErrors::HOUSES[$house]);
+        if (!$valid) {
+            return self::breadcrumbs([['Admin', '/admin/'], ['Import status', self::link('proof.php')], ['Import errors', null]])
+                . '<p class="text-sm text-slate-600">That is not a day and house we can show errors for.</p>';
+        }
+
+        $year = (int) $parts[1];
+        $month = (int) $parts[2];
+        $house_name = ProofReport::HOUSES[ImportErrors::HOUSES[$house]];
+        $errors = ProofReport::errorsForDay($date, ImportErrors::HOUSES[$house]);
+        $month_link = self::link('proof_year.php', ['year' => $year, 'month' => $month]) . '#days';
+
+        $html = self::breadcrumbs([
+            ['Admin', '/admin/'],
+            ['Import status', self::link('proof.php')],
+            [(string) $year, self::link('proof_year.php', ['year' => $year])],
+            [self::monthName($month), $month_link],
+            [$date, null],
+        ]);
+        $html .= '<h3 class="mt-0 mb-2 mx-0 text-base font-semibold text-slate-900">Import errors for ' . htmlspecialchars($date) . ', ' . $house_name . '</h3>'
+            . '<p class="text-sm text-slate-600 max-w-3xl">The parser records errors while it reads a day from Parliament House, and the loader records them while it puts the day into the database. Each clears its own errors for a day when it next handles the day without one.</p>';
+
+        $html .= self::sourceLinks($date, $house);
+
+        if (!$errors) {
+            return $html . '<p class="text-sm text-slate-600">No errors are recorded for this day.</p>';
+        }
+
+        $html .= '<div class="overflow-x-auto">' . self::TABLE . self::HEADING_ROW
+            . '<th class="px-3 py-2 font-semibold">Found by</th><th class="px-3 py-2 font-semibold">Error</th><th class="px-3 py-2 font-semibold">Recorded</th></tr></thead><tbody>';
+        foreach ($errors as $error) {
+            $html .= '<tr class="border-0 border-b border-solid border-slate-200 even:bg-slate-50 align-top">'
+                . '<td class="px-3 py-2 whitespace-nowrap">' . ($error['source'] === 'parser' ? 'Parser' : 'Loader') . '</td>'
+                . '<td class="px-3 py-2"><pre class="m-0 whitespace-pre-wrap break-words font-mono text-xs text-slate-900">' . htmlspecialchars($error['message']) . '</pre></td>'
+                . '<td class="px-3 py-2 text-slate-600 whitespace-nowrap tabular-nums">' . htmlspecialchars($error['created_at'] ?? '') . '</td></tr>';
+        }
+        return $html . '</tbody></table></div>'
+            . '<p class="mt-4 text-sm font-semibold"><a class="' . self::LINK_CLASSES . '" href="' . htmlspecialchars($month_link) . '">&larr; Back to ' . self::monthName($month) . ' ' . $year . '</a></p>';
+    }
+
+    /**
+     * Links to where a day's source files are: the page on Parliament House and the two files we publish.
+     *
+     * The origxml file is missing for some days, so its link can lead to a not found page.
+     *
+     * @param string $date
+     *   A valid day, as Y-m-d.
+     * @param string $house
+     *   Either representatives or senate.
+     */
+    private static function sourceLinks(string $date, string $house): string {
+        [$year, $month, $day] = array_map('intval', explode('-', $date));
+        $letter = $house === 'senate' ? 's' : 'r';
+        $aph = 'https://parlinfo.aph.gov.au/parlInfo/search/display/display.w3p;adv=yes;orderBy=_fragment_number,doc_date-rev;page=0;query=Dataset%3Ahansard' . $letter
+            . ',hansard' . $letter . '80%20Date%3A' . $day . '%2F' . $month . '%2F' . $year . ';rec=0;resCount=Default';
+        $file = self::DATA_URL . '/%s/' . $house . '_debates/' . $date . '.xml';
+        $links = [
+            'The day on Parliament House (APH)' => $aph,
+            'The original XML from APH (origxml)' => sprintf($file, 'origxml'),
+            'The parsed XML we load (scrapedxml)' => sprintf($file, 'scrapedxml'),
+        ];
+
+        $html = '<ul class="my-4 pl-5 text-sm">';
+        foreach ($links as $label => $url) {
+            $html .= '<li><a class="' . self::LINK_CLASSES . '" href="' . htmlspecialchars($url) . '">' . $label . '</a></li>';
+        }
+        return $html . '</ul>';
+    }
+
+    /**
+     * A link to a day's errors with how many there are, or nothing for a day without any.
+     *
+     * @param array<string, mixed> $day
+     *   A row from ProofReport::days().
+     */
+    private static function errorsLink(array $day): string {
+        if ($day['errors'] === 0) {
+            return '';
+        }
+        $house = (string) array_search($day['major'], ImportErrors::HOUSES, true);
+        $label = $day['errors'] === 1 ? '1 error' : $day['errors'] . ' errors';
+        $icon = '<svg class="inline-block align-text-bottom mr-1" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">'
+            . '<circle cx="8" cy="8" r="6.5"/><path d="M8 4.5v4M8 11v.01" stroke-linecap="round"/></svg>';
+        return '<a class="whitespace-nowrap font-semibold !text-rose-700 !no-underline hover:!underline" href="'
+            . htmlspecialchars(self::link('proof_errors.php', ['date' => $day['date'], 'house' => $house])) . '">' . $icon . $label . '</a>';
+    }
+
+    /**
      * A link to a year, or just its number when we hold no days in it.
      *
      * @param array<string, int> $row
@@ -309,7 +410,7 @@ class ProofReportView {
         foreach (['Date', 'House', 'Status'] as $heading) {
             $html .= '<th class="px-3 py-2 font-semibold">' . $heading . '</th>';
         }
-        foreach (['Proof rows', 'Final rows', 'Unknown rows'] as $heading) {
+        foreach (['Proof rows', 'Final rows', 'Unknown rows', 'Errors'] as $heading) {
             $html .= '<th class="px-3 py-2 font-semibold text-right">' . $heading . '</th>';
         }
         $html .= '<th class="px-3 py-2 font-semibold">Last changed</th></tr></thead><tbody>';
@@ -317,13 +418,16 @@ class ProofReportView {
             $status = ProofReport::status($day['proof'], $day['final'], $day['unknown']);
             $path = $day['major'] === 1 ? '/debates/' : '/senate/';
             $date = htmlspecialchars($day['date']);
-            $html .= '<tr class="border-0 border-b border-solid border-slate-200 even:bg-slate-50 hover:bg-teal-50">'
+            $pill = self::SEGMENTS[strtolower($status)]['pill'] ?? 'bg-slate-100 text-slate-700';
+            $row_colours = $day['errors'] > 0 ? 'bg-rose-50 hover:bg-rose-100' : 'even:bg-slate-50 hover:bg-teal-50';
+            $html .= '<tr class="border-0 border-b border-solid border-slate-200 ' . $row_colours . '">'
                 . '<td class="px-3 py-2 whitespace-nowrap"><a class="' . self::LINK_CLASSES . '" href="' . $path . '?d=' . $date . '">' . $date . '</a></td>'
                 . '<td class="px-3 py-2 text-slate-700">' . htmlspecialchars(ProofReport::HOUSES[$day['major']]) . '</td>'
-                . '<td class="px-3 py-2"><span class="inline-block rounded-full px-2 py-0.5 text-xs font-semibold ' . self::SEGMENTS[strtolower($status)]['pill'] . '">' . $status . '</span></td>'
+                . '<td class="px-3 py-2"><span class="inline-block rounded-full px-2 py-0.5 text-xs font-semibold ' . $pill . '">' . $status . '</span></td>'
                 . '<td class="px-3 py-2 text-right tabular-nums">' . $day['proof'] . '</td>'
                 . '<td class="px-3 py-2 text-right tabular-nums">' . $day['final'] . '</td>'
                 . '<td class="px-3 py-2 text-right tabular-nums">' . $day['unknown'] . '</td>'
+                . '<td class="px-3 py-2 text-right tabular-nums">' . self::errorsLink($day) . '</td>'
                 . '<td class="px-3 py-2 text-slate-600 whitespace-nowrap tabular-nums">' . htmlspecialchars($day['last_changed'] ?? '') . '</td></tr>';
         }
         return $html . '</tbody></table></div>';
