@@ -52,36 +52,21 @@ describe('ProofReport::days()', function () {
         expect($dates)->toBe(['2026-03-01', '2026-03-01', '2026-02-01']);
     });
 
-    it('leaves out days that are all final by default', function () {
+    it('omits all-final days by default', function () {
         $keys = array_map(fn (array $day): string => $day['date'] . '/' . $day['major'], ProofReport::days(false));
 
         expect($keys)->toBe(['2026-03-01/1', '2026-02-01/1']);
     });
 
-    it('leaves out houses other than the two we hold', function () {
+    it('omits other houses', function () {
         expect(array_unique(array_column(ProofReport::days(true), 'major')))->toBe([1, 101]);
-    });
-});
-
-describe('ProofReport::days() with many days', function () {
-    beforeEach(function () {
-        for ($i = 0; $i < ProofReport::PER_PAGE + 1; $i++) {
-            proof_report_row(920000 + $i, date('Y-m-d', strtotime('2025-01-01 +' . $i . ' days')), 1, true);
-        }
-    });
-
-    it('returns one row more than a page', function () {
-        expect(ProofReport::days(false))->toHaveCount(ProofReport::PER_PAGE + 1);
-    });
-
-    it('returns the older days on the next page', function () {
-        expect(ProofReport::days(false, 2))->toHaveCount(1);
     });
 });
 
 describe('ProofReport::years()', function () {
     beforeEach(function () {
         proof_report_row(930001, '2026-03-01', 1, true);
+
         proof_report_row(930002, '2026-03-02', 1, false);
         proof_report_row(930003, '2026-03-03', 1, null);
         proof_report_row(930004, '2026-03-04', 1, true);
@@ -90,7 +75,7 @@ describe('ProofReport::years()', function () {
         proof_report_row(930007, '2025-01-01', 1, false);
     });
 
-    it('counts the days in each state for a year', function () {
+    it('counts days by state for a year', function () {
         expect(array_column(ProofReport::years(), null, 'year')[2026])->toBe(['year' => 2026, 'proof' => 1, 'final' => 1, 'unknown' => 1, 'mixed' => 1, 'total' => 4]);
     });
 
@@ -98,7 +83,7 @@ describe('ProofReport::years()', function () {
         expect(array_column(ProofReport::years(), null, 'year')[2025])->toMatchArray(['year' => 2025, 'final' => 2, 'total' => 2]);
     });
 
-    it('lists every year from the current one down to 2007', function () {
+    it('lists years back to 2007', function () {
         expect(array_column(ProofReport::years(), 'year'))->toBe(range(max(2026, (int) date('Y')), 2007));
     });
 
@@ -106,7 +91,7 @@ describe('ProofReport::years()', function () {
         expect(array_column(ProofReport::years(), null, 'year')[2010])->toBe(['year' => 2010, 'proof' => 0, 'final' => 0, 'unknown' => 0, 'mixed' => 0, 'total' => 0]);
     });
 
-    it('lists an earlier year only when we hold days in it', function () {
+    it('lists a pre - 2007 year if it has days', function () {
         proof_report_row(930099, '2006-02-07', 1, false);
         expect(array_column(ProofReport::years(), 'year'))->toContain(2006);
     });
@@ -120,7 +105,7 @@ describe('ProofReport::months()', function () {
         proof_report_row(950004, '2025-03-01', 1, false);
     });
 
-    it('counts the days in each state for a month', function () {
+    it('counts days by state for a month', function () {
         expect(array_column(ProofReport::months(2026), null, 'month')[3])->toBe(['month' => 3, 'proof' => 1, 'final' => 1, 'unknown' => 0, 'mixed' => 0, 'total' => 2, 'last_changed' => '2026-03-09 09:00:00']);
     });
 
@@ -145,8 +130,8 @@ describe('ProofReport::days() for a month', function () {
         proof_report_row(960004, '2026-04-01', 1, true);
     });
 
-    it('lists only that month, first to last day', function () {
-        expect(array_column(ProofReport::days(true, 1, 2026, 3), 'date'))->toBe(['2026-03-31', '2026-03-01']);
+    it('lists only that month', function () {
+        expect(array_column(ProofReport::days(true, 2026, 3), 'date'))->toBe(['2026-03-31', '2026-03-01']);
     });
 });
 
@@ -158,7 +143,7 @@ describe('ProofReport::days() for a year', function () {
     });
 
     it('lists only that year', function () {
-        expect(array_column(ProofReport::days(true, 1, 2025), 'date'))->toBe(['2025-12-31', '2025-01-01']);
+        expect(array_column(ProofReport::days(true, 2025), 'date'))->toBe(['2025-12-31', '2025-01-01']);
     });
 });
 
