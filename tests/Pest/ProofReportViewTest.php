@@ -48,11 +48,11 @@ describe('ProofReportView::bar()', function () {
     });
 
     it('describes the bar for screen readers', function () {
-        expect(ProofReportView::bar(proof_view_counts(1, 1, 0, 2), $this->segments, '2025'))->toContain('aria-label="2025: Final: 1 day (25%)');
+        expect(ProofReportView::bar(proof_view_counts(1, 1, 0, 2), $this->segments, '2025'))->toContain('aria-label="2025: Final: 1 sitting day (25%)');
     });
 
     it('draws an empty track for no days', function () {
-        expect(ProofReportView::bar(proof_view_counts(0, 0, 0, 0), $this->segments, '2010'))->toContain('2010: no days');
+        expect(ProofReportView::bar(proof_view_counts(0, 0, 0, 0), $this->segments, '2010'))->toContain('2010: no sitting days');
     });
 });
 
@@ -97,12 +97,12 @@ describe('ProofReportView::breadcrumbs()', function () {
 });
 
 describe('ProofReportView::days()', function () {
-    it('counts days with the right plural', function (int $count, string $text) {
+    it('counts sitting days, plural right', function (int $count, string $text) {
         expect(ProofReportView::days($count))->toBe($text);
     })->with([
-        'none' => [0, '0 days'],
-        'one' => [1, '1 day'],
-        'thousands' => [1234, '1,234 days'],
+        'none' => [0, '0 sitting days'],
+        'one' => [1, '1 sitting day'],
+        'thousands' => [1234, '1,234 sitting days'],
     ]);
 });
 
