@@ -86,9 +86,21 @@ class ProofReport {
     public static function errorsForDay(string $date, int $major): array {
         $errors = [];
         foreach (ImportError::where('hdate', $date)->where('major', $major)->orderByDesc('source')->orderBy('id')->get() as $error) {
-            $errors[] = ['source' => $error->source, 'message' => $error->message, 'created_at' => $error->created_at];
+            $errors[] = ['source' => $error->source, 'message' => $error->message, 'created_at' => self::siteTime($error->created_at)];
         }
         return $errors;
+    }
+
+    /**
+     * A time MySQL stored, which is in UTC, as the site's time zone shows it, with the zone's name.
+     */
+    private static function siteTime(?string $utc): ?string {
+        if ($utc === null) {
+            return null;
+        }
+        return (new \DateTimeImmutable($utc, new \DateTimeZone('UTC')))
+          ->setTimezone(new \DateTimeZone(date_default_timezone_get()))
+          ->format('Y-m-d H:i:s T');
     }
 
     /**

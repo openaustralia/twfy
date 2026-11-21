@@ -7,6 +7,10 @@
 
 require_once __DIR__ . '/../bootstrap.php';
 
+use Illuminate\Database\Connection;
+use Illuminate\Database\Connectors\MySqlConnector;
+use Illuminate\Database\ConnectionResolver;
+use Illuminate\Database\Eloquent\Model;
 use OpenAustralia\TWFY\ImportErrors;
 use OpenAustralia\TWFY\Models\ImportError;
 
@@ -120,6 +124,45 @@ describe('ImportErrors::execute()', function () {
         ImportErrors::execute('record', ['date' => 'nope', 'house' => 'senate', 'source' => 'parser', 'message' => 'Bad']);
 
         expect(ImportError::count())->toBe(0);
+    });
+});
+
+describe('ImportErrors::execute() when the database fails', function () {
+    beforeEach(function () {
+        $this->resolver = Model::getConnectionResolver();
+        // A real MySQL connector pointed at a closed port, so it fails as an outage does.
+        $down = new Connection(fn () => (new MySqlConnector())->connect([
+          'driver' => 'mysql',
+          'host' => '127.0.0.1',
+          'port' => 1,
+          'database' => 'twfy',
+          'username' => 'nobody',
+          'password' => '',
+        ]));
+        $resolver = new ConnectionResolver(['down' => $down]);
+        $resolver->setDefaultConnection('down');
+        Model::setConnectionResolver($resolver);
+        $this->call = ['date' => '2026-02-03', 'house' => 'senate', 'source' => 'parser', 'message' => 'Bad'];
+    });
+
+    afterEach(function () {
+        Model::setConnectionResolver($this->resolver);
+    });
+
+    it('fails with status 1, not a crash, when recording', function () {
+        expect(ImportErrors::execute('record', $this->call)[0])->toBe(1);
+    });
+
+    it('fails with status 1, not a crash, when clearing', function () {
+        expect(ImportErrors::execute('clear', $this->call)[0])->toBe(1);
+    });
+
+    it('says what it could not do', function () {
+        expect(ImportErrors::execute('record', $this->call)[1])->toContain('Could not record the import error');
+    });
+
+    it('says what it could not do when clearing', function () {
+        expect(ImportErrors::execute('clear', $this->call)[1])->toContain('Could not clear the import error: ');
     });
 });
 

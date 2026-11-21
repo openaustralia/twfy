@@ -9,6 +9,7 @@ require_once __DIR__ . '/../bootstrap.php';
 
 use OpenAustralia\TWFY\ImportErrors;
 use OpenAustralia\TWFY\Models\Hansard;
+use OpenAustralia\TWFY\Models\ImportError;
 use OpenAustralia\TWFY\ProofReport;
 
 uses(TransactionalTestCase::class);
@@ -235,6 +236,29 @@ describe('ProofReport::errorsForDay()', function () {
 
     it('gives none for a day without errors', function () {
         expect(ProofReport::errorsForDay('2026-03-05', 1))->toBe([]);
+    });
+});
+
+describe('ProofReport::errorsForDay() times', function () {
+    beforeEach(function () {
+        $this->zone = date_default_timezone_get();
+        date_default_timezone_set('Australia/Sydney');
+        ImportErrors::record('2026-03-01', 1, 'loader', 'Bad time');
+        ImportError::query()->update(['created_at' => '2026-03-01 00:30:00']);
+    });
+
+    afterEach(function () {
+        date_default_timezone_set($this->zone);
+    });
+
+    it('shows when it was recorded in the site\'s time zone', function () {
+        expect(ProofReport::errorsForDay('2026-03-01', 1)[0]['created_at'])->toBe('2026-03-01 11:30:00 AEDT');
+    });
+
+    it('follows daylight saving', function () {
+        ImportError::query()->update(['created_at' => '2026-07-01 00:30:00']);
+
+        expect(ProofReport::errorsForDay('2026-03-01', 1)[0]['created_at'])->toBe('2026-07-01 10:30:00 AEST');
     });
 });
 

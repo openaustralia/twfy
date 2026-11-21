@@ -655,6 +655,30 @@ foreach (['perl', 'php'] as $implementation) {
                         expect(file_exists($this->marker))->toBeFalse();
                     });
                 });
+
+                describe('when a House day fails and the Senate loads' . xml2dbLabel(), function () {
+                    beforeEach(function () {
+                        $speech = Xml2dbFixtures::speech('representatives', $this->date, 3, '<p>Words.</p>');
+                        $this->xml->writeDay('representatives', $this->date, Xml2dbFixtures::wrap($speech));
+                        $this->xml->writeDay('senate', $this->date, Xml2dbFixtures::day('senate', $this->date));
+                        foreach (['representatives', 'senate'] as $house) {
+                            file_put_contents($this->xml->dir . "/scrapedxml/{$house}_debates/changedates.txt", '');
+                        }
+                        $this->result = $this->xml->run(['--debates', '--senatedebates', '--recent', '--cronquiet']);
+                    });
+
+                    it('exits with an error status', function () {
+                        expect($this->result['status'])->toBe(1);
+                    });
+
+                    it('leaves the House marker', function () {
+                        expect(file_exists($this->marker))->toBeFalse();
+                    });
+
+                    it('moves the Senate marker on', function () {
+                        expect(file_exists($this->xml->dir . '/scrapedxml/senate_debates/xml2db-lastload'))->toBeTrue();
+                    });
+                });
             });
         }
 

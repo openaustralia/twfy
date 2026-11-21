@@ -69,10 +69,16 @@ class ImportErrors {
         }
 
         $major = self::HOUSES[$options['house']];
-        if ($command === 'record') {
-            self::record($options['date'], $major, $options['source'], $options['message']);
-        } else {
-            self::clear($options['date'], $major, $options['source']);
+        try {
+            if ($command === 'record') {
+                self::record($options['date'], $major, $options['source'], $options['message']);
+            } else {
+                self::clear($options['date'], $major, $options['source']);
+            }
+        }
+        catch (\Throwable $e) {
+            // The table may not exist yet or the database may be down, which shouldn't look like a crash to the caller.
+            return [1, "Could not $command the import error: " . $e->getMessage()];
         }
         return [0, ''];
     }

@@ -207,6 +207,15 @@ describe('ProofReportView::errors()', function () {
         expect($this->html)->toContain('Import errors for 2022-03-29, Representatives');
     });
 
+    it('shows when it was recorded with the time zone', function () {
+        $zone = date_default_timezone_get();
+        date_default_timezone_set('Australia/Sydney');
+        $html = ProofReportView::errors('2022-03-29', 'representatives');
+        date_default_timezone_set($zone);
+
+        expect($html)->toMatch('/\d{2}:\d{2}:\d{2} (AEDT|AEST)<\/td>/');
+    });
+
     it('shows the message', function () {
         expect($this->html)->toContain('Incorrect &lt;b&gt;time&lt;/b&gt; value');
     });

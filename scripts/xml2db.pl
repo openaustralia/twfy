@@ -125,13 +125,15 @@ sub revsort {
         return reverse sort @_;
 }
 
-# How many days failed to load. A failed day is recorded in import_errors and the run carries on.
+# How many days failed to load, in all the houses. A failed day is recorded in import_errors and the run carries on.
 my $failed_days = 0;
 
 # Process debates and Senate debates. $xmajor is the hansard.major of the house, to record a failed day against.
 sub process_type {
         my ($xnames, $xdirs, $xdayfunc, $xmajor) = @_;
 
+        # Days that failed in this house, so one house's failure doesn't hold back the other's marker.
+        my $failed_here = 0;
         my $process;
         my $xsince = 0;
         if (open my $fh, '<', $xdirs->[0] . 'xml2db-lastload') {
@@ -180,6 +182,7 @@ sub process_type {
                 } else {
                         record_import_error($process_date, $xmajor, $@);
                         $failed_days++;
+                        $failed_here++;
                 }
                 # So we don't do it again
                 # XXX Doesn't currently apply to any files
@@ -190,7 +193,7 @@ sub process_type {
         }
 
         # Store that we've done, unless a day failed, so the next run tries it again
-        if ($recent && !$failed_days) {
+        if ($recent && !$failed_here) {
                 my $xxmaxtime = 0;
                 for (my $i=0; $i<@$xdirs; $i++) {
                         my $xdir = $xdirs->[$i];
