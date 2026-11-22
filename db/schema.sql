@@ -169,9 +169,11 @@ CREATE TABLE `data_downloads` (
   `bytes` bigint unsigned NOT NULL DEFAULT '0',
   `referrer` text NOT NULL,
   `user_agent` text NOT NULL,
+  `line_hash` char(40) NOT NULL,
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
+  UNIQUE KEY `line_hash` (`line_hash`),
   KEY `request_time` (`request_time`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;

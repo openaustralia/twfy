@@ -58,6 +58,7 @@ beforeEach(function () {
             'bytes' => 51234,
             'referrer' => '',
             'user_agent' => 'ExampleBot/1.0',
+            'line_hash' => sha1(random_bytes(16)),
         ]);
     }
     $this->downloads = new DownloadSource($this->environment, []);

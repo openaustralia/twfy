@@ -34,6 +34,7 @@ function exporter_spec_download(string $time, string $ip = '203.0.113.5'): int {
         'bytes' => 512,
         'referrer' => '',
         'user_agent' => 'ExampleBot/1.0',
+        'line_hash' => sha1(random_bytes(16)),
     ])->id;
 }
 
