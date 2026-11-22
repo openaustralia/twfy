@@ -6,12 +6,12 @@
     "minimum-stability": "stable",
     "require": {
         "php": "^8.3.0",
-        "illuminate/database": "^11.0",
         "robmorgan/phinx": "^0.16.11",
         "sentry/sentry": "^4.31",
         "guzzlehttp/guzzle": "^7.15",
         "php-http/guzzle7-adapter": "^1.1",
-        "league/plates": "^3.6"
+        "league/plates": "^3.6",
+        "laravel/framework": "^13.0"
     },
     "autoload": {
         "psr-4": {
@@ -26,6 +26,9 @@
       ],
       "post-update-cmd": [
           "@git-hooks"
+      ],
+      "post-autoload-dump": [
+          "@php artisan package:discover --ansi"
       ]
     },
     "config": {
