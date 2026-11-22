@@ -217,7 +217,7 @@ make test
 ./vendor/bin/pest tests/
 ```
 
-To run tests with database integration on the host, start MySQL and migrate the test database first:
+To run tests with database integration on the host, start MySQL and Elasticsearch and migrate the test database first:
 
 ```bash
 make services-up

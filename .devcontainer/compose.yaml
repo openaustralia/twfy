@@ -29,6 +29,7 @@ services:
       DB_USER: twfyuser
       DB_PASSWORD: twfypass
       DB_NAME: twfy
+      ELASTICSEARCH_URL: http://elasticsearch:9200
     # Installs PHP and npm dependencies and builds tailwind.css if they're missing, and applies any pending migrations,
     # so a fresh checkout comes up working. What it installs, and the mount points Docker creates as root, are handed
     # to whoever owns the checkout, so host tools can still change them. Any failure stops the container.
@@ -72,5 +73,21 @@ services:
     # Over TCP, so it only passes once first-run setup has finished and the real server is listening.
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-uroot", "-pexamplepassword"]
+      interval: 2s
+      retries: 60
+  # For scripts/send-usage-stats.php and its specs. Matches the Elastic Cloud "Main" deployment's version.
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.17.7
+    ports:
+      - "127.0.0.1:${TWFY_ELASTICSEARCH_PORT:-9201}:9200"
+    networks:
+      - twfy
+    # The 512m heap below, plus Elasticsearch's off-heap memory
+    mem_limit: 1500m
+    environment:
+      discovery.type: single-node
+      ES_JAVA_OPTS: -Xms512m -Xmx512m
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fs 'http://localhost:9200/_cluster/health?wait_for_status=yellow&timeout=1s'"]
       interval: 2s
       retries: 60
