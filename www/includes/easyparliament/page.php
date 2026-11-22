@@ -4,6 +4,8 @@
  * @file
  */
 
+use OpenAustralia\TWFY\AdminView;
+
 if (defined('OPTION_TRACKING') && OPTION_TRACKING) {
     require_once __DIR__ . '/../../../../phplib/tracking.php';
 }
@@ -3148,65 +3150,11 @@ class PAGE {
      *
      */
     public function display_table($data) {
-        /* Pass it data to be displayed in a <table> and it renders it
-        with stripes.
-
-        $data is like (for example):
-        array (
-        'header' => array (
-        'ID',
-        'name'
-        ),
-        'rows' => array (
-        array (
-        '37',
-        'Guy Fawkes'
-        ),
-        etc...
-        )
-        )
-        */
-
-        ?>
-                <table border="1" cellpadding="3" cellspacing="0" width="90%">
-                    <?php
-                    if (isset($data['header']) && count($data['header'])) {
-                        ?>
-                        <thead>
-                            <tr><?php
-                            foreach ($data['header'] as $text) {
-                                ?>
-                                    <th><?php echo $text; ?></th><?php
-                            }
-                            ?>
-                            </tr>
-                        </thead>
-                        <?php
-                    }
-
-                    if (isset($data['rows']) && count($data['rows'])) {
-                        ?>
-                        <tbody>
-                            <?php
-                            foreach ($data['rows'] as $row) {
-                                ?>
-                                <tr><?php
-                                foreach ($row as $text) {
-                                    ?>
-                                        <td><?php echo $text; ?></td><?php
-                                }
-                                ?>
-                                </tr>
-                                <?php
-                            }
-                            ?>
-                        </tbody>
-                        <?php
-                    }
-                    ?>
-                </table>
-                <?php
-
+        // Pass it data to be displayed in a <table>, in the shared admin style.
+        // $data is ['header' => ['ID', 'Name'], 'rows' => [['37', 'Guy Fawkes'], ...]], all as HTML.
+        $rows = $data['rows'] ?? [];
+        // The margin lines the table up with the page's headings, as these pages have no padded block.
+        print '<div class="mx-4">' . AdminView::table($data['header'] ?? [], $rows, '', AdminView::numericColumns($rows)) . '</div>';
     }
 
     /**
