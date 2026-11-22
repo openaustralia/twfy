@@ -3172,6 +3172,7 @@ class PAGE {
             'admin_failedsearches',
             'admin_statistics',
             'admin_usage',
+            'admin_users',
             'admin_commentreports',
             'admin_glossary',
             'admin_glossary_pending',

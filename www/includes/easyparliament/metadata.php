@@ -172,6 +172,11 @@ class Metadata {
             'parent' => 'admin',
             'url' => 'admin/usage.php'
         ],
+        'admin_users' => [
+            'title' => 'Users',
+            'parent' => 'admin',
+            'url' => 'admin/users.php'
+        ],
 
         // Added by Richard Allan for email alert functions.
 
