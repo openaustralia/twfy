@@ -5,9 +5,7 @@
  * First some things to help make our PHP nicer and betterer.
  */
 
-use Sentry\SentrySdk;
 use Sentry\State\Scope;
-use Sentry\Tracing\TransactionContext;
 
 error_reporting(E_ALL);
 ini_set('memory_limit', 32 * 1024 * 1024);
@@ -91,21 +89,8 @@ if (defined('SENTRY_DSN') && SENTRY_DSN) {
         'before_send_transaction' => 'sentry_scrub_event',
     ]);
 
-    // One transaction per request (web page or CLI script - alertmailer.php
-    // and other scripts/*.php all include this file too), so DB query spans
-    // have a parent to attach to; \Sentry\trace() is a no-op with no active
-    // transaction. SCRIPT_NAME (eg "/mp/index.php"), not REQUEST_URI: the
-    // latter includes query strings/IDs, which would give every request its
-    // own transaction *name* instead of grouping same-page requests together.
-    $sentryTransactionContext = new TransactionContext(
-        PHP_SAPI === 'cli' ? ($_SERVER['argv'][0] ?? 'cli') : ($_SERVER['SCRIPT_NAME'] ?? 'unknown')
-    );
-    $sentryTransactionContext->setOp(PHP_SAPI === 'cli' ? 'cli.script' : 'http.server');
-    $sentryRequestTransaction = \Sentry\startTransaction($sentryTransactionContext);
-    SentrySdk::getCurrentHub()->setSpan($sentryRequestTransaction);
-    register_shutdown_function(function () use ($sentryRequestTransaction) {
-        $sentryRequestTransaction->finish();
-    });
+    $sentryRequestTransaction = sentry_start_request_transaction(PHP_SAPI, $_SERVER);
+    register_shutdown_function([$sentryRequestTransaction, 'finish']);
 }
 
 // The time the page starts, so we can display the total at the end.
