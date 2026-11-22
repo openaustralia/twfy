@@ -49,6 +49,20 @@ describe('AdminView::breadcrumbs()', function () {
     });
 });
 
+describe('AdminView::filterLinks()', function () {
+    beforeEach(function () {
+        $this->html = AdminView::filterLinks([['All', '/a?x=1&y=2', false], ['Mine', '/b', true]]);
+    });
+
+    it('links the other choices', function () {
+        expect($this->html)->toContain('href="/a?x=1&amp;y=2">All</a>');
+    });
+
+    it('marks the current choice', function () {
+        expect($this->html)->toContain('aria-current="page">Mine</li>');
+    });
+});
+
 describe('AdminView::table()', function () {
     describe('without rows', function () {
         describe('with a note', function () {
