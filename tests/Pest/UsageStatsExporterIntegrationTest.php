@@ -44,8 +44,7 @@ beforeEach(function () {
     $this->export = fn (int $batchSize = 2, int $concurrency = 1) => (new Exporter(
         new ElasticsearchClient($this->es->client()),
         $batchSize,
-        $concurrency,
-        new DateTimeImmutable('2026-11-22 00:00:00', new DateTimeZone('UTC'))
+        $concurrency
     ))->export($this->source);
     $this->ids = [
         exporter_spec_download('2025-12-31 23:00:00'),
@@ -56,11 +55,9 @@ beforeEach(function () {
 
 describe('Exporter::indexName()', function () {
     it('picks the index for a time', function (string $time, string $expected) {
-        $now = new DateTimeImmutable('2026-11-22 00:00:00', new DateTimeZone('UTC'));
-
-        expect(Exporter::indexName('oa-api-test', $time, $now))->toBe($expected);
+        expect(Exporter::indexName('oa-api-test', $time))->toBe($expected);
     })->with([
-        'this year' => ['2026-01-01 00:00:00', 'oa-api-test-2026.01'],
+        'this year' => ['2026-01-01 00:00:00', 'oa-api-test-2026'],
         'a past year' => ['2009-05-25 21:12:39', 'oa-api-test-2009'],
     ]);
 });
@@ -81,11 +78,11 @@ describe('Exporter->export()', function () {
 
         it('puts each row in its index', function () {
             expect(array_column($this->es->documents(), 'index'))
-              ->toBe(['oa-data-test-2025', 'oa-data-test-2026.11', 'oa-data-test-2026.11']);
+              ->toBe(['oa-data-test-2025', 'oa-data-test-2026', 'oa-data-test-2026']);
         });
 
         it('creates each index once', function () {
-            expect($this->es->createdIndices())->toBe(['oa-data-test-2025', 'oa-data-test-2026.11']);
+            expect($this->es->createdIndices())->toBe(['oa-data-test-2025', 'oa-data-test-2026']);
         });
 
         it('marks OAF servers as internal', function () {

@@ -8,9 +8,10 @@ use OpenAustralia\TWFY\Models\ExportCursor;
 /**
  * Sends a table's new rows to Elasticsearch, carrying on from the last id sent.
  *
- * Each document's id is its row id, so sending a row again overwrites it
- * rather than counting it twice. Completed years go in one yearly index, the
- * current year in monthly ones.
+ * Each document's id is its row id, and its index depends only on the row's
+ * own year, so sending a row again overwrites it rather than counting it
+ * twice. Yearly indices keep the shard count low: a year of API calls is a
+ * few hundred MB.
  */
 class Exporter {
 
@@ -20,8 +21,6 @@ class Exporter {
 
     private int $concurrency;
 
-    private \DateTimeImmutable $now;
-
     /**
      * @param ElasticsearchClient $es
      *   Where to send.
@@ -29,22 +28,18 @@ class Exporter {
      *   Rows per bulk request.
      * @param int $concurrency
      *   Bulk requests in flight at once.
-     * @param \DateTimeImmutable|null $now
-     *   Decides which year is current. Defaults to now.
      */
-    public function __construct(ElasticsearchClient $es, int $batchSize = 5000, int $concurrency = 1, ?\DateTimeImmutable $now = null) {
+    public function __construct(ElasticsearchClient $es, int $batchSize = 5000, int $concurrency = 1) {
         $this->es = $es;
         $this->batchSize = max(1, $batchSize);
         $this->concurrency = max(1, $concurrency);
-        $this->now = $now ?? new \DateTimeImmutable('now', new \DateTimeZone('UTC'));
     }
 
     /**
      * The index for a document from the given UTC time.
      */
-    public static function indexName(string $prefix, string $time, \DateTimeImmutable $now): string {
-        $year = substr($time, 0, 4);
-        return $year === $now->format('Y') ? "$prefix-$year." . substr($time, 5, 2) : "$prefix-$year";
+    public static function indexName(string $prefix, string $time): string {
+        return $prefix . '-' . substr($time, 0, 4);
     }
 
     /**
@@ -121,7 +116,7 @@ class Exporter {
      */
     private function prepare(ExportSource $source, array $batch): array {
         return array_map(function (array $document) use ($source) {
-            $index = self::indexName($source->indexPrefix(), $document['time'], $this->now);
+            $index = self::indexName($source->indexPrefix(), $document['time']);
             $this->es->ensureIndex($index, $source->mappings());
             return ['index' => $index, 'id' => (string) $document['id'], 'body' => $document['body']];
         }, $batch);
