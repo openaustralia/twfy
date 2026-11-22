@@ -64,7 +64,8 @@ class Exporter {
 
             $promises = array_map(fn (array $batch) => $this->es->bulkAsync($this->prepare($source, $batch)), $batches);
             foreach (Utils::settle($promises)->wait() as $i => $result) {
-                $rejected = $result['state'] === 'fulfilled' ? $result['value'] : [$result['reason']->getMessage()];
+                // A failed request's message can quote the response, so only its class is kept.
+                $rejected = $result['state'] === 'fulfilled' ? $result['value'] : [get_class($result['reason'])];
                 if ($rejected) {
                     ExportCursor::advance($name, $lastId);
                     return ['sent' => $sent, 'last_id' => $lastId, 'rejected' => $rejected];

@@ -111,7 +111,8 @@ $es = new ElasticsearchClient(new Client([
     'timeout' => 120,
 ]));
 $exporter = new Exporter($es, (int) ($options['batch-size'] ?? 5000), (int) ($options['concurrency'] ?? 1));
-$environment = usage_stats_setting('SENTRY_ENVIRONMENT') ?: 'development';
+// Elasticsearch index names must be lowercase.
+$environment = preg_replace('/[^a-z0-9_-]/', '', strtolower(usage_stats_setting('SENTRY_ENVIRONMENT'))) ?: 'development';
 $methods = array_map(fn (array $method) => $method['parameters'], api_get_methods());
 $internal = array_values(array_filter(array_map('trim', explode(',', usage_stats_setting('DATA_DOWNLOADS_INTERNAL_IPS')))));
 
@@ -124,7 +125,7 @@ foreach ($sources as $label => $source) {
         $result = $exporter->export($source);
         print "$label sent: {$result['sent']}, last id {$result['last_id']}\n";
         if ($result['rejected']) {
-            // Elasticsearch's reasons name the document id, not its contents.
+            // Only document ids and error types, never field values.
             fwrite(STDERR, "$label: " . count($result['rejected']) . " rejected, such as:\n  "
                 . implode("\n  ", array_slice($result['rejected'], 0, 3)) . "\n");
             throw new RuntimeException("$label rejected by Elasticsearch");

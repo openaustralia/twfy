@@ -137,7 +137,7 @@ describe('Exporter->export()', function () {
         });
 
         it('says why', function () {
-            expect($this->result['rejected'])->toBe(["{$this->ids[1]}: mapper_parsing_exception failed to parse"]);
+            expect($this->result['rejected'])->toBe(["{$this->ids[1]}: mapper_parsing_exception"]);
         });
     });
 

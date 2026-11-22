@@ -71,7 +71,8 @@ class ElasticsearchClient {
 
     /**
      * @return string[]
-     *   The id and reason for each document a _bulk response rejected.
+     *   The id and error type of each document a _bulk response rejected.
+     *   Not the reason, which can quote the field's value.
      */
     private static function rejections(ResponseInterface $response): array {
         $result = json_decode((string) $response->getBody(), true, 512, JSON_THROW_ON_ERROR);
@@ -82,7 +83,7 @@ class ElasticsearchClient {
         foreach ($result['items'] as $item) {
             $error = $item['index']['error'] ?? null;
             if ($error !== null) {
-                $reasons[] = $item['index']['_id'] . ': ' . ($error['type'] ?? '') . ' ' . ($error['reason'] ?? '');
+                $reasons[] = $item['index']['_id'] . ': ' . ($error['type'] ?? 'unknown');
             }
         }
         return $reasons;
