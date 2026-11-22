@@ -57,7 +57,9 @@ class ApiCallSource implements ExportSource {
      * {@inheritdoc}
      */
     public function documentsAfter(int $afterId, int $limit): array {
-        $rows = ApiStat::where('id', '>', $afterId)->orderBy('id')->limit($limit)->get();
+        $rows = ApiStat::where('id', '>', $afterId)
+                    ->whereRaw('query_time <= NOW() - INTERVAL 10 MINUTE')
+                    ->orderBy('id')->limit($limit)->get();
         // MySQL matches keys without regard to case, as api_log_call()'s lookup does, so PHP must too.
         $keyIds = array_change_key_case(
             ApiKey::whereIn('api_key', $rows->pluck('api_key')->unique()->values())->pluck('id', 'api_key')->all()
