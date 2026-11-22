@@ -41,9 +41,9 @@ class DownloadImport {
                     $counts['unreadable']++;
                     continue;
                 }
-                $text = sha1($line);
+                $text = sha1($line); // phpcs:ignore Drupal.Commenting.PostStatementComment -- NOSONAR: dedup key, not security
                 $seen[$text] = ($seen[$text] ?? 0) + 1;
-                $rows[] = $row + ['line_hash' => sha1($text . ':' . $seen[$text])];
+                $rows[] = $row + ['line_hash' => sha1($text . ':' . $seen[$text])]; // phpcs:ignore Drupal.Commenting.PostStatementComment -- NOSONAR: dedup key, not security
                 if (count($rows) === self::CHUNK) {
                     self::insert($rows, $counts);
                     $rows = [];
