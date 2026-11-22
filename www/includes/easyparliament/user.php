@@ -869,7 +869,7 @@ class THEUSER extends USER {
                     // But we need to check the password before we log them in.
                     // And make sure the user hasn't been "deleted".
 
-                    if (md5($this->password()) == $matches[2] && !$this->deleted()) {
+                    if (hash_equals(md5($this->password()), $matches[2]) && !$this->deleted()) {
                         // The correct password is in the cookie,
                         // and the user isn't deleted, so set the user to be logged in.
 
@@ -880,7 +880,7 @@ class THEUSER extends USER {
                         twfy_debug("THEUSER init SUCCEEDED", "setting as logged in");
                         $this->loggedin = true;
 
-                    } elseif (md5($this->password()) != $matches[2]) {
+                    } elseif (!hash_equals(md5($this->password()), $matches[2])) {
                         twfy_debug("THEUSER init FAILED", "Password doesn't match cookie");
                         $this->loggedin = false;
                     } else {
@@ -903,6 +903,10 @@ class THEUSER extends USER {
             $this->loggedin = false;
         }
 
+        if (!$this->loggedin) {
+            $this->forget();
+        }
+
         // If a user is logged in they *might* have set their own constituency.
         // If they aren't logged in, or they haven't set one, then we may
         // have set a constituency for them when they searched for their MP.
@@ -917,6 +921,18 @@ class THEUSER extends USER {
         $this->update_lastvisit();
 
     } // End THEUSER()
+
+    /**
+     * Goes back to an anonymous Viewer.
+     *
+     * A cookie with a wrong password still loads the user it names, role and password hash included, and status() and
+     * is_able_to() don't look at $loggedin, so nothing from a failed login may be kept.
+     */
+    private function forget(): void {
+        foreach (get_class_vars(USER::class) as $name => $default) {
+            $this->$name = $default;
+        }
+    }
 
     /**
      *
