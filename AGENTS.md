@@ -32,7 +32,7 @@ installing, which writes `bootstrap/cache/`.
 
 ## Database access
 
-The ORM is Eloquent (`illuminate/database` ^11). Each table has a model in `www/includes/Models/`, namespaced
+The ORM is Eloquent, from `laravel/framework` ^13. Each table has a model in `www/includes/Models/`, namespaced
 `OpenAustralia\TWFY\Models` (for example `Alert`, `Member`, `Hansard`, `EmailSuppression`). A model sets `$table` and
 `$primaryKey`, lists `$fillable` columns, declares `$casts` for booleans and dates, and documents its columns with
 `@property` tags. Copy `Models/Alert.php` for the shape.
