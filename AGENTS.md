@@ -20,6 +20,16 @@ Composer: `../phplib` (a handful of includes: auth, rabx, tracking), `../perllib
 seeder), `../shlib` (shellcheck CI). Docker mounts `../phplib`; CI checks siblings out and symlinks them, matching
 your branch name in the sibling repo if one exists.
 
+## Laravel
+
+Laravel 13 lives alongside the legacy pages (`docs/adr/0002-laravel-auth-replaces-homegrown-sign-in.md`,
+openaustralia/openaustralia#1069): `bootstrap/app.php`, `config/`, `routes/` and `storage/` at the repo root, with
+`www/docs` as its public folder. `init.php` boots it through `twfy_laravel()` (`www/includes/laravel.php`), which
+skips Laravel's error handling and `.env` loading, turns off facade aliases, and hands Laravel the Eloquent
+connection `eloquent.php` made, so both share one connection. Settings come from `conf/general` (`APP_KEY` among
+them), not `.env`. Apache doesn't route any requests to Laravel yet. Composer runs `artisan package:discover` after
+installing, which writes `bootstrap/cache/`.
+
 ## Database access
 
 The ORM is Eloquent (`illuminate/database` ^11). Each table has a model in `www/includes/Models/`, namespaced

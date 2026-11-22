@@ -35,4 +35,6 @@ if (!isset($GLOBALS['twfy_eloquent_booted'])) {
     $capsule->bootEloquent();
 
     $GLOBALS['twfy_eloquent_booted'] = true;
+    // laravel.php hands this connection to Laravel, so both share one connection and its transactions.
+    $GLOBALS['twfy_capsule'] = $capsule;
 }

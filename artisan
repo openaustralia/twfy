@@ -1,0 +1,22 @@
+#!/usr/bin/env php
+<?php
+
+/**
+ * @file
+ * Laravel's command line. Composer runs "artisan package:discover" after installing.
+ */
+
+use Symfony\Component\Console\Input\ArgvInput;
+
+define('LARAVEL_START', microtime(true));
+
+require __DIR__ . '/vendor/autoload.php';
+
+// Settings come from conf/general, as they do for the legacy pages.
+if (is_file(__DIR__ . '/conf/general')) {
+    require_once __DIR__ . '/conf/general';
+}
+
+$app = require_once __DIR__ . '/bootstrap/app.php';
+
+exit($app->handleCommand(new ArgvInput()));
