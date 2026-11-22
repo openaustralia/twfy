@@ -41,8 +41,7 @@ beforeEach(function () {
     $this->http = new Client(['base_uri' => rtrim($url, '/') . '/', 'timeout' => 30]);
     $this->environment = 'spec' . bin2hex(random_bytes(4));
     $this->export = function ($source) {
-        $now = new DateTimeImmutable('2026-11-22 00:00:00', new DateTimeZone('UTC'));
-        $result = (new Exporter(new ElasticsearchClient($this->http), 2, 2, $now))->export($source);
+        $result = (new Exporter(new ElasticsearchClient($this->http), 2, 2))->export($source);
         $this->http->post('oa-*-' . $this->environment . '-*/_refresh');
         return $result;
     };
@@ -84,11 +83,11 @@ describe('Exporter->export() to Elasticsearch', function () {
             expect($this->result['rejected'])->toBe([]);
         });
 
-        it('creates yearly and monthly indices', function () {
+        it('creates an index per year', function () {
             $indices = array_column(es_spec_get($this->http, "_cat/indices/oa-data-{$this->environment}-*?format=json"), 'index');
             sort($indices);
 
-            expect($indices)->toBe(["oa-data-{$this->environment}-2025", "oa-data-{$this->environment}-2026.11"]);
+            expect($indices)->toBe(["oa-data-{$this->environment}-2025", "oa-data-{$this->environment}-2026"]);
         });
 
         it('fixes each field type', function (string $field, string $type) {
