@@ -61,6 +61,23 @@ class AdminView {
     }
 
     /**
+     * A row of links that choose what a page shows, with the current choice marked and not linked.
+     *
+     * @param list<array{string, string, bool}> $choices
+     *   Each choice's label, its address (not escaped), and whether it is the current one.
+     */
+    public static function filterLinks(array $choices): string {
+        $html = '<ul class="flex flex-wrap items-center gap-6 !m-0 p-0 list-none text-sm font-semibold">';
+        foreach ($choices as [$label, $url, $current]) {
+            $label = htmlspecialchars($label);
+            $html .= $current
+                ? '<li class="!ml-0 text-slate-900" aria-current="page">' . $label . '</li>'
+                : '<li class="!ml-0"><a class="' . self::LINK_CLASSES . '" href="' . htmlspecialchars($url) . '">' . $label . '</a></li>';
+        }
+        return $html . '</ul>';
+    }
+
+    /**
      * A table, or a note when there are no rows and the caller gave one.
      *
      * @param list<string> $headings

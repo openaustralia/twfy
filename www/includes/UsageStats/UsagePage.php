@@ -65,14 +65,10 @@ class UsagePage {
      *   The current period, in days.
      */
     public static function periodLinks(int $period): string {
-        $html = '<ul class="flex flex-wrap items-center gap-6 !m-0 p-0 list-none text-sm font-semibold">';
-        foreach (self::PERIODS as $days) {
-            $label = $days === 1 ? 'Today' : "Last $days days";
-            $html .= $days === $period
-                ? '<li class="!ml-0 text-slate-900" aria-current="page">' . $label . '</li>'
-                : '<li class="!ml-0"><a class="' . AdminView::LINK_CLASSES . '" href="' . self::text(AdminView::link('usage.php', ['period' => $days])) . '">' . $label . '</a></li>';
-        }
-        return $html . '</ul>';
+        return AdminView::filterLinks(array_map(
+            fn (int $days): array => [$days === 1 ? 'Today' : "Last $days days", AdminView::link('usage.php', ['period' => $days]), $days === $period],
+            self::PERIODS
+        ));
     }
 
     /**
