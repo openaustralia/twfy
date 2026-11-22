@@ -26,6 +26,7 @@ use OpenAustralia\TWFY\UsageStats\DownloadImport;
 use OpenAustralia\TWFY\UsageStats\DownloadSource;
 use OpenAustralia\TWFY\UsageStats\ElasticsearchClient;
 use OpenAustralia\TWFY\UsageStats\Exporter;
+use OpenAustralia\TWFY\UsageStats\Settings;
 
 include_once __DIR__ . '/../www/includes/easyparliament/init.php';
 include_once __DIR__ . '/../www/docs/api/api_functions.php';
@@ -66,20 +67,6 @@ function usage_stats_step(string $label, callable $step): bool {
 }
 
 /**
- * A setting from the environment, else conf/general, else ''.
- *
- * The environment wins, as it does for DB_*, so the Docker stack can point
- * the script at its own Elasticsearch.
- */
-function usage_stats_setting(string $name): string {
-    $value = getenv($name);
-    if ($value !== false && $value !== '') {
-        return $value;
-    }
-    return defined($name) ? (string) constant($name) : '';
-}
-
-/**
  * Imports one log file and prints its counts.
  */
 function usage_stats_import(string $path): void {
@@ -93,12 +80,12 @@ if (isset($options['import'])) {
 }
 
 $ok = true;
-$log = usage_stats_setting('DATA_ACCESS_LOG');
+$log = Settings::get('DATA_ACCESS_LOG');
 if ($log !== '' && !isset($options['no-import'])) {
     $ok = usage_stats_step('Import', fn () => usage_stats_import($log)) && $ok;
 }
 
-$url = usage_stats_setting('ELASTICSEARCH_URL');
+$url = Settings::get('ELASTICSEARCH_URL');
 if ($url === '') {
     print "ELASTICSEARCH_URL is empty, so nothing was sent.\n";
     exit($ok ? 0 : 1);
@@ -106,19 +93,18 @@ if ($url === '') {
 
 $es = new ElasticsearchClient(new Client([
     'base_uri' => rtrim($url, '/') . '/',
-    'headers' => ['Authorization' => 'ApiKey ' . usage_stats_setting('ELASTICSEARCH_API_KEY')],
+    'headers' => ['Authorization' => 'ApiKey ' . Settings::get('ELASTICSEARCH_API_KEY')],
     'connect_timeout' => 10,
     'timeout' => 120,
 ]));
 $exporter = new Exporter($es, (int) ($options['batch-size'] ?? 5000), (int) ($options['concurrency'] ?? 1));
 // Elasticsearch index names must be lowercase.
-$environment = preg_replace('/[^a-z0-9_-]/', '', strtolower(usage_stats_setting('SENTRY_ENVIRONMENT'))) ?: 'development';
+$environment = preg_replace('/[^a-z0-9_-]/', '', strtolower(Settings::get('SENTRY_ENVIRONMENT'))) ?: 'development';
 $methods = array_map(fn (array $method) => $method['parameters'], api_get_methods());
-$internal = array_values(array_filter(array_map('trim', explode(',', usage_stats_setting('DATA_DOWNLOADS_INTERNAL_IPS')))));
 
 $sources = [
     'API calls' => new ApiCallSource($methods, $environment),
-    'Downloads' => new DownloadSource($environment, $internal),
+    'Downloads' => new DownloadSource($environment, Settings::internalAddresses()),
 ];
 foreach ($sources as $label => $source) {
     $ok = usage_stats_step("Sending $label", function () use ($exporter, $source, $label) {
