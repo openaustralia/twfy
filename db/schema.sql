@@ -42,7 +42,7 @@ CREATE TABLE `api_daily_usage` (
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`api_key_id`,`date`),
-  KEY `date` (`date`)
+  KEY `api_daily_usage_date_api_key_id_count` (`date`,`api_key_id`,`count`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -174,7 +174,7 @@ CREATE TABLE `data_downloads` (
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   UNIQUE KEY `line_hash` (`line_hash`),
-  KEY `request_time` (`request_time`)
+  KEY `data_downloads_request_time_ip_address` (`request_time`,`ip_address`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -305,9 +305,9 @@ CREATE TABLE `hansard` (
   KEY `hansard_speaker_id_hdate_hpos` (`speaker_id`,`hdate`,`hpos`),
   KEY `major` (`major`),
   KEY `htype` (`htype`),
-  KEY `majorhdate` (`major`,`hdate`),
   KEY `modified` (`modified`),
-  KEY `source_url` (`source_url`)
+  KEY `source_url` (`source_url`),
+  KEY `hansard_major_hdate_proof_modified` (`major`,`hdate`,`proof`,`modified`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
