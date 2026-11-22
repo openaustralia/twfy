@@ -104,6 +104,8 @@ if (!isset($_SERVER['WINDIR'])) {
 include_once __DIR__ . '/../data.php';
 include_once __DIR__ . '/../mysql.php';
 include_once __DIR__ . '/../eloquent.php';
+include_once __DIR__ . '/../laravel.php';
+twfy_laravel();
 
 /**
  *

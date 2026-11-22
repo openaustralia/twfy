@@ -49,6 +49,11 @@ define ("DEBUGTAG", 'debug');
 define ("SENTRY_DSN", "");
 define ("SENTRY_ENVIRONMENT", "development");
 
+// Laravel's encryption key, for its session cookie (docs/adr/0002-laravel-auth-replaces-homegrown-sign-in.md).
+// Each install needs its own: make one with php -r 'echo "base64:", base64_encode(random_bytes(32)), "\n";'.
+// Production's comes from the infrastructure repo. Changing it signs everyone out.
+define ("APP_KEY", "base64:exsExZxVQczSCrwBRI/kdckXmyh7q9tOrkqkclo65q0=");
+
 // Plausible.io analytics script identifier (the "pa-..." fragment of
 // https://plausible.io/js/pa-....js, from Plausible's own dashboard) - not a
 // secret, but empty by default so PlausibleView::renderTag() stays disabled.

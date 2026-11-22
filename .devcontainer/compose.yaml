@@ -18,6 +18,11 @@ services:
       - ..:/app
       - ../www:/var/www #not sure yet why it needs to be here, i got 403s when it /app instead
       - ../vendor:/var/vendor
+      # Laravel's folders sit beside www, as in a deploy, so www/includes/laravel.php finds them.
+      - ../bootstrap:/var/bootstrap
+      - ../config:/var/config
+      - ../routes:/var/routes
+      - ../storage:/var/storage
       - ../conf/general-docker:/var/conf/general
       - ../conf/httpd-docker.conf:/etc/apache2/sites-available/000-default.conf
       - ${PHPLIB_PATH:-../../phplib}:/phplib # the sibling phplib checkout; set PHPLIB_PATH in .env for a worktree
