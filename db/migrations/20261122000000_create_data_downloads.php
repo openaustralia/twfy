@@ -7,6 +7,9 @@ use Phinx\Migration\AbstractMigration;
 /**
  * One row per request to data.openaustralia.org.au, imported each night from
  * Apache's data_access.log, so downloads outlive the 30 days of logs.
+ *
+ * line_hash identifies the log line it came from, so importing a file again
+ * adds nothing.
  */
 final class CreateDataDownloads extends AbstractMigration
 {
@@ -23,9 +26,11 @@ final class CreateDataDownloads extends AbstractMigration
                 bytes bigint unsigned NOT NULL DEFAULT 0,
                 referrer text NOT NULL,
                 user_agent text NOT NULL,
+                line_hash char(40) NOT NULL,
                 created_at timestamp NULL DEFAULT CURRENT_TIMESTAMP,
                 updated_at timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
                 PRIMARY KEY (id),
+                UNIQUE KEY line_hash (line_hash),
                 KEY request_time (request_time)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci"
         );

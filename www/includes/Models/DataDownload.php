@@ -17,6 +17,8 @@ use Illuminate\Database\Eloquent\Model;
  * @property int $bytes
  * @property string $referrer
  * @property string $user_agent
+ * @property string $line_hash
+ *   Identifies the log line, so a file imported twice adds nothing.
  */
 class DataDownload extends Model {
 
@@ -39,6 +41,7 @@ class DataDownload extends Model {
         'bytes',
         'referrer',
         'user_agent',
+        'line_hash',
     ];
 
     protected $casts = [

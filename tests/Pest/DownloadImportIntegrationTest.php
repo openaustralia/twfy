@@ -89,6 +89,34 @@ describe('DownloadImport::fromFile()', function () {
                 expect(DataDownload::count())->toBe(3);
             });
         });
+
+        describe('with a request logged after rotation', function () {
+            beforeEach(function () {
+                ($this->import)([download_import_spec_line('21/Nov/2026:23:58:00', '/scrapedxml/slow.xml')]);
+            });
+
+            it('imports it despite its earlier time', function () {
+                expect(DataDownload::where('path', '/scrapedxml/slow.xml')->count())->toBe(1);
+            });
+        });
+    });
+
+    describe('with identical requests in one second', function () {
+        beforeEach(function () {
+            $line = download_import_spec_line('21/Nov/2026:10:00:00');
+            $this->lines = [$line, $line];
+            ($this->import)($this->lines);
+        });
+
+        it('imports both', function () {
+            expect(DataDownload::count())->toBe(2);
+        });
+
+        it('adds neither when imported again', function () {
+            ($this->import)($this->lines);
+
+            expect(DataDownload::count())->toBe(2);
+        });
     });
 
     it('reads a gzipped log', function () {

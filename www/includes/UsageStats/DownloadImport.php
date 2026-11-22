@@ -2,7 +2,6 @@
 
 namespace OpenAustralia\TWFY\UsageStats;
 
-use Illuminate\Database\Capsule\Manager as DB;
 use OpenAustralia\TWFY\Models\DataDownload;
 
 /**
@@ -13,10 +12,11 @@ class DownloadImport {
     private const CHUNK = 1000;
 
     /**
-     * Imports the lines newer than any already imported, so a file can be run twice.
+     * Imports each line not already imported, so a file can be run twice.
      *
-     * Files must be imported oldest first. One transaction, so a failure part
-     * way through leaves nothing for the next run to skip past.
+     * A line is known by a hash of its text and how many identical lines came
+     * before it in the file, so two identical requests in one second both
+     * count, and a request logged after rotation still lands in the next file.
      *
      * @param string $path
      *   A log file, plain or gzipped.
@@ -31,34 +31,46 @@ class DownloadImport {
         }
 
         $counts = ['imported' => 0, 'already_imported' => 0, 'unreadable' => 0];
+        $seen = [];
+        $rows = [];
         try {
-            DB::transaction(function () use ($handle, &$counts) {
-                $newest = DataDownload::max('request_time');
-                $rows = [];
-                while (($line = gzgets($handle)) !== false) {
-                    $row = AccessLogLine::parse(rtrim($line, "\r\n"));
-                    if ($row === null) {
-                        $counts['unreadable']++;
-                    } elseif ($newest !== null && $row['request_time'] <= $newest) {
-                        $counts['already_imported']++;
-                    } else {
-                        $rows[] = $row;
-                        if (count($rows) === self::CHUNK) {
-                            DataDownload::insert($rows);
-                            $counts['imported'] += count($rows);
-                            $rows = [];
-                        }
-                    }
+            while (($line = gzgets($handle)) !== false) {
+                $line = rtrim($line, "\r\n");
+                $row = AccessLogLine::parse($line);
+                if ($row === null) {
+                    $counts['unreadable']++;
+                    continue;
                 }
-                if ($rows) {
-                    DataDownload::insert($rows);
-                    $counts['imported'] += count($rows);
+                $text = sha1($line);
+                $seen[$text] = ($seen[$text] ?? 0) + 1;
+                $rows[] = $row + ['line_hash' => sha1($text . ':' . $seen[$text])];
+                if (count($rows) === self::CHUNK) {
+                    self::insert($rows, $counts);
+                    $rows = [];
                 }
-            });
+            }
+            self::insert($rows, $counts);
         } finally {
             gzclose($handle);
         }
         return $counts;
+    }
+
+    /**
+     * Inserts rows whose line_hash isn't already there, and counts both kinds.
+     *
+     * @param array<int, array<string, mixed>> $rows
+     *   Parsed lines, each with its line_hash.
+     * @param array<string, int> $counts
+     *   The counts to add to.
+     */
+    private static function insert(array $rows, array &$counts): void {
+        if (!$rows) {
+            return;
+        }
+        $inserted = DataDownload::insertOrIgnore($rows);
+        $counts['imported'] += $inserted;
+        $counts['already_imported'] += count($rows) - $inserted;
     }
 
 }
