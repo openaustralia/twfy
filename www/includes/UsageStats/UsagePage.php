@@ -2,10 +2,10 @@
 
 namespace OpenAustralia\TWFY\UsageStats;
 
-use OpenAustralia\TWFY\ProofReportView;
+use OpenAustralia\TWFY\AdminView;
 
 /**
- * The HTML of the admin usage page, styled like the proof report. Everything it returns is escaped.
+ * The HTML of the admin usage page, in the shared admin style. Everything it returns is escaped.
  */
 class UsagePage {
 
@@ -47,12 +47,13 @@ class UsagePage {
      *   IP addresses of OAF's own servers.
      */
     public static function page(int $period, string $from, string $to, array $internal): string {
-        $html = ProofReportView::breadcrumbs([['Admin', '/admin/'], ['API and data site usage', null]]);
+        $html = AdminView::breadcrumbs([['Admin', '/admin/'], ['API and data site usage', null]]);
         $html .= self::periodLinks($period);
-        $html .= '<p class="text-sm text-slate-600 max-w-3xl">Days are UTC, from ' . self::text($from) . ' to ' . self::text($to) . '. '
+        $html .= '<p class="' . AdminView::NOTE_CLASSES . ' max-w-3xl">Days are UTC, from ' . self::text($from) . ' to ' . self::text($to) . '. '
             . 'API calls are counted as they happen. Downloads are imported from data.openaustralia.org.au\'s access log each night, so they run to yesterday.</p>';
         foreach (self::tables($from, $to, $internal) as $heading => [$columns, $rows, $empty]) {
-            $html .= '<h3 class="mt-8 mb-4 mx-0 text-base font-semibold text-slate-900">' . $heading . '</h3>' . self::table($columns, $rows, $empty);
+            $html .= '<h3 class="' . AdminView::HEADING_CLASSES . '">' . $heading . '</h3>'
+                . AdminView::table(array_keys($columns), $rows, $empty, array_keys(array_filter(array_values($columns))));
         }
         return $html;
     }
@@ -69,39 +70,9 @@ class UsagePage {
             $label = $days === 1 ? 'Today' : "Last $days days";
             $html .= $days === $period
                 ? '<li class="!ml-0 text-slate-900" aria-current="page">' . $label . '</li>'
-                : '<li class="!ml-0"><a class="' . ProofReportView::LINK_CLASSES . '" href="' . self::text(ProofReportView::link('usage.php', ['period' => $days])) . '">' . $label . '</a></li>';
+                : '<li class="!ml-0"><a class="' . AdminView::LINK_CLASSES . '" href="' . self::text(AdminView::link('usage.php', ['period' => $days])) . '">' . $label . '</a></li>';
         }
         return $html . '</ul>';
-    }
-
-    /**
-     * A table in the proof report's style, or a note when there are no rows.
-     *
-     * @param array<string, bool> $columns
-     *   Each column's heading, and whether it holds numbers to right-align.
-     * @param array<int, string[]> $rows
-     *   The cells, already escaped.
-     * @param string $empty
-     *   What to say when there are no rows.
-     */
-    public static function table(array $columns, array $rows, string $empty): string {
-        if (!$rows) {
-            return '<p class="text-sm text-slate-600">' . self::text($empty) . '</p>';
-        }
-        $numeric = array_values($columns);
-        $html = '<div class="overflow-x-auto">' . ProofReportView::TABLE . ProofReportView::HEADING_ROW;
-        foreach ($columns as $heading => $right) {
-            $html .= '<th class="px-3 py-2 font-semibold' . ($right ? ' text-right' : '') . '">' . self::text($heading) . '</th>';
-        }
-        $html .= '</tr></thead><tbody>';
-        foreach ($rows as $row) {
-            $html .= '<tr class="border-0 border-b border-solid border-slate-200 even:bg-slate-50 hover:bg-teal-50">';
-            foreach (array_values($row) as $index => $cell) {
-                $html .= '<td class="px-3 py-2' . ($numeric[$index] ? ' text-right tabular-nums' : '') . '">' . $cell . '</td>';
-            }
-            $html .= '</tr>';
-        }
-        return $html . '</tbody></table></div>';
     }
 
     /**
@@ -158,7 +129,7 @@ class UsagePage {
             return '<em>No account</em>';
         }
         $name = self::text(trim("$user->firstname $user->lastname"));
-        return preg_match('#^https?://#i', (string) $user->url) ? '<a class="' . ProofReportView::LINK_CLASSES . '" href="' . self::text($user->url) . '">' . $name . '</a>' : $name;
+        return preg_match('#^https?://#i', (string) $user->url) ? '<a class="' . AdminView::LINK_CLASSES . '" href="' . self::text($user->url) . '">' . $name . '</a>' : $name;
     }
 
     /**
