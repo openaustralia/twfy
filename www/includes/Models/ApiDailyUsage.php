@@ -2,7 +2,9 @@
 
 namespace OpenAustralia\TWFY\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * Number of API calls per key per UTC day.
@@ -41,5 +43,32 @@ class ApiDailyUsage extends Model {
         'date' => 'date',
         'count' => 'integer',
     ];
+
+    /**
+     * The key these calls were made with.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo<ApiKey, ApiDailyUsage>
+     *   The relationship.
+     */
+    public function apiKey(): BelongsTo {
+        return $this->belongsTo(ApiKey::class, 'api_key_id');
+    }
+
+    /**
+     * Counts for UTC days from $from to $to, both included.
+     *
+     * @param \Illuminate\Database\Eloquent\Builder<ApiDailyUsage> $query
+     *   The query to narrow.
+     * @param string $from
+     *   The first day, as Y-m-d.
+     * @param string $to
+     *   The last day, as Y-m-d.
+     *
+     * @return \Illuminate\Database\Eloquent\Builder<ApiDailyUsage>
+     *   The same query, limited to those days.
+     */
+    public function scopeBetweenDays(Builder $query, string $from, string $to): Builder {
+        return $query->whereBetween('date', [$from, $to]);
+    }
 
 }

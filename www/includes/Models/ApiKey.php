@@ -3,6 +3,7 @@
 namespace OpenAustralia\TWFY\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * ApiKey Eloquent model.
@@ -31,5 +32,15 @@ class ApiKey extends Model {
     protected $casts = [
         'commercial' => 'bool',
     ];
+
+    /**
+     * The person the key belongs to.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo<User, ApiKey>
+     *   The relationship.
+     */
+    public function user(): BelongsTo {
+        return $this->belongsTo(User::class, 'user_id', 'user_id');
+    }
 
 }
