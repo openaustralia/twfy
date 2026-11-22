@@ -5,6 +5,7 @@ TEST_DB_HOST ?= 127.0.0.1
 TEST_DB_USER ?= twfyuser
 TEST_DB_PASSWORD ?= twfypass
 TEST_DB_NAME ?= test_twfy
+TWFY_ELASTICSEARCH_PORT ?= 9201
 DEV_DB_NAME ?= twfy
 SONAR_SCANNER ?= sonar-scanner
 XAPIANDB ?= /app/shared/search/searchdb
@@ -17,7 +18,7 @@ PARSER_PATH ?= ../openaustralia-parser
 help:
 	@echo "Available targets:"
 	@echo "  up                                  Start everything, including the site at http://localhost, once it's ready"
-	@echo "  services-up                         Start MySQL only, once ready (for host-side tools)"
+	@echo "  services-up                         Start MySQL and Elasticsearch, once ready (for host-side tools)"
 	@echo "  down                                Stop and remove the containers, keeping the database"
 	@echo "  clean                               Remove containers, built images (VS Code's too) and dependencies, keeping the data"
 	@echo "  clobber                             Also remove the database and index, then prune Docker machine-wide"
@@ -61,7 +62,7 @@ help:
 	@echo "  PHPCS_ARGS     Extra args for phpcs targets e.g."
 	@echo "                   --report=full          show each violation in context"
 	@echo "                   www/path/to/file.php   check a specific file"
-	@echo "  TWFY_HTTP_PORT, TWFY_MYSQL_PORT, PHPLIB_PATH, PERLLIB_PATH, PARSER_PATH - see \"Port clashes\" in AGENTS.md"
+	@echo "  TWFY_HTTP_PORT, TWFY_MYSQL_PORT, TWFY_ELASTICSEARCH_PORT, PHPLIB_PATH, PERLLIB_PATH, PARSER_PATH - see \"Port clashes\" in AGENTS.md"
 	@echo "  XAPIANDB, XAPIANDB_LASTUPDATED - override index and timestamp paths for xapian-index-docker"
 
 docker-build:
@@ -82,7 +83,7 @@ up:
 	docker compose up --build --wait -d
 
 services-up:
-	docker compose up --wait -d mysql
+	docker compose up --wait -d mysql elasticsearch
 
 down:
 	docker compose down --remove-orphans
@@ -255,7 +256,7 @@ test: vendor/autoload.php
 	./vendor/bin/pest $(TEST_ARGS)
 
 test-all: vendor/autoload.php
-	DB_HOST=$(TEST_DB_HOST) DB_USER=$(TEST_DB_USER) DB_PASSWORD=$(TEST_DB_PASSWORD) DB_NAME=$(TEST_DB_NAME) ./vendor/bin/pest $(TEST_ARGS)
+	DB_HOST=$(TEST_DB_HOST) DB_USER=$(TEST_DB_USER) DB_PASSWORD=$(TEST_DB_PASSWORD) DB_NAME=$(TEST_DB_NAME) ELASTICSEARCH_TEST_URL=http://127.0.0.1:$(TWFY_ELASTICSEARCH_PORT) ./vendor/bin/pest $(TEST_ARGS)
 
 install-xdebug:
 	@if mise exec -- php -m | grep -Eq 'xdebug|pcov'; then \

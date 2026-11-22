@@ -88,6 +88,19 @@ jobs:
           --health-retries=3
         ports:
           - 3306:3306
+      # For tests/Pest/UsageStatsElasticsearchIntegrationTest.php. Matches the Elastic Cloud "Main" deployment's version.
+      elasticsearch:
+        image: docker.elastic.co/elasticsearch/elasticsearch:7.17.7
+        env:
+          discovery.type: single-node
+          ES_JAVA_OPTS: -Xms512m -Xmx512m
+        options: >-
+          --health-cmd="curl -fs 'http://localhost:9200/_cluster/health?wait_for_status=yellow&timeout=1s'"
+          --health-interval=5s
+          --health-timeout=5s
+          --health-retries=30
+        ports:
+          - 9200:9200
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -155,6 +168,7 @@ jobs:
           DB_USER: root
           DB_PASSWORD: root
           DB_NAME: test_twfy
+          ELASTICSEARCH_TEST_URL: http://127.0.0.1:9200
           # The Pest specs run scripts/importxml.php as a subprocess, which writes its own .cov files here
           SUBPROCESS_COVERAGE_DIR: ${{ github.workspace }}/coverage
       - name: Upload coverage for merging

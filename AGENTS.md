@@ -41,7 +41,7 @@ One stack, defined in `.devcontainer/compose.yaml`, serves every way of working:
 
 ```
 make up           # everything, including the app at http://localhost, once it's ready
-make services-up  # MySQL only, for host-side tools
+make services-up  # MySQL and Elasticsearch only, for host-side tools
 make status       # each container's health and host ports
 make logs         # follow the logs (SERVICE=<name> for one container)
 make shell        # a shell in the app container, or a fresh one if it has stopped
@@ -73,6 +73,7 @@ container, as some files are owned by container users.
 |-------------------|-----------------|-------------------------------------------------------------------------|
 | `TWFY_HTTP_PORT`  | 80              | the site                                                                |
 | `TWFY_MYSQL_PORT` | 3306            | MySQL. `Makefile.dev` passes it on to host-side scripts as `DB_PORT`    |
+| `TWFY_ELASTICSEARCH_PORT` | 9201    | Elasticsearch, on 127.0.0.1. Not 9200, which They Vote for You's stack uses. `make test-all` passes it on to the specs as `ELASTICSEARCH_TEST_URL` |
 | `PHPLIB_PATH`     | `../../phplib`  | the sibling phplib checkout. Relative to `.devcontainer/`, so an absolute path is simplest in a worktree |
 | `PERLLIB_PATH`    | `../perllib`    | the sibling perllib checkout, for `make xapian-index-docker`. Relative to the repo root |
 | `PARSER_PATH`     | `../openaustralia-parser` | the sibling parser checkout, for `make docker-db-seed`. Relative to the repo root |
@@ -132,6 +133,10 @@ migrates a fresh database and diffs the dump against `db/schema.sql`.
 - Tests: `*Test.php` are unit tests, `*IntegrationTest.php` need the database; `tests/bootstrap.php` wraps each
   test in mysqli and Eloquent transactions rolled back in `tearDown`, and defines the constants the legacy code
   expects. Seeders are idempotent and `SEEDER=<Name>` runs one.
+- `tests/Pest/UsageStatsElasticsearchIntegrationTest.php` sends rows to a real Elasticsearch 7.17 at
+  `ELASTICSEARCH_TEST_URL`, which `make test-all` points at the stack's own and CI at a service container. Without it
+  the specs skip locally and fail when `CI` is set. Each test writes to its own `oa-*-spec<random>-*` indices and
+  deletes them afterwards. `UsageStatsExporterIntegrationTest.php` covers the same code against a fake.
 - `tests/Pest/Xml2dbIntegrationTest.php` runs every spec against both loaders, `scripts/xml2db.pl` (Perl) and
   `scripts/importxml.php` (PHP, classes in `www/includes/XmlImport/`), as subprocesses with invented XML. A final spec
   loads each scenario with both and requires the same rows. The loaders commit on their own connection, so the specs
