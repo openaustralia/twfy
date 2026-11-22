@@ -8,7 +8,7 @@
 
 require_once __DIR__ . '/../../vendor/autoload.php';
 
-use OpenAustralia\TWFY\ProofReportView;
+use OpenAustralia\TWFY\AdminView;
 use OpenAustralia\TWFY\UsageStats\UsagePage;
 
 /**
@@ -76,7 +76,7 @@ describe('UsagePage::name()', function () {
     describe('with an http(s) web address', function () {
         it('links the name', function () {
             expect(UsagePage::name(usage_page_spec_user('https://example.test/?a=1&b=2')))
-              ->toBe('<a class="' . ProofReportView::LINK_CLASSES . '" href="https://example.test/?a=1&amp;b=2">Ada &lt;Example&gt;</a>');
+              ->toBe('<a class="' . AdminView::LINK_CLASSES . '" href="https://example.test/?a=1&amp;b=2">Ada &lt;Example&gt;</a>');
         });
     });
 
@@ -148,36 +148,5 @@ describe('UsagePage::periodLinks()', function () {
 
     it('links the other periods', function () {
         expect(UsagePage::periodLinks(7))->toContain('href="/admin/usage.php?period=1">Today</a>');
-    });
-});
-
-describe('UsagePage::table()', function () {
-    describe('without rows', function () {
-        it('says so', function () {
-            expect(UsagePage::table(['Path' => false], [], 'Nothing & more'))
-              ->toBe('<p class="text-sm text-slate-600">Nothing &amp; more</p>');
-        });
-    });
-
-    describe('with rows', function () {
-        beforeEach(function () {
-            $this->html = UsagePage::table(['Path' => false, 'Downloads' => true], [['/a.xml', '1,000']], '');
-        });
-
-        it('uses the proof report table', function () {
-            expect($this->html)->toContain(ProofReportView::TABLE . ProofReportView::HEADING_ROW);
-        });
-
-        it('right-aligns number headings', function () {
-            expect($this->html)->toContain('<th class="px-3 py-2 font-semibold text-right">Downloads</th>');
-        });
-
-        it('left-aligns text cells', function () {
-            expect($this->html)->toContain('<td class="px-3 py-2">/a.xml</td>');
-        });
-
-        it('right-aligns number cells', function () {
-            expect($this->html)->toContain('<td class="px-3 py-2 text-right tabular-nums">1,000</td>');
-        });
     });
 });
