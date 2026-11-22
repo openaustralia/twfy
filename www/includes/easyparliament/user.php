@@ -610,13 +610,7 @@ class USER {
      * Handy for forms where you edit/view users etc.
      */
     public function possible_statuses() {
-        // Maybe there's a way of fetching these from the DB,
-        // so we don't duplicate them here...?
-
-        $statuses = ["Viewer", "User", "Moderator", "Administrator", "Superuser"];
-
-        return $statuses;
-
+        return UserModel::ROLES;
     }
 
     /**

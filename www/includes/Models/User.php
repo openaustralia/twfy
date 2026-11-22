@@ -2,6 +2,7 @@
 
 namespace OpenAustralia\TWFY\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -13,6 +14,26 @@ use Illuminate\Database\Eloquent\Model;
  * compatibility with existing code paths.
  */
 class User extends Model {
+
+    /**
+     * The roles a user can have (users.status), lowest first. Administrator and Superuser can open the admin pages.
+     */
+    public const ROLES = ['Viewer', 'User', 'Moderator', 'Administrator', 'Superuser'];
+
+    /**
+     * Only users with a role, or everyone when the role is null or not one of ROLES.
+     *
+     * @param \Illuminate\Database\Eloquent\Builder<User> $query
+     *   The query.
+     * @param string|null $role
+     *   The role.
+     *
+     * @return \Illuminate\Database\Eloquent\Builder<User>
+     *   The query.
+     */
+    public function scopeWithRole(Builder $query, ?string $role): Builder {
+        return in_array($role, self::ROLES, true) ? $query->where('status', $role) : $query;
+    }
 
     /**
      * @var string
