@@ -50,3 +50,21 @@ describe('UsagePage::tables()', function () {
         });
     });
 });
+
+describe('UsagePage::page()', function () {
+    beforeEach(function () {
+        $this->html = UsagePage::page(30, '1999-01-01', '1999-01-30', []);
+    });
+
+    it('starts with breadcrumbs', function () {
+        expect($this->html)->toStartWith('<nav aria-label="Breadcrumb"');
+    });
+
+    it('gives the range', function () {
+        expect($this->html)->toContain('from 1999-01-01 to 1999-01-30');
+    });
+
+    it('heads each table', function () {
+        expect(substr_count($this->html, '<h3 '))->toBe(4);
+    });
+});
