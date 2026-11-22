@@ -67,3 +67,45 @@ describe('DailyUsageRebuild::run()', function () {
         expect(ApiDailyUsage::whereNotIn('api_key_id', ApiKey::pluck('id'))->count())->toBe(0);
     });
 });
+
+describe('DailyUsageRebuild::run() as it goes', function () {
+    beforeEach(function () {
+        $this->keyId = ApiKey::create([
+            'user_id' => 1,
+            'api_key' => 'rebuildspecbatchaaaaaaaa',
+            'commercial' => 0,
+            'created' => '2026-01-01 00:00:00',
+            'reason' => 'Test',
+        ])->id;
+    });
+
+    describe('with a progress callback', function () {
+        it('reports the last id read', function () {
+            rebuild_spec_call('rebuildspecbatchaaaaaaaa', '2009-05-25 12:00:00');
+            $ids = [];
+
+            DailyUsageRebuild::run(100000, function (int $lastId) use (&$ids) {
+                $ids[] = $lastId;
+            });
+
+            expect(end($ids))->toBe((int) ApiStat::max('id'));
+        });
+    });
+
+    // More key-days than one upsert writes.
+    describe('with over 1,000 key-days', function () {
+        it('writes them all', function () {
+            $day = new DateTimeImmutable('2000-01-01');
+            ApiStat::insert(array_map(fn (int $i) => [
+                'api_key' => 'rebuildspecbatchaaaaaaaa',
+                'ip_address' => '192.0.2.10',
+                'query_time' => $day->modify("+$i days")->format('Y-m-d 12:00:00'),
+                'query' => '/api/getSenator?id=1',
+            ], range(0, 1000)));
+
+            DailyUsageRebuild::run();
+
+            expect(ApiDailyUsage::where('api_key_id', $this->keyId)->count())->toBe(1001);
+        });
+    });
+});
