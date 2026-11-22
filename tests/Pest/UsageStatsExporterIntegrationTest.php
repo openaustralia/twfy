@@ -199,7 +199,7 @@ describe('ApiCallSource->documentsAfter()', function () {
             'created' => '2026-01-01 00:00:00',
             'reason' => 'Test',
         ])->id;
-        foreach (['exporterspeckeyaaaaaaaaa', 'exporterspecunknownaaaaa'] as $key) {
+        foreach (['exporterspeckeyaaaaaaaaa', 'exporterspecunknownaaaaa', 'EXPORTERSPECKEYAAAAAAAAA'] as $key) {
             ApiStat::create([
                 'api_key' => $key,
                 'ip_address' => '192.0.2.10',
@@ -219,7 +219,11 @@ describe('ApiCallSource->documentsAfter()', function () {
         expect($this->documents[1]['body']['user']['id'])->toBeNull();
     });
 
+    it('matches a key whatever its case', function () {
+        expect($this->documents[2]['body']['user']['id'])->toBe($this->keyId);
+    });
+
     it('never sends the key itself', function () {
-        expect(json_encode($this->documents))->not->toContain('exporterspec');
+        expect(strtolower(json_encode($this->documents)))->not->toContain('exporterspec');
     });
 });

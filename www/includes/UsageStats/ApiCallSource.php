@@ -58,11 +58,14 @@ class ApiCallSource implements ExportSource {
      */
     public function documentsAfter(int $afterId, int $limit): array {
         $rows = ApiStat::where('id', '>', $afterId)->orderBy('id')->limit($limit)->get();
-        $keyIds = ApiKey::whereIn('api_key', $rows->pluck('api_key')->unique()->values())->pluck('id', 'api_key');
+        // MySQL matches keys without regard to case, as api_log_call()'s lookup does, so PHP must too.
+        $keyIds = array_change_key_case(
+            ApiKey::whereIn('api_key', $rows->pluck('api_key')->unique()->values())->pluck('id', 'api_key')->all()
+        );
         return $rows->map(fn (ApiStat $row) => [
             'id' => (int) $row->id,
             'time' => $row->query_time,
-            'body' => $this->body($row, $keyIds[$row->api_key] ?? null),
+            'body' => $this->body($row, $keyIds[strtolower($row->api_key)] ?? null),
         ])->all();
     }
 
