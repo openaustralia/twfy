@@ -167,6 +167,11 @@ class Metadata {
             'parent' => 'admin',
             'url' => 'admin/statistics.php'
         ],
+        'admin_usage' => [
+            'title' => 'API and data site usage',
+            'parent' => 'admin',
+            'url' => 'admin/usage.php'
+        ],
 
         // Added by Richard Allan for email alert functions.
 

@@ -3223,6 +3223,7 @@ class PAGE {
             'admin_popularsearches',
             'admin_failedsearches',
             'admin_statistics',
+            'admin_usage',
             'admin_commentreports',
             'admin_glossary',
             'admin_glossary_pending',
