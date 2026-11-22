@@ -40,9 +40,9 @@ class ProofReportView {
         'errors' => '<circle cx="8" cy="8" r="6.5"/><path d="M8 4.5v4M8 11v.01" stroke-linecap="round"/>',
     ];
 
-    private const TABLE = '<table class="w-full max-w-4xl !m-0 text-sm border-collapse">';
+    public const TABLE = '<table class="w-full max-w-4xl !m-0 text-sm border-collapse">';
 
-    private const HEADING_ROW = '<thead><tr class="bg-slate-100 text-left text-xs uppercase tracking-wide text-slate-600">';
+    public const HEADING_ROW = '<thead><tr class="bg-slate-100 text-left text-xs uppercase tracking-wide text-slate-600">';
 
     /**
      * The overview page: a bar for each year.
