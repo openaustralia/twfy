@@ -15,8 +15,6 @@ class ProofReportView {
      */
     private const DATA_URL = 'https://data.openaustralia.org.au';
 
-    public const LINK_CLASSES = '!text-teal-700 !no-underline hover:!underline';
-
     /**
      * The segments of a bar, in the order they are drawn. The colours are checked for colour-blind separation across
      * every pair, and each also has an icon, so colour is never the only way to tell them apart.
@@ -40,10 +38,6 @@ class ProofReportView {
         'errors' => '<circle cx="8" cy="8" r="6.5"/><path d="M8 4.5v4M8 11v.01" stroke-linecap="round"/>',
     ];
 
-    public const TABLE = '<table class="w-full max-w-4xl !m-0 text-sm border-collapse">';
-
-    public const HEADING_ROW = '<thead><tr class="bg-slate-100 text-left text-xs uppercase tracking-wide text-slate-600">';
-
     /**
      * The overview page: a bar for each year.
      */
@@ -51,8 +45,8 @@ class ProofReportView {
         $years = ProofReport::years();
         $segments = self::segments($years);
 
-        $html = self::breadcrumbs([['Admin', '/admin/'], ['Import status', null]]);
-        $html .= '<p class="text-sm text-slate-600 max-w-3xl">Each bar shows the share of the sitting days we hold for a year. A sitting day is one house\'s sitting, so a date when both houses sat counts twice. '
+        $html = AdminView::breadcrumbs([['Admin', '/admin/'], ['Import status', null]]);
+        $html .= '<p class="' . AdminView::NOTE_CLASSES . ' max-w-3xl">Each bar shows the share of the sitting days we hold for a year. A sitting day is one house\'s sitting, so a date when both houses sat counts twice. '
             . 'Choose a year to see its months and days.</p>';
         $html .= self::legend($segments);
         $html .= '<ol class="max-w-4xl !m-0 p-0 list-none">';
@@ -82,18 +76,18 @@ class ProofReportView {
         $months = ProofReport::months($year);
         $month = in_array($requested_month, array_column($months, 'month'), true) ? $requested_month : null;
 
-        $trail = [['Admin', '/admin/'], ['Import status', self::link('proof.php')], [(string) $year, self::link('proof_year.php', ['year' => $year])]];
+        $trail = [['Admin', '/admin/'], ['Import status', AdminView::link('proof.php')], [(string) $year, AdminView::link('proof_year.php', ['year' => $year])]];
         if ($month !== null) {
             $trail[] = [self::monthName($month), null];
         }
 
-        $html = self::breadcrumbs($trail) . self::yearNavigation($held, $year);
+        $html = AdminView::breadcrumbs($trail) . self::yearNavigation($held, $year);
         $html .= '<div class="flex items-center gap-4 max-w-4xl my-4">'
             . self::bar($year_row, self::segments([$year_row]), (string) $year)
             . self::finalShare($year_row)
             . '</div>';
         $html .= self::legend(self::segments($months));
-        $html .= '<p class="text-sm text-slate-600 max-w-3xl">Each row is a month. A sitting day is one house\'s sitting, so a date when both houses sat counts twice. Choose a month to see its days. '
+        $html .= '<p class="' . AdminView::NOTE_CLASSES . ' max-w-3xl">Each row is a month. A sitting day is one house\'s sitting, so a date when both houses sat counts twice. Choose a month to see its days. '
             . '"Last changed" is when a row last changed in our database, not when we last read it from Parliament House.</p>';
         $html .= self::monthsTable($months, $year, $month);
 
@@ -180,40 +174,6 @@ class ProofReportView {
     }
 
     /**
-     * The address of one of the report's pages, with only the parameters that have a value. Not escaped for HTML.
-     *
-     * @param string $page
-     *   The file name in the admin folder, such as proof_year.php.
-     * @param array<string, int|string|null> $params
-     *   The query parameters.
-     */
-    public static function link(string $page, array $params = []): string {
-        $query = http_build_query(array_filter($params, fn ($value): bool => $value !== null && $value !== ''));
-        return '/admin/' . $page . ($query === '' ? '' : '?' . $query);
-    }
-
-    /**
-     * The breadcrumb trail, with the last item as the page you are on.
-     *
-     * @param list<array{string, string|null}> $trail
-     *   A label and an address for each step. The address of the last step is ignored.
-     */
-    public static function breadcrumbs(array $trail): string {
-        $html = '<nav aria-label="Breadcrumb" class="mb-4"><ol class="flex flex-wrap items-center gap-2 !m-0 p-0 list-none text-sm text-slate-500">';
-        $last = count($trail) - 1;
-        foreach ($trail as $index => [$label, $url]) {
-            $label = htmlspecialchars($label);
-            if ($index === $last || $url === null) {
-                $html .= '<li class="!ml-0 font-semibold text-slate-900" aria-current="page">' . $label . '</li>';
-                continue;
-            }
-            $html .= '<li class="!ml-0 flex items-center gap-2"><a class="' . self::LINK_CLASSES . '" href="' . htmlspecialchars($url) . '">' . $label . '</a>'
-                . '<span aria-hidden="true">&rsaquo;</span></li>';
-        }
-        return $html . '</ol></nav>';
-    }
-
-    /**
      * A count of days, with the right plural.
      */
     public static function days(int $count): string {
@@ -238,42 +198,42 @@ class ProofReportView {
     public static function errors(string $date, string $house): string {
         $valid = preg_match('/^(\d{4})-(\d{2})-(\d{2})$/', $date, $parts) && checkdate((int) $parts[2], (int) $parts[3], (int) $parts[1]) && isset(ImportErrors::HOUSES[$house]);
         if (!$valid) {
-            return self::breadcrumbs([['Admin', '/admin/'], ['Import status', self::link('proof.php')], ['Import errors', null]])
-                . '<p class="text-sm text-slate-600">That is not a day and house we can show errors for.</p>';
+            return AdminView::breadcrumbs([['Admin', '/admin/'], ['Import status', AdminView::link('proof.php')], ['Import errors', null]])
+                . '<p class="' . AdminView::NOTE_CLASSES . '">That is not a day and house we can show errors for.</p>';
         }
 
         $year = (int) $parts[1];
         $month = (int) $parts[2];
         $house_name = ProofReport::HOUSES[ImportErrors::HOUSES[$house]];
         $errors = ProofReport::errorsForDay($date, ImportErrors::HOUSES[$house]);
-        $month_link = self::link('proof_year.php', ['year' => $year, 'month' => $month]) . '#days';
+        $month_link = AdminView::link('proof_year.php', ['year' => $year, 'month' => $month]) . '#days';
 
-        $html = self::breadcrumbs([
+        $html = AdminView::breadcrumbs([
             ['Admin', '/admin/'],
-            ['Import status', self::link('proof.php')],
-            [(string) $year, self::link('proof_year.php', ['year' => $year])],
+            ['Import status', AdminView::link('proof.php')],
+            [(string) $year, AdminView::link('proof_year.php', ['year' => $year])],
             [self::monthName($month), $month_link],
             [$date, null],
         ]);
         $html .= '<h3 class="mt-0 mb-2 mx-0 text-base font-semibold text-slate-900">Import errors for ' . htmlspecialchars($date) . ', ' . $house_name . '</h3>'
-            . '<p class="text-sm text-slate-600 max-w-3xl">The parser records errors while it reads a day from Parliament House, and the loader records them while it puts the day into the database. Each clears its own errors for a day when it next handles the day without one.</p>';
+            . '<p class="' . AdminView::NOTE_CLASSES . ' max-w-3xl">The parser records errors while it reads a day from Parliament House, and the loader records them while it puts the day into the database. Each clears its own errors for a day when it next handles the day without one.</p>';
 
         $html .= self::sourceLinks($date, $house);
 
         if (!$errors) {
-            return $html . '<p class="text-sm text-slate-600">No errors are recorded for this day.</p>';
+            return $html . '<p class="' . AdminView::NOTE_CLASSES . '">No errors are recorded for this day.</p>';
         }
 
-        $html .= '<div class="overflow-x-auto">' . self::TABLE . self::HEADING_ROW
-            . '<th class="px-3 py-2 font-semibold">Found by</th><th class="px-3 py-2 font-semibold">Error</th><th class="px-3 py-2 font-semibold">Recorded</th></tr></thead><tbody>';
+        $html .= AdminView::TABLE_WRAPPER . AdminView::TABLE . AdminView::HEADING_ROW
+            . AdminView::headings(['Found by', 'Error', 'Recorded']) . '</tr></thead><tbody>';
         foreach ($errors as $error) {
             $html .= '<tr class="border-0 border-b border-solid border-slate-200 even:bg-slate-50 align-top">'
-                . '<td class="px-3 py-2 whitespace-nowrap">' . ($error['source'] === 'parser' ? 'Parser' : 'Loader') . '</td>'
-                . '<td class="px-3 py-2"><pre class="m-0 whitespace-pre-wrap break-words font-mono text-xs text-slate-900">' . htmlspecialchars($error['message']) . '</pre></td>'
-                . '<td class="px-3 py-2 text-slate-600 whitespace-nowrap tabular-nums">' . htmlspecialchars($error['created_at'] ?? '') . '</td></tr>';
+                . AdminView::td($error['source'] === 'parser' ? 'Parser' : 'Loader', 'whitespace-nowrap')
+                . AdminView::td('<pre class="m-0 whitespace-pre-wrap break-words font-mono text-xs text-slate-900">' . htmlspecialchars($error['message']) . '</pre>')
+                . AdminView::td(htmlspecialchars($error['created_at'] ?? ''), 'text-slate-600 whitespace-nowrap tabular-nums') . '</tr>';
         }
         return $html . '</tbody></table></div>'
-            . '<p class="mt-4 text-sm font-semibold"><a class="' . self::LINK_CLASSES . '" href="' . htmlspecialchars($month_link) . '">&larr; Back to ' . self::monthName($month) . ' ' . $year . '</a></p>';
+            . '<p class="mt-4 text-sm font-semibold"><a class="' . AdminView::LINK_CLASSES . '" href="' . htmlspecialchars($month_link) . '">&larr; Back to ' . self::monthName($month) . ' ' . $year . '</a></p>';
     }
 
     /**
@@ -300,7 +260,7 @@ class ProofReportView {
 
         $html = '<ul class="my-4 pl-5 text-sm">';
         foreach ($links as $label => $url) {
-            $html .= '<li><a class="' . self::LINK_CLASSES . '" href="' . htmlspecialchars($url) . '">' . $label . '</a></li>';
+            $html .= '<li><a class="' . AdminView::LINK_CLASSES . '" href="' . htmlspecialchars($url) . '">' . $label . '</a></li>';
         }
         return $html . '</ul>';
     }
@@ -318,7 +278,7 @@ class ProofReportView {
         $house = (string) array_search($day['major'], ImportErrors::HOUSES, true);
         $label = $day['errors'] === 1 ? '1 error' : $day['errors'] . ' errors';
         return '<a class="inline-flex items-center gap-1 whitespace-nowrap font-semibold !text-rose-700 !no-underline hover:!underline" href="'
-            . htmlspecialchars(self::link('proof_errors.php', ['date' => $day['date'], 'house' => $house])) . '">' . self::icon('errors', 16) . $label . '</a>';
+            . htmlspecialchars(AdminView::link('proof_errors.php', ['date' => $day['date'], 'house' => $house])) . '">' . self::icon('errors', 16) . $label . '</a>';
     }
 
     /**
@@ -331,8 +291,8 @@ class ProofReportView {
         if ($row['total'] === 0) {
             return '<span class="w-14 text-sm text-slate-400">' . $row['year'] . '</span>';
         }
-        return '<a class="w-14 text-sm font-semibold ' . self::LINK_CLASSES . '" href="'
-            . htmlspecialchars(self::link('proof_year.php', ['year' => $row['year']])) . '">' . $row['year'] . '</a>';
+        return '<a class="w-14 text-sm font-semibold ' . AdminView::LINK_CLASSES . '" href="'
+            . htmlspecialchars(AdminView::link('proof_year.php', ['year' => $row['year']])) . '">' . $row['year'] . '</a>';
     }
 
     /**
@@ -367,10 +327,10 @@ class ProofReportView {
         $index = array_search($year, $held, true);
         $html = '<div class="flex flex-wrap items-center justify-between max-w-4xl gap-6 text-sm font-semibold">';
         $html .= $index > 0
-            ? '<a class="' . self::LINK_CLASSES . '" href="' . htmlspecialchars(self::link('proof_year.php', ['year' => $held[$index - 1]])) . '">&larr; ' . $held[$index - 1] . '</a>'
+            ? '<a class="' . AdminView::LINK_CLASSES . '" href="' . htmlspecialchars(AdminView::link('proof_year.php', ['year' => $held[$index - 1]])) . '">&larr; ' . $held[$index - 1] . '</a>'
             : '<span></span>';
         if ($index < count($held) - 1) {
-            $html .= '<a class="' . self::LINK_CLASSES . '" href="' . htmlspecialchars(self::link('proof_year.php', ['year' => $held[$index + 1]])) . '">' . $held[$index + 1] . ' &rarr;</a>';
+            $html .= '<a class="' . AdminView::LINK_CLASSES . '" href="' . htmlspecialchars(AdminView::link('proof_year.php', ['year' => $held[$index + 1]])) . '">' . $held[$index + 1] . ' &rarr;</a>';
         }
         return $html . '</div>';
     }
@@ -387,13 +347,13 @@ class ProofReportView {
      */
     private static function monthsTable(array $months, int $year, ?int $selected): string {
         $segments = self::segments($months);
-        $html = '<div class="overflow-x-auto">' . self::TABLE . self::HEADING_ROW
-            . '<th class="px-3 py-2 font-semibold">Month</th><th class="px-3 py-2 font-semibold">Share of sitting days</th>';
+        $html = AdminView::TABLE_WRAPPER . AdminView::TABLE . AdminView::HEADING_ROW
+            . AdminView::th('Month') . AdminView::th('Share of sitting days');
         // Errors has its own column below, which is there even for a year with none.
         foreach (array_diff_key($segments, ['errors' => true]) as $segment) {
-            $html .= '<th class="px-3 py-2 font-semibold text-right">' . $segment['label'] . '</th>';
+            $html .= AdminView::th($segment['label'], 'text-right');
         }
-        $html .= '<th class="px-3 py-2 font-semibold text-right">Sitting days</th><th class="px-3 py-2 font-semibold text-right">Days with errors</th><th class="px-3 py-2 font-semibold">Last changed</th></tr></thead><tbody>';
+        $html .= AdminView::th('Sitting days', 'text-right') . AdminView::th('Days with errors', 'text-right') . AdminView::th('Last changed') . '</tr></thead><tbody>';
 
         foreach ($months as $row) {
             $is_selected = $row['month'] === $selected;
@@ -403,16 +363,16 @@ class ProofReportView {
             if ($row['total'] === 0) {
                 $html .= '<span class="text-slate-400">' . $name . '</span>';
             } else {
-                $html .= '<a class="font-semibold ' . self::LINK_CLASSES . '"' . ($is_selected ? ' aria-current="true"' : '') . ' href="'
-                    . htmlspecialchars(self::link('proof_year.php', ['year' => $year, 'month' => $row['month']])) . '#days">' . $name . '</a>';
+                $html .= '<a class="font-semibold ' . AdminView::LINK_CLASSES . '"' . ($is_selected ? ' aria-current="true"' : '') . ' href="'
+                    . htmlspecialchars(AdminView::link('proof_year.php', ['year' => $year, 'month' => $row['month']])) . '#days">' . $name . '</a>';
             }
             $html .= '</td><td class="px-3 py-2 w-48"><div class="flex">' . self::bar($row, $segments, $name . ' ' . $year) . '</div></td>';
             foreach (array_keys(array_diff_key($segments, ['errors' => true])) as $key) {
-                $html .= '<td class="px-3 py-2 text-right tabular-nums">' . $row[$key] . '</td>';
+                $html .= AdminView::td((string) $row[$key], AdminView::NUMBER_CLASSES);
             }
-            $html .= '<td class="px-3 py-2 text-right tabular-nums">' . $row['total'] . '</td>'
-                . '<td class="px-3 py-2 text-right tabular-nums ' . ($row['errors'] > 0 ? 'font-semibold text-rose-700' : 'text-slate-400') . '">' . $row['errors'] . '</td>'
-                . '<td class="px-3 py-2 text-slate-600 whitespace-nowrap tabular-nums">' . htmlspecialchars($row['last_changed'] ?? '') . '</td></tr>';
+            $html .= AdminView::td((string) $row['total'], AdminView::NUMBER_CLASSES)
+                . AdminView::td((string) $row['errors'], AdminView::NUMBER_CLASSES . ' ' . ($row['errors'] > 0 ? 'font-semibold text-rose-700' : 'text-slate-400'))
+                . AdminView::td(htmlspecialchars($row['last_changed'] ?? ''), 'text-slate-600 whitespace-nowrap tabular-nums') . '</tr>';
         }
         return $html . '</tbody></table></div>';
     }
@@ -428,20 +388,20 @@ class ProofReportView {
      *   The month, from 1 to 12.
      */
     private static function daysSection(array $days, int $year, int $month): string {
-        $html = '<h3 id="days" class="mt-8 mb-4 mx-0 text-base font-semibold text-slate-900">' . self::monthName($month) . ' ' . $year . '</h3>';
+        $html = '<h3 id="days" class="' . AdminView::HEADING_CLASSES . '">' . self::monthName($month) . ' ' . $year . '</h3>';
 
         if (!$days) {
-            return $html . '<p class="text-sm text-slate-600">We hold no sitting days in this month.</p>';
+            return $html . '<p class="' . AdminView::NOTE_CLASSES . '">We hold no sitting days in this month.</p>';
         }
 
-        $html .= '<div class="overflow-x-auto">' . self::TABLE . self::HEADING_ROW;
+        $html .= AdminView::TABLE_WRAPPER . AdminView::TABLE . AdminView::HEADING_ROW;
         foreach (['Date', 'House', 'Status'] as $heading) {
-            $html .= '<th class="px-3 py-2 font-semibold">' . $heading . '</th>';
+            $html .= AdminView::th($heading);
         }
         foreach (['Proof rows', 'Final rows', 'Unknown rows', 'Errors'] as $heading) {
-            $html .= '<th class="px-3 py-2 font-semibold text-right">' . $heading . '</th>';
+            $html .= AdminView::th($heading, 'text-right');
         }
-        $html .= '<th class="px-3 py-2 font-semibold">Last changed</th></tr></thead><tbody>';
+        $html .= AdminView::th('Last changed') . '</tr></thead><tbody>';
         foreach ($days as $day) {
             $status = ProofReport::status($day['proof'], $day['final'], $day['unknown'], $day['errors']);
             $path = $day['major'] === 1 ? '/debates/' : '/senate/';
@@ -451,14 +411,14 @@ class ProofReportView {
             $pill_icon = isset(self::ICONS[$key]) ? self::icon($key, 12) : '';
             $row_colours = $day['errors'] > 0 ? 'bg-rose-50 hover:bg-rose-100' : 'even:bg-slate-50 hover:bg-teal-50';
             $html .= '<tr class="border-0 border-b border-solid border-slate-200 ' . $row_colours . '">'
-                . '<td class="px-3 py-2 whitespace-nowrap"><a class="' . self::LINK_CLASSES . '" href="' . $path . '?d=' . $date . '">' . $date . '</a></td>'
-                . '<td class="px-3 py-2 text-slate-700">' . htmlspecialchars(ProofReport::HOUSES[$day['major']]) . '</td>'
-                . '<td class="px-3 py-2"><span class="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-semibold ' . $pill . '">' . $pill_icon . $status . '</span></td>'
-                . '<td class="px-3 py-2 text-right tabular-nums">' . $day['proof'] . '</td>'
-                . '<td class="px-3 py-2 text-right tabular-nums">' . $day['final'] . '</td>'
-                . '<td class="px-3 py-2 text-right tabular-nums">' . $day['unknown'] . '</td>'
-                . '<td class="px-3 py-2 text-right tabular-nums">' . self::errorsLink($day) . '</td>'
-                . '<td class="px-3 py-2 text-slate-600 whitespace-nowrap tabular-nums">' . htmlspecialchars($day['last_changed'] ?? '') . '</td></tr>';
+                . AdminView::td('<a class="' . AdminView::LINK_CLASSES . '" href="' . $path . '?d=' . $date . '">' . $date . '</a>', 'whitespace-nowrap')
+                . AdminView::td(htmlspecialchars(ProofReport::HOUSES[$day['major']]), 'text-slate-700')
+                . AdminView::td('<span class="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-semibold ' . $pill . '">' . $pill_icon . $status . '</span>')
+                . AdminView::td((string) $day['proof'], AdminView::NUMBER_CLASSES)
+                . AdminView::td((string) $day['final'], AdminView::NUMBER_CLASSES)
+                . AdminView::td((string) $day['unknown'], AdminView::NUMBER_CLASSES)
+                . AdminView::td(self::errorsLink($day), AdminView::NUMBER_CLASSES)
+                . AdminView::td(htmlspecialchars($day['last_changed'] ?? ''), 'text-slate-600 whitespace-nowrap tabular-nums') . '</tr>';
         }
         return $html . '</tbody></table></div>';
     }

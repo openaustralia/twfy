@@ -82,46 +82,6 @@ describe('ProofReportView::bar()', function () {
     });
 });
 
-describe('ProofReportView::link()', function () {
-    it('leaves out parameters with no value', function () {
-        expect(ProofReportView::link('proof_year.php', ['year' => 2026, 'month' => null, 'extra' => '']))->toBe('/admin/proof_year.php?year=2026');
-    });
-
-    it('keeps several parameters', function () {
-        expect(ProofReportView::link('proof_year.php', ['year' => 2026, 'month' => 3]))->toBe('/admin/proof_year.php?year=2026&month=3');
-    });
-
-    it('adds no query when there are none', function () {
-        expect(ProofReportView::link('proof.php'))->toBe('/admin/proof.php');
-    });
-});
-
-describe('ProofReportView::breadcrumbs()', function () {
-    beforeEach(function () {
-        $this->html = ProofReportView::breadcrumbs([
-            ['Admin', '/admin/'],
-            ['Year', ProofReportView::link('proof_year.php', ['year' => 2025, 'month' => 3])],
-            ['March', null],
-        ]);
-    });
-
-    it('links every step but the last', function () {
-        expect($this->html)->toContain('href="/admin/"');
-    });
-
-    it('marks the last step as the current page', function () {
-        expect($this->html)->toContain('aria-current="page">March');
-    });
-
-    it('escapes an address once', function () {
-        expect($this->html)->toContain('year=2025&amp;month=3"');
-    });
-
-    it('does not escape an address twice', function () {
-        expect($this->html)->not->toContain('&amp;amp;');
-    });
-});
-
 describe('ProofReportView::days()', function () {
     it('counts sitting days, plural right', function (int $count, string $text) {
         expect(ProofReportView::days($count))->toBe($text);
