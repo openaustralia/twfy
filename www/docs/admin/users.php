@@ -18,7 +18,7 @@ $page = max(1, (int) ($_GET['page'] ?? 1));
 $role = in_array($_GET['role'] ?? '', User::ROLES, true) ? $_GET['role'] : '';
 
 // The change is handled before page_start() so it can redirect, which means checking admin access here as well.
-if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST' && $THEUSER->is_able_to('viewadminsection')) {
+if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST' && $THEUSER->isloggedin() && $THEUSER->is_able_to('viewadminsection')) {
     $result = UserRoles::change(
         (int) $THEUSER->user_id(),
         (string) $THEUSER->status(),
@@ -35,7 +35,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST' && $THEUSER->is_able_to('viewa
 $PAGE->page_start();
 $PAGE->stripe_start();
 $PAGE->block_start(['id' => 'users', 'title' => 'Users and their roles']);
-$is_superuser = $THEUSER->status() === 'Superuser';
+$is_superuser = $THEUSER->isloggedin() && $THEUSER->status() === 'Superuser';
 print UsersAdminView::page(
     UserRoles::page($page, $role),
     $role,
