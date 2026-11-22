@@ -69,6 +69,16 @@ define ("SENTRY_ENVIRONMENT", "development");
 // (group_vars/openaustralia.yml).
 define ("PLAUSIBLE_SCRIPT_ID", "");
 
+// Usage stats export (scripts/send-usage-stats.php). Empty by default, so the
+// nightly job sends nothing and imports nothing. Production gets the
+// Elasticsearch address, an API key that can only write oa-api-* and oa-data-*,
+// and the data site's log path from the infrastructure repository.
+define ("ELASTICSEARCH_URL", "");
+define ("ELASTICSEARCH_API_KEY", "");
+define ("DATA_ACCESS_LOG", "");
+// Comma-separated IP addresses of OAF's own servers, marked internal in downloads.
+define ("DATA_DOWNLOADS_INTERNAL_IPS", "");
+
 // Timezone (only works in PHP5)
 define ("TIMEZONE", "Australia/Sydney");
 
