@@ -95,6 +95,11 @@ function error_handler(string $errno, string $errmsg, string $filename, int $lin
     // Sends an email to BUGSLIST.
     global $PAGE;
 
+    // PHP calls a handler for errors the @ operator suppressed too, and expects it to skip them.
+    if (!(error_reporting() & (int) $errno)) {
+        return false;
+    }
+
     // Define an assoc array of error string
     // in reality the only entries we should
     // consider are E_WARNING, E_NOTICE, E_USER_ERROR,

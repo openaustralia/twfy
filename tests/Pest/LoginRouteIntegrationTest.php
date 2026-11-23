@@ -91,7 +91,7 @@ describe('POST /user/login', function () {
         });
 
         describe('and a ret on this site', function () {
-            it('redirects there, keeping the trailing slash', function () {
+            it('keeps the trailing slash', function () {
                 expect(login_spec_post($this->form + ['ret' => '/search/?s=tax'])->headers->get('Location'))->toEndWith('/search/?s=tax');
             });
         });

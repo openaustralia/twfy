@@ -35,7 +35,7 @@ function laravel_helper_clashes(): array {
 }
 
 describe('the legacy pages and scripts', function () {
-    it('declare no function a vendor package defines', function () {
+    it('redeclare no vendor function', function () {
         expect(laravel_helper_clashes())->toBe([]);
     });
 });
