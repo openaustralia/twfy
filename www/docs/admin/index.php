@@ -76,9 +76,11 @@ for ($row = 0; $row < $q->rows(); $row++) {
         $name = htmlspecialchars($q->field($row, 'firstname') . ' ' . $q->field($row, 'lastname'));
     }
 
+    $email = htmlspecialchars($q->field($row, 'email'));
+
     $rows[] = [
         $name,
-        '<a href="mailto:' . $q->field($row, 'email') . '">' . $q->field($row, 'email') . '</a>',
+        '<a href="mailto:' . $email . '">' . $email . '</a>',
         $confirmed,
         $q->field($row, 'registrationtime')
     ];
