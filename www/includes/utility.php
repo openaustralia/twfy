@@ -90,13 +90,13 @@ if (!function_exists('twfy_debug')) {
 /**
  * This is set as the default error handler. Your code tools may try to convince you it isn't used, but it is.
  */
-function error_handler(string $errno, string $errmsg, string $filename, int $linenum, ?array $vars = []) {
+function error_handler(int $errno, string $errmsg, string $filename, int $linenum, ?array $vars = []) {
     // Custom error-handling function.
     // Sends an email to BUGSLIST.
     global $PAGE;
 
     // PHP calls a handler for errors the @ operator suppressed too, and expects it to skip them.
-    if (!(error_reporting() & (int) $errno)) {
+    if (!(error_reporting() & $errno)) {
         return false;
     }
 
