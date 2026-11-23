@@ -21,11 +21,14 @@ to Laravel (`illuminate/database` and Eloquent are already in, #863), so this is
 
 - A Laravel 13 app lives in the repo alongside the legacy pages, replacing the standalone `illuminate/database` 11.
   Laravel 11 was the first choice, to match it, but its security support has ended and Composer refuses every 11.x
-  release for open advisories. Apache sends Laravel's routes (the account pages first) to its front controller, and
-  everything else still runs the legacy PHP.
+  release for open advisories. Apache sends Laravel's routes (the login page first, through `www/docs/laravel.php`)
+  to its front controller, and everything else still runs the legacy PHP.
 - `init.php` boots Laravel, so legacy pages read the signed-in user from Laravel's session, and `THEUSER` becomes a
   thin wrapper over `Auth::user()` until the legacy pages are gone.
-- Sessions are stored in a database table, so they can be listed and revoked.
+- Sessions are stored in a database table, so they can be listed and revoked. A session lasts until the browser
+  closes, or a day of inactivity, as the old cookie did. Login throttling uses a database cache table too, as Apache
+  can't write files into the release directory.
+- Everyone signs in again once when this ships, as the old `epuser_id` cookie is no longer read.
 - Existing password hashes come from `password_hash()` with bcrypt, which Laravel verifies as they are, so nobody
   has to reset their password. `users.confirmed` and `registrationtoken` carry across to `email_verified_at`.
 - The `epuser_id` cookie code is removed once nothing reads it. Until then, new sign-in work goes in Laravel, not
