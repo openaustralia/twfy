@@ -15,10 +15,11 @@ class LoginResponse implements LoginResponseContract {
      * Whether a URL stays on this site.
      *
      * Only site-relative URLs are safe. Protocol-relative ones (//evil.com) are rejected because browsers treat
-     * them as absolute.
+     * them as absolute. So are backslashes and control characters, which browsers turn into slashes or drop, so
+     * that /\evil.com and "/<tab>/evil.com" become //evil.com.
      */
     public static function isSafeRedirectUrl(string $url): bool {
-        return str_starts_with($url, '/') && !str_starts_with($url, '//');
+        return str_starts_with($url, '/') && !str_starts_with($url, '//') && !preg_match('/[\\\\\x00-\x1f\x7f]/', $url);
     }
 
     /**

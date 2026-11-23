@@ -97,7 +97,13 @@ describe('POST /user/login', function () {
         });
 
         describe('and a ret on another site', function () {
-            dataset('offsite', ['absolute' => 'https://example.org/evil', 'protocol-relative' => '//example.org/evil']);
+            dataset('offsite', [
+                'absolute' => 'https://example.org/evil',
+                'protocol-relative' => '//example.org/evil',
+                'backslash' => '/\\example.org/evil',
+                'tab' => "/\t/example.org/evil",
+                'newline' => "/\n/example.org/evil",
+            ]);
 
             it('redirects to the home page', function (string $ret) {
                 expect(login_spec_post($this->form + ['ret' => $ret])->headers->get('Location'))->toEndWith('/');

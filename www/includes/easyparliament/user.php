@@ -390,6 +390,8 @@ class USER {
             return false;
         }
 
+        $user->signOutEverywhere();
+
         $this->password = $pwd;
         return $pwd;
 
@@ -736,6 +738,23 @@ class USER {
     /**
      * PRIVATE FUNCTIONS BELOW... ////////////////.
      */
+
+    /**
+     * The session to keep signed in when a user's password changes: the current one, if it is that user's own.
+     */
+    private function sessionToKeep(int $user_id): ?string {
+        global $THEUSER;
+
+        if ($THEUSER && $THEUSER->isloggedin() && (int) $THEUSER->user_id() === $user_id) {
+            return twfy_laravel()->make('session.store')->getId();
+        }
+
+        return null;
+    }
+
+    /**
+     *
+     */
     public function _update($details) {
         // Update a user's info.
         // DO NOT call this function direct.
@@ -800,6 +819,11 @@ class USER {
         // updated if everything went well.
         try {
             UserModel::where('user_id', $details["user_id"])->update($update_data);
+
+            if (isset($update_data['password'])) {
+                UserModel::find($details["user_id"])?->signOutEverywhere($this->sessionToKeep((int) $details["user_id"]));
+            }
+
             return $details;
         } catch (\Exception $e) {
             $PAGE->error_message("Sorry, we were unable to update user id '" . htmlentities($details["user_id"]) . "'");
