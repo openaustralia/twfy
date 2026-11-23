@@ -2,6 +2,8 @@
 
 namespace OpenAustralia\TWFY\Models;
 
+use Illuminate\Auth\Authenticatable;
+use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
@@ -13,7 +15,9 @@ use Illuminate\Database\Eloquent\Model;
  * usual way; legacy `registrationtime` and `lastvisit` columns remain for
  * compatibility with existing code paths.
  */
-class User extends Model {
+class User extends Model implements AuthenticatableContract {
+
+    use Authenticatable;
 
     /**
      * The roles a user can have (users.status), lowest first. Administrator and Superuser can open the admin pages.
@@ -74,6 +78,7 @@ class User extends Model {
         'password',
         'registrationtoken',
         'api_key',
+        'remember_token',
     ];
 
     /**
