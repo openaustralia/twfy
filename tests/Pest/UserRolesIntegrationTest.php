@@ -118,6 +118,14 @@ describe('UserRoles::token()', function () {
     it('changes with the password', function () {
         expect(UserRoles::token(1, 'old-hash'))->not->toBe(UserRoles::token(1, 'new-hash'));
     });
+
+    it('differs between purposes', function () {
+        expect(UserRoles::token(1, 'same-hash', 'user-edit'))->not->toBe(UserRoles::token(1, 'same-hash'));
+    });
+
+    it('is the role change token by default', function () {
+        expect(UserRoles::token(1, 'same-hash'))->toBe(hash_hmac('sha256', 'user-roles:1', 'same-hash'));
+    });
 });
 
 describe('UserRoles::page()', function () {

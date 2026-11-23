@@ -40,6 +40,7 @@ include_once __DIR__ . "/../../includes/easyparliament/init.php";
 include_once __DIR__ . "/../../includes/easyparliament/member.php";
 
 use OpenAustralia\TWFY\Models\Alert;
+use OpenAustralia\TWFY\UserRoles;
 
 // Which page we're on all depends on the value of the "pg" variable...
 switch (get_http_var("pg")) {
@@ -101,7 +102,23 @@ switch (get_http_var("pg")) {
 $who = $this_page == "otheruseredit" ? "the user's" : "your";
 
 
-if (get_http_var("submitted") == "true") {
+if (get_http_var("submitted") == "true" && $this_page != "userjoin" && !edit_token_is_valid()) {
+    // Changing an existing user needs the token from the edit form, posted back here, so another site can't change a
+    // signed-in user's details. Nothing the request sent is used or shown.
+    http_response_code(403);
+
+    $PAGE->page_start();
+
+    $EDITURL = new URL('useredit');
+    $PAGE->error_message([
+        'text' => "Sorry, we couldn't check that this request came from your own form, so nothing was changed.",
+        'linkurl' => $EDITURL->generate(),
+        'linktext' => 'Open your details and try again',
+    ]);
+
+    $PAGE->page_end();
+
+} elseif (get_http_var("submitted") == "true") {
     // The edit or join form has been submitted, so check input.
 
     // Put all the user-submitted data in an array.
@@ -244,6 +261,33 @@ if (get_http_var("submitted") == "true") {
         $PAGE->page_end();
     }
 
+}
+
+/**
+ * The token the edit form carries, so another site can't change a signed-in user's details.
+ *
+ * It is empty unless someone is signed in, as a token with no password hash to key it could be made by anyone.
+ */
+function edit_token(): string {
+    global $THEUSER;
+
+    if (!$THEUSER->isloggedin() || (string) $THEUSER->password() === '') {
+        return '';
+    }
+
+    return UserRoles::token((int) $THEUSER->user_id(), (string) $THEUSER->password(), 'user-edit');
+}
+
+/**
+ * Whether the request posted the signed-in user's edit token.
+ *
+ * Only $_POST is read, as get_http_var() reads $_GET first and a token in a URL would end up in logs.
+ */
+function edit_token_is_valid(): bool {
+    $token = edit_token();
+    $posted = $_POST['token'] ?? '';
+
+    return $token !== '' && is_string($posted) && hash_equals($token, $posted);
 }
 
 /**
@@ -804,6 +848,13 @@ function display_form($details = [], $errors = []) {
         <input type="hidden" name="submitted" value="true">
 
         <?php
+        if ($this_page == "useredit" || $this_page == "otheruseredit") {
+            // So another site can't submit this form for a signed-in user.
+            ?>
+            <input type="hidden" name="token" value="<?php echo htmlentities(edit_token()); ?>">
+            <?php
+        }
+
         if (get_http_var("ret") != "") {
             // The user was probably trying to add a writer but is joining first.
             ?>
