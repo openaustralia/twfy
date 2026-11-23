@@ -11,6 +11,7 @@ use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 use OpenAustralia\TWFY\Auth\AuthServiceProvider;
@@ -35,14 +36,15 @@ $app = Application::configure(basePath: dirname(__DIR__))
             \Sentry\captureException($e);
         });
         // Draw 404s, expired pages and the rest in the legacy layout, as Laravel's own pages need a writable folder.
-        $exceptions->render(function (HttpExceptionInterface $e) {
+        $exceptions->render(function (HttpExceptionInterface $e): Response {
             return response(app(ErrorPage::class)->render($e->getStatusCode()), $e->getStatusCode(), $e->getHeaders());
         });
         // Draw a failed login as the login page again, with the reasons, as the legacy page did.
-        $exceptions->render(function (ValidationException $e, Request $request) {
+        $exceptions->render(function (ValidationException $e, Request $request): ?Response {
             if ($request->routeIs('login.store')) {
                 return response(app(LoginPage::class)->render($e->errors()), $e->status);
             }
+            return null;
         });
     })
   ->create();

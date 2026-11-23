@@ -25,8 +25,12 @@ class AuthServiceProvider extends ServiceProvider {
 
     /**
      * Tells Fortify how to find a user, set a password, and what the pages look like.
+     *
+     * Links Laravel builds, such as the one in the reset email, use the configured site address, not the request's
+     * Host header, which anyone can set to a host of their own.
      */
     public function boot(): void {
+        $this->app->make('url')->forceRootUrl(config('app.url'));
         Fortify::authenticateUsing(new Authenticator());
         Fortify::resetUserPasswordsUsing(ResetUserPassword::class);
         Fortify::loginView(fn (Request $request): string => $this->app->make(LoginPage::class)->render([], $request->session()->get('status')));

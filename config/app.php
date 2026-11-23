@@ -13,7 +13,7 @@ return [
 
     'debug' => defined('DEVSITE') && DEVSITE,
 
-    'url' => defined('DOMAIN') ? 'https://' . DOMAIN : 'http://localhost',
+    'url' => defined('DOMAIN') ? (defined('DEVSITE') && DEVSITE ? 'http://' : 'https://') . DOMAIN : 'http://localhost',
 
     // Laravel sets PHP's zone from this when it boots, so it must match the legacy pages' TIMEZONE.
     'timezone' => defined('TIMEZONE') ? TIMEZONE : 'UTC',
