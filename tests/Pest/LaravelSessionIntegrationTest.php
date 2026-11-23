@@ -34,7 +34,7 @@ afterEach(function () {
 
 describe('twfy_laravel_with_session()', function () {
     describe('when a legacy page reads the session first', function () {
-        it('leaves the flash data for the next Laravel request', function () {
+        it('keeps flash data for Laravel', function () {
             twfy_laravel_with_session(fn () => null);
             twfy_laravel()->make('session')->forgetDrivers();
             twfy_laravel()->forgetInstance('session.store');
@@ -44,7 +44,7 @@ describe('twfy_laravel_with_session()', function () {
     });
 
     describe('with the session cookie', function () {
-        it('runs the callback with the session started', function () {
+        it('starts the session first', function () {
             expect(twfy_laravel_with_session(fn () => twfy_laravel()->make('session.store')->token()))->toBe('spec-token');
         });
     });
