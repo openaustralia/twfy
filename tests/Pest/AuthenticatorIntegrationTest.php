@@ -90,7 +90,7 @@ describe('Authenticator', function () {
         describe('for an unconfirmed user', function () {
             beforeEach(fn () => authenticator_spec_user(['confirmed' => false]));
 
-            it('says to confirm when the password matches', function () {
+            it('says to confirm the email address', function () {
                 expect(fn () => (new Authenticator())->authenticate('ada.authspec@example.test', 'correct-horse'))
                     ->toThrow(ValidationException::class, "You haven't confirmed your email address yet.");
             });
@@ -102,7 +102,7 @@ describe('Authenticator', function () {
     });
 
     describe('__invoke()', function () {
-        it('reads the email and password from the request', function () {
+        it('reads the login form fields', function () {
             authenticator_spec_user();
             $request = Request::create('/user/login', 'POST', ['email' => 'ada.authspec@example.test', 'password' => 'correct-horse']);
 

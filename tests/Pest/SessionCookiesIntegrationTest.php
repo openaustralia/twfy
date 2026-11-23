@@ -6,6 +6,7 @@
  */
 
 require_once __DIR__ . '/../bootstrap.php';
+require_once __DIR__ . '/../../www/includes/utility.php';
 
 use Illuminate\Contracts\Http\Kernel;
 use Illuminate\Http\Request;
@@ -58,8 +59,8 @@ function cookies_spec_user_for(array $cookies): ?int {
 }
 
 beforeEach(function () {
-    // Laravel's Recaller reads a "remember me" cookie with @unserialize(), which warns on the plain text it falls back to.
-    set_error_handler(fn (int $number, string $message): bool => str_contains($message, 'unserialize()'), E_WARNING);
+    // Laravel's Recaller reads a "remember me" cookie with @unserialize(), which warns. The site's own handler must skip it.
+    set_error_handler('error_handler');
     $this->saved = $_COOKIE;
     $this->user = User::create([
         'firstname' => 'Cora',
@@ -98,7 +99,7 @@ describe('a later request', function () {
             expect(cookies_spec_user_for($this->cookies))->toBe($this->user->user_id);
         });
 
-        it('is the user with only the "remember me" cookie', function () {
+        it('is the user from remember me alone', function () {
             expect(cookies_spec_user_for([$this->rememberCookie => $this->cookies[$this->rememberCookie]]))->toBe($this->user->user_id);
         });
     });
@@ -114,7 +115,7 @@ describe('a later request', function () {
             expect(cookies_spec_user_for([$this->sessionCookie => $this->cookies[$this->sessionCookie]]))->toBeNull();
         });
 
-        it('is nobody with the old "remember me" cookie', function () {
+        it('is nobody with the old remember me', function () {
             expect(cookies_spec_user_for([$this->rememberCookie => $this->cookies[$this->rememberCookie]]))->toBeNull();
         });
     });
