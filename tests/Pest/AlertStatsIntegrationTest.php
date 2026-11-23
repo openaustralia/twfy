@@ -220,6 +220,14 @@ describe('AlertStats::listRows()', function () {
         });
     });
 
+    describe('when the email has no user', function () {
+        it('escapes the email', function () {
+            AlertFixtures::alert('<script>x</script>@example.invalid', 'tax');
+
+            expect(array_column(list_rows_for_specs(), 0))->toContain('&lt;script&gt;x&lt;/script&gt;@example.invalid');
+        });
+    });
+
     describe('when the email has a user', function () {
         beforeEach(function () {
             $this->user = UserModel::create(['firstname' => 'Zoe', 'lastname' => 'Example', 'email' => 'ZED@example.invalid']);
@@ -227,6 +235,12 @@ describe('AlertStats::listRows()', function () {
 
         it('links the name to the user page', function () {
             expect(array_column(list_rows_for_specs(), 0)[1])->toBe('<a href="/user/' . $this->user->user_id . '">Zoe Example</a>');
+        });
+
+        it('escapes the name', function () {
+            $this->user->update(['firstname' => '<script>x</script>', 'lastname' => 'O"Example']);
+
+            expect(array_column(list_rows_for_specs(), 0)[1])->toBe('<a href="/user/' . $this->user->user_id . '">&lt;script&gt;x&lt;/script&gt; O&quot;Example</a>');
         });
     });
 });
