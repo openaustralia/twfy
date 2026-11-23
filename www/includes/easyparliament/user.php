@@ -6,7 +6,7 @@
  *
  * This file contains USER and THEUSER classes.
  *
- * It automatically instantiates a $THEUSER global object. This refers to the person actually viewing the site. If they have a valid cookie set, $THEUSER's data will be fetched from the DB and they will be logged in. Otherwise they will have a minimum access level and will not be logged in.
+ * It automatically instantiates a $THEUSER global object. This refers to the person actually viewing the site. If Laravel has them signed in, $THEUSER's data will be fetched from the DB and they will be logged in. Otherwise they will have a minimum access level and will not be logged in.
  *
  *
  * The USER class allows us to fetch and alter data about any user (rather than $THEUSER).
@@ -30,7 +30,7 @@
  *
  *
  *
- * The cookie set to indicate a logged in user is called "epuser_id". More on that in THEUSER().
+ * Laravel keeps who is signed in (docs/adr/0002-laravel-auth-replaces-homegrown-sign-in.md). Fortify handles the login page.
  *
  *
  * Functions here:
@@ -49,9 +49,8 @@
  * _update()            Private function that updates a user's data in DB.
  *
  * THEUSER
- * THEUSER()            Constructor that logs in if the cookie is correct.
+ * THEUSER()            Constructor that logs in if Laravel has them signed in.
  * isloggedin()        Check if the user is logged in or not.
- * isvalid()            Check to see if the user's login form details are OK.
  * login()                Log the user in.
  * logout()            Log the user out.
  * confirm()            With the correct token, confirms the user then logs them in.
@@ -61,6 +60,7 @@
 require_once __DIR__ . '/../request.php';
 
 use Illuminate\Database\Capsule\Manager as DB;
+use OpenAustralia\TWFY\Auth\LoginResponse;
 use OpenAustralia\TWFY\Models\User as UserModel;
 
 /**
@@ -834,66 +834,14 @@ class THEUSER extends USER {
         // Set up $this->db.
         parent::__construct();
 
-        // We look at the user's cookie and see if it's valid.
-        // If so, we're going to log them in.
+        // Laravel keeps who is signed in, in its session or its "remember me" cookie (docs/adr/0002).
+        $user = twfy_laravel_user();
 
-        // A user's cookie is of the form:
-        // 123.blahblahblah
-        // Where '123' is a user id, and 'blahblahblah' is an md5 hash of the
-        // encrypted password we've stored in the db.
-        // (Maybe we could just put the encrypted pw in the cookie and md5ing
-        // it is overkill? Whatever, it works.)
-
-        // In includes/utility.php.
-        $cookie = get_cookie_var("epuser_id");
-
-        if ($cookie == '') {
-            twfy_debug("THEUSER init FAILED", "No cookie set");
-            $this->loggedin = false;
-
-        } elseif (preg_match("/([[:alnum:]]*)\.([[:alnum:]]*)/", $cookie, $matches)) {
-
-            if (is_numeric($matches[1])) {
-
-                $success = $this->init($matches[1]);
-
-                if ($success) {
-                    // We got all the user's data from the DB.
-
-                    // But we need to check the password before we log them in.
-                    // And make sure the user hasn't been "deleted".
-
-                    if (hash_equals(md5($this->password()), $matches[2]) && !$this->deleted()) {
-                        // The correct password is in the cookie,
-                        // and the user isn't deleted, so set the user to be logged in.
-
-                        // This would be an appropriate place to call other functions
-                        // that might set user info that only a logged-in user is going
-                        // to need. Their preferences and saved things or something.
-
-                        twfy_debug("THEUSER init SUCCEEDED", "setting as logged in");
-                        $this->loggedin = true;
-
-                    } elseif (!hash_equals(md5($this->password()), $matches[2])) {
-                        twfy_debug("THEUSER init FAILED", "Password doesn't match cookie");
-                        $this->loggedin = false;
-                    } else {
-                        twfy_debug("THEUSER init FAILED", "User is deleted");
-                        $this->loggedin = false;
-                    }
-
-                } else {
-                    twfy_debug("THEUSER init FAILED", "didn't get 1 row from db");
-                    $this->loggedin = false;
-                }
-
-            } else {
-                twfy_debug("THEUSER init FAILED", "cookie's user_id is not numeric");
-                $this->loggedin = false;
-            }
-
+        if ($user && !$user->deleted && $this->init((int) $user->user_id)) {
+            twfy_debug("THEUSER init SUCCEEDED", "setting as logged in");
+            $this->loggedin = true;
         } else {
-            twfy_debug("THEUSER init FAILED", "cookie is not of the correct form");
+            twfy_debug("THEUSER init FAILED", "no signed-in user");
             $this->loggedin = false;
         }
 
@@ -919,8 +867,8 @@ class THEUSER extends USER {
     /**
      * Goes back to an anonymous Viewer.
      *
-     * A cookie with a wrong password still loads the user it names, role and password hash included, and status() and
-     * is_able_to() don't look at $loggedin, so nothing from a failed login may be kept.
+     * init() loads a user's role and password hash even when they turn out to be deleted, and status() and
+     * is_able_to() don't look at $loggedin, so nothing from a failed sign-in may be kept.
      */
     private function forget(): void {
         foreach (get_class_vars(USER::class) as $name => $default) {
@@ -969,96 +917,26 @@ class THEUSER extends USER {
     }
 
     /**
+     * Signs the user in, then redirects them. Only the confirmation page calls this, as the login page is Fortify's.
      *
-     */
-    public function isvalid(string $email, string $userenteredpassword) {
-        // Returns true if this email and plaintext password match a user in the db.
-        // If false returns an array of form error messages.
-
-        // We use this on the log in page to check if the details the user entered
-        // are correct. We can then continue with logging the user in (taking into
-        // account their cookie remembering settings etc) with $this->login().
-
-        $user = UserModel::where('email', $email)
-          ->first(['user_id', 'password', 'deleted', 'confirmed']);
-
-        if ($user) {
-            // OK.
-            // The password in the DB is crypted.
-            $dbpassword = $user->password;
-            if (str_starts_with($dbpassword, '$1$')) {
-                // Legacy md5-crypt hash from PHP 5.x era
-                // FIXME: remove once count is zero: `select count(*) from users where password like '$1$%';`.
-                $valid_password = crypt($userenteredpassword, $dbpassword) === $dbpassword;
-
-                if ($valid_password) {
-                    // Upgrade to the more secure Bcrypt hash.
-                    $newHash = password_hash($userenteredpassword, PASSWORD_DEFAULT);
-                    $user->update(['password' => $newHash]);
-                    $dbpassword = $newHash;
-                }
-            } else {
-                // Modern bcrypt hash from move to php 8.0 in 2026.
-                $valid_password = password_verify($userenteredpassword, $dbpassword);
-            }
-            if ($valid_password) {
-                $this->user_id = $user->user_id;
-                $this->password = $dbpassword;
-                // We'll need these when we're going to log in.
-                $this->deleted = $user->deleted == 1 ? true : false;
-                $this->confirmed = $user->confirmed == 1 ? true : false;
-                return true;
-
-            } else {
-                // Failed.
-                return ["invalidpassword" => "This is not the correct password for " . htmlentities($email)];
-
-            }
-
-        } else {
-            // Failed.
-            return ["invalidemail" => "There is no user registered with an email of " . htmlentities($email) . '. If you are subscribed to email alerts, you are not necessarily registered on the website. If you register, you will be able to manage your email alerts, as well as leave comments.'];
-        }
-
-    }
-
-    /**
-     * Validate that a redirect URL is safe.
-     *
-     * Only site-relative URLs are allowed. Protocol-relative URLs (e.g.
-     * //evil.com) are rejected because browsers treat them as absolute.
-     */
-    private function is_safe_redirect_url($url) {
-        // Must start with exactly one slash (site-relative).
-        // Reject // which is a protocol-relative URL and an open-redirect vector.
-        return strpos($url, '/') === 0 && strpos($url, '//') !== 0;
-    }
-
-    /**
-     * This is used to log the user in. Duh.
-     * You should already have checked the user's email and password using
-     * $this->isvalid()
-     * That will have set $this->user_id and $this->password, allowing the
-     * login to proceed...
-     *
-     * $expire is either 'session' or 'never' - for the cookie.
+     * You should already have set $this->user_id and checked $this->confirmed and $this->deleted.
      *
      * $returl is the URL to redirect the user to after log in, generally the
      * page they were on before. But if it doesn't exist, they'll just go to
      * the front page.
      */
-    public function login(string $returl = "", $expire = "session") {
+    public function login(string $returl = ""): void {
 
         global $PAGE;
 
-        if ($returl == "" || !$this->is_safe_redirect_url($returl)) {
+        if ($returl == "" || !LoginResponse::isSafeRedirectUrl($returl)) {
             $URL = new URL("home");
             $returl = $URL->generate();
         }
 
         // Various checks about the user - if they fail, we exit.
-        if ($this->user_id() == "" || $this->password == "") {
-            $PAGE->error_message("We don't have the user_id or password to make the cookie.", true);
+        if ($this->user_id() == "") {
+            $PAGE->error_message("We don't have the user_id to sign in.", true);
             return;
         } elseif ($this->deleted) {
             $PAGE->error_message("This user has been deleted.", true);
@@ -1073,38 +951,37 @@ class THEUSER extends USER {
         // user. We don't want it hanging around as it causes confusion.
         $this->unset_constituency_cookie();
 
-        // Reminder: $this->password is actually a crypted version of the plaintext pw.
-        $cookie = $this->user_id() . "." . md5($this->password());
+        twfy_laravel_with_session(fn () => twfy_laravel()->make('auth')->guard()->loginUsingId((int) $this->user_id()));
 
-        if ($expire == 'never') {
-            header("Location: $returl");
-            setcookie('epuser_id', $cookie, time() + 86400 * 365 * 20, '/', COOKIEDOMAIN);
-        } else {
-            header("Location: $returl");
-            setcookie('epuser_id', $cookie, 0, '/', COOKIEDOMAIN);
-        }
+        header("Location: $returl");
     }
 
     /**
+     * Signs the user out, then redirects them.
      *
+     * $returl is the URL to redirect the user to after log out, generally the
+     * page they were on before. But if it doesn't exist, they'll just go to
+     * the front page.
      */
-    public function logout(string $returl) {
+    public function logout(string $returl): void {
 
-        // $returl is the URL to redirect the user to after log in, generally the
-        // page they were on before. But if it doesn't exist, they'll just go to
-        // the front page.
-
-        if ($returl == '' || !$this->is_safe_redirect_url($returl)) {
+        if ($returl == '' || !LoginResponse::isSafeRedirectUrl($returl)) {
             $URL = new URL("home");
             $returl = $URL->generate();
         }
 
-        // get_cookie_var() is in includes/utility.php.
-        if (get_cookie_var("epuser_id") != "") {
-            // They're logged in, so set the cookie to empty.
-            header("Location: $returl");
-            setcookie('epuser_id', '', time() - 86400, '/', COOKIEDOMAIN);
+        if (!$this->isloggedin()) {
+            return;
         }
+
+        twfy_laravel_with_session(function (): void {
+            twfy_laravel()->make('auth')->guard()->logout();
+            $session = twfy_laravel()->make('session.store');
+            $session->invalidate();
+            $session->regenerateToken();
+        });
+
+        header("Location: $returl");
     }
 
     /**
@@ -1167,7 +1044,7 @@ class THEUSER extends USER {
         $URL->insert(['welcome' => 't']);
         $redirecturl = $URL->generate();
 
-        $this->login($redirecturl, 'session');
+        $this->login($redirecturl);
 
     }
 

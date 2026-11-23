@@ -63,6 +63,11 @@ if (!defined('CONSTITUENCY_COOKIE')) {
     define('CONSTITUENCY_COOKIE', 'constituency');
 }
 
+// A made-up key for Laravel's encrypted cookies.
+if (!defined('APP_KEY')) {
+    define('APP_KEY', 'base64:' . base64_encode(str_repeat('k', 32)));
+}
+
 if (!defined('COOKIEDOMAIN')) {
     define('COOKIEDOMAIN', '');
 }
@@ -125,6 +130,7 @@ foreach (['DB_HOST', 'DB_USER', 'DB_PASSWORD', 'DB_NAME'] as $_dbConst) {
 unset($_dbConst, $_dbVal);
 
 require_once __DIR__ . '/../www/includes/eloquent.php';
+require_once __DIR__ . '/../www/includes/laravel.php';
 
 /**
  * Returns the shared ParlDB instance, with test override support.
