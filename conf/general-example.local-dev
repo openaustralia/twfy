@@ -61,6 +61,7 @@ define ("SENTRY_ENVIRONMENT", "development");
 // Laravel's encryption key, for its session cookie (docs/adr/0002-laravel-auth-replaces-homegrown-sign-in.md).
 // Each install needs its own: make one with php -r 'echo "base64:", base64_encode(random_bytes(32)), "\n";'.
 // Production's comes from the infrastructure repo. Changing it signs everyone out.
+// This key is public in this repo, so use it for local development only.
 define ("APP_KEY", "base64:1HH+iGYHWLB/66T7KvUD+gRxlf/TDd2fX23GELP09Hk=");
 
 // Plausible.io analytics script identifier (the "pa-..." fragment of
