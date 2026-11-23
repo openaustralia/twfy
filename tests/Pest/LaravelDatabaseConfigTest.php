@@ -4,11 +4,11 @@ describe('config/database.php', function () {
     $load = fn (): array => require __DIR__ . '/../../config/database.php';
 
     afterEach(function () {
-        putenv('DB_HOST=' . $this->savedHost);
+        $this->savedHost === false ? putenv('DB_HOST') : putenv('DB_HOST=' . $this->savedHost);
     });
 
     beforeEach(function () {
-        $this->savedHost = getenv('DB_HOST') ?: '';
+        $this->savedHost = getenv('DB_HOST');
     });
 
     it('defaults to MySQL', function () use ($load) {

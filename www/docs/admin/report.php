@@ -81,7 +81,7 @@ if (get_http_var('resolve') != '') {
     // The user has reached the final stage, choosing what emails to send to who.
     // And here we finally delete the comment if needs be, and resolve the report.
 
-    resolve($REPORT, $COMMENT);
+    report_resolve($REPORT, $COMMENT);
 
 
 } elseif (get_http_var('takingaction') == 'true') {
@@ -106,7 +106,7 @@ if (get_http_var('resolve') != '') {
 
 
     // The user is viewing a comment and its report.
-    view($REPORT, $COMMENT, $FORMURL);
+    report_view($REPORT, $COMMENT, $FORMURL);
 
 }
 
@@ -121,12 +121,14 @@ $PAGE->page_end();
 
 /**
  * Below are the functions for actually displaying each of the pages this file handles:
- * view()
+ * report_view()
  * prepare_emails_for_deleting()
  * prepare_emails_for_not_deleting()
- * resolve()
+ * report_resolve()
+ *
+ * Laravel defines global view() and resolve() helpers, so these two carry a report_ prefix.
  */
-function view($REPORT, $COMMENT, $FORMURL) {
+function report_view($REPORT, $COMMENT, $FORMURL) {
     // First page - viewing the comment and its report.
 
     // This also sets the comment's url, which we use further down!
@@ -177,7 +179,7 @@ function get_template_contents($template) {
  *
  */
 function prepare_emails_for_deleting($REPORT, $COMMENT, $FORMURL) {
-    // From the view() function, the user has chosen to delete the comment.
+    // From the report_view() function, the user has chosen to delete the comment.
     // Now they can prepare the appropriate emails, or choose not to send them.
 
     global $this_page;
@@ -215,7 +217,7 @@ function prepare_emails_for_deleting($REPORT, $COMMENT, $FORMURL) {
  *
  */
 function prepare_emails_for_not_deleting($REPORT, $COMMENT, $FORMURL) {
-    // From the view() function, the user has chosen NOT to delete the comment.
+    // From the report_view() function, the user has chosen NOT to delete the comment.
     // Now they can prepare the appropriate emails, or choose not to send them.
 
     global $this_page;
@@ -243,7 +245,7 @@ function prepare_emails_for_not_deleting($REPORT, $COMMENT, $FORMURL) {
 /**
  *
  */
-function resolve($REPORT, $COMMENT) {
+function report_resolve($REPORT, $COMMENT) {
     // The user has chosen to either delete or not delete the comment.
     // And we might be sending emails.
 
