@@ -2521,9 +2521,10 @@ class SPWRANSLIST extends WRANSLIST {
      *
      */
     public function get_gid_from_spid($spid) {
+        $literal = addcslashes($spid, '\\%_');
         $gid = Hansard::query()
           ->toBase()
-          ->where('gid', 'like', 'uk.org.publicwhip/spwa/%.' . $spid . '.h')
+          ->where('gid', 'like', 'uk.org.publicwhip/spwa/%.' . $literal . '.h')
           ->value('gid');
         if ($gid) {
             return str_replace('uk.org.publicwhip/spwa/', '', $gid);
