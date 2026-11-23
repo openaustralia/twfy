@@ -68,9 +68,14 @@ function admin_home_spec_render(string $cookie): string {
     );
     fclose($pipes[0]);
     $output = stream_get_contents($pipes[1]);
+    $errors = stream_get_contents($pipes[2]);
     fclose($pipes[1]);
     fclose($pipes[2]);
-    proc_close($process);
+    $exit = proc_close($process);
+
+    if ($exit !== 0 || !str_contains($output, '</html>')) {
+        throw new RuntimeException("The admin home page did not render (exit $exit): $errors");
+    }
 
     return $output;
 }
