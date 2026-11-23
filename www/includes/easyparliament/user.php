@@ -40,7 +40,6 @@
  * add()                Add a new user to the DB.
  * send_confirmation_email()    Done after add()ing the user.
  * update_other_user()    Update the data of another user.
- * change_password()    Generate a new password and put in DB.
  * id_exists()            Checks if a user_id is valid.
  * email_exists()        Checks if a user exists with a certain email address.
  * is_able_to()        Is the user allowed to perform this action?
@@ -351,83 +350,6 @@ class USER {
             return false;
 
         }
-    }
-
-    /**
-     *
-     */
-    public function change_password(string $email) {
-
-        // This function is called from the Change Password page.
-        // It will create a new password for the user with $email address.
-        // If all goes OK it will return the plaintext version of the password.
-        // Otherwise it returns false.
-
-        $user = UserModel::where('email', $email)->first(['user_id']);
-
-        if (!$user) {
-            // Email didn't exist.
-            return false;
-        }
-
-        $this->email = $email;
-        // Generates an unambiguous 14-character cryptographically secure random password (up from 6 uppercase).
-        // FIXME: Replace with a token based password replacement with expiry.
-        $unambiguous_alphabet = 'abcdefghjkmnpqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ23456789';
-        $last_index = strlen($unambiguous_alphabet) - 1;
-        $pwd = '';
-        for ($i = 0; $i < 14; $i++) {
-            $pwd .= $unambiguous_alphabet[random_int(0, $last_index)];
-        }
-
-        $passwordforDB = password_hash($pwd, PASSWORD_DEFAULT);
-
-        $updated = $user->update([
-            'password' => $passwordforDB,
-        ]);
-
-        if ($updated === false) {
-            return false;
-        }
-
-        $user->signOutEverywhere();
-
-        $this->password = $pwd;
-        return $pwd;
-
-    }
-
-    /**
-     *
-     */
-    public function send_password_reminder() {
-        global $PAGE;
-
-        // You'll probably have just called $this->change_password().
-
-        if ($this->email() == '') {
-            $PAGE->error_message("No email set for this user, so can't send a password reminder.");
-            return false;
-        }
-
-        $data = [
-            'to' => $this->email(),
-            'template' => 'new_password'
-        ];
-
-        $URL = new URL("userlogin");
-
-        $merge = [
-            'EMAIL' => $this->email(),
-            'LOGINURL' => "https://" . DOMAIN . $URL->generate(),
-            'PASSWORD' => $this->password()
-        ];
-
-        // send_template_email in utility.php.
-        $success = send_template_email($data, $merge);
-
-        return $success;
-
     }
 
     /**

@@ -3,7 +3,9 @@
 namespace OpenAustralia\TWFY\Models;
 
 use Illuminate\Auth\Authenticatable;
+use Illuminate\Auth\Passwords\CanResetPassword;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
+use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
@@ -16,9 +18,10 @@ use Illuminate\Support\Str;
  * usual way; legacy `registrationtime` and `lastvisit` columns remain for
  * compatibility with existing code paths.
  */
-class User extends Model implements AuthenticatableContract {
+class User extends Model implements AuthenticatableContract, CanResetPasswordContract {
 
     use Authenticatable;
+    use CanResetPassword;
 
     /**
      * The roles a user can have (users.status), lowest first. Administrator and Superuser can open the admin pages.
@@ -54,6 +57,29 @@ class User extends Model implements AuthenticatableContract {
         Session::where('user_id', $this->getKey())
           ->when($exceptSessionId, fn (Builder $query) => $query->where('id', '!=', $exceptSessionId))
           ->delete();
+    }
+
+    /**
+     * Emails the link for choosing a new password, through the site's own mail sending.
+     *
+     * Deleted users get nothing, as they can't sign in.
+     *
+     * @param string $token
+     *   The reset token.
+     */
+    public function sendPasswordResetNotification($token): void {
+        if ($this->deleted) {
+            return;
+        }
+
+        send_template_email(
+            ['to' => $this->email, 'template' => 'password_reset'],
+            [
+                'EMAIL' => $this->email,
+                'MINUTES' => (string) config('auth.passwords.users.expire'),
+                'RESETURL' => route('password.reset', ['token' => $token, 'email' => $this->email]),
+            ]
+        );
     }
 
     /**

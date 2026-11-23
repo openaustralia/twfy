@@ -176,7 +176,7 @@ class SendEmailTest extends TestCase {
             }
 
         };
-        send_template_email(['to' => 'alice@example.invalid', 'template' => 'new_password'], ['EMAIL' => 'a', 'LOGINURL' => 'b', 'PASSWORD' => 'c']);
+        send_template_email(['to' => 'alice@example.invalid', 'template' => 'password_reset'], ['EMAIL' => 'a', 'MINUTES' => '60', 'RESETURL' => 'c']);
 
         $this->assertStringContainsString("X-Postal-Tag: password\n", $this->sent[0]['headers']);
     }
@@ -239,8 +239,8 @@ class SendEmailTest extends TestCase {
 
         };
         $ok = send_template_email(
-            ['to' => 'alice@example.invalid', 'template' => 'new_password'],
-            ['EMAIL' => 'alice@example.invalid', 'LOGINURL' => 'https://example.invalid/login', 'PASSWORD' => 'secret-example']
+            ['to' => 'alice@example.invalid', 'template' => 'password_reset'],
+            ['EMAIL' => 'alice@example.invalid', 'MINUTES' => '60', 'RESETURL' => 'https://example.invalid/reset/secret-example']
         );
         $this->assertTrue($ok);
         $this->assertSame('alice@example.invalid', $this->sent[0]['to']);
@@ -254,7 +254,7 @@ class SendEmailTest extends TestCase {
         yield ['alert_mailout', 'alert'];
         yield ['alert_confirmation', 'confirmation'];
         yield ['join_confirmation', 'confirmation'];
-        yield ['new_password', 'password'];
+        yield ['password_reset', 'password'];
         yield ['comment_deleted', 'notice'];
         yield ['comment_deleted_blank', 'notice'];
         yield ['email_a_friend', 'notice'];

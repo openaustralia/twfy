@@ -12,8 +12,10 @@ class LoginPage {
      *
      * @param array<string, list<string>> $errors
      *   Messages by form field, as a ValidationException holds them.
+     * @param string|null $status
+     *   A message to show above the form, such as that a password was changed.
      */
-    public function render(array $errors = []): string {
+    public function render(array $errors = [], ?string $status = null): string {
         global $PAGE, $this_page;
 
         $this_page = 'userlogin';
@@ -23,6 +25,9 @@ class LoginPage {
         ob_start();
         $PAGE->page_start();
         $PAGE->stripe_start();
+        if ($status) {
+            echo '<p><strong>' . e($status) . "</strong></p>\n";
+        }
         ?>
         <p>Not yet a member? <a href="<?php echo (new \URL('userjoin'))->generate(); ?>">Join now</a>!</p>
         <?php
