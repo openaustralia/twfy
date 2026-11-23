@@ -390,6 +390,9 @@ class USER {
             return false;
         }
 
+        // Whoever else had the old password, or a cookie from signing in with it, is signed out.
+        $user->signOutEverywhere();
+
         $this->password = $pwd;
         return $pwd;
 
@@ -800,6 +803,9 @@ class USER {
         // updated if everything went well.
         try {
             UserModel::where('user_id', $details["user_id"])->update($update_data);
+            if (isset($update_data['password'])) {
+                UserModel::find($details["user_id"])?->signOutEverywhere();
+            }
             return $details;
         } catch (\Exception $e) {
             $PAGE->error_message("Sorry, we were unable to update user id '" . htmlentities($details["user_id"]) . "'");
@@ -1103,6 +1109,8 @@ class THEUSER extends USER {
                 $this->optin = $newdetails["optin"];
                 if (array_key_exists("password", $newdetails) && $newdetails["password"] != "") {
                     $this->password = $newdetails["password"];
+                    // Every session was just ended, so this one needs signing in again.
+                    twfy_laravel_with_session(fn () => twfy_laravel()->make('auth')->guard()->loginUsingId((int) $this->user_id));
                 }
 
                 return true;

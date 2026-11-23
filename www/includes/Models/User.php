@@ -4,8 +4,10 @@ namespace OpenAustralia\TWFY\Models;
 
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
+use Illuminate\Database\Capsule\Manager as DB;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 /**
  * Eloquent model for the `users` table.
@@ -94,5 +96,15 @@ class User extends Model implements AuthenticatableContract {
         'deleted'          => 'bool',
         'confirmed'        => 'bool',
     ];
+
+    /**
+     * Signs this user out on every device, as when their password changes.
+     *
+     * Replaces the "remember me" token and deletes their sessions, so cookies from before no longer work.
+     */
+    public function signOutEverywhere(): void {
+        $this->forceFill(['remember_token' => Str::random(60)])->save();
+        DB::table('sessions')->where('user_id', $this->user_id)->delete();
+    }
 
 }
