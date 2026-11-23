@@ -136,7 +136,7 @@ describe('POST /user/password', function () {
         });
 
         describe('sent with a forged Host header', function () {
-            it('links to the configured site, not that host', function () {
+            it('links to the site, not that host', function () {
                 $session = reset_spec_session();
 
                 reset_spec_call('POST', 'http://attacker.example/user/password', ['email' => 'pat.resetspec@example.test', '_token' => $session['token']], $session['cookies']);
@@ -238,6 +238,21 @@ describe('POST /user/password/reset', function () {
             reset_spec_post('/user/password/reset', ($this->form)(['email' => 'sam.resetspec@example.test']));
 
             expect(password_verify('sam-password', $other->fresh()->password))->toBeTrue();
+        });
+    });
+
+    describe('with an email address that has no account', function () {
+        beforeEach(function () {
+            // The message the reset form shows, as the redirect back flashes it.
+            $this->messageFor = fn (array $changes): string => reset_spec_post('/user/password/reset', ($this->form)($changes))->getSession()->get('errors')->first('email');
+        });
+
+        it('says what it says for a bad link', function () {
+            expect(($this->messageFor)(['email' => 'nobody.resetspec@example.test']))->toBe(($this->messageFor)(['token' => 'made-up']));
+        });
+
+        it('does not say a link was sent', function () {
+            expect(($this->messageFor)(['email' => 'nobody.resetspec@example.test']))->toBe(trans('passwords.token'));
         });
     });
 

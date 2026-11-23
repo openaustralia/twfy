@@ -17,8 +17,6 @@ class PasswordPages {
         $email = (string) $request->old('email', $request->query('email', ''));
 
         return $this->draw(function () use ($request, $status, $email): void {
-            global $PAGE;
-
             if ($status) {
                 echo '<p><strong>' . e($status) . "</strong></p>\n";
             } else {

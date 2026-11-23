@@ -12,13 +12,6 @@ use Laravel\Fortify\Contracts\SuccessfulPasswordResetLinkRequestResponse;
 class PasswordLinkRequestedResponse implements SuccessfulPasswordResetLinkRequestResponse, FailedPasswordResetLinkRequestResponse {
 
     /**
-     * @param string $status
-     *   The language key for what the password broker did.
-     */
-    public function __construct(protected string $status) {
-    }
-
-    /**
      * @param \Illuminate\Http\Request $request
      *   The request.
      */
