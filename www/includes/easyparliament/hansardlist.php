@@ -2521,6 +2521,9 @@ class SPWRANSLIST extends WRANSLIST {
      *
      */
     public function get_gid_from_spid($spid) {
+        if (!is_string($spid)) {
+            return null;
+        }
         $literal = addcslashes($spid, '\\%_');
         $gid = Hansard::query()
           ->toBase()

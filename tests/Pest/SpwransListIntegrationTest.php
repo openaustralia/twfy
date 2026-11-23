@@ -49,6 +49,12 @@ describe('SPWRANSLIST::get_gid_from_spid()', function () {
         });
     });
 
+    describe('with a list instead of a string', function () {
+        it('returns null', function () {
+            expect($this->list->get_gid_from_spid(['S1W-12345']))->toBeNull();
+        });
+    });
+
     describe('with an ID that does not exist', function () {
         it('returns null', function () {
             expect($this->list->get_gid_from_spid('S1W-99999'))->toBeNull();
