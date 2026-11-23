@@ -146,9 +146,6 @@ class MEMBER {
 
             $entered_time = strtotime($entered_house);
             $left_time = strtotime($left_house);
-            if ($left_time === -1) {
-                $left_time = false;
-            }
 
             if (!isset($this->entered_house[$house]) || $entered_time < $this->entered_house[$house]['time']) {
                 $this->entered_house[$house] = [
