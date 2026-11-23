@@ -28,6 +28,9 @@ to Laravel (`illuminate/database` and Eloquent are already in, #863), so this is
 - Sessions are stored in a database table, so they can be listed and revoked. A session lasts until the browser
   closes, or a day of inactivity, as the old cookie did. Login throttling uses a database cache table too, as Apache
   can't write files into the release directory.
+- Forgotten passwords get a reset link that expires after an hour, instead of an emailed new password. Whoever
+  knows an email address can no longer lock its owner out by asking for one, and a reset signs the user out
+  everywhere.
 - Everyone signs in again once when this ships, as the old `epuser_id` cookie is no longer read.
 - Existing password hashes come from `password_hash()` with bcrypt, which Laravel verifies as they are, so nobody
   has to reset their password. `users.confirmed` and `registrationtoken` carry across to `email_verified_at`.

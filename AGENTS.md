@@ -29,11 +29,16 @@ skips Laravel's error handling and `.env` loading, turns off facade aliases, and
 connection `eloquent.php` made, so both share one connection. Settings come from `conf/general` (`APP_KEY` among
 them), not `.env`. Composer runs `artisan package:discover` after installing, which writes `bootstrap/cache/`.
 
-Sign-in is Laravel's (Fortify). Apache sends only `/user/login` to Laravel, through `www/docs/laravel.php`, which
-loads the legacy bootstrap first so `www/includes/Auth/LoginPage.php` can draw the page with the legacy `$PAGE`.
+Sign-in and password reset are Laravel's (Fortify). Apache sends only `/user/login` and `/user/password...` to Laravel,
+through `www/docs/laravel.php`, which loads the legacy bootstrap first so `LoginPage`, `PasswordPages` and `ErrorPage`
+(in `www/includes/Auth/`) can draw their pages with the legacy `$PAGE`. Laravel's own error pages are Blade views and
+need a writable compiled-views folder, so `bootstrap/app.php` draws errors with `ErrorPage` instead. A reset link is
+emailed through the legacy `send_template_email()` (template `password_reset`), not Laravel's mail, so it keeps the
+site's headers and Postal tags; `User::sendPasswordResetNotification()` does that. The form that asks for a link gives
+the same answer for every address, and a reset signs the user out everywhere by deleting their `sessions` rows.
 `Auth\Authenticator` checks the password, including the old md5-crypt (`$1$`) hashes, which it upgrades to bcrypt.
 `THEUSER` reads who is signed in from Laravel's session or "remember me" cookie (`twfy_laravel_user()`), and
-`twfy_laravel_with_session()` lets a legacy page sign someone in or out. Sessions and login throttling live in the
+`twfy_laravel_with_session()` lets a legacy page sign someone in or out, and keeps flash data for Laravel's own request. Sessions and login throttling live in the
 database, as Apache can't write into a release directory. The legacy `epuser_id` cookie is no longer read. Logout is
 still the legacy GET page, and the login form still has no CSRF token; both change when CSRF reaches every form.
 The Docker `webhost` bind-mounts `bootstrap/`, `config/`, `lang/`, `routes/` and `storage/` beside `www/`: after a
