@@ -89,13 +89,13 @@ describe('PasswordPages', function () {
             expect((new PasswordPages())->requestLink(pages_spec_request()))->toContain("can email you a link to choose a new one");
         });
 
-        it('shows what the last request said instead', function () {
+        it('shows the status instead', function () {
             $html = (new PasswordPages())->requestLink(pages_spec_request(flash: ['status' => "We've sent it"]));
 
             expect($html)->toContain('We&#039;ve sent it')->not->toContain('can email you a link');
         });
 
-        it('fills in the email address from the link', function () {
+        it('fills in the email from the link', function () {
             expect((new PasswordPages())->requestLink(pages_spec_request(query: ['email' => 'ann@example.test'])))->toContain('value="ann@example.test"');
         });
 
