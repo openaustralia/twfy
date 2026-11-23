@@ -16,7 +16,7 @@ use Illuminate\Foundation\Bootstrap\RegisterProviders;
  *
  * It skips two of Laravel's steps: HandleExceptions, so the legacy error handler and Sentry stay in charge, and
  * LoadEnvironmentVariables, as settings come from conf/general and the root .env is for Docker Compose. It uses the
- * Eloquent connection eloquent.php made, so legacy queries and Laravel share one connection and its transactions.
+ * Eloquent connection eloquent.php made, so Eloquent queries and Laravel share one connection and its transactions.
  */
 function twfy_laravel(): Application {
     static $app = null;
