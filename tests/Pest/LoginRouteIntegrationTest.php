@@ -40,7 +40,7 @@ beforeEach(function () {
     // The legacy page layout isn't loaded in tests, so draw the error messages alone.
     $app->bind(LoginPage::class, fn () => new class extends LoginPage {
 
-        public function render(array $errors = []): string {
+        public function render(array $errors = [], ?string $status = null): string {
             return implode('|', array_map(fn (array $messages): string => $messages[0], $errors));
         }
 

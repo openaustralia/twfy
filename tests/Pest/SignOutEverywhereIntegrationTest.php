@@ -107,14 +107,6 @@ describe('User::signOutEverywhere()', function () {
 });
 
 describe('changing a password', function () {
-    describe('with the forgotten password page', function () {
-        it('signs the user out everywhere', function () {
-            (new \USER())->change_password($this->ann->email);
-
-            expect(Session::where('user_id', $this->ann->user_id)->count())->toBe(0);
-        });
-    });
-
     describe('on the account page', function () {
         beforeEach(function () {
             twfy_laravel()->make('session.store')->setId(str_pad('annone', 40, '0'));
