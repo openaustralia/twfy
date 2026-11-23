@@ -14,7 +14,7 @@ use Sentry\Event;
  * Removes credentials and email-address-shaped strings from a Sentry event.
  *
  * Drops request cookies and the Cookie, Set-Cookie and Authorization
- * headers, because the epuser_id login cookie is a bearer token. Scrubs
+ * headers, because the login cookies (oa_session, remember_web_*, and the old epuser_id) are bearer tokens. Scrubs
  * email addresses from breadcrumb messages and metadata, plus request query
  * strings, headers and bodies, in line with the Australian Privacy
  * Principles. Used as the before_send and before_send_transaction callback.

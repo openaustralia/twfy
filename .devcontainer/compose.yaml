@@ -21,6 +21,7 @@ services:
       # Laravel's folders sit beside www, as in a deploy, so www/includes/laravel.php finds them.
       - ../bootstrap:/var/bootstrap
       - ../config:/var/config
+      - ../lang:/var/lang
       - ../routes:/var/routes
       - ../storage:/var/storage
       - ../conf/general-docker:/var/conf/general
