@@ -109,11 +109,20 @@ if (get_http_var("submitted") == "true" && $this_page != "userjoin" && !edit_tok
 
     $PAGE->page_start();
 
-    $EDITURL = new URL('useredit');
+    $target_id = $this_page == "otheruseredit" ? edit_target_id() : null;
+    if ($target_id !== null) {
+        // Back to the edit page of the user who was being edited, as that is where the form is.
+        $EDITURL = new URL('otheruseredit');
+        $EDITURL->insert(['u' => (string) $target_id]);
+        $linktext = "Open the user's details and try again";
+    } else {
+        $EDITURL = new URL('useredit');
+        $linktext = 'Open your details and try again';
+    }
     $PAGE->error_message([
         'text' => "Sorry, we couldn't check that this request came from your own form, so nothing was changed.",
         'linkurl' => $EDITURL->generate(),
-        'linktext' => 'Open your details and try again',
+        'linktext' => $linktext,
     ]);
 
     $PAGE->page_end();
@@ -264,18 +273,41 @@ if (get_http_var("submitted") == "true" && $this_page != "userjoin" && !edit_tok
 }
 
 /**
+ * The id of the user being edited, when it is a whole number, or null.
+ */
+function edit_target_id(): ?int {
+    $id = get_http_var("u");
+
+    if (!is_string($id) || !ctype_digit($id)) {
+        return null;
+    }
+
+    return (int) $id;
+}
+
+/**
  * The token the edit form carries, so another site can't change a signed-in user's details.
  *
+ * Editing another user binds the token to that user, so one issued for one user is no good for another.
  * It is empty unless someone is signed in, as a token with no password hash to key it could be made by anyone.
  */
 function edit_token(): string {
-    global $THEUSER;
+    global $THEUSER, $this_page;
 
     if (!$THEUSER->isloggedin() || (string) $THEUSER->password() === '') {
         return '';
     }
 
-    return UserRoles::token((int) $THEUSER->user_id(), (string) $THEUSER->password(), 'user-edit');
+    $purpose = 'user-edit';
+    if ($this_page == "otheruseredit") {
+        $target_id = edit_target_id();
+        if ($target_id === null) {
+            return '';
+        }
+        $purpose .= ':' . $target_id;
+    }
+
+    return UserRoles::token((int) $THEUSER->user_id(), (string) $THEUSER->password(), $purpose);
 }
 
 /**
