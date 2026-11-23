@@ -139,8 +139,8 @@ class MEMBER {
             }
             $const = $row->constituency;
             $party = $row->party;
-            $entered_house = $row->entered_house;
-            $left_house = $row->left_house;
+            $entered_house = $row->entered_house->format('Y-m-d');
+            $left_house = $row->left_house->format('Y-m-d');
             $entered_reason = $row->entered_reason;
             $left_reason = $row->left_reason;
 
@@ -203,7 +203,7 @@ class MEMBER {
             if ($left_reason == 'changed_party') {
                 $this->other_parties[] = [
                     'from' => $this->party_text($row->party),
-                    'date' => $row->left_house
+                    'date' => $left_house
                 ];
             }
         }
