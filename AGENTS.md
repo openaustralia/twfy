@@ -23,12 +23,21 @@ your branch name in the sibling repo if one exists.
 ## Laravel
 
 Laravel 13 lives alongside the legacy pages (`docs/adr/0002-laravel-auth-replaces-homegrown-sign-in.md`,
-openaustralia/openaustralia#1069): `bootstrap/app.php`, `config/`, `routes/` and `storage/` at the repo root, with
-`www/docs` as its public folder. `init.php` boots it through `twfy_laravel()` (`www/includes/laravel.php`), which
+openaustralia/openaustralia#1069): `bootstrap/app.php`, `config/`, `lang/`, `routes/` and `storage/` at the repo root,
+with `www/docs` as its public folder. `init.php` boots it through `twfy_laravel()` (`www/includes/laravel.php`), which
 skips Laravel's error handling and `.env` loading, turns off facade aliases, and hands Laravel the Eloquent
 connection `eloquent.php` made, so both share one connection. Settings come from `conf/general` (`APP_KEY` among
-them), not `.env`. Apache doesn't route any requests to Laravel yet. Composer runs `artisan package:discover` after
-installing, which writes `bootstrap/cache/`.
+them), not `.env`. Composer runs `artisan package:discover` after installing, which writes `bootstrap/cache/`.
+
+Sign-in is Laravel's (Fortify). Apache sends only `/user/login` to Laravel, through `www/docs/laravel.php`, which
+loads the legacy bootstrap first so `www/includes/Auth/LoginPage.php` can draw the page with the legacy `$PAGE`.
+`Auth\Authenticator` checks the password, including the old md5-crypt (`$1$`) hashes, which it upgrades to bcrypt.
+`THEUSER` reads who is signed in from Laravel's session or "remember me" cookie (`twfy_laravel_user()`), and
+`twfy_laravel_with_session()` lets a legacy page sign someone in or out. Sessions and login throttling live in the
+database, as Apache can't write into a release directory. The legacy `epuser_id` cookie is no longer read. Logout is
+still the legacy GET page, and the login form still has no CSRF token; both change when CSRF reaches every form.
+The Docker `webhost` bind-mounts `bootstrap/`, `config/`, `lang/`, `routes/` and `storage/` beside `www/`: after a
+branch switch that deletes and recreates one, recreate the container (`docker compose up -d --force-recreate webhost`).
 
 ## Database access
 
