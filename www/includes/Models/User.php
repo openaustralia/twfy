@@ -6,6 +6,7 @@ use Illuminate\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 /**
  * Eloquent model for the `users` table.
@@ -37,6 +38,22 @@ class User extends Model implements AuthenticatableContract {
      */
     public function scopeWithRole(Builder $query, ?string $role): Builder {
         return in_array($role, self::ROLES, true) ? $query->where('status', $role) : $query;
+    }
+
+    /**
+     * Signs the user out everywhere, as whoever knew their old password may still be signed in.
+     *
+     * Replaces the "remember me" token, which signs out every browser that kept one, and deletes the user's sessions.
+     *
+     * @param string|null $exceptSessionId
+     *   A session to keep, such as the one the user is changing their password in.
+     */
+    public function signOutEverywhere(?string $exceptSessionId = null): void {
+        static::whereKey($this->getKey())->update(['remember_token' => Str::random(60)]);
+
+        Session::where('user_id', $this->getKey())
+          ->when($exceptSessionId, fn (Builder $query) => $query->where('id', '!=', $exceptSessionId))
+          ->delete();
     }
 
     /**
