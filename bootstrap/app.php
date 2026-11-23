@@ -12,7 +12,9 @@ use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
+use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 use OpenAustralia\TWFY\Auth\AuthServiceProvider;
+use OpenAustralia\TWFY\Auth\ErrorPage;
 use OpenAustralia\TWFY\Auth\LoginPage;
 use OpenAustralia\TWFY\Auth\LoginResponse;
 
@@ -31,6 +33,10 @@ $app = Application::configure(basePath: dirname(__DIR__))
         // Laravel catches exceptions before the legacy handler sees them, so send them to Sentry from here.
         $exceptions->report(function (Throwable $e): void {
             \Sentry\captureException($e);
+        });
+        // Draw 404s, expired pages and the rest in the legacy layout, as Laravel's own pages need a writable folder.
+        $exceptions->render(function (HttpExceptionInterface $e) {
+            return response(app(ErrorPage::class)->render($e->getStatusCode()), $e->getStatusCode(), $e->getHeaders());
         });
         // Draw a failed login as the login page again, with the reasons, as the legacy page did.
         $exceptions->render(function (ValidationException $e, Request $request) {
