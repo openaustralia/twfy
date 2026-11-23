@@ -5,7 +5,7 @@ namespace OpenAustralia\TWFY\Auth;
 /**
  * The login page, drawn by the legacy PAGE class, for Laravel's login routes to return.
  */
-class LoginPage {
+class LoginPage extends LegacyPage {
 
     /**
      * The page's HTML.
@@ -16,26 +16,17 @@ class LoginPage {
      *   A message to show above the form, such as that a password was changed.
      */
     public function render(array $errors = [], ?string $status = null): string {
-        global $PAGE, $this_page;
-
-        $this_page = 'userlogin';
-
         $messages = array_map(fn (array $field): string => (string) reset($field), $errors);
 
-        ob_start();
-        $PAGE->page_start();
-        $PAGE->stripe_start();
-        if ($status) {
-            echo '<p><strong>' . e($status) . "</strong></p>\n";
-        }
-        ?>
-        <p>Not yet a member? <a href="<?php echo (new \URL('userjoin'))->generate(); ?>">Join now</a>!</p>
-        <?php
-        $PAGE->login_form($messages);
-        $PAGE->stripe_end([['type' => 'include', 'content' => 'userlogin']]);
-        $PAGE->page_end();
-
-        return (string) ob_get_clean();
+        return $this->drawInStripe('userlogin', function (object $page) use ($messages, $status): void {
+            if ($status) {
+                echo '<p><strong>' . e($status) . "</strong></p>\n";
+            }
+            ?>
+            <p>Not yet a member? <a href="<?php echo (new \URL('userjoin'))->generate(); ?>">Join now</a>!</p>
+            <?php
+            $page->login_form($messages);
+        }, [['type' => 'include', 'content' => 'userlogin']]);
     }
 
 }

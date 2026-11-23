@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 /**
  * The password reset pages, drawn by the legacy PAGE class, for Fortify's reset routes to return.
  */
-class PasswordPages {
+class PasswordPages extends LegacyPage {
 
     /**
      * The form for asking for a reset link.
@@ -16,7 +16,7 @@ class PasswordPages {
         $status = $request->session()->get('status');
         $email = (string) $request->old('email', $request->query('email', ''));
 
-        return $this->draw(function () use ($request, $status, $email): void {
+        return $this->drawInStripe('userpassword', function () use ($request, $status, $email): void {
             if ($status) {
                 echo '<p><strong>' . e($status) . "</strong></p>\n";
             } else {
@@ -45,7 +45,7 @@ class PasswordPages {
     public function resetForm(Request $request): string {
         $email = (string) $request->old('email', $request->query('email', ''));
 
-        return $this->draw(function () use ($request, $email): void {
+        return $this->drawInStripe('userpassword', function () use ($request, $email): void {
             ?>
             <p>Choose a new password.</p>
             <form method="post" action="<?php echo e(route('password.update')); ?>">
@@ -69,24 +69,6 @@ class PasswordPages {
             </form>
             <?php
         });
-    }
-
-    /**
-     * The page around whatever the callback prints.
-     */
-    private function draw(callable $body): string {
-        global $PAGE, $this_page;
-
-        $this_page = 'userpassword';
-
-        ob_start();
-        $PAGE->page_start();
-        $PAGE->stripe_start();
-        $body();
-        $PAGE->stripe_end();
-        $PAGE->page_end();
-
-        return (string) ob_get_clean();
     }
 
     /**

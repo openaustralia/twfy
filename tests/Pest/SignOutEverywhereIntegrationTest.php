@@ -67,9 +67,7 @@ beforeEach(function () {
 
 afterEach(function () {
     $GLOBALS['THEUSER'] = $this->savedUser;
-    twfy_laravel()->make('auth')->forgetGuards();
-    twfy_laravel()->make('session')->forgetDrivers();
-    twfy_laravel()->forgetInstance('session.store');
+    laravel_spec_new_request();
 });
 
 describe('User::signOutEverywhere()', function () {

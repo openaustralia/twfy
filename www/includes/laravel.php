@@ -5,6 +5,7 @@
  * Boots the Laravel application inside a legacy page or script, once.
  */
 
+use Illuminate\Auth\SessionGuard;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Application;
@@ -16,6 +17,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Pipeline\Pipeline;
 use Illuminate\Session\Middleware\StartSession;
+use Illuminate\Session\Store;
 use OpenAustralia\TWFY\Models\User;
 
 /**
@@ -46,6 +48,20 @@ function twfy_laravel(): Application {
 }
 
 /**
+ * The guard that signs people in.
+ */
+function twfy_laravel_guard(): SessionGuard {
+    return twfy_laravel()->make('auth')->guard();
+}
+
+/**
+ * Laravel's session store.
+ */
+function twfy_laravel_session(): Store {
+    return twfy_laravel()->make('session.store');
+}
+
+/**
  * Runs a callback with Laravel's session started, as for one of its own requests, then sends the cookies it set.
  *
  * Legacy pages call this to sign people in and out, as their own requests never pass through Laravel's middleware.
@@ -69,7 +85,7 @@ function twfy_laravel_with_session(callable $callback): mixed {
       ->then(function (Request $request) use ($app, $callback, &$result): Response {
             $app->instance('request', $request);
             // Saving ages the flash data, so keep what Laravel's own request is about to show.
-            $app->make('session.store')->reflash();
+            twfy_laravel_session()->reflash();
             $result = $callback();
             return new Response();
       });
@@ -87,7 +103,7 @@ function twfy_laravel_with_session(callable $callback): mixed {
  * Visitors with neither cookie are anonymous without a session being started for them.
  */
 function twfy_laravel_user(): ?User {
-    $guard = twfy_laravel()->make('auth')->guard();
+    $guard = twfy_laravel_guard();
 
     if (!$guard->hasUser()) {
         $config = twfy_laravel()->make('config');

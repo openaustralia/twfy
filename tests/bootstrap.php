@@ -133,6 +133,19 @@ require_once __DIR__ . '/../www/includes/eloquent.php';
 require_once __DIR__ . '/../www/includes/laravel.php';
 
 /**
+ * Starts the next simulated Laravel request with nothing left in memory from the last, as in a new PHP process.
+ */
+function laravel_spec_new_request(): void {
+    $app = twfy_laravel();
+    $app->make('auth')->forgetGuards();
+    // The session handler records the user from this guard, so one kept from an earlier request names the wrong user.
+    $app->forgetInstance('auth.driver');
+    $app->make('session')->forgetDrivers();
+    $app->forgetInstance('session.store');
+    $app->make('cookie')->flushQueuedCookies();
+}
+
+/**
  * Returns the shared ParlDB instance, with test override support.
  */
 if (!function_exists('getParlDB')) {

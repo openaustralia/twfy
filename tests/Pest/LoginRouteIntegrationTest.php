@@ -56,10 +56,7 @@ beforeEach(function () {
 });
 
 afterEach(function () {
-    $app = twfy_laravel();
-    $app->make('auth')->forgetGuards();
-    $app->make('session')->forgetDrivers();
-    $app->forgetInstance('session.store');
+    laravel_spec_new_request();
 });
 
 describe('POST /user/login', function () {

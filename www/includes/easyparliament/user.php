@@ -187,7 +187,7 @@ class USER {
 
         // Hash password for storage using bcrypt (PASSWORD_DEFAULT).
         // This is different to legacy md5-crypt hashes from the PHP 5.x era which has `$1$` prefix.
-        $passwordforDB = password_hash($details["password"], PASSWORD_DEFAULT);
+        $passwordforDB = UserModel::hashPassword($details["password"]);
 
         if (!isset($details["status"])) {
             $details["status"] = "User";
@@ -668,7 +668,7 @@ class USER {
         global $THEUSER;
 
         if ($THEUSER && $THEUSER->isloggedin() && (int) $THEUSER->user_id() === $user_id) {
-            return twfy_laravel()->make('session.store')->getId();
+            return twfy_laravel_session()->getId();
         }
 
         return null;
@@ -699,7 +699,7 @@ class USER {
 
             // Hash password for storage using bcrypt (PASSWORD_DEFAULT).
             // Different to legacy md5-crypt hashes from the PHP 5.x era which has `$1$` prefix.
-            $passwordforDB = password_hash($details["password"], PASSWORD_DEFAULT);
+            $passwordforDB = UserModel::hashPassword($details["password"]);
 
             $update_data['password'] = $passwordforDB;
         }
@@ -900,7 +900,7 @@ class THEUSER extends USER {
         // user. We don't want it hanging around as it causes confusion.
         $this->unset_constituency_cookie();
 
-        twfy_laravel_with_session(fn () => twfy_laravel()->make('auth')->guard()->loginUsingId((int) $this->user_id()));
+        twfy_laravel_with_session(fn () => twfy_laravel_guard()->loginUsingId((int) $this->user_id()));
 
         header("Location: $returl");
     }
@@ -925,8 +925,8 @@ class THEUSER extends USER {
         }
 
         twfy_laravel_with_session(function (): void {
-            twfy_laravel()->make('auth')->guard()->logout();
-            $session = twfy_laravel()->make('session.store');
+            twfy_laravel_guard()->logout();
+            $session = twfy_laravel_session();
             $session->invalidate();
             $session->regenerateToken();
         });
