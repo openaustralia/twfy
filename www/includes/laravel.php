@@ -68,6 +68,8 @@ function twfy_laravel_with_session(callable $callback): mixed {
       ->through([EncryptCookies::class, AddQueuedCookiesToResponse::class, StartSession::class])
       ->then(function (Request $request) use ($app, $callback, &$result): Response {
             $app->instance('request', $request);
+            // Saving ages the flash data, so keep what Laravel's own request is about to show.
+            $app->make('session.store')->reflash();
             $result = $callback();
             return new Response();
       });
