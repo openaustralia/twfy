@@ -101,40 +101,27 @@ describe('/user/?u=ID', function () {
     });
 
     describe('with an ordinary name', function () {
-        it('keeps an apostrophe in the title', function () {
-            $page = $this->renderPage(PROFILE_PAGE, 'GET', profile_query_for('Sean', "O'Brien"));
+        dataset('ordinary names', [
+            'an apostrophe' => ['Sean', "O'Brien", "Sean O'Brien", "Sean O&#039;Brien"],
+            'an ampersand' => ['Smith', '& Jones', 'Smith & Jones', 'Smith &amp; Jones'],
+        ]);
 
-            expect(profile_element($page['output'], 'title'))->toStartWith("Sean O'Brien");
-        });
+        it('keeps the name in the title', function (string $first, string $last, string $shown) {
+            $page = $this->renderPage(PROFILE_PAGE, 'GET', profile_query_for($first, $last));
 
-        it('keeps an apostrophe in the h2', function () {
-            $page = $this->renderPage(PROFILE_PAGE, 'GET', profile_query_for('Sean', "O'Brien"));
+            expect(profile_element($page['output'], 'title'))->toStartWith($shown);
+        })->with('ordinary names');
 
-            expect(profile_element($page['output'], 'h2'))->toContain("Sean O'Brien");
-        });
+        it('keeps the name in the h2', function (string $first, string $last, string $shown) {
+            $page = $this->renderPage(PROFILE_PAGE, 'GET', profile_query_for($first, $last));
 
-        it('encodes an apostrophe in the keywords', function () {
-            $page = $this->renderPage(PROFILE_PAGE, 'GET', profile_query_for('Sean', "O'Brien"));
+            expect(profile_element($page['output'], 'h2'))->toContain($shown);
+        })->with('ordinary names');
 
-            expect(profile_keywords($page['output']))->toContain('Sean O&#039;Brien');
-        });
+        it('encodes the name in the keywords', function (string $first, string $last, string $shown, string $encoded) {
+            $page = $this->renderPage(PROFILE_PAGE, 'GET', profile_query_for($first, $last));
 
-        it('keeps an ampersand in the title', function () {
-            $page = $this->renderPage(PROFILE_PAGE, 'GET', profile_query_for('Smith', '& Jones'));
-
-            expect(profile_element($page['output'], 'title'))->toStartWith('Smith & Jones');
-        });
-
-        it('keeps an ampersand in the h2', function () {
-            $page = $this->renderPage(PROFILE_PAGE, 'GET', profile_query_for('Smith', '& Jones'));
-
-            expect(profile_element($page['output'], 'h2'))->toContain('Smith & Jones');
-        });
-
-        it('encodes an ampersand in the keywords', function () {
-            $page = $this->renderPage(PROFILE_PAGE, 'GET', profile_query_for('Smith', '& Jones'));
-
-            expect(profile_keywords($page['output']))->toContain('Smith &amp; Jones');
-        });
+            expect(profile_keywords($page['output']))->toContain($encoded);
+        })->with('ordinary names');
     });
 });
