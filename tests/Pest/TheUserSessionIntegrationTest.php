@@ -25,7 +25,7 @@ beforeEach(function () {
 });
 
 afterEach(function () {
-    twfy_laravel()->make('auth')->forgetGuards();
+    laravel_spec_new_request();
 });
 
 describe('THEUSER from the session', function () {

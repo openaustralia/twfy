@@ -4,6 +4,7 @@ namespace OpenAustralia\TWFY\Auth;
 
 use Illuminate\Support\Facades\Validator;
 use Laravel\Fortify\Contracts\ResetsUserPasswords;
+use OpenAustralia\TWFY\Models\User;
 
 /**
  * Sets the new password when someone follows the link in their reset email.
@@ -27,7 +28,7 @@ class ResetUserPassword implements ResetsUserPasswords {
             'password.confirmed' => 'The two passwords did not match. Please try again.',
         ])->validate();
 
-        $user->forceFill(['password' => password_hash($input['password'], PASSWORD_DEFAULT)])->save();
+        $user->forceFill(['password' => User::hashPassword($input['password'])])->save();
 
         $user->signOutEverywhere();
     }

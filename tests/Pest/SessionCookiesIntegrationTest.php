@@ -15,19 +15,6 @@ use OpenAustralia\TWFY\Models\User;
 uses(TransactionalTestCase::class);
 
 /**
- * Starts the next request with nothing left in memory from the last, as it is in a new PHP process.
- */
-function cookies_spec_new_request(): void {
-    $app = twfy_laravel();
-    $app->make('auth')->forgetGuards();
-    // The session handler records the user from this guard, so a guard kept from an earlier request names the wrong one.
-    $app->forgetInstance('auth.driver');
-    $app->make('session')->forgetDrivers();
-    $app->forgetInstance('session.store');
-    $app->make('cookie')->flushQueuedCookies();
-}
-
-/**
  * The cookies a browser keeps after signing in.
  *
  * @return array<string, string>
@@ -40,7 +27,7 @@ function cookies_spec_sign_in(bool $remember): array {
     foreach ($response->headers->getCookies() as $cookie) {
         $cookies[$cookie->getName()] = $cookie->getValue();
     }
-    cookies_spec_new_request();
+    laravel_spec_new_request();
 
     return $cookies;
 }
@@ -52,7 +39,7 @@ function cookies_spec_sign_in(bool $remember): array {
  *   Cookie values by name.
  */
 function cookies_spec_user_for(array $cookies): ?int {
-    cookies_spec_new_request();
+    laravel_spec_new_request();
     $_COOKIE = $cookies;
 
     return twfy_laravel_user()?->user_id;
@@ -76,7 +63,7 @@ beforeEach(function () {
 afterEach(function () {
     restore_error_handler();
     $_COOKIE = $this->saved;
-    cookies_spec_new_request();
+    laravel_spec_new_request();
 });
 
 describe('a later request', function () {

@@ -44,6 +44,13 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     }
 
     /**
+     * The hash to store for a password.
+     */
+    public static function hashPassword(string $password): string {
+        return password_hash($password, PASSWORD_DEFAULT);
+    }
+
+    /**
      * Signs the user out everywhere, as whoever knew their old password may still be signed in.
      *
      * Replaces the "remember me" token, which signs out every browser that kept one, and deletes the user's sessions.

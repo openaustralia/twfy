@@ -28,16 +28,14 @@ beforeEach(function () {
 afterEach(function () {
     $_COOKIE = $this->saved;
     $app = twfy_laravel();
-    $app->make('session')->forgetDrivers();
-    $app->forgetInstance('session.store');
+    laravel_spec_new_request();
 });
 
 describe('twfy_laravel_with_session()', function () {
     describe('when a legacy page reads the session first', function () {
         it('keeps flash data for Laravel', function () {
             twfy_laravel_with_session(fn () => null);
-            twfy_laravel()->make('session')->forgetDrivers();
-            twfy_laravel()->forgetInstance('session.store');
+            laravel_spec_new_request();
 
             expect(twfy_laravel_with_session(fn () => twfy_laravel()->make('session.store')->get('status')))->toBe('Your password has been changed');
         });

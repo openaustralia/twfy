@@ -64,7 +64,7 @@ class Authenticator {
             return false;
         }
 
-        $user->update(['password' => password_hash($password, PASSWORD_DEFAULT)]);
+        $user->update(['password' => User::hashPassword($password)]);
 
         return true;
     }

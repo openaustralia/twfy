@@ -75,10 +75,7 @@ beforeEach(function () {
 
 afterEach(function () {
     $GLOBALS['PAGE'] = $this->savedPage;
-    $app = twfy_laravel();
-    $app->make('auth')->forgetGuards();
-    $app->make('session')->forgetDrivers();
-    $app->forgetInstance('session.store');
+    laravel_spec_new_request();
 });
 
 describe('LoginPage', function () {
