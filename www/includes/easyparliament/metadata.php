@@ -408,6 +408,7 @@ class Metadata {
             'title' => "Are your Representatives and Senators working for you in Australia's Parliament?",
             'track' => true,
             'rss' => 'news/index.rdf',
+            'responsive' => true,
             'url' => ''
         ],
         'houserules' => [
