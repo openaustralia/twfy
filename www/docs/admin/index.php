@@ -7,6 +7,8 @@
 include_once __DIR__ . "/../../includes/easyparliament/init.php";
 include_once __DIR__ . "/../../includes/easyparliament/commentreportlist.php";
 
+use OpenAustralia\TWFY\Models\User;
+
 $this_page = "admin_home";
 
 $PAGE->page_start();
@@ -47,42 +49,36 @@ $PAGE->block_end();
 <h4>Recently registered users</h4>
 <?php
 
-$q = parlDBQuery("SELECT firstname,
-						lastname,
-						email,
-						user_id,
-						confirmed,
-						registrationtime
-				FROM	users
-				ORDER BY registrationtime DESC
-				LIMIT 50
-				");
+$recentUsers = User::query()
+  ->select(['firstname', 'lastname', 'email', 'user_id', 'confirmed', 'registrationtime'])
+  ->orderByDesc('registrationtime')
+  ->limit(50)
+  ->toBase()
+  ->get();
 
 $rows = [];
 $USERURL = new URL('userview');
 
-for ($row = 0; $row < $q->rows(); $row++) {
+foreach ($recentUsers as $recentUser) {
 
-    $user_id = $q->field($row, 'user_id');
+    $USERURL->insert(['u' => $recentUser->user_id]);
 
-    $USERURL->insert(['u' => $user_id]);
-
-    if ($q->field($row, 'confirmed') == 1) {
+    if ($recentUser->confirmed == 1) {
         $confirmed = 'Yes';
-        $name = '<a href="' . $USERURL->generate() . '">' . htmlspecialchars($q->field($row, 'firstname'))
-        . ' ' . htmlspecialchars($q->field($row, 'lastname')) . '</a>';
+        $name = '<a href="' . $USERURL->generate() . '">' . htmlspecialchars($recentUser->firstname)
+        . ' ' . htmlspecialchars($recentUser->lastname) . '</a>';
     } else {
         $confirmed = 'No';
-        $name = htmlspecialchars($q->field($row, 'firstname') . ' ' . $q->field($row, 'lastname'));
+        $name = htmlspecialchars($recentUser->firstname . ' ' . $recentUser->lastname);
     }
 
-    $email = htmlspecialchars($q->field($row, 'email'));
+    $email = htmlspecialchars($recentUser->email);
 
     $rows[] = [
         $name,
         '<a href="mailto:' . $email . '">' . $email . '</a>',
         $confirmed,
-        $q->field($row, 'registrationtime')
+        $recentUser->registrationtime
     ];
 }
 
