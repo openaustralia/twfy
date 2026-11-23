@@ -1033,11 +1033,12 @@ class THEUSER extends USER {
             return false;
         }
 
-        $user = UserModel::where('user_id', $user_id)->where('registrationtoken', $registrationtoken)->first(['user_id', 'email', 'password', 'constituency']);
+        $user = UserModel::where('user_id', $user_id)->where('registrationtoken', $registrationtoken)->first(['user_id', 'email', 'password', 'constituency', 'deleted']);
 
-        if (!$user) {
+        if (!$user || $user->deleted) {
                 // Couldn't find this user in the DB. Maybe the token was
-                // wrong or incomplete?
+                // wrong or incomplete? Or the account was deleted, so the
+                // link must not confirm it or sign anyone in.
                 return false;
         }
 
