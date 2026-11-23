@@ -119,6 +119,25 @@ describe('a later request', function () {
         });
     });
 
+    describe('for a user deleted while signed in', function () {
+        beforeEach(function () {
+            $this->cookies = cookies_spec_sign_in(false);
+            $this->user->update(['deleted' => true]);
+            cookies_spec_user_for($this->cookies);
+            $this->theUser = new THEUSER();
+        });
+
+        it('is anonymous to the legacy pages', function () {
+            expect($this->theUser->isloggedin())->toBeFalse();
+        });
+
+        it('can still sign out', function () {
+            $this->theUser->logout('/safe-path');
+
+            expect(cookies_spec_user_for($this->cookies))->toBeNull();
+        });
+    });
+
     describe('after the password changes elsewhere', function () {
         it('is nobody with the old cookies', function () {
             $cookies = cookies_spec_sign_in(true);
