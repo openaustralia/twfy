@@ -820,8 +820,11 @@ class USER {
         try {
             UserModel::where('user_id', $details["user_id"])->update($update_data);
 
-            if (isset($update_data['password'])) {
-                UserModel::find($details["user_id"])?->signOutEverywhere($this->sessionToKeep((int) $details["user_id"]));
+            $deleting = !empty($update_data['deleted']);
+            if ($deleting || isset($update_data['password'])) {
+                // A deleted user keeps no session. A user changing their own password keeps the one they're in.
+                $keep = $deleting ? null : $this->sessionToKeep((int) $details["user_id"]);
+                UserModel::find($details["user_id"])?->signOutEverywhere($keep);
             }
 
             return $details;
@@ -994,7 +997,8 @@ class THEUSER extends USER {
             $returl = $URL->generate();
         }
 
-        if (!$this->isloggedin()) {
+        // Not isloggedin(), as a deleted user is anonymous here but may still be signed in to Laravel.
+        if (!twfy_laravel_user()) {
             return;
         }
 

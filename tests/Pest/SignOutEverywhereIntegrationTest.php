@@ -148,6 +148,28 @@ describe('changing a password', function () {
         });
     });
 
+    describe('when an administrator deletes an account', function () {
+        beforeEach(function () {
+            $admin = sign_out_spec_user('Cat', 'Superuser');
+            twfy_laravel()->make('auth')->guard()->setUser($admin);
+            $GLOBALS['THEUSER'] = new THEUSER();
+
+            $GLOBALS['THEUSER']->update_other_user(sign_out_spec_details($this->ann, '') + ['deleted' => true]);
+        });
+
+        it('signs the user out everywhere', function () {
+            expect(Session::where('user_id', $this->ann->user_id)->count())->toBe(0);
+        });
+
+        it('replaces the "remember me" token', function () {
+            expect($this->ann->fresh()->remember_token)->not->toBe('old-remember-token');
+        });
+
+        it('leaves other users signed in', function () {
+            expect(Session::where('user_id', $this->bob->user_id)->count())->toBe(1);
+        });
+    });
+
     describe('without a new password', function () {
         it('leaves the sessions', function () {
             twfy_laravel()->make('auth')->guard()->setUser($this->ann);
