@@ -14,9 +14,9 @@ if (!defined('CONTACTEMAIL')) {
 
 use Illuminate\Contracts\Http\Kernel;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use OpenAustralia\TWFY\Auth\ErrorPage;
 use OpenAustralia\TWFY\Auth\PasswordPages;
+use OpenAustralia\TWFY\Models\Session;
 use OpenAustralia\TWFY\Models\User;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -134,6 +134,16 @@ describe('POST /user/password', function () {
 
             expect(password_verify('old-password', $this->user->fresh()->password))->toBeTrue();
         });
+
+        describe('sent with a forged Host header', function () {
+            it('links to the configured site, not that host', function () {
+                $session = reset_spec_session();
+
+                reset_spec_call('POST', 'http://attacker.example/user/password', ['email' => 'pat.resetspec@example.test', '_token' => $session['token']], $session['cookies']);
+
+                expect($this->sent[0]['message'])->toContain(config('app.url') . '/user/password/reset/')->not->toContain('attacker.example');
+            });
+        });
     });
 
     describe('for an address with no account', function () {
@@ -196,11 +206,11 @@ describe('POST /user/password/reset', function () {
         });
 
         it('signs them out everywhere', function () {
-            DB::table('sessions')->insert(['id' => 'reset-spec-session', 'user_id' => $this->user->user_id, 'payload' => '', 'last_activity' => time()]);
+            Session::create(['id' => 'reset-spec-session', 'user_id' => $this->user->user_id, 'payload' => '', 'last_activity' => time()]);
 
             reset_spec_post('/user/password/reset', ($this->form)());
 
-            expect(DB::table('sessions')->where('id', 'reset-spec-session')->exists())->toBeFalse();
+            expect(Session::find('reset-spec-session'))->toBeNull();
         });
 
         it('replaces their "remember me" token', function () {

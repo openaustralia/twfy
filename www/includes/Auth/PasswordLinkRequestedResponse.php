@@ -2,6 +2,7 @@
 
 namespace OpenAustralia\TWFY\Auth;
 
+use Illuminate\Http\RedirectResponse;
 use Laravel\Fortify\Contracts\FailedPasswordResetLinkRequestResponse;
 use Laravel\Fortify\Contracts\SuccessfulPasswordResetLinkRequestResponse;
 
@@ -21,7 +22,7 @@ class PasswordLinkRequestedResponse implements SuccessfulPasswordResetLinkReques
      * @param \Illuminate\Http\Request $request
      *   The request.
      */
-    public function toResponse($request) {
+    public function toResponse($request): RedirectResponse {
         return back()->with('status', trans('passwords.sent'));
     }
 
