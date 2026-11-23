@@ -2521,8 +2521,10 @@ class SPWRANSLIST extends WRANSLIST {
      *
      */
     public function get_gid_from_spid($spid) {
-        $q = parlDBQuery("SELECT gid from hansard WHERE gid LIKE 'uk.org.publicwhip/spwa/%.$spid.h'");
-        $gid = $q->field(0, 'gid');
+        $gid = Hansard::query()
+          ->toBase()
+          ->where('gid', 'like', 'uk.org.publicwhip/spwa/%.' . $spid . '.h')
+          ->value('gid');
         if ($gid) {
             return str_replace('uk.org.publicwhip/spwa/', '', $gid);
         }
