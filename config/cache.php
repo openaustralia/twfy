@@ -2,11 +2,11 @@
 
 /**
  * @file
- * Files, so the cache needs no table.
+ * The database, as Apache can't write files into the release directory.
  */
 
 return [
 
-    'default' => 'file',
+    'default' => 'database',
 
 ];
