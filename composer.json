@@ -11,7 +11,8 @@
         "guzzlehttp/guzzle": "^7.15",
         "php-http/guzzle7-adapter": "^1.1",
         "league/plates": "^3.6",
-        "laravel/framework": "^13.0"
+        "laravel/framework": "^13.0",
+        "laravel/fortify": "^1.43"
     },
     "autoload": {
         "psr-4": {
