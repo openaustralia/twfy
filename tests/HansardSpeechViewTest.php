@@ -405,7 +405,7 @@ class HansardSpeechViewTest extends TestCase {
     public function test_forProcedural_builds_a_minimal_view_with_no_speaker_fields_at_all() {
         $row = ['gid' => '2026-08-18.108.1', 'body' => '<p>The Senate divided.</p>'];
 
-        $view = HansardProceduralView::forProcedural($row, $this->info(['major' => 101]));
+        $view = HansardProceduralView::forProcedural($row);
 
         $this->assertSame('g108.1', $view->id);
         $this->assertSame('<p>The Senate divided.</p>', $view->bodyHtml);
@@ -420,7 +420,7 @@ class HansardSpeechViewTest extends TestCase {
     public function test_forProcedural_also_cleans_the_body() {
         $row = ['gid' => '2026-08-18.108.1', 'body' => '<p><i>Term</i> <i/> <i>other</i></p>'];
 
-        $view = HansardProceduralView::forProcedural($row, $this->info());
+        $view = HansardProceduralView::forProcedural($row);
 
         $this->assertSame('<p><i>Term</i>  <i>other</i></p>', $view->bodyHtml);
     }
@@ -430,7 +430,7 @@ class HansardSpeechViewTest extends TestCase {
      */
     public function test_buildRoster_is_empty_for_procedural_only_pages() {
         $items = [
-            HansardProceduralView::forProcedural(['gid' => '2026-08-18.108.1', 'body' => 'x'], $this->info()),
+            HansardProceduralView::forProcedural(['gid' => '2026-08-18.108.1', 'body' => 'x']),
         ];
 
         $this->assertSame([], HansardSpeechView::buildRoster($items));
