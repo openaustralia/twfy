@@ -4,8 +4,6 @@
  * @file
  */
 
-use OpenAustralia\TWFY\AdminView;
-
 if (defined('OPTION_TRACKING') && OPTION_TRACKING) {
     require_once __DIR__ . '/../../../../phplib/tracking.php';
 }
