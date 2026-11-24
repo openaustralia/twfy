@@ -85,8 +85,8 @@ describe('DEBATELIST::_get_data_by_column()', function () {
         expect(array_column($this->data, 'body'))->toBe(['Budget', 'Tax', 'We should cut it.', 'We should not.']);
     });
 
-    it('keeps the empty comment count for API clients', function () {
-        expect(array_unique(array_column($this->data, 'totalcomments')))->toBe([0]);
+    it('keeps the comment count as a string', function () {
+        expect(array_unique(array_column($this->data, 'totalcomments')))->toBe(['0']);
     });
 
     it('keeps the empty comment for API clients', function () {
