@@ -718,7 +718,6 @@ class HANSARDLIST {
             'amount' => [
                 'body' => true,
                 'speaker' => true,
-                'comment' => true
             ],
             'where' => [
                 // Need to add the 'uk.org.publicwhip/debate/' or whatever on before
@@ -839,7 +838,6 @@ class HANSARDLIST {
             'amount' => [
                 'body' => true,
                 'speaker' => true,
-                'comment' => true
             ]
         ];
         if (strstr($gid, $from)) {
@@ -883,7 +881,6 @@ class HANSARDLIST {
             $input = [
                 'amount' => [
                     'body' => true,
-                    'comment' => true,
                     'excerpt' => true
                 ],
                 'where' => [
@@ -911,7 +908,6 @@ class HANSARDLIST {
                     $input = [
                         'amount' => [
                             'body' => true,
-                            'comment' => true,
                             'excerpt' => true
                         ],
                         'where' => [
@@ -1691,7 +1687,6 @@ class HANSARDLIST {
 
         $input['amount'] can have any or all these keys:
             'body'      - Get the body text from the epobject table.
-            'comment'   - Get the first comment (and totalcomments count) for this item.
             'speaker'   - Get the speaker for this item, where applicable.
             'excerpt'   - For sub/sections get the body text for the first item within them.
 
@@ -1716,10 +1711,7 @@ class HANSARDLIST {
             $fieldsarr['hansard'][] = 'speaker_id';
         }
 
-        if (
-            !empty($amount['body']) ||
-            !empty($amount['comment'])
-        ) {
+        if (!empty($amount['body'])) {
             $fieldsarr['epobject'] = ['body'];
             $join = 'LEFT OUTER JOIN epobject ON hansard.epobject_id = epobject.epobject_id';
         } else {
@@ -1886,20 +1878,6 @@ class HANSARDLIST {
                 ) {
 
                     $item['speaker'] = $this->_get_speaker($item['speaker_id'], $item['hdate']);
-                }
-
-                // Get comment count and (if any) most recent comment for each item.
-                if (!empty($amount['comment'])) {
-
-                    // All the things we need to get the comment data.
-                    $item_data = [
-                        'htype' => $item['htype'],
-                        'epobject_id' => $item['epobject_id']
-                    ];
-
-                    $commentdata = $this->_get_comment($item_data);
-                    $item['totalcomments'] = $commentdata['totalcomments'];
-                    $item['comment'] = $commentdata['comment'];
                 }
 
                 // Add this item on to the array of items we're returning.
@@ -2084,111 +2062,6 @@ class HANSARDLIST {
     /**
      *
      */
-    public function _get_comment($item_data) {
-        // Pass it some variables belonging to an item and the function
-        // returns an array containing:
-        // 1) A count of the comments within this item.
-        // 2) The details of the most recent comment posted to this item.
-
-        // Sections/subsections have (1) (the sum of the comments
-        // of all contained items), but not (2).
-
-        // What we return.
-        $totalcomments = $this->_get_comment_count_for_epobject($item_data);
-        $comment = [];
-
-        if ($item_data['htype'] == '12' || $item_data['htype'] == '13') {
-
-            // Things which can have comments posted directly to them.
-
-            if ($totalcomments > 0) {
-
-                // Get the first comment.
-
-                // Not doing this for Wrans sections because we don't
-                // need it anywhere. Arbitrary but it'll save us MySQL time!
-
-                $q = parlDBQuery("SELECT c.comment_id,
-									c.user_id,
-									c.body,
-									c.posted,
-									u.firstname,
-									u.lastname
-							FROM	comments c, users u
-                            WHERE	c.epobject_id = ?
-                            AND		c.user_id = u.user_id
-							AND		c.visible = 1
-							ORDER BY c.posted ASC
-							LIMIT	1
-							", $item_data['epobject_id']);
-
-                // Add this comment to the data structure.
-                $comment = [
-                    'comment_id' => $q->field(0, 'comment_id'),
-                    'user_id' => $q->field(0, 'user_id'),
-                    'body' => $q->field(0, 'body'),
-                    'posted' => $q->field(0, 'posted'),
-                    'username' => $q->field(0, 'firstname') . ' ' . $q->field(0, 'lastname')
-                ];
-            }
-
-        }
-
-        // We don't currently allow people to post comments to a section
-        // or subsection itself, only the items within them. So
-        // we don't get the most recent comment. Because there isn't one.
-
-        $return = [
-            'totalcomments' => $totalcomments,
-            'comment' => $comment
-        ];
-
-        return $return;
-    }
-
-    /**
-     *
-     */
-    public function _get_comment_count_for_epobject($item_data) {
-        global $hansardmajors;
-        // What it says on the tin.
-        // $item_data must have 'htype' and 'epobject_id' elements. TODO: Check for major==4.
-
-        if (
-            ($hansardmajors[$this->major]['type'] == 'debate') &&
-            ($item_data['htype'] == '10' || $item_data['htype'] == '11')
-        ) {
-            // We'll be getting a count of the comments on all items
-            // within this (sub)section.
-            $from = "comments, hansard";
-            $where = "comments.epobject_id = hansard.epobject_id
-					AND subsection_id = '" . $item_data['epobject_id'] . "'";
-
-            if ($item_data['htype'] == '10') {
-                // Section - get a count of comments within this section that
-                // don't have a subsection heading.
-                $where .= " AND section_id = '" . $item_data['epobject_id'] . "'";
-            }
-
-        } else {
-            // Just getting a count of the comments on this item.
-            $from = "comments";
-            $where = "epobject_id = '" . getParlDB()->escape($item_data['epobject_id']) . "'";
-        }
-
-        $q = parlDBQuery("SELECT COUNT(*) AS count
-						FROM 	$from
-						WHERE	$where
-						AND		visible = 1
-
-						");
-
-        return $q->field(0, 'count');
-    }
-
-    /**
-     *
-     */
     public function _get_data_by_gid($args) {
 
         // We need to get the data for this gid.
@@ -2322,7 +2195,6 @@ class HANSARDLIST {
             $amount = [
                 'body' => true,
                 'speaker' => true,
-                'comment' => true
             ];
 
             if ($itemdata['htype'] == '10') {
@@ -2344,7 +2216,6 @@ class HANSARDLIST {
                     $input = [
                         'amount' => [
                             'body' => true,
-                            'comment' => true,
                             'excerpt' => true
                         ],
                         'where' => [
@@ -2406,7 +2277,7 @@ class HANSARDLIST {
         twfy_debug(get_class($this), "getting data by column");
 
         $input = [
-            'amount' => ['body' => true, 'comment' => true],
+            'amount' => ['body' => true],
             'where' => ['hdate=' => $args['date'], 'major=' => $this->major, 'gid LIKE ' => '%.' . $args['column'] . '.%'],
             'order' => 'hpos'
         ];
@@ -2665,7 +2536,6 @@ class DEBATELIST extends HANSARDLIST {
             ];
 
             $list_url = $this->_get_listurl($item_data);
-            $totalcomments = $this->_get_comment_count_for_epobject($item_data);
 
             $contentcount = $q->field($row, 'count');
             $body = $q->field($row, 'body');
@@ -2676,8 +2546,7 @@ class DEBATELIST extends HANSARDLIST {
                 'contentcount' => $contentcount,
                 'body' => $body,
                 'hdate' => $hdate,
-                'list_url' => $list_url,
-                'totalcomments' => $totalcomments
+                'list_url' => $list_url
             ];
 
             // If this is a subsection, we're going to prepend the title
@@ -2862,7 +2731,6 @@ class WRANSLIST extends HANSARDLIST {
             ];
 
             $list_url = $this->_get_listurl($item_data);
-            $totalcomments = $this->_get_comment_count_for_epobject($item_data);
 
             $body = $q->field($row, 'body');
             $hdate = $q->field($row, 'hdate');
@@ -2894,7 +2762,6 @@ class WRANSLIST extends HANSARDLIST {
                 'body' => $body,
                 'hdate' => $hdate,
                 'list_url' => $list_url,
-                'totalcomments' => $totalcomments,
                 'child' => [
                     'body' => $childbody,
                     'speaker' => $speaker
@@ -2975,7 +2842,6 @@ class StandingCommittee extends DEBATELIST {
         $input = [
             'amount' => [
                 'body' => true,
-                'comment' => true,
                 'excerpt' => true
             ],
             'where' => [
@@ -2993,7 +2859,6 @@ class StandingCommittee extends DEBATELIST {
                 $input = [
                     'amount' => [
                         'body' => true,
-                        'comment' => true,
                         'excerpt' => true
                     ],
                     'where' => [

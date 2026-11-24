@@ -53,11 +53,6 @@ function api_get_methods() {
             'required' => true,
             'help' => 'Returns any of the above',
         ],
-        'getComments' => [
-            'parameters' => ['search', 'page', 'num', 'pid'],
-            'required' => false,
-            'help' => 'Returns comments'
-        ],
     ];
 }
 

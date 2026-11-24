@@ -28,17 +28,6 @@ function highlighted_html(string $text, string $searchterm): string {
 }
 
 /**
- * Render comment search results.
- *
- * @param array<string, mixed> $args
- *   Search arguments.
- */
-function find_comments(array $args): void {
-    $commentlist = new COMMENTLIST();
-    $commentlist->display('search', $args);
-}
-
-/**
  * Render constituency/postcode matches.
  *
  * @param array<string, mixed> $args

@@ -5,8 +5,7 @@
  * For displaying the main Hansard content listings (by gid),
  */
 
-// And individual Hansard items (the comments are handled separately
-// by COMMENTLIST and the comments.php template).
+// And individual Hansard items.
 
 // Remember, we are currently within the DEBATELIST or WRANSLISTS class,
 // in the render() function.
@@ -71,8 +70,6 @@ if (isset($data['rows'])) {
             } else {
                 unset($entry['listurl']);
                 unset($entry['commentsurl']);
-                unset($entry['comment']);
-                unset($entry['totalcomments']);
             }
             $out[] = $entry;
         }

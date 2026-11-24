@@ -95,14 +95,6 @@ if (get_http_var("d") != "") {
         header('Location: //' . DOMAIN . $URL->generate('none'));
         exit;
     }
-    if ($LIST->htype() == '12' || $LIST->htype() == '13') {
-        $PAGE->stripe_start('side', 'comments');
-        $COMMENTLIST = new COMMENTLIST();
-        $args['user_id'] = get_http_var('u');
-        $args['epobject_id'] = $LIST->epobject_id();
-        $COMMENTLIST->display('ep', $args);
-        $PAGE->stripe_end();
-    }
 } else {
     $this_page = "spdebatesfront";
     $PAGE->page_start();

@@ -36,19 +36,12 @@ foreach ($data['data'] as $wran) {
 
     $extrainfo = array();
 
-    if ($wran['totalcomments'] > 0) {
-        $plural = make_plural('comment', $wran['totalcomments']);
-        $totalcomments = '; ' . $wran['totalcomments'] . ' ' . $plural;
-    } else {
-        $totalcomments = '';
-    }
-
     $speaker = $wran['child']['speaker'];
     echo '<dt><a name="w', $count, '"></a><strong><a href="', $wran['list_url'], '">';
     if ($wran['parent']['body'])
         echo $wran['parent']['body'], ': ';
     echo $wran['body'], '</a></strong> <small>(', format_date($wran['hdate'], LONGDATEFORMAT),
-        $totalcomments, ')</small></dt><dd>';
+        ')</small></dt><dd>';
     if (count($speaker)) {
         echo '<a href="', $speaker['url'], '">', member_full_name($speaker['house'], $speaker['title'], $speaker['first_name'], $speaker['last_name'], $speaker['constituency']), '</a>: ';
     }

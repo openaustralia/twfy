@@ -15,10 +15,10 @@
 <div id="<?php echo $this->e($item->id) ?>" class="border-solid border-t border-b border-slate-200 py-4 text-sm text-slate-600 italic">
     <?php echo $item->bodyHtml /* pre-sanitised hansard body HTML, same pipeline as the old rendering path */ ?>
 
-    <?php if ($item->contextLinkHtml || $item->commentTeaserHtml): ?>
+    <?php if ($item->contextLinkHtml): ?>
         <?php
-        // [&_a]:...: same fix as speech.php's own footer - contextLinkHtml/
-        // commentTeaserHtml are bare <a> tags from legacy helpers, overridden to
+        // [&_a]:...: same fix as speech.php's own footer - contextLinkHtml is
+        // a bare <a> tag from a legacy helper, overridden to
         // the legacy blue/purple by layout.css's global a:link/a:visited rules
         // without this. Copilot finding on #227.
         //
@@ -33,7 +33,6 @@
                 ?>
                 <span><span aria-hidden="true">🔍</span> <?php echo $item->contextLinkHtml ?></span>
             <?php endif; ?>
-            <?php echo $item->commentTeaserHtml ?>
         </div>
     <?php endif; ?>
 </div>

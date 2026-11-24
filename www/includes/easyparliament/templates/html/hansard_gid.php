@@ -1,7 +1,6 @@
 <?php
 // For displaying the main Hansard content listings (by gid),
-// and individual Hansard items (the comments are handled separately
-// by COMMENTLIST and the comments.php template).
+// and individual Hansard items.
 
 // Remember, we are currently within the DEBATELIST or WRANSLISTS class,
 // in the render() function.
@@ -18,7 +17,7 @@ if (!defined('NO_TITLE_SENTINEL')) {
 include_once __DIR__ . "/../../../easyparliament/searchengine.php";
 include_once __DIR__ . "/../../../easyparliament/member.php";
 include_once __DIR__ . "/../../../easyparliament/HansardSpeechView.php";
-// context_link()/generate_commentteaser(), called directly below (the old
+// context_link(), called directly below (the old
 // stripe-based rendering) - included explicitly rather than relying on
 // HansardSpeechView.php's own include of the same file above.
 include_once __DIR__ . "/../../../easyparliament/hansard_row_helpers.php";
@@ -242,14 +241,7 @@ if (isset($data['rows'])) {
 
             echo context_link($row);
 
-            $sidebarhtml = generate_commentteaser($row, $data['info']['major']);
-
-            $PAGE->stripe_end(array(
-                array(
-                    'type' => 'html',
-                    'content' => $sidebarhtml
-                )
-            ));
+            $PAGE->stripe_end();
 
 
         } elseif ($row['htype'] == '12') {
@@ -380,16 +372,9 @@ if (isset($data['rows'])) {
 
             echo context_link($row);
 
-            $sidebarhtml = '';
             $extrahtml = '';
 
-            $sidebarhtml .= generate_commentteaser($row, $data['info']['major']);
-
             $PAGE->stripe_end(array(
-                array(
-                    'type' => 'html',
-                    'content' => $sidebarhtml
-                ),
                 array(
                     'type' => 'extrahtml',
                     'content' => $extrahtml
@@ -493,17 +478,13 @@ if (isset($data['rows'])) {
             }
             if ($has_content) {
                 print '<a href="' . $row['listurl'] . '"><strong>' . $row['body'] . '</strong></a> ';
-                // For the "x speeches, x comments" text.
+                // For the "x speeches" text.
                 $moreinfo = array();
                 if ($hansardmajors[$row['major']]['type'] != 'other') {
                     // All wrans have 2 speeches, so no need for this.
                     // All WMS have 1 speech
                     $plural = $row['contentcount'] == 1 ? 'speech' : 'speeches';
                     $moreinfo[] = $row['contentcount'] . " $plural";
-                }
-                if ($row['totalcomments'] > 0) {
-                    $plural = $row['totalcomments'] == 1 ? 'comment' : 'comments';
-                    $moreinfo[] = $row['totalcomments'] . " $plural";
                 }
                 if (count($moreinfo) > 0) {
                     print "<small>(" . implode(', ', $moreinfo) . ") </small>";
@@ -563,7 +544,7 @@ if (
 }
 
 
-// context_link()/generate_commentteaser(): moved to hansard_row_helpers.php
+// context_link(): moved to hansard_row_helpers.php
 // (included by HansardSpeechView.php, which needed them without depending on
 // this template happening to be the one that loaded it first) - still used
 // directly below, in the old stripe-based rendering. Ben Fairless's review on
