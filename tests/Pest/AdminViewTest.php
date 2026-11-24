@@ -104,26 +104,3 @@ describe('AdminView::table()', function () {
         });
     });
 });
-
-describe('AdminView::numericColumns()', function () {
-    it('finds the number columns', function () {
-        expect(AdminView::numericColumns([
-            ['<a href="/u/1">Ada</a>', '1,234', '12%', '4.5', ''],
-            ['Bob', '7', '0%', '', '2026-03-10'],
-        ]))->toBe([1, 2, 3]);
-    });
-
-    it('ignores empty cells', function () {
-        expect(AdminView::numericColumns([['', '3'], ['', '']]))->toBe([1]);
-    });
-
-    it('treats a dotted address as text', function () {
-        expect(AdminView::numericColumns([['203.0.113.5']]))->toBe([]);
-    });
-
-    describe('without rows', function () {
-        it('finds none', function () {
-            expect(AdminView::numericColumns([]))->toBe([]);
-        });
-    });
-});

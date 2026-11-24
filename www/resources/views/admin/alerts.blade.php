@@ -15,7 +15,7 @@
 <x-admin.row>
 <x-admin.cell>
 @if ($alert['url'])
-<x-admin.link href="{{ $alert['url'] }}">{{ $alert['who'] }}</x-admin.link>
+<x-admin.link :href="$alert['url']">{{ $alert['who'] }}</x-admin.link>
 @else
 {{ $alert['who'] }}
 @endif

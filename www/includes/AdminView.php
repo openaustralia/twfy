@@ -144,28 +144,4 @@ class AdminView {
         return '<td class="px-3 py-2' . ($classes === '' ? '' : ' ' . $classes) . '">' . $html . '</td>';
     }
 
-    /**
-     * The columns in which every filled cell is a number, such as 1,234, 4.5 or 12%.
-     *
-     * @param array<int, array<int|string, string|int|float|null>> $rows
-     *   The cells, as HTML.
-     *
-     * @return list<int>
-     *   The column indexes.
-     */
-    public static function numericColumns(array $rows): array {
-        $numeric = null;
-        foreach ($rows as $row) {
-            foreach (array_values($row) as $index => $cell) {
-                $text = trim(strip_tags((string) $cell));
-                if ($text !== '' && !is_numeric(str_replace([',', '%'], '', $text))) {
-                    $numeric[$index] = false;
-                } elseif ($text !== '' && !isset($numeric[$index])) {
-                    $numeric[$index] = true;
-                }
-            }
-        }
-        return array_keys(array_filter($numeric ?? []));
-    }
-
 }
