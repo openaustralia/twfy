@@ -25,14 +25,14 @@ class GlossaryController extends PageController {
 
         $this->page('glossary', function () use ($terms, $term, $letter) {
             $letters = GlossaryLetters::for($terms, $letter);
-            $addUrl = WEBPATH . 'addterm/';
+            $addUrl = GlossaryUrls::add();
 
             if ($term === null) {
                 return $this->view('glossary.browse', [
                     'letters' => $letters,
                     'letter' => $letter,
                     'terms' => $terms->filter(fn (Glossary $each): bool => GlossaryLetters::initial($each) === $letter)
-                      ->map(fn (Glossary $each): array => ['title' => (string) $each->title, 'url' => self::termUrl($each)])
+                      ->map(fn (Glossary $each): array => ['title' => (string) $each->title, 'url' => GlossaryUrls::term($each->glossary_id)])
                       ->values()
                       ->all(),
                     'add_url' => $addUrl,
@@ -47,13 +47,13 @@ class GlossaryController extends PageController {
                 'letters' => $letters,
                 'term' => [
                     'title' => (string) $term->title,
-                    'body_html' => self::linked((string) $term->body, (int) $term->glossary_id),
+                    'body_html' => GlossaryBody::html((string) $term->body, (int) $term->glossary_id),
                     'contributor' => trim($term->firstname . ' ' . $term->lastname),
                     'contributor_url' => WEBPATH . 'user/?u=' . $term->user_id,
-                    'search_url' => WEBPATH . 'search/?' . http_build_query(['s' => '"' . $term->title . '"']),
+                    'search_url' => GlossaryUrls::search((string) $term->title),
                 ],
-                'previous' => ['title' => (string) $previous->title, 'url' => self::termUrl($previous)],
-                'next' => ['title' => (string) $next->title, 'url' => self::termUrl($next)],
+                'previous' => ['title' => (string) $previous->title, 'url' => GlossaryUrls::term($previous->glossary_id)],
+                'next' => ['title' => (string) $next->title, 'url' => GlossaryUrls::term($next->glossary_id)],
                 'add_url' => $addUrl,
             ]);
         });
@@ -73,22 +73,6 @@ class GlossaryController extends PageController {
             return $asked;
         }
         return $term === null ? 'A' : GlossaryLetters::initial($term);
-    }
-
-    /**
-     * The address of a term's page.
-     */
-    private static function termUrl(Glossary $term): string {
-        return WEBPATH . 'glossary/?gl=' . $term->glossary_id;
-    }
-
-    /**
-     * A term's body with the other terms in it linked, after stripping all but the few tags people may use.
-     *
-     * This is the only HTML a view prints without escaping it.
-     */
-    private static function linked(string $body, int $id): string {
-        return (new \GLOSSARY(['sort' => 'regexp_replace', 'glossary_id' => $id]))->glossarise(filter_user_input($body, 'comment'), 0, 1);
     }
 
 }

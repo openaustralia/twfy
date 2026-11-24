@@ -31,7 +31,7 @@ final class GlossaryLetters {
         $letters = in_array(self::OTHER, $used, true) ? [...range('A', 'Z'), self::OTHER] : range('A', 'Z');
         return array_map(fn (string $letter): array => [
             'letter' => $letter,
-            'url' => in_array($letter, $used, true) ? WEBPATH . 'glossary/?az=' . rawurlencode($letter) : null,
+            'url' => in_array($letter, $used, true) ? GlossaryUrls::letter($letter) : null,
             'current' => $letter === $current,
         ], $letters);
     }

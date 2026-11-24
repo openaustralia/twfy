@@ -53,7 +53,7 @@ class AddTermController extends PageController {
             if (trim($definition) === '') {
                 $notice = 'Please write a definition to preview.';
             } else {
-                $preview = ['title' => $phrase, 'body_html' => self::linked($definition)];
+                $preview = ['title' => $phrase, 'body_html' => GlossaryBody::html($definition)];
             }
             $form = ['phrase' => $phrase, 'body' => $definition];
         } elseif ($searching) {
@@ -77,8 +77,8 @@ class AddTermController extends PageController {
             'signed_in' => $signedIn,
             'can_add' => $canAdd,
             'token' => self::token(),
-            'search_url' => $signedIn ? WEBPATH . 'addterm/' : WEBPATH . 'user/prompt/',
-            'return_url' => WEBPATH . 'addterm/',
+            'search_url' => $signedIn ? GlossaryUrls::add() : GlossaryUrls::signIn(),
+            'return_url' => GlossaryUrls::add(),
             'phrase' => $phrase,
             'notice' => $notice,
             'thanks' => $thanks,
@@ -88,8 +88,8 @@ class AddTermController extends PageController {
             'preview' => $preview,
             'excerpts_html' => $excerpts,
             'letters' => GlossaryLetters::for(Glossary::approvedTerms()),
-            'examples' => [['title' => 'Standing Order 94A', 'url' => WEBPATH . 'glossary/?gl=2'], ['title' => 'interjecting', 'url' => WEBPATH . 'glossary/?gl=1']],
-            'browse_url' => WEBPATH . 'glossary/',
+            'examples' => [['title' => 'Standing Order 94A', 'url' => GlossaryUrls::term(2)], ['title' => 'interjecting', 'url' => GlossaryUrls::term(1)]],
+            'browse_url' => GlossaryUrls::index(),
         ]));
     }
 
@@ -123,13 +123,6 @@ class AddTermController extends PageController {
     }
 
     /**
-     * A definition with the other terms in it linked, after stripping all but the few tags people may use.
-     */
-    private static function linked(string $body): string {
-        return (new \GLOSSARY(['sort' => 'regexp_replace']))->glossarise(filter_user_input($body, 'comment'), 0, 1);
-    }
-
-    /**
      * The token the form carries, so another site can't post it for a signed-in user.
      *
      * It is empty unless someone is signed in, as a token with no password hash to key it could be made by anyone.
@@ -160,7 +153,7 @@ class AddTermController extends PageController {
      */
     private static function matches(string $phrase): array {
         return Glossary::approvedTerms($phrase)
-          ->map(fn (Glossary $term): array => ['title' => (string) $term->title, 'url' => WEBPATH . 'glossary/?gl=' . $term->glossary_id])
+          ->map(fn (Glossary $term): array => ['title' => (string) $term->title, 'url' => GlossaryUrls::term($term->glossary_id)])
           ->all();
     }
 
