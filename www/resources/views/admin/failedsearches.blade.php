@@ -3,7 +3,7 @@
 <x-admin.row>
 <x-admin.cell numeric>{{ $search['ips'] }}</x-admin.cell>
 <x-admin.cell numeric>{{ $search['times'] }}</x-admin.cell>
-<x-admin.cell><x-admin.link href="{{ $search['url'] }}">{{ $search['query'] }}</x-admin.link></x-admin.cell>
+<x-admin.cell><x-admin.link :href="$search['url']">{{ $search['query'] }}</x-admin.link></x-admin.cell>
 <x-admin.cell>{{ $search['latest'] }}</x-admin.cell>
 <x-admin.cell>{{ $search['first'] }}</x-admin.cell>
 </x-admin.row>
