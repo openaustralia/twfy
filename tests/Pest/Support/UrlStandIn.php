@@ -11,6 +11,11 @@ if (!class_exists('URL')) {
      */
     class URL {
 
+        /**
+         * @var array<string, string>
+         */
+        private array $params = [];
+
         public function __construct(private string $page) {
         }
 
@@ -19,10 +24,19 @@ if (!class_exists('URL')) {
          *   Query values.
          */
         public function insert(array $params): void {
+            $this->params = $params + $this->params;
+        }
+
+        /**
+         * @param array<string, string> $params
+         *   Query values.
+         */
+        public function update(array $params): void {
+            $this->params = $params + $this->params;
         }
 
         public function generate(string $type = ''): string {
-            return '/' . $this->page . '/';
+            return '/' . $this->page . '/' . ($this->params === [] ? '' : '?' . http_build_query($this->params));
         }
 
     }

@@ -47,7 +47,7 @@ class GlossaryController extends PageController {
                 'letters' => $letters,
                 'term' => [
                     'title' => (string) $term->title,
-                    'body_html' => self::linked((string) $term->body),
+                    'body_html' => self::linked((string) $term->body, (int) $term->glossary_id),
                     'contributor' => trim($term->firstname . ' ' . $term->lastname),
                     'contributor_url' => WEBPATH . 'user/?u=' . $term->user_id,
                     'search_url' => WEBPATH . 'search/?' . http_build_query(['s' => '"' . $term->title . '"']),
@@ -87,8 +87,8 @@ class GlossaryController extends PageController {
      *
      * This is the only HTML a view prints without escaping it.
      */
-    private static function linked(string $body): string {
-        return (new \GLOSSARY(['sort' => 'regexp_replace']))->glossarise(filter_user_input($body, 'comment'), 0, 1);
+    private static function linked(string $body, int $id): string {
+        return (new \GLOSSARY(['sort' => 'regexp_replace', 'glossary_id' => $id]))->glossarise(filter_user_input($body, 'comment'), 0, 1);
     }
 
 }
