@@ -110,6 +110,18 @@ class Metadata {
             'parent' => 'admin',
             'url' => 'admin/proof.php',
         ],
+        'admin_proof_year' => [
+            'title' => 'Import status by month',
+            'icon' => 'sync',
+            'parent' => 'admin',
+            'url' => 'admin/proof_year.php',
+        ],
+        'admin_proof_errors' => [
+            'title' => 'Import errors for a day',
+            'icon' => 'sync',
+            'parent' => 'admin',
+            'url' => 'admin/proof_errors.php',
+        ],
         'admin_home' => [
             'title' => 'Home',
             'icon' => 'home',
