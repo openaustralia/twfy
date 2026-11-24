@@ -10,7 +10,7 @@
 
 @foreach ($lists as $title => $rows)
 <x-admin.heading>{{ $title }}</x-admin.heading>
-<x-admin.table class="mx-4" :headings="['Email', 'Criteria', 'Created']" empty="There are none.">
+<x-admin.table class="mx-4" :headings="[['label' => 'Email', 'href' => 'alerts.php'], 'Criteria', ['label' => 'Created', 'href' => 'alerts.php?o=c']]" empty="There are none.">
 @foreach ($rows as $alert)
 <x-admin.row>
 <x-admin.cell>
