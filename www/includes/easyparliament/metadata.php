@@ -142,10 +142,15 @@ class Metadata {
             'parent' => 'admin',
             'url' => 'admin/statistics.php'
         ],
-        'admin_usage' => [
-            'title' => 'API and data site usage',
+        'admin_api_keys' => [
+            'title' => 'Busiest API keys',
             'parent' => 'admin',
-            'url' => 'admin/usage.php'
+            'url' => 'admin/api_keys.php'
+        ],
+        'admin_downloads' => [
+            'title' => 'Data site downloads',
+            'parent' => 'admin',
+            'url' => 'admin/downloads.php'
         ],
         'admin_users' => [
             'title' => 'Users',
