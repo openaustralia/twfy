@@ -3,6 +3,7 @@
 namespace OpenAustralia\TWFY\Pages;
 
 use OpenAustralia\TWFY\Models\Glossary;
+use OpenAustralia\TWFY\UserRoles;
 
 /**
  * The page for suggesting a glossary term: search for a phrase, check it appears in Hansard, then write its definition.
@@ -37,6 +38,9 @@ class AddTermController extends PageController {
         if (!$canAdd && ($submitting || $previewing || $searching)) {
             $notice = $denied;
             $matches = $phrase === '' ? [] : self::matches($phrase);
+        } elseif (($submitting || $previewing) && !self::tokenIsValid()) {
+            $notice = 'Sorry, that form has expired. Please check your definition and post it again.';
+            $form = ['phrase' => $phrase, 'body' => $definition];
         } elseif ($submitting) {
             $result = TermSubmission::submit((int) $THEUSER->user_id(), $phrase, $definition);
             if ($result['ok']) {
@@ -72,6 +76,7 @@ class AddTermController extends PageController {
         $this->page('glossary_addterm', fn () => $this->view('glossary.addterm', [
             'signed_in' => $signedIn,
             'can_add' => $canAdd,
+            'token' => self::token(),
             'search_url' => $signedIn ? WEBPATH . 'addterm/' : WEBPATH . 'user/prompt/',
             'return_url' => WEBPATH . 'addterm/',
             'phrase' => $phrase,
@@ -122,6 +127,29 @@ class AddTermController extends PageController {
      */
     private static function linked(string $body): string {
         return (new \GLOSSARY(['sort' => 'regexp_replace']))->glossarise(filter_user_input($body, 'comment'), 0, 1);
+    }
+
+    /**
+     * The token the form carries, so another site can't post it for a signed-in user.
+     *
+     * It is empty unless someone is signed in, as a token with no password hash to key it could be made by anyone.
+     */
+    private static function token(): string {
+        global $THEUSER;
+
+        if (!$THEUSER->isloggedin() || (string) $THEUSER->password() === '') {
+            return '';
+        }
+        return UserRoles::token((int) $THEUSER->user_id(), (string) $THEUSER->password(), 'glossary-addterm');
+    }
+
+    /**
+     * Whether the request posted the signed-in user's token. Only $_POST is read, so it never appears in a URL.
+     */
+    private static function tokenIsValid(): bool {
+        $token = self::token();
+        $posted = $_POST['token'] ?? '';
+        return $token !== '' && is_string($posted) && hash_equals($token, $posted);
     }
 
     /**

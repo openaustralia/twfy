@@ -17,6 +17,7 @@ use OpenAustralia\TWFY\Models\Editqueue;
 use OpenAustralia\TWFY\Models\Glossary;
 use OpenAustralia\TWFY\Models\User;
 use OpenAustralia\TWFY\Pages\AddTermController;
+use OpenAustralia\TWFY\UserRoles;
 
 uses(AdminControllerTestCase::class);
 
@@ -61,7 +62,18 @@ function addterm_visitor(bool $signed_in, bool $allowed, int $user_id = 0): void
             return $this->user_id;
         }
 
+        public function password(): string {
+            return 'stored-password-hash';
+        }
+
     };
+}
+
+/**
+ * The token the form carries for the signed-in test user.
+ */
+function addterm_token(): string {
+    return UserRoles::token(test()->user->user_id, 'stored-password-hash', 'glossary-addterm');
 }
 
 beforeEach(function () {
@@ -210,7 +222,7 @@ describe('AddTermController::index() for a visitor who is signed out', function 
 
 describe('AddTermController::index() for a preview', function () {
     it('shows the entry', function () {
-        $_POST = ['g' => 'point of order', 'previewterm' => 'Preview', 'definition' => 'A <strong>claim</strong> that a rule is broken. <script>alert(1)</script>'];
+        $_POST = ['token' => addterm_token(), 'g' => 'point of order', 'previewterm' => 'Preview', 'definition' => 'A <strong>claim</strong> that a rule is broken. <script>alert(1)</script>'];
 
         $html = $this->render(fn () => addterm_controller()->index());
 
@@ -218,7 +230,7 @@ describe('AddTermController::index() for a preview', function () {
     });
 
     it('strips any other tag from the definition', function () {
-        $_POST = ['g' => 'point of order', 'previewterm' => 'Preview', 'definition' => 'A claim. <script>alert(1)</script>'];
+        $_POST = ['token' => addterm_token(), 'g' => 'point of order', 'previewterm' => 'Preview', 'definition' => 'A claim. <script>alert(1)</script>'];
 
         $html = $this->render(fn () => addterm_controller()->index());
 
@@ -226,7 +238,7 @@ describe('AddTermController::index() for a preview', function () {
     });
 
     it('ends a web address at a quote', function () {
-        $_POST = ['g' => 'point of order', 'previewterm' => 'Preview', 'definition' => 'See http://example.test/a"onmouseover="alert(1)'];
+        $_POST = ['token' => addterm_token(), 'g' => 'point of order', 'previewterm' => 'Preview', 'definition' => 'See http://example.test/a"onmouseover="alert(1)'];
 
         $html = $this->render(fn () => addterm_controller()->index());
 
@@ -234,7 +246,7 @@ describe('AddTermController::index() for a preview', function () {
     });
 
     it('keeps the definition in the form', function () {
-        $_POST = ['g' => 'point of order', 'previewterm' => 'Preview', 'definition' => 'A claim.'];
+        $_POST = ['token' => addterm_token(), 'g' => 'point of order', 'previewterm' => 'Preview', 'definition' => 'A claim.'];
 
         $html = $this->render(fn () => addterm_controller()->index());
 
@@ -242,7 +254,7 @@ describe('AddTermController::index() for a preview', function () {
     });
 
     it('asks for a definition when there is none', function () {
-        $_POST = ['g' => 'point of order', 'previewterm' => 'Preview', 'definition' => ''];
+        $_POST = ['token' => addterm_token(), 'g' => 'point of order', 'previewterm' => 'Preview', 'definition' => ''];
 
         $html = $this->render(fn () => addterm_controller()->index());
 
@@ -252,7 +264,7 @@ describe('AddTermController::index() for a preview', function () {
 
 describe('AddTermController::index() for a submission', function () {
     beforeEach(function () {
-        $_POST = ['g' => 'point of order', 'submitterm' => 'Post', 'definition' => 'A <strong>claim</strong> that a rule is broken.'];
+        $_POST = ['token' => addterm_token(), 'g' => 'point of order', 'submitterm' => 'Post', 'definition' => 'A <strong>claim</strong> that a rule is broken.'];
     });
 
     it('queues the term for a moderator', function () {
@@ -334,7 +346,7 @@ describe('AddTermController::index() for a visitor who is signed in without the 
     });
 
     it('says the account cannot add terms when posting', function () {
-        $_POST = ['g' => 'point of order', 'submitterm' => 'Post', 'definition' => 'A claim.'];
+        $_POST = ['token' => addterm_token(), 'g' => 'point of order', 'submitterm' => 'Post', 'definition' => 'A claim.'];
 
         $html = $this->render(fn () => addterm_controller()->index());
 
@@ -342,7 +354,7 @@ describe('AddTermController::index() for a visitor who is signed in without the 
     });
 
     it('queues nothing when posting', function () {
-        $_POST = ['g' => 'point of order', 'submitterm' => 'Post', 'definition' => 'A claim.'];
+        $_POST = ['token' => addterm_token(), 'g' => 'point of order', 'submitterm' => 'Post', 'definition' => 'A claim.'];
 
         $this->render(fn () => addterm_controller()->index());
 
@@ -360,7 +372,7 @@ describe('AddTermController::index() for a phrase typed in quotation marks', fun
     });
 
     it('queues the phrase without the quotation marks', function () {
-        $_POST = ['g' => '“point of order”', 'submitterm' => 'Post', 'definition' => 'A claim.'];
+        $_POST = ['token' => addterm_token(), 'g' => '“point of order”', 'submitterm' => 'Post', 'definition' => 'A claim.'];
 
         $this->render(fn () => addterm_controller()->index());
 
@@ -370,7 +382,7 @@ describe('AddTermController::index() for a phrase typed in quotation marks', fun
 
 describe('AddTermController::index() for a phrase with formatting tags in it', function () {
     it('shows the phrase as plain text in the preview', function () {
-        $_POST = ['g' => '<em>point</em> of order', 'previewterm' => 'Preview', 'definition' => 'A claim.'];
+        $_POST = ['token' => addterm_token(), 'g' => '<em>point</em> of order', 'previewterm' => 'Preview', 'definition' => 'A claim.'];
 
         $html = $this->render(fn () => addterm_controller()->index());
 
@@ -378,10 +390,62 @@ describe('AddTermController::index() for a phrase with formatting tags in it', f
     });
 
     it('queues the phrase as plain text', function () {
-        $_POST = ['g' => '<em>point</em> of order', 'submitterm' => 'Post', 'definition' => 'A claim.'];
+        $_POST = ['token' => addterm_token(), 'g' => '<em>point</em> of order', 'submitterm' => 'Post', 'definition' => 'A claim.'];
 
         $this->render(fn () => addterm_controller()->index());
 
         expect(Editqueue::where('user_id', $this->user->user_id)->pluck('title')->all())->toBe(['point of order']);
+    });
+});
+
+describe('AddTermController::index() for a post without the right token', function () {
+    it('queues nothing when the token is missing', function () {
+        $_POST = ['g' => 'point of order', 'submitterm' => 'Post', 'definition' => 'A claim.'];
+
+        $this->render(fn () => addterm_controller()->index());
+
+        expect(Editqueue::where('user_id', $this->user->user_id)->count())->toBe(0);
+    });
+
+    it('queues nothing when the token is wrong', function () {
+        $_POST = ['token' => 'not-the-token', 'g' => 'point of order', 'submitterm' => 'Post', 'definition' => 'A claim.'];
+
+        $this->render(fn () => addterm_controller()->index());
+
+        expect(Editqueue::where('user_id', $this->user->user_id)->count())->toBe(0);
+    });
+
+    it('says the form has expired', function () {
+        $_POST = ['g' => 'point of order', 'submitterm' => 'Post', 'definition' => 'A claim.'];
+
+        $html = $this->render(fn () => addterm_controller()->index());
+
+        expect($html)->toContain('that form has expired');
+    });
+
+    it('keeps the definition so it can be posted again', function () {
+        $_POST = ['g' => 'point of order', 'submitterm' => 'Post', 'definition' => 'A claim.'];
+
+        $html = $this->render(fn () => addterm_controller()->index());
+
+        expect($html)->toContain('>A claim.</textarea>');
+    });
+
+    it('shows no preview when the token is missing', function () {
+        $_POST = ['g' => 'point of order', 'previewterm' => 'Preview', 'definition' => 'A claim.'];
+
+        $html = $this->render(fn () => addterm_controller()->index());
+
+        expect($html)->not->toContain('>point of order</h3>');
+    });
+});
+
+describe('AddTermController::index() for the form', function () {
+    it('carries the token', function () {
+        $_GET['g'] = 'point of order';
+
+        $html = $this->render(fn () => addterm_controller()->index());
+
+        expect($html)->toContain('<input type="hidden" name="token" value="' . addterm_token() . '">');
     });
 });

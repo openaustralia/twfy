@@ -53,6 +53,7 @@
 <h2 class="!mx-0 !mb-3 !mt-0 text-xl font-semibold !text-slate-900">Add a definition for &ldquo;{{ $form['phrase'] }}&rdquo;</h2>
 <form action="{{ $search_url }}" method="post" class="flex flex-col gap-3">
 <input type="hidden" name="g" value="{{ $form['phrase'] }}">
+<input type="hidden" name="token" value="{{ $token }}">
 <label for="definition" class="sr-only">Definition</label>
 <textarea name="definition" id="definition" rows="8" class="!m-0 box-border w-full rounded border border-solid border-slate-300 px-4 py-3 text-base text-slate-900 shadow-sm">{{ $form['body'] }}</textarea>
 <p class="!m-0 text-sm text-slate-600">Only &lt;b&gt; and &lt;i&gt; tags are allowed. Web and email addresses are turned into links automatically.</p>
