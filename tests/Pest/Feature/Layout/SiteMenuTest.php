@@ -40,11 +40,15 @@ if (!class_exists('URL')) {
  *   Whether they are signed in.
  * @param bool $admin
  *   Whether they may open the admin section.
+ * @param string $page
+ *   The page key of the page being shown.
+ * @param \DATA|null $data
+ *   The page metadata, if not the real thing.
  */
-function site_menu_html(bool $logged_in, bool $admin): string {
+function site_menu_html(bool $logged_in, bool $admin, string $page = 'home', ?DATA $data = null): string {
     global $this_page, $DATA, $THEUSER;
-    $this_page = 'home';
-    $DATA = new DATA();
+    $this_page = $page;
+    $DATA = $data ?? new DATA();
     $THEUSER = new class($logged_in, $admin) {
 
         public function __construct(private bool $logged_in, private bool $admin) {
@@ -92,5 +96,28 @@ describe('PAGE::menu()', function () {
 
     it('gives a visitor who is signed out no admin menu', function () {
         expect(site_menu_html(false, false))->not->toContain('admin-menu');
+    });
+
+    describe('when the admin menu fails', function () {
+        beforeEach(function () {
+            $this->data = new class extends DATA {
+
+                public function page_metadata($page, $key) {
+                    if (str_starts_with((string) $page, 'admin_')) {
+                        throw new RuntimeException('No metadata for ' . $page);
+                    }
+                    return parent::page_metadata($page, $key);
+                }
+
+            };
+        });
+
+        it('still draws the site menu', function () {
+            expect(site_menu_html(true, true, 'home', $this->data))->toContain('id="menu"');
+        });
+
+        it('tells the admin the menu is unavailable', function () {
+            expect(site_menu_html(true, true, 'home', $this->data))->toContain('Admin menu unavailable');
+        });
     });
 });

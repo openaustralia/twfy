@@ -700,9 +700,18 @@ class PAGE {
             }
         }
         // Only people who may open the admin section get its menu.
-        $admin_menu_html = $THEUSER->isloggedin() && $THEUSER->is_able_to('viewadminsection')
-            ? twfy_laravel()->make('view')->make('layout.admin-menu', ['sections' => $this->admin_menu_sections()])->render()
-            : '';
+        $admin_menu_html = '';
+        if ($THEUSER->isloggedin() && $THEUSER->is_able_to('viewadminsection')) {
+            try {
+                $admin_menu_html = twfy_laravel()->make('view')->make('layout.admin-menu', ['sections' => $this->admin_menu_sections()])->render();
+            }
+            catch (\Throwable $e) {
+                // A broken admin menu must not take the public pages down: report it, and say so to the admin.
+                \Sentry\captureException($e);
+                error_log('The admin menu failed: ' . $e->getMessage());
+                $admin_menu_html = '<span class="text-xs text-rose-300" role="alert">Admin menu unavailable</span>';
+            }
+        }
         ?>
                         <?php include __DIR__ . '/templates/html/menu.php'; ?>
 
