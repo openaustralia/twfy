@@ -170,7 +170,7 @@ describe('AlertStats::listRows()', function () {
      * @param string $order
      *   How to order the rows.
      *
-     * @return list<array{string, string, string}>
+     * @return list<array{who: string, url: string|null, description: string, created: string}>
      *   The rows.
      */
     function list_rows_for_specs(string $order = 'email'): array {
@@ -193,30 +193,30 @@ describe('AlertStats::listRows()', function () {
     });
 
     it('sorts by email by default', function () {
-        expect(array_column(list_rows_for_specs(), 0))->toBe(['amy@example.invalid', 'zed@example.invalid']);
+        expect(array_column(list_rows_for_specs(), 'who'))->toBe(['amy@example.invalid', 'zed@example.invalid']);
     });
 
     it('describes the criteria', function () {
-        expect(array_column(list_rows_for_specs(), 1))->toBe(['about tax', 'about budget']);
+        expect(array_column(list_rows_for_specs(), 'description'))->toBe(['about tax', 'about budget']);
     });
 
     it('treats an unknown order as email', function () {
-        expect(array_column(list_rows_for_specs('email; DROP TABLE alerts'), 0))->toBe(['amy@example.invalid', 'zed@example.invalid']);
+        expect(array_column(list_rows_for_specs('email; DROP TABLE alerts'), 'who'))->toBe(['amy@example.invalid', 'zed@example.invalid']);
     });
 
     describe('when ordered by created', function () {
         it('sorts oldest first', function () {
             AlertModel::where('email', 'zed@example.invalid')->update(['created' => '2020-01-01 00:00:00']);
 
-            expect(array_column(list_rows_for_specs('created'), 0)[0])->toBe('zed@example.invalid');
+            expect(array_column(list_rows_for_specs('created'), 'who')[0])->toBe('zed@example.invalid');
         });
     });
 
     describe('when the alert has no creation time', function () {
-        it('shows a space', function () {
+        it('leaves the time empty', function () {
             AlertModel::where('email', 'zed@example.invalid')->update(['created' => '0000-01-01 00:00:00']);
 
-            expect(array_column(list_rows_for_specs(), 2)[1])->toBe('&nbsp;');
+            expect(array_column(list_rows_for_specs(), 'created')[1])->toBe('');
         });
     });
 
@@ -233,57 +233,13 @@ describe('AlertStats::listRows()', function () {
             $this->user = UserModel::create(['firstname' => 'Zoe', 'lastname' => 'Example', 'email' => 'ZED@example.invalid']);
         });
 
-        it('links the name to the user page', function () {
-            expect(array_column(list_rows_for_specs(), 0)[1])->toBe('<a href="/user/' . $this->user->user_id . '">Zoe Example</a>');
+        it('gives the name', function () {
+            expect(array_column(list_rows_for_specs(), 'who')[1])->toBe('Zoe Example');
         });
 
-        it('escapes the name', function () {
-            $this->user->update(['firstname' => '<script>x</script>', 'lastname' => 'O"Example']);
-
-            expect(array_column(list_rows_for_specs(), 0)[1])->toBe('<a href="/user/' . $this->user->user_id . '">&lt;script&gt;x&lt;/script&gt; O&quot;Example</a>');
+        it('gives the user page address', function () {
+            expect(array_column(list_rows_for_specs(), 'url')[1])->toBe('/user/' . $this->user->user_id);
         });
-    });
-
-    describe('with ordinary emails', function () {
-        it('shows the email', function (string $email, string $expected) {
-            AlertFixtures::alert($email, 'tax');
-
-            expect(array_column(list_rows_for_specs(), 0))->toContain($expected);
-        })->with([
-            'plain' => ['kim@example.invalid', 'kim@example.invalid'],
-            'ampersand' => ['r&d@example.invalid', 'r&amp;d@example.invalid'],
-            'apostrophe' => ["o'neil@example.invalid", 'o&#039;neil@example.invalid'],
-        ]);
-    });
-
-    describe('with ordinary names', function () {
-        it('shows the name', function (string $first, string $last, string $expected) {
-            $user = UserModel::create(['firstname' => $first, 'lastname' => $last, 'email' => 'zed@example.invalid']);
-
-            expect(array_column(list_rows_for_specs(), 0)[1])->toBe('<a href="/user/' . $user->user_id . '">' . $expected . '</a>');
-        })->with([
-            'plain' => ['Zoe', 'Example', 'Zoe Example'],
-            'apostrophe' => ['Zoe', "O'Brien", 'Zoe O&#039;Brien'],
-            'ampersand' => ['Zoe', 'Smith & Sons', 'Zoe Smith &amp; Sons'],
-        ]);
-    });
-});
-
-describe('AlertStats::htmlTable()', function () {
-    it('wraps rows in a table', function () {
-        expect(AlertStats::htmlTable([], [['a', 1]]))->toBe('<table><tr><td>a</td><td>1</td></tr></table>');
-    });
-
-    it('adds a heading row', function () {
-        expect(AlertStats::htmlTable(['Name'], []))->toBe('<table><tr><th>Name</th></tr></table>');
-    });
-
-    it('escapes cells', function () {
-        expect(AlertStats::htmlTable([], [['<script>']]))->toContain('&lt;script&gt;');
-    });
-
-    it('escapes headings', function () {
-        expect(AlertStats::htmlTable(['<b>'], []))->toContain('&lt;b&gt;');
     });
 });
 

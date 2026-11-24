@@ -28,8 +28,7 @@ class AlertStats {
     }
 
     /**
-     * The rows of an admin list of alerts, with each person's name linked to
-     * their user page when they have an account.
+     * The rows of an admin list of alerts.
      *
      * @param \Illuminate\Database\Eloquent\Builder<Alert> $alerts
      *   The alerts to list.
@@ -40,12 +39,9 @@ class AlertStats {
      * @param callable(int): string $user_url
      *   Given a user id, returns the address of that user's page.
      *
-     * @return list<array{string, string, string}>
-     *   The name or email, the description and the created time of each alert.
-     *   The name and email cell is HTML-encoded, and the name is wrapped in a
-     *   link when the person has an account. The description cell is returned
-     *   as the callback gives it, so the callback owns its encoding. The
-     *   created cell is the stored time, or "&nbsp;" when none was recorded.
+     * @return list<array{who: string, url: string|null, description: string, created: string}>
+     *   Who made each alert (their name when they have an account, else their email), the address of their user
+     *   page (null without an account), what the alert searches for, and when it was created (empty when unknown).
      */
     public static function listRows(Builder $alerts, string $order, callable $describe, callable $user_url): array {
         $alerts = $alerts->orderBy($order === 'created' ? 'created' : 'email')
@@ -60,34 +56,13 @@ class AlertStats {
             $user = $users->get(strtolower($alert->email));
             $created = (string) $alert->created;
             $rows[] = [
-                $user === null ? htmlspecialchars($alert->email) : '<a href="' . $user_url($user->user_id) . '">' . htmlspecialchars($user->firstname . ' ' . $user->lastname) . '</a>',
-                $describe($alert->criteria),
-                str_starts_with($created, '0000-') ? '&nbsp;' : $created,
+                'who' => $user === null ? $alert->email : $user->firstname . ' ' . $user->lastname,
+                'url' => $user === null ? null : $user_url($user->user_id),
+                'description' => $describe($alert->criteria),
+                'created' => str_starts_with($created, '0000-') ? '' : $created,
             ];
         }
         return $rows;
-    }
-
-    /**
-     * A table with every cell escaped.
-     *
-     * @param list<string> $header
-     *   The column headings, or none for a table without a heading row.
-     * @param list<list<string|int>> $rows
-     *   The cells of each row.
-     *
-     * @return string
-     *   The table's HTML.
-     */
-    public static function htmlTable(array $header, array $rows): string {
-        $html = '<table>';
-        if ($header) {
-            $html .= '<tr><th>' . implode('</th><th>', array_map('htmlspecialchars', $header)) . '</th></tr>';
-        }
-        foreach ($rows as $row) {
-            $html .= '<tr><td>' . implode('</td><td>', array_map(fn ($cell): string => htmlspecialchars((string) $cell), $row)) . '</td></tr>';
-        }
-        return $html . '</table>';
     }
 
     /**
