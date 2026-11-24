@@ -3,7 +3,7 @@ Hi {FIRSTNAME},
 
 Welcome to OpenAustralia.org.
 
-Before you can log in and add comments, we need you to confirm your registration by clicking on the link below:
+Before you can log in, we need you to confirm your registration by clicking on the link below:
 
 {CONFIRMURL}
 
