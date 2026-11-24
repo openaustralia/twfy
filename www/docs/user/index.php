@@ -921,7 +921,10 @@ function display_user($user_id = "") {
             $registrationtime = $USER->registrationtime();
 
             // Change the page title to reflect whose info we're viewing.
-            $DATA->set_page_metadata($this_page, "title", "$name");
+            // page_header() and heading() print the title unescaped, and
+            // page_header() also htmlentities() it for the meta keywords, so
+            // only neutralise "<", which is all it takes to start a tag.
+            $DATA->set_page_metadata($this_page, "title", str_replace('<', '&lt;', $name));
 
         } else {
             // This user_id doesn't exist.
