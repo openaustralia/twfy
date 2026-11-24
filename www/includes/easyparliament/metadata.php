@@ -773,7 +773,7 @@ class Metadata {
         'userjoin' => [
             'menu' => [
                 'text' => 'Join',
-                'title' => "Joining is free and allows you to post comments"
+                'title' => "Joining is free"
             ],
             'pg' => 'join',
             'sidebar' => 'userjoin',
@@ -795,7 +795,7 @@ class Metadata {
         'userlogin' => [
             'menu' => [
                 'text' => 'Log in',
-                'title' => "If you've already joined, log in to post comments"
+                'title' => "If you've already joined, log in"
             ],
             'sidebar' => 'userlogin',
             'title' => 'Log in',
