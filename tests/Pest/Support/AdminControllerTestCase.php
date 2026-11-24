@@ -5,6 +5,7 @@
  */
 
 require_once __DIR__ . '/../../bootstrap.php';
+require_once __DIR__ . '/../../../www/includes/data.php';
 
 /**
  * Runs an admin controller as its page file does, inside the test's transaction.
@@ -17,6 +18,7 @@ abstract class AdminControllerTestCase extends TransactionalTestCase {
     protected function setUp(): void {
         parent::setUp();
         twfy_laravel();
+        $GLOBALS['DATA'] = new DATA();
         $GLOBALS['PAGE'] = new class() {
 
             public function __call(string $name, array $args): string {
