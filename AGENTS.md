@@ -88,7 +88,8 @@ see "If the app won't start" in the README.
 
 `conf/general` is gitignored, and only host-side tools need it (`cp conf/general-example.local-dev conf/general`):
 the container reads `conf/general-docker`, and its `DB_*` environment variables win over both (`phinx.php`). On start,
-the `webhost` container installs `vendor/` and builds `tailwind.css` if they're missing, then applies pending
+the `webhost` container installs `vendor/` and builds `tailwind.css` if they're missing, makes
+`storage/framework/views` writable for Apache (Blade compiles views there as `www-data`), then applies pending
 migrations. Seed data and the search index are separate steps:
 
 ```
