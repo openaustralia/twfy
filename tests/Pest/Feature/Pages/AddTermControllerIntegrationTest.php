@@ -476,4 +476,28 @@ describe('AddTermController::index() for a phrase or definition that is too long
 
         expect(Editqueue::where('user_id', $this->user->user_id)->count())->toBe(0);
     });
+
+    it('refuses a definition over the column size in bytes', function () {
+        $_POST = ['token' => addterm_token(), 'g' => 'point of order', 'submitterm' => 'Post', 'definition' => str_repeat('é', 33000)];
+
+        $html = $this->render(fn () => addterm_controller()->index());
+
+        expect($html)->toContain('that definition is too long');
+    });
+
+    it('queues nothing for a definition that is too long', function () {
+        $_POST = ['token' => addterm_token(), 'g' => 'point of order', 'submitterm' => 'Post', 'definition' => str_repeat('é', 33000)];
+
+        $this->render(fn () => addterm_controller()->index());
+
+        expect(Editqueue::where('user_id', $this->user->user_id)->count())->toBe(0);
+    });
+
+    it('accepts a long definition that fits', function () {
+        $_POST = ['token' => addterm_token(), 'g' => 'point of order', 'submitterm' => 'Post', 'definition' => str_repeat('é', 30000)];
+
+        $this->render(fn () => addterm_controller()->index());
+
+        expect(Editqueue::where('user_id', $this->user->user_id)->count())->toBe(1);
+    });
 });

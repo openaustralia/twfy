@@ -15,6 +15,11 @@ final class TermSubmission {
     public const FLOOD_SECONDS = 20;
 
     /**
+     * The most bytes a definition can hold, which is the size of the edit queue's text column.
+     */
+    private const BODY_BYTES = 65535;
+
+    /**
      * The edit type of a glossary term in the edit queue.
      */
     private const TERM = 2;
@@ -38,12 +43,14 @@ final class TermSubmission {
 
         $validator = twfy_laravel()->make('validator')->make(
             ['title' => $title, 'body' => $body],
-            ['title' => 'required|max:255', 'body' => 'required|max:65000'],
+            [
+                'title' => 'required|max:255',
+                'body' => ['required', fn (string $attribute, mixed $value, \Closure $fail) => strlen((string) $value) > self::BODY_BYTES ? $fail('Sorry, that definition is too long.') : null],
+            ],
             [
                 'title.required' => 'Sorry, you can\'t define a term without a title.',
                 'title.max' => 'Sorry, that phrase is too long. Please keep it under 255 characters.',
                 'body.required' => 'You haven\'t entered a definition.',
-                'body.max' => 'Sorry, that definition is too long.',
             ]
         );
         if ($validator->fails()) {
