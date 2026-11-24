@@ -83,9 +83,12 @@ class SearchLogsController extends AdminController {
     }
 
     /**
-     * How long ago a time was, such as "2 hours".
+     * How long ago a time was, such as "2 hours", or nothing when the time was not kept.
      */
-    private static function ago(string $datetime): string {
+    private static function ago(?string $datetime): string {
+        if ($datetime === null || $datetime === '') {
+            return '';
+        }
         return str_replace(' ago', '', relative_time($datetime));
     }
 

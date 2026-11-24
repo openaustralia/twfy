@@ -121,3 +121,33 @@ describe('SearchLogsController::recent() from an address that was not kept', fun
         expect($html)->toContain('1 hour');
     });
 });
+
+describe('SearchLogsController with a search that has no time', function () {
+    it('still draws the recent searches', function () {
+        $GLOBALS['SEARCHLOG'] = new class() {
+
+            public function admin_recent_searches(int $count): array {
+                return [['url' => '/search/?s=x&amp;pop=1', 'query' => 'x', 'page_number' => 1, 'count_hits' => 4, 'ip_address' => '127.0.0.1', 'query_time' => null]];
+            }
+
+        };
+
+        $html = $this->render(fn () => (new SearchLogsController())->recent());
+
+        expect($html)->toContain('>x</a>');
+    });
+
+    it('still draws the failed searches', function () {
+        $GLOBALS['SEARCHLOG'] = new class() {
+
+            public function admin_failed_searches(): array {
+                return [['url' => '/search/?s=x&amp;pop=1', 'query' => 'x', 'count_ips' => 1, 'group_count' => 2, 'max_time' => null, 'min_time' => null]];
+            }
+
+        };
+
+        $html = $this->render(fn () => (new SearchLogsController())->failed());
+
+        expect($html)->toContain('>x</a>');
+    });
+});
