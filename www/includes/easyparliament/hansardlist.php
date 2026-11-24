@@ -1880,6 +1880,10 @@ class HANSARDLIST {
                     $item['speaker'] = $this->_get_speaker($item['speaker_id'], $item['hdate']);
                 }
 
+                // Comments are gone, but API clients still read these two fields.
+                $item['totalcomments'] = 0;
+                $item['comment'] = [];
+
                 // Add this item on to the array of items we're returning.
                 $data[$n] = $item;
             }

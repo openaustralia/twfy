@@ -39,6 +39,8 @@ if (isset($data['rows'])) {
         } else {
             unset($entry['listurl']);
             unset($entry['commentsurl']);
+            unset($entry['comment']);
+            unset($entry['totalcomments']);
         }
 
         if ($row['htype'] == '10') {
