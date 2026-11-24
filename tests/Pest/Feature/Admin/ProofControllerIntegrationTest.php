@@ -48,7 +48,7 @@ describe('ProofController::overview()', function () {
     });
 
     it('draws the page around the bars', function () {
-        expect($this->html)->toStartWith('[page_start][stripe_start]');
+        expect($this->html)->toStartWith('[page_start]');
     });
 
     it('links a year that has days', function () {

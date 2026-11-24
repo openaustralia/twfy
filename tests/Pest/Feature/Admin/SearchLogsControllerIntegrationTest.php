@@ -38,7 +38,7 @@ describe('SearchLogsController::recent()', function () {
     });
 
     it('draws the page around the table', function () {
-        expect($this->html)->toStartWith('[page_start][stripe_start]');
+        expect($this->html)->toStartWith('[page_start]');
     });
 
     it('draws no script tag', function () {

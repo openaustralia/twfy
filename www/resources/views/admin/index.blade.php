@@ -1,5 +1,5 @@
 <x-admin.heading>Stats</x-admin.heading>
-<ul class="mx-4">
+<ul>
 <li>Confirmed users: {{ $confirmed }}</li>
 <li>Unconfirmed users: {{ $unconfirmed }}</li>
 <li>Logged-in users active in past day: {{ $activeDay }}</li>
@@ -7,7 +7,7 @@
 </ul>
 
 <x-admin.heading>Recently registered users</x-admin.heading>
-<x-admin.table class="mx-4" :headings="['Name', 'Email', 'Confirmed?', 'Registration time']">
+<x-admin.table :headings="['Name', 'Email', 'Confirmed?', 'Registration time']">
 @foreach ($recent as $user)
 <x-admin.row>
 <x-admin.cell>

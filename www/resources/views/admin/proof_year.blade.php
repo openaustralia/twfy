@@ -1,10 +1,10 @@
 <x-admin.heading>Import status by month</x-admin.heading>
 <x-admin.breadcrumbs :trail="$trail" />
-<div class="flex flex-wrap items-center justify-between max-w-4xl gap-6 text-sm font-semibold">
+<div class="flex flex-wrap items-center justify-between gap-6 text-sm font-semibold">
 @if ($newer)<x-admin.link :href="$newer['url']">&larr; {{ $newer['year'] }}</x-admin.link>@else<span></span>@endif
 @if ($older)<x-admin.link :href="$older['url']">{{ $older['year'] }} &rarr;</x-admin.link>@endif
 </div>
-<div class="flex items-center gap-4 max-w-4xl my-4">
+<div class="flex items-center gap-4 my-4">
 <x-admin.proof-bar :bar="$year_bar" />
 <span class="w-24 text-right text-sm tabular-nums text-slate-700">{{ $year_share }}</span>
 </div>

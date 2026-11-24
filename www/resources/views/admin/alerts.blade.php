@@ -1,5 +1,5 @@
 <x-admin.heading>Statistics</x-admin.heading>
-<x-admin.table class="mx-4" :headings="['Stat', 'Number']" :numeric="[1]">
+<x-admin.table :headings="['Stat', 'Number']" :numeric="[1]">
 @foreach ($totals as [$label, $count])
 <x-admin.row>
 <x-admin.cell>{{ $label }}</x-admin.cell>
@@ -10,7 +10,7 @@
 
 @foreach ($lists as $title => $rows)
 <x-admin.heading>{{ $title }}</x-admin.heading>
-<x-admin.table class="mx-4" :headings="[['label' => 'Email', 'href' => 'alerts.php'], 'Criteria', ['label' => 'Created', 'href' => 'alerts.php?o=c']]" empty="There are none.">
+<x-admin.table :headings="[['label' => 'Email', 'href' => 'alerts.php'], 'Criteria', ['label' => 'Created', 'href' => 'alerts.php?o=c']]" empty="There are none.">
 @foreach ($rows as $alert)
 <x-admin.row>
 <x-admin.cell>
