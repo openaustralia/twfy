@@ -3,6 +3,7 @@
 namespace OpenAustralia\TWFY\Pages;
 
 use Illuminate\Contracts\View\View;
+use Illuminate\Http\Request;
 
 /**
  * What the public pages share: the site layout around a Blade view, in the front page's style.
@@ -34,6 +35,22 @@ abstract class PageController {
         echo $action()->render();
         echo '</div>';
         $PAGE->page_end();
+    }
+
+    /**
+     * The request, from PHP's globals.
+     */
+    protected function request(): Request {
+        return Request::capture();
+    }
+
+    /**
+     * A value from the posted form or else the query string, as text. Anything but a single value is empty.
+     */
+    protected function input(string $name): string {
+        $request = $this->request();
+        $value = $request->post($name) ?? $request->query($name);
+        return is_scalar($value) ? (string) $value : '';
     }
 
     /**

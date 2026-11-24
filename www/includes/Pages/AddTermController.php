@@ -16,10 +16,10 @@ class AddTermController extends PageController {
     public function index(): void {
         global $THEUSER, $DATA;
 
-        $phrase = self::cleanPhrase(self::input('g'));
-        $definition = self::input('definition');
-        $submitting = self::input('submitterm') !== '';
-        $previewing = !$submitting && self::input('previewterm') !== '';
+        $phrase = self::cleanPhrase($this->input('g'));
+        $definition = $this->input('definition');
+        $submitting = $this->input('submitterm') !== '';
+        $previewing = !$submitting && $this->input('previewterm') !== '';
         $searching = $phrase !== '' && !$submitting && !$previewing;
         $signedIn = (bool) $THEUSER->isloggedin();
         $canAdd = $signedIn && $THEUSER->is_able_to('addterm');
@@ -38,16 +38,16 @@ class AddTermController extends PageController {
         if (!$canAdd && ($submitting || $previewing || $searching)) {
             $notice = $denied;
             $matches = $phrase === '' ? [] : self::matches($phrase);
-        } elseif (($submitting || $previewing) && !self::tokenIsValid()) {
+        } elseif (($submitting || $previewing) && !$this->tokenIsValid()) {
             $notice = 'Sorry, that form has expired. Please check your definition and post it again.';
-            $form = ['phrase' => $phrase, 'body' => $definition];
+            $form = self::form($phrase, $definition);
         } elseif ($submitting) {
             $result = TermSubmission::submit((int) $THEUSER->user_id(), $phrase, $definition);
             if ($result['ok']) {
                 $thanks = $result['title'];
             } else {
                 $notice = $result['message'];
-                $form = ['phrase' => $phrase, 'body' => $definition];
+                $form = self::form($phrase, $definition);
             }
         } elseif ($previewing) {
             if (trim($definition) === '') {
@@ -55,7 +55,7 @@ class AddTermController extends PageController {
             } else {
                 $preview = ['title' => $phrase, 'body_html' => GlossaryBody::html($definition)];
             }
-            $form = ['phrase' => $phrase, 'body' => $definition];
+            $form = self::form($phrase, $definition);
         } elseif ($searching) {
             if (in_array(strtolower($phrase), (new \GLOSSARY())->get_stopwords(), true)) {
                 $notice = 'Sorry, that phrase appears too many times to be useful as a link within the parliamentary record.';
@@ -67,7 +67,7 @@ class AddTermController extends PageController {
                     $phrase = '';
                 } else {
                     $matches = self::matches($phrase);
-                    $form = ['phrase' => $phrase, 'body' => ''];
+                    $form = self::form($phrase);
                     $excerpts = $this->excerpts($phrase);
                 }
             }
@@ -139,10 +139,20 @@ class AddTermController extends PageController {
     /**
      * Whether the request posted the signed-in user's token. Only $_POST is read, so it never appears in a URL.
      */
-    private static function tokenIsValid(): bool {
+    private function tokenIsValid(): bool {
         $token = self::token();
-        $posted = $_POST['token'] ?? '';
+        $posted = $this->request()->post('token');
         return $token !== '' && is_string($posted) && hash_equals($token, $posted);
+    }
+
+    /**
+     * What the definition form shows: the phrase being defined, and the definition so far.
+     *
+     * @return array{phrase: string, body: string}
+     *   The phrase and the definition.
+     */
+    private static function form(string $phrase, string $body = ''): array {
+        return ['phrase' => $phrase, 'body' => $body];
     }
 
     /**
@@ -162,13 +172,6 @@ class AddTermController extends PageController {
      */
     private static function cleanPhrase(string $text): string {
         return trim(str_replace(['"', '“', '”'], '', filter_user_input($text, 'strict')));
-    }
-
-    /**
-     * A request value from the form or the query string, as text.
-     */
-    private static function input(string $name): string {
-        return (string) ($_POST[$name] ?? $_GET[$name] ?? '');
     }
 
 }

@@ -257,6 +257,17 @@ describe('GlossaryController::index() for terms that start with something other 
     });
 });
 
+describe('GlossaryController::index() for a term sent as a list', function () {
+    it('shows the index instead', function () {
+        public_glossary_term('Quorum');
+        $_GET['gl'] = ['1'];
+
+        $html = $this->render(fn () => (new GlossaryController())->index());
+
+        expect($html)->toContain('>Glossary index</h1>');
+    });
+});
+
 describe('GlossaryController::index() for a term that is not there', function () {
     it('shows the index instead', function () {
         public_glossary_term('Quorum');

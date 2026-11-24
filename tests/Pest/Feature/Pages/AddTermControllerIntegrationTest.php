@@ -118,6 +118,16 @@ describe('AddTermController::index() with no phrase', function () {
     });
 });
 
+describe('AddTermController::index() for a phrase sent as a list', function () {
+    it('asks for a phrase as if none was sent', function () {
+        $_GET['g'] = ['point', 'of order'];
+
+        $html = $this->render(fn () => addterm_controller()->index());
+
+        expect($html)->toContain('Step 1: Search for a phrase');
+    });
+});
+
 describe('AddTermController::index() for a phrase that is in Hansard', function () {
     beforeEach(function () {
         $_GET['g'] = 'point of order';

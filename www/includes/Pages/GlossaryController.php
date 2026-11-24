@@ -17,9 +17,9 @@ class GlossaryController extends PageController {
         global $DATA;
 
         $terms = Glossary::approvedTerms();
-        $id = isset($_GET['gl']) && is_numeric($_GET['gl']) ? (int) $_GET['gl'] : null;
+        $id = is_numeric($this->input('gl')) ? (int) $this->input('gl') : null;
         $term = $id === null ? null : $terms->firstWhere('glossary_id', $id);
-        $letter = self::letter($terms, $term);
+        $letter = $this->letter($terms, $term);
 
         $DATA->set_page_metadata('glossary', 'title', $term === null ? $letter . ': Glossary index' : $term->title . ': Glossary item');
 
@@ -67,8 +67,8 @@ class GlossaryController extends PageController {
      * @param \OpenAustralia\TWFY\Models\Glossary|null $term
      *   The term being shown, if any.
      */
-    private static function letter(Collection $terms, ?Glossary $term): string {
-        $asked = strtoupper(substr((string) ($_GET['az'] ?? ''), 0, 1));
+    private function letter(Collection $terms, ?Glossary $term): string {
+        $asked = strtoupper(substr($this->input('az'), 0, 1));
         if (preg_match('/^[A-Z#]$/', $asked) === 1) {
             return $asked;
         }
