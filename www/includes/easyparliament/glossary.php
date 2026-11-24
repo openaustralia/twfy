@@ -287,19 +287,6 @@ class GLOSSARY {
     /**
      *
      */
-    public function delete($glossary_id) {
-        $q = parlDBQuery("DELETE from glossary where glossary_id = ? LIMIT 1", $glossary_id);
-        // If that worked, we need to update the editqueue,
-        // and remove the term from the already generated object list.
-        if ($q->affected_rows() >= 1) {
-            unset($this->replace_order[$glossary_id]);
-            unset($this->terms[$glossary_id]);
-        }
-    }
-
-    /**
-     *
-     */
     public function glossarise($body, $tokenize = 0, $urlize = 0) {
         // Turn a body of text into a link-up wonderland of glossary joy.
 

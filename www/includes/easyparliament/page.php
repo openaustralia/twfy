@@ -2726,24 +2726,12 @@ class PAGE {
 
         $term['body'] = $GLOSSARY->glossarise($term['body'], 0, 1);
 
-        // Add some extra controls for the administrators.
-        if ($this_page == "admin_glossary") {
-            print "<a id=\"gl" . $term['glossary_id'] . "\"></a>";
-            print "<h3>" . $term['title'] . "</h3>";
-            $URL = new URL('admin_glossary');
-            $URL->insert(["delete_confirm" => $term['glossary_id']]);
-            $delete_url = $URL->generate();
-            $admin_links = "<br><small><a href=\"" . $delete_url . "\">delete</a></small>";
-        } else {
-            $admin_links = "";
-        }
-
         if (isset($term['user_id'])) {
             $URL = new URL('userview');
             $URL->insert(['u' => $term['user_id']]);
             $user_link = $URL->generate('url');
 
-            $user_details = "\t\t\t\t<p><small>contributed by user <a href=\"" . $user_link . "\">" . $term['firstname'] . " " . $term['lastname'] . "</a></small>" . $admin_links . "</p>\n";
+            $user_details = "\t\t\t\t<p><small>contributed by user <a href=\"" . $user_link . "\">" . $term['firstname'] . " " . $term['lastname'] . "</a></small></p>\n";
         } else {
             $user_details = "";
         }

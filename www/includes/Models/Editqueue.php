@@ -2,6 +2,7 @@
 
 namespace OpenAustralia\TWFY\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -49,5 +50,47 @@ class Editqueue extends Model {
     protected $casts = [
         'approved' => 'bool',
     ];
+
+    /**
+     * Submissions nobody has decided on, newest first, with who submitted them.
+     *
+     * Each row has edit_id, user_id, firstname, lastname, glossary_id, title, body and submitted.
+     *
+     * @param \Illuminate\Database\Eloquent\Builder<Editqueue> $query
+     *   The query to narrow.
+     *
+     * @return \Illuminate\Database\Eloquent\Builder<Editqueue>
+     *   The same query, joined to the user.
+     */
+    public function scopePending(Builder $query): Builder {
+        return $query->join('users', 'users.user_id', '=', 'editqueue.user_id')
+          ->whereNull('editqueue.approved')
+          ->orderByDesc('editqueue.submitted')
+          ->select('editqueue.edit_id', 'editqueue.user_id', 'users.firstname', 'users.lastname', 'editqueue.glossary_id', 'editqueue.title', 'editqueue.body', 'editqueue.submitted');
+    }
+
+    /**
+     * Makes a pending submission a visible glossary term, and records who approved it.
+     *
+     * @param int $editor_id
+     *   The user who approved it.
+     */
+    public function approve(int $editor_id): void {
+        $this->getConnection()->transaction(function () use ($editor_id) {
+            $now = date('Y-m-d H:i:s');
+            $term = Glossary::create(['title' => $this->title, 'body' => $this->body, 'type' => 2, 'created' => $now, 'visible' => true]);
+            $this->update(['glossary_id' => $term->glossary_id, 'editor_id' => $editor_id, 'approved' => true, 'decided' => $now]);
+        });
+    }
+
+    /**
+     * Turns down a pending submission, and records who did.
+     *
+     * @param int $editor_id
+     *   The user who declined it.
+     */
+    public function decline(int $editor_id): void {
+        $this->update(['editor_id' => $editor_id, 'approved' => false, 'decided' => date('Y-m-d H:i:s')]);
+    }
 
 }
