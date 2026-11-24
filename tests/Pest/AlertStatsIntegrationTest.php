@@ -221,10 +221,10 @@ describe('AlertStats::listRows()', function () {
     });
 
     describe('when the email has no user', function () {
-        it('escapes the email', function () {
+        it('gives the email as it is', function () {
             AlertFixtures::alert('<script>x</script>@example.invalid', 'tax');
 
-            expect(array_column(list_rows_for_specs(), 0))->toContain('&lt;script&gt;x&lt;/script&gt;@example.invalid');
+            expect(array_column(list_rows_for_specs(), 'who'))->toContain('<script>x</script>@example.invalid');
         });
     });
 
