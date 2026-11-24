@@ -17,5 +17,5 @@ describe('AdminServiceProvider::boot()', function () {
 
     it('names each admin component', function (string $component) {
         expect($this->blade->getClassComponentAliases())->toHaveKey('admin.' . $component, 'components.admin.' . $component);
-    })->with(['cell', 'heading', 'link', 'row', 'table']);
+    })->with(array_map(fn (string $file): string => basename($file, '.blade.php'), glob(__DIR__ . '/../../../../www/resources/views/components/admin/*.blade.php')));
 });
