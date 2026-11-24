@@ -150,6 +150,22 @@ describe('GlossaryController::index() for a term with unsafe text', function () 
     });
 });
 
+describe('GlossaryController::index() for a body with a web address that holds a quote', function () {
+    beforeEach(function () {
+        $term = public_glossary_term('Filibuster', 'See http://example.test/a"onmouseover="alert(1)');
+        $_GET['gl'] = (string) $term->glossary_id;
+        $this->html = $this->render(fn () => (new GlossaryController())->index());
+    });
+
+    it('ends the link at the quote', function () {
+        expect($this->html)->toContain('<a href="http://example.test/a">http://example.test/a</a>');
+    });
+
+    it('adds no attribute to the link', function () {
+        expect($this->html)->not->toContain('<a href="http://example.test/a"onmouseover');
+    });
+});
+
 describe('GlossaryController::index() for a term that is not there', function () {
     it('shows the index instead', function () {
         public_glossary_term('Quorum');

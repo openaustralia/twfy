@@ -218,6 +218,14 @@ describe('AddTermController::index() for a preview', function () {
         expect($html)->not->toContain('<script>');
     });
 
+    it('ends a web address at a quote', function () {
+        $_POST = ['g' => 'point of order', 'previewterm' => 'Preview', 'definition' => 'See http://example.test/a"onmouseover="alert(1)'];
+
+        $html = $this->render(fn () => addterm_controller()->index());
+
+        expect($html)->toContain('<a href="http://example.test/a">http://example.test/a</a>');
+    });
+
     it('keeps the definition in the form', function () {
         $_POST = ['g' => 'point of order', 'previewterm' => 'Preview', 'definition' => 'A claim.'];
 

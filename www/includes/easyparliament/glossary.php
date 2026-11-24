@@ -311,7 +311,7 @@ class GLOSSARY {
         // Generate links from URL when wanted
         // NB WRANS is already doing this.
         if ($urlize == 1) {
-            $body = preg_replace("~(http(s)?:\/\/[^\s\n]*)\b(\/)?~i", "<a href=\"\\0\">\\0</a>", $body);
+            $body = preg_replace("~(http(s)?:\/\/[^\s\n\"<>]*)\b(\/)?~i", "<a href=\"\\0\">\\0</a>", $body);
         }
 
         // Check for any glossary terms to replace.
