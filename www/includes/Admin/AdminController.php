@@ -47,14 +47,7 @@ abstract class AdminController {
      *   What the view can use.
      */
     protected function view(string $name, array $data = []): View {
-        $app = twfy_laravel();
-
-        // Aliases spare Blade from guessing component classes, which reads composer.json, and the dev container has none.
-        foreach (['cell', 'heading', 'link', 'row', 'table'] as $component) {
-            $app->make('blade.compiler')->component('components.admin.' . $component, 'admin.' . $component);
-        }
-
-        return $app->make('view')->make($name, $data);
+        return twfy_laravel()->make('view')->make($name, $data);
     }
 
     /**
