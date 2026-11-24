@@ -36,11 +36,18 @@ final class TermSubmission {
         $title = filter_user_input($title, 'strict');
         $body = filter_user_input($body, 'comment');
 
-        if ($title === '') {
-            return ['ok' => false, 'message' => 'Sorry, you can\'t define a term without a title.', 'title' => $title];
-        }
-        if ($body === '') {
-            return ['ok' => false, 'message' => 'You haven\'t entered a definition.', 'title' => $title];
+        $validator = twfy_laravel()->make('validator')->make(
+            ['title' => $title, 'body' => $body],
+            ['title' => 'required|max:255', 'body' => 'required|max:65000'],
+            [
+                'title.required' => 'Sorry, you can\'t define a term without a title.',
+                'title.max' => 'Sorry, that phrase is too long. Please keep it under 255 characters.',
+                'body.required' => 'You haven\'t entered a definition.',
+                'body.max' => 'Sorry, that definition is too long.',
+            ]
+        );
+        if ($validator->fails()) {
+            return ['ok' => false, 'message' => $validator->errors()->first(), 'title' => $title];
         }
         if (Editqueue::where('user_id', $user_id)->where('submitted', '>', date('Y-m-d H:i:s', time() - self::FLOOD_SECONDS))->exists()) {
             return ['ok' => false, 'message' => 'Sorry, we limit people to one term every ' . self::FLOOD_SECONDS . ' seconds, to help prevent duplicates. Please try again in a moment.', 'title' => $title];

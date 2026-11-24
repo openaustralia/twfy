@@ -449,3 +449,21 @@ describe('AddTermController::index() for the form', function () {
         expect($html)->toContain('<input type="hidden" name="token" value="' . addterm_token() . '">');
     });
 });
+
+describe('AddTermController::index() for a phrase or definition that is too long', function () {
+    it('refuses a phrase over 255 characters', function () {
+        $_POST = ['token' => addterm_token(), 'g' => str_repeat('a', 256), 'submitterm' => 'Post', 'definition' => 'A claim.'];
+
+        $html = $this->render(fn () => addterm_controller()->index());
+
+        expect($html)->toContain('that phrase is too long');
+    });
+
+    it('queues nothing for a phrase that is too long', function () {
+        $_POST = ['token' => addterm_token(), 'g' => str_repeat('a', 256), 'submitterm' => 'Post', 'definition' => 'A claim.'];
+
+        $this->render(fn () => addterm_controller()->index());
+
+        expect(Editqueue::where('user_id', $this->user->user_id)->count())->toBe(0);
+    });
+});
