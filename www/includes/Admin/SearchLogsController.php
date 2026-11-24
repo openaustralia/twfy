@@ -2,6 +2,9 @@
 
 namespace OpenAustralia\TWFY\Admin;
 
+use OpenAustralia\TWFY\Models\Member;
+use OpenAustralia\TWFY\Models\SearchQueryLog;
+
 /**
  * The admin reports on what people searched for.
  */
@@ -12,16 +15,14 @@ class SearchLogsController extends AdminController {
      */
     public function recent(): void {
         $this->page('admin_searchlogs', function () {
-            global $SEARCHLOG;
-
-            $searches = array_map(fn (array $row): array => [
-                'url' => self::plainUrl($row['url']),
-                'query' => $row['query'],
-                'page' => $row['page_number'],
-                'hits' => $row['count_hits'],
-                'host' => self::host($row['ip_address']),
-                'ago' => self::ago($row['query_time']),
-            ], $SEARCHLOG->admin_recent_searches(50));
+            $searches = SearchQueryLog::mostRecent(50)->get()->map(fn (SearchQueryLog $log): array => [
+                'url' => self::searchUrl($log->query_string),
+                'query' => self::label($log->query_string),
+                'page' => $log->page_number,
+                'hits' => $log->count_hits,
+                'host' => self::host($log->ip_address),
+                'ago' => self::ago($log->query_time),
+            ])->all();
 
             return $this->view('admin.searchlogs', ['searches' => $searches]);
         });
@@ -32,13 +33,11 @@ class SearchLogsController extends AdminController {
      */
     public function popular(): void {
         $this->page('admin_popularsearches', function () {
-            global $SEARCHLOG;
-
-            $searches = array_map(fn (array $row): array => [
-                'url' => self::plainUrl($row['url']),
-                'query' => $row['query'],
-                'count' => $row['c'],
-            ], $SEARCHLOG->admin_popular_searches(1000));
+            $searches = SearchQueryLog::popular(1000)->get()->map(fn (SearchQueryLog $log): array => [
+                'url' => self::searchUrl($log->query_string),
+                'query' => self::label($log->query_string),
+                'count' => $log->c,
+            ])->all();
 
             return $this->view('admin.popularsearches', ['searches' => $searches]);
         });
@@ -49,26 +48,46 @@ class SearchLogsController extends AdminController {
      */
     public function failed(): void {
         $this->page('admin_failedsearches', function () {
-            global $SEARCHLOG;
-
-            $searches = array_map(fn (array $row): array => [
-                'url' => self::plainUrl($row['url']),
-                'query' => $row['query'],
-                'ips' => $row['count_ips'],
-                'times' => $row['group_count'],
-                'latest' => self::ago($row['max_time']),
-                'first' => self::ago($row['min_time']),
-            ], $SEARCHLOG->admin_failed_searches());
+            $searches = SearchQueryLog::failed()->get()->map(fn (SearchQueryLog $log): array => [
+                'url' => self::searchUrl($log->query_string),
+                'query' => self::label($log->query_string),
+                'ips' => $log->count_ips,
+                'times' => $log->group_count,
+                'latest' => self::ago($log->max_time),
+                'first' => self::ago($log->min_time),
+            ])->all();
 
             return $this->view('admin.failedsearches', ['searches' => $searches]);
         });
     }
 
     /**
-     * A search address without the HTML encoding SEARCHLOG gives it, as Blade encodes what it prints.
+     * The address of a search, with each repeated word once, and flagged as an admin's.
      */
-    private static function plainUrl(string $url): string {
-        return htmlspecialchars_decode($url);
+    private static function searchUrl(string $query): string {
+        return WEBPATH . 'search/?' . http_build_query(['s' => self::withoutRepeats($query), 'pop' => 1]);
+    }
+
+    /**
+     * What to call a search: the person's name for a speaker search, else the words without quote marks.
+     */
+    private static function label(string $query): string {
+        $query = self::withoutRepeats($query);
+        $position = strpos($query, ':');
+        if ($position) {
+            $member = Member::where('person_id', substr($query, $position + 1))->first(['first_name', 'last_name']);
+            if ($member) {
+                return $member->first_name . ' ' . $member->last_name;
+            }
+        }
+        return str_replace('"', '', $query);
+    }
+
+    /**
+     * A query with each word once, as bots send the same word many times.
+     */
+    private static function withoutRepeats(string $query): string {
+        return implode(' ', array_unique(explode(' ', $query)));
     }
 
     /**
