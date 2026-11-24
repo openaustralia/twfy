@@ -3052,17 +3052,6 @@ class PAGE {
     /**
      *
      */
-    public function display_table($data) {
-        // Pass it data to be displayed in a <table>, in the shared admin style.
-        // $data is ['header' => ['ID', 'Name'], 'rows' => [['37', 'Guy Fawkes'], ...]], all as HTML.
-        $rows = $data['rows'] ?? [];
-        // The margin lines the table up with the page's headings, as these pages have no padded block.
-        print '<div class="mx-4">' . AdminView::table($data['header'] ?? [], $rows, '', AdminView::numericColumns($rows)) . '</div>';
-    }
-
-    /**
-     *
-     */
     public function admin_menu() {
         // Returns HTML suitable for putting in the sidebar on Admin pages.
         global $this_page, $DATA;
