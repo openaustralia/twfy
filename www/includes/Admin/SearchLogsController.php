@@ -69,7 +69,8 @@ class SearchLogsController extends AdminController {
     }
 
     /**
-     * What to call a search: the person's name for a speaker search, else the words without quote marks.
+     * What to call a search: the person's name for a speaker search, else the words as typed, quotes included, as
+     * "cost of living" and cost of living are counted separately.
      */
     private static function label(?string $query): string {
         $query = self::withoutRepeats($query);
@@ -80,7 +81,7 @@ class SearchLogsController extends AdminController {
                 return $member->first_name . ' ' . $member->last_name;
             }
         }
-        return str_replace('"', '', $query);
+        return $query;
     }
 
     /**
