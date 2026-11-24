@@ -94,66 +94,79 @@ class Metadata {
 
         'admin_alerts' => [
             'title' => 'Email alerts',
+            'icon' => 'bell',
             'parent' => 'admin',
             'url' => 'admin/alerts.php',
         ],
         'alert_stats' => [
             'title' => 'Email alerts',
+            'icon' => 'bell',
             'parent' => 'admin',
             'url' => 'admin/alert_stats.php',
         ],
         'admin_proof' => [
             'title' => 'Import status',
+            'icon' => 'sync',
             'parent' => 'admin',
             'url' => 'admin/proof.php',
         ],
         'admin_home' => [
             'title' => 'Home',
+            'icon' => 'home',
             'parent' => 'admin',
             'url' => 'admin/'
         ],
         'admin_failedsearches' => [
             'title' => 'Failed searches',
+            'icon' => 'failed',
             'parent' => 'admin',
             'url' => 'admin/failedsearches.php'
         ],
         'admin_glossary' => [
             'title' => 'Manage glossary entries',
+            'icon' => 'book',
             'parent' => 'admin',
             'url' => 'admin/glossary.php'
         ],
         'admin_glossary_pending' => [
             'title' => 'Review pending glossary entries',
+            'icon' => 'clock',
             'parent' => 'admin',
             'url' => 'admin/glossary_pending.php'
         ],
         'admin_searchlogs' => [
             'title' => 'Recent searches',
+            'icon' => 'search',
             'parent' => 'admin',
             'url' => 'admin/searchlogs.php'
         ],
         'admin_popularsearches' => [
             'title' => 'Popular searches in last 30 days (first 1000)',
+            'icon' => 'popular',
             'parent' => 'admin',
             'url' => 'admin/popularsearches.php'
         ],
         'admin_statistics' => [
             'title' => 'General statistics',
+            'icon' => 'statistics',
             'parent' => 'admin',
             'url' => 'admin/statistics.php'
         ],
         'admin_api_keys' => [
             'title' => 'Busiest API keys',
+            'icon' => 'key',
             'parent' => 'admin',
             'url' => 'admin/api_keys.php'
         ],
         'admin_downloads' => [
             'title' => 'Data site downloads',
+            'icon' => 'download',
             'parent' => 'admin',
             'url' => 'admin/downloads.php'
         ],
         'admin_users' => [
             'title' => 'Users',
+            'icon' => 'users',
             'parent' => 'admin',
             'url' => 'admin/users.php'
         ],
