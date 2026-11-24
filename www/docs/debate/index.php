@@ -9,8 +9,7 @@ include_once __DIR__ . "/../../includes/easyparliament/glossary.php";
 
 $this_page = "debate";
 
-// For displaying a SINGLE speech from a debate, with comments and
-// an 'Add comment' form.
+// For displaying a SINGLE speech from a debate.
 
 
 if (get_http_var('id') != '') {
@@ -32,28 +31,6 @@ if (get_http_var('id') != '') {
         $URL->insert(['id' => $result]);
         header('Location: //' . DOMAIN . $URL->generate('none'), true, 301);
         exit;
-    }
-
-
-    // 12 is speech
-    // 13 is procedural - see http://parl.stand.org.uk/cgi-bin/moin.cgi/DataSchema
-    if (
-        $DEBATELIST->htype() == '12' ||
-        $DEBATELIST->htype() == '13'
-    ) {
-
-        $PAGE->stripe_start('side', 'comments');
-
-        // Display all comments for this ep object.
-        $COMMENTLIST = new COMMENTLIST();
-
-        // For highlighting their comments.
-        $args['user_id'] = get_http_var('u');
-        $args['epobject_id'] = $DEBATELIST->epobject_id();
-
-        $COMMENTLIST->display('ep', $args);
-
-        $PAGE->stripe_end();
     }
 
 

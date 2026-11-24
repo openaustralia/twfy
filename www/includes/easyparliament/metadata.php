@@ -92,10 +92,6 @@ class Metadata {
             'url' => 'about/'
         ],
 
-        'addcomment' => [
-            'url' => 'addcomment/',
-        ],
-
         'admin_alerts' => [
             'title' => 'Email alerts',
             'parent' => 'admin',
@@ -251,21 +247,6 @@ class Metadata {
         'cards' => [
             'title' => 'MP Stats Cards',
             'url' => 'cards/'
-        ],
-
-        'commentreport' => [
-            'title' => 'Reporting a comment',
-            'url' => 'report/',
-            'session_vars' => ['id']
-        ],
-
-        'comments_recent' => [
-            'menu' => [
-                'text' => 'Recent comments',
-                'title' => "Recently posted comments"
-            ],
-            'title' => "Recent comments",
-            'url' => 'comments/recent/'
         ],
 
         'contact' => [

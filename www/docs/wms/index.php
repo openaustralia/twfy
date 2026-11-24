@@ -87,12 +87,6 @@ if (get_http_var("d") != "") {
         exit;
     }
 
-    $PAGE->stripe_start('side', 'comments');
-    $COMMENTLIST = new COMMENTLIST();
-    $args['user_id'] = get_http_var('u');
-    $args['epobject_id'] = $WMSLIST->epobject_id();
-    $COMMENTLIST->display('ep', $args);
-    $PAGE->stripe_end();
 } else {
     // No date or debate id. Show recent WMS.
 

@@ -71,18 +71,6 @@ if (get_http_var('d')) {
         exit;
     }
 
-    $PAGE->stripe_start('side', 'comments');
-
-    // Display all comments for this ep object.
-    $COMMENTLIST = new COMMENTLIST();
-
-    // For highlighting their comments.
-    $args['user_id'] = get_http_var('u');
-    $args['epobject_id'] = $SPWRANSLIST->epobject_id();
-
-    $COMMENTLIST->display('ep', $args);
-
-    $PAGE->stripe_end();
 } elseif (get_http_var('y') != '') {
 
     // Show a calendar for a particular year's debates.

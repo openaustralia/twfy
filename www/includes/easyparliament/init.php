@@ -16,9 +16,6 @@ ini_set('memory_limit', 32 * 1024 * 1024);
  ********************************************************************************/
 
 
-// In case we need to switch these off globally at some point...
-define("ALLOWCOMMENTS", true);
-
 // These variables are so we can keep date/time formats consistent across the site
 // and change them easily.
 // Formats here: https://www.php.net/manual/en/function.date.php
@@ -165,12 +162,10 @@ if (defined('SENTRY_DSN') && SENTRY_DSN && $THEUSER->isloggedin()) {
 
 include_once __DIR__ . '/../easyparliament/page.php';
 include_once __DIR__ . '/../easyparliament/hansardlist.php';
-include_once __DIR__ . '/../easyparliament/commentlist.php';
 
 // Initialise searchlogging.
 global $SEARCHLOG;
 $SEARCHLOG = new SEARCHLOG();
-include_once __DIR__ . '/../easyparliament/comment.php';
 
 // Added in as new module by Richard Allan MP.
 include_once __DIR__ . '/../easyparliament/alert.php';

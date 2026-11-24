@@ -625,7 +625,6 @@ class PAGE {
         $items = [
             'home' => [],
             'hansard' => [],
-            'comments_recent' => [],
             'mps' => [],
             'peers' => [],
             'help' => []
@@ -721,7 +720,6 @@ class PAGE {
             'home' => [],
             'sitenews' => [],
             'hansard' => [],
-            'comments_recent' => [],
             'mps' => [],
             'peers' => [],
             // 'mlas'          => array (),
@@ -1825,7 +1823,6 @@ class PAGE {
             }
             if ($member['party'] != 'Sinn Fein') {
                 // $displayed_stuff |= display_stats_line('public_whip_division_attendance', 'Has voted in <a href=" . PUBLICWHIP_HOST . "/mp.php?id=uk.org.publicwhip/member/' . $member['member_id'] . '&amp;showall=yes#divisions" title="See more details at Public Whip">', 'of vote', '</a> in parliament', $after_stuff, $extra_info);
-                $displayed_stuff |= display_stats_line('comments_on_speeches', 'People have made <a href="' . WEBPATH . 'comments/recent/?pid=' . $member['person_id'] . '">', 'comment', "</a> on this Representative's speeches", '', $extra_info);
                 $displayed_stuff |= display_stats_line('reading_age', 'This Representative\'s speeches are understandable to an average ', '', ' year old, going by the <a href="http://en.wikipedia.org/wiki/Flesch-Kincaid_Readability_Test">Flesch-Kincaid Grade Level</a> score', '', $extra_info);
             }
 

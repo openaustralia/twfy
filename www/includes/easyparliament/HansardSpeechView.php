@@ -6,7 +6,7 @@
  * and Senate only - major 1 and 101, see hansard_gid.php). Each one takes the existing
  * $row HansardObjectData array (documented at the bottom of hansard_gid.php) and turns
  * it into a finished, escaping-agnostic set of fields - some (bodyHtml,
- * contextLinkHtml, commentTeaserHtml) do carry pre-built, pre-sanitised HTML through
+ * contextLinkHtml) do carry pre-built, pre-sanitised HTML through
  * from existing helpers, but this class builds no markup structure of its own: no
  * direct echo/print, no $PAGE-> calls. The Plates template is the only thing that
  * turns these into a finished page; this class is the only thing that reads $row's
@@ -15,7 +15,7 @@
  * See openaustralia/openaustralia#939 for why this split exists.
  */
 
-// context_link()/generate_commentteaser(), used by forSpeech()/forProcedural()
+// context_link(), used by forSpeech()/forProcedural()
 // below - included directly rather than assumed already loaded by whichever
 // template happened to include this class first. Ben Fairless's review on #227.
 include_once __DIR__ . '/hansard_row_helpers.php';
@@ -44,7 +44,6 @@ class HansardSpeechView {
     public ?string $sourceLabel = null;
     public ?string $permalinkUrl = null;
     public string $contextLinkHtml = '';
-    public string $commentTeaserHtml = '';
 
     /**
      * $showTimestamp is false when this speech falls at the same time as the one
@@ -109,7 +108,6 @@ class HansardSpeechView {
         }
 
         $view->contextLinkHtml = context_link($row);
-        $view->commentTeaserHtml = generate_commentteaser($row, $info['major']);
 
         return $view;
     }
@@ -367,7 +365,6 @@ class HansardProceduralView {
     public string $id;
     public string $bodyHtml;
     public string $contextLinkHtml = '';
-    public string $commentTeaserHtml = '';
 
     /**
      *
@@ -379,7 +376,6 @@ class HansardProceduralView {
         // comment for why the <i/> strip matters even for these short rows.
         $view->bodyHtml = HansardSpeechView::cleanBody($row['body']);
         $view->contextLinkHtml = context_link($row);
-        $view->commentTeaserHtml = generate_commentteaser($row, $info['major']);
         return $view;
     }
 
