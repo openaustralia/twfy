@@ -1,4 +1,4 @@
-<h1 class="!mb-6 !mt-0 text-3xl font-semibold !text-slate-900">Glossary index</h1>
+<h1 class="!mb-6 !mt-0 !block !leading-tight text-3xl font-semibold !text-slate-900">Glossary index</h1>
 @include('glossary.about')
 @include('glossary.letters')
 @if ($terms)

@@ -121,6 +121,10 @@ describe('GlossaryController::index() for a term', function () {
         expect($this->html)->toContain('href="/search/?s=%22Quorum%22"');
     });
 
+    it('labels the page as a glossary term', function () {
+        expect($this->html)->toContain('>Glossary Term</p>');
+    });
+
     it('titles the page by the term', function () {
         expect($GLOBALS['DATA']->page_metadata('glossary', 'title'))->toBe('Quorum: Glossary item');
     });
