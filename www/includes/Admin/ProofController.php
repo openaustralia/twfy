@@ -54,7 +54,7 @@ class ProofController extends AdminController {
      * The page for one year: its months, and the days of one month when a month is chosen.
      */
     public function year(): void {
-        $this->page('admin_proof', function () {
+        $this->page('admin_proof_year', function () {
             $years = ProofReport::years();
             $held = array_column($years, 'year');
             $requested_year = (int) ($_GET['year'] ?? 0);
@@ -102,7 +102,7 @@ class ProofController extends AdminController {
      * The page listing the import errors recorded for one day and house.
      */
     public function errors(): void {
-        $this->page('admin_proof', function () {
+        $this->page('admin_proof_errors', function () {
             $date = (string) ($_GET['date'] ?? '');
             $house = (string) ($_GET['house'] ?? '');
             $valid = preg_match('/^(\d{4})-(\d{2})-(\d{2})$/', $date, $parts) && checkdate((int) $parts[2], (int) $parts[3], (int) $parts[1]) && isset(ImportErrors::HOUSES[$house]);

@@ -1,4 +1,3 @@
-<x-admin.heading>Import errors for a day</x-admin.heading>
 <x-admin.breadcrumbs :trail="$trail" />
 @if (!$valid)
 <x-admin.note>That is not a day and house we can show errors for.</x-admin.note>

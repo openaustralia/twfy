@@ -1,4 +1,3 @@
-<x-admin.heading>Import status by month</x-admin.heading>
 <x-admin.breadcrumbs :trail="$trail" />
 <div class="flex flex-wrap items-center justify-between gap-6 text-sm font-semibold">
 @if ($newer)<x-admin.link :href="$newer['url']">&larr; {{ $newer['year'] }}</x-admin.link>@else<span></span>@endif
