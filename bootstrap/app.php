@@ -14,13 +14,14 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
+use OpenAustralia\TWFY\Admin\AdminServiceProvider;
 use OpenAustralia\TWFY\Auth\AuthServiceProvider;
 use OpenAustralia\TWFY\Auth\ErrorPage;
 use OpenAustralia\TWFY\Auth\LoginPage;
 use OpenAustralia\TWFY\Auth\LoginResponse;
 
 $app = Application::configure(basePath: dirname(__DIR__))
-  ->withProviders([AuthServiceProvider::class])
+  ->withProviders([AuthServiceProvider::class, AdminServiceProvider::class])
   ->withRouting(
         web: __DIR__ . '/../routes/web.php',
         commands: __DIR__ . '/../routes/console.php',
