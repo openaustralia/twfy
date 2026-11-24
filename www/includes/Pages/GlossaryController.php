@@ -21,7 +21,7 @@ class GlossaryController extends PageController {
         $term = $id === null ? null : $terms->firstWhere('glossary_id', $id);
         $letter = $this->letter($terms, $term);
 
-        $DATA->set_page_metadata('glossary', 'title', $term === null ? $letter . ': Glossary index' : $term->title . ': Glossary item');
+        $DATA->set_page_metadata('glossary', 'title', $term === null ? $letter . ': Glossary index' : e($term->title) . ': Glossary item');
 
         $this->page('glossary', function () use ($terms, $term, $letter) {
             $letters = GlossaryLetters::for($terms, $letter);

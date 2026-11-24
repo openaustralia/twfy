@@ -58,3 +58,18 @@ describe('/glossary/ for a body that names terms', function () {
         expect($this->html)->toContain('<strong>Filibuster</strong>');
     });
 });
+
+describe('/glossary/ for a term whose title holds markup', function () {
+    beforeEach(function () {
+        $term = linking_term('</title><script>alert(1)</script>', 'A body.');
+        $this->html = $this->renderPage(GLOSSARY_PAGE, 'GET', ['gl' => (string) $term->glossary_id])['output'];
+    });
+
+    it('draws no script from the title', function () {
+        expect($this->html)->not->toContain('<script>alert(1)');
+    });
+
+    it('keeps the page title whole', function () {
+        expect($this->html)->toContain('<title>&lt;/title&gt;&lt;script&gt;alert(1)&lt;/script&gt;: Glossary item');
+    });
+});
