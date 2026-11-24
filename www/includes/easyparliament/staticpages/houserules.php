@@ -50,11 +50,6 @@
         <p>No porn, no snuff, no filez etc.</p>
     </dd>
 
-    <dt>Deliberate misuse of the "report this comment" complaints system is not permitted</dt>
-    <dd>
-        <p>If you persist in doing this action may be taken against your account. It's bad form.</p>
-    </dd>
-
     <dt>Break these House Rules once, and we'll let you off with a warning.</dt>
     <dd>
         <p>After that, we reserve the right to get medieval.</p>

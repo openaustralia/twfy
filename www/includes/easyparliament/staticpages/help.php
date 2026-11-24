@@ -5,7 +5,6 @@
  */
 ?>
 <ul>
-    <li><a href="#moderation">How do you moderate comments?</a></li>
     <li><a href="#missing">Is this the whole of Hansard?</a></li>
     <li><a href="#privacy">What is your Privacy Policy?</a></li>
     <li><a href="#cookie">What is your Cookie Policy?</a></li>
@@ -24,19 +23,6 @@
 <!-- start new faq entry -->
 <dl>
 
-    <dt><a name="moderation"></a>How do you moderate comments?</dt>
-    <dd>
-        <p>Ideally, we won't. If everyone keeps to the <a href="<?php echo WEBPATH ?>houserules"
-                title="link to House Rules">House Rules</a>, that is. But we're not naive enough to think that life
-            online is that simple. OpenAustralia.org operates a 'reactive moderation' policy. We will only check whether
-            a comment breaches our House Rules if someone lets us know of their concerns via the 'Report this Comment'
-            link, which can be found next to every comment. If we decide that the comment has breached our House Rules,
-            we will delete it and let the original author know via email. We will also give them opportunity to rephrase
-            and resubmit their orginal comment. If we deem the comment to be legit, we'll leave it up, and email the
-            complainant to let them know why. We will do our utmost to respond to reports of potential breaches of our
-            House Rules within forty-eight hours, but please bear in mind that this service is run by a small charity,
-            and sometimes it might take us slightly longer.</p>
-    </dd>
     <!-- end old faq entry -->
 
     <!-- start new faq entry -->
