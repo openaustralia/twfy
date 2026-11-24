@@ -129,6 +129,16 @@ describe('SearchLogsController::recent() from an address that was not kept', fun
     });
 });
 
+describe('SearchLogsController::recent() for a phrase search', function () {
+    it('keeps the quote marks', function () {
+        logged_search('"cost of living"', 3);
+
+        $html = $this->render(fn () => (new SearchLogsController())->recent());
+
+        expect($html)->toContain('>&quot;cost of living&quot;</a>');
+    });
+});
+
 describe('SearchLogsController with a search that has no query', function () {
     beforeEach(function () {
         SearchQueryLog::create(['query_string' => null, 'page_number' => 1, 'count_hits' => 0, 'ip_address' => '127.0.0.1', 'query_time' => date('Y-m-d H:i:s', time() - 3600)]);
