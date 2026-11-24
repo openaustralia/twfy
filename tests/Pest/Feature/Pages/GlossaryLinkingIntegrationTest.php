@@ -73,3 +73,29 @@ describe('/glossary/ for a term whose title holds markup', function () {
         expect($this->html)->toContain('<title>&lt;/title&gt;&lt;script&gt;alert(1)&lt;/script&gt;: Glossary item');
     });
 });
+
+describe('/glossary/ for terms with regular expression characters in their titles', function () {
+    beforeEach(function () {
+        linking_term('Question Time (QT) rules', 'How questions are asked.');
+        $term = linking_term('Filibuster', 'See Question Time (QT) rules for how this differs.');
+        $this->html = $this->renderPage(GLOSSARY_PAGE, 'GET', ['gl' => (string) $term->glossary_id])['output'];
+    });
+
+    it('still shows the definition', function () {
+        expect($this->html)->toContain('See <a href=');
+    });
+
+    it('links the term', function () {
+        expect($this->html)->toContain('class="glossary">Question Time (QT) rules</a>');
+    });
+});
+
+describe('/glossary/ for a term with regular expression characters in its own title', function () {
+    it('marks the title in bold in the definition', function () {
+        $term = linking_term('Question Time (QT) rules', 'About Question Time (QT) rules in practice.');
+
+        $html = $this->renderPage(GLOSSARY_PAGE, 'GET', ['gl' => (string) $term->glossary_id])['output'];
+
+        expect($html)->toContain('<strong>Question Time (QT) rules</strong>');
+    });
+});

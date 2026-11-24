@@ -306,7 +306,7 @@ class GLOSSARY {
             $term_title = $this->terms[$glossary_id]['title'];
 
             $URL->update(["gl" => $glossary_id]);
-            $findwords[$glossary_id] = "/(?<![>\.\'\/])\b(" . $term_title . ")\b(?![<\'])/i";
+            $findwords[$glossary_id] = "/(?<![>\.\'\/])\b(" . preg_quote($term_title, '/') . ")\b(?![<\'])/i";
             // Catch glossary terms within their own definitions.
             if ($glossary_id == $this->glossary_id) {
                 $replacewords[] = "<strong>\\1</strong>";
@@ -323,7 +323,7 @@ class GLOSSARY {
         // Highlight all occurrences of another glossary term in the definition.
         $body = preg_replace($findwords, $replacewords, $body);
         if (isset($this->glossary_id)) {
-            $body = preg_replace("/(?<![>\.\'\/])\b(" . $this->terms[$this->glossary_id]['title'] . ")\b(?![<\'])/i", '<strong>\\1</strong>', $body, 1);
+            $body = preg_replace("/(?<![>\.\'\/])\b(" . preg_quote($this->terms[$this->glossary_id]['title'], '/') . ")\b(?![<\'])/i", '<strong>\\1</strong>', $body, 1);
         }
 
         // Replace any phrases in wikipedia
