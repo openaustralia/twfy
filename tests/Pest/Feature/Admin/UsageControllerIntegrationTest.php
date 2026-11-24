@@ -18,7 +18,7 @@ use OpenAustralia\TWFY\Models\User;
 uses(AdminControllerTestCase::class);
 
 /**
- * Creates a fictional person with a key, who made some calls today, and returns nothing.
+ * Creates a fictional person with a key, who made some calls today.
  */
 function usage_page_key(string $name, string $url): void {
     $user = User::create(['firstname' => $name, 'lastname' => '<Example>', 'email' => strtolower($name) . '@example.test', 'url' => $url]);
@@ -26,26 +26,15 @@ function usage_page_key(string $name, string $url): void {
     ApiDailyUsage::insert([['api_key_id' => $key->id, 'date' => gmdate('Y-m-d'), 'count' => 1234]]);
 }
 
-describe('UsageController::index()', function () {
+describe('UsageController::apiKeys()', function () {
     beforeEach(function () {
         usage_page_key('Ada', 'https://example.test/');
         usage_page_key('Bob', 'javascript:alert(1)');
-        DataDownload::create([
-            'request_time' => gmdate('Y-m-d') . ' 00:00:01',
-            'ip_address' => '203.0.113.5',
-            'method' => 'GET',
-            'path' => '/usage-page-spec.xml',
-            'status' => 200,
-            'bytes' => 512,
-            'referrer' => '',
-            'user_agent' => 'ExampleBot/1.0',
-            'line_hash' => sha1(random_bytes(16)),
-        ]);
-        $this->html = $this->render(fn () => (new UsageController())->index());
+        $this->html = $this->render(fn () => (new UsageController())->apiKeys());
     });
 
-    it('draws the page around the tables', function () {
-        expect($this->html)->toStartWith('[page_start][stripe_start]');
+    it('draws the page around the table', function () {
+        expect($this->html)->toStartWith('[page_start]');
     });
 
     it('lists a key holder', function () {
@@ -60,11 +49,36 @@ describe('UsageController::index()', function () {
         expect($this->html)->not->toContain('javascript:');
     });
 
+    it('sets the page key for the menu', function () {
+        expect($GLOBALS['this_page'])->toBe('admin_api_keys');
+    });
+});
+
+describe('UsageController::downloads()', function () {
+    beforeEach(function () {
+        DataDownload::create([
+            'request_time' => gmdate('Y-m-d') . ' 00:00:01',
+            'ip_address' => '203.0.113.5',
+            'method' => 'GET',
+            'path' => '/usage-page-spec.xml',
+            'status' => 200,
+            'bytes' => 512,
+            'referrer' => '',
+            'user_agent' => 'ExampleBot/1.0',
+            'line_hash' => sha1(random_bytes(16)),
+        ]);
+        $this->html = $this->render(fn () => (new UsageController())->downloads());
+    });
+
     it('lists a download', function () {
         expect($this->html)->toContain('/usage-page-spec.xml');
     });
 
+    it('lists the visitor', function () {
+        expect($this->html)->toContain('203.0.113.5');
+    });
+
     it('sets the page key for the menu', function () {
-        expect($GLOBALS['this_page'])->toBe('admin_usage');
+        expect($GLOBALS['this_page'])->toBe('admin_downloads');
     });
 });
