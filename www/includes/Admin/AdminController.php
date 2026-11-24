@@ -21,14 +21,14 @@ abstract class AdminController {
      *   Builds the view to show. It only runs once the visitor is known to be an admin.
      */
     protected function page(string $thisPage, \Closure $action): void {
-        global $PAGE, $this_page;
+        global $PAGE, $DATA, $this_page;
 
         $this_page = $thisPage;
 
         // page_start() turns away anyone who is not an admin, so nothing is read before it.
         $PAGE->page_start();
         echo '<div class="px-4 pb-12 pt-4 md:px-8">';
-        $PAGE->heading();
+        echo $this->view('layout.admin-title', ['title' => $DATA->page_metadata($thisPage, 'title'), 'icon' => (string) $DATA->page_metadata($thisPage, 'icon')])->render();
         echo $action()->render();
         echo '</div>';
         $PAGE->page_end();
