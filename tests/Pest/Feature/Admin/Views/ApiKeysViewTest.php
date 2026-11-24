@@ -21,7 +21,7 @@ uses(ViewTestCase::class);
  */
 function api_keys_view_data(array $key = []): array {
     return [
-        'filters' => [['Last 30 days', '/admin/usage.php', true], ['Today', '/admin/usage.php?period=1', false]],
+        'filters' => [['Last 30 days', '/admin/api_keys.php', true], ['Today', '/admin/api_keys.php?period=1', false]],
         'from' => '1999-01-01',
         'to' => '1999-01-30',
         'keys' => [$key + ['name' => 'Ada <Example>', 'website' => null, 'email' => 'ada@example.test', 'reason' => 'A school project', 'short_reason' => 'A school', 'commercial' => false, 'disabled' => '', 'total' => 12345, 'mean' => 411.5, 'min' => 3, 'max' => 2000]],
@@ -34,7 +34,7 @@ describe('admin.api_keys', function () {
     });
 
     it('offers the periods', function () {
-        $this->view('admin.api_keys', api_keys_view_data())->assertSee('href="/admin/usage.php?period=1">Today</a>', false);
+        $this->view('admin.api_keys', api_keys_view_data())->assertSee('href="/admin/api_keys.php?period=1">Today</a>', false);
     });
 });
 
