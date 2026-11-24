@@ -22,15 +22,15 @@ beforeEach(function () {
         }
 
         public function admin_recent_searches(int $count): array {
-            return [['url' => '/search/?s=x', 'query' => $this->query, 'page_number' => 1, 'count_hits' => 4, 'ip_address' => '127.0.0.1', 'query_time' => date('Y-m-d H:i:s', time() - 3600)]];
+            return [['url' => '/search/?s=x&amp;pop=1', 'query' => $this->query, 'page_number' => 1, 'count_hits' => 4, 'ip_address' => '127.0.0.1', 'query_time' => date('Y-m-d H:i:s', time() - 3600)]];
         }
 
         public function admin_popular_searches(int $count): array {
-            return [['url' => '/search/?s=x', 'query' => $this->query, 'c' => 7]];
+            return [['url' => '/search/?s=x&amp;pop=1', 'query' => $this->query, 'c' => 7]];
         }
 
         public function admin_failed_searches(): array {
-            return [['url' => '/search/?s=x', 'query' => $this->query, 'count_ips' => 1, 'group_count' => 2, 'max_time' => date('Y-m-d H:i:s', time() - 3600), 'min_time' => date('Y-m-d H:i:s', time() - 86400)]];
+            return [['url' => '/search/?s=x&amp;pop=1', 'query' => $this->query, 'count_ips' => 1, 'group_count' => 2, 'max_time' => date('Y-m-d H:i:s', time() - 3600), 'min_time' => date('Y-m-d H:i:s', time() - 86400)]];
         }
 
     };
@@ -39,6 +39,10 @@ beforeEach(function () {
 describe('SearchLogsController::recent()', function () {
     beforeEach(function () {
         $this->html = $this->render(fn () => (new SearchLogsController())->recent());
+    });
+
+    it('encodes the link once', function () {
+        expect($this->html)->toContain('href="/search/?s=x&amp;pop=1"');
     });
 
     it('draws the page around the table', function () {
@@ -63,6 +67,10 @@ describe('SearchLogsController::popular()', function () {
         $this->html = $this->render(fn () => (new SearchLogsController())->popular());
     });
 
+    it('encodes the link once', function () {
+        expect($this->html)->toContain('href="/search/?s=x&amp;pop=1"');
+    });
+
     it('draws no script tag', function () {
         expect($this->html)->not->toContain('<script>');
     });
@@ -79,6 +87,10 @@ describe('SearchLogsController::popular()', function () {
 describe('SearchLogsController::failed()', function () {
     beforeEach(function () {
         $this->html = $this->render(fn () => (new SearchLogsController())->failed());
+    });
+
+    it('encodes the link once', function () {
+        expect($this->html)->toContain('href="/search/?s=x&amp;pop=1"');
     });
 
     it('draws no script tag', function () {

@@ -15,7 +15,7 @@ class SearchLogsController extends AdminController {
             global $SEARCHLOG;
 
             $searches = array_map(fn (array $row): array => [
-                'url' => $row['url'],
+                'url' => self::plainUrl($row['url']),
                 'query' => $row['query'],
                 'page' => $row['page_number'],
                 'hits' => $row['count_hits'],
@@ -35,7 +35,7 @@ class SearchLogsController extends AdminController {
             global $SEARCHLOG;
 
             $searches = array_map(fn (array $row): array => [
-                'url' => $row['url'],
+                'url' => self::plainUrl($row['url']),
                 'query' => $row['query'],
                 'count' => $row['c'],
             ], $SEARCHLOG->admin_popular_searches(1000));
@@ -52,7 +52,7 @@ class SearchLogsController extends AdminController {
             global $SEARCHLOG;
 
             $searches = array_map(fn (array $row): array => [
-                'url' => $row['url'],
+                'url' => self::plainUrl($row['url']),
                 'query' => $row['query'],
                 'ips' => $row['count_ips'],
                 'times' => $row['group_count'],
@@ -62,6 +62,13 @@ class SearchLogsController extends AdminController {
 
             return $this->view('admin.failedsearches', ['searches' => $searches]);
         });
+    }
+
+    /**
+     * A search address without the HTML encoding SEARCHLOG gives it, as Blade encodes what it prints.
+     */
+    private static function plainUrl(string $url): string {
+        return htmlspecialchars_decode($url);
     }
 
     /**
