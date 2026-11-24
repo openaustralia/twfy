@@ -1,4 +1,4 @@
-<x-admin.table class="mx-4" :headings="['Query', 'Page', 'Hits', 'Host', 'Time ago']" :numeric="[1, 2]">
+<x-admin.table :headings="['Query', 'Page', 'Hits', 'Host', 'Time ago']" :numeric="[1, 2]">
 @foreach ($searches as $search)
 <x-admin.row>
 <x-admin.cell><x-admin.link :href="$search['url']">{{ $search['query'] }}</x-admin.link></x-admin.cell>

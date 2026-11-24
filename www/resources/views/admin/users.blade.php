@@ -3,7 +3,7 @@
 <div class="mb-4"><x-admin.filters :choices="$filters" /></div>
 <x-admin.note class="max-w-3xl">Administrators and Superusers can open the admin pages, and Moderators can moderate comments. {{ $can_edit ? 'Nobody can change their own role, so there is always a Superuser.' : 'Only a Superuser can change roles.' }}</x-admin.note>
 @if ($result)
-<p role="status" class="max-w-4xl rounded px-3 py-2 text-sm {{ $result['good'] ? 'bg-teal-100 text-teal-800' : 'bg-rose-100 text-rose-800' }}">{{ $result['text'] }}</p>
+<p role="status" class="rounded px-3 py-2 text-sm {{ $result['good'] ? 'bg-teal-100 text-teal-800' : 'bg-rose-100 text-rose-800' }}">{{ $result['text'] }}</p>
 @endif
 <x-admin.table :headings="['Name', 'Email', 'Role', 'Account']" :empty="$role === '' ? 'There are no users.' : 'No users have this role.'">
 @foreach ($users as $user)
@@ -31,7 +31,7 @@
 @endforeach
 </x-admin.table>
 @if ($pages > 1)
-<nav aria-label="Pages of users" class="flex max-w-4xl items-center justify-between gap-6 mt-4 text-sm font-semibold">
+<nav aria-label="Pages of users" class="flex items-center justify-between gap-6 mt-4 text-sm font-semibold">
 @if ($previous_url)<x-admin.link :href="$previous_url">&larr; Previous</x-admin.link>@else<span></span>@endif
 <span class="text-slate-500">Page {{ $page }} of {{ $pages }}</span>
 @if ($next_url)<x-admin.link :href="$next_url">Next &rarr;</x-admin.link>@else<span></span>@endif

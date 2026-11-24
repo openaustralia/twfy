@@ -27,14 +27,10 @@ abstract class AdminController {
 
         // page_start() turns away anyone who is not an admin, so nothing is read before it.
         $PAGE->page_start();
-        $PAGE->stripe_start();
+        echo '<div class="px-4 pb-12 pt-4 md:px-8">';
+        $PAGE->heading();
         echo $action()->render();
-        $PAGE->stripe_end([
-            [
-                'type' => 'html',
-                'content' => $PAGE->admin_menu(),
-            ],
-        ]);
+        echo '</div>';
         $PAGE->page_end();
     }
 
