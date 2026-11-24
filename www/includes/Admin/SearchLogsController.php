@@ -72,9 +72,12 @@ class SearchLogsController extends AdminController {
     }
 
     /**
-     * The searcher's host name, shortened.
+     * The searcher's host name, shortened, or nothing when the address was not kept.
      */
-    private static function host(string $ip_address): string {
+    private static function host(?string $ip_address): string {
+        if ($ip_address === null || $ip_address === '') {
+            return '';
+        }
         $host = gethostbyaddr($ip_address);
         return trim_characters($host, strlen($host) - 25, 100);
     }
