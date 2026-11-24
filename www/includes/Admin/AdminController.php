@@ -54,7 +54,7 @@ abstract class AdminController {
      * The address of a user's page.
      */
     protected function userUrl(int $user_id): string {
-        return '/user/?u=' . $user_id;
+        return WEBPATH . 'user/?u=' . $user_id;
     }
 
 }
