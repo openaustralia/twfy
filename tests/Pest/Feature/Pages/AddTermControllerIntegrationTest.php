@@ -311,3 +311,77 @@ describe('AddTermController::index() for a submission', function () {
         expect($html)->toContain('You haven&#039;t entered a definition.');
     });
 });
+
+describe('AddTermController::index() for a visitor who is signed in without the right to add terms', function () {
+    beforeEach(function () {
+        addterm_visitor(true, false, test()->user->user_id);
+    });
+
+    it('says the account cannot add terms when searching', function () {
+        $_GET['g'] = 'point of order';
+
+        $html = $this->render(fn () => addterm_controller()->index());
+
+        expect($html)->toContain('your account can&#039;t add glossary terms');
+    });
+
+    it('offers no form when searching', function () {
+        $_GET['g'] = 'point of order';
+
+        $html = $this->render(fn () => addterm_controller()->index());
+
+        expect($html)->not->toContain('name="definition"');
+    });
+
+    it('says the account cannot add terms when posting', function () {
+        $_POST = ['g' => 'point of order', 'submitterm' => 'Post', 'definition' => 'A claim.'];
+
+        $html = $this->render(fn () => addterm_controller()->index());
+
+        expect($html)->toContain('your account can&#039;t add glossary terms');
+    });
+
+    it('queues nothing when posting', function () {
+        $_POST = ['g' => 'point of order', 'submitterm' => 'Post', 'definition' => 'A claim.'];
+
+        $this->render(fn () => addterm_controller()->index());
+
+        expect(Editqueue::where('title', 'point of order')->count())->toBe(0);
+    });
+});
+
+describe('AddTermController::index() for a phrase typed in quotation marks', function () {
+    it('searches for the words without the quotation marks', function () {
+        $_GET['g'] = '"point of order"';
+
+        $html = $this->render(fn () => addterm_controller()->index());
+
+        expect($html)->toContain('<input type="hidden" name="g" value="point of order">');
+    });
+
+    it('queues the phrase without the quotation marks', function () {
+        $_POST = ['g' => '“point of order”', 'submitterm' => 'Post', 'definition' => 'A claim.'];
+
+        $this->render(fn () => addterm_controller()->index());
+
+        expect(Editqueue::where('user_id', $this->user->user_id)->pluck('title')->all())->toBe(['point of order']);
+    });
+});
+
+describe('AddTermController::index() for a phrase with formatting tags in it', function () {
+    it('shows the phrase as plain text in the preview', function () {
+        $_POST = ['g' => '<em>point</em> of order', 'previewterm' => 'Preview', 'definition' => 'A claim.'];
+
+        $html = $this->render(fn () => addterm_controller()->index());
+
+        expect($html)->toContain('>point of order</h3>');
+    });
+
+    it('queues the phrase as plain text', function () {
+        $_POST = ['g' => '<em>point</em> of order', 'submitterm' => 'Post', 'definition' => 'A claim.'];
+
+        $this->render(fn () => addterm_controller()->index());
+
+        expect(Editqueue::where('user_id', $this->user->user_id)->pluck('title')->all())->toBe(['point of order']);
+    });
+});

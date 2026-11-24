@@ -15,13 +15,14 @@ class AddTermController extends PageController {
     public function index(): void {
         global $THEUSER, $DATA;
 
-        $phrase = filter_user_input(self::input('g'), 'strict');
+        $phrase = self::cleanPhrase(self::input('g'));
         $definition = self::input('definition');
         $submitting = self::input('submitterm') !== '';
         $previewing = !$submitting && self::input('previewterm') !== '';
         $searching = $phrase !== '' && !$submitting && !$previewing;
         $signedIn = (bool) $THEUSER->isloggedin();
         $canAdd = $signedIn && $THEUSER->is_able_to('addterm');
+        $denied = $signedIn ? 'Sorry, your account can\'t add glossary terms.' : 'Sorry, you need to be signed in to add a glossary term.';
 
         $DATA->set_page_metadata('glossary_addterm', 'title', 'Add a glossary item');
 
@@ -33,8 +34,11 @@ class AddTermController extends PageController {
         $preview = null;
         $excerpts = '';
 
-        if ($submitting) {
-            $result = $canAdd ? TermSubmission::submit((int) $THEUSER->user_id(), self::input('g'), $definition) : ['ok' => false, 'message' => 'Sorry, you need to be signed in to add a glossary term.', 'title' => ''];
+        if (!$canAdd && ($submitting || $previewing || $searching)) {
+            $notice = $denied;
+            $matches = $phrase === '' ? [] : self::matches($phrase);
+        } elseif ($submitting) {
+            $result = TermSubmission::submit((int) $THEUSER->user_id(), $phrase, $definition);
             if ($result['ok']) {
                 $thanks = $result['title'];
             } else {
@@ -45,7 +49,7 @@ class AddTermController extends PageController {
             if (trim($definition) === '') {
                 $notice = 'Please write a definition to preview.';
             } else {
-                $preview = ['title' => filter_user_input(self::input('g'), 'comment'), 'body_html' => self::linked($definition)];
+                $preview = ['title' => $phrase, 'body_html' => self::linked($definition)];
             }
             $form = ['phrase' => $phrase, 'body' => $definition];
         } elseif ($searching) {
@@ -58,13 +62,9 @@ class AddTermController extends PageController {
                     $notice = 'Unfortunately "' . $phrase . '" doesn\'t seem to appear in Hansard at all.';
                     $phrase = '';
                 } else {
-                    foreach (Glossary::approvedTerms($phrase) as $term) {
-                        $matches[] = ['title' => (string) $term->title, 'url' => WEBPATH . 'glossary/?gl=' . $term->glossary_id];
-                    }
-                    if ($canAdd) {
-                        $form = ['phrase' => $phrase, 'body' => ''];
-                        $excerpts = $this->excerpts($phrase);
-                    }
+                    $matches = self::matches($phrase);
+                    $form = ['phrase' => $phrase, 'body' => ''];
+                    $excerpts = $this->excerpts($phrase);
                 }
             }
         }
@@ -122,6 +122,25 @@ class AddTermController extends PageController {
      */
     private static function linked(string $body): string {
         return (new \GLOSSARY(['sort' => 'regexp_replace']))->glossarise(filter_user_input($body, 'comment'), 0, 1);
+    }
+
+    /**
+     * The terms we already have that contain a phrase.
+     *
+     * @return list<array{title: string, url: string}>
+     *   Each term's title and address.
+     */
+    private static function matches(string $phrase): array {
+        return Glossary::approvedTerms($phrase)
+          ->map(fn (Glossary $term): array => ['title' => (string) $term->title, 'url' => WEBPATH . 'glossary/?gl=' . $term->glossary_id])
+          ->all();
+    }
+
+    /**
+     * A phrase as plain text, without tags or quotation marks, which the search adds itself.
+     */
+    private static function cleanPhrase(string $text): string {
+        return trim(str_replace(['"', '“', '”'], '', filter_user_input($text, 'strict')));
     }
 
     /**

@@ -33,7 +33,7 @@ final class TermSubmission {
      *   Whether it was queued, a message for the person if it was not, and the phrase as it was kept.
      */
     public static function submit(int $user_id, string $title, string $body): array {
-        $title = filter_user_input($title, 'comment');
+        $title = filter_user_input($title, 'strict');
         $body = filter_user_input($body, 'comment');
 
         if ($title === '') {
