@@ -31,4 +31,12 @@ describe('admin.alerts', function () use ($hostile) {
     it('escapes the described criteria', function () use ($hostile) {
         $this->view->assertSee("the word '" . $hostile . "'");
     });
+
+    it('links the email heading to the default order', function () {
+        $this->view->assertSee('href="alerts.php">Email</a>', false);
+    });
+
+    it('links the created heading to the date order', function () {
+        $this->view->assertSee('href="alerts.php?o=c">Created</a>', false);
+    });
 });
