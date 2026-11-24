@@ -2,6 +2,7 @@
 
 namespace OpenAustralia\TWFY\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -35,5 +36,25 @@ class Glossary extends Model {
     protected $casts = [
         'visible' => 'bool',
     ];
+
+    /**
+     * Visible terms a moderator approved, with who submitted them, by title.
+     *
+     * Each row has glossary_id, title, body, user_id, firstname and lastname.
+     *
+     * @param \Illuminate\Database\Eloquent\Builder<Glossary> $query
+     *   The query to narrow.
+     *
+     * @return \Illuminate\Database\Eloquent\Builder<Glossary>
+     *   The same query, joined to the queue and the user.
+     */
+    public function scopeApproved(Builder $query): Builder {
+        return $query->where('glossary.visible', 1)
+          ->join('editqueue', 'editqueue.glossary_id', '=', 'glossary.glossary_id')
+          ->join('users', 'users.user_id', '=', 'editqueue.user_id')
+          ->where('editqueue.approved', 1)
+          ->orderBy('glossary.title')
+          ->select('glossary.glossary_id', 'glossary.title', 'glossary.body', 'users.user_id', 'users.firstname', 'users.lastname');
+    }
 
 }
