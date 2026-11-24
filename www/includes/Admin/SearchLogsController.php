@@ -64,14 +64,14 @@ class SearchLogsController extends AdminController {
     /**
      * The address of a search, with each repeated word once, and flagged as an admin's.
      */
-    private static function searchUrl(string $query): string {
+    private static function searchUrl(?string $query): string {
         return WEBPATH . 'search/?' . http_build_query(['s' => self::withoutRepeats($query), 'pop' => 1]);
     }
 
     /**
      * What to call a search: the person's name for a speaker search, else the words without quote marks.
      */
-    private static function label(string $query): string {
+    private static function label(?string $query): string {
         $query = self::withoutRepeats($query);
         $position = strpos($query, ':');
         if ($position) {
@@ -86,8 +86,8 @@ class SearchLogsController extends AdminController {
     /**
      * A query with each word once, as bots send the same word many times.
      */
-    private static function withoutRepeats(string $query): string {
-        return implode(' ', array_unique(explode(' ', $query)));
+    private static function withoutRepeats(?string $query): string {
+        return implode(' ', array_unique(explode(' ', (string) $query)));
     }
 
     /**
