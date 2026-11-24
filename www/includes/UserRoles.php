@@ -68,13 +68,16 @@ class UserRoles {
     }
 
     /**
-     * The token a role change form carries, so another site can't post one for a signed-in Superuser.
+     * The token a form carries, so another site can't post it for a signed-in user.
      *
-     * It is keyed by the Superuser's stored password hash, so it needs no new secret and changes with their password.
+     * It is keyed by the user's stored password hash, so it needs no new secret and changes with their password.
      * The login cookie holds an md5 of that hash, not the hash, so the cookie can't be used to make one.
+     *
+     * The purpose names the form the token is for, so a token from one form is no good for another. The role change
+     * form uses the default.
      */
-    public static function token(int $user_id, string $password_hash): string {
-        return hash_hmac('sha256', 'user-roles:' . $user_id, $password_hash);
+    public static function token(int $user_id, string $password_hash, string $purpose = 'user-roles'): string {
+        return hash_hmac('sha256', $purpose . ':' . $user_id, $password_hash);
     }
 
     /**

@@ -40,6 +40,7 @@ include_once __DIR__ . "/../../includes/easyparliament/init.php";
 include_once __DIR__ . "/../../includes/easyparliament/member.php";
 
 use OpenAustralia\TWFY\Models\Alert;
+use OpenAustralia\TWFY\UserRoles;
 
 // Which page we're on all depends on the value of the "pg" variable...
 switch (get_http_var("pg")) {
@@ -101,7 +102,32 @@ switch (get_http_var("pg")) {
 $who = $this_page == "otheruseredit" ? "the user's" : "your";
 
 
-if (get_http_var("submitted") == "true") {
+if (get_http_var("submitted") == "true" && $this_page != "userjoin" && !edit_token_is_valid()) {
+    // Changing an existing user needs the token from the edit form, posted back here, so another site can't change a
+    // signed-in user's details. Nothing the request sent is used or shown.
+    http_response_code(403);
+
+    $PAGE->page_start();
+
+    $target_id = $this_page == "otheruseredit" ? edit_target_id() : null;
+    if ($target_id !== null) {
+        // Back to the edit page of the user who was being edited, as that is where the form is.
+        $EDITURL = new URL('otheruseredit');
+        $EDITURL->insert(['u' => (string) $target_id]);
+        $linktext = "Open the user's details and try again";
+    } else {
+        $EDITURL = new URL('useredit');
+        $linktext = 'Open your details and try again';
+    }
+    $PAGE->error_message([
+        'text' => "Sorry, we couldn't check that this request came from your own form, so nothing was changed.",
+        'linkurl' => $EDITURL->generate(),
+        'linktext' => $linktext,
+    ]);
+
+    $PAGE->page_end();
+
+} elseif (get_http_var("submitted") == "true") {
     // The edit or join form has been submitted, so check input.
 
     // Put all the user-submitted data in an array.
@@ -244,6 +270,56 @@ if (get_http_var("submitted") == "true") {
         $PAGE->page_end();
     }
 
+}
+
+/**
+ * The id of the user being edited, when it is a whole number, or null.
+ */
+function edit_target_id(): ?int {
+    $id = get_http_var("u");
+
+    if (!is_string($id) || !ctype_digit($id)) {
+        return null;
+    }
+
+    return (int) $id;
+}
+
+/**
+ * The token the edit form carries, so another site can't change a signed-in user's details.
+ *
+ * Editing another user binds the token to that user, so one issued for one user is no good for another.
+ * It is empty unless someone is signed in, as a token with no password hash to key it could be made by anyone.
+ */
+function edit_token(): string {
+    global $THEUSER, $this_page;
+
+    if (!$THEUSER->isloggedin() || (string) $THEUSER->password() === '') {
+        return '';
+    }
+
+    $purpose = 'user-edit';
+    if ($this_page == "otheruseredit") {
+        $target_id = edit_target_id();
+        if ($target_id === null) {
+            return '';
+        }
+        $purpose .= ':' . $target_id;
+    }
+
+    return UserRoles::token((int) $THEUSER->user_id(), (string) $THEUSER->password(), $purpose);
+}
+
+/**
+ * Whether the request posted the signed-in user's edit token.
+ *
+ * Only $_POST is read, as get_http_var() reads $_GET first and a token in a URL would end up in logs.
+ */
+function edit_token_is_valid(): bool {
+    $token = edit_token();
+    $posted = $_POST['token'] ?? '';
+
+    return $token !== '' && is_string($posted) && hash_equals($token, $posted);
 }
 
 /**
@@ -804,6 +880,13 @@ function display_form($details = [], $errors = []) {
         <input type="hidden" name="submitted" value="true">
 
         <?php
+        if ($this_page == "useredit" || $this_page == "otheruseredit") {
+            // So another site can't submit this form for a signed-in user.
+            ?>
+            <input type="hidden" name="token" value="<?php echo htmlentities(edit_token()); ?>">
+            <?php
+        }
+
         if (get_http_var("ret") != "") {
             // The user was probably trying to add a writer but is joining first.
             ?>

@@ -114,11 +114,22 @@ abstract class PageRenderingIntegrationTestCase extends TestCase {
      * it suits error pages and non-GET requests. The page runs against the
      * committed database, not any transaction held by the test process.
      *
+     * @param string $script
+     *   The page script.
+     * @param string $method
+     *   The request method.
+     * @param array $query
+     *   The query string variables, as $_GET.
+     * @param array $post
+     *   The form variables, as $_POST.
+     * @param array $cookies
+     *   The cookies, as $_COOKIE.
+     *
      * @return array
      *   Keys output, stderr, status (the HTTP response code the page set) and
      *   exit.
      */
-    protected function renderPage(string $script, string $method = 'GET', array $query = []): array {
+    protected function renderPage(string $script, string $method = 'GET', array $query = [], array $post = [], array $cookies = []): array {
         $config = getTestDbConfig();
         $env = [
             'DB_HOST' => $config['host'],
@@ -134,7 +145,7 @@ abstract class PageRenderingIntegrationTestCase extends TestCase {
                 '$_SERVER["REQUEST_METHOD"] = ' . var_export($method, true) . ';' .
                 '$_SERVER["REQUEST_URI"] = "/";' .
                 '$_SERVER["HTTP_HOST"] = "localhost";' .
-                '$_GET = ' . var_export($query, true) . '; $_POST = [];' .
+                '$_GET = ' . var_export($query, true) . '; $_POST = ' . var_export($post, true) . '; $_COOKIE = ' . var_export($cookies, true) . ';' .
                 'register_shutdown_function(function () { fwrite(STDERR, "\nSTATUS=" . (http_response_code() ?: 200) . "\n"); });' .
                 'chdir(dirname(' . var_export($script, true) . '));' .
                 'include ' . var_export($script, true) . ';'
