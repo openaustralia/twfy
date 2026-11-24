@@ -369,7 +369,7 @@ class HansardProceduralView {
     /**
      *
      */
-    public static function forProcedural(array $row, array $info): self {
+    public static function forProcedural(array $row): self {
         $view = new self();
         $view->id = 'g' . gid_to_anchor($row['gid']);
         // Same cleanup as HansardSpeechView::forSpeech() - see cleanBody()'s own

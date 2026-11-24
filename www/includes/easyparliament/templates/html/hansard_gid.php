@@ -228,7 +228,7 @@ if (isset($data['rows'])) {
                 // nothing's echoed for a Plates row at this point, it's just pushed
                 // onto $plates_items and rendered in one batch by $platesEngine->render()
                 // long after this loop ends, so there'd be nothing new to flush.
-                $plates_items[] = HansardProceduralView::forProcedural($row, $data['info']);
+                $plates_items[] = HansardProceduralView::forProcedural($row);
                 continue;
             }
 
