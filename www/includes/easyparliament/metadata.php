@@ -111,31 +111,10 @@ class Metadata {
             'parent' => 'admin',
             'url' => 'admin/proof.php',
         ],
-        'admin_badusers' => [
-            'title' => 'Bad users',
-            'parent' => 'admin',
-            'url' => 'admin/badusers.php'
-        ],
         'admin_home' => [
             'title' => 'Home',
             'parent' => 'admin',
             'url' => 'admin/'
-        ],
-        'admin_comments' => [
-            'title' => 'Recent comments',
-            'parent' => 'admin',
-            'url' => 'admin/comments.php'
-        ],
-        'admin_commentreport' => [
-            'title' => 'Processing a comment report',
-            'parent' => 'admin',
-            'url' => 'admin/report.php',
-            'session_vars' => ['rid', 'cid']
-        ],
-        'admin_commentreports' => [
-            'title' => 'Outstanding comment reports',
-            'parent' => 'admin',
-            'url' => 'admin/reports.php'
         ],
         'admin_failedsearches' => [
             'title' => 'Failed searches',
