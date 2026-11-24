@@ -404,8 +404,7 @@ if (isset($MEMBER) && is_array($MEMBER->person_id())) {
 <div class="blockbody"><p>Please feel free to use the data
 on this page, but if you do you must cite OpenAustralia.org in the
 body of your articles as the source of any analysis or
-data you get off this site. If you ignore this, we might have to start
-keeping these sorts of records on you...</p></div></div>'
+data you get off this site.</p></div></div>'
     ];
     // $PAGE->stripe_end($sidebars);
 
