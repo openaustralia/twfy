@@ -4,6 +4,7 @@ namespace OpenAustralia\TWFY\Models;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Collection;
 
 /**
  * Glossary Eloquent model.
@@ -55,6 +56,23 @@ class Glossary extends Model {
           ->where('editqueue.approved', 1)
           ->orderBy('glossary.title')
           ->select('glossary.glossary_id', 'glossary.title', 'glossary.body', 'users.user_id', 'users.firstname', 'users.lastname');
+    }
+
+    /**
+     * The approved terms, one for each term even when it has more than one approved queue entry.
+     *
+     * @param string $titleContains
+     *   Keeps only terms whose title contains this text, when it is not empty.
+     *
+     * @return \Illuminate\Support\Collection<int, Glossary>
+     *   The terms, by title.
+     */
+    public static function approvedTerms(string $titleContains = ''): Collection {
+        $query = static::approved();
+        if ($titleContains !== '') {
+            $query->where('glossary.title', 'like', '%' . addcslashes($titleContains, '%_\\') . '%');
+        }
+        return $query->get()->unique('glossary_id')->values();
     }
 
 }

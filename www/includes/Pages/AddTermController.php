@@ -58,7 +58,7 @@ class AddTermController extends PageController {
                     $notice = 'Unfortunately "' . $phrase . '" doesn\'t seem to appear in Hansard at all.';
                     $phrase = '';
                 } else {
-                    foreach (Glossary::approved()->where('glossary.title', 'like', '%' . addcslashes($phrase, '%_\\') . '%')->get() as $term) {
+                    foreach (Glossary::approvedTerms($phrase) as $term) {
                         $matches[] = ['title' => (string) $term->title, 'url' => WEBPATH . 'glossary/?gl=' . $term->glossary_id];
                     }
                     if ($canAdd) {
@@ -82,7 +82,7 @@ class AddTermController extends PageController {
             'form' => $form,
             'preview' => $preview,
             'excerpts_html' => $excerpts,
-            'letters' => GlossaryLetters::for(Glossary::approved()->get()),
+            'letters' => GlossaryLetters::for(Glossary::approvedTerms()),
             'examples' => [['title' => 'Standing Order 94A', 'url' => WEBPATH . 'glossary/?gl=2'], ['title' => 'interjecting', 'url' => WEBPATH . 'glossary/?gl=1']],
             'browse_url' => WEBPATH . 'glossary/',
         ]));

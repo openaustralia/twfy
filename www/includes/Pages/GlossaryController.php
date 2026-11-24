@@ -16,7 +16,7 @@ class GlossaryController extends PageController {
     public function index(): void {
         global $DATA;
 
-        $terms = Glossary::approved()->get();
+        $terms = Glossary::approvedTerms();
         $id = isset($_GET['gl']) && is_numeric($_GET['gl']) ? (int) $_GET['gl'] : null;
         $term = $id === null ? null : $terms->firstWhere('glossary_id', $id);
         $letter = self::letter($terms, $term);

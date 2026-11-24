@@ -166,6 +166,38 @@ describe('GlossaryController::index() for a body with a web address that holds a
     });
 });
 
+/**
+ * Approves the term a second time, as a re-approval or resubmission would.
+ */
+function public_glossary_approve_again(Glossary $term): void {
+    $first = Editqueue::where('glossary_id', $term->glossary_id)->first();
+    Editqueue::create(['user_id' => $first->user_id, 'edit_type' => 2, 'glossary_id' => $term->glossary_id, 'title' => $term->title, 'body' => $term->body, 'submitted' => '2026-11-02 10:00:00', 'approved' => true]);
+}
+
+describe('GlossaryController::index() for a term approved twice', function () {
+    beforeEach(function () {
+        $this->twice = public_glossary_term('Filibuster');
+        public_glossary_approve_again($this->twice);
+        public_glossary_term('Quorum');
+    });
+
+    it('lists the term once', function () {
+        $_GET['az'] = 'F';
+
+        $html = $this->render(fn () => (new GlossaryController())->index());
+
+        expect(substr_count($html, '>Filibuster</a>'))->toBe(1);
+    });
+
+    it('links the term after it, not itself', function () {
+        $_GET['gl'] = (string) $this->twice->glossary_id;
+
+        $html = $this->render(fn () => (new GlossaryController())->index());
+
+        expect($html)->toContain('>Quorum &rarr;</a>');
+    });
+});
+
 describe('GlossaryController::index() for a term that is not there', function () {
     it('shows the index instead', function () {
         public_glossary_term('Quorum');

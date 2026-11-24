@@ -134,14 +134,21 @@ describe('AddTermController::index() for a phrase that is in Hansard', function 
 });
 
 describe('AddTermController::index() for a phrase with a definition already', function () {
-    it('lists the existing definition', function () {
+    beforeEach(function () {
         $term = Glossary::create(['title' => 'quorum call', 'body' => 'A claim.', 'type' => 2, 'visible' => true]);
-        Editqueue::create(['user_id' => test()->user->user_id, 'edit_type' => 2, 'glossary_id' => $term->glossary_id, 'title' => 'quorum call', 'body' => 'A claim.', 'submitted' => '2026-11-01 10:00:00', 'approved' => true]);
+        foreach (['2026-11-01 10:00:00', '2026-11-02 10:00:00'] as $submitted) {
+            Editqueue::create(['user_id' => test()->user->user_id, 'edit_type' => 2, 'glossary_id' => $term->glossary_id, 'title' => 'quorum call', 'body' => 'A claim.', 'submitted' => $submitted, 'approved' => true]);
+        }
         $_GET['g'] = 'quorum';
+        $this->html = $this->render(fn () => addterm_controller(2)->index());
+    });
 
-        $html = $this->render(fn () => addterm_controller(2)->index());
+    it('lists the existing definition', function () {
+        expect($this->html)->toContain('>quorum call</a>');
+    });
 
-        expect($html)->toContain('>quorum call</a>');
+    it('lists it once, however many times it was approved', function () {
+        expect(substr_count($this->html, '>quorum call</a>'))->toBe(1);
     });
 });
 
