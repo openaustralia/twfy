@@ -10,6 +10,9 @@
 
 require_once __DIR__ . '/bootstrap.php';
 
+use Illuminate\Cookie\CookieValuePrefix;
+use OpenAustralia\TWFY\Models\Session;
+use OpenAustralia\TWFY\Models\User;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -19,6 +22,13 @@ abstract class PageRenderingIntegrationTestCase extends TestCase {
 
     private static bool $createdConfGeneral = false;
     private static ?string $originalConfGeneral = null;
+
+    /**
+     * The sessions signedInCookies() saved, removed again after each test.
+     *
+     * @var list<string>
+     */
+    private array $sessionIds = [];
 
     /**
      *
@@ -39,6 +49,15 @@ abstract class PageRenderingIntegrationTestCase extends TestCase {
         if (!$conn) {
             $this->markTestSkipped('Database connection not available');
         }
+    }
+
+    /**
+     *
+     */
+    protected function tearDown(): void {
+        Session::whereIn('id', $this->sessionIds)->delete();
+        $this->sessionIds = [];
+        parent::tearDown();
     }
 
     /**
@@ -179,6 +198,32 @@ abstract class PageRenderingIntegrationTestCase extends TestCase {
     }
 
     /**
+     * The cookies of a browser that Laravel has signed in as a user.
+     *
+     * The page runs in another process, so the session is saved to the committed database and removed after the
+     * test.
+     *
+     * @return array<string, string>
+     *   The encrypted session cookie, by name.
+     */
+    protected function signedInCookies(User $user): array {
+        $app = twfy_laravel();
+        $encrypter = $app->make('encrypter');
+        $name = $app->make('config')->get('session.cookie');
+        $id = bin2hex(random_bytes(20));
+        Session::create([
+            'id' => $id,
+            'user_id' => $user->user_id,
+            'ip_address' => '127.0.0.1',
+            'user_agent' => 'page rendering spec',
+            'payload' => base64_encode(serialize(['_token' => bin2hex(random_bytes(20)), twfy_laravel_guard()->getName() => $user->user_id])),
+            'last_activity' => time(),
+        ]);
+        $this->sessionIds[] = $id;
+        return [$name => $encrypter->encrypt(CookieValuePrefix::create($name, $encrypter->getKey()) . $id, false)];
+    }
+
+    /**
      * Ensure conf/general exists so init.php can load.
      */
     private static function ensureConfGeneral(): void {
@@ -214,7 +259,8 @@ abstract class PageRenderingIntegrationTestCase extends TestCase {
             . 'define("REGMEMPDFPATH", "regmem/scan/");' . "\n"
             . 'define("METADATAPATH", ' . var_export(__DIR__ . '/../www/includes/easyparliament/metadata.php', true) . ');' . "\n"
             . 'define("XAPIANDB", "/tmp/searchdb");' . "\n"
-            . 'define("RECESSFILE", "/dev/null");' . "\n";
+            . 'define("RECESSFILE", "/dev/null");' . "\n"
+            . 'define("APP_KEY", ' . var_export(APP_KEY, true) . ');' . "\n";
 
         file_put_contents($path, $content);
         self::$createdConfGeneral = true;

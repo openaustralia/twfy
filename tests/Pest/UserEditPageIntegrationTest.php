@@ -31,7 +31,7 @@ describe('/user/ submitted when signed in', function () {
             'status' => 'User',
             'password' => $this->hash,
         ]);
-        $this->cookies = ['epuser_id' => $this->bea->user_id . '.' . md5($this->hash)];
+        $this->cookies = $this->signedInCookies($this->bea);
         $this->token = UserRoles::token($this->bea->user_id, $this->hash, 'user-edit');
         $this->form = [
             'pg' => 'edit',
@@ -143,7 +143,7 @@ describe('/user/ edit forms', function () {
             'status' => 'User',
             'password' => 'another-hash',
         ]);
-        $this->cookies = ['epuser_id' => $this->boss->user_id . '.' . md5($this->hash)];
+        $this->cookies = $this->signedInCookies($this->boss);
         $this->tokenFor = fn (?int $target): string => UserRoles::token(
             $this->boss->user_id,
             $this->hash,
