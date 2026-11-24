@@ -198,6 +198,53 @@ describe('GlossaryController::index() for a term approved twice', function () {
     });
 });
 
+describe('GlossaryController::index() for terms that start with something other than a letter', function () {
+    beforeEach(function () {
+        public_glossary_term('1983 Inquiry');
+        public_glossary_term('Émile Rule');
+        public_glossary_term('Quorum');
+    });
+
+    it('links a # to them', function () {
+        $html = $this->render(fn () => (new GlossaryController())->index());
+
+        expect($html)->toContain('href="/glossary/?az=%23"');
+    });
+
+    it('lists the digit term under the #', function () {
+        $_GET['az'] = '#';
+
+        $html = $this->render(fn () => (new GlossaryController())->index());
+
+        expect($html)->toContain('>1983 Inquiry</a>');
+    });
+
+    it('lists the accented term under the #', function () {
+        $_GET['az'] = '#';
+
+        $html = $this->render(fn () => (new GlossaryController())->index());
+
+        expect($html)->toContain('>Émile Rule</a>');
+    });
+
+    it('keeps them out of the letter pages', function () {
+        $_GET['az'] = 'Q';
+
+        $html = $this->render(fn () => (new GlossaryController())->index());
+
+        expect($html)->not->toContain('>1983 Inquiry</a>');
+    });
+
+    it('shows no # when every term starts with a letter', function () {
+        Glossary::where('title', '1983 Inquiry')->delete();
+        Glossary::where('title', 'Émile Rule')->delete();
+
+        $html = $this->render(fn () => (new GlossaryController())->index());
+
+        expect($html)->not->toContain('>#</');
+    });
+});
+
 describe('GlossaryController::index() for a term that is not there', function () {
     it('shows the index instead', function () {
         public_glossary_term('Quorum');

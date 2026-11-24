@@ -69,7 +69,7 @@ class GlossaryController extends PageController {
      */
     private static function letter(Collection $terms, ?Glossary $term): string {
         $asked = strtoupper(substr((string) ($_GET['az'] ?? ''), 0, 1));
-        if (preg_match('/^[A-Z]$/', $asked) === 1) {
+        if (preg_match('/^[A-Z#]$/', $asked) === 1) {
             return $asked;
         }
         return $term === null ? 'A' : GlossaryLetters::initial($term);
