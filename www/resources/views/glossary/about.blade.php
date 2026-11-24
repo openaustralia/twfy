@@ -3,6 +3,5 @@
 <h2 class="!mx-0 !mb-3 !mt-0 text-xl font-semibold !text-slate-900">What is the glossary?</h2>
 <p class="mb-3 text-lg text-slate-700">Parliament has its own language. The glossary explains the jargon, from adjournment to quorum, in plain words.</p>
 <p class="mb-3 text-lg text-slate-700">Wherever one of these terms comes up in a debate on OpenAustralia, it links to its definition here, so you can find out what it means without leaving the page.</p>
-<p class="mb-5 text-lg text-slate-700">Anyone with an account can suggest a term. Search for the phrase first, so we can check it appears in Hansard, then write your definition. A moderator checks every suggestion, and it should appear within a day or two.</p>
-<a href="{{ $add_url }}" class="inline-block rounded bg-teal-700 px-6 py-3 font-semibold !text-white !no-underline shadow-sm hover:bg-teal-800">Suggest a term</a>
+<p class="mb-0 text-lg text-slate-700">Anyone with an account can suggest a term. Search for the phrase first, so we can check it appears in Hansard, then write your definition. A moderator checks every suggestion, and it should appear within a day or two.</p>
 </section>

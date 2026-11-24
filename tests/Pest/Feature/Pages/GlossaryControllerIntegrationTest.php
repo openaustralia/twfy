@@ -45,6 +45,10 @@ describe('GlossaryController::index() for a letter', function () {
         $this->html = $this->render(fn () => (new GlossaryController())->index());
     });
 
+    it('marks the terms as a bulleted list', function () {
+        expect($this->html)->toContain('<ul class="!m-0 !list-disc');
+    });
+
     it('draws the page around the list', function () {
         expect($this->html)->toStartWith('[page_start]');
     });
@@ -67,6 +71,10 @@ describe('GlossaryController::index() for a letter', function () {
 
     it('invites a suggestion', function () {
         expect($this->html)->toContain('href="/addterm/"');
+    });
+
+    it('puts the suggest a term button above the explanation', function () {
+        expect(strpos($this->html, 'href="/addterm/"'))->toBeLessThan(strpos($this->html, 'What is the glossary?'));
     });
 
     it('links the letters that have terms', function () {
@@ -105,8 +113,8 @@ describe('GlossaryController::index() for a term', function () {
         $this->html = $this->render(fn () => (new GlossaryController())->index());
     });
 
-    it('shows the title', function () {
-        expect($this->html)->toContain('>Quorum</h1>');
+    it('shows the term above its definition', function () {
+        expect($this->html)->toContain('>Quorum</h2>');
     });
 
     it('links the term before it', function () {
@@ -121,8 +129,12 @@ describe('GlossaryController::index() for a term', function () {
         expect($this->html)->toContain('href="/search/?s=%22Quorum%22"');
     });
 
-    it('labels the page as a glossary term', function () {
-        expect($this->html)->toContain('>Glossary Term</p>');
+    it('puts the glossary icon next to the page title', function () {
+        expect($this->html)->toMatch('/<h1[^>]*><svg[^>]*aria-hidden="true"/');
+    });
+
+    it('titles the page Glossary Term', function () {
+        expect($this->html)->toContain('Glossary Term</h1>');
     });
 
     it('titles the page by the term', function () {
