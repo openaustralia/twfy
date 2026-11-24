@@ -32,7 +32,7 @@ describe('HomeController::index()', function () {
     });
 
     it('links a confirmed user to their page', function () {
-        expect($this->html)->toContain('href="/user/?u=');
+        expect($this->html)->toContain('href="' . WEBPATH . 'user/?u=');
     });
 
     it('sets the page key for the menu', function () {
