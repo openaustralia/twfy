@@ -1,4 +1,4 @@
-<h1 class="!m-0 mb-6 text-3xl font-semibold !text-slate-900">{{ $term['title'] }}</h1>
+<h1 class="!mb-6 !mt-0 text-3xl font-semibold !text-slate-900">{{ $term['title'] }}</h1>
 @include('glossary.letters')
 <article class="rounded-2xl bg-white p-6 shadow-md md:p-8">
 {{-- The body is the only HTML printed unescaped: GlossaryController filters it down to a few tags and links the terms in it. --}}

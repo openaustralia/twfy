@@ -84,6 +84,14 @@ describe('GlossaryController::index() for a letter', function () {
         expect($this->html)->not->toContain('<script>');
     });
 
+    it('explains what the glossary is', function () {
+        expect($this->html)->toContain('What is the glossary?');
+    });
+
+    it('invites a suggestion', function () {
+        expect($this->html)->toContain('href="/addterm/"');
+    });
+
     it('links the letters that have terms', function () {
         expect($this->html)->toContain('href="/glossary/?az=F"');
     });

@@ -1,5 +1,5 @@
 {{-- The A to Z strip. A letter is a link when some term starts with it, and marked when it is the one being shown. --}}
-<nav aria-label="Glossary letters" class="mb-6">
+<nav aria-label="Glossary letters" class="mb-8">
 <ul class="m-0 flex list-none flex-wrap gap-2 p-0">
 @foreach ($letters as $letter)
 <li class="!m-0">
