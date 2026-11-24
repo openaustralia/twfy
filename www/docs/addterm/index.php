@@ -28,7 +28,7 @@ if ((get_http_var('g') != '') && (get_http_var('previewterm') == '')) {
 
 // Check that people aren't trying to define silly words.
 if (
-    in_array(strtolower($GLOSSARY->query), $GLOSSARY->get_stopwords())
+    in_array(strtolower((string) $GLOSSARY->query), $GLOSSARY->get_stopwords())
 ) {
     $GLOSSARY->query = "";
     $args['blankform'] = 1;
