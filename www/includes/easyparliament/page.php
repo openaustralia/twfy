@@ -2934,103 +2934,6 @@ class PAGE {
     /**
      *
      */
-    public function display_commentreport($data) {
-        // $data has key value pairs.
-        // Called from $COMMENT->display_report().
-
-        if ($data['user_id'] > 0) {
-            $USERURL = new URL('userview');
-            $USERURL->insert(['id' => $data['user_id']]);
-            $username = '<a href="' . $USERURL->generate() . '">' . htmlentities($data['user_name']) . '</a>';
-        } else {
-            $username = htmlentities($data['user_name']);
-        }
-        ?>
-                <div class="comment">
-                    <p class="credit"><strong>Comment report</strong><br>
-                        <small>Reported by <?php echo $username; ?> on <?php echo $data['reported']; ?></small>
-                    </p>
-
-                    <p><?php echo htmlentities($data['body']); ?></p>
-                </div>
-                <?php
-                if ($data['resolved'] != 'NULL') {
-                    ?>
-                    <p>&nbsp;<br><em>This report has not been resolved.</em></p>
-                    <?php
-                } else {
-                    ?>
-                    <p><em>This report was resolved on <?php echo $data['resolved']; ?></em></p>
-                    <?php
-                    // We could link to the person who resolved it with $data['resolvedby'],
-                    // a user_id. But we don't have their name at the moment.
-                }
-
-    }
-
-    /**
-     *
-     */
-    public function display_commentreportlist($data) {
-        // For the admin section.
-        // Gets an array of data from COMMENTLIST->render().
-        // Passes it on to $this->display_table().
-
-        if (count($data) > 0) {
-
-            ?>
-                        <h3>Reported comments</h3>
-                        <?php
-                        // Put the data in an array which we then display using $PAGE->display_table().
-                        $tabledata['header'] = [
-                            'Reported by',
-                            'Begins...',
-                            'Reported on',
-                            ''
-                        ];
-
-                        $tabledata['rows'] = [];
-
-                        $EDITURL = new URL('admin_commentreport');
-
-                        foreach ($data as $n => $report) {
-
-                            if (!$report['locked']) {
-                                // Yes, we could probably cope if we just passed the report_id
-                                // through, but this isn't a public-facing page and life's
-                                // easier if we have the comment_id too.
-                                $EDITURL->insert([
-                                    'rid' => $report['report_id'],
-                                    'cid' => $report['comment_id'],
-                                ]);
-                                $editlink = '<a href="' . $EDITURL->generate() . '">View</a>';
-                            } else {
-                                $editlink = 'Locked';
-                            }
-
-                            $body = trim_characters($report['body'], 0, 40);
-
-                            $tabledata['rows'][] = [
-                                htmlentities($report['firstname'] . ' ' . $report['lastname']),
-                                htmlentities($body),
-                                $report['reported'],
-                                $editlink
-                            ];
-
-                        }
-
-                        $this->display_table($tabledata);
-
-        } else {
-
-            print "<p>There are no outstanding comment reports.</p>\n";
-        }
-
-    }
-
-    /**
-     *
-     */
     public function display_calendar_month($month, $year, $dateArray, $page) {
         // From https://www.zend.com/zend/trick/tricks-Oct-2002.php
         // Adjusted for style, putting Monday first, and the URL of the page linked to.
@@ -3169,17 +3072,14 @@ class PAGE {
 
         $pages = [
             'admin_home',
-            'admin_comments',
             'admin_searchlogs',
             'admin_popularsearches',
             'admin_failedsearches',
             'admin_statistics',
             'admin_usage',
             'admin_users',
-            'admin_commentreports',
             'admin_glossary',
             'admin_glossary_pending',
-            'admin_badusers',
             'admin_alerts',
             'admin_proof',
         ];
