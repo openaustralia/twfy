@@ -42,6 +42,10 @@ class AlertStats {
      *
      * @return list<array{string, string, string}>
      *   The name or email, the description and the created time of each alert.
+     *   The name and email cell is HTML-encoded, and the name is wrapped in a
+     *   link when the person has an account. The description cell is returned
+     *   as the callback gives it, so the callback owns its encoding. The
+     *   created cell is the stored time, or "&nbsp;" when none was recorded.
      */
     public static function listRows(Builder $alerts, string $order, callable $describe, callable $user_url): array {
         $alerts = $alerts->orderBy($order === 'created' ? 'created' : 'email')
@@ -56,7 +60,7 @@ class AlertStats {
             $user = $users->get(strtolower($alert->email));
             $created = (string) $alert->created;
             $rows[] = [
-                $user === null ? $alert->email : '<a href="' . $user_url($user->user_id) . '">' . $user->firstname . ' ' . $user->lastname . '</a>',
+                $user === null ? htmlspecialchars($alert->email) : '<a href="' . $user_url($user->user_id) . '">' . htmlspecialchars($user->firstname . ' ' . $user->lastname) . '</a>',
                 $describe($alert->criteria),
                 str_starts_with($created, '0000-') ? '&nbsp;' : $created,
             ];

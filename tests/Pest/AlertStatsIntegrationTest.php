@@ -220,6 +220,14 @@ describe('AlertStats::listRows()', function () {
         });
     });
 
+    describe('when the email has no user', function () {
+        it('escapes the email', function () {
+            AlertFixtures::alert('<script>x</script>@example.invalid', 'tax');
+
+            expect(array_column(list_rows_for_specs(), 0))->toContain('&lt;script&gt;x&lt;/script&gt;@example.invalid');
+        });
+    });
+
     describe('when the email has a user', function () {
         beforeEach(function () {
             $this->user = UserModel::create(['firstname' => 'Zoe', 'lastname' => 'Example', 'email' => 'ZED@example.invalid']);
@@ -228,6 +236,36 @@ describe('AlertStats::listRows()', function () {
         it('links the name to the user page', function () {
             expect(array_column(list_rows_for_specs(), 0)[1])->toBe('<a href="/user/' . $this->user->user_id . '">Zoe Example</a>');
         });
+
+        it('escapes the name', function () {
+            $this->user->update(['firstname' => '<script>x</script>', 'lastname' => 'O"Example']);
+
+            expect(array_column(list_rows_for_specs(), 0)[1])->toBe('<a href="/user/' . $this->user->user_id . '">&lt;script&gt;x&lt;/script&gt; O&quot;Example</a>');
+        });
+    });
+
+    describe('with ordinary emails', function () {
+        it('shows the email', function (string $email, string $expected) {
+            AlertFixtures::alert($email, 'tax');
+
+            expect(array_column(list_rows_for_specs(), 0))->toContain($expected);
+        })->with([
+            'plain' => ['kim@example.invalid', 'kim@example.invalid'],
+            'ampersand' => ['r&d@example.invalid', 'r&amp;d@example.invalid'],
+            'apostrophe' => ["o'neil@example.invalid", 'o&#039;neil@example.invalid'],
+        ]);
+    });
+
+    describe('with ordinary names', function () {
+        it('shows the name', function (string $first, string $last, string $expected) {
+            $user = UserModel::create(['firstname' => $first, 'lastname' => $last, 'email' => 'zed@example.invalid']);
+
+            expect(array_column(list_rows_for_specs(), 0)[1])->toBe('<a href="/user/' . $user->user_id . '">' . $expected . '</a>');
+        })->with([
+            'plain' => ['Zoe', 'Example', 'Zoe Example'],
+            'apostrophe' => ['Zoe', "O'Brien", 'Zoe O&#039;Brien'],
+            'ampersand' => ['Zoe', 'Smith & Sons', 'Zoe Smith &amp; Sons'],
+        ]);
     });
 });
 
