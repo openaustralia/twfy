@@ -44,6 +44,13 @@ still the legacy GET page, and the login form still has no CSRF token; both chan
 The Docker `webhost` bind-mounts `bootstrap/`, `config/`, `lang/`, `routes/` and `storage/` beside `www/`: after a
 branch switch that deletes and recreates one, recreate the container (`docker compose up -d --force-recreate webhost`).
 
+Admin pages are moving to Blade views and controller classes. A page file in `www/docs/admin/` only calls a controller
+in `www/includes/Admin/` (extending `AdminController`), which fetches the data and returns a Blade view from
+`www/resources/views/admin/`, drawn inside the legacy `$PAGE` layout. Blade's `{{ }}` escapes every value, so views
+never build HTML from data; shared table parts are anonymous components in `www/resources/views/components/admin/`.
+`config/view.php` compiles views into `storage/framework/views`, or the system temp folder when that is not writable.
+Pages not yet converted are `users.php`, `proof*.php`, `usage.php` and the two glossary pages.
+
 ## Database access
 
 The ORM is Eloquent, from `laravel/framework` ^13. Each table has a model in `www/includes/Models/`, namespaced
