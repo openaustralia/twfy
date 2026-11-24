@@ -105,3 +105,19 @@ describe('SearchLogsController::failed()', function () {
         expect($GLOBALS['this_page'])->toBe('admin_failedsearches');
     });
 });
+
+describe('SearchLogsController::recent() from an address that was not kept', function () {
+    it('still draws the page', function () {
+        $GLOBALS['SEARCHLOG'] = new class() {
+
+            public function admin_recent_searches(int $count): array {
+                return [['url' => '/search/?s=x&amp;pop=1', 'query' => 'x', 'page_number' => 1, 'count_hits' => 4, 'ip_address' => null, 'query_time' => date('Y-m-d H:i:s', time() - 3600)]];
+            }
+
+        };
+
+        $html = $this->render(fn () => (new SearchLogsController())->recent());
+
+        expect($html)->toContain('1 hour');
+    });
+});
