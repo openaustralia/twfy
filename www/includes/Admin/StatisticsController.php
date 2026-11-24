@@ -30,8 +30,8 @@ class StatisticsController extends AdminController {
             $speeches = (clone $debates)->where('htype', self::SPEECH)->count();
 
             return $this->view('admin.statistics', [
-                'from' => Hansard::min('hdate'),
-                'to' => Hansard::max('hdate'),
+                'from' => format_date((string) Hansard::min('hdate'), SHORTDATEFORMAT),
+                'to' => format_date((string) Hansard::max('hdate'), SHORTDATEFORMAT),
                 'sittingDays' => $sittingDays,
                 'items' => $debates->count(),
                 'speeches' => $speeches,
