@@ -24,14 +24,14 @@ class GlossaryController extends PageController {
         $DATA->set_page_metadata('glossary', 'title', $term === null ? $letter . ': Glossary index' : $term->title . ': Glossary item');
 
         $this->page('glossary', function () use ($terms, $term, $letter) {
-            $letters = self::letters($terms, $letter);
+            $letters = GlossaryLetters::for($terms, $letter);
             $addUrl = WEBPATH . 'addterm/';
 
             if ($term === null) {
                 return $this->view('glossary.browse', [
                     'letters' => $letters,
                     'letter' => $letter,
-                    'terms' => $terms->filter(fn (Glossary $each): bool => self::initial($each) === $letter)
+                    'terms' => $terms->filter(fn (Glossary $each): bool => GlossaryLetters::initial($each) === $letter)
                       ->map(fn (Glossary $each): array => ['title' => (string) $each->title, 'url' => self::termUrl($each)])
                       ->values()
                       ->all(),
@@ -72,34 +72,7 @@ class GlossaryController extends PageController {
         if (preg_match('/^[A-Z]$/', $asked) === 1) {
             return $asked;
         }
-        return $term === null ? 'A' : self::initial($term);
-    }
-
-    /**
-     * The letters A to Z, each with its address when some term starts with it.
-     *
-     * @param \Illuminate\Support\Collection<int, \OpenAustralia\TWFY\Models\Glossary> $terms
-     *   The approved terms.
-     * @param string $current
-     *   The letter being shown.
-     *
-     * @return list<array{letter: string, url: string|null, current: bool}>
-     *   One entry for each letter.
-     */
-    private static function letters(Collection $terms, string $current): array {
-        $used = $terms->map(fn (Glossary $term): string => self::initial($term))->unique()->all();
-        return array_map(fn (string $letter): array => [
-            'letter' => $letter,
-            'url' => in_array($letter, $used, true) ? WEBPATH . 'glossary/?az=' . $letter : null,
-            'current' => $letter === $current,
-        ], range('A', 'Z'));
-    }
-
-    /**
-     * The first letter of a term's title, in capitals.
-     */
-    private static function initial(Glossary $term): string {
-        return strtoupper(substr((string) $term->title, 0, 1));
+        return $term === null ? 'A' : GlossaryLetters::initial($term);
     }
 
     /**

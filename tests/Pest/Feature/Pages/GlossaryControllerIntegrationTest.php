@@ -7,6 +7,7 @@
 
 require_once __DIR__ . '/../../../bootstrap.php';
 require_once __DIR__ . '/../../Support/AdminControllerTestCase.php';
+require_once __DIR__ . '/../../Support/UrlStandIn.php';
 require_once __DIR__ . '/../../../../www/includes/data.php';
 require_once __DIR__ . '/../../../../www/includes/utility.php';
 require_once __DIR__ . '/../../../../www/includes/lib_filter.php';
@@ -18,30 +19,6 @@ use OpenAustralia\TWFY\Models\User;
 use OpenAustralia\TWFY\Pages\GlossaryController;
 
 uses(AdminControllerTestCase::class);
-
-// The legacy glossary builds each term's link with the URL class, which other specs also stand in for.
-if (!class_exists('URL')) {
-    /**
-     * Minimal URL stand-in.
-     */
-    class URL {
-
-        public function __construct(private string $page) {
-        }
-
-        /**
-         * @param array<string, string> $params
-         *   Query values.
-         */
-        public function insert(array $params): void {
-        }
-
-        public function generate(string $type = ''): string {
-            return '/' . $this->page . '/';
-        }
-
-    }
-}
 
 /**
  * An approved term from a fictional person.
