@@ -40,11 +40,6 @@ if (array_key_exists('data', $data) && is_array($data['data'])) {
             $plural = $debate['contentcount'] == 1 ? 'speech' : 'speeches';
             $extrainfo[] = $debate['contentcount'] . ' ' . $plural;
 
-            if ($debate['totalcomments'] > 0) {
-                $plural = $debate['totalcomments'] == 1 ? 'comment' : 'comments';
-                $extrainfo[] = $debate['totalcomments'] . ' ' . $plural;
-            }
-
             $debateline = '<strong><a href="' . $debate['list_url'] . '">' . $debate['body'] . '</a></strong> <small>(' . implode(', ', $extrainfo) . ')</small>';
 
             if (isset($debate['parent'])) {

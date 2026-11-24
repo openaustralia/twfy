@@ -95,14 +95,6 @@ if (get_http_var("d") != "") {
         header('Location: //' . DOMAIN . $URL->generate('none'));
         exit;
     }
-    if ($NILIST->htype() == '12' || $NILIST->htype() == '13') {
-        $PAGE->stripe_start('side', 'comments');
-        $COMMENTLIST = new COMMENTLIST();
-        $args['user_id'] = get_http_var('u');
-        $args['epobject_id'] = $NILIST->epobject_id();
-        $COMMENTLIST->display('ep', $args);
-        $PAGE->stripe_end();
-    }
 } else {
     $this_page = "nidebatesfront";
     $PAGE->page_start();

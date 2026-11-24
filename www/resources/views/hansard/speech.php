@@ -107,10 +107,10 @@
             <?php echo $speech->bodyHtml /* pre-sanitised hansard body HTML, same pipeline as the old rendering path */ ?>
         </div>
 
-        <?php if ($speech->sourceUrl || $speech->contextLinkHtml || $speech->commentTeaserHtml || $speech->permalinkUrl): ?>
+        <?php if ($speech->sourceUrl || $speech->contextLinkHtml || $speech->permalinkUrl): ?>
             <?php
-            // [&_a]:...: contextLinkHtml/commentTeaserHtml are bare <a> tags from
-            // legacy helpers, with no colour classes of their own - without this,
+            // [&_a]:...: contextLinkHtml is a bare <a> tag from
+            // a legacy helper, with no colour classes of their own - without this,
             // layout.css's global a:link/a:visited rules (see this file's other
             // comment on that) override the inherited slate colour and render them
             // in the legacy blue/purple instead of matching the source/permalink
@@ -138,7 +138,6 @@
                     ?>
                     <span><span aria-hidden="true">🔍</span> <?php echo $speech->contextLinkHtml ?></span>
                 <?php endif; ?>
-                <?php echo $speech->commentTeaserHtml ?>
                 <?php if ($speech->permalinkUrl): ?>
                     <a href="<?php echo $this->e($speech->permalinkUrl) ?>" class="!text-slate-500 hover:!text-teal-700 !no-underline"
                         title="Copy this URL to link directly to this piece of text"><span aria-hidden="true">🔗</span> Link to this</a>

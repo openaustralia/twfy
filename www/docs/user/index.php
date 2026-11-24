@@ -1226,18 +1226,6 @@ function display_user($user_id = "") {
             $PAGE->stripe_end();
         }
 
-        if (!$edited) {
-
-            $args = [
-                'user_id' => $user_id,
-                'page' => get_http_var('p')
-            ];
-
-            $COMMENTLIST = new COMMENTLIST();
-
-            $COMMENTLIST->display('user', $args);
-        }
-
     } else {
 
         $message = [

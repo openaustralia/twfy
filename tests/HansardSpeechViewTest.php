@@ -57,8 +57,8 @@ if (!function_exists('member_full_name')) {
 
 }
 
-// context_link()/generate_commentteaser() (called by forSpeech()/forProcedural()
-// below) are stubbed in tests/bootstrap.php, not here - see that file's own
+// context_link() (called by forSpeech()/forProcedural()
+// below) is stubbed in tests/bootstrap.php, not here - see that file's own
 // comment on why.
 
 /**
@@ -391,13 +391,12 @@ class HansardSpeechViewTest extends TestCase {
     /**
      *
      */
-    public function test_forSpeech_passes_the_row_and_major_through_to_the_sidebar_helpers() {
+    public function test_forSpeech_passes_the_row_through_to_the_context_link_helper() {
         $row = $this->speechRow(['gid' => '2026-08-18.108.5']);
 
         $view = HansardSpeechView::forSpeech($row, $this->info(['major' => 101]), true);
 
         $this->assertSame('<context-link:2026-08-18.108.5>', $view->contextLinkHtml);
-        $this->assertSame('<comment-teaser:2026-08-18.108.5:101>', $view->commentTeaserHtml);
     }
 
     /**
@@ -411,7 +410,6 @@ class HansardSpeechViewTest extends TestCase {
         $this->assertSame('g108.1', $view->id);
         $this->assertSame('<p>The Senate divided.</p>', $view->bodyHtml);
         $this->assertSame('<context-link:2026-08-18.108.1>', $view->contextLinkHtml);
-        $this->assertSame('<comment-teaser:2026-08-18.108.1:101>', $view->commentTeaserHtml);
     }
 
     /**

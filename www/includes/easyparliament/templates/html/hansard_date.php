@@ -82,7 +82,7 @@ if (isset($data['rows'])) {
 
             print '<a href="' . $row['listurl'] . '"><strong>' . $row['body'] . '</strong></a> ';
 
-            // For the "x speeches, x comments" text.
+            // For the "x speeches" text.
             $moreinfo = array();
 
             if ($hansardmajors[$row['major']]['type'] != 'other') {
@@ -90,11 +90,6 @@ if (isset($data['rows'])) {
                 // All WMS have 1 speech
                 $plural = $row['contentcount'] == 1 ? 'speech' : 'speeches';
                 $moreinfo[] = $row['contentcount'] . " $plural";
-            }
-
-            if ($row['totalcomments'] > 0) {
-                $plural = $row['totalcomments'] == 1 ? 'comment' : 'comments';
-                $moreinfo[] = $row['totalcomments'] . " $plural";
             }
 
             if (count($moreinfo) > 0) {

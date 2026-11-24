@@ -177,7 +177,6 @@ if (get_http_var('s') != '' || get_http_var('pid') != '') {
         if ($args['s']) {
             find_constituency($args);
             find_glossary_items($args);
-            find_comments($args);
         }
     }
 } else {

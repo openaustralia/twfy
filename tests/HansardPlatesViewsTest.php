@@ -93,23 +93,21 @@ class HansardPlatesViewsTest extends TestCase {
     /**
      *
      */
-    public function test_procedural_renders_context_and_comment_links_when_present() {
+    public function test_procedural_renders_the_context_link_when_present() {
         $item = $this->proceduralView([
             'contextLinkHtml' => '<a href="/x">context</a>',
-            'commentTeaserHtml' => '<a href="/y">2 comments</a>',
         ]);
 
         $html = $this->engine->render('hansard/procedural', ['item' => $item]);
 
         $this->assertStringContainsString('<a href="/x">context</a>', $html);
-        $this->assertStringContainsString('<a href="/y">2 comments</a>', $html);
     }
 
     /**
      *
      */
-    public function test_procedural_omits_the_footer_row_when_both_links_are_empty() {
-        $item = $this->proceduralView(['contextLinkHtml' => '', 'commentTeaserHtml' => '']);
+    public function test_procedural_omits_the_footer_row_when_the_link_is_empty() {
+        $item = $this->proceduralView(['contextLinkHtml' => '']);
 
         $html = $this->engine->render('hansard/procedural', ['item' => $item]);
 
@@ -239,12 +237,11 @@ class HansardPlatesViewsTest extends TestCase {
     /**
      *
      */
-    public function test_speech_renders_the_source_context_and_comment_links_when_present() {
+    public function test_speech_renders_the_source_and_context_links_when_present() {
         $speech = $this->speechView([
             'sourceUrl' => 'https://parlinfo.aph.gov.au/x',
             'sourceLabel' => 'Hansard source',
             'contextLinkHtml' => '<a href="/x">See this speech in context</a>',
-            'commentTeaserHtml' => '<a href="/y">2 comments</a>',
         ]);
 
         $html = $this->engine->render('hansard/speech', ['speech' => $speech]);
@@ -252,7 +249,6 @@ class HansardPlatesViewsTest extends TestCase {
         $this->assertStringContainsString('href="https://parlinfo.aph.gov.au/x"', $html);
         $this->assertStringContainsString('Hansard source', $html);
         $this->assertStringContainsString('See this speech in context', $html);
-        $this->assertStringContainsString('2 comments', $html);
     }
 
     /**
@@ -276,7 +272,6 @@ class HansardPlatesViewsTest extends TestCase {
         $speech = $this->speechView([
             'sourceUrl' => null,
             'contextLinkHtml' => '',
-            'commentTeaserHtml' => '',
             'permalinkUrl' => null,
         ]);
 
@@ -731,7 +726,6 @@ class HansardPlatesViewsTest extends TestCase {
         $view->sourceUrl = null;
         $view->sourceLabel = null;
         $view->contextLinkHtml = '';
-        $view->commentTeaserHtml = '';
         foreach ($overrides as $key => $value) {
             $view->$key = $value;
         }
@@ -746,7 +740,6 @@ class HansardPlatesViewsTest extends TestCase {
         $view->id = 'g108.1';
         $view->bodyHtml = '<p>The House divided.</p>';
         $view->contextLinkHtml = '';
-        $view->commentTeaserHtml = '';
         foreach ($overrides as $key => $value) {
             $view->$key = $value;
         }

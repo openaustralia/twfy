@@ -127,15 +127,6 @@ if (get_http_var("d") != "") {
         header('Location: //' . DOMAIN . $URL->generate('none'), true, 301);
         exit;
     }
-    if ($LORDSDEBATELIST->htype() == '12' || $LORDSDEBATELIST->htype() == '13') {
-        // $PAGE->stripe_start('side', 'comments');
-        $COMMENTLIST = new COMMENTLIST();
-        $args['user_id'] = get_http_var('u');
-        $args['epobject_id'] = $LORDSDEBATELIST->epobject_id();
-        $args['mobile'] = 1;
-        $COMMENTLIST->display('ep', $args);
-        // $PAGE->stripe_end();
-    }
 } else {
     // No date or debate id. Show recent years with debates on.
 

@@ -7,8 +7,7 @@
 // file an issue instead of investing further.
 //
 // For displaying the main Hansard content listings (by gid),
-// and individual Hansard items (the comments are handled separately
-// by COMMENTLIST and the comments.php template).
+// and individual Hansard items.
 
 // Remember, we are currently within the DEBATELIST or WRANSLISTS class,
 // in the render() function.
@@ -156,7 +155,7 @@ if (isset($data['rows'])) {
 
             context_link($row);
 
-            $sidebarhtml = generate_commentteaser($row, $data['info']['major']);
+            $sidebarhtml = '';
 
             /*
             $PAGE->stripe_end(array(
@@ -298,12 +297,6 @@ if (isset($data['rows'])) {
             $sidebarhtml = '';
             $extrahtml = '';
 
-            # Do the logic for this in the function; plus why shouldn't
-# you be able to comment on speeches with unknown speakers?
-#			if (($hansardmajors[$data['info']['major']]['type'] == 'debate') && isset($row['speaker']) && count($row['speaker']) > 0) {
-            $sidebarhtml .= generate_commentteaser($row, $data['info']['major']);
-            #			}
-
             /*
                         $PAGE->stripe_end(array(
                             #array (
@@ -358,17 +351,13 @@ if (isset($data['rows'])) {
             }
             if ($has_content) {
                 print '<a href="' . $row['listurl'] . '"><strong>' . $row['body'] . '</strong></a> ';
-                // For the "x speeches, x comments" text.
+                // For the "x speeches" text.
                 $moreinfo = [];
                 if ($hansardmajors[$row['major']]['type'] != 'other') {
                     // All wrans have 2 speeches, so no need for this.
                     // All WMS have 1 speech
                     $plural = $row['contentcount'] == 1 ? 'speech' : 'speeches';
                     $moreinfo[] = $row['contentcount'] . " $plural";
-                }
-                if ($row['totalcomments'] > 0) {
-                    $plural = $row['totalcomments'] == 1 ? 'comment' : 'comments';
-                    $moreinfo[] = $row['totalcomments'] . " $plural";
                 }
                 if (count($moreinfo) > 0) {
                     print "<small>(" . implode(', ', $moreinfo) . ") </small>";
@@ -427,82 +416,6 @@ function context_link(&$row)
     }
 }
 
-
-//$totalcomments, $comment, $commenturl
-function generate_commentteaser($row, $major)
-{
-    // Returns HTML for the one fragment of comment and link for the sidebar.
-    // $totalcomments is the number of comments this item has on it.
-    // $comment is an array like:
-    /* $comment = array (
-        'comment_id' => 23,
-        'user_id'	=> 34,
-        'body'		=> 'Blah blah...',
-        'posted'	=> '2004-02-24 23:45:30',
-        'username'	=> 'phil'
-        )
-    */
-    // $url is the URL of the item's page, which contains comments.
-
-    global $this_page, $THEUSER, $hansardmajors;
-
-    $html = '';
-
-    if ($hansardmajors[$major]['type'] == 'debate' && $hansardmajors[$major]['page_all'] == $this_page) {
-
-        if ($row['totalcomments'] > 0) {
-            $comment = $row['comment'];
-
-            // If the comment is longer than the speech body, we want to trim it
-            // to be the same length so they fit next to each other.
-            // But the comment typeface is smaller, so we scale things slightly too...
-            $targetsize = round(strlen($row['body']) * 0.6);
-
-            if ($targetsize > strlen($comment['body'])) {
-                // This comment will fit in its entirety.
-                $commentbody = $comment['body'];
-
-                if ($row['totalcomments'] > 1) {
-                    $morecount = $row['totalcomments'] - 1;
-                    $plural = $morecount == 1 ? 'comment' : 'comments';
-                    $linktext = "Read $morecount more $plural";
-                }
-
-            } else {
-                // This comment needs trimming.
-                $commentbody = htmlentities(trim_characters($comment['body'], 0, $targetsize));
-                if ($row['totalcomments'] > 1) {
-                    $morecount = $row['totalcomments'] - 1;
-                    $plural = $morecount == 1 ? 'comment' : 'comments';
-                    $linktext = "Continue reading (and $morecount more $plural)";
-                } else {
-                    $linktext = 'Continue reading';
-                }
-            }
-
-            $html = '<em>' . htmlentities($comment['username']) . '</em>: ' . prepare_comment_for_display($commentbody);
-
-            if (isset($linktext)) {
-                $html .= ' <a href="' . $row['commentsurl'] . '#c' . $comment['comment_id'] . '" title="See any comments posted about this">' . $linktext . '</a>';
-            }
-
-            $html .= '<br><br>';
-        }
-
-        // 'Add a comment' link.
-        if (!$THEUSER->isloggedin()) {
-            $URL = new URL('userprompt');
-            $URL->insert(array('ret' => $row['commentsurl']));
-            $commentsurl = $URL->generate();
-        } else {
-            $commentsurl = $row['commentsurl'];
-        }
-
-        $html = "\t\t\t\t" . '<p class="comment-teaser">' . $html . "</p>\n";
-    }
-
-    return $html;
-}
 
 /*
 

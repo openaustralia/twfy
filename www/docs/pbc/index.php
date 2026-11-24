@@ -55,14 +55,6 @@ if ($bill_id && !$id) {
 
     $result = $committee->display('gid', $args);
     /* This section below is shared between here and everywhere else - factor it out! */
-    if ($committee->htype() == '12' || $committee->htype() == '13') {
-        $PAGE->stripe_start('side', 'comments');
-        $COMMENTLIST = new COMMENTLIST();
-        $args['user_id'] = get_http_var('u');
-        $args['epobject_id'] = $committee->epobject_id();
-        $COMMENTLIST->display('ep', $args);
-        $PAGE->stripe_end();
-    }
 } elseif ($session) {
     $this_page = 'pbc_session';
     $DATA->set_page_metadata($this_page, 'title', "Session $session");
