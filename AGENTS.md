@@ -131,7 +131,8 @@ make phpcs                # phpcs (Drupal standard, phpcs.xml) over www and scri
 ./vendor/bin/phpcbf <files>
 make test                 # pest unit tests (*Test.php)
 make test-all             # pest including *IntegrationTest.php - needs the docker MySQL up
-make docker-test            # all of pest in the webhost container, against test_twfy (not the dev database)
+make docker-test          # all of pest in the webhost container, against a migrated test_twfy (not the dev database),
+                          # with the stack's Elasticsearch, so the usage export specs run
 make test-coverage-docker # tests with coverage inside docker
 make docker-dump-schema   # regenerate db/schema.sql after migrating
 ```

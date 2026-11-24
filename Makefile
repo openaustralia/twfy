@@ -46,7 +46,7 @@ help:
 	@echo "  test-all [TEST_ARGS=...]            Run all PHPUnit tests including DB integration"
 	@echo "  test-coverage [TEST_ARGS=...]       Run all tests with code coverage reports"
 	@echo "  test-coverage-docker [TEST_ARGS=...] Run all tests with coverage in Docker (simplest method)"
-	@echo "  docker-test [TEST_ARGS=...]         Run all tests in the running webhost container, against $(TEST_DB_NAME)"
+	@echo "  docker-test [TEST_ARGS=...]         Run all tests in the webhost container, against a migrated $(TEST_DB_NAME), with Elasticsearch"
 	@echo "  phpcs [PHPCS_ARGS=...]              Run coding standards check (summary)"
 	@echo "  phpcs-verbose [PHPCS_ARGS=...]      Run coding standards check (verbose)"
 	@echo "  phpcs-sonar [PHPCS_ARGS=...]        Generate PHPCS checkstyle report for SonarQube"
@@ -170,10 +170,12 @@ docker-test-db-create:
 docker-test-db-migrate:
 	DB_HOST=$(TEST_DB_HOST) DB_USER=$(TEST_DB_USER) DB_PASSWORD=$(TEST_DB_PASSWORD) DB_NAME=$(TEST_DB_NAME) ./vendor/bin/phinx migrate -c phinx.php
 
-# The container's DB_NAME is the dev database, whose data breaks specs that expect an empty table.
+# The container's DB_NAME is the dev database, whose data breaks specs that expect an empty table, so run against
+# test_twfy, migrated first. Elasticsearch is up so the usage export specs run instead of skipping.
 docker-test:
-	docker compose up --wait -d mysql webhost
-	docker compose exec -e DB_NAME=$(TEST_DB_NAME) webhost ./vendor/bin/pest $(TEST_ARGS)
+	docker compose up --wait -d mysql webhost elasticsearch
+	docker compose exec -e DB_NAME=$(TEST_DB_NAME) webhost ./vendor/bin/phinx migrate -c phinx.php
+	docker compose exec -e DB_NAME=$(TEST_DB_NAME) -e ELASTICSEARCH_TEST_URL=http://elasticsearch:9200 webhost ./vendor/bin/pest $(TEST_ARGS)
 
 docker-db-shell:
 	docker compose up --wait -d mysql
