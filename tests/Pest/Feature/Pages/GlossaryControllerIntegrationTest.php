@@ -268,6 +268,24 @@ describe('GlossaryController::index() for a term sent as a list', function () {
     });
 });
 
+describe('GlossaryController::index() for a term approved from two contributors', function () {
+    beforeEach(function () {
+        $term = public_glossary_term('Filibuster', 'A long speech.', 'Later');
+        $earlier = User::create(['firstname' => 'Earlier', 'lastname' => 'Example', 'email' => 'earlier' . random_int(1000, 9999) . '@example.test']);
+        Editqueue::create(['user_id' => $earlier->user_id, 'edit_type' => 2, 'glossary_id' => $term->glossary_id, 'title' => 'Filibuster', 'body' => 'A long speech.', 'submitted' => '2026-10-01 10:00:00', 'approved' => true]);
+        $_GET['gl'] = (string) $term->glossary_id;
+        $this->html = $this->render(fn () => (new GlossaryController())->index());
+    });
+
+    it('credits the earliest submission', function () {
+        expect($this->html)->toContain('>Earlier Example</a>');
+    });
+
+    it('does not credit the later one', function () {
+        expect($this->html)->not->toContain('Later');
+    });
+});
+
 describe('GlossaryController::index() for a term that is not there', function () {
     it('shows the index instead', function () {
         public_glossary_term('Quorum');
