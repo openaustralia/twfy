@@ -13,7 +13,8 @@ class AdminServiceProvider extends ServiceProvider {
      * Registers <x-admin.cell>, <x-admin.heading> and the other components in resources/views/components/admin.
      */
     public function boot(): void {
-        foreach (['cell', 'heading', 'link', 'row', 'table'] as $component) {
+        foreach (glob(dirname(__DIR__, 2) . '/resources/views/components/admin/*.blade.php') as $file) {
+            $component = basename($file, '.blade.php');
             $this->app->make('blade.compiler')->component('components.admin.' . $component, 'admin.' . $component);
         }
     }

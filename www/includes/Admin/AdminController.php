@@ -51,6 +51,19 @@ abstract class AdminController {
     }
 
     /**
+     * The address of an admin page, with only the parameters that have a value. Not encoded for HTML.
+     *
+     * @param string $page
+     *   The file name in the admin folder, such as proof_year.php.
+     * @param array<string, int|string|null> $params
+     *   The query parameters.
+     */
+    protected function adminUrl(string $page, array $params = []): string {
+        $query = http_build_query(array_filter($params, fn ($value): bool => $value !== null && $value !== ''));
+        return '/admin/' . $page . ($query === '' ? '' : '?' . $query);
+    }
+
+    /**
      * The address of a user's page.
      */
     protected function userUrl(int $user_id): string {
