@@ -13,7 +13,7 @@ XAPIANDB_LASTUPDATED ?= $(XAPIANDB)/../searchdb-lastupdated
 PERLLIB_PATH ?= ../perllib
 PARSER_PATH ?= ../openaustralia-parser
 
-.PHONY: help up services-up down clean clobber status logs shell docker-build xapian-index-docker lint lint-perl lint-perl-ci lint-perl-critic lint-php lint-php-ci phpcs phpcs-ci phpcs-verbose phpcs-sonar sonar-ci dependencies tailwind-build tailwind-watch playwright-update install setup test test-all install-xdebug test-coverage test-coverage-docker docker-test-db-create docker-test-db-migrate docker-db-shell docker-test-db-shell
+.PHONY: help up services-up down clean clobber status logs shell docker-build xapian-index-docker lint lint-perl lint-perl-ci lint-perl-critic lint-php lint-php-ci phpcs phpcs-ci phpcs-verbose phpcs-sonar sonar-ci dependencies tailwind-build tailwind-watch playwright-update install setup test test-all install-xdebug test-coverage test-coverage-docker docker-test-db-create docker-test-db-migrate docker-test docker-db-shell docker-test-db-shell
 
 help:
 	@echo "Available targets:"
@@ -46,6 +46,7 @@ help:
 	@echo "  test-all [TEST_ARGS=...]            Run all PHPUnit tests including DB integration"
 	@echo "  test-coverage [TEST_ARGS=...]       Run all tests with code coverage reports"
 	@echo "  test-coverage-docker [TEST_ARGS=...] Run all tests with coverage in Docker (simplest method)"
+	@echo "  docker-test [TEST_ARGS=...]         Run all tests in the running webhost container, against $(TEST_DB_NAME)"
 	@echo "  phpcs [PHPCS_ARGS=...]              Run coding standards check (summary)"
 	@echo "  phpcs-verbose [PHPCS_ARGS=...]      Run coding standards check (verbose)"
 	@echo "  phpcs-sonar [PHPCS_ARGS=...]        Generate PHPCS checkstyle report for SonarQube"
@@ -168,6 +169,11 @@ docker-test-db-create:
 
 docker-test-db-migrate:
 	DB_HOST=$(TEST_DB_HOST) DB_USER=$(TEST_DB_USER) DB_PASSWORD=$(TEST_DB_PASSWORD) DB_NAME=$(TEST_DB_NAME) ./vendor/bin/phinx migrate -c phinx.php
+
+# The container's DB_NAME is the dev database, whose data breaks specs that expect an empty table.
+docker-test:
+	docker compose up --wait -d mysql webhost
+	docker compose exec -e DB_NAME=$(TEST_DB_NAME) webhost ./vendor/bin/pest $(TEST_ARGS)
 
 docker-db-shell:
 	docker compose up --wait -d mysql
