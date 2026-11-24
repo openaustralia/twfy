@@ -156,7 +156,9 @@ migrates a fresh database and diffs the dump against `db/schema.sql`.
   a problem. Xapian search is only active when `XAPIANDB` is non-empty in `conf/general` (the local-dev example
   leaves it off, falling back to MySQL search).
 - Tests are mid-move from PHPUnit classes to Pest specs (openaustralia/openaustralia#1049). **Write every new test as a
-  Pest spec, never a new PHPUnit class.** Specs go in `tests/Pest/`
+  Pest spec, never a new PHPUnit class.** Specs go in `tests/Pest/`, in Laravel's layout for new work: `Feature/`
+  for controllers and Blade views (`ViewTestCase` gives `$this->view('admin.alerts', $data)->assertSee()`), `Support/`
+  for helpers
   and follow [betterspecs.org](https://betterspecs.org): `describe()` per function, `when`/`with`/`without` contexts,
   descriptions under 40 characters, one `expect()` per `it()`, datasets for repeated cases. Everything else under
   `tests/` is a PHPUnit class. Run everything with `./vendor/bin/pest`; a bare `phpunit` refuses to load the specs,
