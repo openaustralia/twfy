@@ -49,6 +49,10 @@ describe('UsageController::apiKeys()', function () {
         expect($this->html)->not->toContain('javascript:');
     });
 
+    it('links the other periods to its own page', function () {
+        expect($this->html)->toContain('href="/admin/api_keys.php?period=7"');
+    });
+
     it('sets the page key for the menu', function () {
         expect($GLOBALS['this_page'])->toBe('admin_api_keys');
     });
@@ -76,6 +80,10 @@ describe('UsageController::downloads()', function () {
 
     it('lists the visitor', function () {
         expect($this->html)->toContain('203.0.113.5');
+    });
+
+    it('links the other periods to its own page', function () {
+        expect($this->html)->toContain('href="/admin/downloads.php?period=7"');
     });
 
     it('sets the page key for the menu', function () {
