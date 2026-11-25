@@ -16,78 +16,123 @@ class AddTermController extends PageController {
     public function index(): void {
         global $THEUSER, $DATA;
 
-        $phrase = self::cleanPhrase($this->input('g'));
-        $definition = $this->input('definition');
-        $submitting = $this->input('submitterm') !== '';
-        $previewing = !$submitting && $this->input('previewterm') !== '';
-        $searching = $phrase !== '' && !$submitting && !$previewing;
-        $signedIn = (bool) $THEUSER->isloggedin();
-        $canAdd = $signedIn && $THEUSER->is_able_to('addterm');
-        $denied = $signedIn ? 'Sorry, your account can\'t add glossary terms.' : 'Sorry, you need to be signed in to add a glossary term.';
-
         $DATA->set_page_metadata('glossary_addterm', 'title', 'Add a glossary item');
 
-        $notice = null;
-        $thanks = null;
-        $matches = [];
-        $count = 0;
-        $form = null;
-        $preview = null;
-        $excerpts = '';
+        $phrase = self::cleanPhrase($this->input('g'));
+        $signedIn = (bool) $THEUSER->isloggedin();
+        $step = $this->step($phrase, $this->input('definition'), $signedIn, $signedIn && $THEUSER->is_able_to('addterm'));
 
-        if (!$canAdd && ($submitting || $previewing || $searching)) {
-            $notice = $denied;
-            $matches = $phrase === '' ? [] : self::matches($phrase);
-        } elseif (($submitting || $previewing) && !$this->tokenIsValid()) {
-            $notice = 'Sorry, that form has expired. Please check your definition and post it again.';
-            $form = self::form($phrase, $definition);
-        } elseif ($submitting) {
-            $result = TermSubmission::submit((int) $THEUSER->user_id(), $phrase, $definition);
-            if ($result['ok']) {
-                $thanks = $result['title'];
-            } else {
-                $notice = $result['message'];
-                $form = self::form($phrase, $definition);
-            }
-        } elseif ($previewing) {
-            if (trim($definition) === '') {
-                $notice = 'Please write a definition to preview.';
-            } else {
-                $preview = ['title' => $phrase, 'body_html' => GlossaryBody::html($definition)];
-            }
-            $form = self::form($phrase, $definition);
-        } elseif ($searching) {
-            if (in_array(strtolower($phrase), (new \GLOSSARY())->get_stopwords(), true)) {
-                $notice = 'Sorry, that phrase appears too many times to be useful as a link within the parliamentary record.';
-                $phrase = '';
-            } else {
-                $count = $this->occurrences($phrase);
-                if ($count === 0) {
-                    $notice = 'Unfortunately "' . $phrase . '" doesn\'t seem to appear in Hansard at all.';
-                    $phrase = '';
-                } else {
-                    $matches = self::matches($phrase);
-                    $form = self::form($phrase);
-                    $excerpts = $this->excerpts($phrase);
-                }
-            }
-        }
-
-        $this->page('glossary_addterm', fn () => $this->view('glossary.addterm', [
+        $this->page('glossary_addterm', fn () => $this->view('glossary.addterm', $step + [
             'signed_in' => $signedIn,
             'token' => self::token(),
             'search_url' => $signedIn ? GlossaryUrls::add() : GlossaryUrls::signIn(),
-            'phrase' => $phrase,
-            'notice' => $notice,
-            'thanks' => $thanks,
-            'matches' => $matches,
-            'count' => $count,
-            'form' => $form,
-            'preview' => $preview,
-            'excerpts_html' => $excerpts,
             'letters' => GlossaryLetters::for(Glossary::approvedTerms()),
             'examples' => [['title' => 'Standing Order 94A', 'url' => GlossaryUrls::term(2)], ['title' => 'interjecting', 'url' => GlossaryUrls::term(1)]],
         ]));
+    }
+
+    /**
+     * What the page shows for this request, whichever step it is.
+     *
+     * @return array<string, mixed>
+     *   The notice, form, matches and so on the view draws.
+     */
+    private function step(string $phrase, string $definition, bool $signedIn, bool $canAdd): array {
+        $submitting = $this->input('submitterm') !== '';
+        $previewing = !$submitting && $this->input('previewterm') !== '';
+        $posting = $submitting || $previewing;
+
+        if (!$canAdd && ($posting || $phrase !== '')) {
+            $shown = $this->denied($phrase, $signedIn);
+        } elseif ($posting && !$this->tokenIsValid()) {
+            $shown = ['notice' => 'Sorry, that form has expired. Please check your definition and post it again.', 'form' => self::form($phrase, $definition)];
+        } elseif ($submitting) {
+            $shown = self::submit($phrase, $definition);
+        } elseif ($previewing) {
+            $shown = self::preview($phrase, $definition);
+        } elseif ($phrase !== '') {
+            $shown = $this->search($phrase);
+        } else {
+            $shown = [];
+        }
+
+        return $shown + [
+            'phrase' => $phrase,
+            'notice' => null,
+            'thanks' => null,
+            'matches' => [],
+            'count' => 0,
+            'form' => null,
+            'preview' => null,
+            'excerpts_html' => '',
+        ];
+    }
+
+    /**
+     * Turns away a visitor who can't add terms, but still lists the terms we have for a phrase.
+     *
+     * @return array<string, mixed>
+     *   What the view draws.
+     */
+    private function denied(string $phrase, bool $signedIn): array {
+        return [
+            'notice' => $signedIn ? 'Sorry, your account can\'t add glossary terms.' : 'Sorry, you need to be signed in to add a glossary term.',
+            'matches' => $phrase === '' ? [] : self::matches($phrase),
+        ];
+    }
+
+    /**
+     * Queues a suggested term.
+     *
+     * @return array<string, mixed>
+     *   A thank you, or the reason it was not queued with the form to try again.
+     */
+    private static function submit(string $phrase, string $definition): array {
+        global $THEUSER;
+
+        $result = TermSubmission::submit((int) $THEUSER->user_id(), $phrase, $definition);
+        if ($result['ok']) {
+            return ['thanks' => $result['title']];
+        }
+        return ['notice' => $result['message'], 'form' => self::form($phrase, $definition)];
+    }
+
+    /**
+     * Shows how a definition will look, beside the form to change or post it.
+     *
+     * @return array<string, mixed>
+     *   The preview, or a reminder to write a definition, with the form.
+     */
+    private static function preview(string $phrase, string $definition): array {
+        $shown = ['form' => self::form($phrase, $definition)];
+        if (trim($definition) === '') {
+            return $shown + ['notice' => 'Please write a definition to preview.'];
+        }
+        return $shown + ['preview' => ['title' => $phrase, 'body_html' => GlossaryBody::html($definition)]];
+    }
+
+    /**
+     * Checks a phrase is worth defining, then offers the form with Hansard excerpts to write from.
+     *
+     * @return array<string, mixed>
+     *   The matches, count, form and excerpts, or why the phrase can't be defined.
+     */
+    private function search(string $phrase): array {
+        if (in_array(strtolower($phrase), (new \GLOSSARY())->get_stopwords(), true)) {
+            return ['phrase' => '', 'notice' => 'Sorry, that phrase appears too many times to be useful as a link within the parliamentary record.'];
+        }
+
+        $count = $this->occurrences($phrase);
+        if ($count === 0) {
+            return ['phrase' => '', 'notice' => 'Unfortunately "' . $phrase . '" doesn\'t seem to appear in Hansard at all.'];
+        }
+
+        return [
+            'count' => $count,
+            'matches' => self::matches($phrase),
+            'form' => self::form($phrase),
+            'excerpts_html' => $this->excerpts($phrase),
+        ];
     }
 
     /**
