@@ -16,6 +16,10 @@ Route::withoutMiddleware('web')->group(function (): void {
     Route::get('/senators', [SenatorController::class, 'index'])->name('senators.index');
     Route::get('/mp', MemberLookupController::class)->name('representatives.lookup');
     Route::get('/senator', MemberLookupController::class)->name('senators.lookup');
+    // Old bookmarks name the file that once answered. These come first, so the file isn't read as someone's name.
+    $oldFiles = 'index\.php|mobile\.php';
+    Route::get('/mp/{file}', MemberLookupController::class)->where('file', $oldFiles)->name('representatives.file');
+    Route::get('/senator/{file}', MemberLookupController::class)->where('file', $oldFiles)->name('senators.file');
     Route::get('/mp/{name}/{electorate?}', [RepresentativeController::class, 'show'])->name('representatives.show');
     Route::get('/senator/{name}/{state?}', [SenatorController::class, 'show'])->name('senators.show');
 });

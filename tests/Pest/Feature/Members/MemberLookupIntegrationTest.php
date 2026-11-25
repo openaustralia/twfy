@@ -96,6 +96,28 @@ describe('GET /mp/ by name or electorate', function () {
     })->with('words');
 });
 
+describe('GET an old file address', function () {
+    dataset('old files', [
+        'index.php' => ['/mp/index.php?pid=97601', '/mp/robin_example/test_ville'],
+        'mobile.php' => ['/mp/mobile.php?pid=97601', '/mp/robin_example/test_ville'],
+        'a name and electorate' => ['/mp/index.php?n=robin+example&c=test+ville', '/mp/robin_example/test_ville'],
+        'a Senator\'s name' => ['/senator/index.php?n=sam+sample', '/senator/sam_sample'],
+    ]);
+
+    it('answers as the lookup does', function (string $address, string $profile) {
+        expect(lookup_location($address))->toBe($profile);
+    })->with('old files');
+
+    dataset('bare old files', [
+        'for Representatives' => ['/mp/mobile.php', '[top:mp:]'],
+        'for Senators' => ['/senator/index.php', '[top:peer:]'],
+    ]);
+
+    it('asks for a postcode without a query', function (string $address, string $top) {
+        expect(MemberPageStubs::get($address)->getContent())->toContain($top, 'Enter your Australian postcode');
+    })->with('bare old files');
+});
+
 describe('GET /mp/?recent=1', function () {
     it('goes to their speeches', function () {
         expect(lookup_location('/mp/?recent=1&pid=97601'))->toBe('/search/?pid=97601&pop=1');

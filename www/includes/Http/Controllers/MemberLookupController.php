@@ -14,7 +14,7 @@ use OpenAustralia\TWFY\Parliament\Person;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * /mp/ and /senator/ without a name in the path.
+ * /mp/ and /senator/ without a name in the path, and their old index.php and mobile.php addresses.
  *
  * It finds someone from the query string, or else the visitor's electorate, and redirects to their profile. With
  * nothing to go on, it asks for a postcode. The parameters are ?pid (or ?p) for a person, ?m for a term, ?pc for a
@@ -130,7 +130,7 @@ class MemberLookupController {
      * The house the address is about.
      */
     private function house(Request $request): House {
-        return $request->routeIs('senators.lookup') ? House::Senate : House::Representatives;
+        return $request->routeIs('senators.*') ? House::Senate : House::Representatives;
     }
 
     /**
