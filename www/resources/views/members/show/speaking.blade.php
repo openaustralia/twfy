@@ -32,9 +32,11 @@ $peak = array_search(max($speaking), $speaking, true);
 @endforeach
 <circle cx="{{ $points[$last]['x'] }}" cy="{{ $points[$last]['y'] }}" r="4" fill="currentColor" stroke="#ffffff" stroke-width="2"></circle>
 @foreach ($points as $point)
+{{-- A year's hover area stays inside the chart. --}}
+@php($left = max(0, $point['x'] - $step / 2))
 <g class="group">
 <title>{{ $point['text'] }}</title>
-<rect x="{{ $point['x'] - $step / 2 }}" y="0" width="{{ $step }}" height="56" fill="transparent"></rect>
+<rect x="{{ $left }}" y="0" width="{{ min(240, $point['x'] + $step / 2) - $left }}" height="56" fill="transparent"></rect>
 <circle class="opacity-0 group-hover:opacity-100" cx="{{ $point['x'] }}" cy="{{ $point['y'] }}" r="4" fill="currentColor" stroke="#ffffff" stroke-width="2"></circle>
 </g>
 @endforeach

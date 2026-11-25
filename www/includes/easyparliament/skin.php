@@ -152,7 +152,7 @@ class SKIN {
             <link rel="stylesheet" href="<?php echo WEBPATH; ?>style/<?php echo $skinstyles['global']; ?>/global.css?v=6"
                 type="text/css">
             <link rel="stylesheet"
-                href="<?php echo WEBPATH; ?>style/<?php echo $skinstyles['global']; ?>/layout.css?v=3"
+                href="<?php echo WEBPATH; ?>style/<?php echo $skinstyles['global']; ?>/layout.css?v=4"
                 type="text/css">
             <?php
         }

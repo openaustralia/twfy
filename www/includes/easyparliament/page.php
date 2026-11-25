@@ -485,12 +485,12 @@ class PAGE {
      *
      */
     public function page_body() {
-        global $this_page;
+        global $this_page, $DATA;
 
         // Start the body, put in the page headings.
         ?>
 
-        <body>
+        <body<?php echo $DATA->page_metadata($this_page, 'responsive') ? ' class="responsive"' : ''; ?>>
             <div id="container" class="!box-border flex min-h-screen flex-col">
                 <?php
                 twfy_debug("PAGE", "This page: $this_page");
