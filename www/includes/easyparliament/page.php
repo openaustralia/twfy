@@ -312,7 +312,7 @@ class PAGE {
             <title><?php echo $title; ?></title>
             <meta name="description" content="Making parliament easy.">
             <meta name="keywords"
-                content="Parliament, government, House of Representatives, Senate, Senator, MP, Member of Parliament, MPs, Australia, Australian, <?php echo htmlentities($keywords_title) . htmlentities($keywords); ?>">
+                content="Parliament, government, House of Representatives, Senate, Senator, MP, Member of Parliament, MPs, Australia, Australian, <?php echo htmlentities($keywords_title, double_encode: false) . htmlentities($keywords); ?>">
             <meta name="verify-v1" content="5FBaCDi8kCKdo4s64NEdB5EOJDNc310SwcLLYHmEbgg=">
             <?php if ($DATA->page_metadata($this_page, 'responsive')) { ?>
             <meta name="viewport" content="width=device-width, initial-scale=1">
