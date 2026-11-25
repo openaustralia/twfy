@@ -21,6 +21,7 @@ final class HouseTheme {
       public readonly string $label,
       public readonly string $link,
       public readonly string $button,
+      public readonly string $icon,
     ) {
     }
 
@@ -36,6 +37,7 @@ final class HouseTheme {
                 label: '!text-teal-200',
                 link: '!text-teal-700',
                 button: 'bg-teal-700 hover:bg-teal-800',
+                icon: 'bg-teal-100 !text-teal-700',
             ),
             House::Senate => new self(
                 hero: 'bg-[#4a1424]',
@@ -44,6 +46,7 @@ final class HouseTheme {
                 label: '!text-rose-200',
                 link: '!text-rose-900',
                 button: 'bg-rose-900 hover:bg-rose-950',
+                icon: 'bg-rose-100 !text-rose-900',
             ),
         };
     }

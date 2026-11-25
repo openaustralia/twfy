@@ -84,6 +84,10 @@ describe('GET /senator/{name}/{state}', function () {
             expect(senator_page_get()->getContent())->toContain('Left Senate on 30 June 2025');
         });
 
+        it('has no register tile', function () {
+            expect(senator_page_get()->getContent())->not->toContain('href="#register"');
+        });
+
         it('offers no email alerts', function () {
             expect(senator_page_get()->getContent())->not->toContain('speaks</a>', 'No more than once per day');
         });
@@ -125,17 +129,31 @@ describe('GET /senator/{name}/{state}', function () {
         });
     });
 
+    it('has a tile for the numbers', function () {
+        expect(senator_page_get()->getContent())->toContain('href="#numbers"', 'Activity statistics');
+    });
+
     describe('without an interest statement', function () {
         it('says none is available', function () {
             expect(senator_page_get()->getContent())->toContain('entry is not yet available');
         });
+
+        it('says so on the register tile', function () {
+            expect(senator_page_get()->getContent())->toContain('href="#register"', 'Scan not yet available');
+        });
     });
 
     describe('with an interest statement', function () {
-        it('links to it', function () {
+        beforeEach(function () {
             Personinfo::create(['person_id' => 97401, 'data_key' => 'aph_interests_url', 'data_value' => 'https://example.test/interests']);
+        });
 
+        it('links to it', function () {
             expect(senator_page_get()->getContent())->toContain('href="https://example.test/interests"');
+        });
+
+        it('says so on the register tile', function () {
+            expect(senator_page_get()->getContent())->toContain('Their declared interests');
         });
     });
 

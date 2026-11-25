@@ -79,13 +79,3 @@ Email me whenever {{ $profile->name() }} speaks
 </div>
 @endif
 </section>
-{{-- The quick link tiles will replace this list. --}}
-<ul class="jumpers !m-0 !mb-6 !pl-5">
-@if (defined('DISPLAY_VOTING_DATA') && DISPLAY_VOTING_DATA)
-<li><a href="#votingrecord">Voting record</a></li>
-@endif
-<li><a href="#numbers">Numbers</a></li>
-@if ($profile->canBeFollowed())
-<li><a href="#register">Register of Interests</a></li>
-@endif
-</ul>

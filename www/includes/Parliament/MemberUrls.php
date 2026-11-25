@@ -31,6 +31,13 @@ final class MemberUrls {
     }
 
     /**
+     * How a member voted on key issues, at They Vote For You. It takes the member id of one term.
+     */
+    public static function theyVoteForYou(int $memberId): string {
+        return 'https://theyvoteforyou.org.au/mp.php?id=uk.org.publicwhip/member/' . $memberId;
+    }
+
+    /**
      * Signing up to be emailed when a person speaks.
      */
     public static function alert(int $personId): string {
