@@ -66,7 +66,7 @@ function delete_success() {
     <p>You will no longer receive this alert though any others you have requested will be unaffected. If you wish to unsubscribe from any more
     alerts you will have to do this individually.  If you wish to set new alerts then please visit OpenAustralia again.</p>
 
-    <p><strong>If you didn't mean to do this, <a href="<?php echo WEBPATH ?>alert/undelete/?t=<?php echo get_http_var('t') ?>">resubscribe to this alert</a></strong></p>
+    <p><strong>If you didn't mean to do this, <a href="<?php echo WEBPATH ?>alert/undelete/?t=<?php echo rawurlencode(get_http_var('t')) ?>">resubscribe to this alert</a></strong></p>
 
 
     <?php
