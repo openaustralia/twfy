@@ -114,6 +114,10 @@ describe('GET /mp/{name}', function () {
         'a name alone' => ['/mp/robin_o%27example'],
         'a trailing slash' => ['/mp/robin_o%27example/'],
         'a trailing " mp"' => ['/mp/robin%20o%27example%20mp'],
+        'a "+" for a space' => ['/mp/robin+o%27example'],
+        'a "+" before "mp"' => ['/mp/robin+o%27example+mp'],
+        'a "+" in the electorate' => ['/mp/robin_o%27example/test+ville'],
+        'a "+" in both' => ['/mp/robin+o%27example/test+ville'],
     ]);
 
     it('redirects to the full address', function (string $address) {

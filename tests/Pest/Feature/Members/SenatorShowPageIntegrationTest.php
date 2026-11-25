@@ -129,6 +129,21 @@ describe('GET /senator/{name}/{state}', function () {
         });
     });
 
+    dataset('plus addresses', [
+        'in the name' => ['/senator/kim+o%27specimen'],
+        'in both parts' => ['/senator/kim+o%27specimen/new+south+wales'],
+        'in the state' => ['/senator/kim_o%27specimen/new+south+wales'],
+    ]);
+
+    describe('with "+" for spaces', function () {
+        it('redirects to the full address', function (string $address) {
+            Member::find(97401)->update(['constituency' => 'New South Wales']);
+
+            expect(senator_page_get($address)->headers->get('Location'))
+              ->toEndWith('/senator/kim_o%27specimen/new_south_wales');
+        })->with('plus addresses');
+    });
+
     describe('without a state', function () {
         it('redirects to the full address', function () {
             expect(senator_page_get('/senator/kim_o%27specimen')->headers->get('Location'))

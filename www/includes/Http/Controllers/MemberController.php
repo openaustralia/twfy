@@ -38,7 +38,7 @@ abstract class MemberController {
     }
 
     /**
-     * One person's profile. An address without a constituency redirects to the full one.
+     * One person's profile. An address without a constituency, or spelt with "+", redirects to the full one.
      */
     public function show(RecentSpeeches $speeches, string $name, ?string $constituency = null): View|RedirectResponse {
         $matches = $this->matches($name, $constituency);
@@ -46,7 +46,9 @@ abstract class MemberController {
 
         $person = Person::find($matches->first()->person_id);
 
-        return $constituency === null ? redirect($person->latest()->profile_url) : $this->profile($person, $speeches);
+        return $constituency === null || $this->usesPlus($name, $constituency)
+          ? redirect($person->latest()->profile_url)
+          : $this->profile($person, $speeches);
     }
 
     /**
@@ -96,7 +98,21 @@ abstract class MemberController {
     }
 
     /**
-     * The people an address names, each as their latest matching term. Underscores stand for spaces.
+     * Whether an address is an old one that spells spaces as "+".
+     */
+    protected function usesPlus(string $name, ?string $constituency): bool {
+        return str_contains($name . $constituency, '+');
+    }
+
+    /**
+     * Part of an address as words. Underscores stand for spaces, as "+" does in old links.
+     */
+    protected function words(string $segment): string {
+        return str_replace(['_', '+'], ' ', $segment);
+    }
+
+    /**
+     * The people an address names, each as their latest matching term.
      *
      * @param string $name
      *   The name from the address.
@@ -109,8 +125,8 @@ abstract class MemberController {
     protected function matches(string $name, ?string $constituency): SupportCollection {
         return Person::termsNamed(
             $this->house(),
-            str_replace('_', ' ', $name),
-            $constituency === null ? null : str_replace('_', ' ', $constituency),
+            $this->words($name),
+            $constituency === null ? null : $this->words($constituency),
         );
     }
 

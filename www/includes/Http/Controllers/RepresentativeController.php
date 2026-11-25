@@ -25,13 +25,14 @@ class RepresentativeController extends MemberController {
     /**
      * One Representative's profile.
      *
-     * A name that several people share asks which one. A name alone, or with the wrong electorate, redirects to the
-     * full address.
+     * A name that several people share asks which one. A name alone, with the wrong electorate, or spelt with "+",
+     * redirects to the full address.
      */
     public function show(RecentSpeeches $speeches, string $name, ?string $constituency = null): View|RedirectResponse {
+        $oldSpelling = $this->usesPlus($name, $constituency);
         // Old links may say "/mp/jane citizen mp".
         if ($constituency === null) {
-            $name = preg_replace('/ mp$/i', '', $name);
+            $name = preg_replace('/ mp$/i', '', $this->words($name));
         }
 
         $matches = $this->matches($name, $constituency);
@@ -46,7 +47,7 @@ class RepresentativeController extends MemberController {
         }
 
         $person = Person::find($matches->first()->person_id);
-        if ($constituency === null || $wrongElectorate) {
+        if ($constituency === null || $wrongElectorate || $oldSpelling) {
             return redirect($person->latest()->profile_url);
         }
 
