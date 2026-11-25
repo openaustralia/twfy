@@ -4,6 +4,7 @@ namespace OpenAustralia\TWFY\Models;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Collection;
 
 /**
  * Glossary Eloquent model.
@@ -38,7 +39,7 @@ class Glossary extends Model {
     ];
 
     /**
-     * Visible terms a moderator approved, with who submitted them, by title.
+     * Visible terms a moderator approved, with who submitted them, by title and then the earliest submission.
      *
      * Each row has glossary_id, title, body, user_id, firstname and lastname.
      *
@@ -54,7 +55,26 @@ class Glossary extends Model {
           ->join('users', 'users.user_id', '=', 'editqueue.user_id')
           ->where('editqueue.approved', 1)
           ->orderBy('glossary.title')
+          ->orderBy('editqueue.submitted')
+          ->orderBy('editqueue.edit_id')
           ->select('glossary.glossary_id', 'glossary.title', 'glossary.body', 'users.user_id', 'users.firstname', 'users.lastname');
+    }
+
+    /**
+     * The approved terms, one for each term even when it has more than one approved queue entry.
+     *
+     * @param string $titleContains
+     *   Keeps only terms whose title contains this text, when it is not empty.
+     *
+     * @return \Illuminate\Support\Collection<int, Glossary>
+     *   The terms, by title.
+     */
+    public static function approvedTerms(string $titleContains = ''): Collection {
+        $query = static::approved();
+        if ($titleContains !== '') {
+            $query->where('glossary.title', 'like', '%' . addcslashes($titleContains, '%_\\') . '%');
+        }
+        return $query->get()->unique('glossary_id')->values();
     }
 
 }

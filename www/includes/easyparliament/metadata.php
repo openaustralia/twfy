@@ -349,13 +349,6 @@ class Metadata {
             'url' => 'addlink/',
             'session_vars' => ['g']
         ],
-        'glossary_item' => [
-            'heading' => 'Glossary heading',
-            'parent' => 'help_us_out',
-            'track' => true,
-            'url' => 'glossary/',
-            'session_vars' => ['g']
-        ],
         'hansard' => [
             'menu' => [
                 'text' => 'Debates',

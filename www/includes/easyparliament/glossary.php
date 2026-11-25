@@ -54,8 +54,6 @@ class GLOSSARY {
                                   * Will only be set if we have a valid epobject_id.
                                   */
     public $terms = [];
-    public $previous_term;
-    public $next_term;
 
     public $current_letter;
     public $search_matches = [];
@@ -136,30 +134,13 @@ class GLOSSARY {
 
             $this->num_terms = $q->rows();
 
-            // If we were given a glossary_id, then we need one term in particular,
-            // as well as knowing the next and previous terms for the navigation.
+            // If we were given a glossary_id, then we need one term in particular.
             if (isset($args['glossary_id']) && ($args['glossary_id'] != "")) {
-                $next = 0;
                 foreach ($this->terms as $term) {
-                    if ($next == 1) {
-                        $this->next_term = $term;
-                        break;
-                    } elseif ($term['glossary_id'] == $args['glossary_id']) {
+                    if ($term['glossary_id'] == $args['glossary_id']) {
                         $this->glossary_id = $args['glossary_id'];
-                        $this->current_term = $term;
-                        $next = 1;
-
-                    } else {
-                        $this->previous_term = $term;
+                        break;
                     }
-                }
-                // The first term in the list has no previous, so we'll make it the last term.
-                if (!isset($this->previous_term)) {
-                    $this->previous_term = end($this->terms);
-                }
-                // And the last has no next, so we'll make it the first.
-                if (!isset($this->next_term)) {
-                    $this->next_term = reset($this->terms);
                 }
             }
 
@@ -311,7 +292,7 @@ class GLOSSARY {
         // Generate links from URL when wanted
         // NB WRANS is already doing this.
         if ($urlize == 1) {
-            $body = preg_replace("~(http(s)?:\/\/[^\s\n]*)\b(\/)?~i", "<a href=\"\\0\">\\0</a>", $body);
+            $body = preg_replace("~(http(s)?:\/\/[^\s\"<>]*)\b(\/)?~i", "<a href=\"\\0\">\\0</a>", $body);
         }
 
         // Check for any glossary terms to replace.
@@ -324,7 +305,7 @@ class GLOSSARY {
             $term_title = $this->terms[$glossary_id]['title'];
 
             $URL->update(["gl" => $glossary_id]);
-            $findwords[$glossary_id] = "/(?<![>\.\'\/])\b(" . $term_title . ")\b(?![<\'])/i";
+            $findwords[$glossary_id] = "/(?<![>\.\'\/])\b(" . preg_quote($term_title, '/') . ")\b(?![<\'])/i";
             // Catch glossary terms within their own definitions.
             if ($glossary_id == $this->glossary_id) {
                 $replacewords[] = "<strong>\\1</strong>";
@@ -341,7 +322,7 @@ class GLOSSARY {
         // Highlight all occurrences of another glossary term in the definition.
         $body = preg_replace($findwords, $replacewords, $body);
         if (isset($this->glossary_id)) {
-            $body = preg_replace("/(?<![>\.\'\/])\b(" . $this->terms[$this->glossary_id]['title'] . ")\b(?![<\'])/i", '<strong>\\1</strong>', $body, 1);
+            $body = preg_replace("/(?<![>\.\'\/])\b(" . preg_quote($this->terms[$this->glossary_id]['title'], '/') . ")\b(?![<\'])/i", '<strong>\\1</strong>', $body, 1);
         }
 
         // Replace any phrases in wikipedia

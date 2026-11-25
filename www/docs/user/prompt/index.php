@@ -31,6 +31,9 @@ if ($type == 2) {
     $URL->insert(['g' => get_http_var('g')]);
     $glossary_returl = $URL->generate();
     $anchor = '';
+    if ($returl == '') {
+        $returl = $glossary_returl;
+    }
 
 } else {
     // Comment.
