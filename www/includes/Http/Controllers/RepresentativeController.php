@@ -6,6 +6,7 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Collection;
 use OpenAustralia\TWFY\Enums\House;
+use OpenAustralia\TWFY\Http\Visitor;
 use OpenAustralia\TWFY\Models\Member;
 use OpenAustralia\TWFY\Parliament\Person;
 use OpenAustralia\TWFY\Parliament\RecentSpeeches;
@@ -14,6 +15,12 @@ use OpenAustralia\TWFY\Parliament\RecentSpeeches;
  * Pages about members of the House of Representatives.
  */
 class RepresentativeController extends MemberController {
+
+    /**
+     * Takes what it needs to know about the visitor.
+     */
+    public function __construct(private readonly Visitor $visitor) {
+    }
 
     /**
      * One Representative's profile.
@@ -59,7 +66,7 @@ class RepresentativeController extends MemberController {
     protected function profilePage(Person $person): string {
         // The visitor's own Representative gets the "Your Representative" menu entry.
         $theirs = $person->sitsIn($this->house())
-          && strcasecmp($this->visitorsElectorate(), $person->latest()->constituency) === 0;
+          && strcasecmp($this->visitor->electorate(), $person->latest()->constituency) === 0;
 
         return $theirs ? 'yourmp' : 'mp';
     }
@@ -117,17 +124,10 @@ class RepresentativeController extends MemberController {
     }
 
     /**
-     * The electorate the visitor has given, or an empty string.
-     */
-    private function visitorsElectorate(): string {
-        return (string) $GLOBALS['THEUSER']->constituency();
-    }
-
-    /**
      * The current or latest Representative for the electorate the visitor has given, if any.
      */
     private function visitorsRepresentative(): ?Member {
-        $electorate = $this->visitorsElectorate();
+        $electorate = $this->visitor->electorate();
         if ($electorate === '') {
             return null;
         }

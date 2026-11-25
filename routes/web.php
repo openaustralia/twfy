@@ -6,6 +6,7 @@
  */
 
 use Illuminate\Support\Facades\Route;
+use OpenAustralia\TWFY\Http\Controllers\MemberLookupController;
 use OpenAustralia\TWFY\Http\Controllers\RepresentativeController;
 use OpenAustralia\TWFY\Http\Controllers\SenatorController;
 
@@ -13,6 +14,8 @@ use OpenAustralia\TWFY\Http\Controllers\SenatorController;
 Route::withoutMiddleware('web')->group(function (): void {
     Route::get('/mps', [RepresentativeController::class, 'index'])->name('representatives.index');
     Route::get('/senators', [SenatorController::class, 'index'])->name('senators.index');
+    Route::get('/mp', MemberLookupController::class)->name('representatives.lookup');
+    Route::get('/senator', MemberLookupController::class)->name('senators.lookup');
     Route::get('/mp/{name}/{electorate?}', [RepresentativeController::class, 'show'])->name('representatives.show');
     Route::get('/senator/{name}/{state?}', [SenatorController::class, 'show'])->name('senators.show');
 });

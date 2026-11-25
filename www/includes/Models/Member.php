@@ -191,6 +191,13 @@ class Member extends Model {
     }
 
     /**
+     * The term of whoever sits for an electorate or state, or else of whoever left it last.
+     */
+    public static function latestInElectorate(string $electorate): ?self {
+        return static::query()->where('constituency', $electorate)->orderByDesc('left_house')->first();
+    }
+
+    /**
      * The members sitting in a house, one per person, with what a list shows about them.
      *
      * Sorting by debates leaves out anyone without a count.

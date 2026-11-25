@@ -30,14 +30,15 @@ connection `eloquent.php` made, so both share one connection. Settings come from
 them), not `.env`. Composer runs `artisan package:discover` after installing, which writes `bootstrap/cache/`.
 
 Apache sends only Laravel's own routes to Laravel, through `www/docs/laravel.php`: `/user/login`, `/user/password...`,
-`/mps`, `/senators`, `/mp/<name>` and `/senator/<name>`. Production's rewrite rules live in the infrastructure repo, so
-a new route needs one there too.
+`/mps`, `/senators`, `/mp...` and `/senator...`. Production's rewrite rules are templated by Ansible in the
+infrastructure repo, so a new route needs a rule there too.
 
-The Representative and Senator list and profile pages use controllers in `www/includes/Http/Controllers/` and Blade
-views that extend `layout.legacy`, which draws them between the legacy header and footer (`Http\LegacyLayout`).
-`www/includes/Parliament/` holds what a profile says about a person. Their routes skip the `web` middleware group, so
-reading a public page starts no session. `/mp/` and `/senator/` on their own, with the postcode and ID lookups, are
-still legacy PHP (`www/docs/mp/index.php`).
+The Representative and Senator pages (lists, profiles, and the postcode and ID lookups at `/mp/` and `/senator/`) use
+controllers in `www/includes/Http/Controllers/` and Blade views that extend `layout.legacy`, which draws them between
+the legacy header and footer (`Http\LegacyLayout`). `www/includes/Parliament/` holds what a profile says about a
+person. Their routes skip the `web` middleware group, so reading a public page starts no session, and `Http\Visitor`
+reads and keeps the visitor's electorate. The old pages under `www/docs/mp*` and `www/docs/senators` stay until
+production sends these addresses to Laravel.
 
 Sign-in and password reset are Laravel's (Fortify). `www/docs/laravel.php` loads the legacy bootstrap first so
 `LoginPage`, `PasswordPages` and `ErrorPage` (in `www/includes/Auth/`) can draw their pages with the legacy `$PAGE`. Laravel's own error pages are Blade views and

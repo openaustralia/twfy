@@ -28,10 +28,9 @@ RewriteRule ^/U/(.*)$     /user/confirm/index.php?t=$1 [QSA]
 RewriteRule ^/user/login/?$ /laravel.php [L]
 RewriteRule ^/user/password(/.*)?$ /laravel.php [L]
 
-# The Representative and Senator list and profile pages, which Laravel handles
+# The Representative and Senator pages, which Laravel handles
 RewriteRule ^/(mps|senators)/?$ /laravel.php [L]
-# Not index.php or mobile.php: Apache asks for these when serving /mp/ and /senator/.
-RewriteRule ^/(mp|senator)/(?!index\.php|mobile\.php)[^/]+(/[^/]+)?/?$ /laravel.php [L]
+RewriteRule ^/(mp|senator)(/[^/]+){0,2}/?$ /laravel.php [L]
 
 # Postal delivery webhooks. Mapped to the file so a POST isn't redirected to a
 # trailing slash, which would drop its body.
@@ -42,30 +41,11 @@ RewriteRule ^/api/((get|convert).*)$ /api/index.php?method=$1 [QSA]
 RewriteRule ^/api/docs/?$            /api/ [R]
 RewriteRule ^/api/docs/(.*)$         /api/index.php?docs=1&method=$1 [QSA]
 
-# Other people types
-RewriteRule ^/senator/(.*)   /mp/$1?peer=1 [QSA]
-
 ##########################################################################################
 ## See http://smartmobtoolkit.wordpress.com/2008/10/16/not-device-detection/ for more info
 ## NOTE: May also need conds/rules for specific transcoders that lie
 ##       e.g. Google\sWireless\sTranscoder & MG\(Novarra-Vision
 ##########################################################################################
-    # /mp/ URL Mobile redirection (by exclusion)
-    RewriteCond         %{QUERY_STRING}         !.*show_pc.* [NC]
-        # NOTE: May want to add other bot patters here
-        RewriteCond         %{HTTP_USER_AGENT}      !^.*(spider|crawl|slurp|bot).*$ [NC]
-    RewriteCond         %{HTTP_USER_AGENT}      ^.*webOS.*$ [NC,OR]
-    RewriteCond         %{HTTP_USER_AGENT}      !^.*Linux.*$ [NC,OR]
-    RewriteCond         %{HTTP_USER_AGENT}      ^.*Android.*$ [NC]
-    RewriteCond         %{HTTP_USER_AGENT}      !^.*Win.*$ [NC,OR]
-    RewriteCond         %{HTTP_USER_AGENT}      ^.*Windows\s+CE.*$ [NC]
-    RewriteCond         %{HTTP_USER_AGENT}      !^.*OS\s+(X|9).*$ [NC,OR]
-    RewriteCond         %{HTTP_USER_AGENT}      ^.*iPhone.*$ [NC,OR]
-    RewriteCond         %{HTTP_USER_AGENT}      ^.*iPod.*$ [NC]
-    RewriteCond         %{HTTP_USER_AGENT}      !^.*Solaris.*$ [NC]
-    RewriteCond         %{HTTP_USER_AGENT}      !^.*BSD.*$
-    RewriteRule         ^/mp/$      /mp/mobile.php?n=$1&c=$2 [QSA]
-
 # News
 RewriteRule ^/news/archives/(.*)$  /news/index.php/archives/$1 [QSA]
 RewriteRule ^/news/index.rdf$      /news/rdf.php [QSA]

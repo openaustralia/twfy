@@ -3,6 +3,7 @@
 namespace OpenAustralia\TWFY\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Collection;
 
 /**
  * PostcodeLookup Eloquent model.
@@ -24,5 +25,15 @@ class PostcodeLookup extends Model {
         'postcode',
         'name',
     ];
+
+    /**
+     * The electorates a postcode falls in.
+     *
+     * @return \Illuminate\Support\Collection<int, string>
+     *   Their names, each once.
+     */
+    public static function electoratesFor(string $postcode): Collection {
+        return static::query()->where('postcode', $postcode)->orderBy('name')->pluck('name')->unique()->values();
+    }
 
 }
