@@ -2,11 +2,8 @@
 
 /**
  * @file
- * The busiest API keys and data.openaustralia.org.au downloads, for staff.
+ * The old address of the Busiest API keys report, which bookmarks and links may still use.
  */
 
-include_once __DIR__ . "/../../includes/easyparliament/init.php";
-
-use OpenAustralia\TWFY\Admin\UsageController;
-
-(new UsageController())->index();
+header('Location: /admin/api_keys.php' . ($_GET ? '?' . http_build_query($_GET) : ''), true, 301);
+exit;

@@ -35,7 +35,7 @@ describe('UsersController::index()', function () {
         });
 
         it('draws the page around the list', function () {
-            expect($this->html)->toStartWith('[page_start][stripe_start]');
+            expect($this->html)->toStartWith('[page_start]');
         });
 
         it('gives another user a form', function () {

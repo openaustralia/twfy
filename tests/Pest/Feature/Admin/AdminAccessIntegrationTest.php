@@ -23,7 +23,7 @@ const ADMIN_ACCESS_NAME = 'Adminaccessspec';
  *   The file names.
  */
 function admin_access_pages(): array {
-    return ['alert_stats.php', 'alerts.php', 'failedsearches.php', 'glossary.php', 'glossary_pending.php', 'index.php', 'popularsearches.php', 'proof.php', 'proof_errors.php', 'proof_year.php', 'searchlogs.php', 'statistics.php', 'usage.php', 'users.php'];
+    return ['alert_stats.php', 'alerts.php', 'api_keys.php', 'downloads.php', 'failedsearches.php', 'glossary.php', 'glossary_pending.php', 'index.php', 'popularsearches.php', 'proof.php', 'proof_errors.php', 'proof_year.php', 'searchlogs.php', 'statistics.php', 'users.php'];
 }
 
 /**

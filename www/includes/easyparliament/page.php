@@ -699,6 +699,19 @@ class PAGE {
                 }
             }
         }
+        // Only people who may open the admin section get its menu.
+        $admin_menu_html = '';
+        if ($THEUSER->isloggedin() && $THEUSER->is_able_to('viewadminsection')) {
+            try {
+                $admin_menu_html = twfy_laravel()->make('view')->make('layout.admin-menu', ['sections' => $this->admin_menu_sections()])->render();
+            }
+            catch (\Throwable $e) {
+                // A broken admin menu must not take the public pages down: report it, and say so to the admin.
+                \Sentry\captureException($e);
+                error_log('The admin menu failed: ' . $e->getMessage());
+                $admin_menu_html = '<span class="text-xs text-rose-300" role="alert">Admin menu unavailable</span>';
+            }
+        }
         ?>
                         <?php include __DIR__ . '/templates/html/menu.php'; ?>
 
@@ -3036,48 +3049,31 @@ class PAGE {
     }
 
     /**
+     * The admin menu: Home, then the reports, then the pages for managing things.
      *
+     * @return list<array{heading: string|null, links: list<array{title: string, url: string, icon: string, current: bool}>}>
+     *   Each section's heading, null for the first, and a link for each page in it. A page's icon is in its metadata.
      */
-    public function admin_menu() {
-        // Returns HTML suitable for putting in the sidebar on Admin pages.
+    public function admin_menu_sections(): array {
         global $this_page, $DATA;
 
-        $pages = [
-            'admin_home',
-            'admin_searchlogs',
-            'admin_popularsearches',
-            'admin_failedsearches',
-            'admin_statistics',
-            'admin_usage',
-            'admin_users',
-            'admin_glossary',
-            'admin_glossary_pending',
-            'admin_alerts',
-            'admin_proof',
-        ];
-
-        $links = [];
-
-        foreach ($pages as $page) {
-            $title = $DATA->page_metadata($page, 'title');
-
-            if ($page != $this_page) {
-                $URL = new URL($page);
-                $title = '<a href="' . $URL->generate() . '">' . $title . '</a>';
-            } else {
-                $title = '<strong>' . $title . '</strong>';
-            }
-
-            $links[] = $title;
+        $sections = [];
+        foreach ([
+            null => ['admin_home'],
+            'Reports' => ['admin_searchlogs', 'admin_popularsearches', 'admin_failedsearches', 'admin_statistics', 'admin_api_keys', 'admin_downloads', 'admin_proof'],
+            'Admin' => ['admin_users', 'admin_alerts', 'admin_glossary', 'admin_glossary_pending'],
+        ] as $heading => $pages) {
+            $sections[] = [
+                'heading' => $heading === '' ? null : $heading,
+                'links' => array_map(fn (string $page): array => [
+                    'title' => $DATA->page_metadata($page, 'title'),
+                    'url' => (new URL($page))->generate('none'),
+                    'icon' => (string) $DATA->page_metadata($page, 'icon'),
+                    'current' => $page === $this_page,
+                ], $pages),
+            ];
         }
-
-        $html = "<ul>\n";
-
-        $html .= "<li>" . implode("</li>\n<li>", $links) . "</li>\n";
-
-        $html .= "</ul>\n";
-
-        return $html;
+        return $sections;
     }
 
 }

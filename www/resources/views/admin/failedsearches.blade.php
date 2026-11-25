@@ -1,4 +1,4 @@
-<x-admin.table class="mx-4" :headings="['Distinct IPs', 'Number of times', 'Query', 'Most recent ago', 'First ago']" :numeric="[0, 1]">
+<x-admin.table :headings="['Distinct IPs', 'Number of times', 'Query', 'Most recent ago', 'First ago']" :numeric="[0, 1]">
 @foreach ($searches as $search)
 <x-admin.row>
 <x-admin.cell numeric>{{ $search['ips'] }}</x-admin.cell>

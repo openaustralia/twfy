@@ -67,7 +67,7 @@ describe('GlossaryController::index()', function () {
     });
 
     it('draws the page around the terms', function () {
-        expect($this->html)->toStartWith('[page_start][stripe_start]');
+        expect($this->html)->toStartWith('[page_start]');
     });
 
     it('lists an approved term', function () {

@@ -8,7 +8,7 @@ use OpenAustralia\TWFY\UsageStats\ReasonText;
 use OpenAustralia\TWFY\UsageStats\Settings;
 
 /**
- * The admin report of the busiest API keys and data.openaustralia.org.au downloads.
+ * The admin reports of the busiest API keys and data.openaustralia.org.au downloads.
  */
 class UsageController extends AdminController {
 
@@ -18,27 +18,67 @@ class UsageController extends AdminController {
     public const PERIODS = [30, 7, 1];
 
     /**
-     * The usage over a period ending today.
+     * The API keys that made the most calls over a period ending today.
      */
-    public function index(): void {
-        $this->page('admin_usage', function () {
-            $period = self::period((string) ($_GET['period'] ?? ''));
-            [$from, $to] = self::range($period, new \DateTimeImmutable('today', new \DateTimeZone('UTC')));
-            $downloads = new DownloadReport($from, $to, Settings::internalAddresses());
+    public function apiKeys(): void {
+        $this->page('admin_api_keys', function () {
+            [$period, $from, $to] = self::periodAndRange();
 
-            return $this->view('admin.usage', [
-                'filters' => array_map(
-                    fn (int $days): array => [$days === 1 ? 'Today' : "Last $days days", $this->adminUrl('usage.php', ['period' => $days]), $days === $period],
-                    self::PERIODS
-                ),
+            return $this->view('admin.api_keys', [
+                'filters' => $this->periodFilters('api_keys.php', $period),
                 'from' => $from,
                 'to' => $to,
                 'keys' => array_map(fn (array $row): array => self::keyRow($row), ApiUsageReport::topKeys($from, $to)),
+            ]);
+        });
+    }
+
+    /**
+     * The data.openaustralia.org.au downloads over a period ending today.
+     */
+    public function downloads(): void {
+        $this->page('admin_downloads', function () {
+            [$period, $from, $to] = self::periodAndRange();
+            $downloads = new DownloadReport($from, $to, Settings::internalAddresses());
+
+            return $this->view('admin.downloads', [
+                'filters' => $this->periodFilters('downloads.php', $period),
+                'from' => $from,
+                'to' => $to,
                 'daily' => $downloads->dailyTotals(),
                 'paths' => $downloads->topPaths(),
                 'visitors' => $downloads->topVisitors(),
             ]);
         });
+    }
+
+    /**
+     * The period asked for, and the first and last day of it.
+     *
+     * @return array{int, string, string}
+     *   The period in days, then its first and last day as Y-m-d.
+     */
+    private static function periodAndRange(): array {
+        $period = self::period((string) ($_GET['period'] ?? ''));
+        return [$period, ...self::range($period, new \DateTimeImmutable('today', new \DateTimeZone('UTC')))];
+    }
+
+    /**
+     * Links to each period on a page, with the current one marked.
+     *
+     * @param string $page
+     *   The page's file name in the admin folder.
+     * @param int $current
+     *   The period shown, in days.
+     *
+     * @return list<array{string, string, bool}>
+     *   Each choice's label, address and whether it is the current one.
+     */
+    private function periodFilters(string $page, int $current): array {
+        return array_map(
+            fn (int $days): array => [$days === 1 ? 'Today' : "Last $days days", $this->adminUrl($page, ['period' => $days]), $days === $current],
+            self::PERIODS
+        );
     }
 
     /**

@@ -20,7 +20,15 @@ describe('HomeController::index()', function () {
     });
 
     it('draws the page around the stats', function () {
-        expect($this->html)->toStartWith('[page_start][stripe_start]');
+        expect($this->html)->toStartWith('[page_start]');
+    });
+
+    it('titles the page with its icon', function () {
+        expect($this->html)->toMatch('/<h3[^>]*>\s*<svg[^>]*>.*<\/svg>\s*Home\s*<\/h3>/s');
+    });
+
+    it('draws no side stripe', function () {
+        expect($this->html)->not->toContain('[stripe_start]');
     });
 
     it('escapes a user\'s name', function () {
