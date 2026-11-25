@@ -25,15 +25,13 @@ function lookup_location(string $address): string {
 
 beforeEach(function () {
     MemberPageStubs::bind();
-    $this->theuser = $GLOBALS['THEUSER'] ?? null;
-    MemberPageStubs::visitor();
     MemberFixtures::term(97601);
     MemberFixtures::term(97602, ['house' => 2, 'first_name' => 'Sam', 'last_name' => 'Sample', 'constituency' => 'Tasmania']);
     PostcodeLookup::create(['postcode' => '9990', 'name' => 'Test Ville']);
 });
 
 afterEach(function () {
-    $GLOBALS['THEUSER'] = $this->theuser;
+    MemberPageStubs::restoreVisitor();
     laravel_spec_new_request();
 });
 

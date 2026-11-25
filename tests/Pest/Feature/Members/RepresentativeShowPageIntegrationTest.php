@@ -36,13 +36,11 @@ function representative_page_term(int $id, array $overrides = []): Member {
 
 beforeEach(function () {
     MemberPageStubs::bind();
-    $this->theuser = $GLOBALS['THEUSER'] ?? null;
-    MemberPageStubs::visitor();
     representative_page_term(97501);
 });
 
 afterEach(function () {
-    $GLOBALS['THEUSER'] = $this->theuser;
+    MemberPageStubs::restoreVisitor();
     laravel_spec_new_request();
 });
 

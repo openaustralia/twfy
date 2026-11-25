@@ -33,6 +33,7 @@ beforeEach(function () {
 });
 
 afterEach(function () {
+    MemberPageStubs::restoreVisitor();
     laravel_spec_new_request();
 });
 

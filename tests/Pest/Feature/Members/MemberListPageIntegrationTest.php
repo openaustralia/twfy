@@ -29,15 +29,13 @@ function member_page_download(string $address): string {
 
 beforeEach(function () {
     MemberPageStubs::bind();
-    $this->theuser = $GLOBALS['THEUSER'] ?? null;
-    MemberPageStubs::visitor();
 
     MemberFixtures::term(97101, ['last_name' => "O'Example", 'constituency' => 'Testville']);
     MemberFixtures::term(97102, ['house' => 2, 'first_name' => 'Sam', 'last_name' => 'Sample', 'constituency' => 'Tasmania']);
 });
 
 afterEach(function () {
-    $GLOBALS['THEUSER'] = $this->theuser;
+    MemberPageStubs::restoreVisitor();
     laravel_spec_new_request();
 });
 

@@ -18,9 +18,18 @@ use Symfony\Component\HttpFoundation\Response;
 final class MemberPageStubs {
 
     /**
-     * Stands in for the legacy layout, error page and search. The layout shows its page key and subtitle.
+     * The THEUSER global as bind() found it: empty if there was none.
+     *
+     * @var array<string, mixed>
+     */
+    private static array $visitorBefore = [];
+
+    /**
+     * Stands in for the legacy layout, error page, search and an anonymous visitor. The layout shows its page key and
+     * subtitle. Call restoreVisitor() after the test.
      */
     public static function bind(): void {
+        self::$visitorBefore = array_intersect_key($GLOBALS, ['THEUSER' => true]);
         twfy_laravel()->bind(LegacyLayout::class, fn () => new class extends LegacyLayout {
 
             public function top(string $page, array $metadata = []): string {
@@ -41,6 +50,16 @@ final class MemberPageStubs {
         });
         self::visitor();
         self::speeches([]);
+    }
+
+    /**
+     * Puts back whoever was visiting before bind().
+     */
+    public static function restoreVisitor(): void {
+        unset($GLOBALS['THEUSER']);
+        foreach (self::$visitorBefore as $name => $visitor) {
+            $GLOBALS[$name] = $visitor;
+        }
     }
 
     /**
