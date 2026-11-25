@@ -93,7 +93,7 @@ final class ServiceHistory {
         $before = null;
         foreach ($this->terms() as [$term, $party]) {
             if ($before && $before[0]->left_reason === 'changed_party' && $before[1] !== $party) {
-                $changes[] = ['on' => $this->shortDate($term->entered_house), 'from' => $before[1], 'to' => $party];
+                $changes[] = ['on' => $this->shortDate($before[0]->left_house), 'from' => $before[1], 'to' => $party];
             }
             $before = [$term, $party];
         }

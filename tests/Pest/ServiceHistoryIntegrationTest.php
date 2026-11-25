@@ -71,6 +71,15 @@ describe('ServiceHistory::partyNotice()', function () {
         });
     });
 
+    describe('with a break after the change', function () {
+        it('dates it when the old party ended', function () {
+            history_left_party(97601, 'Old Party', '2016-07-02', '2018-04-10');
+            history_term(97602, '2018-07-28', ['party' => 'New Party']);
+
+            expect(history()->partyNotice())->toBe('on 10 Apr 2018, from Old Party.');
+        });
+    });
+
     describe('with a move to Independent', function () {
         it('says they now sit as one', function () {
             history_left_party(97601, 'Old Party', '2019-05-18', '2023-02-01');
