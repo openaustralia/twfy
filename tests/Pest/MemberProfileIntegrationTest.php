@@ -170,6 +170,14 @@ describe('MemberProfile::since()', function () {
         });
     });
 
+    describe('with an unknown reason', function () {
+        it('gives none', function () {
+            profile_term(97301, ['entered_reason' => 'unknown']);
+
+            expect(profile()->since()['reason'])->toBe('');
+        });
+    });
+
     describe('with someone who has left', function () {
         it('is empty', function () {
             profile_term(97301, ['left_house' => '2025-06-30']);
@@ -195,63 +203,13 @@ describe('MemberProfile::since()', function () {
             expect(profile()->since())->toBeNull();
         });
     });
-});
 
-describe('MemberProfile::partyChanges()', function () {
-    beforeEach(function () {
-        profile_term(97301);
-    });
+    describe('with a presiding officer', function () {
+        it('still gives the start', function () {
+            profile_term(97301, ['party' => 'PRES']);
+            profile_term(97303, ['entered_house' => '2019-07-01', 'left_house' => '2022-07-01', 'left_reason' => 'changed_party']);
 
-    describe('with no change', function () {
-        it('says nothing', function () {
-            expect(profile()->partyChanges())->toBeNull();
-        });
-    });
-
-    describe('with a change', function () {
-        it('names the party and date', function () {
-            profile_term(97303, ['party' => 'Old Party', 'entered_house' => '2019-07-01', 'left_house' => '2022-07-01', 'left_reason' => 'changed_party']);
-
-            expect(profile()->partyChanges())->toBe('Changed party from Old Party on 1 Jul 2022');
-        });
-    });
-});
-
-describe('MemberProfile::history()', function () {
-    describe('with a sitting Senator', function () {
-        it('says when they became one', function () {
-            profile_term(97301);
-
-            expect(profile()->history())->toBe([['text' => 'Became a Senator on 1 July 2022', 'reason' => 'Federal election']]);
-        });
-    });
-
-    describe('with a start known to the year', function () {
-        it('gives only the year', function () {
-            profile_term(97301, ['entered_house' => '1990-01-01']);
-
-            expect(profile()->history()[0]['text'])->toBe('Became a Senator in 1990');
-        });
-    });
-
-    describe('with a Senator from the House', function () {
-        it('tells both stories', function () {
-            profile_term(97301);
-            profile_house_term();
-
-            expect(array_column(profile()->history(), 'text'))->toBe([
-                'Entered the Senate on 1 July 2022',
-                'Previously Representative for Testville until 11 April 2019',
-                'Entered House of Representatives on 2 July 2016',
-            ]);
-        });
-    });
-
-    describe('with a former Senator', function () {
-        it('says when and why they left', function () {
-            profile_term(97301, ['left_house' => '2025-06-30', 'left_reason' => 'resigned']);
-
-            expect(profile()->history()[1])->toBe(['text' => 'Left Senate on 30 June 2025', 'reason' => 'Resigned']);
+            expect(profile()->since()['date'])->toBe('1 July 2019');
         });
     });
 });

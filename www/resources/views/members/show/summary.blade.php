@@ -7,6 +7,12 @@
 <p class="hidden print:block">This data was produced by OpenAustralia from a variety of sources.</p>
 <p class="!m-0 !mb-3 text-sm"><a href="{{ route($house === House::Senate ? 'senators.index' : 'representatives.index', [], false) }}" class="{{ $theme->link }} !underline">&larr; All {{ $house->memberTitle() }}s</a></p>
 <section id="mp" aria-labelledby="who" class="mb-6 rounded-lg {{ $theme->hero }} p-5 !text-white shadow-md md:p-8">
+@if ($history->partyNotice())
+<div class="mb-6 flex items-start gap-3 rounded-md bg-white/10 px-4 py-3 text-[15px]">
+<svg aria-hidden="true" class="mt-0.5 flex-none {{ $theme->label }}" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 1l4 4-4 4M3 11V9a4 4 0 0 1 4-4h14M7 23l-4-4 4-4M21 13v2a4 4 0 0 1-4 4H3"></path></svg>
+<span><strong>Changed party</strong> {{ $history->partyNotice() }}</span>
+</div>
+@endif
 <div class="flex flex-wrap items-start gap-6">
 @if ($photo)
 <img class="h-[214px] w-40 flex-none rounded-xl border-4 border-solid {{ $theme->photo }} object-cover" alt="Photo of {{ $profile->name() }}" src="{{ $photo }}" width="160" height="214">
@@ -43,17 +49,6 @@
 </div>
 @endif
 </dl>
-{{-- Anything "since" can't say. The history timelines will replace this. --}}
-@if (!$since)
-<ul class="!m-0 !mb-5 !pl-5 text-sm !text-slate-300">
-@if ($profile->partyChanges())
-<li>{{ $profile->partyChanges() }}</li>
-@endif
-@foreach ($profile->history() as $event)
-<li>{{ $event['text'] }}{{ $event['reason'] ? ' — ' . $event['reason'] : '' }}</li>
-@endforeach
-</ul>
-@endif
 @if ($profile->canBeFollowed())
 <div class="flex flex-wrap items-center gap-x-4 gap-y-2">
 <a href="{{ MemberUrls::alert($person->id) }}" class="box-border inline-flex min-h-[44px] items-center gap-2.5 rounded {{ $theme->button }} px-6 py-2.5 text-base font-semibold !text-white !no-underline shadow">
@@ -76,6 +71,13 @@ Email me whenever {{ $profile->name() }} speaks
 </li>
 @endforeach
 </ul>
+</div>
+@endif
+{{-- Anyone "since" can't sum up gets their histories. --}}
+@if (!$since)
+<div class="mt-7 grid grid-cols-[repeat(auto-fit,minmax(min(300px,100%),1fr))] gap-x-10 gap-y-6 border-0 border-t border-solid border-white/20 pt-5">
+<x-members.timeline title="Party history" :entries="$history->parties()" :label="$theme->label" />
+<x-members.timeline title="Electorate history" :entries="$history->seats()" :label="$theme->label" />
 </div>
 @endif
 </section>

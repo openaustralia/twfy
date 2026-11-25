@@ -81,7 +81,7 @@ describe('GET /senator/{name}/{state}', function () {
         });
 
         it('says when they left', function () {
-            expect(senator_page_get()->getContent())->toContain('Left Senate on 30 June 2025');
+            expect(senator_page_get()->getContent())->toContain('21 May 2022 to 30 Jun 2025 (3 years)');
         });
 
         it('has no register tile', function () {

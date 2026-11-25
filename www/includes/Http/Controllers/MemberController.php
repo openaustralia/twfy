@@ -18,6 +18,7 @@ use OpenAustralia\TWFY\Parliament\MemberStatistics;
 use OpenAustralia\TWFY\Parliament\MemberUrls;
 use OpenAustralia\TWFY\Parliament\Person;
 use OpenAustralia\TWFY\Parliament\RecentSpeeches;
+use OpenAustralia\TWFY\Parliament\ServiceHistory;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 /**
@@ -140,6 +141,7 @@ abstract class MemberController {
             // The legacy layout prints the title as it is.
             'metadata' => array_filter(['subtitle' => e($profile->pageTitle()), 'rss' => $feed]),
             'profile' => $profile,
+            'history' => new ServiceHistory($person),
             'person' => $person,
             'house' => $house,
             'theme' => HouseTheme::for($house),

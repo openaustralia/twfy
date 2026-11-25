@@ -17,20 +17,14 @@ final class MemberProfile {
     public const SHORT_DATE = 'j M Y';
 
     /**
-     * The reasons a term starts or ends. Others show as the database has them.
+     * The reasons a term starts. An unknown one says nothing, and others show as the database has them.
      */
     private const REASONS = [
         'by_election' => 'Byelection',
         'changed_party' => 'Changed party',
-        'declared_void' => 'Declared void',
-        'died' => 'Died',
-        'disqualified' => 'Disqualified',
         'general_election' => 'Federal election',
-        'general_election_standing' => 'Federal election (stood again)',
-        'general_election_not_standing' => 'did not stand for re-election',
         'reinstated' => 'Reinstated',
-        'resigned' => 'Resigned',
-        'still_in_office' => 'Still in office',
+        'unknown' => '',
     ];
 
     /**
@@ -110,7 +104,7 @@ final class MemberProfile {
     }
 
     /**
-     * When a sitting member with one house and one party to their name started, and why. Others need history().
+     * When a sitting member with one house and one party to their name started, and why. Others need the timelines.
      *
      * @return array{date: string, reason: string}|null
      *   The date is a year alone for a Senate term only known to the year.
@@ -119,63 +113,17 @@ final class MemberProfile {
         $house = House::from($this->person->latest()->house);
         $simple = $this->person->sitsIn($house)
           && count($this->person->houses()) === 1
-          && $this->person->partyChanges()->isEmpty();
+          && (new ServiceHistory($this->person))->partyNotice() === null;
         if (!$simple) {
             return null;
         }
 
         $first = $this->person->firstTerm($house);
 
-        return ['date' => $this->startDate($first), 'reason' => $this->reason($first->entered_reason)];
-    }
+        $entered = $first->entered_house;
+        $date = $first->enteredYearOnly() ? (string) $entered->year : $entered->format(self::LONG_DATE);
 
-    /**
-     * The parties they have left, unless they now preside, as party() then names the last one.
-     */
-    public function partyChanges(): ?string {
-        $changes = $this->person->partyChanges();
-        if ($changes->isEmpty() || $this->person->latest()->isPresidingOfficer()) {
-            return null;
-        }
-
-        return 'Changed party ' . $changes
-          ->map(fn (Member $term): string => "from $term->party_name on " . $term->left_house->format(self::SHORT_DATE))
-          ->implode('; ');
-    }
-
-    /**
-     * When they entered and left each house, and why.
-     *
-     * @return list<array{text: string, reason: string}>
-     *   The events, in the order the page shows them.
-     */
-    public function history(): array {
-        $representative = $this->person->firstTerm(House::Representatives);
-        $senator = $this->person->firstTerm(House::Senate);
-        $leftHouse = $representative && !$this->person->sitsIn(House::Representatives)
-          ? $this->person->latestTerm(House::Representatives)
-          : null;
-        $events = [];
-
-        if ($senator && $representative) {
-            $events[] = $this->joined('Entered the Senate', $senator);
-            if ($leftHouse) {
-                $events[] = $this->left("Previously Representative for $leftHouse->display_constituency until", $leftHouse);
-            }
-        } elseif ($senator) {
-            $events[] = $this->joined('Became a Senator', $senator);
-        } elseif ($leftHouse) {
-            $events[] = $this->left('Left House of Representatives on', $leftHouse);
-        }
-
-        if ($representative) {
-            $events[] = $this->joined('Entered House of Representatives', $representative);
-        }
-        if ($senator && !$this->person->sitsIn(House::Senate)) {
-            $events[] = $this->left('Left Senate on', $this->person->latestTerm(House::Senate));
-        }
-
-        return $events;
+        return ['date' => $date, 'reason' => $this->reason($first->entered_reason)];
     }
 
     /**
@@ -291,46 +239,10 @@ final class MemberProfile {
     }
 
     /**
-     * When a term started. Some Senate terms are only known to the year, and are stored as 1 January.
-     */
-    private function startDate(Member $term): string {
-        $date = $term->entered_house;
-        $yearOnly = $term->house === House::Senate->value && $date->format('m-d') === '01-01';
-
-        return $yearOnly ? (string) $date->year : $date->format(self::LONG_DATE);
-    }
-
-    /**
-     * A reason a term started or ended, in words.
+     * A reason a term started, in words.
      */
     private function reason(?string $reason): string {
         return self::REASONS[$reason] ?? (string) $reason;
-    }
-
-    /**
-     * A term's start.
-     *
-     * @return array{text: string, reason: string}
-     *   The event.
-     */
-    private function joined(string $what, Member $term): array {
-        $date = $this->startDate($term);
-        $when = (strlen($date) === 4 ? 'in ' : 'on ') . $date;
-
-        return ['text' => "$what $when", 'reason' => $this->reason($term->entered_reason)];
-    }
-
-    /**
-     * A term's end.
-     *
-     * @return array{text: string, reason: string}
-     *   The event.
-     */
-    private function left(string $what, Member $term): array {
-        return [
-            'text' => "$what " . $term->left_house->format(self::LONG_DATE),
-            'reason' => $this->reason($term->left_reason),
-        ];
     }
 
 }

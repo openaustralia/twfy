@@ -198,6 +198,13 @@ class Member extends Model {
     }
 
     /**
+     * Whether the start is only known to the year. Some Senate terms are stored as 1 January.
+     */
+    public function enteredYearOnly(): bool {
+        return $this->house === House::Senate->value && $this->entered_house->format('m-d') === '01-01';
+    }
+
+    /**
      * The term of whoever sits for an electorate or state, or else of whoever left it last, in either house or one.
      */
     public static function latestInElectorate(string $electorate, ?House $house = null): ?self {
