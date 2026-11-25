@@ -34,11 +34,11 @@ class Member extends Model {
      * The party codes that stand for a presiding office, with that office and its house.
      */
     private const PRESIDING_OFFICERS = [
-        'SPK' => ['Speaker', 'House of Representatives'],
-        'CWM' => ['Deputy Speaker', 'House of Representatives'],
-        'DCWM' => ['Deputy Speaker', 'House of Representatives'],
-        'PRES' => ['President', 'Senate'],
-        'DPRES' => ['Deputy President', 'Senate'],
+        'SPK' => ['Speaker', House::Representatives],
+        'CWM' => ['Deputy Speaker', House::Representatives],
+        'DCWM' => ['Deputy Speaker', House::Representatives],
+        'PRES' => ['President', House::Senate],
+        'DPRES' => ['Deputy President', House::Senate],
     ];
 
     /**
@@ -301,7 +301,8 @@ class Member extends Model {
         return Attribute::get(function (): array {
             $positions = $this->currentOffices->pluck('description')->filter()->values()->all();
             if ($this->isPresidingOfficer()) {
-                array_unshift($positions, implode(', ', self::PRESIDING_OFFICERS[$this->party]));
+                [$office, $house] = self::PRESIDING_OFFICERS[$this->party];
+                array_unshift($positions, "$office, {$house->title()}");
             }
             return $positions;
         });

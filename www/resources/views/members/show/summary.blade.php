@@ -14,7 +14,7 @@
 @endif
 <div class="flex flex-wrap items-start gap-6">
 @if ($photo)
-<img class="h-[214px] w-40 flex-none rounded-xl border-4 border-solid {{ $theme->photo }} object-cover" alt="Photo of {{ $profile->name() }}" src="{{ $photo }}" width="160" height="214">
+<img class="h-[214px] w-40 flex-none rounded-xl border-4 border-solid {{ $theme->photo }} object-cover" alt="{{ $profile->name() }}" src="{{ $photo }}" width="160" height="214">
 @else
 <div class="box-border flex h-[214px] w-40 flex-none flex-col items-center justify-center gap-2 rounded-xl border-4 border-solid {{ $theme->photo }} p-3 text-center text-sm !text-slate-900">
 <span>We're missing a photo!</span>
