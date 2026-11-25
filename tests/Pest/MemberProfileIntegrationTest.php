@@ -299,6 +299,20 @@ describe('MemberProfile neighbours', function () {
         expect(profile()->successors()->pluck('person_id')->all())->toBe([97320]);
     });
 
+    describe('after a move from another seat', function () {
+        beforeEach(function () {
+            profile_term(97303, ['house' => 1, 'constituency' => 'Elsewhere', 'entered_house' => '1998-10-03', 'left_house' => '2016-05-09']);
+        });
+
+        it('counts earlier holders as before', function () {
+            expect(profile()->predecessors()->pluck('person_id')->all())->toBe([97310]);
+        });
+
+        it('counts only later holders as after', function () {
+            expect(profile()->successors()->pluck('person_id')->all())->toBe([97320]);
+        });
+    });
+
     describe('with a later Senate term', function () {
         it('lists nobody', function () {
             profile_term(97330);

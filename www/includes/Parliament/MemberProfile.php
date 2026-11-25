@@ -194,7 +194,7 @@ final class MemberProfile {
     }
 
     /**
-     * Who has held their electorate since they arrived, the earliest first.
+     * Who has held their electorate since they first did, the earliest first.
      *
      * @return \Illuminate\Support\Collection<int, Member>
      *   One term for each person.
@@ -204,21 +204,26 @@ final class MemberProfile {
     }
 
     /**
-     * Others in the electorate who entered the House before or after this person first did.
+     * Others in the electorate who entered the House before or after this person first did for it.
      *
      * @return \Illuminate\Support\Collection<int, Member>
-     *   One term for each person. Empty for someone who never sat in the House.
+     *   One term for each person. Empty for someone who never sat in the House for it.
      */
     private function electorateNeighbours(string $comparison, string $direction): Collection {
-        $first = $this->person->firstTerm(House::Representatives);
+        // The constituency heading the profile, so a profile headed by a Senate term lists nobody.
+        $constituency = $this->person->latest()->constituency;
+        $first = $this->person->terms
+          ->where('house', House::Representatives->value)
+          ->where('constituency', $constituency)
+          ->sortBy('entered_house')
+          ->first();
         if (!$first) {
             return new Collection();
         }
 
         return Member::query()
           ->inHouse(House::Representatives)
-          // The constituency heading the profile, so a profile headed by a Senate term lists nobody.
-          ->where('constituency', $this->person->latest()->constituency)
+          ->where('constituency', $constituency)
           ->where('person_id', '!=', $this->person->id)
           ->where('entered_house', $comparison, $first->entered_house->toDateString())
           ->orderBy('entered_house', $direction)
