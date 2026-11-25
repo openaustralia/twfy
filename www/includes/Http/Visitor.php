@@ -4,6 +4,7 @@ namespace OpenAustralia\TWFY\Http;
 
 use Illuminate\Support\Facades\Cookie;
 use OpenAustralia\TWFY\Enums\House;
+use OpenAustralia\TWFY\Models\Alert;
 use OpenAustralia\TWFY\Models\Member;
 use OpenAustralia\TWFY\Models\User;
 use Symfony\Component\HttpFoundation\Response;
@@ -29,6 +30,15 @@ class Visitor {
         $electorate = $this->electorate();
 
         return $electorate === '' ? null : Member::latestInElectorate($electorate, $house);
+    }
+
+    /**
+     * Their alert for everything a person says, if they're signed in and have one running.
+     */
+    public function alertFor(int $personId): ?Alert {
+        $user = $GLOBALS['THEUSER'];
+
+        return $user->isloggedin() ? Alert::query()->active()->following($user->email(), $personId)->first() : null;
     }
 
     /**

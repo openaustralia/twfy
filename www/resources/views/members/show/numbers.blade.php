@@ -22,7 +22,11 @@ years old, on average, can understand this {{ $memberTitle }}’s speeches, goin
 @php($followers = $statistics->followers())
 <x-members.statistic :figure="number_format($followers)" :theme="$theme">
 {{ $followers === 1 ? 'person is' : 'people are' }} tracking whenever this {{ $memberTitle }} speaks
-@if ($profile->canBeFollowed())
+@if ($subscription)
+<x-slot:action>
+<x-members.subscribed :alert="$subscription" :name="$profile->name()" :theme="$theme" />
+</x-slot:action>
+@elseif ($profile->canBeFollowed())
 <x-slot:action>
 <x-members.alert-button :person="$person->id" :name="$profile->name()" :theme="$theme" />
 </x-slot:action>

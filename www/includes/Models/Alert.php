@@ -3,6 +3,7 @@
 namespace OpenAustralia\TWFY\Models;
 
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -53,6 +54,23 @@ class Alert extends Model {
      */
     public function scopeActive(Builder $query): Builder {
         return $query->where('confirmed', true)->where('deleted', false);
+    }
+
+    /**
+     * An address's alerts for everything one person says.
+     *
+     * @param \Illuminate\Database\Eloquent\Builder<Alert> $query
+     *   The query to narrow.
+     * @param string $email
+     *   The address.
+     * @param int $personId
+     *   The person.
+     *
+     * @return \Illuminate\Database\Eloquent\Builder<Alert>
+     *   The same query, limited to those alerts.
+     */
+    public function scopeFollowing(Builder $query, string $email, int $personId): Builder {
+        return $query->where('email', $email)->where('criteria', "speaker:$personId");
     }
 
     /**
@@ -122,6 +140,13 @@ class Alert extends Model {
           ->selectRaw('COUNT(*) AS c')
           ->groupBy('criteria')
           ->orderByDesc('c');
+    }
+
+    /**
+     * What the unsubscribe and confirm pages take to act on this alert.
+     */
+    protected function token(): Attribute {
+        return Attribute::get(fn (): string => "$this->alert_id-$this->registrationtoken");
     }
 
 }

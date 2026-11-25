@@ -10,6 +10,7 @@ use Illuminate\Support\Collection as SupportCollection;
 use OpenAustralia\TWFY\Enums\House;
 use OpenAustralia\TWFY\Enums\MemberOrder;
 use OpenAustralia\TWFY\Http\HouseTheme;
+use OpenAustralia\TWFY\Http\Visitor;
 use OpenAustralia\TWFY\Models\Member;
 use OpenAustralia\TWFY\Parliament\MemberFacts;
 use OpenAustralia\TWFY\Parliament\MemberLinks;
@@ -26,6 +27,12 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
  * What the pages about Representatives and Senators share.
  */
 abstract class MemberController {
+
+    /**
+     * Takes what it needs to know about the visitor.
+     */
+    public function __construct(protected readonly Visitor $visitor) {
+    }
 
     /**
      * The sitting members of one house, as a page or, with ?f=csv, as a spreadsheet.
@@ -152,6 +159,7 @@ abstract class MemberController {
             'statistics' => new MemberStatistics($person, $facts),
             'speeches' => $speeches->for($person->id),
             'speaking' => SpeakingRecord::for($person),
+            'subscription' => $this->visitor->alertFor($person->id),
             'photo' => $photo,
             'photoSize' => $photoSize,
             'feed' => $feed,

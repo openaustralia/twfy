@@ -39,6 +39,7 @@ final class MemberPageStubs {
             }
 
         });
+        self::visitor();
         self::speeches([]);
     }
 
@@ -66,6 +67,10 @@ final class MemberPageStubs {
 
             public function user_id(): ?int {
                 return $this->userId;
+            }
+
+            public function email(): string {
+                return $this->userId === null ? '' : 'sam.visitor@example.test';
             }
 
         };

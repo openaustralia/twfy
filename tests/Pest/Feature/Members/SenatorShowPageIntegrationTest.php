@@ -10,6 +10,7 @@ require_once __DIR__ . '/../../../../www/includes/utility.php';
 require_once __DIR__ . '/../../Support/MemberFixtures.php';
 require_once __DIR__ . '/../../Support/MemberPageStubs.php';
 
+use OpenAustralia\TWFY\Models\Alert;
 use OpenAustralia\TWFY\Models\Hansard;
 use OpenAustralia\TWFY\Models\Member;
 use OpenAustralia\TWFY\Models\Moffice;
@@ -94,6 +95,45 @@ describe('GET /senator/{name}/{state}', function () {
 
         it('says how it compares', function () {
             expect(senator_page_get()->getContent())->toContain('Above average amongst Senators');
+        });
+    });
+
+    describe('with a signed-in subscriber', function () {
+        beforeEach(function () {
+            MemberPageStubs::visitor(userId: 97401);
+            $this->alert = Alert::create(['email' => 'sam.visitor@example.test', 'criteria' => 'speaker:97401', 'confirmed' => true, 'deleted' => false, 'registrationtoken' => 'spectoken']);
+        });
+
+        it('says they are subscribed', function () {
+            expect(senator_page_get()->getContent())->toContain('You’re subscribed');
+        });
+
+        it('offers to unsubscribe', function () {
+            expect(senator_page_get()->getContent())->toContain('action="/alert/delete/" method="post"', 'value="' . $this->alert->alert_id . '-spectoken"');
+        });
+
+        describe('who unsubscribed', function () {
+            it('offers the alert again', function () {
+                $this->alert->update(['deleted' => true]);
+
+                expect(senator_page_get()->getContent())->not->toContain('You’re subscribed', 'spectoken');
+            });
+        });
+    });
+
+    describe('with someone else subscribed', function () {
+        beforeEach(function () {
+            Alert::create(['email' => 'other@example.test', 'criteria' => 'speaker:97401', 'confirmed' => true, 'deleted' => false, 'registrationtoken' => 'othertoken']);
+        });
+
+        it('keeps their token from a visitor', function () {
+            expect(senator_page_get()->getContent())->not->toContain('othertoken');
+        });
+
+        it('keeps it from another user', function () {
+            MemberPageStubs::visitor(userId: 97401);
+
+            expect(senator_page_get()->getContent())->not->toContain('othertoken');
         });
     });
 

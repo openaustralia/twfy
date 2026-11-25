@@ -6,7 +6,6 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Collection;
 use OpenAustralia\TWFY\Enums\House;
-use OpenAustralia\TWFY\Http\Visitor;
 use OpenAustralia\TWFY\Models\Member;
 use OpenAustralia\TWFY\Parliament\MemberUrls;
 use OpenAustralia\TWFY\Parliament\Person;
@@ -16,12 +15,6 @@ use OpenAustralia\TWFY\Parliament\RecentSpeeches;
  * Pages about members of the House of Representatives.
  */
 class RepresentativeController extends MemberController {
-
-    /**
-     * Takes what it needs to know about the visitor.
-     */
-    public function __construct(private readonly Visitor $visitor) {
-    }
 
     /**
      * One Representative's profile.
