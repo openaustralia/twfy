@@ -3,6 +3,7 @@
 @php($link = $theme->link . ' !underline')
 @php($offices = $profile->pastOffices())
 <aside aria-label="More about this person" class="mt-8 flex flex-col gap-5 lg:mt-0 lg:w-80 lg:flex-none">
+@include('members.show.donate')
 @if ($links)
 <x-members.panel title="More useful links for this person">
 <ul class="!m-0 !pl-5 text-base !text-slate-700">
@@ -41,5 +42,4 @@
 <x-members.panel title="Journalist?" soft>
 <p class="!m-0 text-[15px] !text-slate-700">Please feel free to use the data on this page, but if you do you must cite OpenAustralia.org in the body of your articles as the source of any analysis or data you get off this site.</p>
 </x-members.panel>
-@include('members.show.donate')
 </aside>
