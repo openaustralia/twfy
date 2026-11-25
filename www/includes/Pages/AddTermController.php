@@ -75,7 +75,6 @@ class AddTermController extends PageController {
 
         $this->page('glossary_addterm', fn () => $this->view('glossary.addterm', [
             'signed_in' => $signedIn,
-            'can_add' => $canAdd,
             'token' => self::token(),
             'search_url' => $signedIn ? GlossaryUrls::add() : GlossaryUrls::signIn(),
             'phrase' => $phrase,
@@ -88,7 +87,6 @@ class AddTermController extends PageController {
             'excerpts_html' => $excerpts,
             'letters' => GlossaryLetters::for(Glossary::approvedTerms()),
             'examples' => [['title' => 'Standing Order 94A', 'url' => GlossaryUrls::term(2)], ['title' => 'interjecting', 'url' => GlossaryUrls::term(1)]],
-            'browse_url' => GlossaryUrls::index(),
         ]));
     }
 

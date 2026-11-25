@@ -139,7 +139,6 @@ class GLOSSARY {
                 foreach ($this->terms as $term) {
                     if ($term['glossary_id'] == $args['glossary_id']) {
                         $this->glossary_id = $args['glossary_id'];
-                        $this->current_term = $term;
                         break;
                     }
                 }

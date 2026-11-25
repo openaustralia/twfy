@@ -2750,15 +2750,6 @@ class PAGE {
         }
 
         print "\t\t\t\t<p class=\"glossary-body\">" . $term['body'] . "</p>\n" . $user_details;
-
-        if ($this_page == "glossary_item") {
-            // Add a direct search link for current glossary item.
-            $URL = new URL('search');
-            // Remember to quote the term for phrase matching in search.
-            $URL->insert(['s' => '"' . $term['title'] . '"']);
-            $search_url = $URL->generate();
-            printf("\t\t\t\t<p>Search hansard for \"<a href=\"%s\" title=\"View search results for this glossary item\">%s</a>\"</p>", $search_url, $term['title']);
-        }
     }
 
     /**
