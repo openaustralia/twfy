@@ -98,11 +98,12 @@ class MemberLookupController {
         }
 
         $member = Member::latestInElectorate($electorates->first());
-        if (!$member) {
-            return $this->form($request);
-        }
+        $answer = $this->toPerson($request, $member?->person_id);
 
-        return $this->visitor->rememberElectorate($member->constituency, $this->toPerson($request, $member->person_id));
+        // Only an electorate that leads to a profile is worth keeping.
+        return $answer instanceof RedirectResponse
+          ? $this->visitor->rememberElectorate($member->constituency, $answer)
+          : $answer;
     }
 
     /**

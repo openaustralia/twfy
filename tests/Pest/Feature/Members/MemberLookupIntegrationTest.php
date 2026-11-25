@@ -154,6 +154,22 @@ describe('GET /mp/?pc=', function () {
         expect(MemberPageStubs::get('/mp/?pc=' . $postcode)->getContent())->toContain($message);
     })->with('bad postcodes');
 
+    describe('whose member has no profile', function () {
+        beforeEach(function () {
+            // A term in neither house, which has no profile page.
+            MemberFixtures::term(97603, ['house' => 3, 'constituency' => 'Odd Ville']);
+            PostcodeLookup::create(['postcode' => '9992', 'name' => 'Odd Ville']);
+        });
+
+        it('asks for a postcode', function () {
+            expect(MemberPageStubs::get('/mp/?pc=9992')->getContent())->toContain('Enter your Australian postcode');
+        });
+
+        it('keeps no electorate', function () {
+            expect(MemberPageStubs::get('/mp/?pc=9992')->headers->getCookies())->toBe([]);
+        });
+    });
+
     describe('in several electorates', function () {
         beforeEach(function () {
             PostcodeLookup::create(['postcode' => '9990', 'name' => 'Other Ville']);
