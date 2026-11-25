@@ -2,6 +2,7 @@
 
 namespace OpenAustralia\TWFY\Models;
 
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -48,5 +49,21 @@ class Moffice extends Model {
         'from_date'  => 'date',
         'to_date'    => 'date',
     ];
+
+    /**
+     * The office in words, such as "Minister, Treasury". A department alone means membership of it.
+     */
+    protected function description(): Attribute {
+        return Attribute::get(function (): string {
+            $description = match (true) {
+                $this->position && $this->dept => "$this->position, $this->dept",
+                (bool) $this->position => $this->position,
+                (bool) $this->dept => "Member, $this->dept",
+                default => '',
+            };
+            // The loader stores some punctuation as HTML entities.
+            return html_entity_decode($description, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+        });
+    }
 
 }
