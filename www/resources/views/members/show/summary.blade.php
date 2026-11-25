@@ -9,7 +9,7 @@
 <section id="mp" aria-labelledby="who" class="mb-6 rounded-lg {{ $theme->hero }} p-5 !text-white shadow-md md:p-8">
 @if ($history->partyNotice())
 <div class="mb-6 flex items-start gap-3 rounded-md bg-white/10 px-4 py-3 text-[15px]">
-<svg aria-hidden="true" class="mt-0.5 flex-none {{ $theme->label }}" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 1l4 4-4 4M3 11V9a4 4 0 0 1 4-4h14M7 23l-4-4 4-4M21 13v2a4 4 0 0 1-4 4H3"></path></svg>
+<x-members.icon class="mt-0.5 {{ $theme->label }}" path="M17 1l4 4-4 4M3 11V9a4 4 0 0 1 4-4h14M7 23l-4-4 4-4M21 13v2a4 4 0 0 1-4 4H3" />
 <span><strong>Changed party</strong> {{ $history->partyNotice() }}</span>
 </div>
 @endif
@@ -52,7 +52,7 @@
 @if ($profile->canBeFollowed())
 <div class="flex flex-wrap items-center gap-x-4 gap-y-2">
 <a href="{{ MemberUrls::alert($person->id) }}" class="box-border inline-flex min-h-[44px] items-center gap-2.5 rounded {{ $theme->button }} px-6 py-2.5 text-base font-semibold !text-white !no-underline shadow">
-<svg aria-hidden="true" class="flex-none" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2zM22 6l-10 7L2 6"></path></svg>
+<x-members.icon path="M4 4h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2zM22 6l-10 7L2 6" />
 Email me whenever {{ $profile->name() }} speaks
 </a>
 <span class="text-sm !text-slate-300">No more than once per day</span>
