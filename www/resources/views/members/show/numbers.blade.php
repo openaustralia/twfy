@@ -23,7 +23,9 @@ years old, on average, can understand this {{ $memberTitle }}’s speeches, goin
 <x-members.statistic :figure="number_format($followers)" :theme="$theme">
 {{ $followers === 1 ? 'person is' : 'people are' }} tracking whenever this {{ $memberTitle }} speaks
 @if ($profile->canBeFollowed())
-<a href="{{ MemberUrls::alert($person->id) }}" class="mt-2 block {{ $link }}">Email me whenever {{ $profile->name() }} speaks</a>
+<x-slot:action>
+<x-members.alert-button :person="$person->id" :name="$profile->name()" :theme="$theme" />
+</x-slot:action>
 @endif
 </x-members.statistic>
 @foreach ($statistics->alliterations() as $alliteration)

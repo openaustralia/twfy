@@ -127,7 +127,7 @@ describe('GET /senator/{name}/{state}', function () {
         });
 
         it('offers no email alerts', function () {
-            expect(senator_page_get()->getContent())->not->toContain('speaks</a>', 'No more than once per day');
+            expect(senator_page_get()->getContent())->not->toContain('Email me whenever', 'No more than once per day');
         });
     });
 
