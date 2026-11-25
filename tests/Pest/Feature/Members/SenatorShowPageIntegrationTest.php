@@ -95,6 +95,10 @@ describe('GET /senator/{name}/{state}', function () {
             Member::find(97401)->update(['left_house' => '2025-06-30', 'left_reason' => 'resigned']);
         });
 
+        it('searches by name alone', function () {
+            expect(senator_page_get()->getContent())->toContain('Search Kim O&#039;Specimen’s speeches');
+        });
+
         it('calls them former', function () {
             expect(senator_page_get()->getContent())->toContain('Former Senator', 'Represented');
         });
@@ -135,7 +139,7 @@ describe('GET /senator/{name}/{state}', function () {
     });
 
     it('searches their speeches', function () {
-        expect(senator_page_get()->getContent())->toContain('Search Kim’s speeches', 'name="pid" value="97401"');
+        expect(senator_page_get()->getContent())->toContain('Search Senator Kim O&#039;Specimen’s speeches', 'name="pid" value="97401"');
     });
 
     it('links to more of their speeches', function () {
