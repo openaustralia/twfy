@@ -21,6 +21,16 @@ enum House: int {
     }
 
     /**
+     * What a member of this house is called.
+     */
+    public function memberTitle(): string {
+        return match ($this) {
+            self::Representatives => 'Representative',
+            self::Senate => 'Senator',
+        };
+    }
+
+    /**
      * The first part of the address of a member's profile.
      */
     public function profilePath(): string {
