@@ -109,10 +109,18 @@ describe('GET /senator/{name}/{state}', function () {
 
     describe('with recent speeches', function () {
         it('links to each', function () {
-            MemberPageStubs::speeches([['url' => '/senate/?id=1&s=x', 'title' => 'Motions', 'date' => '14 May 2026', 'extract' => 'I <b>move</b>']]);
+            MemberPageStubs::speeches([['url' => '/senate/?id=1&s=x', 'title' => 'Motions', 'date' => '14 May 2026', 'iso' => '2026-05-14', 'extract' => 'I <b>move</b>']]);
 
             expect(senator_page_get()->getContent())->toContain('href="/senate/?id=1&amp;s=x"', 'I <b>move</b>');
         });
+    });
+
+    it('searches their speeches', function () {
+        expect(senator_page_get()->getContent())->toContain('Search Kim’s speeches', 'name="pid" value="97401"');
+    });
+
+    it('links to more of their speeches', function () {
+        expect(senator_page_get()->getContent())->toContain('href="/search/?pid=97401&amp;pop=1#n4"');
     });
 
     describe('with the search broken', function () {

@@ -390,7 +390,7 @@ describe('RecentSpeeches::for()', function () {
         };
 
         expect($speeches->for(97301))
-          ->toBe([['url' => '/senate/?id=1&s=x', 'title' => 'Motions', 'date' => '14 May 2026', 'extract' => 'Hello']]);
+          ->toBe([['url' => '/senate/?id=1&s=x', 'title' => 'Motions', 'date' => '14 May 2026', 'iso' => '2026-05-14', 'extract' => 'Hello']]);
     });
 
     describe('when the search fails', function () {

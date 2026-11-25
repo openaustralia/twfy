@@ -1,13 +1,6 @@
 @use('OpenAustralia\TWFY\Parliament\MemberUrls')
 <aside class="mt-8 space-y-4 lg:mt-0 lg:w-72 lg:shrink-0">
 @include('members.donate')
-<x-members.card title="Search this person's speeches">
-<form action="{{ WEBPATH }}search/" method="get" class="flex gap-2">
-<input name="s" aria-label="Search this person's speeches" maxlength="200" class="min-w-0 flex-1">
-<input type="hidden" name="pid" value="{{ $person->id }}">
-<input type="submit" class="submit" value="GO">
-</form>
-</x-members.card>
 @if ($links)
 <x-members.card title="More useful links for this person">
 <ul class="!m-0 !pl-5 text-sm">
