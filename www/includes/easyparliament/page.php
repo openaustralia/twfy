@@ -536,25 +536,10 @@ class PAGE {
 
         $img = '<img src="' . IMAGEPATH . 'openaustraliaorg2026.png" width="262" height="32" alt="OpenAustralia.org">';
 
-        // isn't this very hacky? shouldn't we be cobranding cleverly using METADATA? ( I've repeated this below however -stef".
-        if (get_http_var('c4')) {
-            $img = '<img src="/images/c4banner.gif" alt="OpenAustralia.org with Channel 4">';
-        } elseif (get_http_var('c4x')) {
-            $img = '<img src="/images/c4Xbanner.gif" alt="OpenAustralia.org with Channel 4">';
-        }
-
         if ($this_page != 'home') {
-            if (get_http_var('c4')) {
-                $HOMEURL = 'https://www.channel4.com/news/microsites/E/election2005/';
-                $HOMETITLE = 'To Channel 4\'s main election site';
-            } elseif (get_http_var('c4x')) {
-                $HOMEURL = 'https://www.channel4.com/life/microsites/E/elexion/';
-                $HOMETITLE = 'To Channel 4\'s main election site';
-            } else {
-                $HOMEURL = new URL('home');
-                $HOMEURL = $HOMEURL->generate();
-                $HOMETITLE = 'To the front page of the site';
-            }
+            $HOMEURL = new URL('home');
+            $HOMEURL = $HOMEURL->generate();
+            $HOMETITLE = 'To the front page of the site';
             $img = '<a href="' . $HOMEURL . '" title="' . $HOMETITLE . '">' . $img . '</a>';
         }
         ?>
@@ -588,13 +573,6 @@ class PAGE {
         // $img = '<img src="' . IMAGEPATH . 'theyworkforyoucom.gif" width="293" height="28" alt="OpenAustralia.org">';
 
         $img = '<img src="' . IMAGEPATH . 'openaustraliaorg2026.png" width="262" height="32" alt="OpenAustralia.org">';
-
-        // isn't this very hacky? shouldn't we be cobranding cleverly using METADATA? ( I've repeated this below however -stef".
-        if (get_http_var('c4')) {
-            $img = '<img src="/images/c4banner.gif" alt="OpenAustralia.org with Channel 4">';
-        } elseif (get_http_var('c4x')) {
-            $img = '<img src="/images/c4Xbanner.gif" alt="OpenAustralia.org with Channel 4">';
-        }
 
         if ($this_page != 'home') {
             $HOMEURL = new URL('home');
@@ -1203,7 +1181,7 @@ class PAGE {
         // XXX Yucky.
         if (
             $this_page != 'home' && $this_page != 'yourmp' && $this_page != 'mp' && $this_page != 'peer'
-            && $this_page != 'mla' && $this_page != 'c4_mp' && $this_page != 'c4x_mp' && $this_page != 'royal' && $this_page != 'contact' && $this_page != 'msp'
+            && $this_page != 'mla' && $this_page != 'royal' && $this_page != 'contact' && $this_page != 'msp'
         ) {
 
             if ($section_text && $parent_page != 'help_us_out' && $parent_page != 'home') {
@@ -1312,12 +1290,6 @@ class PAGE {
         ?>
         <form action="<?php echo $MPURL->generate(); ?>" method="get">
             <?php
-            if (get_http_var('c4')) {
-                print '<input type="hidden" name="c4" value="1">';
-            }
-            if (get_http_var('c4x')) {
-                print '<input type="hidden" name="c4x" value="1">';
-            }
             if ($THEUSER->constituency_is_set()) {
 
                 $FORGETURL = new URL('userchangepc');
@@ -1329,7 +1301,6 @@ class PAGE {
                 <input type="text" name="pc" value="<?php echo htmlentities(get_http_var('pc')); ?>" maxlength="10" size="10">
                 <input type="submit" value="GO" class="submit"> <small>(e.g. 2340)</small>
             </p>
-            <input type="hidden" name="ch" value="t">
         </form>
         <?php
         $this->block_end();
@@ -2025,7 +1996,7 @@ class PAGE {
         $html = '<div class="block">
                 <h4>More useful links for this person</h4>
                 <div class="blockbody">
-                <ul' . (get_http_var('c4') ? ' style="list-style-type:none;"' : '') . '>';
+                <ul>';
 
         if (isset($links['maiden_speech'])) {
             $maiden_speech = fix_gid_from_db($links['maiden_speech']);
@@ -3139,42 +3110,4 @@ function display_stats_line_house($house, $category, $blurb, $type, $inwhat, $ex
     }
     print ".$afterstuff</li>";
     return true;
-}
-
-/**
- *
- */
-function display_writetothem_numbers($year, $extra_info) {
-    if (isset($extra_info["writetothem_responsiveness_notes_$year"])) {
-        ?>
-                <li>Responsiveness to messages sent via <a
-                        href="https://www.writetothem.com/stats/<?php echo $year ?>/mps">WriteToThem.com</a> in
-                    <?php echo $year ?>:
-                    <?php echo $extra_info["writetothem_responsiveness_notes_$year"] ?>.
-                </li>
-                <?php
-                return true;
-    } elseif (isset($extra_info["writetothem_responsiveness_mean_$year"])) {
-        $mean = $extra_info["writetothem_responsiveness_mean_$year"];
-
-        $a = $extra_info["writetothem_responsiveness_fuzzy_response_description_$year"];
-        if ($a == 'very low') {
-            $a = 'a very low';
-        }
-        if ($a == 'low') {
-            $a = 'a low';
-        }
-        if ($a == 'medium') {
-            $a = 'a medium';
-        }
-        if ($a == 'high') {
-            $a = 'a high';
-        }
-        if ($a == 'very high') {
-            $a = 'a very high';
-        }
-        $extra_info["writetothem_responsiveness_fuzzy_response_description_$year"] = $a;
-
-        return display_stats_line("writetothem_responsiveness_fuzzy_response_description_$year", 'Replied within 2 or 3 weeks to <a href="https://www.writetothem.com/stats/' . $year . '/mps" title="From WriteToThem.com">', "", "</a> <!-- Mean: " . $mean . " --> number of messages sent via WriteToThem.com during " . $year . ", according to constituents", "", $extra_info);
-    }
 }

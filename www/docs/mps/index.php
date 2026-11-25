@@ -8,11 +8,6 @@ include_once __DIR__ . "/../../includes/easyparliament/init.php";
 include_once __DIR__ . "/../../includes/easyparliament/people.php";
 
 $this_page = 'mps';
-if (get_http_var('c4')) {
-    $this_page = 'c4_mps';
-} elseif (get_http_var('c4x')) {
-    $this_page = 'c4x_mps';
-}
 
 if (get_http_var('f') != 'csv') {
     $PAGE->page_start();

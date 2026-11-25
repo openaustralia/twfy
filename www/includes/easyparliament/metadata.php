@@ -478,16 +478,6 @@ class Metadata {
             'track' => true,
             'url' => 'email/'
         ],
-        'c4_mp' => [
-            'title' => 'MP',
-            'track' => true,
-            'url' => 'mp/c4/'
-        ],
-        'c4x_mp' => [
-            'title' => 'MP',
-            'track' => true,
-            'url' => 'mp/c4x/'
-        ],
         // The directory MPs' RSS feeds are stored in.
         'mp_rss' => [
             'url' => 'rss/mp/'
@@ -501,16 +491,6 @@ class Metadata {
             'title' => 'All Members of the House of Representatives',
             'track' => true,
             'url' => 'mps/'
-        ],
-        'c4_mps' => [
-            'title' => 'All MPs',
-            'track' => true,
-            'url' => 'mps/c4/'
-        ],
-        'c4x_mps' => [
-            'title' => 'All MPs',
-            'track' => true,
-            'url' => 'mps/c4x/'
         ],
 
         'nidebate' => [

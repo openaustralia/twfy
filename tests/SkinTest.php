@@ -16,7 +16,7 @@ require_once __DIR__ . '/../www/includes/easyparliament/skin.php';
 
 // Same stub as PageHeaderAnalyticsTest.php, for the same reason - utility.php
 // can't be required here without redeclaring twfy_debug(), already stubbed in
-// bootstrap.php. output_stylesheets()'s channel4 branch is the one caller here.
+// bootstrap.php.
 if (!function_exists('get_http_var')) {
 
     function get_http_var($name, $default = '') {

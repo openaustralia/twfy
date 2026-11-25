@@ -197,14 +197,6 @@ class SKIN {
                 media="print">
             <?php
         }
-
-        if (get_http_var('c4') || get_http_var('c4x')) {
-            $x = get_http_var('c4x') ? 'X' : ''; ?>
-            <link rel="stylesheet" href="<?php echo WEBPATH; ?>style/channel4/global<?php echo $x ?>.css?v=2" type="text/css">
-            <link rel="stylesheet" href="<?php echo WEBPATH; ?>style/channel4/layout<?php echo $x ?>.css?v=1"
-                type="text/css">
-            <?php
-        }
     }
 
 }

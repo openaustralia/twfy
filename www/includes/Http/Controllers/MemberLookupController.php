@@ -94,7 +94,6 @@ class MemberLookupController {
                 'page' => $this->page($request),
                 'postcode' => $postcode,
                 'electorates' => $electorates->mapWithKeys(fn (string $name): array => [$name => Member::latestInElectorate($name)]),
-                'error' => null,
             ]);
         }
 
