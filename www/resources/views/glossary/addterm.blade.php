@@ -56,7 +56,7 @@
 <input type="hidden" name="token" value="{{ $token }}">
 <label for="definition" class="sr-only">Definition</label>
 <textarea name="definition" id="definition" rows="8" class="!m-0 box-border w-full rounded border border-solid border-slate-300 px-4 py-3 text-base text-slate-900 shadow-sm">{{ $form['body'] }}</textarea>
-<p class="!m-0 text-sm text-slate-600">Only &lt;b&gt; and &lt;i&gt; tags are allowed. Web and email addresses are turned into links automatically.</p>
+<p class="!m-0 text-sm text-slate-600">Use &lt;strong&gt; for bold text and &lt;em&gt; for italics. Addresses starting with http:// or https:// become links automatically.</p>
 <div class="flex flex-wrap gap-3">
 <button type="submit" name="previewterm" value="Preview" class="rounded border-0 bg-slate-200 px-6 py-3 font-semibold text-slate-900 hover:bg-slate-300">Preview</button>
 <button type="submit" name="submitterm" value="Post" class="rounded border-0 bg-teal-700 px-6 py-3 font-semibold text-white shadow-sm hover:bg-teal-800">Post</button>

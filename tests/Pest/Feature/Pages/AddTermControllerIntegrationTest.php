@@ -501,3 +501,13 @@ describe('AddTermController::index() for a phrase or definition that is too long
         expect(Editqueue::where('user_id', $this->user->user_id)->count())->toBe(1);
     });
 });
+
+describe('AddTermController::index() for the definition form', function () {
+    it('describes the tags and addresses the filter keeps', function () {
+        $_GET['g'] = 'point of order';
+
+        $html = $this->render(fn () => addterm_controller()->index());
+
+        expect($html)->toContain('Use &lt;strong&gt; for bold text and &lt;em&gt; for italics. Addresses starting with http:// or https:// become links automatically.');
+    });
+});
