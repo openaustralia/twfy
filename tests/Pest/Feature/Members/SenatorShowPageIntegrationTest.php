@@ -173,6 +173,20 @@ describe('GET /senator/{name}/{state}', function () {
         });
     });
 
+    it('asks for donations', function () {
+        expect(senator_page_get()->getContent())->toContain('href="https://donate.oaf.org.au/"');
+    });
+
+    describe('with seven past offices', function () {
+        it('folds away all but five', function () {
+            foreach (range(2001, 2007) as $year) {
+                Moffice::create(['person' => 97401, 'position' => "Office $year", 'dept' => '', 'from_date' => "$year-01-01", 'to_date' => "$year-12-31", 'source' => '']);
+            }
+
+            expect(senator_page_get()->getContent())->toContain('Show 2 more offices');
+        });
+    });
+
     describe('with a name nobody has', function () {
         it('is not found', function () {
             expect(senator_page_get('/senator/no_body/tasmania')->getStatusCode())->toBe(404);

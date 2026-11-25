@@ -9,6 +9,7 @@ require_once __DIR__ . '/../bootstrap.php';
 require_once __DIR__ . '/Support/MemberFixtures.php';
 require_once __DIR__ . '/../../www/includes/utility.php';
 
+use OpenAustralia\TWFY\Enums\House;
 use OpenAustralia\TWFY\Models\Alert;
 use OpenAustralia\TWFY\Models\Consinfo;
 use OpenAustralia\TWFY\Models\Member;
@@ -267,7 +268,23 @@ describe('MemberProfile offices', function () {
     });
 
     it('spans the past ones', function () {
-        expect(profile()->pastOffices())->toBe(['Old Office (1 Jun 2019 to 1 Jun 2022)']);
+        expect(profile()->pastOffices())
+          ->toBe([['title' => 'Old Office', 'dates' => '1 Jun 2019 to 1 Jun 2022', 'house' => null]]);
+    });
+
+    dataset('titles naming a house', [
+        'the Senate' => ['Leader in the Senate', House::Senate],
+        'the House' => ['Whip in the House', House::Representatives],
+        'neither' => ['Treasurer', null],
+    ]);
+
+    describe('with someone from both houses', function () {
+        it('tags the house a title names', function (string $title, ?House $house) {
+            profile_house_term();
+            Moffice::query()->where('position', 'Old Office')->update(['position' => $title]);
+
+            expect(profile()->pastOffices()[0]['house'])->toBe($house);
+        })->with('titles naming a house');
     });
 });
 

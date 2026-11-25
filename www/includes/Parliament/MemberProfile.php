@@ -198,15 +198,30 @@ final class MemberProfile {
     /**
      * The offices they used to hold.
      *
-     * @return list<string>
-     *   Such as "Minister for Examples (1 Jun 2019 to 1 Jun 2022)".
+     * @return list<array{title: string, dates: string, house: \OpenAustralia\TWFY\Enums\House|null}>
+     *   The latest to start first. The house is set for someone who sat in both, when the title names one.
      */
     public function pastOffices(): array {
         return $this->offices()
           ->reject(fn (Moffice $office): bool => $office->isCurrent())
-          ->map(fn (Moffice $office): string => "$office->description ({$office->from_date->format(self::SHORT_DATE)} to {$office->to_date->format(self::SHORT_DATE)})")
+          ->map(fn (Moffice $office): array => [
+              'title' => $office->description,
+              'dates' => $office->from_date->format(self::SHORT_DATE) . ' to ' . $office->to_date->format(self::SHORT_DATE),
+              'house' => $this->houseNamedBy($office->description),
+          ])
           ->values()
           ->all();
+    }
+
+    /**
+     * The house an office's title names, for someone whose offices could belong to either.
+     */
+    private function houseNamedBy(string $title): ?House {
+        if (count($this->person->houses()) < 2 || !preg_match('/\bin the (House|Senate)\b/', $title, $found)) {
+            return null;
+        }
+
+        return $found[1] === 'Senate' ? House::Senate : House::Representatives;
     }
 
     /**
