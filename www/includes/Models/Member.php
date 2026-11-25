@@ -148,6 +148,49 @@ class Member extends Model {
     }
 
     /**
+     * Terms of people called by a name given as one string, such as "jane van example".
+     *
+     * With three or more words, the second may end the first name or start the last name, so this tries both.
+     *
+     * @param \Illuminate\Database\Eloquent\Builder<Member> $query
+     *   The query to narrow.
+     * @param string $name
+     *   The first and last names, separated by a space.
+     *
+     * @return \Illuminate\Database\Eloquent\Builder<Member>
+     *   The same query, limited to that name. A single word matches nobody.
+     */
+    public function scopeNamed(Builder $query, string $name): Builder {
+        $words = explode(' ', $name, 3);
+        if (count($words) < 2) {
+            return $query->whereIn('member_id', []);
+        }
+        if (count($words) === 2) {
+            return $query->where('first_name', $words[0])->where('last_name', $words[1]);
+        }
+
+        [$first, $middle, $last] = $words;
+
+        return $query->where(fn (Builder $either) => $either
+          ->where(fn (Builder $split) => $split->where('first_name', "$first $middle")->where('last_name', $last))
+          ->orWhere(fn (Builder $split) => $split->where('first_name', $first)->where('last_name', "$middle $last")));
+    }
+
+    /**
+     * Whether this term is still running.
+     */
+    public function isSitting(): bool {
+        return $this->left_house->year === 9999;
+    }
+
+    /**
+     * Whether the party code names a presiding office, such as Speaker.
+     */
+    public function isPresidingOfficer(): bool {
+        return isset(self::PRESIDING_OFFICERS[$this->party]);
+    }
+
+    /**
      * The members sitting in a house, one per person, with what a list shows about them.
      *
      * Sorting by debates leaves out anyone without a count.
@@ -186,7 +229,14 @@ class Member extends Model {
      * The party, or "-" for a presiding officer, whose party code names their office instead.
      */
     protected function partyLabel(): Attribute {
-        return Attribute::get(fn (): string => isset(self::PRESIDING_OFFICERS[$this->party]) ? '-' : (string) $this->party);
+        return Attribute::get(fn (): string => $this->isPresidingOfficer() ? '-' : (string) $this->party);
+    }
+
+    /**
+     * The party, or the office a presiding officer's party code stands for.
+     */
+    protected function partyName(): Attribute {
+        return Attribute::get(fn (): string => self::PRESIDING_OFFICERS[$this->party][0] ?? (string) $this->party);
     }
 
     /**
@@ -195,7 +245,7 @@ class Member extends Model {
     protected function positions(): Attribute {
         return Attribute::get(function (): array {
             $positions = $this->currentOffices->pluck('description')->filter()->values()->all();
-            if (isset(self::PRESIDING_OFFICERS[$this->party])) {
+            if ($this->isPresidingOfficer()) {
                 array_unshift($positions, implode(', ', self::PRESIDING_OFFICERS[$this->party]));
             }
             return $positions;
