@@ -29,9 +29,15 @@ skips Laravel's error handling and `.env` loading, turns off facade aliases, and
 connection `eloquent.php` made, so both share one connection. Settings come from `conf/general` (`APP_KEY` among
 them), not `.env`. Composer runs `artisan package:discover` after installing, which writes `bootstrap/cache/`.
 
-Sign-in and password reset are Laravel's (Fortify). Apache sends only `/user/login` and `/user/password...` to Laravel,
-through `www/docs/laravel.php`, which loads the legacy bootstrap first so `LoginPage`, `PasswordPages` and `ErrorPage`
-(in `www/includes/Auth/`) can draw their pages with the legacy `$PAGE`. Laravel's own error pages are Blade views and
+Apache sends only Laravel's own routes to Laravel, through `www/docs/laravel.php`: `/user/login`, `/user/password...`,
+`/mps` and `/senators`. Production's rewrite rules live in the infrastructure repo, so a new route needs one there too.
+
+The lists of Representatives and Senators use controllers in `www/includes/Http/Controllers/` and Blade views that
+extend `layout.legacy`, which draws them between the legacy header and footer (`Http\LegacyLayout`). Their routes skip
+the `web` middleware group, so reading a public page starts no session.
+
+Sign-in and password reset are Laravel's (Fortify). `www/docs/laravel.php` loads the legacy bootstrap first so
+`LoginPage`, `PasswordPages` and `ErrorPage` (in `www/includes/Auth/`) can draw their pages with the legacy `$PAGE`. Laravel's own error pages are Blade views and
 need a writable compiled-views folder, so `bootstrap/app.php` draws errors with `ErrorPage` instead. A reset link is
 emailed through the legacy `send_template_email()` (template `password_reset`), not Laravel's mail, so it keeps the
 site's headers and Postal tags; `User::sendPasswordResetNotification()` does that. The form that asks for a link gives
