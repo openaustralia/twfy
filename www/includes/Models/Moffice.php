@@ -4,6 +4,7 @@ namespace OpenAustralia\TWFY\Models;
 
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
+use OpenAustralia\TWFY\Support\StoredText;
 
 /**
  * Eloquent model for the `moffice` table.
@@ -61,8 +62,7 @@ class Moffice extends Model {
                 (bool) $this->dept => "Member, $this->dept",
                 default => '',
             };
-            // The loader stores some punctuation as HTML entities.
-            return html_entity_decode($description, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+            return StoredText::decode($description);
         });
     }
 

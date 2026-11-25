@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use OpenAustralia\TWFY\Enums\House;
 use OpenAustralia\TWFY\Enums\MemberOrder;
+use OpenAustralia\TWFY\Support\StoredText;
 
 /**
  * Eloquent model for the `member` table.
@@ -226,10 +227,40 @@ class Member extends Model {
     }
 
     /**
-     * The name with any title, such as "Ms Jane Citizen".
+     * The name with any title, such as "Ms Jane Citizen", ready to show.
      */
     protected function fullName(): Attribute {
-        return Attribute::get(fn (): string => trim($this->title . ' ' . $this->first_name . ' ' . $this->last_name));
+        return Attribute::get(fn (): string => StoredText::decode(trim($this->title . ' ' . $this->first_name . ' ' . $this->last_name)));
+    }
+
+    /**
+     * The first and last names without a title, ready to show.
+     */
+    protected function shortName(): Attribute {
+        return Attribute::get(fn (): string => "$this->display_first_name $this->display_last_name");
+    }
+
+    // The columns keep their stored form, which lookups and addresses use. These are for showing them.
+
+    /**
+     * The first name, ready to show.
+     */
+    protected function displayFirstName(): Attribute {
+        return Attribute::get(fn (): string => StoredText::decode($this->first_name));
+    }
+
+    /**
+     * The last name, ready to show.
+     */
+    protected function displayLastName(): Attribute {
+        return Attribute::get(fn (): string => StoredText::decode($this->last_name));
+    }
+
+    /**
+     * The electorate or state, ready to show.
+     */
+    protected function displayConstituency(): Attribute {
+        return Attribute::get(fn (): string => StoredText::decode($this->constituency));
     }
 
     /**

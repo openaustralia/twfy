@@ -38,7 +38,7 @@ final class MemberLinks {
         $add($info->get('wikipedia_url'), 'Biography', 'From Wikipedia');
         $add($info->get('mp_biography_qanda'), 'Biography', "From ABC's Q & A");
         foreach (self::ELECTION_YEARS as $year) {
-            $add($info->get("abc_election_results_$year"), "$year Election results for $term->constituency", 'From ABC');
+            $add($info->get("abc_election_results_$year"), "$year Election results for $term->display_constituency", 'From ABC');
         }
 
         return $links;

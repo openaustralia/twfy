@@ -31,7 +31,7 @@ name
 </td>
 <td class="{{ $row }}"><a href="{{ $member->profile_url }}">{{ ucfirst($member->full_name) }}</a></td>
 <td class="{{ $row }}">{{ $member->party_label }}</td>
-<td class="{{ $row }}">{{ $member->constituency }}</td>
+<td class="{{ $row }}">{{ $member->display_constituency }}</td>
 <td class="{{ $row }}">
 @foreach ($member->positions as $position)
 <div>{{ $position }}</div>

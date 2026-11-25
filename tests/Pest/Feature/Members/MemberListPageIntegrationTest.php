@@ -7,6 +7,7 @@
 
 require_once __DIR__ . '/../../../bootstrap.php';
 require_once __DIR__ . '/../../../../www/includes/utility.php';
+require_once __DIR__ . '/../../Support/MemberPageStubs.php';
 
 use Illuminate\Contracts\Http\Kernel;
 use Illuminate\Http\Request;
@@ -116,6 +117,27 @@ describe('GET /mps/', function () {
 
     it('starts no session', function () {
         expect(member_page_get('/mps/')->headers->getCookies())->toBe([]);
+    });
+
+    describe('with a name stored as entities', function () {
+        beforeEach(function () {
+            Member::find(97101)->update(['last_name' => 'Nu&ntilde;ez']);
+        });
+
+        it('shows the characters', function () {
+            expect(member_page_get('/mps/')->getContent())->toContain('Robin Nuñez')->not->toContain('&amp;ntilde;');
+        });
+
+        it('downloads the characters', function () {
+            expect(member_page_download('/mps/?f=csv'))->toContain('Nuñez');
+        });
+
+        it('links to a profile that opens', function () {
+            MemberPageStubs::speeches([]);
+            preg_match('#href="(/mp/robin_nu[^"]+)"#', member_page_get('/mps/')->getContent(), $link);
+
+            expect(member_page_get($link[1])->getStatusCode())->toBe(200);
+        });
     });
 
     describe('without an electorate', function () {

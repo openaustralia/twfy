@@ -57,7 +57,7 @@ final class MemberProfile {
      * The text for the browser's title, such as "Senator Jane Citizen, Tasmania".
      */
     public function pageTitle(): string {
-        $constituency = $this->person->latest()->constituency;
+        $constituency = $this->person->latest()->display_constituency;
         if ($this->person->sitsIn(House::Senate)) {
             return 'Senator ' . $this->name() . ', ' . $constituency;
         }
@@ -106,7 +106,7 @@ final class MemberProfile {
                 $party .= ', and ' . $before->party_name;
             }
 
-            return ($this->person->sitsIn($house) ? '' : 'Former ') . "$party {$house->memberTitle()} for $term->constituency";
+            return ($this->person->sitsIn($house) ? '' : 'Former ') . "$party {$house->memberTitle()} for $term->display_constituency";
         }, $this->person->houses());
     }
 
@@ -141,7 +141,7 @@ final class MemberProfile {
         if ($senator && $representative) {
             $events[] = $this->joined('Entered the Senate', $senator);
             if ($leftHouse) {
-                $events[] = $this->left("Previously Representative for $leftHouse->constituency until", $leftHouse);
+                $events[] = $this->left("Previously Representative for $leftHouse->display_constituency until", $leftHouse);
             }
         } elseif ($senator) {
             $events[] = $this->joined('Became a Senator', $senator);

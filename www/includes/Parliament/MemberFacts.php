@@ -6,6 +6,7 @@ use Illuminate\Support\Collection;
 use OpenAustralia\TWFY\Models\Consinfo;
 use OpenAustralia\TWFY\Models\Memberinfo;
 use OpenAustralia\TWFY\Models\Personinfo;
+use OpenAustralia\TWFY\Support\StoredText;
 
 /**
  * The extra facts the loaders keep about a person, their latest term and their constituency, as named values.
@@ -35,11 +36,11 @@ final class MemberFacts {
     }
 
     /**
-     * A value as plain text, or null if there is none. The loaders may store HTML entities.
+     * A value as plain text, or null if there is none.
      */
     public function get(string $key): ?string {
         $value = $this->values->get($key);
-        return $value === null ? null : html_entity_decode((string) $value, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+        return $value === null ? null : StoredText::decode((string) $value);
     }
 
 }

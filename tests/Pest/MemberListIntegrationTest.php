@@ -122,6 +122,32 @@ describe('Member full_name', function () {
     });
 });
 
+describe('Member stored entities', function () {
+    beforeEach(function () {
+        $this->member = member_list_term(97001, [
+            'first_name' => "D'Arcy O&#39;Neil",
+            'last_name' => 'Nu&ntilde;ez',
+            'constituency' => 'Bar &amp; Baz',
+        ]);
+    });
+
+    dataset('shown', [
+        'full_name' => ['full_name', "D'Arcy O'Neil Nuñez"],
+        'short_name' => ['short_name', "D'Arcy O'Neil Nuñez"],
+        'display_first_name' => ['display_first_name', "D'Arcy O'Neil"],
+        'display_last_name' => ['display_last_name', 'Nuñez'],
+        'display_constituency' => ['display_constituency', 'Bar & Baz'],
+    ]);
+
+    it('shows the characters', function (string $attribute, string $expected) {
+        expect($this->member->{$attribute})->toBe($expected);
+    })->with('shown');
+
+    it('keeps the stored form', function () {
+        expect($this->member->last_name)->toBe('Nu&ntilde;ez');
+    });
+});
+
 describe('Member profile_url', function () {
     dataset('houses', [
         'Representative' => [1, '/mp/alex_example/testville'],

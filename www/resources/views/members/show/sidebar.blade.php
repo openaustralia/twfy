@@ -29,7 +29,7 @@
 <h2 class="{{ $heading }}">{{ $which }} Representatives in this constituency</h2>
 <ul class="!m-0 !pl-5 text-sm">
 @foreach ($neighbours as $neighbour)
-<li><a href="{{ WEBPATH }}mp/?pid={{ $neighbour->person_id }}">{{ $neighbour->first_name }} {{ $neighbour->last_name }}</a></li>
+<li><a href="{{ WEBPATH }}mp/?pid={{ $neighbour->person_id }}">{{ $neighbour->short_name }}</a></li>
 @endforeach
 </ul>
 </section>

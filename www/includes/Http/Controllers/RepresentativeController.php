@@ -106,10 +106,10 @@ class RepresentativeController extends MemberController {
     protected function csvRow(Member $member): array {
         return [
             $member->person_id,
-            $member->first_name,
-            $member->last_name,
+            $member->display_first_name,
+            $member->display_last_name,
             $member->party_label,
-            $member->constituency,
+            $member->display_constituency,
             $this->absoluteProfileUrl($member),
         ];
     }
