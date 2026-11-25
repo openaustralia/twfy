@@ -3,6 +3,8 @@
 namespace OpenAustralia\TWFY\Http;
 
 use Illuminate\Support\Facades\Cookie;
+use OpenAustralia\TWFY\Enums\House;
+use OpenAustralia\TWFY\Models\Member;
 use OpenAustralia\TWFY\Models\User;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -18,6 +20,15 @@ class Visitor {
      */
     public function electorate(): string {
         return (string) $GLOBALS['THEUSER']->constituency();
+    }
+
+    /**
+     * The current or latest member for their electorate, in either house or one, if they have given an electorate.
+     */
+    public function member(?House $house = null): ?Member {
+        $electorate = $this->electorate();
+
+        return $electorate === '' ? null : Member::latestInElectorate($electorate, $house);
     }
 
     /**

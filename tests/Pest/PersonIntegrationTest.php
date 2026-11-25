@@ -6,6 +6,7 @@
  */
 
 require_once __DIR__ . '/../bootstrap.php';
+require_once __DIR__ . '/Support/MemberFixtures.php';
 
 use OpenAustralia\TWFY\Enums\House;
 use OpenAustralia\TWFY\Models\Member;
@@ -22,20 +23,7 @@ uses(TransactionalTestCase::class);
  *   Columns to change.
  */
 function person_term(int $member, array $overrides = []): Member {
-    return Member::create($overrides + [
-        'member_id' => $member,
-        'person_id' => 97201,
-        'house' => 2,
-        'title' => '',
-        'first_name' => 'Kim',
-        'last_name' => 'Specimen',
-        'constituency' => 'Tasmania',
-        'party' => 'Example Party',
-        'entered_house' => '2022-07-01',
-        'left_house' => '9999-12-31',
-        'entered_reason' => 'general_election',
-        'left_reason' => 'still_in_office',
-    ]);
+    return MemberFixtures::term($member, $overrides + ['person_id' => 97201, 'house' => 2, 'first_name' => 'Kim', 'last_name' => 'Specimen', 'constituency' => 'Tasmania', 'entered_house' => '2022-07-01']);
 }
 
 /**

@@ -7,6 +7,7 @@
 
 require_once __DIR__ . '/../../../bootstrap.php';
 require_once __DIR__ . '/../../../../www/includes/utility.php';
+require_once __DIR__ . '/../../Support/MemberFixtures.php';
 require_once __DIR__ . '/../../Support/MemberPageStubs.php';
 
 use OpenAustralia\TWFY\Models\Member;
@@ -22,7 +23,7 @@ function representative_page_get(string $address = '/mp/robin_o%27example/test_v
 }
 
 /**
- * Adds a term for a fictional Representative.
+ * Adds a term for the fictional Representative these specs are about.
  *
  * @param int $id
  *   The member and person id.
@@ -30,42 +31,13 @@ function representative_page_get(string $address = '/mp/robin_o%27example/test_v
  *   Columns to change.
  */
 function representative_page_term(int $id, array $overrides = []): Member {
-    return Member::create($overrides + [
-        'member_id' => $id,
-        'person_id' => $id,
-        'house' => 1,
-        'title' => '',
-        'first_name' => 'Robin',
-        'last_name' => "O'Example",
-        'constituency' => 'Test Ville',
-        'party' => 'Example Party',
-        'entered_house' => '2022-05-21',
-        'left_house' => '9999-12-31',
-        'entered_reason' => 'general_election',
-        'left_reason' => 'still_in_office',
-    ]);
-}
-
-/**
- * Stands in for the visitor, who may have given their electorate.
- */
-function representative_page_visitor(string $electorate = ''): void {
-    $GLOBALS['THEUSER'] = new class($electorate) {
-
-        public function __construct(private string $electorate) {
-        }
-
-        public function constituency(): string {
-            return $this->electorate;
-        }
-
-    };
+    return MemberFixtures::term($id, $overrides + ['last_name' => "O'Example"]);
 }
 
 beforeEach(function () {
     MemberPageStubs::bind();
     $this->theuser = $GLOBALS['THEUSER'] ?? null;
-    representative_page_visitor();
+    MemberPageStubs::visitor();
     representative_page_term(97501);
 });
 
@@ -89,7 +61,7 @@ describe('GET /mp/{name}/{electorate}', function () {
 
     describe('in the visitor\'s electorate', function () {
         it('marks the visitor\'s menu entry', function () {
-            representative_page_visitor('test ville');
+            MemberPageStubs::visitor('test ville');
 
             expect(representative_page_get()->getContent())->toContain('[top:yourmp:');
         });

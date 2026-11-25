@@ -1,11 +1,12 @@
+@use('OpenAustralia\TWFY\Parliament\MemberUrls')
 <p class="hidden print:block">This data was produced by OpenAustralia from a variety of sources.</p>
 <section id="mp">
-<h1 class="!m-0 !mb-4 !block !leading-tight text-3xl font-semibold !text-slate-900">
+<x-members.title>
 @if ($feed)
 <a href="{{ WEBPATH . $feed }}" class="float-right"><img src="{{ WEBPATH }}images/rss.gif" alt="RSS feed" class="border-0"></a>
 @endif
 {{ $profile->heading() }}
-</h1>
+</x-members.title>
 <div class="sm:flex sm:items-start sm:gap-6">
 @if ($photo)
 <img class="portrait mb-4 shrink-0" alt="Photo of {{ $profile->name() }}" src="{{ $photo }}" @if ($photoSize === 'S') height="118" @endif>
@@ -30,7 +31,7 @@
 <li><strong>{{ $event['text'] }}</strong>{{ $event['reason'] ? ' — ' . $event['reason'] : '' }}</li>
 @endforeach
 @if ($profile->canBeFollowed())
-<li><a href="{{ WEBPATH }}alert/?only=1&pid={{ $person->id }}"><strong>Email me whenever {{ $profile->name() }} speaks</strong></a> (no more than once per day)</li>
+<li><a href="{{ MemberUrls::alert($person->id) }}"><strong>Email me whenever {{ $profile->name() }} speaks</strong></a> (no more than once per day)</li>
 @endif
 </ul>
 </div>

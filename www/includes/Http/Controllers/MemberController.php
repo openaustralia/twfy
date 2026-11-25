@@ -14,6 +14,7 @@ use OpenAustralia\TWFY\Parliament\MemberFacts;
 use OpenAustralia\TWFY\Parliament\MemberLinks;
 use OpenAustralia\TWFY\Parliament\MemberProfile;
 use OpenAustralia\TWFY\Parliament\MemberStatistics;
+use OpenAustralia\TWFY\Parliament\MemberUrls;
 use OpenAustralia\TWFY\Parliament\Person;
 use OpenAustralia\TWFY\Parliament\RecentSpeeches;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -105,13 +106,6 @@ abstract class MemberController {
     }
 
     /**
-     * Part of an address as words. Underscores stand for spaces, as "+" does in old links.
-     */
-    protected function words(string $segment): string {
-        return str_replace(['_', '+'], ' ', $segment);
-    }
-
-    /**
      * The people an address names, each as their latest matching term.
      *
      * @param string $name
@@ -125,8 +119,8 @@ abstract class MemberController {
     protected function matches(string $name, ?string $constituency): SupportCollection {
         return Person::termsNamed(
             $this->house(),
-            $this->words($name),
-            $constituency === null ? null : $this->words($constituency),
+            MemberUrls::words($name),
+            $constituency === null ? null : MemberUrls::words($constituency),
         );
     }
 

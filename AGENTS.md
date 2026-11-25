@@ -58,6 +58,7 @@ Admin pages are Blade views and controller classes. A page file in `www/docs/adm
 in `www/includes/Admin/` (extending `AdminController`), which fetches the data and returns a Blade view from
 `www/resources/views/admin/`, drawn inside the legacy `$PAGE` layout. Blade's `{{ }}` escapes every value, so views
 never build HTML from data; shared table parts are anonymous components in `www/resources/views/components/admin/`.
+`Http\ComponentServiceProvider` names every component in `components/*/`.
 `config/view.php` compiles views into `storage/framework/views`. Apache can't write into a release, so Capistrano links
 that folder to `shared/` (`linked_dirs` in the umbrella repo), which the infrastructure repo creates writable for `www-data`.
 

@@ -9,6 +9,7 @@ use OpenAustralia\TWFY\Enums\House;
 use OpenAustralia\TWFY\Http\Visitor;
 use OpenAustralia\TWFY\Models\Member;
 use OpenAustralia\TWFY\Models\PostcodeLookup;
+use OpenAustralia\TWFY\Parliament\MemberUrls;
 use OpenAustralia\TWFY\Parliament\Person;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -34,10 +35,10 @@ class MemberLookupController {
         $personId = $this->id($request, 'pid') ?? $this->id($request, 'p');
 
         if ($this->text($request, 'recent') !== '') {
-            $speaker = $personId ?? $this->visitorsMember()?->person_id;
+            $speaker = $personId ?? $this->visitor->member()?->person_id;
             if ($speaker) {
                 // away() keeps the slash before the query, which Apache would otherwise redirect to add.
-                return redirect()->away(WEBPATH . 'search/?' . http_build_query(['pid' => $speaker, 'pop' => 1]));
+                return redirect()->away(MemberUrls::speeches($speaker));
             }
         }
 
@@ -57,18 +58,17 @@ class MemberLookupController {
      */
     private function byWords(Request $request): View|Response {
         $postcode = $this->text($request, 'pc');
-        $electorate = str_replace('_', ' ', $this->text($request, 'c'));
-        $name = str_replace('_', ' ', $this->text($request, 'n'));
+        $electorate = MemberUrls::words($this->text($request, 'c'));
+        $name = MemberUrls::words($this->text($request, 'n'));
 
         if ($postcode !== '') {
             return $this->byPostcode($request, $postcode, $electorate);
         }
         if ($name !== '') {
-            $house = $this->house($request);
-            return redirect(WEBPATH . $house->profilePath() . make_member_url($name, $electorate, $house->value));
+            return redirect(MemberUrls::profile($this->house($request), $name, $electorate));
         }
 
-        $member = $electorate === '' ? $this->visitorsMember() : Member::latestInElectorate($electorate);
+        $member = $electorate === '' ? $this->visitor->member() : Member::latestInElectorate($electorate);
 
         return $this->toPerson($request, $member?->person_id);
     }
@@ -124,15 +124,6 @@ class MemberLookupController {
             'postcode' => $this->text($request, 'pc'),
             'error' => $error,
         ]);
-    }
-
-    /**
-     * The current or latest member for the visitor's electorate, if they have given one.
-     */
-    private function visitorsMember(): ?Member {
-        $electorate = $this->visitor->electorate();
-
-        return $electorate === '' ? null : Member::latestInElectorate($electorate);
     }
 
     /**

@@ -1,5 +1,5 @@
-<section id="hansard" class="mt-8">
-<h2 class="!m-0 !mb-3 !block !p-0 text-xl font-semibold !text-slate-900">Most recent appearances in parliament</h2>
+@use('OpenAustralia\TWFY\Parliament\MemberUrls')
+<x-members.section id="hansard" title="Most recent appearances in parliament">
 @if ($speeches === null)
 <p class="!mx-0">Recent appearances are unavailable right now.</p>
 @elseif (!$speeches)
@@ -13,8 +13,8 @@
 @endforeach
 </dl>
 @endif
-<p class="!mx-0"><a href="{{ WEBPATH }}search/?pid={{ $person->id }}&pop=1#n4">More of {{ $profile->name() }}'s recent appearances</a></p>
+<p class="!mx-0"><a href="{{ MemberUrls::speeches($person->id) }}#n4">More of {{ $profile->name() }}'s recent appearances</a></p>
 @if ($feed)
 <p class="!mx-0"><a href="{{ WEBPATH . $feed }}" title="XML version of this person's recent appearances">RSS feed</a> (<a href="{{ WEBPATH }}help/#rss" title="An explanation of what RSS feeds are for">?</a>)</p>
 @endif
-</section>
+</x-members.section>

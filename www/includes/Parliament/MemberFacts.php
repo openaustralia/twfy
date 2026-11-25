@@ -2,6 +2,7 @@
 
 namespace OpenAustralia\TWFY\Parliament;
 
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use OpenAustralia\TWFY\Models\Consinfo;
 use OpenAustralia\TWFY\Models\Memberinfo;
@@ -41,6 +42,14 @@ final class MemberFacts {
     public function get(string $key): ?string {
         $value = $this->values->get($key);
         return $value === null ? null : StoredText::decode((string) $value);
+    }
+
+    /**
+     * A stored date in the short form, or null if there is no date.
+     */
+    public function date(string $key): ?string {
+        $value = (string) $this->get($key);
+        return Carbon::hasFormat($value, 'Y-m-d') ? Carbon::parse($value)->format(MemberProfile::SHORT_DATE) : null;
     }
 
 }

@@ -8,6 +8,7 @@ use Illuminate\Support\Collection;
 use OpenAustralia\TWFY\Enums\House;
 use OpenAustralia\TWFY\Http\Visitor;
 use OpenAustralia\TWFY\Models\Member;
+use OpenAustralia\TWFY\Parliament\MemberUrls;
 use OpenAustralia\TWFY\Parliament\Person;
 use OpenAustralia\TWFY\Parliament\RecentSpeeches;
 
@@ -32,7 +33,7 @@ class RepresentativeController extends MemberController {
         $oldSpelling = $this->usesPlus($name, $constituency);
         // Old links may say "/mp/jane citizen mp".
         if ($constituency === null) {
-            $name = preg_replace('/ mp$/i', '', $this->words($name));
+            $name = preg_replace('/ mp$/i', '', MemberUrls::words($name));
         }
 
         $matches = $this->matches($name, $constituency);
@@ -83,7 +84,7 @@ class RepresentativeController extends MemberController {
      * {@inheritdoc}
      */
     protected function indexData(): array {
-        return ['yours' => $this->visitorsRepresentative()];
+        return ['yours' => $this->visitor->member($this->house())];
     }
 
     /**
@@ -122,22 +123,6 @@ class RepresentativeController extends MemberController {
      */
     private function choose(Collection $matches): View {
         return view('members.choose', ['page' => 'mp', 'matches' => $matches]);
-    }
-
-    /**
-     * The current or latest Representative for the electorate the visitor has given, if any.
-     */
-    private function visitorsRepresentative(): ?Member {
-        $electorate = $this->visitor->electorate();
-        if ($electorate === '') {
-            return null;
-        }
-
-        return Member::query()
-          ->inHouse($this->house())
-          ->where('constituency', $electorate)
-          ->orderByDesc('left_house')
-          ->first();
     }
 
 }

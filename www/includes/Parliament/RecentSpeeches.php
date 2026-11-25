@@ -19,7 +19,7 @@ class RecentSpeeches {
         return rescue(fn (): array => array_map(fn (array $row): array => [
             'url' => html_entity_decode((string) $row['listurl']),
             'title' => (string) ($row['parent']['body'] ?? ''),
-            'date' => Carbon::parse($row['hdate'])->format('j M Y'),
+            'date' => Carbon::parse($row['hdate'])->format(MemberProfile::SHORT_DATE),
             'extract' => (string) $row['body'],
         ], $this->search($personId)));
     }

@@ -2,6 +2,7 @@
 
 namespace OpenAustralia\TWFY\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use OpenAustralia\TWFY\Support\StoredText;
@@ -50,6 +51,26 @@ class Moffice extends Model {
         'from_date'  => 'date',
         'to_date'    => 'date',
     ];
+
+    /**
+     * Offices still held.
+     *
+     * @param \Illuminate\Database\Eloquent\Builder<Moffice> $query
+     *   The query to narrow.
+     *
+     * @return \Illuminate\Database\Eloquent\Builder<Moffice>
+     *   The same query, limited to offices without an end date.
+     */
+    public function scopeCurrent(Builder $query): Builder {
+        return $query->where('to_date', Member::NO_END_DATE);
+    }
+
+    /**
+     * Whether the office is still held.
+     */
+    public function isCurrent(): bool {
+        return $this->to_date->toDateString() === Member::NO_END_DATE;
+    }
 
     /**
      * The office in words, such as "Minister, Treasury". A department alone means membership of it.

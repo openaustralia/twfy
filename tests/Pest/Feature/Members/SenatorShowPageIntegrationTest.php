@@ -7,6 +7,7 @@
 
 require_once __DIR__ . '/../../../bootstrap.php';
 require_once __DIR__ . '/../../../../www/includes/utility.php';
+require_once __DIR__ . '/../../Support/MemberFixtures.php';
 require_once __DIR__ . '/../../Support/MemberPageStubs.php';
 
 use OpenAustralia\TWFY\Models\Member;
@@ -26,20 +27,7 @@ function senator_page_get(string $address = '/senator/kim_o%27specimen/tasmania'
 beforeEach(function () {
     MemberPageStubs::bind();
 
-    Member::create([
-        'member_id' => 97401,
-        'person_id' => 97401,
-        'house' => 2,
-        'title' => '',
-        'first_name' => 'Kim',
-        'last_name' => "O'Specimen",
-        'constituency' => 'Tasmania',
-        'party' => 'Example Party',
-        'entered_house' => '2022-07-01',
-        'left_house' => '9999-12-31',
-        'entered_reason' => 'general_election',
-        'left_reason' => 'still_in_office',
-    ]);
+    MemberFixtures::term(97401, ['house' => 2, 'first_name' => 'Kim', 'last_name' => "O'Specimen", 'constituency' => 'Tasmania']);
 });
 
 afterEach(function () {
@@ -60,7 +48,7 @@ describe('GET /senator/{name}/{state}', function () {
     });
 
     it('offers email alerts', function () {
-        expect(senator_page_get()->getContent())->toContain('href="/alert/?only=1&pid=97401"');
+        expect(senator_page_get()->getContent())->toContain('href="/alert/?only=1&amp;pid=97401"');
     });
 
     it('starts no session', function () {

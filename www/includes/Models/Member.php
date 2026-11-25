@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use OpenAustralia\TWFY\Enums\House;
 use OpenAustralia\TWFY\Enums\MemberOrder;
+use OpenAustralia\TWFY\Parliament\MemberUrls;
 use OpenAustralia\TWFY\Support\StoredText;
 
 /**
@@ -23,6 +24,11 @@ use OpenAustralia\TWFY\Support\StoredText;
  *     place for compatibility with existing code paths.
  */
 class Member extends Model {
+
+    /**
+     * The end date of a term or office that is still running.
+     */
+    public const NO_END_DATE = '9999-12-31';
 
     /**
      * The party codes that stand for a presiding office, with that office and its house.
@@ -116,7 +122,7 @@ class Member extends Model {
      */
     public function currentOffices(): HasMany {
         return $this->hasMany(Moffice::class, 'person', 'person_id')
-          ->where('to_date', '9999-12-31')
+          ->current()
           ->orderBy('moffice_id');
     }
 
@@ -181,7 +187,7 @@ class Member extends Model {
      * Whether this term is still running.
      */
     public function isSitting(): bool {
-        return $this->left_house->year === 9999;
+        return $this->left_house->toDateString() === self::NO_END_DATE;
     }
 
     /**
@@ -192,10 +198,14 @@ class Member extends Model {
     }
 
     /**
-     * The term of whoever sits for an electorate or state, or else of whoever left it last.
+     * The term of whoever sits for an electorate or state, or else of whoever left it last, in either house or one.
      */
-    public static function latestInElectorate(string $electorate): ?self {
-        return static::query()->where('constituency', $electorate)->orderByDesc('left_house')->first();
+    public static function latestInElectorate(string $electorate, ?House $house = null): ?self {
+        return static::query()
+          ->where('constituency', $electorate)
+          ->when($house, fn (Builder $query): Builder => $query->inHouse($house))
+          ->orderByDesc('left_house')
+          ->first();
     }
 
     /**
@@ -294,8 +304,11 @@ class Member extends Model {
      * The address of this member's profile. Titles are left out, as the profile is found by name.
      */
     protected function profileUrl(): Attribute {
-        return Attribute::get(fn (): string => WEBPATH . House::from($this->house)->profilePath()
-          . make_member_url($this->first_name . ' ' . $this->last_name, $this->constituency, $this->house));
+        return Attribute::get(fn (): string => MemberUrls::profile(
+            House::from($this->house),
+            "$this->first_name $this->last_name",
+            $this->constituency,
+        ));
     }
 
     /**

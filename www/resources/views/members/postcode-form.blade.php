@@ -1,4 +1,4 @@
-<h1 class="!m-0 !mb-4 !block !leading-tight text-2xl font-semibold !text-slate-900">Find out about your Representative</h1>
+<x-members.title size="text-2xl">Find out about your Representative</x-members.title>
 <form action="{{ WEBPATH }}mp/" method="get">
 <p class="!mx-0">
 <label for="pc"><strong>Enter your Australian postcode:</strong></label>

@@ -7,67 +7,13 @@
 
 require_once __DIR__ . '/../../../bootstrap.php';
 require_once __DIR__ . '/../../../../www/includes/utility.php';
+require_once __DIR__ . '/../../Support/MemberFixtures.php';
 require_once __DIR__ . '/../../Support/MemberPageStubs.php';
 
-use OpenAustralia\TWFY\Models\Member;
 use OpenAustralia\TWFY\Models\PostcodeLookup;
 use OpenAustralia\TWFY\Models\User;
 
 uses(TransactionalTestCase::class);
-
-/**
- * Adds a sitting term for a fictional member.
- *
- * @param int $id
- *   The member and person id.
- * @param array<string, int|string> $overrides
- *   Columns to change.
- */
-function lookup_term(int $id, array $overrides = []): Member {
-    return Member::create($overrides + [
-        'member_id' => $id,
-        'person_id' => $id,
-        'house' => 1,
-        'title' => '',
-        'first_name' => 'Robin',
-        'last_name' => 'Example',
-        'constituency' => 'Test Ville',
-        'party' => 'Example Party',
-        'entered_house' => '2022-05-21',
-        'left_house' => '9999-12-31',
-        'entered_reason' => 'general_election',
-        'left_reason' => 'still_in_office',
-    ]);
-}
-
-/**
- * Stands in for the visitor.
- *
- * @param string $electorate
- *   The electorate they have given.
- * @param int|null $userId
- *   Their user id, if signed in.
- */
-function lookup_visitor(string $electorate = '', ?int $userId = null): void {
-    $GLOBALS['THEUSER'] = new class($electorate, $userId) {
-
-        public function __construct(private string $electorate, private ?int $userId) {
-        }
-
-        public function constituency(): string {
-            return $this->electorate;
-        }
-
-        public function isloggedin(): bool {
-            return $this->userId !== null;
-        }
-
-        public function user_id(): ?int {
-            return $this->userId;
-        }
-
-    };
-}
 
 /**
  * Where a lookup sends the visitor, without the scheme and host.
@@ -80,9 +26,9 @@ function lookup_location(string $address): string {
 beforeEach(function () {
     MemberPageStubs::bind();
     $this->theuser = $GLOBALS['THEUSER'] ?? null;
-    lookup_visitor();
-    lookup_term(97601);
-    lookup_term(97602, ['house' => 2, 'first_name' => 'Sam', 'last_name' => 'Sample', 'constituency' => 'Tasmania']);
+    MemberPageStubs::visitor();
+    MemberFixtures::term(97601);
+    MemberFixtures::term(97602, ['house' => 2, 'first_name' => 'Sam', 'last_name' => 'Sample', 'constituency' => 'Tasmania']);
     PostcodeLookup::create(['postcode' => '9990', 'name' => 'Test Ville']);
 });
 
@@ -111,7 +57,7 @@ describe('GET /mp/ with nothing to go on', function () {
 
     describe('when the electorate is known', function () {
         it('goes to their member', function () {
-            lookup_visitor('test ville');
+            MemberPageStubs::visitor('test ville');
 
             expect(lookup_location('/mp/'))->toBe('/mp/robin_example/test_ville');
         });
@@ -157,7 +103,7 @@ describe('GET /mp/?recent=1', function () {
 
     describe('when the electorate is known', function () {
         it('uses their member', function () {
-            lookup_visitor('Test Ville');
+            MemberPageStubs::visitor('Test Ville');
 
             expect(lookup_location('/mp/?recent=1'))->toBe('/search/?pid=97601&pop=1');
         });
@@ -184,7 +130,7 @@ describe('GET /mp/?pc=', function () {
                 'password' => 'x',
                 'constituency' => '',
             ]);
-            lookup_visitor('', $this->user->user_id);
+            MemberPageStubs::visitor('', $this->user->user_id);
         });
 
         it('saves the electorate', function () {

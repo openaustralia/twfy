@@ -14,7 +14,7 @@ final class MemberProfile {
 
     private const LONG_DATE = 'j F Y';
 
-    private const SHORT_DATE = 'j M Y';
+    public const SHORT_DATE = 'j M Y';
 
     /**
      * The reasons a term starts or ends. Others show as the database has them.
@@ -167,7 +167,7 @@ final class MemberProfile {
      */
     public function currentOffices(): array {
         return $this->offices()
-          ->filter(fn (Moffice $office): bool => $office->to_date->year === 9999)
+          ->filter(fn (Moffice $office): bool => $office->isCurrent())
           ->map(fn (Moffice $office): string => "$office->description (since {$office->from_date->format(self::SHORT_DATE)})")
           ->values()
           ->all();
@@ -181,7 +181,7 @@ final class MemberProfile {
      */
     public function pastOffices(): array {
         return $this->offices()
-          ->reject(fn (Moffice $office): bool => $office->to_date->year === 9999)
+          ->reject(fn (Moffice $office): bool => $office->isCurrent())
           ->map(fn (Moffice $office): string => "$office->description ({$office->from_date->format(self::SHORT_DATE)} to {$office->to_date->format(self::SHORT_DATE)})")
           ->values()
           ->all();
