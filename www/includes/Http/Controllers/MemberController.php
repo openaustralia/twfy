@@ -4,10 +4,17 @@ namespace OpenAustralia\TWFY\Http\Controllers;
 
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use OpenAustralia\TWFY\Enums\House;
 use OpenAustralia\TWFY\Enums\MemberOrder;
 use OpenAustralia\TWFY\Models\Member;
+use OpenAustralia\TWFY\Parliament\MemberFacts;
+use OpenAustralia\TWFY\Parliament\MemberLinks;
+use OpenAustralia\TWFY\Parliament\MemberProfile;
+use OpenAustralia\TWFY\Parliament\MemberStatistics;
+use OpenAustralia\TWFY\Parliament\Person;
+use OpenAustralia\TWFY\Parliament\RecentSpeeches;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 /**
@@ -30,9 +37,52 @@ abstract class MemberController {
     }
 
     /**
+     * One person's profile. An address without a constituency redirects to the full one.
+     */
+    public function show(RecentSpeeches $speeches, string $name, ?string $constituency = null): View|RedirectResponse {
+        $id = Person::idsNamed(
+            $this->house(),
+            str_replace('_', ' ', $name),
+            $constituency === null ? null : str_replace('_', ' ', $constituency),
+        )->first();
+        abort_if($id === null, 404);
+
+        $person = Person::find($id);
+        if ($constituency === null) {
+            return redirect($person->latest()->profile_url);
+        }
+
+        $profile = new MemberProfile($person);
+        $facts = MemberFacts::for($person);
+        $feed = $this->feedPath($person);
+        [$photo, $photoSize] = find_rep_image($person->id);
+
+        return view('members.show', [
+            'page' => $this->profilePage(),
+            // The legacy layout prints the title as it is.
+            'metadata' => array_filter(['subtitle' => e($profile->pageTitle()), 'rss' => $feed]),
+            'profile' => $profile,
+            'person' => $person,
+            'memberTitle' => House::from($person->latest()->house)->memberTitle(),
+            'facts' => $facts,
+            'links' => MemberLinks::for($profile, $facts),
+            'statistics' => new MemberStatistics($person, $facts),
+            'speeches' => $speeches->for($person->id),
+            'photo' => $photo,
+            'photoSize' => $photoSize,
+            'feed' => $feed,
+        ]);
+    }
+
+    /**
      * The house these pages are about.
      */
     abstract protected function house(): House;
+
+    /**
+     * The legacy page key for a profile, which sets the title and the menu.
+     */
+    abstract protected function profilePage(): string;
 
     /**
      * The Blade view for the list.
@@ -75,6 +125,14 @@ abstract class MemberController {
      */
     protected function absoluteProfileUrl(Member $member): string {
         return 'https://' . DOMAIN . $member->profile_url;
+    }
+
+    /**
+     * The RSS feed of a person's speeches, if scripts/mprss.php has written one.
+     */
+    private function feedPath(Person $person): ?string {
+        $path = 'rss/mp/' . $person->id . '.rdf';
+        return file_exists(BASEDIR . '/' . $path) ? $path : null;
     }
 
     /**

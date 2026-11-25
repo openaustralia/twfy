@@ -20,6 +20,13 @@ class SenatorController extends MemberController {
     /**
      * {@inheritdoc}
      */
+    protected function profilePage(): string {
+        return 'peer';
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     protected function indexView(): string {
         return 'senators.index';
     }

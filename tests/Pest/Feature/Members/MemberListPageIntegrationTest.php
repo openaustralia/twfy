@@ -56,7 +56,7 @@ beforeEach(function () {
     // The legacy page layout isn't loaded in tests, so stand in for it.
     twfy_laravel()->bind(LegacyLayout::class, fn () => new class extends LegacyLayout {
 
-        public function top(string $page): string {
+        public function top(string $page, array $metadata = []): string {
             return "[top:$page]";
         }
 

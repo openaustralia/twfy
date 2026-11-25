@@ -20,6 +20,13 @@ class RepresentativeController extends MemberController {
     /**
      * {@inheritdoc}
      */
+    protected function profilePage(): string {
+        return 'mp';
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     protected function indexView(): string {
         return 'representatives.index';
     }

@@ -12,12 +12,16 @@ class LegacyLayout {
      *
      * @param string $page
      *   The legacy page key, which sets the title and the menu.
+     * @param array<string, string> $metadata
+     *   Anything more the legacy layout should know about the page, such as its subtitle or RSS feed.
      */
-    public function top(string $page): string {
+    public function top(string $page, array $metadata = []): string {
         global $PAGE, $DATA, $this_page;
 
         $this_page = $page;
-        $DATA->set_page_metadata($page, 'responsive', true);
+        foreach ($metadata + ['responsive' => true] as $key => $value) {
+            $DATA->set_page_metadata($page, $key, $value);
+        }
 
         return $this->capture(fn () => $PAGE->page_start());
     }
