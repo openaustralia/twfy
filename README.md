@@ -13,7 +13,7 @@ Statements, the Northern Ireland Assembly, or the Scottish Parliament (debates o
 answers) with real data, and never will.
 
 Code for all of those is still in the tree (`dbtypes.php`'s majors 2-8/104, the
-`www/docs/{whall,wrans,wms,ni,sp,spwrans,pbc,mlas,msps}/` routers, matching sidebars, and most of
+`www/docs/{whall,wrans,wms,ni,sp,spwrans,pbc}/` routers, matching sidebars, and most of
 `hansardlist.php`'s list classes) - it's dead weight from the fork, not a feature anyone should
 build on. Treat it as such: don't invest effort maintaining it, and prefer removing it outright
 over updating it whenever a change already touches it. See

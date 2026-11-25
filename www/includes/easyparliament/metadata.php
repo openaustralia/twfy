@@ -460,29 +460,11 @@ class Metadata {
             'track' => true,
             'url' => 'mla/'
         ],
-        'mlas' => [
-            'menu' => [
-                'text' => 'All MLAs',
-                'title' => "List of all MLAs"
-            ],
-            'title' => 'All MLAs',
-            'track' => true,
-            'url' => 'mlas/'
-        ],
 
         'msp' => [
             'title' => 'MSP',
             'track' => true,
             'url' => 'msp/'
-        ],
-        'msps' => [
-            'menu' => [
-                'text' => 'All MSPs',
-                'title' => "List of all MSPs"
-            ],
-            'title' => 'All MSPs',
-            'track' => true,
-            'url' => 'msps/'
         ],
 
         /* Not 'Your MP', whose name is 'yourmp'... */

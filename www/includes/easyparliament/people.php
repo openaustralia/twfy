@@ -62,22 +62,6 @@ class PEOPLE {
     /**
      *
      */
-    public function _get_data_by_msps($args) {
-        $args['house'] = 4;
-        return $this->_get_data_by_group($args);
-    }
-
-    /**
-     *
-     */
-    public function _get_data_by_mlas($args) {
-        $args['house'] = 3;
-        return $this->_get_data_by_group($args);
-    }
-
-    /**
-     *
-     */
     public function _get_data_by_peers($args) {
         $args['house'] = 2;
         return $this->_get_data_by_group($args);
