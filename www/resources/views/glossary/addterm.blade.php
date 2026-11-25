@@ -79,7 +79,6 @@
 <form action="{{ $search_url }}" method="get" class="flex flex-col gap-3 sm:flex-row">
 @if (!$signed_in)
 <input type="hidden" name="type" value="2">
-<input type="hidden" name="ret" value="{{ $return_url }}">
 @endif
 <label for="phrase" class="sr-only">Phrase to search for</label>
 <input type="text" name="g" id="phrase" value="{{ $phrase }}" class="!m-0 !min-w-0 !w-full box-border rounded border border-solid border-slate-300 px-4 py-3 text-base text-slate-900 shadow-sm" placeholder="A phrase, such as &quot;point of order&quot;">

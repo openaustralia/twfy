@@ -502,6 +502,21 @@ describe('AddTermController::index() for a phrase or definition that is too long
     });
 });
 
+describe('AddTermController::index() for the signed-out search form', function () {
+    beforeEach(function () {
+        addterm_visitor(false, false);
+        $this->html = $this->render(fn () => addterm_controller()->index());
+    });
+
+    it('sends no return address, so the sign-in page can keep the phrase', function () {
+        expect($this->html)->not->toContain('name="ret"');
+    });
+
+    it('tells the sign-in page it is for the glossary', function () {
+        expect($this->html)->toContain('<input type="hidden" name="type" value="2">');
+    });
+});
+
 describe('AddTermController::index() for the definition form', function () {
     it('describes the tags and addresses the filter keeps', function () {
         $_GET['g'] = 'point of order';

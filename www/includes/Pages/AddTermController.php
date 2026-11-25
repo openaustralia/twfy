@@ -78,7 +78,6 @@ class AddTermController extends PageController {
             'can_add' => $canAdd,
             'token' => self::token(),
             'search_url' => $signedIn ? GlossaryUrls::add() : GlossaryUrls::signIn(),
-            'return_url' => GlossaryUrls::add(),
             'phrase' => $phrase,
             'notice' => $notice,
             'thanks' => $thanks,
