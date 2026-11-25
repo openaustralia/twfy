@@ -186,6 +186,24 @@ describe('MemberProfile::since()', function () {
         });
     });
 
+    describe('with a change of seat', function () {
+        it('leaves it to the history', function () {
+            profile_term(97301);
+            profile_term(97303, ['constituency' => 'Victoria', 'entered_house' => '2019-07-01', 'left_house' => '2022-07-01']);
+
+            expect(profile()->since())->toBeNull();
+        });
+    });
+
+    describe('with a break in service', function () {
+        it('leaves it to the history', function () {
+            profile_term(97301);
+            profile_term(97303, ['entered_house' => '2016-07-02', 'left_house' => '2019-04-11', 'left_reason' => 'resigned']);
+
+            expect(profile()->since())->toBeNull();
+        });
+    });
+
     describe('with two houses', function () {
         it('leaves it to the history', function () {
             profile_term(97301);

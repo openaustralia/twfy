@@ -104,16 +104,16 @@ final class MemberProfile {
     }
 
     /**
-     * When a sitting member with one house and one party to their name started, and why. Others need the timelines.
+     * When a sitting member with one unbroken seat and no change of party started, and why. Others need the timelines.
      *
      * @return array{date: string, reason: string}|null
      *   The date is a year alone for a Senate term only known to the year.
      */
     public function since(): ?array {
         $house = House::from($this->person->latest()->house);
-        $simple = $this->person->sitsIn($house)
-          && count($this->person->houses()) === 1
-          && (new ServiceHistory($this->person))->partyNotice() === null;
+        $history = new ServiceHistory($this->person);
+        // A second seat, house or break in service each add a seat entry.
+        $simple = $this->person->sitsIn($house) && count($history->seats()) === 1 && $history->partyNotice() === null;
         if (!$simple) {
             return null;
         }
