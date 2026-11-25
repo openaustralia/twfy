@@ -328,7 +328,7 @@ describe('MemberStatistics', function () {
         profile_fact('Ldebate_sectionsspoken_inlastyear_quintile', '1');
 
         expect(profile_statistics()->debates())
-          ->toBe([['count' => 1, 'figure' => '1 debate', 'standing' => 'above average amongst Senators']]);
+          ->toBe([['count' => 1, 'standing' => 'above average amongst Senators']]);
     });
 
     it('compares alliterations by rank', function () {

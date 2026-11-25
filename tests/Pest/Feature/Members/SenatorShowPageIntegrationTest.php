@@ -82,6 +82,21 @@ describe('GET /senator/{name}/{state}', function () {
         });
     });
 
+    describe('with debate numbers', function () {
+        beforeEach(function () {
+            Personinfo::create(['person_id' => 97401, 'data_key' => 'Ldebate_sectionsspoken_inlastyear', 'data_value' => '12']);
+            Personinfo::create(['person_id' => 97401, 'data_key' => 'Ldebate_sectionsspoken_inlastyear_quintile', 'data_value' => '1']);
+        });
+
+        it('shows the figure', function () {
+            expect(senator_page_get()->getContent())->toContain('>12</strong>', 'debates spoken in');
+        });
+
+        it('says how it compares', function () {
+            expect(senator_page_get()->getContent())->toContain('Above average amongst Senators');
+        });
+    });
+
     describe('with a current office', function () {
         it('lists it as a role', function () {
             Moffice::create(['person' => 97401, 'position' => 'Minister for Examples', 'dept' => '', 'from_date' => '2022-06-01', 'to_date' => '9999-12-31', 'source' => '']);

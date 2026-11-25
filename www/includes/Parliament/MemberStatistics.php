@@ -2,7 +2,6 @@
 
 namespace OpenAustralia\TWFY\Parliament;
 
-use Illuminate\Support\Str;
 use OpenAustralia\TWFY\Enums\House;
 use OpenAustralia\TWFY\Models\Alert;
 
@@ -22,7 +21,7 @@ final class MemberStatistics {
     /**
      * How many debates they spoke in over the last year, for each house with a count.
      *
-     * @return list<array{count: int, figure: string, standing: string|null}>
+     * @return list<array{count: int, standing: string|null}>
      *   One entry a house.
      */
     public function debates(): array {
@@ -32,7 +31,6 @@ final class MemberStatistics {
             if ($count !== null) {
                 $entries[] = [
                     'count' => (int) $count,
-                    'figure' => $count . ' ' . Str::plural('debate', (int) $count),
                     'standing' => $this->standing($house->debatesKey(), $house),
                 ];
             }
@@ -55,7 +53,7 @@ final class MemberStatistics {
     /**
      * How often they have used three-word alliterative phrases, for each house with a count.
      *
-     * @return list<array{figure: string, standing: string|null}>
+     * @return list<array{count: int, standing: string|null}>
      *   One entry a house.
      */
     public function alliterations(): array {
@@ -64,7 +62,7 @@ final class MemberStatistics {
             $count = $this->info->get($key);
             if ($count !== null) {
                 $entries[] = [
-                    'figure' => $count . ' ' . Str::plural('time', (int) $count),
+                    'count' => (int) $count,
                     'standing' => $this->standing($key, $house),
                 ];
             }

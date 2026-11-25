@@ -1,31 +1,35 @@
+@use('Illuminate\Support\Str')
 @use('OpenAustralia\TWFY\Parliament\MemberUrls')
 @php($link = $theme->link . ' !underline')
 <x-members.section id="numbers" title="Numbers">
-<div class="rounded-lg border border-solid border-slate-300 bg-white p-5 text-base !text-slate-700">
-<p class="!m-0 !mb-3"><em>Please note that numbers do not measure quality. Also, {{ $memberTitle }}s may do other things not currently covered by this site.</em> (<a href="{{ WEBPATH }}help/#numbers" class="{{ $link }}">More about this</a>)</p>
-<ul class="!m-0 !pl-5">
+<p class="!m-0 !mb-4 text-sm !text-slate-600">Please note that numbers do not measure quality. Also, {{ $memberTitle }}s may do other things not currently covered by this site. (<a href="{{ WEBPATH }}help/#numbers" class="{{ $link }}">More about this</a>)</p>
+<ul class="!m-0 grid list-none grid-cols-[repeat(auto-fit,minmax(min(300px,100%),1fr))] gap-4 !p-0">
 @foreach ($statistics->debates() as $debate)
-<li>Has spoken in
+<x-members.statistic :figure="number_format($debate['count'])" :standing="$debate['standing']" :theme="$theme">
 @if ($debate['count'])
-<a href="{{ MemberUrls::speeches($person->id) }}" class="{{ $link }}"><strong>{{ $debate['figure'] }}</strong></a>
+<a href="{{ MemberUrls::speeches($person->id) }}" class="{{ $link }}">{{ Str::plural('debate', $debate['count']) }} spoken in</a>
 @else
-<strong>{{ $debate['figure'] }}</strong>
+debates spoken in
 @endif
-in the last year{{ $debate['standing'] ? ' — ' . $debate['standing'] : '' }}.</li>
+in the last year
+</x-members.statistic>
 @endforeach
 @if ($statistics->readingAge())
-<li>This Representative's speeches are understandable to an average <strong>{{ $statistics->readingAge() }}</strong> year old, going by the <a href="https://en.wikipedia.org/wiki/Flesch-Kincaid_Readability_Test" class="{{ $link }}">Flesch-Kincaid Grade Level</a> score.</li>
+<x-members.statistic :figure="$statistics->readingAge()" :theme="$theme">
+years old, on average, can understand this {{ $memberTitle }}’s speeches, going by the <a href="https://en.wikipedia.org/wiki/Flesch-Kincaid_Readability_Test" class="{{ $link }}">Flesch-Kincaid Grade Level</a> score
+</x-members.statistic>
 @endif
 @php($followers = $statistics->followers())
-<li><strong>{{ $followers }}</strong> {{ $followers === 1 ? 'person is' : 'people are' }} tracking whenever this {{ $memberTitle }} speaks
+<x-members.statistic :figure="number_format($followers)" :theme="$theme">
+{{ $followers === 1 ? 'person is' : 'people are' }} tracking whenever this {{ $memberTitle }} speaks
 @if ($profile->canBeFollowed())
-— <a href="{{ MemberUrls::alert($person->id) }}" class="{{ $link }}">email me whenever {{ $profile->name() }} speaks</a>.</li>
-@else
-.</li>
+<a href="{{ MemberUrls::alert($person->id) }}" class="mt-2 block {{ $link }}">Email me whenever {{ $profile->name() }} speaks</a>
 @endif
+</x-members.statistic>
 @foreach ($statistics->alliterations() as $alliteration)
-<li>Has used three-word alliterative phrases (e.g. "she sells seashells") <strong>{{ $alliteration['figure'] }}</strong> in debates{{ $alliteration['standing'] ? ' — ' . $alliteration['standing'] : '' }}. <small>(<a href="{{ WEBPATH }}help/#numbers" class="{{ $link }}">Why is this here?</a>)</small></li>
+<x-members.statistic :figure="number_format($alliteration['count'])" :standing="$alliteration['standing']" :theme="$theme">
+three-word alliterative {{ Str::plural('phrase', $alliteration['count']) }} used in debates, such as “she sells seashells”. <a href="{{ WEBPATH }}help/#numbers" class="{{ $link }}">Why is this here?</a>
+</x-members.statistic>
 @endforeach
 </ul>
-</div>
 </x-members.section>
