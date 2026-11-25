@@ -99,14 +99,4 @@ final class Person {
         return $this->latestTerm($house)?->isSitting() ?? false;
     }
 
-    /**
-     * The terms that ended with a change of party, latest first.
-     *
-     * @return \Illuminate\Support\Collection<int, Member>
-     *   Those terms.
-     */
-    public function partyChanges(): Collection {
-        return $this->terms->where('left_reason', 'changed_party')->values();
-    }
-
 }

@@ -98,9 +98,13 @@ final class MemberProfile {
      */
     public function party(): string {
         $term = $this->person->latest();
-        $before = $this->person->partyChanges()->last();
+        if (!$term->isPresidingOfficer()) {
+            return $term->party_name;
+        }
+        // The latest term that isn't itself an office, as they may have held another office first.
+        $before = $this->person->terms->first(fn (Member $earlier): bool => !$earlier->isPresidingOfficer());
 
-        return $term->isPresidingOfficer() && $before ? "$term->party_name, and $before->party_name" : $term->party_name;
+        return $before ? "$term->party_name, and $before->party_name" : $term->party_name;
     }
 
     /**

@@ -151,6 +151,26 @@ describe('MemberProfile::party()', function () {
             expect(profile()->party())->toBe('President, and Old Party');
         });
     });
+
+    describe('with two earlier parties', function () {
+        it('adds the later one', function () {
+            Member::find(97301)->update(['party' => 'PRES']);
+            profile_term(97303, ['party' => 'Newer Party', 'entered_house' => '2019-07-01', 'left_house' => '2022-07-01', 'left_reason' => 'changed_party']);
+            profile_term(97304, ['party' => 'Older Party', 'entered_house' => '2016-07-02', 'left_house' => '2019-07-01', 'left_reason' => 'changed_party']);
+
+            expect(profile()->party())->toBe('President, and Newer Party');
+        });
+    });
+
+    describe('with an earlier office', function () {
+        it('adds the party before both', function () {
+            Member::find(97301)->update(['party' => 'PRES']);
+            profile_term(97303, ['party' => 'DPRES', 'entered_house' => '2019-07-01', 'left_house' => '2022-07-01', 'left_reason' => 'changed_party']);
+            profile_term(97304, ['party' => 'Old Party', 'entered_house' => '2016-07-02', 'left_house' => '2019-07-01', 'left_reason' => 'changed_party']);
+
+            expect(profile()->party())->toBe('President, and Old Party');
+        });
+    });
 });
 
 describe('MemberProfile::since()', function () {

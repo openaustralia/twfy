@@ -86,12 +86,6 @@ describe('Person::sitsIn()', function () {
     })->with('seats');
 });
 
-describe('Person::partyChanges()', function () {
-    it('lists the terms left for a party', function () {
-        expect(Person::find(97201)->partyChanges()->pluck('party')->all())->toBe(['First Party']);
-    });
-});
-
 describe('Person::termsNamed()', function () {
     it('ignores the case of the name', function () {
         expect(person_ids_named(House::Senate, 'kim specimen', 'tasmania'))->toBe([97201]);
