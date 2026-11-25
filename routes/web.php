@@ -13,5 +13,6 @@ use OpenAustralia\TWFY\Http\Controllers\SenatorController;
 Route::withoutMiddleware('web')->group(function (): void {
     Route::get('/mps', [RepresentativeController::class, 'index'])->name('representatives.index');
     Route::get('/senators', [SenatorController::class, 'index'])->name('senators.index');
+    Route::get('/mp/{name}/{electorate?}', [RepresentativeController::class, 'show'])->name('representatives.show');
     Route::get('/senator/{name}/{state?}', [SenatorController::class, 'show'])->name('senators.show');
 });

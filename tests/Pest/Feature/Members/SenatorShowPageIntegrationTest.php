@@ -7,15 +7,11 @@
 
 require_once __DIR__ . '/../../../bootstrap.php';
 require_once __DIR__ . '/../../../../www/includes/utility.php';
+require_once __DIR__ . '/../../Support/MemberPageStubs.php';
 
-use Illuminate\Contracts\Http\Kernel;
-use Illuminate\Http\Request;
-use OpenAustralia\TWFY\Auth\ErrorPage;
-use OpenAustralia\TWFY\Http\LegacyLayout;
 use OpenAustralia\TWFY\Models\Member;
 use OpenAustralia\TWFY\Models\Moffice;
 use OpenAustralia\TWFY\Models\Personinfo;
-use OpenAustralia\TWFY\Parliament\RecentSpeeches;
 use Symfony\Component\HttpFoundation\Response;
 
 uses(TransactionalTestCase::class);
@@ -24,49 +20,11 @@ uses(TransactionalTestCase::class);
  * The response to a visit.
  */
 function senator_page_get(string $address = '/senator/kim_o%27specimen/tasmania'): Response {
-    return twfy_laravel()->make(Kernel::class)->handle(Request::create($address));
-}
-
-/**
- * Stands in for the search, which gives these speeches, or null when it is broken.
- *
- * @param list<array<string, string>>|null $speeches
- *   What the search gives.
- */
-function senator_page_speeches(?array $speeches): void {
-    twfy_laravel()->bind(RecentSpeeches::class, fn () => new class($speeches) extends RecentSpeeches {
-
-        public function __construct(private ?array $speeches) {
-        }
-
-        public function for(int $personId): ?array {
-            return $this->speeches;
-        }
-
-    });
+    return MemberPageStubs::get($address);
 }
 
 beforeEach(function () {
-    // The legacy page layout isn't loaded in tests, so stand in for it.
-    twfy_laravel()->bind(LegacyLayout::class, fn () => new class extends LegacyLayout {
-
-        public function top(string $page, array $metadata = []): string {
-            return "[top:$page:" . ($metadata['subtitle'] ?? '') . ']';
-        }
-
-        public function bottom(): string {
-            return '[bottom]';
-        }
-
-    });
-    twfy_laravel()->bind(ErrorPage::class, fn () => new class extends ErrorPage {
-
-        public function render(int $status): string {
-            return "[error:$status]";
-        }
-
-    });
-    senator_page_speeches([]);
+    MemberPageStubs::bind();
 
     Member::create([
         'member_id' => 97401,
@@ -117,7 +75,7 @@ describe('GET /senator/{name}/{state}', function () {
 
     describe('with recent speeches', function () {
         it('links to each', function () {
-            senator_page_speeches([['url' => '/senate/?id=1&s=x', 'title' => 'Motions', 'date' => '14 May 2026', 'extract' => 'I <b>move</b>']]);
+            MemberPageStubs::speeches([['url' => '/senate/?id=1&s=x', 'title' => 'Motions', 'date' => '14 May 2026', 'extract' => 'I <b>move</b>']]);
 
             expect(senator_page_get()->getContent())->toContain('href="/senate/?id=1&amp;s=x"', 'I <b>move</b>');
         });
@@ -125,7 +83,7 @@ describe('GET /senator/{name}/{state}', function () {
 
     describe('with the search broken', function () {
         beforeEach(function () {
-            senator_page_speeches(null);
+            MemberPageStubs::speeches(null);
         });
 
         it('says speeches are unavailable', function () {

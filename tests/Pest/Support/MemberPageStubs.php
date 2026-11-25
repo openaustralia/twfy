@@ -1,0 +1,71 @@
+<?php
+
+/**
+ * @file
+ * What the profile page specs share: stand-ins for what isn't loaded in tests, and visits through Laravel.
+ */
+
+use Illuminate\Contracts\Http\Kernel;
+use Illuminate\Http\Request;
+use OpenAustralia\TWFY\Auth\ErrorPage;
+use OpenAustralia\TWFY\Http\LegacyLayout;
+use OpenAustralia\TWFY\Parliament\RecentSpeeches;
+use Symfony\Component\HttpFoundation\Response;
+
+/**
+ * Stand-ins and requests for the profile page specs.
+ */
+final class MemberPageStubs {
+
+    /**
+     * Stands in for the legacy layout, error page and search. The layout shows its page key and subtitle.
+     */
+    public static function bind(): void {
+        twfy_laravel()->bind(LegacyLayout::class, fn () => new class extends LegacyLayout {
+
+            public function top(string $page, array $metadata = []): string {
+                return "[top:$page:" . ($metadata['subtitle'] ?? '') . ']';
+            }
+
+            public function bottom(): string {
+                return '[bottom]';
+            }
+
+        });
+        twfy_laravel()->bind(ErrorPage::class, fn () => new class extends ErrorPage {
+
+            public function render(int $status): string {
+                return "[error:$status]";
+            }
+
+        });
+        self::speeches([]);
+    }
+
+    /**
+     * Stands in for the search.
+     *
+     * @param list<array<string, string>>|null $speeches
+     *   What the search gives, or null when it is broken.
+     */
+    public static function speeches(?array $speeches): void {
+        twfy_laravel()->bind(RecentSpeeches::class, fn () => new class($speeches) extends RecentSpeeches {
+
+            public function __construct(private ?array $speeches) {
+            }
+
+            public function for(int $personId): ?array {
+                return $this->speeches;
+            }
+
+        });
+    }
+
+    /**
+     * The response to a visit.
+     */
+    public static function get(string $address): Response {
+        return twfy_laravel()->make(Kernel::class)->handle(Request::create($address));
+    }
+
+}

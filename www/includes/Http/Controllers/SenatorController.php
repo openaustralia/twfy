@@ -4,6 +4,7 @@ namespace OpenAustralia\TWFY\Http\Controllers;
 
 use OpenAustralia\TWFY\Enums\House;
 use OpenAustralia\TWFY\Models\Member;
+use OpenAustralia\TWFY\Parliament\Person;
 
 /**
  * Pages about Senators.
@@ -20,7 +21,7 @@ class SenatorController extends MemberController {
     /**
      * {@inheritdoc}
      */
-    protected function profilePage(): string {
+    protected function profilePage(Person $person): string {
         return 'peer';
     }
 

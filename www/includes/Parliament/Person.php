@@ -37,7 +37,7 @@ final class Person {
     }
 
     /**
-     * The ids of the people of a name who have sat in a house, the latest to leave first.
+     * The people of a name who have sat in a house, each as their latest matching term.
      *
      * @param \OpenAustralia\TWFY\Enums\House $house
      *   The house.
@@ -46,18 +46,19 @@ final class Person {
      * @param string|null $constituency
      *   Only those who sat for this electorate or state.
      *
-     * @return \Illuminate\Support\Collection<int, int>
-     *   Person ids, each once.
+     * @return \Illuminate\Support\Collection<int, Member>
+     *   One term for each person, the latest to leave first.
      */
-    public static function idsNamed(House $house, string $name, ?string $constituency = null): Collection {
+    public static function termsNamed(House $house, string $name, ?string $constituency = null): Collection {
         return Member::query()
           ->inHouse($house)
           ->named($name)
           ->when($constituency, fn ($query) => $query->where('constituency', $constituency))
           ->orderByDesc('left_house')
-          ->pluck('person_id')
-          ->unique()
-          ->values();
+          ->get()
+          ->unique('person_id')
+          ->values()
+          ->toBase();
     }
 
     /**

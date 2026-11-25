@@ -6,6 +6,7 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection as SupportCollection;
 use OpenAustralia\TWFY\Enums\House;
 use OpenAustralia\TWFY\Enums\MemberOrder;
 use OpenAustralia\TWFY\Models\Member;
@@ -40,38 +41,12 @@ abstract class MemberController {
      * One person's profile. An address without a constituency redirects to the full one.
      */
     public function show(RecentSpeeches $speeches, string $name, ?string $constituency = null): View|RedirectResponse {
-        $id = Person::idsNamed(
-            $this->house(),
-            str_replace('_', ' ', $name),
-            $constituency === null ? null : str_replace('_', ' ', $constituency),
-        )->first();
-        abort_if($id === null, 404);
+        $matches = $this->matches($name, $constituency);
+        abort_if($matches->isEmpty(), 404);
 
-        $person = Person::find($id);
-        if ($constituency === null) {
-            return redirect($person->latest()->profile_url);
-        }
+        $person = Person::find($matches->first()->person_id);
 
-        $profile = new MemberProfile($person);
-        $facts = MemberFacts::for($person);
-        $feed = $this->feedPath($person);
-        [$photo, $photoSize] = find_rep_image($person->id);
-
-        return view('members.show', [
-            'page' => $this->profilePage(),
-            // The legacy layout prints the title as it is.
-            'metadata' => array_filter(['subtitle' => e($profile->pageTitle()), 'rss' => $feed]),
-            'profile' => $profile,
-            'person' => $person,
-            'memberTitle' => House::from($person->latest()->house)->memberTitle(),
-            'facts' => $facts,
-            'links' => MemberLinks::for($profile, $facts),
-            'statistics' => new MemberStatistics($person, $facts),
-            'speeches' => $speeches->for($person->id),
-            'photo' => $photo,
-            'photoSize' => $photoSize,
-            'feed' => $feed,
-        ]);
+        return $constituency === null ? redirect($person->latest()->profile_url) : $this->profile($person, $speeches);
     }
 
     /**
@@ -80,9 +55,9 @@ abstract class MemberController {
     abstract protected function house(): House;
 
     /**
-     * The legacy page key for a profile, which sets the title and the menu.
+     * The legacy page key for a person's profile, which sets the title and the menu.
      */
-    abstract protected function profilePage(): string;
+    abstract protected function profilePage(Person $person): string;
 
     /**
      * The Blade view for the list.
@@ -118,6 +93,51 @@ abstract class MemberController {
      */
     protected function indexData(): array {
         return [];
+    }
+
+    /**
+     * The people an address names, each as their latest matching term. Underscores stand for spaces.
+     *
+     * @param string $name
+     *   The name from the address.
+     * @param string|null $constituency
+     *   The electorate or state from the address, if it has one.
+     *
+     * @return \Illuminate\Support\Collection<int, Member>
+     *   One term for each person.
+     */
+    protected function matches(string $name, ?string $constituency): SupportCollection {
+        return Person::termsNamed(
+            $this->house(),
+            str_replace('_', ' ', $name),
+            $constituency === null ? null : str_replace('_', ' ', $constituency),
+        );
+    }
+
+    /**
+     * The page about one person.
+     */
+    protected function profile(Person $person, RecentSpeeches $speeches): View {
+        $profile = new MemberProfile($person);
+        $facts = MemberFacts::for($person);
+        $feed = $this->feedPath($person);
+        [$photo, $photoSize] = find_rep_image($person->id);
+
+        return view('members.show', [
+            'page' => $this->profilePage($person),
+            // The legacy layout prints the title as it is.
+            'metadata' => array_filter(['subtitle' => e($profile->pageTitle()), 'rss' => $feed]),
+            'profile' => $profile,
+            'person' => $person,
+            'memberTitle' => House::from($person->latest()->house)->memberTitle(),
+            'facts' => $facts,
+            'links' => MemberLinks::for($profile, $facts),
+            'statistics' => new MemberStatistics($person, $facts),
+            'speeches' => $speeches->for($person->id),
+            'photo' => $photo,
+            'photoSize' => $photoSize,
+            'feed' => $feed,
+        ]);
     }
 
     /**

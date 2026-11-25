@@ -2,13 +2,49 @@
 
 namespace OpenAustralia\TWFY\Http\Controllers;
 
+use Illuminate\Contracts\View\View;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Collection;
 use OpenAustralia\TWFY\Enums\House;
 use OpenAustralia\TWFY\Models\Member;
+use OpenAustralia\TWFY\Parliament\Person;
+use OpenAustralia\TWFY\Parliament\RecentSpeeches;
 
 /**
  * Pages about members of the House of Representatives.
  */
 class RepresentativeController extends MemberController {
+
+    /**
+     * One Representative's profile.
+     *
+     * A name that several people share asks which one. A name alone, or with the wrong electorate, redirects to the
+     * full address.
+     */
+    public function show(RecentSpeeches $speeches, string $name, ?string $constituency = null): View|RedirectResponse {
+        // Old links may say "/mp/jane citizen mp".
+        if ($constituency === null) {
+            $name = preg_replace('/ mp$/i', '', $name);
+        }
+
+        $matches = $this->matches($name, $constituency);
+        $wrongElectorate = $constituency !== null && $matches->isEmpty();
+        if ($wrongElectorate) {
+            $matches = $this->matches($name, null);
+        }
+        abort_if($matches->isEmpty(), 404);
+
+        if ($matches->count() > 1) {
+            return $this->choose($matches);
+        }
+
+        $person = Person::find($matches->first()->person_id);
+        if ($constituency === null || $wrongElectorate) {
+            return redirect($person->latest()->profile_url);
+        }
+
+        return $this->profile($person, $speeches);
+    }
 
     /**
      * {@inheritdoc}
@@ -20,8 +56,12 @@ class RepresentativeController extends MemberController {
     /**
      * {@inheritdoc}
      */
-    protected function profilePage(): string {
-        return 'mp';
+    protected function profilePage(Person $person): string {
+        // The visitor's own Representative gets the "Your Representative" menu entry.
+        $theirs = $person->sitsIn($this->house())
+          && strcasecmp($this->visitorsElectorate(), $person->latest()->constituency) === 0;
+
+        return $theirs ? 'yourmp' : 'mp';
     }
 
     /**
@@ -67,10 +107,27 @@ class RepresentativeController extends MemberController {
     }
 
     /**
+     * A list of the people who share a name.
+     *
+     * @param \Illuminate\Support\Collection<int, Member> $matches
+     *   One term for each person.
+     */
+    private function choose(Collection $matches): View {
+        return view('members.choose', ['page' => 'mp', 'matches' => $matches]);
+    }
+
+    /**
+     * The electorate the visitor has given, or an empty string.
+     */
+    private function visitorsElectorate(): string {
+        return (string) $GLOBALS['THEUSER']->constituency();
+    }
+
+    /**
      * The current or latest Representative for the electorate the visitor has given, if any.
      */
     private function visitorsRepresentative(): ?Member {
-        $electorate = (string) $GLOBALS['THEUSER']->constituency();
+        $electorate = $this->visitorsElectorate();
         if ($electorate === '') {
             return null;
         }

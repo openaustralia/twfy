@@ -38,6 +38,16 @@ function person_term(int $member, array $overrides = []): Member {
     ]);
 }
 
+/**
+ * The ids of the people found by name.
+ *
+ * @return list<int>
+ *   Person ids, in order.
+ */
+function person_ids_named(House $house, string $name, ?string $constituency = null): array {
+    return Person::termsNamed($house, $name, $constituency)->pluck('person_id')->all();
+}
+
 beforeEach(function () {
     // A Representative who changed party, then moved to the Senate.
     person_term(97201, ['house' => 1, 'constituency' => 'Testville', 'party' => 'First Party', 'entered_house' => '2013-09-07', 'left_house' => '2016-05-09', 'left_reason' => 'changed_party']);
@@ -94,20 +104,20 @@ describe('Person::partyChanges()', function () {
     });
 });
 
-describe('Person::idsNamed()', function () {
+describe('Person::termsNamed()', function () {
     it('ignores the case of the name', function () {
-        expect(Person::idsNamed(House::Senate, 'kim specimen', 'tasmania')->all())->toBe([97201]);
+        expect(person_ids_named(House::Senate, 'kim specimen', 'tasmania'))->toBe([97201]);
     });
 
     describe('with another state', function () {
         it('finds nobody', function () {
-            expect(Person::idsNamed(House::Senate, 'kim specimen', 'victoria')->all())->toBe([]);
+            expect(person_ids_named(House::Senate, 'kim specimen', 'victoria'))->toBe([]);
         });
     });
 
     describe('with one word', function () {
         it('finds nobody', function () {
-            expect(Person::idsNamed(House::Senate, 'specimen')->all())->toBe([]);
+            expect(person_ids_named(House::Senate, 'specimen'))->toBe([]);
         });
     });
 
@@ -120,7 +130,7 @@ describe('Person::idsNamed()', function () {
         it('tries both ways to split them', function (string $first, string $last) {
             person_term(97210, ['person_id' => 97210, 'first_name' => $first, 'last_name' => $last]);
 
-            expect(Person::idsNamed(House::Senate, 'mary jo specimen')->all())->toBe([97210]);
+            expect(person_ids_named(House::Senate, 'mary jo specimen'))->toBe([97210]);
         })->with('three word names');
     });
 
@@ -128,7 +138,7 @@ describe('Person::idsNamed()', function () {
         it('puts the latest to leave first', function () {
             person_term(97220, ['person_id' => 97220, 'left_house' => '2001-06-30', 'entered_house' => '1996-07-01']);
 
-            expect(Person::idsNamed(House::Senate, 'kim specimen')->all())->toBe([97201, 97220]);
+            expect(person_ids_named(House::Senate, 'kim specimen'))->toBe([97201, 97220]);
         });
     });
 });
