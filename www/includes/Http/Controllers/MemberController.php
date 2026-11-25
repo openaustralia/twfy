@@ -19,6 +19,7 @@ use OpenAustralia\TWFY\Parliament\MemberUrls;
 use OpenAustralia\TWFY\Parliament\Person;
 use OpenAustralia\TWFY\Parliament\RecentSpeeches;
 use OpenAustralia\TWFY\Parliament\ServiceHistory;
+use OpenAustralia\TWFY\Parliament\SpeakingRecord;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 /**
@@ -150,6 +151,7 @@ abstract class MemberController {
             'links' => MemberLinks::for($profile, $facts),
             'statistics' => new MemberStatistics($person, $facts),
             'speeches' => $speeches->for($person->id),
+            'speaking' => SpeakingRecord::for($person),
             'photo' => $photo,
             'photoSize' => $photoSize,
             'feed' => $feed,

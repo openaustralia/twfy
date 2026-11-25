@@ -10,6 +10,7 @@ require_once __DIR__ . '/../../../../www/includes/utility.php';
 require_once __DIR__ . '/../../Support/MemberFixtures.php';
 require_once __DIR__ . '/../../Support/MemberPageStubs.php';
 
+use OpenAustralia\TWFY\Models\Hansard;
 use OpenAustralia\TWFY\Models\Member;
 use OpenAustralia\TWFY\Models\Moffice;
 use OpenAustralia\TWFY\Models\Personinfo;
@@ -61,6 +62,24 @@ describe('GET /senator/{name}/{state}', function () {
 
     it('says since when', function () {
         expect(senator_page_get()->getContent())->toContain('Senator since', '21 May 2022');
+    });
+
+    describe('without speeches', function () {
+        it('draws no chart', function () {
+            expect(senator_page_get()->getContent())->not->toContain('Speaking in Hansard');
+        });
+    });
+
+    describe('with speeches over two years', function () {
+        beforeEach(function () {
+            foreach ([97400001 => '2023-02-01', 97400002 => '2024-02-01'] as $id => $date) {
+                Hansard::create(['epobject_id' => $id, 'gid' => "spec/$id", 'htype' => 12, 'speaker_id' => 97401, 'major' => 101, 'section_id' => 0, 'subsection_id' => 0, 'hpos' => 1, 'hdate' => $date, 'source_url' => '']);
+            }
+        });
+
+        it('charts them', function () {
+            expect(senator_page_get()->getContent())->toContain('Speaking in Hansard', '2023: 1 contribution');
+        });
     });
 
     describe('with a current office', function () {
