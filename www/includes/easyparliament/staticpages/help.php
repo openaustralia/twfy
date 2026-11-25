@@ -6,6 +6,7 @@
 ?>
 <ul>
     <li><a href="#missing">Is this the whole of Hansard?</a></li>
+    <li><a href="#glossary">What do the terms used in debates mean?</a></li>
     <li><a href="#privacy">What is your Privacy Policy?</a></li>
     <li><a href="#cookie">What is your Cookie Policy?</a></li>
     <li><a href="#extreme">What's that Plausible script I spy in your page source?</a></li>
@@ -38,6 +39,15 @@
             find what you want.</p>
     </dd>
     <!-- end old faq entry -->
+
+    <!-- start new faq entry -->
+    <dt><a name="glossary"></a>What do the terms used in debates mean?</dt>
+    <dd>
+        <p>Parliament has its own jargon. Our <a href="/glossary/">glossary</a> explains it in plain words, and the
+            terms it covers link to their definitions wherever they come up in a debate. If you have an account, you
+            can <a href="/addterm/">suggest a term</a> too.</p>
+    </dd>
+    <!-- end new faq entry -->
 
     <!-- start new faq entry -->
     <dt><a name="privacy"></a>What is your Privacy Policy?</dt>
