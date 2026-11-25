@@ -105,8 +105,7 @@ class AddTermController extends PageController {
     private function searchEngine(string $phrase): \SEARCHENGINE {
         global $SEARCHENGINE;
 
-        $SEARCHENGINE = new \SEARCHENGINE('"' . $phrase . '"');
-        return $SEARCHENGINE;
+        return $SEARCHENGINE = new \SEARCHENGINE('"' . $phrase . '"');
     }
 
     /**

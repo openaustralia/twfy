@@ -2,7 +2,6 @@
 
 namespace OpenAustralia\TWFY\Pages;
 
-use Illuminate\Support\Collection;
 use OpenAustralia\TWFY\Models\Glossary;
 
 /**
@@ -19,7 +18,7 @@ class GlossaryController extends PageController {
         $terms = Glossary::approvedTerms();
         $id = is_numeric($this->input('gl')) ? (int) $this->input('gl') : null;
         $term = $id === null ? null : $terms->firstWhere('glossary_id', $id);
-        $letter = $this->letter($terms, $term);
+        $letter = $this->letter($term);
 
         $DATA->set_page_metadata('glossary', 'title', $term === null ? $letter . ': Glossary index' : e($term->title) . ': Glossary item');
 
@@ -62,12 +61,10 @@ class GlossaryController extends PageController {
     /**
      * The letter to show: the one asked for, else the term's first letter, else A.
      *
-     * @param \Illuminate\Support\Collection<int, \OpenAustralia\TWFY\Models\Glossary> $terms
-     *   The approved terms.
      * @param \OpenAustralia\TWFY\Models\Glossary|null $term
      *   The term being shown, if any.
      */
-    private function letter(Collection $terms, ?Glossary $term): string {
+    private function letter(?Glossary $term): string {
         $asked = strtoupper(substr($this->input('az'), 0, 1));
         if (preg_match('/^[A-Z#]$/', $asked) === 1) {
             return $asked;
