@@ -92,27 +92,54 @@ describe('MemberProfile::pageTitle()', function () {
 });
 
 describe('MemberProfile::heading()', function () {
-    beforeEach(function () {
-        profile_term(97301);
-        profile_house_term();
+    dataset('headings', [
+        'a sitting Senator' => [2, '9999-12-31', 'Senator Kim Specimen'],
+        'a sitting Representative' => [1, '9999-12-31', 'Kim Specimen MP'],
+        'someone who has left' => [2, '2025-06-30', 'Kim Specimen'],
+    ]);
+
+    it('titles a sitting member', function (int $house, string $left, string $heading) {
+        profile_term(97301, ['house' => $house, 'left_house' => $left]);
+
+        expect(profile()->heading())->toBe($heading);
+    })->with('headings');
+});
+
+describe('MemberProfile::formerly()', function () {
+    describe('with a sitting Senator', function () {
+        it('is empty', function () {
+            profile_term(97301);
+
+            expect(profile()->formerly())->toBeNull();
+        });
     });
 
-    it('adds the houses they have left', function () {
-        expect(profile()->heading())->toBe('Senator Kim Specimen, former Representative');
+    describe('with a house they left', function () {
+        it('names it', function () {
+            profile_term(97301);
+            profile_house_term();
+
+            expect(profile()->formerly())->toBe('Former Representative');
+        });
+    });
+
+    describe('with both houses left', function () {
+        it('names both', function () {
+            profile_term(97301, ['left_house' => '2025-06-30']);
+            profile_house_term();
+
+            expect(profile()->formerly())->toBe('Former Senator and Representative');
+        });
     });
 });
 
-describe('MemberProfile::roles()', function () {
+describe('MemberProfile::party()', function () {
     beforeEach(function () {
         profile_term(97301);
-        profile_house_term();
     });
 
-    it('gives a line for each house', function () {
-        expect(profile()->roles())->toBe([
-            'Example Party Senator for Tasmania',
-            'Former Example Party Representative for Testville',
-        ]);
+    it('names the party', function () {
+        expect(profile()->party())->toBe('Example Party');
     });
 
     describe('with a presiding officer', function () {
@@ -120,7 +147,51 @@ describe('MemberProfile::roles()', function () {
             Member::find(97301)->update(['party' => 'PRES']);
             profile_term(97303, ['party' => 'Old Party', 'entered_house' => '2019-07-01', 'left_house' => '2022-07-01', 'left_reason' => 'changed_party']);
 
-            expect(profile()->roles()[0])->toBe('President, and Old Party Senator for Tasmania');
+            expect(profile()->party())->toBe('President, and Old Party');
+        });
+    });
+});
+
+describe('MemberProfile::since()', function () {
+    describe('with one house and party', function () {
+        it('gives the start and reason', function () {
+            profile_term(97301);
+
+            expect(profile()->since())->toBe(['date' => '1 July 2022', 'reason' => 'Federal election']);
+        });
+    });
+
+    describe('with a start known to the year', function () {
+        it('gives only the year', function () {
+            profile_term(97301, ['entered_house' => '1990-01-01']);
+
+            expect(profile()->since()['date'])->toBe('1990');
+        });
+    });
+
+    describe('with someone who has left', function () {
+        it('is empty', function () {
+            profile_term(97301, ['left_house' => '2025-06-30']);
+
+            expect(profile()->since())->toBeNull();
+        });
+    });
+
+    describe('with two houses', function () {
+        it('leaves it to the history', function () {
+            profile_term(97301);
+            profile_house_term();
+
+            expect(profile()->since())->toBeNull();
+        });
+    });
+
+    describe('with a change of party', function () {
+        it('leaves it to the history', function () {
+            profile_term(97301);
+            profile_term(97303, ['party' => 'Old Party', 'entered_house' => '2019-07-01', 'left_house' => '2022-07-01', 'left_reason' => 'changed_party']);
+
+            expect(profile()->since())->toBeNull();
         });
     });
 });
@@ -192,7 +263,7 @@ describe('MemberProfile offices', function () {
     });
 
     it('dates the current ones', function () {
-        expect(profile()->currentOffices())->toBe(['Minister for Examples (since 1 Jun 2022)']);
+        expect(profile()->currentRoles())->toBe([['title' => 'Minister for Examples', 'since' => '1 Jun 2022']]);
     });
 
     it('spans the past ones', function () {

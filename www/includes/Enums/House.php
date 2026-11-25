@@ -31,6 +31,16 @@ enum House: int {
     }
 
     /**
+     * The house's name.
+     */
+    public function title(): string {
+        return match ($this) {
+            self::Representatives => 'House of Representatives',
+            self::Senate => 'Senate',
+        };
+    }
+
+    /**
      * The first part of the address of a member's profile.
      */
     public function profilePath(): string {

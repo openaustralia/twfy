@@ -52,7 +52,15 @@ describe('GET /mp/{name}/{electorate}', function () {
     });
 
     it('gives their party and electorate', function () {
-        expect(representative_page_get()->getContent())->toContain('Example Party Representative for Test Ville');
+        expect(representative_page_get()->getContent())->toContain('Example Party</dd>', 'Test Ville</dd>');
+    });
+
+    it('is teal', function () {
+        expect(representative_page_get()->getContent())->toContain('bg-teal-900');
+    });
+
+    it('names their house', function () {
+        expect(representative_page_get()->getContent())->toContain('>House of Representatives</span>');
     });
 
     it('starts no session', function () {
@@ -107,7 +115,7 @@ describe('GET /mp/{name}', function () {
         });
 
         it('shows one when given a seat', function () {
-            expect(representative_page_get()->getContent())->toContain('Example Party Representative for Test Ville');
+            expect(representative_page_get()->getContent())->toContain('Test Ville</dd>');
         });
     });
 });

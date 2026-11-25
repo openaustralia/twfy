@@ -616,6 +616,9 @@ class PAGE {
         $top_links = [];
         $bottom_links = [];
 
+        // A member's profile belongs to its house's list.
+        $sections = ['mp' => 'mps', 'yourmp' => 'mps', 'peer' => 'peers'];
+
         // We work out which of the items in the top and bottom menus are highlighted - $top_hilite and $bottom_hilite respectively.
 
         $this_parent = $DATA->page_metadata($this_page, 'parent');
@@ -654,9 +657,11 @@ class PAGE {
             // Where we're linking to.
             $URL = new URL($toppage);
 
-            $is_current = $toppage == $top_hilite;
+            $is_current = $toppage == ($sections[$top_hilite] ?? $top_hilite);
+            // The Senate's pages are burgundy, and the rest teal.
+            $underline = $toppage === 'peers' ? 'border-rose-400' : 'border-teal-400';
             $tab_class = $is_current
-                ? 'on !text-white border-0 border-b-2 border-solid border-teal-400'
+                ? 'on !text-white border-0 border-b-2 border-solid ' . $underline
                 : 'border-0 border-b-2 border-solid border-transparent !text-slate-200 hover:!text-white';
             $class = ' class="inline-block rounded px-3 py-1.5 font-semibold !no-underline ' . $tab_class . '"';
             $aria_current = $is_current ? ' aria-current="page"' : '';

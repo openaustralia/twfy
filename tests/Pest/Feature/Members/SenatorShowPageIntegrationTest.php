@@ -44,7 +44,49 @@ describe('GET /senator/{name}/{state}', function () {
     });
 
     it('gives their party and state', function () {
-        expect(senator_page_get()->getContent())->toContain('Example Party Senator for Tasmania');
+        expect(senator_page_get()->getContent())->toContain('Example Party</dd>', 'Tasmania</dd>');
+    });
+
+    it('is burgundy', function () {
+        expect(senator_page_get()->getContent())->toContain('bg-[#4a1424]');
+    });
+
+    it('names their house', function () {
+        expect(senator_page_get()->getContent())->toContain('>Senate</span>');
+    });
+
+    it('links back to the list', function () {
+        expect(senator_page_get()->getContent())->toContain('href="/senators"', 'All Senators');
+    });
+
+    it('says since when', function () {
+        expect(senator_page_get()->getContent())->toContain('Senator since', '21 May 2022');
+    });
+
+    describe('with a current office', function () {
+        it('lists it as a role', function () {
+            Moffice::create(['person' => 97401, 'position' => 'Minister for Examples', 'dept' => '', 'from_date' => '2022-06-01', 'to_date' => '9999-12-31', 'source' => '']);
+
+            expect(senator_page_get()->getContent())->toContain('Current roles', 'Minister for Examples', 'since 1 Jun 2022');
+        });
+    });
+
+    describe('with someone who has left', function () {
+        beforeEach(function () {
+            Member::find(97401)->update(['left_house' => '2025-06-30', 'left_reason' => 'resigned']);
+        });
+
+        it('calls them former', function () {
+            expect(senator_page_get()->getContent())->toContain('Former Senator', 'Represented');
+        });
+
+        it('says when they left', function () {
+            expect(senator_page_get()->getContent())->toContain('Left Senate on 30 June 2025');
+        });
+
+        it('offers no email alerts', function () {
+            expect(senator_page_get()->getContent())->not->toContain('speaks</a>', 'No more than once per day');
+        });
     });
 
     it('offers email alerts', function () {

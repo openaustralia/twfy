@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Collection as SupportCollection;
 use OpenAustralia\TWFY\Enums\House;
 use OpenAustralia\TWFY\Enums\MemberOrder;
+use OpenAustralia\TWFY\Http\HouseTheme;
 use OpenAustralia\TWFY\Models\Member;
 use OpenAustralia\TWFY\Parliament\MemberFacts;
 use OpenAustralia\TWFY\Parliament\MemberLinks;
@@ -132,6 +133,7 @@ abstract class MemberController {
         $facts = MemberFacts::for($person);
         $feed = $this->feedPath($person);
         [$photo, $photoSize] = find_rep_image($person->id);
+        $house = House::from($person->latest()->house);
 
         return view('members.show', [
             'page' => $this->profilePage($person),
@@ -139,7 +141,9 @@ abstract class MemberController {
             'metadata' => array_filter(['subtitle' => e($profile->pageTitle()), 'rss' => $feed]),
             'profile' => $profile,
             'person' => $person,
-            'memberTitle' => House::from($person->latest()->house)->memberTitle(),
+            'house' => $house,
+            'theme' => HouseTheme::for($house),
+            'memberTitle' => $house->memberTitle(),
             'facts' => $facts,
             'links' => MemberLinks::for($profile, $facts),
             'statistics' => new MemberStatistics($person, $facts),

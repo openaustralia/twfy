@@ -106,6 +106,19 @@ describe('PAGE::menu()', function () {
         expect(substr_count(site_menu_html(true, true, 'admin_proof_year'), 'aria-current="page"'))->toBe(0);
     });
 
+    dataset('member pages', [
+        'the Senators list' => ['peers', '/peers/', 'border-rose-400'],
+        'a Senator' => ['peer', '/peers/', 'border-rose-400'],
+        'a Representative' => ['mp', '/mps/', 'border-teal-400'],
+        'the visitor\'s Representative' => ['yourmp', '/mps/', 'border-teal-400'],
+    ]);
+
+    it('underlines the section', function (string $page, string $link, string $colour) {
+        preg_match('#<a href="' . $link . '"[^>]*>#', site_menu_html(false, false, $page), $tab);
+
+        expect($tab[0])->toContain($colour, 'aria-current="page"');
+    })->with('member pages');
+
     describe('when the admin menu fails', function () {
         beforeEach(function () {
             $this->data = new class extends DATA {

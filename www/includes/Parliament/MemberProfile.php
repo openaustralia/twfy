@@ -75,43 +75,62 @@ final class MemberProfile {
     }
 
     /**
-     * The heading, naming the seats they hold and then those they have left.
+     * The name as the page's heading, with "Senator" or "MP" for a sitting member.
      */
     public function heading(): string {
-        $heading = ($this->person->sitsIn(House::Senate) ? 'Senator ' : '') . $this->name();
-        if ($this->person->sitsIn(House::Representatives)) {
-            $heading .= ' MP';
+        if ($this->person->sitsIn(House::Senate)) {
+            return 'Senator ' . $this->name();
         }
+
+        return $this->person->sitsIn(House::Representatives) ? $this->name() . ' MP' : $this->name();
+    }
+
+    /**
+     * The houses they have left, such as "Former Senator", or null.
+     */
+    public function formerly(): ?string {
+        $titles = [];
         foreach ($this->person->houses() as $house) {
             if (!$this->person->sitsIn($house)) {
-                $heading .= ', former ' . $house->memberTitle();
+                $titles[] = $house->memberTitle();
             }
         }
 
-        return $heading;
+        return $titles ? 'Former ' . implode(' and ', $titles) : null;
     }
 
     /**
-     * One line for each house, giving their party and seat there.
-     *
-     * @return list<string>
-     *   Such as "Former Example Party Senator for Tasmania".
+     * Their party now, or last. A presiding officer's office comes first, then the party they came from.
      */
-    public function roles(): array {
-        return array_map(function (House $house): string {
-            $term = $this->person->latestTerm($house);
-            $party = $term->party_name;
-            $before = $this->person->partyChanges()->last();
-            if ($term->isPresidingOfficer() && $before) {
-                $party .= ', and ' . $before->party_name;
-            }
+    public function party(): string {
+        $term = $this->person->latest();
+        $before = $this->person->partyChanges()->last();
 
-            return ($this->person->sitsIn($house) ? '' : 'Former ') . "$party {$house->memberTitle()} for $term->display_constituency";
-        }, $this->person->houses());
+        return $term->isPresidingOfficer() && $before ? "$term->party_name, and $before->party_name" : $term->party_name;
     }
 
     /**
-     * The parties they have left, unless they now preside, as roles() then names the last one.
+     * When a sitting member with one house and one party to their name started, and why. Others need history().
+     *
+     * @return array{date: string, reason: string}|null
+     *   The date is a year alone for a Senate term only known to the year.
+     */
+    public function since(): ?array {
+        $house = House::from($this->person->latest()->house);
+        $simple = $this->person->sitsIn($house)
+          && count($this->person->houses()) === 1
+          && $this->person->partyChanges()->isEmpty();
+        if (!$simple) {
+            return null;
+        }
+
+        $first = $this->person->firstTerm($house);
+
+        return ['date' => $this->startDate($first), 'reason' => $this->reason($first->entered_reason)];
+    }
+
+    /**
+     * The parties they have left, unless they now preside, as party() then names the last one.
      */
     public function partyChanges(): ?string {
         $changes = $this->person->partyChanges();
@@ -162,13 +181,16 @@ final class MemberProfile {
     /**
      * The offices they hold now.
      *
-     * @return list<string>
-     *   Such as "Minister for Examples (since 1 Jun 2022)".
+     * @return list<array{title: string, since: string}>
+     *   The latest to start first.
      */
-    public function currentOffices(): array {
+    public function currentRoles(): array {
         return $this->offices()
           ->filter(fn (Moffice $office): bool => $office->isCurrent())
-          ->map(fn (Moffice $office): string => "$office->description (since {$office->from_date->format(self::SHORT_DATE)})")
+          ->map(fn (Moffice $office): array => [
+              'title' => $office->description,
+              'since' => $office->from_date->format(self::SHORT_DATE),
+          ])
           ->values()
           ->all();
     }
@@ -254,18 +276,33 @@ final class MemberProfile {
     }
 
     /**
-     * A term's start. Some Senate terms are only known to the year, and are stored as 1 January.
+     * When a term started. Some Senate terms are only known to the year, and are stored as 1 January.
+     */
+    private function startDate(Member $term): string {
+        $date = $term->entered_house;
+        $yearOnly = $term->house === House::Senate->value && $date->format('m-d') === '01-01';
+
+        return $yearOnly ? (string) $date->year : $date->format(self::LONG_DATE);
+    }
+
+    /**
+     * A reason a term started or ended, in words.
+     */
+    private function reason(?string $reason): string {
+        return self::REASONS[$reason] ?? (string) $reason;
+    }
+
+    /**
+     * A term's start.
      *
      * @return array{text: string, reason: string}
      *   The event.
      */
     private function joined(string $what, Member $term): array {
-        $date = $term->entered_house;
-        $when = $term->house === House::Senate->value && $date->format('m-d') === '01-01'
-          ? 'in ' . $date->year
-          : 'on ' . $date->format(self::LONG_DATE);
+        $date = $this->startDate($term);
+        $when = (strlen($date) === 4 ? 'in ' : 'on ') . $date;
 
-        return ['text' => "$what $when", 'reason' => self::REASONS[$term->entered_reason] ?? (string) $term->entered_reason];
+        return ['text' => "$what $when", 'reason' => $this->reason($term->entered_reason)];
     }
 
     /**
@@ -277,7 +314,7 @@ final class MemberProfile {
     private function left(string $what, Member $term): array {
         return [
             'text' => "$what " . $term->left_house->format(self::LONG_DATE),
-            'reason' => self::REASONS[$term->left_reason] ?? (string) $term->left_reason,
+            'reason' => $this->reason($term->left_reason),
         ];
     }
 
