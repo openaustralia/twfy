@@ -7,13 +7,7 @@
 @if ($links)
 <x-members.panel title="More useful links for this person">
 <ul class="!m-0 !pl-5 text-base !text-slate-700">
-@foreach ($links as $each)
-<li><a href="{{ $each['url'] }}" class="{{ $link }}">{{ $each['text'] }}</a>
-@if ($each['source'])
-<small>({{ $each['source'] }})</small>
-@endif
-</li>
-@endforeach
+@include('members.show.links', ['class' => $link])
 </ul>
 </x-members.panel>
 @endif
