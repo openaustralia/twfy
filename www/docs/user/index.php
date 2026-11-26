@@ -10,18 +10,21 @@
 
 /* What happens?
 
+Someone's own details are at /account/ (Laravel, AccountController), and nobody's details are public. What is
+left here is joining, and an administrator editing another user, so:
+
 1) We check what $this_page is going to be. This depends on:
  * the value of $pg, if anything;
- * whether $THEUSER is logged in or not;
  * whether $THEUSER has appropriate security privileges;
- * and whether we've been passed the ID of a user to view/edit.
+ * and whether we've been passed the ID of a user to edit.
+Anything else goes to /account/.
 
 2) If we've come to this page after submitting its form, we check the form data.
-If the data is OK, we either edit or add the user and display the new info.
+If the data is OK, we either edit or add the user.
 If there were errors, the same form is displayed again with error messages.
 
 3) On the other hand, if the form hasn't been submitted we've just arrived here.
-In that case the form (or the user info, if just viewing) is displayed.
+In that case the form is displayed.
 
 
 After the first part of working out which page we're on, and munging any data
@@ -31,7 +34,6 @@ check_input()   Validates the edited or added user data and creates error messag
 add_user()      Calls $THEUSER->add() and displays the results, depending on success.
 update_user()   Calls the appropriate functions and updates, displays results.
 display_form()  Displays the form for editing or adding a user.
-display_user()  Displays a user's details.
 
  */
 
@@ -39,61 +41,25 @@ display_user()  Displays a user's details.
 include_once __DIR__ . "/../../includes/easyparliament/init.php";
 include_once __DIR__ . "/../../includes/easyparliament/member.php";
 
-use OpenAustralia\TWFY\Models\Alert;
+use OpenAustralia\TWFY\Account\LegacyUserPage;
+use OpenAustralia\TWFY\Models\User as UserModel;
 use OpenAustralia\TWFY\UserRoles;
 
 // Which page we're on all depends on the value of the "pg" variable...
-switch (get_http_var("pg")) {
+$pg = get_http_var("pg");
 
+if ($pg == "join") {
     // A new user signing up.
-    case "join":
-        $this_page = "userjoin";
-      break;
+    $this_page = "userjoin";
 
-    // Editing someone else's info.
-    case "editother":
+} elseif ($pg == "editother" && is_numeric(get_http_var("u")) && $THEUSER->is_able_to("edituser")) {
+    // Editing someone else's info. We need a user_id, and the user must be allowed to do this.
+    $this_page = "otheruseredit";
 
-        // We need a user_id. So make sure that exists.
-        // And make sure the user is allowed to do this!
-
-        if (is_numeric(get_http_var("u")) && $THEUSER->is_able_to("edituser")) {
-
-            $this_page = "otheruseredit";
-
-        } else {
-            // Revert to editing THEUSER's own info.
-            $this_page = "useredit";
-
-        }
-
-      break;
-
-    // Edit this user's owninfo.
-    case "edit":
-
-        if ($THEUSER->isloggedin()) {
-            $this_page = "useredit";
-
-        } else {
-            // Unlikely to get to this page without being logged in,
-            // but just in case, show them the blank form.
-            $this_page = "userjoin";
-
-        }
-      break;
-
-    default:
-
-        if (
-            $THEUSER->isloggedin() &&
-            (get_http_var('u') == '' || get_http_var('u') == $THEUSER->user_id())
-        ) {
-            // Logged in user viewing their own details.
-            $this_page = 'userviewself';
-        } else {
-            // Viewing someone else's details.
-            $this_page = "userview";
-        }
+} else {
+    // Someone's own details, which Laravel's pages show now. Nobody else's are shown, so there is nothing else here.
+    header('Location: ' . WEBPATH . LegacyUserPage::destination($pg), true, 301);
+    exit;
 }
 
 
@@ -104,26 +70,24 @@ $who = $this_page == "otheruseredit" ? "the user's" : "your";
 
 if (get_http_var("submitted") == "true" && $this_page != "userjoin" && !edit_token_is_valid()) {
     // Changing an existing user needs the token from the edit form, posted back here, so another site can't change a
-    // signed-in user's details. Nothing the request sent is used or shown.
+    // user's details. Nothing the request sent is used or shown.
     http_response_code(403);
 
     $PAGE->page_start();
 
-    $target_id = $this_page == "otheruseredit" ? edit_target_id() : null;
+    $target_id = edit_target_id();
     if ($target_id !== null) {
         // Back to the edit page of the user who was being edited, as that is where the form is.
         $EDITURL = new URL('otheruseredit');
         $EDITURL->insert(['u' => (string) $target_id]);
-        $linktext = "Open the user's details and try again";
+        $PAGE->error_message([
+            'text' => "Sorry, we couldn't check that this request came from your own form, so nothing was changed.",
+            'linkurl' => $EDITURL->generate(),
+            'linktext' => "Open the user's details and try again",
+        ]);
     } else {
-        $EDITURL = new URL('useredit');
-        $linktext = 'Open your details and try again';
+        $PAGE->error_message("Sorry, we couldn't check that this request came from your own form, so nothing was changed.");
     }
-    $PAGE->error_message([
-        'text' => "Sorry, we couldn't check that this request came from your own form, so nothing was changed.",
-        'linkurl' => $EDITURL->generate(),
-        'linktext' => $linktext,
-    ]);
 
     $PAGE->page_end();
 
@@ -136,21 +100,12 @@ if (get_http_var("submitted") == "true" && $this_page != "userjoin" && !edit_tok
     $details["lastname"] = trim(get_http_var("lastname"));
     $details["email"] = trim(get_http_var("em"));
     // We use boolean true/false internally. Convert the text from the form to boolean.
-    $details["emailpublic"] = get_http_var("emailpublic") == "true" ? true : false;
     $details["password"] = trim(get_http_var("password"));
     $details["password2"] = trim(get_http_var("password2"));
     $details["optin"] = get_http_var("optin") == "true" ? true : false;
     $details['mp_alert'] = get_http_var('mp_alert') == 'true' ? true : false;
-    if (get_http_var("remember") != "") {
-        $remember = get_http_var("remember");
-        $details["remember"] = $remember[0] == "true" ? true : false;
-    }
 
     $details["constituency"] = trim(get_http_var("constituency"));
-    $details["url"] = trim(get_http_var("url"));
-    if ($details['url'] != '' && !preg_match('/^http/', $details['url'])) {
-        $details['url'] = 'http://' . $details['url'];
-    }
 
     if ($this_page == "otheruseredit") {
         $details["user_id"] = trim(get_http_var("u"));
@@ -168,8 +123,6 @@ if (get_http_var("submitted") == "true" && $this_page != "userjoin" && !edit_tok
             $details['confirmed'] = false;
         }
     }
-
-    // $details['status'] = $THEUSER->status();
 
     // Check the input.
     // If there are any errors with the submission, $errors (an array)
@@ -193,7 +146,7 @@ if (get_http_var("submitted") == "true" && $this_page != "userjoin" && !edit_tok
 
     } else {
         // No errors so far, editing an existing user,
-        // $this_page == "useredit" or "otheruseredit".
+        // $this_page == "otheruseredit".
 
         update_user($details);
 
@@ -201,74 +154,44 @@ if (get_http_var("submitted") == "true" && $this_page != "userjoin" && !edit_tok
 
 
 } else {
-    // THEUSER has just arrived at this page, no form submitted.
+    // Someone has just arrived at this page, no form submitted.
 
+    $PAGE->page_start();
 
-    if ($this_page == "userview" || $this_page == 'userviewself') {
+    if ($this_page == "otheruseredit") {
 
-        display_user();
+        // We're editing the info of a different user.
+        // So set up a new user object with the id supplied
+        // and get the user's info.
+
+        $USER = new USER();
+        $USER->init(get_http_var("u"));
+
+        $details = [];
+
+        $details["user_id"] = $USER->user_id();
+        $details["firstname"] = $USER->firstname();
+        $details["lastname"] = $USER->lastname();
+        $details["email"] = $USER->email();
+        $details["password"] = $USER->password();
+        $details["optin"] = $USER->optin();
+        $details["constituency"] = $USER->constituency();
+        $details["status"] = $USER->status();
+        $details["deleted"] = $USER->deleted();
+        $details["confirmed"] = $USER->confirmed();
+
+        // Display the form with the other user's info.
+        display_form($details);
 
     } else {
 
+        // $this_page == "userjoin".
+        // Display a blank form.
+        display_form();
 
-        $PAGE->page_start();
-
-        if ($this_page == "useredit") {
-
-            // We're editing THEUSER's own info, so set all the vars.
-            $details = [];
-            $details["firstname"] = $THEUSER->firstname();
-            $details["lastname"] = $THEUSER->lastname();
-            $details["email"] = $THEUSER->email();
-            $details["emailpublic"] = $THEUSER->emailpublic();
-            $details["password"] = $THEUSER->password();
-            $details["constituency"] = $THEUSER->constituency();
-            $details["optin"] = $THEUSER->optin();
-            $details["constituency"] = $THEUSER->constituency();
-            $details["url"] = $THEUSER->url();
-            $details["status"] = $THEUSER->status();
-
-            // Display the form with this user's info.
-            display_form($details);
-
-        } elseif ($this_page == "otheruseredit") {
-
-            // We're editing the info of a different user.
-            // So set up a new user object with the id supplied
-            // and get the user's info.
-
-            $USER = new USER();
-            $USER->init(get_http_var("u"));
-
-            $details = [];
-
-            $details["user_id"] = $USER->user_id();
-            $details["firstname"] = $USER->firstname();
-            $details["lastname"] = $USER->lastname();
-            $details["email"] = $USER->email();
-            $details["emailpublic"] = $USER->emailpublic();
-            $details["password"] = $USER->password();
-            $details["optin"] = $USER->optin();
-            $details["constituency"] = $USER->constituency();
-            $details["url"] = $USER->url();
-            $details["status"] = $USER->status();
-            $details["deleted"] = $USER->deleted();
-            $details["confirmed"] = $USER->confirmed();
-
-            // Display the form with the other user's info.
-            display_form($details);
-
-        } else {
-
-            // $this_page == "userjoin".
-            // Display a blank form.
-            display_form();
-
-        }
-
-
-        $PAGE->page_end();
     }
+
+    $PAGE->page_end();
 
 }
 
@@ -339,12 +262,10 @@ function check_input($details) {
     // This will then be used to (a) indicate there were errors and (b) display
     // error messages when we show the form again.
 
-    // Check first name.
-    if ($details["firstname"] == "") {
-        $errors["firstname"] = "Please enter $who first name";
+    // People don't all have a first and a last name, so either one is enough.
+    if ($details["firstname"] == "" && $details["lastname"] == "") {
+        $errors["firstname"] = "Please enter $who first name or last name";
     }
-
-    // They don't need a last name. In case Madonna joins.
 
     // Check email address is valid and unique.
     if ($details["email"] == "") {
@@ -354,32 +275,8 @@ function check_input($details) {
         // validate_email() is in includes/utilities.php.
         $errors["email"] = "Please enter a valid email address";
 
-    } else {
-
-        $USER = new USER();
-        $id_of_user_with_this_addresss = $USER->email_exists($details["email"]);
-
-        if (
-            $this_page == "useredit" &&
-            get_http_var("u") == "" &&
-            $THEUSER->isloggedin()
-        ) {
-            // User is updating their own info.
-            // Check no one else has this email.
-
-            if (
-                $id_of_user_with_this_addresss &&
-                $id_of_user_with_this_addresss != $THEUSER->user_id()
-            ) {
-                $errors["email"] = "Someone else has already joined with this email address";
-            }
-
-        } else {
-            // User is joining. Check no one is already here with this email.
-            if ($this_page == "userjoin" && $id_of_user_with_this_addresss) {
-                $errors["email"] = "There is already a user with this email address";
-            }
-        }
+    } elseif (UserModel::emailTaken($details["email"], $this_page == "otheruseredit" ? (int) $details["user_id"] : null)) {
+        $errors["email"] = $this_page == "userjoin" ? "There is already a user with this email address" : "Someone else has already joined with this email address";
     }
 
     // Check passwords.
@@ -389,8 +286,8 @@ function check_input($details) {
         if ($details["password"] == "") {
             $errors["password"] = "Please enter $who password";
 
-        } elseif (strlen($details["password"]) < 6) {
-            $errors["password"] = "Please enter at least six characters";
+        } elseif ($problem = UserModel::passwordProblem($details["password"])) {
+            $errors["password"] = $problem;
         }
 
         if ($details["password2"] == "") {
@@ -405,8 +302,8 @@ function check_input($details) {
 
         // Update details pages.
 
-        if ($details["password"] != "" && strlen($details["password"]) < 6) {
-            $errors["password"] = "Please enter at least six characters";
+        if ($details["password"] != "" && $problem = UserModel::passwordProblem($details["password"])) {
+            $errors["password"] = $problem;
         }
 
         if ($details["password"] != $details["password2"]) {
@@ -524,39 +421,28 @@ function add_user($details) {
  *
  */
 function update_user($details) {
-    global $THEUSER, $this_page, $PAGE, $who;
+    global $THEUSER, $PAGE, $who;
 
     // There were no errors when the edit user form was submitted,
     // so make the changes in the DB.
 
-    // Who are we updating? $THEUSER or someone else?
-    if ($this_page == "otheruseredit") {
-        // Someone else.
-
-        $success = $THEUSER->update_other_user($details);
-
-        // For displaying the altered info.
-        $user_id = $details["user_id"];
-
-    } else {
-        // $this_page == "useredit"
-
-        $success = $THEUSER->update_self($details);
-
-        // For displaying the altered info.
-        $user_id = $THEUSER->user_id;
-    }
+    $success = $THEUSER->update_other_user($details);
 
     if ($success) {
-        // No errors, all updated, show results.
+        // No errors, all updated.
 
-        if ($this_page == 'otheruseredit') {
-            $this_page = "userview";
-        } else {
-            $this_page = "userviewself";
-        }
+        $PAGE->page_start();
 
-        display_user($user_id);
+        $PAGE->stripe_start();
+
+        $PAGE->message([
+            'title' => 'Details updated',
+            'text' => 'The details have been updated. <a href="' . WEBPATH . 'admin/users.php">Back to the users</a>.',
+        ]);
+
+        $PAGE->stripe_end();
+
+        $PAGE->page_end();
 
     } else {
         // Something went wrong.
@@ -611,15 +497,6 @@ function display_form($details = [], $errors = []) {
             <?php
         }
 
-        if ($this_page == 'useredit' && isset($details['status'])) {
-            ?>
-            <div class="row">
-                <span class="label">Status:</span>
-                <span class="formw"><?php echo htmlentities($details['status']); ?></span>
-            </div>
-            <?php
-        }
-
         if (isset($errors["firstname"])) {
             $PAGE->error_message($errors["firstname"]);
         }
@@ -660,7 +537,7 @@ function display_form($details = [], $errors = []) {
 
         <?php
 
-        if ($this_page == "useredit" || $this_page == "otheruseredit") {
+        if ($this_page == "otheruseredit") {
             // If not, the user's joining.
             ?>
             <div class="row">
@@ -677,7 +554,7 @@ function display_form($details = [], $errors = []) {
         <div class="row">
             <span class="label"><label for="password">Password:</label></span>
             <span class="formw"><input type="password" name="password" id="password" value="" maxlength="30" size="20"
-                    class="form"> <small>At least six characters</small></span>
+                    class="form"> <small>At least <?php echo UserModel::PASSWORD_MIN; ?> characters</small></span>
         </div>
 
         <?php
@@ -698,50 +575,7 @@ function display_form($details = [], $errors = []) {
             if (isset($details["constituency"])) {
             echo htmlentities($details["constituency"]);
             } ?>" maxlength="20" size="20" class="form"></span>
-        <?php
-        if (isset($errors["url"])) {
-            $PAGE->error_message($errors["url"]);
-        }
-        ?>
-        <div class="row">
-            <span class="label"><label for="url">Your website:</label></span>
-            <span class="formw"><input type="url" name="url" id="url" value="<?php
-            if (isset($details['url'])) {
-                echo htmlentities($details['url']);
-            } ?>" maxlength="255" size="20" class="form"> <small>Optional and public</small></span>
-        </div>
-
-
-        <div class="row">
-            &nbsp;<br>Let other users see <?php echo $who; ?> email address?
-        </div>
-
-        <?php
-        if (isset($errors["emailpublic"])) {
-            $PAGE->error_message($errors["emailpublic"]);
-        }
-
-        ?>
-        <div class="row">
-            <span class="label">&nbsp;</span>
-            <span class="formw"><input type="radio" name="emailpublic" id="emailpublictrue" value="true" <?php
-            if (!empty($details["emailpublic"])) {
-                print " checked";
-            }
-            ?>> <label
-                    for="emailpublictrue">Yes</label><br>
-                <input type="radio" name="emailpublic" id="emailpublicfalse" value="false" <?php
-                if (
-                    ($this_page == "userjoin" && get_http_var("submitted") != "true")
-                    ||
-                    (isset($details["emailpublic"]) && !$details["emailpublic"])
-                ) {
-                    print " checked";
-                }
-                ?>> <label
-                    for="emailpublicfalse">No</label></span>
-        </div>
-
+        <br>
 
         <div class="row">
             &nbsp;<br>Do <?php
@@ -856,7 +690,7 @@ function display_form($details = [], $errors = []) {
             <?php
         }
 
-        if ($this_page == "useredit" || $this_page == "otheruseredit") {
+        if ($this_page == "otheruseredit") {
             $submittext = "Update details";
         } else {
             $submittext = "Join OpenAustralia.org";
@@ -880,7 +714,7 @@ function display_form($details = [], $errors = []) {
         <input type="hidden" name="submitted" value="true">
 
         <?php
-        if ($this_page == "useredit" || $this_page == "otheruseredit") {
+        if ($this_page == "otheruseredit") {
             // So another site can't submit this form for a signed-in user.
             ?>
             <input type="hidden" name="token" value="<?php echo htmlentities(edit_token()); ?>">
@@ -926,317 +760,3 @@ function display_form($details = [], $errors = []) {
     }
 
 } // End display_form()
-
-/**
- *
- */
-function display_user($user_id = "") {
-
-    global $THEUSER, $PAGE, $DATA, $this_page, $who;
-
-    // We're either going to be:
-    // Displaying the details of a user who's just been edited
-    // (their user_id will be in $user_id now).
-    // * Viewing THEUSER's own data.
-    // * Viewing someone else's data (their id will be in the GET string user_id variable).
-
-    // We could do something cleverer so that if THEUSER has sufficient
-    // privileges we display more data when they're viewing someone else's info
-    // than what your average punter sees.
-
-    // If $user_id is a user id, we've just edited that user's info.
-
-    // FIRST: Work out whose info we're going to show.
-
-    // Have we just edited someone's info?
-    $edited = false;
-
-    if (is_numeric($user_id) && $user_id == $THEUSER->user_id()) {
-        // Display this user's just edited info.
-        $display = "this user";
-        $edited = true;
-
-    } elseif (is_numeric($user_id)) {
-        // Display someone else's just edited info.
-        $display = "another user";
-        $edited = true;
-
-    } elseif (is_numeric(get_http_var("u"))) {
-        // Display someone else's info.
-        $user_id = get_http_var("u");
-        $display = "another user";
-
-    } elseif ($THEUSER->isloggedin()) {
-        // Display this user's info.
-        $display = "this user";
-        $user_id = $THEUSER->user_id();
-
-    } else {
-        // Nothing to show!
-        $URL = new URL('userlogin');
-        $URL->insert(['ret' => '/user/']);
-        $loginurl = $URL->generate();
-        header("Location: $loginurl");
-        exit;
-
-    }
-
-    // SECOND: Get the data for whoever we're going to show.
-
-    if ($display == "another user") {
-
-        // Viewing someone else's info.
-
-        $USER = new USER();
-        $valid = $USER->init($user_id);
-
-        if ($valid && $USER->confirmed() && !$USER->deleted()) {
-            // Don't want to display unconfirmed or deleted users.
-
-            $name = $USER->firstname() . " " . $USER->lastname();
-            $url = $USER->url();
-
-            if ($USER->emailpublic()) {
-                $email = $USER->email();
-            }
-
-            $status = $USER->status();
-            $registrationtime = $USER->registrationtime();
-
-            // Change the page title to reflect whose info we're viewing.
-            // page_header() and heading() print the title unescaped, and
-            // page_header() also htmlentities() it for the meta keywords, so
-            // only neutralise "<", which is all it takes to start a tag.
-            $DATA->set_page_metadata($this_page, "title", str_replace('<', '&lt;', $name));
-
-        } else {
-            // This user_id doesn't exist.
-            $display = "none";
-        }
-
-    } elseif ($display == "this user") {
-
-        // Display THEUSER's info.
-        $name = $THEUSER->firstname() . " " . $THEUSER->lastname();
-        $url = $THEUSER->url();
-        if ($edited) {
-            // We want to show all the info to the user.
-            $email = $THEUSER->email();
-            $emailpublic = $THEUSER->emailpublic() ? "Yes" : "No";
-            $optin = $THEUSER->optin() ? "Yes" : "No";
-            $constituency = $THEUSER->constituency();
-        } else {
-            // We're showing them how they're seen to other people.
-            if ($THEUSER->emailpublic()) {
-                $email = $THEUSER->email();
-            }
-            $registrationtime = $THEUSER->registrationtime();
-            $status = $THEUSER->status();
-        }
-
-        // Change the page title to make it clear we're viewing THEUSER's
-        // own info. Make them less worried about other people seeing some of the
-        // info that shouldn't be public.
-        $DATA->set_page_metadata($this_page, "title", "Your details");
-
-    } else {
-
-        // There's nothing to display!
-
-    }
-
-    // THIRD: Print out what we've got.
-
-    $PAGE->page_start();
-
-    if ($display != "none") {
-
-        $PAGE->stripe_start();
-
-        if (isset($registrationtime)) {
-            // Make registration time more user-friendly.
-            [$date, $time] = explode(' ', $registrationtime);
-            $registrationtime = format_date($date, LONGDATEFORMAT);
-        }
-
-        if ($edited) {
-            print "\t\t\t\t<p><strong>" . ucfirst($who) . " details have been updated:</strong></p>\n";
-        }
-
-        if ($this_page == 'userviewself' && !$edited) {
-            $EDITURL = new URL('useredit');
-            ?>
-            <p><strong>This is how other people see you.</strong> <a href="<?php echo $EDITURL->generate(); ?>">Edit your
-                    details</a>.</p>
-            <?php
-        }
-
-        ?>
-        <div class="row">
-            <span class="label">Name</span>
-            <span class="formw"><?php
-            if (substr($name, -3) == ' MP') {
-                print '<a href="' . WEBPATH . '/mp/' . make_member_url(substr($name, 0, -3)) . '">';
-            }
-            echo htmlentities($name);
-            if (substr($name, -3) == ' MP') {
-                print '</a>';
-            }
-            ?></span>
-        </div>
-
-        <div class="row">
-            <span class="label">Email</span>
-            <span class="formw"><?php
-            if (isset($email)) {
-                $escaped_email = str_replace('@', '&#64;', htmlentities($email));
-                ?><a href="mailto:<?php echo $escaped_email . "\">" . $escaped_email; ?></a><?php
-            } else {
-                ?>Not public<?php
-            }
-            ?></span>
-                </div>
-
-        <?php
-
-        if (isset($constituency)) {
-            if ($constituency == '') {
-                $constituency = 'none';
-            }
-            ?>
-                <div class=" row">&nbsp;<br>
-                        <span class="label">Australian Electoral Division</span>
-                        <span class="formw"><?php echo htmlentities($constituency); ?> <small>(not public)</small></span>
-            </div>
-
-            <?php
-        }
-
-        if (isset($url)) {
-            if ($url == '') {
-                $url = 'none';
-            } else {
-                $url = '<a href="' . htmlentities($url) . '">' . htmlentities($url) . '</a>';
-            }
-            ?>
-            <div class="row">
-                <span class="label">Website</span>
-                <span class="formw"><?php echo $url; ?></span>
-            </div>
-
-            <?php
-        }
-
-        if (isset($emailpublic)) {
-            ?>
-            <div class="row">&nbsp;<br>Let other people see your email address?
-                <strong><?php echo htmlentities($emailpublic); ?></strong>
-            </div>
-
-            <?php
-        }
-        if (isset($optin)) {
-            ?>
-            <div class="row">Receive OpenAustralia.org emails? <strong><?php echo htmlentities($optin); ?></strong></div>
-
-            <?php
-        }
-
-        if (isset($status)) {
-            ?>
-            <div class="row">
-                <span class="label">Status</span>
-                <span class="formw"><?php echo htmlentities($status); ?></span>
-            </div>
-            <?php
-        }
-        if (isset($registrationtime)) {
-            ?>
-            <div class="row">
-                <span class="label">Joined</span>
-                <span class="formw"><?php echo htmlentities($registrationtime); ?></span>
-            </div>
-            <?php
-        }
-
-        if ($edited && $this_page == 'userviewself') {
-            $EDITURL = new URL('useredit');
-            $VIEWURL = new URL('userviewself');
-            ?>
-            <p>&nbsp;<br><a href="<?php echo $EDITURL->generate(); ?>">Edit again</a> or <a
-                    href="<?php echo $VIEWURL->generate(); ?>">see how others see you</a>.</p>
-            <?php
-        }
-
-        $PAGE->stripe_end();
-
-        // Email alerts.
-        if ($this_page == 'userviewself') {
-            $PAGE->stripe_start();
-            print '<h3>Your email alerts</h3>';
-            print alert_suppression_notice($THEUSER->email());
-
-            $alerts = Alert::where('email', $THEUSER->email())
-              ->orderBy('confirmed')
-              ->orderBy('deleted')
-              ->orderBy('alert_id')
-              ->get();
-            $out = '';
-            foreach ($alerts as $alert) {
-                $alert_criteria_terms = explode(' ', $alert->criteria);
-                $display_terms = [];
-                $search_keywords = [];
-                $search_url = WEBPATH . "search/?";
-                foreach ($alert_criteria_terms as $criteria_term) {
-                    if (preg_match('#^speaker:(\d+)#', $criteria_term, $m)) {
-                        $MEMBER = new MEMBER(['person_id' => $m[1]]);
-                        $display_terms[] = 'spoken by ' . $MEMBER->full_name();
-                        $search_url .= 'pid=' . $MEMBER->person_id();
-                    } else {
-                        $display_terms[] = $criteria_term;
-                        $search_keywords[] = $criteria_term;
-                    }
-                }
-
-                if (count($search_keywords) > 0) {
-                    if (strpos($search_url, 'pid=') !== false) {
-                        $search_url .= '&';
-                    }
-                    $search_url .= "s=" . implode("+", $search_keywords);
-                }
-
-                $display_criteria = implode(' ', $display_terms);
-                $token = $alert->alert_id . '-' . $alert->registrationtoken;
-                if (!$alert->confirmed) {
-                    $action = '<a href="' . WEBPATH . 'A/' . $token . '">Confirm</a>';
-                } elseif ($alert->deleted) {
-                    $action = '<form action="' . WEBPATH . 'alert/undelete/" method="post"><input type="hidden" name="t" value="' . $token . '"><input type="submit" value="Resubscribe"></form>';
-                } else {
-                    $action = '<form action="' . WEBPATH . 'alert/delete/" method="post"><input type="hidden" name="t" value="' . $token . '"><input type="submit" value="Unsubscribe"></form>';
-                }
-                $out .= "<tr><td><a href='" . $search_url . "'>" . $display_criteria . "</a></td><td>" . $action . "</td></tr>";
-            }
-            print '<p>To add a new alert, simply visit a Representative or Senator\'s page or conduct a search &#8212; to be given the option of turning them into alerts automatically &#8212; or visit <a href="' . WEBPATH . 'alert/">the manual addition page</a>.</p>';
-            if ($out) {
-                print '<p>Here are your email alerts:</p>';
-                print '<table cellpadding="3" cellspacing="0"><tr><th>Criteria</th><th>Action</th></tr>' . $out . '</table>';
-            } else {
-                print '<p>You currently have no email alerts set up.</p>';
-            }
-            $PAGE->stripe_end();
-        }
-
-    } else {
-
-        $message = [
-            'title' => 'Sorry...',
-            'text' => "We don't have a user ID, so we can't show you anyone's details."
-        ];
-
-        $PAGE->message($message);
-
-    }
-
-    $PAGE->page_end();
-
-} // end display_user()

@@ -17,7 +17,6 @@ class UserAddTest extends TransactionalTestCase {
             'lastname' => 'Smith',
             'email' => 'jane@example.com',
             'constituency' => 'Leeds',
-            'url' => 'http://example.com',
             'password' => 'testpassword123',
         ];
 
@@ -39,9 +38,7 @@ class UserAddTest extends TransactionalTestCase {
             'lastname' => 'Doe',
             'email' => 'john.doe@test.com',
             'constituency' => 'Westminster',
-            'url' => 'https://johndoe.com',
             'password' => 'securepass456',
-            'emailpublic' => true,
             'optin' => true,
             'status' => 'User',
         ];
@@ -57,8 +54,6 @@ class UserAddTest extends TransactionalTestCase {
         $this->assertEquals('Doe', $retrievedUser->lastname());
         $this->assertEquals('john.doe@test.com', $retrievedUser->email());
         $this->assertEquals('Westminster', $retrievedUser->constituency());
-        $this->assertEquals('https://johndoe.com', $retrievedUser->url());
-        $this->assertTrue($retrievedUser->emailpublic());
         $this->assertTrue($retrievedUser->optin());
         $this->assertEquals('User', $retrievedUser->status());
     }
@@ -74,9 +69,7 @@ class UserAddTest extends TransactionalTestCase {
             'lastname' => 'Bool',
             'email' => 'bool@test.com',
             'constituency' => 'Test',
-            'url' => '',
             'password' => 'pass',
-            'emailpublic' => true,
             'optin' => false,
         ];
 
@@ -85,8 +78,6 @@ class UserAddTest extends TransactionalTestCase {
 
         $retrievedUser = new USER();
         $retrievedUser->init($user_id);
-
-        $this->assertTrue($retrievedUser->emailpublic());
         $this->assertFalse($retrievedUser->optin());
     }
 
@@ -101,7 +92,6 @@ class UserAddTest extends TransactionalTestCase {
             'lastname' => 'Test',
             'email' => 'token@test.com',
             'constituency' => 'Test',
-            'url' => '',
             'password' => 'pass',
         ];
 
@@ -124,7 +114,6 @@ class UserAddTest extends TransactionalTestCase {
             'lastname' => 'Default',
             'email' => 'status@test.com',
             'constituency' => 'Test',
-            'url' => '',
             'password' => 'pass',
             // Note: no status provided
         ];
@@ -149,7 +138,6 @@ class UserAddTest extends TransactionalTestCase {
             'lastname' => 'User',
             'email' => 'admin@test.com',
             'constituency' => 'Test',
-            'url' => '',
             'password' => 'pass',
             'status' => 'Administrator',
         ];
@@ -176,7 +164,6 @@ class UserAddTest extends TransactionalTestCase {
             'lastname' => 'User',
             'email' => 'duplicate@test.com',
             'constituency' => 'Test',
-            'url' => '',
             'password' => 'pass',
         ];
         $USER1->add($details1, false);
@@ -188,7 +175,6 @@ class UserAddTest extends TransactionalTestCase {
             'lastname' => 'User',
             'email' => 'duplicate@test.com',
             'constituency' => 'Test',
-            'url' => '',
             'password' => 'pass',
         ];
 
@@ -208,7 +194,6 @@ class UserAddTest extends TransactionalTestCase {
                 'lastname' => 'One',
                 'email' => 'user1@test.com',
                 'constituency' => 'Test',
-                'url' => '',
                 'password' => 'pass',
             ];
             $result1 = $USER1->add($details1, false);
@@ -221,7 +206,6 @@ class UserAddTest extends TransactionalTestCase {
                 'lastname' => 'Two',
                 'email' => 'user2@test.com',
                 'constituency' => 'Test',
-                'url' => '',
                 'password' => 'pass',
             ];
             $result2 = $USER2->add($details2, false);
@@ -241,7 +225,6 @@ class UserAddTest extends TransactionalTestCase {
             'lastname' => 'Test',
             'email' => 'confirm@test.com',
             'constituency' => 'Test',
-            'url' => '',
             'password' => 'pass',
         ];
 
@@ -264,7 +247,6 @@ class UserAddTest extends TransactionalTestCase {
             'lastname' => 'Test',
             'email' => 'iptest@test.com',
             'constituency' => 'Test',
-            'url' => '',
             'password' => 'pass',
         ];
 
@@ -290,7 +272,6 @@ class UserAddTest extends TransactionalTestCase {
             'lastname' => 'Test',
             'email' => 'hash@test.com',
             'constituency' => 'Test',
-            'url' => '',
             'password' => $plainPassword,
         ];
 
@@ -317,7 +298,6 @@ class UserAddTest extends TransactionalTestCase {
             'lastname' => 'Test',
             'email' => 'time@test.com',
             'constituency' => 'Test',
-            'url' => '',
             'password' => 'pass',
         ];
 
@@ -349,7 +329,6 @@ class UserAddTest extends TransactionalTestCase {
             'lastname' => 'User',
             'email' => 'active@test.com',
             'constituency' => 'Test',
-            'url' => '',
             'password' => 'pass',
         ];
 
@@ -373,7 +352,6 @@ class UserAddTest extends TransactionalTestCase {
             'lastname' => 'Confirm',
             'email' => 'noconfirm@test.com',
             'constituency' => 'Test',
-            'url' => '',
             'password' => 'pass',
         ];
 
@@ -395,7 +373,6 @@ class UserAddTest extends TransactionalTestCase {
             'lastname' => 'User',
             'email' => 'minimal@test.com',
             'constituency' => '',
-            'url' => '',
             'password' => 'pass',
         ];
 
@@ -408,7 +385,6 @@ class UserAddTest extends TransactionalTestCase {
         $retrievedUser->init($user_id);
 
         $this->assertEquals('', $retrievedUser->constituency());
-        $this->assertEquals('', $retrievedUser->url());
     }
 
 }

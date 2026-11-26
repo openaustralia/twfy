@@ -751,9 +751,8 @@ class Metadata {
             'url' => 'user/confirm/'
         ],
         'useredit' => [
-            'pg' => 'edit',
             'title' => 'Edit your details',
-            'url' => 'user/'
+            'url' => 'account/edit/'
         ],
         'userjoin' => [
             'menu' => [
@@ -803,16 +802,12 @@ class Metadata {
             'title' => 'Please log in',
             'url' => 'user/prompt/'
         ],
-        'userview' => [
-            'session_vars' => ['u'],
-            'url' => 'user/'
-        ],
         'userviewself' => [
             'menu' => [
                 'text' => 'Your details',
                 'title' => "View and edit your details"
             ],
-            'url' => 'user/'
+            'url' => 'account/'
         ],
         'userwelcome' => [
             'title' => 'Welcome!',

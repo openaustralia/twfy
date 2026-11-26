@@ -99,17 +99,15 @@ class UserInitTest extends TransactionalTestCase {
     }
 
     /**
-     * Test that init() handles optional fields.
+     * Test that init() handles a constituency.
      */
-    public function test_init_with_constituency_and_url() {
+    public function test_init_with_constituency() {
         UserModel::query()->insert([
             'user_id' => 99030,
             'firstname' => 'Charlie',
             'lastname' => 'Brown',
             'email' => 'charlie@example.com',
-            'emailpublic' => 1,
             'constituency' => 'TestConstituency',
-            'url' => 'https://example.com/charlie',
             'password' => password_hash('testpass', PASSWORD_DEFAULT),
             'optin' => 1,
             'status' => 'User',
@@ -125,8 +123,6 @@ class UserInitTest extends TransactionalTestCase {
         $user->init(99030);
 
         $this->assertSame('TestConstituency', $user->constituency());
-        $this->assertSame('https://example.com/charlie', $user->url());
-        $this->assertTrue($user->emailpublic());
         $this->assertTrue($user->optin());
     }
 

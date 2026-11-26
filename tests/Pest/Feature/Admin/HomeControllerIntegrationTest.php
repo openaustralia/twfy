@@ -39,8 +39,8 @@ describe('HomeController::index()', function () {
         expect($this->html)->not->toContain('<script>');
     });
 
-    it('links a confirmed user to their page', function () {
-        expect($this->html)->toContain('href="' . WEBPATH . 'user/?u=');
+    it('links a confirmed user to the page that edits them', function () {
+        expect($this->html)->toContain('href="' . WEBPATH . 'user/?pg=editother&amp;u=');
     });
 
     it('sets the page key for the menu', function () {

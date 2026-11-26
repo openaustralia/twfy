@@ -37,8 +37,8 @@ if (get_http_var('welcome') == 't') {
 
         <p><strong>OpenAustralia.org</strong> helps make sense of this vital democratic resource.</p>
 
-        <p>Feel free to use it to keep an eye on <strong>your Representative</strong>, add <strong>comments</strong> next to
-            speeches, or help others by contributing your own <strong>links</strong>.</p>
+        <p>Feel free to use it to keep an eye on <strong>your Representative</strong>, or help others by contributing your own
+            <strong>links</strong>.</p>
 
         <p><strong>OpenAustralia.org</strong> is currently being <strong>beta tested</strong>, so <a
                 href="mailto:<?php echo CONTACTEMAIL; ?>">let us know</a> if you find a bug, or have a suggestion.</p>

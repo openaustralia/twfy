@@ -878,7 +878,7 @@ class PAGE {
                 $logoutclass = ' class="on inline-block rounded px-2 py-1 text-sm font-semibold !no-underline !text-white border-0 border-b-2 border-solid border-teal-400" aria-current="page"';
             }
 
-            $username = $THEUSER->firstname() . ' ' . $THEUSER->lastname();
+            $username = trim($THEUSER->firstname() . ' ' . $THEUSER->lastname());
 
         } else {
             // User logged out.
@@ -2622,17 +2622,7 @@ class PAGE {
 
         $term['body'] = $GLOSSARY->glossarise($term['body'], 0, 1);
 
-        if (isset($term['user_id'])) {
-            $URL = new URL('userview');
-            $URL->insert(['u' => $term['user_id']]);
-            $user_link = $URL->generate('url');
-
-            $user_details = "\t\t\t\t<p><small>contributed by user <a href=\"" . $user_link . "\">" . $term['firstname'] . " " . $term['lastname'] . "</a></small></p>\n";
-        } else {
-            $user_details = "";
-        }
-
-        print "\t\t\t\t<p class=\"glossary-body\">" . $term['body'] . "</p>\n" . $user_details;
+        print "\t\t\t\t<p class=\"glossary-body\">" . $term['body'] . "</p>\n";
     }
 
     /**

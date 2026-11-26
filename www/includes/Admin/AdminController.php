@@ -60,10 +60,10 @@ abstract class AdminController {
     }
 
     /**
-     * The address of a user's page.
+     * The address of the page where an administrator edits a user, as nobody's details are public.
      */
     protected function userUrl(int $user_id): string {
-        return WEBPATH . 'user/?u=' . $user_id;
+        return WEBPATH . 'user/?pg=editother&u=' . $user_id;
     }
 
 }

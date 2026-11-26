@@ -37,7 +37,7 @@ function sign_out_spec_session(string $id, ?User $user): void {
 }
 
 /**
- * The details form that update_self() and update_other_user() take, with a new password.
+ * The details form that update_other_user() takes, with a new password.
  *
  * @return array<string, mixed>
  *   The details.
@@ -48,9 +48,7 @@ function sign_out_spec_details(User $user, string $password): array {
         'firstname' => $user->firstname,
         'lastname' => $user->lastname,
         'email' => $user->email,
-        'emailpublic' => false,
         'constituency' => '',
-        'url' => '',
         'optin' => false,
         'password' => $password,
     ];
@@ -105,24 +103,27 @@ describe('User::signOutEverywhere()', function () {
 });
 
 describe('changing a password', function () {
-    describe('on the account page', function () {
+    describe('by an administrator, for their own account', function () {
         beforeEach(function () {
-            twfy_laravel()->make('session.store')->setId(str_pad('annone', 40, '0'));
-            twfy_laravel()->make('auth')->guard()->setUser($this->ann);
+            $this->cat = sign_out_spec_user('Cat', 'Superuser');
+            sign_out_spec_session('catone', $this->cat);
+            sign_out_spec_session('cattwo', $this->cat);
+            twfy_laravel()->make('session.store')->setId(str_pad('catone', 40, '0'));
+            twfy_laravel()->make('auth')->guard()->setUser($this->cat);
             $GLOBALS['THEUSER'] = new THEUSER();
-            $GLOBALS['THEUSER']->update_self(sign_out_spec_details($this->ann, 'new-password'));
+            $GLOBALS['THEUSER']->update_other_user(sign_out_spec_details($this->cat, 'new-password'));
         });
 
         it('keeps the session it was changed in', function () {
-            expect(Session::where('user_id', $this->ann->user_id)->pluck('id')->all())->toBe([str_pad('annone', 40, '0')]);
+            expect(Session::where('user_id', $this->cat->user_id)->pluck('id')->all())->toBe([str_pad('catone', 40, '0')]);
         });
 
         it('replaces the "remember me" token', function () {
-            expect($this->ann->fresh()->remember_token)->not->toBe('old-remember-token');
+            expect($this->cat->fresh()->remember_token)->not->toBe('old-remember-token');
         });
 
         it('saves the password', function () {
-            expect(password_verify('new-password', $this->ann->fresh()->password))->toBeTrue();
+            expect(password_verify('new-password', $this->cat->fresh()->password))->toBeTrue();
         });
     });
 
@@ -162,10 +163,10 @@ describe('changing a password', function () {
 
     describe('without a new password', function () {
         it('leaves the sessions', function () {
-            twfy_laravel()->make('auth')->guard()->setUser($this->ann);
+            twfy_laravel()->make('auth')->guard()->setUser(sign_out_spec_user('Cat', 'Superuser'));
             $GLOBALS['THEUSER'] = new THEUSER();
 
-            $GLOBALS['THEUSER']->update_self(sign_out_spec_details($this->ann, ''));
+            $GLOBALS['THEUSER']->update_other_user(sign_out_spec_details($this->ann, ''));
 
             expect(Session::where('user_id', $this->ann->user_id)->count())->toBe(2);
         });
