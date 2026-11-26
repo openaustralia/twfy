@@ -5,11 +5,10 @@ namespace OpenAustralia\TWFY\Http\Controllers;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 use Illuminate\Support\Collection as SupportCollection;
 use OpenAustralia\TWFY\Enums\House;
-use OpenAustralia\TWFY\Enums\MemberOrder;
 use OpenAustralia\TWFY\Http\HouseTheme;
+use OpenAustralia\TWFY\Http\Requests\MemberListRequest;
 use OpenAustralia\TWFY\Http\Visitor;
 use OpenAustralia\TWFY\Models\Member;
 use OpenAustralia\TWFY\Parliament\MemberFacts;
@@ -37,15 +36,25 @@ abstract class MemberController {
     /**
      * The sitting members of one house, as a page or, with ?f=csv, as a spreadsheet.
      */
-    public function index(Request $request): View|StreamedResponse {
-        $order = MemberOrder::fromQuery($request->query('o'));
-        $members = Member::sittingList($this->house(), $order);
+    public function index(MemberListRequest $request): View|StreamedResponse {
+        $order = $request->order();
+        $members = Member::sittingList($this->house(), $order, $request->search(), $request->party());
 
-        if ($request->query('f') === 'csv') {
-            return $this->csv($members, $order);
+        if ($request->wantsCsv()) {
+            return $this->csv($members);
         }
 
-        return view($this->indexView(), ['members' => $members, 'order' => $order] + $this->indexData());
+        return view($this->indexView(), [
+            'members' => $members,
+            'order' => $order,
+            'house' => $this->house(),
+            'theme' => HouseTheme::for($this->house()),
+            'search' => $request->search(),
+            'party' => $request->party(),
+            'parties' => Member::sittingParties($this->house()),
+            'filters' => $request->filters(),
+            'orderParameters' => $request->orderParameters(),
+        ] + $this->indexData());
     }
 
     /**
@@ -83,7 +92,7 @@ abstract class MemberController {
     abstract protected function csvName(): string;
 
     /**
-     * The spreadsheet's column headings, before any for the sort order.
+     * The spreadsheet's column headings.
      *
      * @return list<string>
      *   Headings.
@@ -186,25 +195,13 @@ abstract class MemberController {
      *
      * @param \Illuminate\Database\Eloquent\Collection<int, Member> $members
      *   The members, in order.
-     * @param \OpenAustralia\TWFY\Enums\MemberOrder $order
-     *   The order asked for, which may add a column.
      */
-    private function csv(Collection $members, MemberOrder $order): StreamedResponse {
-        $debates = $order === MemberOrder::Debates;
-
-        return response()->streamDownload(function () use ($members, $debates): void {
+    private function csv(Collection $members): StreamedResponse {
+        return response()->streamDownload(function () use ($members): void {
             $output = fopen('php://output', 'w');
-            $headings = $this->csvHeadings();
-            if ($debates) {
-                $headings[] = 'Debates spoken in the last year';
-            }
-            fputcsv($output, $headings, escape: '');
+            fputcsv($output, $this->csvHeadings(), escape: '');
             foreach ($members as $member) {
-                $row = $this->csvRow($member);
-                if ($debates) {
-                    $row[] = (int) $member->personInfo->first()->data_value;
-                }
-                fputcsv($output, $row, escape: '');
+                fputcsv($output, $this->csvRow($member), escape: '');
             }
             fclose($output);
         }, $this->csvName(), ['Content-Type' => 'text/csv;charset=UTF-8']);

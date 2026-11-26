@@ -94,7 +94,7 @@ describe('GET /mps/', function () {
 
     describe('without an electorate', function () {
         it('asks for a postcode', function () {
-            expect(MemberPageStubs::get('/mps/')->getContent())->toContain('All you need is a postcode.');
+            expect(MemberPageStubs::get('/mps/')->getContent())->toContain('Enter your postcode to see who represents you.');
         });
     });
 
@@ -111,8 +111,120 @@ describe('GET /mps/', function () {
             it('calls them former', function () {
                 Member::find(97101)->update(['left_house' => '2025-05-03']);
 
-                expect(MemberPageStubs::get('/mps/')->getContent())->toContain('your former Representative');
+                expect(MemberPageStubs::get('/mps/')->getContent())->toContain('Your former Representative');
             });
+        });
+    });
+
+    describe('with a search', function () {
+        it('lists who matches', function () {
+            expect(MemberPageStubs::get('/mps/?q=testville')->getContent())->toContain('Robin O&#039;Example');
+        });
+
+        it('says how many it found', function () {
+            expect(MemberPageStubs::get('/mps/?q=testville')->getContent())->toContain('1 Representative<');
+        });
+
+        it('keeps the search in the box', function () {
+            expect(MemberPageStubs::get('/mps/?q=testville')->getContent())->toContain('value="testville"');
+        });
+
+        it('keeps the search in the sort links', function () {
+            expect(MemberPageStubs::get('/mps/?q=testville')->getContent())->toContain('href="/mps?o=f&amp;q=testville"');
+        });
+
+        it('keeps the search in the spreadsheet link', function () {
+            expect(MemberPageStubs::get('/mps/?q=testville')->getContent())->toContain('href="/mps?f=csv&amp;q=testville"');
+        });
+
+        it('offers to clear it', function () {
+            expect(MemberPageStubs::get('/mps/?q=testville')->getContent())->toContain('Clear filters');
+        });
+
+        describe('of "0"', function () {
+            it('keeps the search in the sort links', function () {
+                expect(MemberPageStubs::get('/mps/?q=0')->getContent())->toContain('href="/mps?o=f&amp;q=0"');
+            });
+        });
+
+        describe('for a name stored with an accent', function () {
+            it('finds them by the plain text', function () {
+                Member::find(97101)->update(['last_name' => 'Gon&ccedil;alves']);
+
+                expect(MemberPageStubs::get('/mps/?q=' . urlencode('gonçalves'))->getContent())->toContain('Robin Gonçalves');
+            });
+        });
+
+        describe('that matches nobody', function () {
+            it('says so', function () {
+                expect(MemberPageStubs::get('/mps/?q=nobody')->getContent())->toContain('No representatives match your search.');
+            });
+        });
+
+        describe('that holds markup', function () {
+            it('shows it as text', function () {
+                $html = MemberPageStubs::get('/mps/?q=' . urlencode('"><script>alert(1)</script>'))->getContent();
+
+                expect($html)->toContain('value="&quot;&gt;&lt;script&gt;alert(1)&lt;/script&gt;"')->not->toContain('<script>alert(1)');
+            });
+        });
+
+        describe('that is too long', function () {
+            it('goes back to the plain list', function () {
+                expect(MemberPageStubs::get('/mps/?q=' . str_repeat('a', 101))->getStatusCode())->toBe(302);
+            });
+        });
+
+        describe('that is not text', function () {
+            it('goes back to the plain list', function () {
+                expect(MemberPageStubs::get('/mps/?q[]=a')->headers->get('Location'))->toEndWith('/mps');
+            });
+        });
+    });
+
+    describe('with a party', function () {
+        it('offers each party', function () {
+            expect(MemberPageStubs::get('/mps/')->getContent())->toContain('>Example Party</option>');
+        });
+
+        it('leaves out anyone else', function () {
+            MemberFixtures::term(97103, ['first_name' => 'Lee', 'last_name' => 'Other', 'constituency' => 'Elsewhere', 'party' => 'Other Party']);
+
+            expect(MemberPageStubs::get('/mps/?party=' . urlencode('Other Party'))->getContent())->toContain('Lee Other')->not->toContain('Testville');
+        });
+
+        it('marks it chosen', function () {
+            expect(MemberPageStubs::get('/mps/?party=' . urlencode('Example Party'))->getContent())->toMatch('/<option value="Example Party"\\s+selected>/');
+        });
+    });
+
+    describe('with a party that nobody sits for', function () {
+        it('keeps it in the dropdown, chosen', function () {
+            expect(MemberPageStubs::get('/mps/?party=SPK')->getContent())->toMatch('/<option value="SPK"\\s+selected>/');
+        });
+    });
+
+    describe('with no members sitting', function () {
+        it('says there are none, without blaming a search', function () {
+            Member::find(97101)->update(['left_house' => '2025-05-03']);
+
+            expect(MemberPageStubs::get('/mps/')->getContent())->toContain('There are no representatives to show.')->not->toContain('match your search');
+        });
+    });
+
+    describe('with a sort and a search', function () {
+        it('keeps the sort when searching again', function () {
+            expect(MemberPageStubs::get('/mps/?o=p')->getContent())->toContain('<input type="hidden" name="o" value="p">');
+        });
+    });
+
+    describe('sorted by party', function () {
+        it('keeps the sort in the spreadsheet link', function () {
+            expect(MemberPageStubs::get('/mps/?o=p&q=testville')->getContent())->toContain('href="/mps?f=csv&amp;q=testville&amp;o=p"');
+        });
+
+        it('keeps the sort in the link that clears the filters', function () {
+            expect(MemberPageStubs::get('/mps/?o=p&q=testville')->getContent())->toContain('href="/mps?o=p"');
         });
     });
 
@@ -128,7 +240,27 @@ describe('GET /mps/', function () {
     });
 });
 
+describe('the list routes', function () {
+    dataset('lists', ['/mps', '/senators']);
+
+    it('answer only to GET and HEAD', function (string $uri) {
+        $methods = collect(app('router')->getRoutes()->getRoutes())
+          ->filter(fn ($route) => $route->uri() === ltrim($uri, '/'))
+          ->flatMap(fn ($route) => $route->methods())
+          ->unique()
+          ->sort()
+          ->values()
+          ->all();
+
+        expect($methods)->toBe(['GET', 'HEAD']);
+    })->with('lists');
+});
+
 describe('GET /senators/', function () {
+    it('has no postcode finder', function () {
+        expect(MemberPageStubs::get('/senators/')->getContent())->not->toContain('name="pc"');
+    });
+
     it('marks the Senators menu', function () {
         expect(MemberPageStubs::get('/senators/')->getContent())->toContain('[top:peers:]');
     });
