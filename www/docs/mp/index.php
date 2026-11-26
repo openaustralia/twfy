@@ -106,11 +106,7 @@ if (get_http_var('recent')) {
 //
 // CHECK SUBMITTED MEMBER (term of office) ID.
 
-if (get_http_var('c4')) {
-    $this_page = 'c4_mp';
-} elseif (get_http_var('c4x')) {
-    $this_page = 'c4x_mp';
-} elseif (get_http_var('peer')) {
+if (get_http_var('peer')) {
     $this_page = 'peer';
 } elseif (get_http_var('royal')) {
     $this_page = 'royal';
@@ -419,14 +415,10 @@ $PAGE->page_end();
  *
  */
 function member_redirect(&$MEMBER) {
-    global $this_page;
     // We come here after creating a MEMBER object by various methods.
     // Now we redirect to the canonical MP page, with a person_id.
     if ($MEMBER->person_id()) {
         $url = $MEMBER->url();
-        if ($this_page == 'c4_mp') {
-            $url = str_replace('mp/', 'mp/c4/', $url);
-        }
         header('Location: ' . $url);
         exit;
     }

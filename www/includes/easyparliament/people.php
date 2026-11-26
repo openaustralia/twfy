@@ -62,22 +62,6 @@ class PEOPLE {
     /**
      *
      */
-    public function _get_data_by_msps($args) {
-        $args['house'] = 4;
-        return $this->_get_data_by_group($args);
-    }
-
-    /**
-     *
-     */
-    public function _get_data_by_mlas($args) {
-        $args['house'] = 3;
-        return $this->_get_data_by_group($args);
-    }
-
-    /**
-     *
-     */
     public function _get_data_by_peers($args) {
         $args['house'] = 2;
         return $this->_get_data_by_group($args);
@@ -191,9 +175,6 @@ class PEOPLE {
                 $data[$p_id] = $narray;
             }
         }
-        // If ($args['house'] == 2 && ($order == 'name' || $order == 'constituency'))
-        // uasort($data, array($this, 'by_peer_name'));.
-
         $data = [
             'info' => [
                 'order' => $order
@@ -203,25 +184,6 @@ class PEOPLE {
 
         return $data;
 
-    }
-
-    /**
-     *
-     */
-    public function by_peer_name($a, $b) {
-        if (!$a['last_name'] && !$b['last_name']) {
-            return strcmp($a['constituency'], $b['constituency']);
-        }
-        if (!$a['last_name']) {
-            return strcmp($a['constituency'], $b['last_name']);
-        }
-        if (!$b['last_name']) {
-            return strcmp($a['last_name'], $b['constituency']);
-        }
-        if (strcmp($a['last_name'], $b['last_name'])) {
-            return strcmp($a['last_name'], $b['last_name']);
-        }
-        return strcmp($a['constituency'], $b['constituency']);
     }
 
     /**

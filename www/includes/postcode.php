@@ -26,10 +26,6 @@ function postcode_to_constituency($postcode) {
     global $last_postcode;
     global $last_postcode_value;
 
-    // if(!defined("POSTCODE_SEARCH_DOMAIN") || !POSTCODE_SEARCH_DOMAIN) {
-    // return fake_postcode($postcode);
-    // }
-
     $postcode = canonicalise_postcode($postcode);
 
     if ($last_postcode == $postcode) {
@@ -52,20 +48,6 @@ function postcode_to_constituency($postcode) {
     $last_postcode = $postcode;
     $last_postcode_value = $ret;
     return $ret;
-}
-
-/**
- * Map a postcode to an MP, random but deterministic.
- */
-function fake_postcode($postcode) {
-
-    $fake_cons_id = abs(crc32($postcode) % 630);
-    $q2 = parlDBQuery("SELECT name from constituency WHERE main_name AND cons_id = ?", $fake_cons_id);
-    if ($q2->rows <= 0) {
-        return false;
-    }
-
-    return $q2->field(0, "name");
 }
 
 /**

@@ -29,9 +29,19 @@ skips Laravel's error handling and `.env` loading, turns off facade aliases, and
 connection `eloquent.php` made, so both share one connection. Settings come from `conf/general` (`APP_KEY` among
 them), not `.env`. Composer runs `artisan package:discover` after installing, which writes `bootstrap/cache/`.
 
-Sign-in and password reset are Laravel's (Fortify). Apache sends only `/user/login` and `/user/password...` to Laravel,
-through `www/docs/laravel.php`, which loads the legacy bootstrap first so `LoginPage`, `PasswordPages` and `ErrorPage`
-(in `www/includes/Auth/`) can draw their pages with the legacy `$PAGE`. Laravel's own error pages are Blade views and
+Apache sends only Laravel's own routes to Laravel, through `www/docs/laravel.php`: `/user/login`, `/user/password...`,
+`/mps`, `/senators`, `/mp...` and `/senator...`. Production's rewrite rules are templated by Ansible in the
+infrastructure repo, so a new route needs a rule there too.
+
+The Representative and Senator pages (lists, profiles, and the postcode and ID lookups at `/mp/` and `/senator/`) use
+controllers in `www/includes/Http/Controllers/` and Blade views that extend `layout.legacy`, which draws them between
+the legacy header and footer (`Http\LegacyLayout`). `www/includes/Parliament/` holds what a profile says about a
+person. Their routes skip the `web` middleware group, so reading a public page starts no session, and `Http\Visitor`
+reads and keeps the visitor's electorate. The old pages under `www/docs/mp*` and `www/docs/senators` stay until
+production sends these addresses to Laravel.
+
+Sign-in and password reset are Laravel's (Fortify). `www/docs/laravel.php` loads the legacy bootstrap first so
+`LoginPage`, `PasswordPages` and `ErrorPage` (in `www/includes/Auth/`) can draw their pages with the legacy `$PAGE`. Laravel's own error pages are Blade views and
 need a writable compiled-views folder, so `bootstrap/app.php` draws errors with `ErrorPage` instead. A reset link is
 emailed through the legacy `send_template_email()` (template `password_reset`), not Laravel's mail, so it keeps the
 site's headers and Postal tags; `User::sendPasswordResetNotification()` does that. The form that asks for a link gives
@@ -48,6 +58,7 @@ Admin pages are Blade views and controller classes. A page file in `www/docs/adm
 in `www/includes/Admin/` (extending `AdminController`), which fetches the data and returns a Blade view from
 `www/resources/views/admin/`, drawn inside the legacy `$PAGE` layout. Blade's `{{ }}` escapes every value, so views
 never build HTML from data; shared table parts are anonymous components in `www/resources/views/components/admin/`.
+`Http\ComponentServiceProvider` names every component in `components/*/`.
 `config/view.php` compiles views into `storage/framework/views`. Apache can't write into a release, so Capistrano links
 that folder to `shared/` (`linked_dirs` in the umbrella repo), which the infrastructure repo creates writable for `www-data`.
 

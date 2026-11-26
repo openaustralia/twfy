@@ -816,6 +816,12 @@ acronym {
 	}
 }
 
+/* A responsive page fits any width, so the 950px minimum above doesn't apply to it. */
+body.responsive,
+body.responsive #content {
+	min-width: 0;
+}
+
 #topics h5 {
 	font-size: 100%;
 	margin: 0.5em 14px 0.5em 0;

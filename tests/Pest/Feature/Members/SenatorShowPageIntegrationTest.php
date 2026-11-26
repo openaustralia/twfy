@@ -1,0 +1,302 @@
+<?php
+
+/**
+ * @file
+ * A Senator's profile at /senator/name/state, through Laravel's routes. Uses fictional members.
+ */
+
+require_once __DIR__ . '/../../../bootstrap.php';
+require_once __DIR__ . '/../../../../www/includes/utility.php';
+require_once __DIR__ . '/../../Support/MemberFixtures.php';
+require_once __DIR__ . '/../../Support/MemberPageStubs.php';
+
+use OpenAustralia\TWFY\Models\Alert;
+use OpenAustralia\TWFY\Models\Hansard;
+use OpenAustralia\TWFY\Models\Member;
+use OpenAustralia\TWFY\Models\Moffice;
+use OpenAustralia\TWFY\Models\Personinfo;
+use Symfony\Component\HttpFoundation\Response;
+
+uses(TransactionalTestCase::class);
+
+/**
+ * The response to a visit.
+ */
+function senator_page_get(string $address = '/senator/kim_o%27specimen/tasmania'): Response {
+    return MemberPageStubs::get($address);
+}
+
+beforeEach(function () {
+    MemberPageStubs::bind();
+
+    MemberFixtures::term(97401, ['house' => 2, 'first_name' => 'Kim', 'last_name' => "O'Specimen", 'constituency' => 'Tasmania']);
+});
+
+afterEach(function () {
+    MemberPageStubs::restoreVisitor();
+    laravel_spec_new_request();
+});
+
+describe('GET /senator/{name}/{state}', function () {
+    it('titles the page', function () {
+        expect(senator_page_get()->getContent())->toContain('[top:peer:Senator Kim O&#039;Specimen, Tasmania]');
+    });
+
+    it('heads it with their name', function () {
+        expect(senator_page_get()->getContent())->toContain('Senator Kim O&#039;Specimen');
+    });
+
+    it('gives their party and state', function () {
+        expect(senator_page_get()->getContent())->toContain('Example Party</dd>', 'Tasmania</dd>');
+    });
+
+    it('is burgundy', function () {
+        expect(senator_page_get()->getContent())->toContain('bg-[#4a1424]');
+    });
+
+    it('names their house', function () {
+        expect(senator_page_get()->getContent())->toContain('>Senate</span>');
+    });
+
+    it('links back to the list', function () {
+        expect(senator_page_get()->getContent())->toContain('href="/senators"', 'All Senators');
+    });
+
+    it('says since when', function () {
+        expect(senator_page_get()->getContent())->toContain('Senator since', '21 May 2022');
+    });
+
+    describe('without speeches', function () {
+        it('draws no chart', function () {
+            expect(senator_page_get()->getContent())->not->toContain('Speaking in Hansard');
+        });
+    });
+
+    describe('with speeches over two years', function () {
+        beforeEach(function () {
+            foreach ([97400001 => '2023-02-01', 97400002 => '2024-02-01'] as $id => $date) {
+                Hansard::create(['epobject_id' => $id, 'gid' => "spec/$id", 'htype' => 12, 'speaker_id' => 97401, 'major' => 101, 'section_id' => 0, 'subsection_id' => 0, 'hpos' => 1, 'hdate' => $date, 'source_url' => '']);
+            }
+        });
+
+        it('charts them', function () {
+            expect(senator_page_get()->getContent())->toContain('Speaking in Hansard', '2023: 1 contribution');
+        });
+    });
+
+    describe('with debate numbers', function () {
+        beforeEach(function () {
+            Personinfo::create(['person_id' => 97401, 'data_key' => 'Ldebate_sectionsspoken_inlastyear', 'data_value' => '12']);
+            Personinfo::create(['person_id' => 97401, 'data_key' => 'Ldebate_sectionsspoken_inlastyear_quintile', 'data_value' => '1']);
+        });
+
+        it('shows the figure', function () {
+            expect(senator_page_get()->getContent())->toContain('>12</strong>', 'debates spoken in');
+        });
+
+        it('says how it compares', function () {
+            expect(senator_page_get()->getContent())->toContain('Above average amongst Senators');
+        });
+    });
+
+    describe('with a signed-in subscriber', function () {
+        beforeEach(function () {
+            MemberPageStubs::visitor(userId: 97401);
+            $this->alert = Alert::create(['email' => 'sam.visitor@example.test', 'criteria' => 'speaker:97401', 'confirmed' => true, 'deleted' => false, 'registrationtoken' => 'spectoken']);
+        });
+
+        it('says they are subscribed', function () {
+            expect(senator_page_get()->getContent())->toContain('You’re subscribed');
+        });
+
+        it('offers to unsubscribe', function () {
+            expect(senator_page_get()->getContent())->toContain('action="/alert/delete/" method="post"', 'value="' . $this->alert->alert_id . '-spectoken"');
+        });
+
+        describe('who unsubscribed', function () {
+            it('offers the alert again', function () {
+                $this->alert->update(['deleted' => true]);
+
+                expect(senator_page_get()->getContent())->not->toContain('You’re subscribed', 'spectoken');
+            });
+        });
+    });
+
+    describe('with someone else subscribed', function () {
+        beforeEach(function () {
+            Alert::create(['email' => 'other@example.test', 'criteria' => 'speaker:97401', 'confirmed' => true, 'deleted' => false, 'registrationtoken' => 'othertoken']);
+        });
+
+        it('keeps their token from a visitor', function () {
+            expect(senator_page_get()->getContent())->not->toContain('othertoken');
+        });
+
+        it('keeps it from another user', function () {
+            MemberPageStubs::visitor(userId: 97401);
+
+            expect(senator_page_get()->getContent())->not->toContain('othertoken');
+        });
+    });
+
+    describe('with a current office', function () {
+        it('lists it as a role', function () {
+            Moffice::create(['person' => 97401, 'position' => 'Minister for Examples', 'dept' => '', 'from_date' => '2022-06-01', 'to_date' => '9999-12-31', 'source' => '']);
+
+            expect(senator_page_get()->getContent())->toContain('Current roles', 'Minister for Examples', 'since 1 Jun 2022');
+        });
+    });
+
+    describe('with someone who has left', function () {
+        beforeEach(function () {
+            Member::find(97401)->update(['left_house' => '2025-06-30', 'left_reason' => 'resigned']);
+        });
+
+        it('searches by name alone', function () {
+            expect(senator_page_get()->getContent())->toContain('Search Kim O&#039;Specimen’s speeches');
+        });
+
+        it('calls them former', function () {
+            expect(senator_page_get()->getContent())->toContain('Former Senator', 'Represented');
+        });
+
+        it('says when they left', function () {
+            expect(senator_page_get()->getContent())->toContain('21 May 2022 to 30 Jun 2025 (3 years)');
+        });
+
+        it('has no register tile', function () {
+            expect(senator_page_get()->getContent())->not->toContain('href="#register"');
+        });
+
+        it('offers no email alerts', function () {
+            expect(senator_page_get()->getContent())->not->toContain('Email me whenever', 'No more than once per day');
+        });
+    });
+
+    it('offers email alerts', function () {
+        expect(senator_page_get()->getContent())->toContain('href="/alert/?only=1&amp;pid=97401"');
+    });
+
+    it('starts no session', function () {
+        expect(senator_page_get()->headers->getCookies())->toBe([]);
+    });
+
+    describe('without a photo', function () {
+        it('asks for one', function () {
+            expect(senator_page_get()->getContent())->toContain('missing a photo');
+        });
+    });
+
+    describe('with recent speeches', function () {
+        it('links to each', function () {
+            MemberPageStubs::speeches([['url' => '/senate/?id=1&s=x', 'title' => 'Motions', 'date' => '14 May 2026', 'iso' => '2026-05-14', 'extract' => 'I <b>move</b>']]);
+
+            expect(senator_page_get()->getContent())->toContain('href="/senate/?id=1&amp;s=x"', 'I <b>move</b>');
+        });
+    });
+
+    it('searches their speeches', function () {
+        expect(senator_page_get()->getContent())->toContain('Search Senator Kim O&#039;Specimen’s speeches', 'name="pid" value="97401"');
+    });
+
+    it('links to more of their speeches', function () {
+        expect(senator_page_get()->getContent())->toContain('href="/search/?pid=97401&amp;pop=1#n4"');
+    });
+
+    describe('with the search broken', function () {
+        beforeEach(function () {
+            MemberPageStubs::speeches(null);
+        });
+
+        it('says speeches are unavailable', function () {
+            expect(senator_page_get()->getContent())->toContain('Recent appearances are unavailable right now.');
+        });
+
+        it('still draws the rest', function () {
+            expect(senator_page_get()->getContent())->toContain('id="numbers"', '[bottom]');
+        });
+    });
+
+    it('has a tile for the numbers', function () {
+        expect(senator_page_get()->getContent())->toContain('href="#numbers"', 'Activity statistics');
+    });
+
+    describe('without an interest statement', function () {
+        it('says none is available', function () {
+            expect(senator_page_get()->getContent())->toContain('entry is not yet available');
+        });
+
+        it('says so on the register tile', function () {
+            expect(senator_page_get()->getContent())->toContain('href="#register"', 'Scan not yet available');
+        });
+    });
+
+    describe('with an interest statement', function () {
+        beforeEach(function () {
+            Personinfo::create(['person_id' => 97401, 'data_key' => 'aph_interests_url', 'data_value' => 'https://example.test/interests']);
+        });
+
+        it('links to it', function () {
+            expect(senator_page_get()->getContent())->toContain('href="https://example.test/interests"');
+        });
+
+        it('says so on the register tile', function () {
+            expect(senator_page_get()->getContent())->toContain('Their declared interests');
+        });
+    });
+
+    describe('with a past office', function () {
+        it('lists it', function () {
+            Moffice::create(['person' => 97401, 'position' => 'Old Office', 'dept' => '', 'from_date' => '2019-06-01', 'to_date' => '2022-06-01', 'source' => '']);
+
+            expect(senator_page_get()->getContent())->toContain('Other offices held in the past', 'Old Office');
+        });
+    });
+
+    it('asks for donations', function () {
+        expect(senator_page_get()->getContent())->toContain('href="https://donate.oaf.org.au/"');
+    });
+
+    describe('with seven past offices', function () {
+        it('folds away all but five', function () {
+            foreach (range(2001, 2007) as $year) {
+                Moffice::create(['person' => 97401, 'position' => "Office $year", 'dept' => '', 'from_date' => "$year-01-01", 'to_date' => "$year-12-31", 'source' => '']);
+            }
+
+            expect(senator_page_get()->getContent())->toContain('Show 2 more offices');
+        });
+    });
+
+    describe('with a name nobody has', function () {
+        it('is not found', function () {
+            expect(senator_page_get('/senator/no_body/tasmania')->getStatusCode())->toBe(404);
+        });
+    });
+
+    describe('with the wrong state', function () {
+        it('is not found', function () {
+            expect(senator_page_get('/senator/kim_o%27specimen/victoria')->getStatusCode())->toBe(404);
+        });
+    });
+
+    dataset('plus addresses', [
+        'in the name' => ['/senator/kim+o%27specimen'],
+        'in both parts' => ['/senator/kim+o%27specimen/new+south+wales'],
+        'in the state' => ['/senator/kim_o%27specimen/new+south+wales'],
+    ]);
+
+    describe('with "+" for spaces', function () {
+        it('redirects to the full address', function (string $address) {
+            Member::find(97401)->update(['constituency' => 'New South Wales']);
+
+            expect(senator_page_get($address)->headers->get('Location'))
+              ->toEndWith('/senator/kim_o%27specimen/new_south_wales');
+        })->with('plus addresses');
+    });
+
+    describe('without a state', function () {
+        it('redirects to the full address', function () {
+            expect(senator_page_get('/senator/kim_o%27specimen')->headers->get('Location'))
+              ->toEndWith('/senator/kim_o%27specimen/tasmania');
+        });
+    });
+});

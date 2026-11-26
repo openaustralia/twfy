@@ -13,7 +13,7 @@ XAPIANDB_LASTUPDATED ?= $(XAPIANDB)/../searchdb-lastupdated
 PERLLIB_PATH ?= ../perllib
 PARSER_PATH ?= ../openaustralia-parser
 
-.PHONY: help up services-up down clean clobber status logs shell docker-build xapian-index-docker lint lint-perl lint-perl-ci lint-perl-critic lint-php lint-php-ci phpcs phpcs-ci phpcs-verbose phpcs-sonar sonar-ci dependencies tailwind-build tailwind-watch playwright-update install setup test test-all install-xdebug test-coverage test-coverage-docker docker-test-db-create docker-test-db-migrate docker-test docker-db-shell docker-test-db-shell
+.PHONY: help up services-up down clean clobber status logs shell docker-build xapian-index-docker docker-member-numbers lint lint-perl lint-perl-ci lint-perl-critic lint-php lint-php-ci phpcs phpcs-ci phpcs-verbose phpcs-sonar sonar-ci dependencies tailwind-build tailwind-watch playwright-update install setup test test-all install-xdebug test-coverage test-coverage-docker docker-test-db-create docker-test-db-migrate docker-test docker-db-shell docker-test-db-shell
 
 help:
 	@echo "Available targets:"
@@ -34,6 +34,7 @@ help:
 	@echo "  docker-db-shell                     Open interactive MySQL shell for the dev DB"
 	@echo "  docker-test-db-shell                Open interactive MySQL shell for the test DB"
 	@echo "  xapian-index-docker                Run Xapian indexing in Docker"
+	@echo "  docker-member-numbers              Work out the numbers on member profiles, in Docker"
 	@echo "  help                                Output this help"
 	@echo "  lint                                Run lint-php and lint-perl on the www and scripts directories"
 	@echo "  dependencies                        Install PHP (Composer) dependencies into ./vendor"
@@ -195,6 +196,16 @@ xapian-index-docker:
 		-v $(CURDIR)/conf/general-docker:/conf/general:ro \
 		-v $(abspath $(PERLLIB_PATH)):/perllib:ro \
 		webhost bash -lc "/search/index.pl $(XAPIANDB) sincefile $(XAPIANDB_LASTUPDATED) && chown -R $(shell id -u):$(shell id -g) /app/shared/search"
+
+# Works out the numbers on member profiles, such as reading ages, from the dev database. mpinfoin.pl reads
+# ../conf/general and ../../perllib, as index.pl does. The image lacks XML::Twig, so each run installs it first.
+docker-member-numbers:
+	docker compose up --wait -d mysql webhost
+	docker compose run --rm --no-deps \
+		-v $(CURDIR)/scripts:/scripts:ro \
+		-v $(CURDIR)/conf/general-docker:/conf/general:ro \
+		-v $(abspath $(PERLLIB_PATH)):/perllib:ro \
+		webhost bash -c "apt-get update -qq --allow-releaseinfo-change && apt-get install -y -qq libxml-twig-perl && cd /scripts && ./mpinfoin.pl rankings"
 
 lint: lint-php lint-perl
 

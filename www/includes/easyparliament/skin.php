@@ -141,7 +141,7 @@ class SKIN {
 
         // Utility classes for new/updated page layouts; built by `make tailwind-build`.
         ?>
-        <link rel="stylesheet" href="<?php echo WEBPATH; ?>style/tailwind/tailwind.css?v=18" type="text/css">
+        <link rel="stylesheet" href="<?php echo WEBPATH; ?>style/tailwind/tailwind.css?v=20" type="text/css">
         <?php
 
         // The array of stylesheets to use for this skin.
@@ -152,7 +152,7 @@ class SKIN {
             <link rel="stylesheet" href="<?php echo WEBPATH; ?>style/<?php echo $skinstyles['global']; ?>/global.css?v=6"
                 type="text/css">
             <link rel="stylesheet"
-                href="<?php echo WEBPATH; ?>style/<?php echo $skinstyles['global']; ?>/layout.css?v=3"
+                href="<?php echo WEBPATH; ?>style/<?php echo $skinstyles['global']; ?>/layout.css?v=4"
                 type="text/css">
             <?php
         }
@@ -195,14 +195,6 @@ class SKIN {
             ?>
             <link rel="stylesheet" href="<?php echo WEBPATH; ?>style/<?php echo $skinstyles['print']; ?>/print.css" type="text/css"
                 media="print">
-            <?php
-        }
-
-        if (get_http_var('c4') || get_http_var('c4x')) {
-            $x = get_http_var('c4x') ? 'X' : ''; ?>
-            <link rel="stylesheet" href="<?php echo WEBPATH; ?>style/channel4/global<?php echo $x ?>.css?v=2" type="text/css">
-            <link rel="stylesheet" href="<?php echo WEBPATH; ?>style/channel4/layout<?php echo $x ?>.css?v=1"
-                type="text/css">
             <?php
         }
     }
