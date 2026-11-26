@@ -2059,6 +2059,9 @@ class PAGE {
         if (isset($links['guardian_election_results'])) {
             $html .= '	<li><a href="' . $links['guardian_election_results'] . '">Election results for ' . $member->constituency() . '</a> <small>(From The Guardian)</small></li>';
         }
+        if (isset($links['abc_election_results_2025'])) {
+            $html .= '	<li><a href="' . $links['abc_election_results_2025'] . '">2025 Election results for ' . $member->constituency() . '</a> <small>(From ABC)</small></li>';
+        }
         if (isset($links['abc_election_results_2022'])) {
             $html .= '	<li><a href="' . $links['abc_election_results_2022'] . '">2022 Election results for ' . $member->constituency() . '</a> <small>(From ABC)</small></li>';
         }
