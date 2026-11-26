@@ -6,9 +6,7 @@
 @include('members.show.donate')
 @if ($links)
 <x-members.panel title="More useful links for this person">
-<ul class="!m-0 !pl-5 text-base !text-slate-700">
-@include('members.show.links', ['class' => $link])
-</ul>
+@include('members.show.links', ['class' => $link, 'listClass' => '!m-0 !pl-5 text-base !text-slate-700'])
 </x-members.panel>
 @endif
 @if ($offices)
