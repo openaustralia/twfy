@@ -2033,9 +2033,6 @@ class PAGE {
             $html .= '<li><a href="' . $links['aph_url'] . '">Parliament House web page for ' . $member->full_name() . '</a></li>';
         }
 
-        if (isset($links['guardian_biography'])) {
-            $html .= '	<li><a href="' . $links['guardian_biography'] . '">Biography</a> <small>(From The Guardian)</small></li>';
-        }
         if (isset($links['wikipedia_url'])) {
             $html .= '	<li><a href="' . $links['wikipedia_url'] . '">Biography</a> <small>(From Wikipedia)</small></li>';
         }
@@ -2047,18 +2044,6 @@ class PAGE {
             $html .= '	<li><a href="' . $links['diocese_url'] . '">Diocese website</a></li>';
         }
 
-        if (isset($links['journa_list_link'])) {
-            $html .= '	<li><a href="' . $links['journa_list_link'] . '">Newspaper articles written by this MP</a> <small>(From Journa-list)</small></li>';
-
-        }
-
-        if (isset($links['guardian_parliament_history'])) {
-            $html .= '	<li><a href="' . $links['guardian_parliament_history'] . '">Parliamentary career</a> <small>(From The Guardian)</small></li>';
-        }
-
-        if (isset($links['guardian_election_results'])) {
-            $html .= '	<li><a href="' . $links['guardian_election_results'] . '">Election results for ' . $member->constituency() . '</a> <small>(From The Guardian)</small></li>';
-        }
         if (isset($links['abc_election_results_2025'])) {
             $html .= '	<li><a href="' . $links['abc_election_results_2025'] . '">2025 Election results for ' . $member->constituency() . '</a> <small>(From ABC)</small></li>';
         }
@@ -2080,25 +2065,6 @@ class PAGE {
         if (isset($links['abc_election_results_2007'])) {
             $html .= '	<li><a href="' . $links['abc_election_results_2007'] . '">2007 Election results for ' . $member->constituency() . '</a> <small>(From ABC)</small></li>';
         }
-
-        if (isset($links['guardian_candidacies'])) {
-            $html .= '	<li><a href="' . $links['guardian_candidacies'] . '">Previous candidacies</a> <small>(From The Guardian)</small></li>';
-        }
-
-        if (isset($links['guardian_contactdetails'])) {
-            $html .= '	<li><a href="' . $links['guardian_contactdetails'] . '">Contact details</a> <small>(From The Guardian)</small></li>';
-        }
-
-        if (isset($links['bbc_profile_url'])) {
-            $html .= '	<li><a href="' . $links['bbc_profile_url'] . '">General information</a> <small>(From BBC News)</small></li>';
-
-        }
-
-        $bbc_name = urlencode($member->first_name()) . "%20" . urlencode($member->last_name());
-        if ($member->member_id() == -1) {
-            $bbc_name = 'Queen Elizabeth';
-        }
-        // $html .= ' <li><a href="http://catalogue.bbc.co.uk/catalogue/infax/search/' . $bbc_name . '">TV/radio appearances</a> <small>(From BBC Programme Catalogue)</small></li>';
 
         $html .= "	</ul>
                     </div>

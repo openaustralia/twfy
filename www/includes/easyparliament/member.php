@@ -380,25 +380,10 @@ class MEMBER {
             $this->extra_info[$row->data_key] = $row->data_value;
         }
 
-        // Info specific to constituency (e.g. election results page on Guardian website)
+        // Info specific to constituency (e.g. election results page on ABC website)
         $consInfoRows = DB::table('consinfo')->where('constituency', $this->constituency)->get(['data_key', 'data_value']);
         foreach ($consInfoRows as $row) {
             $this->extra_info[$row->data_key] = $row->data_value;
-        }
-
-        if (array_key_exists('guardian_mp_summary', $this->extra_info)) {
-            $guardian_url = $this->extra_info['guardian_mp_summary'];
-            $this->extra_info['guardian_register_member_interests'] =
-                str_replace("/person/", "/person/parliamentrmi/", $guardian_url);
-            $this->extra_info['guardian_parliament_history'] =
-                str_replace("/person/", "/person/parliament/", $guardian_url);
-            $this->extra_info['guardian_biography'] = $guardian_url;
-            $this->extra_info['guardian_candidacies'] =
-                str_replace("/person/", "/person/candidacies/", $guardian_url);
-            $this->extra_info['guardian_howtheyvoted'] =
-                str_replace("/person/", "/person/howtheyvoted/", $guardian_url);
-            $this->extra_info['guardian_contactdetails'] =
-                str_replace("/person/", "/person/contactdetails/", $guardian_url);
         }
 
         if (array_key_exists('public_whip_rebellions', $this->extra_info)) {
