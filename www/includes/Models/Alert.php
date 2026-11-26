@@ -143,6 +143,27 @@ class Alert extends Model {
     }
 
     /**
+     * The person whose speeches this alert is about, if it names one.
+     */
+    public function personId(): ?int {
+        return preg_match('/(?:^| )speaker:(\d+)/', $this->criteria, $matches) ? (int) $matches[1] : null;
+    }
+
+    /**
+     * The words this alert looks for, which are empty for an alert about a person alone.
+     */
+    public function keywords(): string {
+        return trim(preg_replace('/(?:^| )speaker:\d+/', '', $this->criteria));
+    }
+
+    /**
+     * The path of the search that finds what this alert looks for.
+     */
+    public function searchPath(): string {
+        return '/search/?' . http_build_query(array_filter(['pid' => $this->personId(), 's' => $this->keywords()]));
+    }
+
+    /**
      * What the unsubscribe and confirm pages take to act on this alert.
      */
     protected function token(): Attribute {

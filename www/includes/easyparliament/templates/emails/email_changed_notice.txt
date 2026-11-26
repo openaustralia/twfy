@@ -1,0 +1,10 @@
+Subject: Your OpenAustralia.org email address was changed
+Hi {FIRSTNAME},
+
+The email address on your OpenAustralia.org account was changed from {EMAIL} to {NEWEMAIL}. Your alerts now go to {NEWEMAIL}.
+
+If you did not make this change, please email {CONTACTEMAIL} straight away.
+
+Best wishes,
+
+- The OpenAustralia.org Volunteers

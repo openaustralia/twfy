@@ -30,7 +30,7 @@ connection `eloquent.php` made, so both share one connection. Settings come from
 them), not `.env`. Composer runs `artisan package:discover` after installing, which writes `bootstrap/cache/`.
 
 Apache sends only Laravel's own routes to Laravel, through `www/docs/laravel.php`: `/user/login`, `/user/password...`,
-`/mps`, `/senators`, `/mp...` and `/senator...`. Production's rewrite rules are templated by Ansible in the
+`/account...`, `/mps`, `/senators`, `/mp...` and `/senator...`. Production's rewrite rules are templated by Ansible in the
 infrastructure repo, so a new route needs a rule there too.
 
 The Representative and Senator pages (lists, profiles, and the postcode and ID lookups at `/mp/` and `/senator/`) use
@@ -53,6 +53,17 @@ database, as Apache can't write into a release directory. The legacy `epuser_id`
 still the legacy GET page, and the login form still has no CSRF token; both change when CSRF reaches every form.
 The Docker `webhost` bind-mounts `bootstrap/`, `config/`, `lang/`, `routes/` and `storage/` beside `www/`: after a
 branch switch that deletes and recreates one, recreate the container (`docker compose up -d --force-recreate webhost`).
+
+Someone's own details and alerts are at `/account` and `/account/edit` (`AccountController`, Blade views in
+`www/resources/views/account/`, `Account\AlertListing` for the alerts), behind Laravel's `auth` middleware, with CSRF on
+every form. Nobody's details are public, so there is no page about another user: the old `/user/` address only joins
+people and lets an administrator edit another user (`pg=editother`), and sends everything else to `/account/`.
+Changing an email address waits for a link emailed to the new one (`Account\EmailChange`, `users.pending_email`):
+the link is a signed, one-hour URL that holds a hash of the new address and works only for the signed-in user it is
+for. Asking again replaces the waiting address, which stops the old link. Confirming moves the user's alerts to the
+new address, signs every other browser out and tells the old address. Changing a password needs no current password;
+it signs the other browsers out and emails a notice. Emails go through `User::sendTemplate()`, so they keep the site's
+headers.
 
 Admin pages are Blade views and controller classes. A page file in `www/docs/admin/` only calls a controller
 in `www/includes/Admin/` (extending `AdminController`), which fetches the data and returns a Blade view from

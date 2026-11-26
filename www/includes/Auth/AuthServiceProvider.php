@@ -4,10 +4,12 @@ namespace OpenAustralia\TWFY\Auth;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Validation\Rules\Password;
 use Laravel\Fortify\Contracts\FailedPasswordResetLinkRequestResponse;
 use Laravel\Fortify\Contracts\LoginResponse as LoginResponseContract;
 use Laravel\Fortify\Contracts\SuccessfulPasswordResetLinkRequestResponse;
 use Laravel\Fortify\Fortify;
+use OpenAustralia\TWFY\Models\User;
 
 /**
  * Plugs the legacy password check and pages into Fortify.
@@ -31,6 +33,8 @@ class AuthServiceProvider extends ServiceProvider {
      */
     public function boot(): void {
         $this->app->make('url')->forceRootUrl(config('app.url'));
+        // Every new password follows Laravel's password rule, set once here.
+        Password::defaults(fn (): Password => Password::min(User::PASSWORD_MIN));
         Fortify::authenticateUsing(new Authenticator());
         Fortify::resetUserPasswordsUsing(ResetUserPassword::class);
         Fortify::loginView(fn (Request $request): string => $this->app->make(LoginPage::class)->render([], $request->session()->get('status')));

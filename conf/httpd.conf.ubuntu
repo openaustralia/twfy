@@ -28,6 +28,9 @@ RewriteRule ^/U/(.*)$     /user/confirm/index.php?t=$1 [QSA]
 RewriteRule ^/user/login/?$ /laravel.php [L]
 RewriteRule ^/user/password(/.*)?$ /laravel.php [L]
 
+# Someone's own details, alerts and change of email address, which Laravel handles
+RewriteRule ^/account(/.*)?$ /laravel.php [L]
+
 # The Representative and Senator pages, which Laravel handles
 RewriteRule ^/(mps|senators)/?$ /laravel.php [L]
 RewriteRule ^/(mp|senator)(/[^/]+){0,2}/?$ /laravel.php [L]
