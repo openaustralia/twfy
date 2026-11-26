@@ -13,7 +13,6 @@ use OpenAustralia\TWFY\Enums\House;
 use OpenAustralia\TWFY\Enums\MemberOrder;
 use OpenAustralia\TWFY\Models\Member;
 use OpenAustralia\TWFY\Models\Moffice;
-use OpenAustralia\TWFY\Models\Personinfo;
 
 uses(TransactionalTestCase::class);
 
@@ -76,16 +75,90 @@ describe('Member::sittingList()', function () {
             expect(member_list_ids(House::Representatives, MemberOrder::LastName))->toBe([97002, 97003]);
         });
     });
+});
 
-    describe('when sorted by debates', function () {
-        beforeEach(function () {
-            Member::whereIn('member_id', [97001, 97002, 97003])->update(['house' => 2]);
-            Personinfo::create(['person_id' => 97001, 'data_key' => 'Ldebate_sectionsspoken_inlastyear', 'data_value' => '9']);
-            Personinfo::create(['person_id' => 97002, 'data_key' => 'Ldebate_sectionsspoken_inlastyear', 'data_value' => '10']);
+describe('Member::sittingList() filters', function () {
+    beforeEach(function () {
+        member_list_term(97001, ['first_name' => 'Cam', 'last_name' => 'Adams', 'constituency' => 'Zed', 'party' => 'B Party']);
+        member_list_term(97002, ['first_name' => 'Ada', 'last_name' => 'Brown', 'constituency' => 'Yarra', 'party' => 'C Party']);
+        member_list_term(97003, ['first_name' => 'Bo', 'last_name' => 'Clark', 'constituency' => 'Xavier', 'party' => 'B Party']);
+    });
+
+    /**
+     * The ids of the fixture people a search and party leave.
+     *
+     * @return list<int>
+     *   Person ids.
+     */
+    function member_list_found(string $search = '', ?string $party = null): array {
+        return Member::sittingList(House::Representatives, MemberOrder::LastName, $search, $party)
+          ->pluck('person_id')
+          ->intersect([97001, 97002, 97003])
+          ->values()
+          ->all();
+    }
+
+    dataset('searches', [
+        'a first name' => ['bo', [97003]],
+        'a last name' => ['CLARK', [97003]],
+        'an electorate' => ['zed', [97001]],
+        'a part of a name' => ['ar', [97002, 97003]],
+        'words in any order' => ['brown ada', [97002]],
+        'words from different fields' => ['bo xavier', [97003]],
+        'a first name inside another' => ['ada', [97001, 97002]],
+        'a word nobody has' => ['nobody', []],
+        'a blank search' => ['   ', [97001, 97002, 97003]],
+    ]);
+
+    it('finds what a search names', function (string $search, array $expected) {
+        expect(member_list_found($search))->toBe($expected);
+    })->with('searches');
+
+    dataset('wildcards', ['%', '_', '\\', "' OR '1'='1"]);
+
+    it('matches wildcards as text', function (string $search) {
+        expect(member_list_found($search))->toBe([]);
+    })->with('wildcards');
+
+    it('limits the list to a party', function () {
+        expect(member_list_found('', 'B Party'))->toBe([97001, 97003]);
+    });
+
+    it('combines a search with a party', function () {
+        expect(member_list_found('bo', 'B Party'))->toBe([97003]);
+    });
+
+    describe('with a party nobody sits for', function () {
+        it('finds nobody', function () {
+            expect(member_list_found('', 'Z Party'))->toBe([]);
         });
+    });
+});
 
-        it('puts the highest count first', function () {
-            expect(member_list_ids(House::Senate, MemberOrder::Debates))->toBe([97002, 97001]);
+describe('Member::sittingParties()', function () {
+    beforeEach(function () {
+        member_list_term(97001, ['last_name' => 'Adams', 'party' => 'B Party']);
+        member_list_term(97002, ['last_name' => 'Brown', 'party' => 'A Party']);
+        member_list_term(97003, ['last_name' => 'Clark', 'party' => 'B Party']);
+    });
+
+    it('lists each party once, A to Z', function () {
+        expect(Member::sittingParties(House::Representatives)->intersect(['A Party', 'B Party'])->values()->all())->toBe(['A Party', 'B Party']);
+    });
+
+    describe('with a presiding officer', function () {
+        it('leaves out their office code', function () {
+            Member::find(97001)->update(['party' => 'SPK']);
+
+            expect(Member::sittingParties(House::Representatives)->all())->not->toContain('SPK');
+        });
+    });
+
+    describe('with a member who has left', function () {
+        it('leaves out their party', function () {
+            Member::find(97002)->update(['left_house' => '2025-05-03']);
+
+            expect(Member::sittingParties(House::Representatives)->all())->not->toContain('A Party');
         });
     });
 });

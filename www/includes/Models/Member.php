@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Collection as SupportCollection;
 use OpenAustralia\TWFY\Enums\House;
 use OpenAustralia\TWFY\Enums\MemberOrder;
 use OpenAustralia\TWFY\Parliament\MemberUrls;
@@ -102,16 +103,6 @@ class Member extends Model {
      */
     public function info(): HasMany {
         return $this->hasMany(Memberinfo::class, 'member_id', 'member_id');
-    }
-
-    /**
-     * Defines the relationship to person info rows for this member's person.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
-     *   Related person info rows.
-     */
-    public function personInfo(): HasMany {
-        return $this->hasMany(Personinfo::class, 'person_id', 'person_id');
     }
 
     /**
@@ -216,31 +207,87 @@ class Member extends Model {
     }
 
     /**
+     * Terms with every word of a search in the first name, last name or electorate or state.
+     *
+     * @param \Illuminate\Database\Eloquent\Builder<Member> $query
+     *   The query to narrow.
+     * @param string $search
+     *   The words to look for, in any order. Blank matches everyone.
+     *
+     * @return \Illuminate\Database\Eloquent\Builder<Member>
+     *   The same query, limited to terms that match every word.
+     */
+    public function scopeMatching(Builder $query, string $search): Builder {
+        foreach (preg_split('/\s+/', trim($search), -1, PREG_SPLIT_NO_EMPTY) as $word) {
+            // A search word is not a pattern, so % and _ match themselves.
+            $like = '%' . addcslashes($word, '\\%_') . '%';
+            $query->where(fn (Builder $any) => $any
+              ->where('first_name', 'like', $like)
+              ->orWhere('last_name', 'like', $like)
+              ->orWhere('constituency', 'like', $like));
+        }
+
+        return $query;
+    }
+
+    /**
+     * Terms for one party.
+     *
+     * @param \Illuminate\Database\Eloquent\Builder<Member> $query
+     *   The query to narrow.
+     * @param string $party
+     *   The party as stored.
+     *
+     * @return \Illuminate\Database\Eloquent\Builder<Member>
+     *   The same query, limited to that party.
+     */
+    public function scopeOfParty(Builder $query, string $party): Builder {
+        return $query->where('party', $party);
+    }
+
+    /**
      * The members sitting in a house, one per person, with what a list shows about them.
      *
-     * Sorting by debates leaves out anyone without a count.
+     * @param \OpenAustralia\TWFY\Enums\House $house
+     *   The house.
+     * @param \OpenAustralia\TWFY\Enums\MemberOrder $order
+     *   How to sort them.
+     * @param string $search
+     *   Words every member must match, if any.
+     * @param string|null $party
+     *   The one party to show, if any.
      *
      * @return \Illuminate\Database\Eloquent\Collection<int, Member>
      *   The members, in order.
      */
-    public static function sittingList(House $house, MemberOrder $order): Collection {
-        $query = static::query()->inHouse($house)->sitting()->with('currentOffices');
+    public static function sittingList(House $house, MemberOrder $order, string $search = '', ?string $party = null): Collection {
+        $query = static::query()
+          ->inHouse($house)
+          ->sitting()
+          ->matching($search)
+          ->when($party !== null, fn (Builder $query): Builder => $query->ofParty($party))
+          ->with('currentOffices');
         foreach ($order->columns() as $column) {
             $query->orderBy($column);
         }
 
-        if ($order !== MemberOrder::Debates) {
-            return $query->get()->unique('person_id')->values();
-        }
+        return $query->get()->unique('person_id')->values();
+    }
 
-        $debates = fn ($info) => $info->where('data_key', $house->debatesKey());
-
-        return $query->whereHas('personInfo', $debates)
-          ->with(['personInfo' => $debates])
-          ->get()
-          ->unique('person_id')
-          ->sortByDesc(fn (Member $member): int => (int) $member->personInfo->first()->data_value)
-          ->values();
+    /**
+     * The parties of the members sitting in a house, A to Z. A presiding officer's code names their office, not a party.
+     *
+     * @return \Illuminate\Support\Collection<int, string>
+     *   Party names.
+     */
+    public static function sittingParties(House $house): SupportCollection {
+        return static::query()
+          ->inHouse($house)
+          ->sitting()
+          ->whereNotIn('party', array_keys(self::PRESIDING_OFFICERS))
+          ->distinct()
+          ->orderBy('party')
+          ->pluck('party');
     }
 
     /**

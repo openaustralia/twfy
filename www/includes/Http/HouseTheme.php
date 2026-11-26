@@ -23,6 +23,7 @@ final class HouseTheme {
       public readonly string $button,
       public readonly string $icon,
       public readonly string $outline,
+      public readonly string $rule,
       public readonly string $tint,
     ) {
     }
@@ -41,6 +42,7 @@ final class HouseTheme {
                 button: 'bg-teal-700 hover:bg-teal-800',
                 icon: 'bg-teal-100 !text-teal-700',
                 outline: 'border-teal-700 !text-teal-700',
+                rule: 'border-teal-700',
                 tint: 'bg-teal-100',
             ),
             House::Senate => new self(
@@ -52,6 +54,7 @@ final class HouseTheme {
                 button: 'bg-rose-900 hover:bg-rose-950',
                 icon: 'bg-rose-100 !text-rose-900',
                 outline: 'border-rose-900 !text-rose-900',
+                rule: 'border-rose-900',
                 tint: 'bg-rose-100',
             ),
         };

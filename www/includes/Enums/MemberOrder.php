@@ -11,7 +11,6 @@ enum MemberOrder: string {
     case LastName = 'l';
     case Constituency = 'c';
     case Party = 'p';
-    case Debates = 'd';
 
     /**
      * The order a query parameter asks for, or last name.
@@ -21,7 +20,7 @@ enum MemberOrder: string {
     }
 
     /**
-     * The member columns to sort by. Debates sorts by name first, then by count once the rows are read.
+     * The member columns to sort by.
      *
      * @return list<string>
      *   Column names, most significant first.
@@ -29,7 +28,7 @@ enum MemberOrder: string {
     public function columns(): array {
         return match ($this) {
             self::FirstName => ['first_name', 'last_name'],
-            self::LastName, self::Debates => ['last_name', 'first_name'],
+            self::LastName => ['last_name', 'first_name'],
             self::Constituency => ['constituency', 'last_name', 'first_name'],
             self::Party => ['party', 'last_name', 'first_name', 'constituency'],
         };
