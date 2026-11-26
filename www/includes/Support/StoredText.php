@@ -17,10 +17,18 @@ final class StoredText {
     }
 
     /**
-     * Plain text written the way the loaders store it, for matching against a stored column.
+     * The ways the loaders may store some plain text, for matching against a stored column.
+     *
+     * The loaders leave a field's first apostrophe as it is and write any other as an entity. A word taken from the
+     * middle of a field may be stored either way, so both are given.
+     *
+     * @return list<string>
+     *   The distinct stored forms.
      */
-    public static function encode(string $text): string {
-        return XmlText::entitiesNoApos($text);
+    public static function encodings(string $text): array {
+        $encoded = XmlText::entitiesNoApos($text);
+
+        return array_values(array_unique([$encoded, str_replace("'", '&#39;', $encoded)]));
     }
 
 }

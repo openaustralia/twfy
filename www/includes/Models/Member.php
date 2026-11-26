@@ -221,12 +221,15 @@ class Member extends Model {
      */
     public function scopeMatching(Builder $query, string $search): Builder {
         foreach (preg_split('/\s+/', trim($search), -1, PREG_SPLIT_NO_EMPTY) as $word) {
-            // The columns hold accents as entities, and a search word is not a pattern, so % and _ match themselves.
-            $like = '%' . addcslashes(StoredText::encode($word), '\\%_') . '%';
-            $query->where(fn (Builder $any) => $any
-              ->where('first_name', 'like', $like)
-              ->orWhere('last_name', 'like', $like)
-              ->orWhere('constituency', 'like', $like));
+            // A search word is not a pattern, so % and _ match themselves.
+            $patterns = array_map(fn (string $form): string => '%' . addcslashes($form, '\\%_') . '%', StoredText::encodings($word));
+            $query->where(function (Builder $any) use ($patterns): void {
+                foreach (['first_name', 'last_name', 'constituency'] as $column) {
+                    foreach ($patterns as $pattern) {
+                        $any->orWhere($column, 'like', $pattern);
+                    }
+                }
+            });
         }
 
         return $query;

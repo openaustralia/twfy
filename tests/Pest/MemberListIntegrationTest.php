@@ -124,6 +124,7 @@ describe('Member::sittingList() filters', function () {
         beforeEach(function () {
             member_list_term(97004, ['last_name' => 'Gon&ccedil;alves', 'constituency' => 'Zo&euml;ville']);
             member_list_term(97005, ['last_name' => "O'Brien", 'constituency' => 'Elsewhere']);
+            member_list_term(97006, ['first_name' => "D'Arcy", 'last_name' => 'O&#39;Neil', 'constituency' => 'Nowhere']);
         });
 
         dataset('accented searches', [
@@ -131,6 +132,8 @@ describe('Member::sittingList() filters', function () {
             'an accent in uppercase' => ['GONÇALVES', 97004],
             'an accent in an electorate' => ['zoëville', 97004],
             'an apostrophe' => ["o'brien", 97005],
+            'a first apostrophe' => ["d'arcy", 97006],
+            'a second apostrophe' => ["o'neil", 97006],
         ]);
 
         it('finds them by the plain text', function (string $search, int $person) {
