@@ -368,6 +368,16 @@ describe('MemberLinks::for()', function () {
               ->toBe(['mailto:kim@example.test']);
         });
     });
+
+    describe('with ABC results for two elections', function () {
+        it('lists the newest election first', function () {
+            Consinfo::create(['constituency' => 'Tasmania', 'data_key' => 'abc_election_results_2022', 'data_value' => 'https://example.test/2022']);
+            Consinfo::create(['constituency' => 'Tasmania', 'data_key' => 'abc_election_results_2025', 'data_value' => 'https://example.test/2025']);
+
+            expect(array_column(MemberLinks::for(profile(), MemberFacts::for(Person::find(97301))), 'url'))
+              ->toBe(['https://example.test/contact', 'https://example.test/2025', 'https://example.test/2022']);
+        });
+    });
 });
 
 describe('MemberStatistics', function () {

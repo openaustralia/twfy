@@ -4,6 +4,11 @@
  * @file
  */
 
+use OpenAustralia\TWFY\Parliament\MemberFacts;
+use OpenAustralia\TWFY\Parliament\MemberLinks;
+use OpenAustralia\TWFY\Parliament\MemberProfile;
+use OpenAustralia\TWFY\Parliament\Person;
+
 if (defined('OPTION_TRACKING') && OPTION_TRACKING) {
     require_once __DIR__ . '/../../../../phplib/tracking.php';
 }
@@ -1990,118 +1995,22 @@ class PAGE {
      *
      */
     public function generate_member_links($member, $links) {
-        // Receives its data from $MEMBER->display_links;
-        // This returns HTML, rather than outputting it.
-        // Why? Because we need this to be in the sidebar, and
-        // we can't call the MEMBER object from the sidebar includes
-        // to get the links. So we call this function from the mp
-        // page and pass the HTML through to stripe_end(). Better than nothing.
-
-        // Bah, can't use $this->block_start() for this, as we're returning HTML...
-        $html = '<div class="block">
-                <h4>More useful links for this person</h4>
-                <div class="blockbody">
-                <ul>';
+        // Returns HTML, because the sidebar takes it as a string.
+        $person = Person::find($member->person_id());
+        $rows = MemberLinks::for(
+            new MemberProfile($person),
+            MemberFacts::for($person)
+        );
 
         if (isset($links['maiden_speech'])) {
-            $maiden_speech = fix_gid_from_db($links['maiden_speech']);
-            $html .= '<li><a href="' . WEBPATH . 'debate/?id=' . $maiden_speech . '">Maiden speech</a></li>';
+            array_unshift($rows, [
+                'url' => WEBPATH . 'debate/?id=' . fix_gid_from_db($links['maiden_speech']),
+                'text' => 'Maiden speech',
+                'source' => null,
+            ]);
         }
 
-        // BIOGRAPHY.
-        if (isset($links['mp_email'])) {
-            $html .= '	<li><a href="mailto:' . $links['mp_email'] . '">Email ' . $member->full_name() . '</a></li>';
-        } elseif (isset($links['mp_contact_form'])) {
-            $html .= '	<li><a href="' . $links['mp_contact_form'] . '">Contact form</a> <small>(On the Australian Parliament website)</small></li>';
-        }
-
-        // TODO: shall we remove these?
-        if (isset($links['mp_twitter_url'])) {
-            $html .= '	<li><a href="' . $links['mp_twitter_url'] . '">' . $member->full_name() . ' on Twitter</a></li>';
-        }
-        if (isset($links['mp_facebook_url'])) {
-            $html .= '	<li><a href="' . $links['mp_facebook_url'] . '">' . $member->full_name() . ' on Facebook</a></li>';
-        }
-
-        if (isset($links['mp_website'])) {
-            $html .= '<li><a href="' . $links['mp_website'] . '">' . $member->full_name() . '\'s personal website</a></li>';
-        }
-        if (isset($links['sp_url'])) {
-            $html .= '<li><a href="' . $links['sp_url'] . '">' . $member->full_name() . '\'s page on the Scottish Parliament website</a></li>';
-        }
-        if (isset($links['aph_url'])) {
-            $html .= '<li><a href="' . $links['aph_url'] . '">Parliament House web page for ' . $member->full_name() . '</a></li>';
-        }
-
-        if (isset($links['guardian_biography'])) {
-            $html .= '	<li><a href="' . $links['guardian_biography'] . '">Biography</a> <small>(From The Guardian)</small></li>';
-        }
-        if (isset($links['wikipedia_url'])) {
-            $html .= '	<li><a href="' . $links['wikipedia_url'] . '">Biography</a> <small>(From Wikipedia)</small></li>';
-        }
-        if (isset($links['mp_biography_qanda']) && $links['mp_biography_qanda'] != "") {
-            $html .= '	<li><a href="' . $links['mp_biography_qanda'] . '">Biography</a> <small>(From ABC\'s Q &amp; A)</small></li>';
-        }
-
-        if (isset($links['diocese_url'])) {
-            $html .= '	<li><a href="' . $links['diocese_url'] . '">Diocese website</a></li>';
-        }
-
-        if (isset($links['journa_list_link'])) {
-            $html .= '	<li><a href="' . $links['journa_list_link'] . '">Newspaper articles written by this MP</a> <small>(From Journa-list)</small></li>';
-
-        }
-
-        if (isset($links['guardian_parliament_history'])) {
-            $html .= '	<li><a href="' . $links['guardian_parliament_history'] . '">Parliamentary career</a> <small>(From The Guardian)</small></li>';
-        }
-
-        if (isset($links['guardian_election_results'])) {
-            $html .= '	<li><a href="' . $links['guardian_election_results'] . '">Election results for ' . $member->constituency() . '</a> <small>(From The Guardian)</small></li>';
-        }
-        if (isset($links['abc_election_results_2022'])) {
-            $html .= '	<li><a href="' . $links['abc_election_results_2022'] . '">2022 Election results for ' . $member->constituency() . '</a> <small>(From ABC)</small></li>';
-        }
-        if (isset($links['abc_election_results_2019'])) {
-            $html .= '	<li><a href="' . $links['abc_election_results_2019'] . '">2019 Election results for ' . $member->constituency() . '</a> <small>(From ABC)</small></li>';
-        }
-        if (isset($links['abc_election_results_2016'])) {
-            $html .= '	<li><a href="' . $links['abc_election_results_2016'] . '">2016 Election results for ' . $member->constituency() . '</a> <small>(From ABC)</small></li>';
-        }
-        if (isset($links['abc_election_results_2013'])) {
-            $html .= '	<li><a href="' . $links['abc_election_results_2013'] . '">2013 Election results for ' . $member->constituency() . '</a> <small>(From ABC)</small></li>';
-        }
-        if (isset($links['abc_election_results_2010'])) {
-            $html .= '	<li><a href="' . $links['abc_election_results_2010'] . '">2010 Election results for ' . $member->constituency() . '</a> <small>(From ABC)</small></li>';
-        }
-        if (isset($links['abc_election_results_2007'])) {
-            $html .= '	<li><a href="' . $links['abc_election_results_2007'] . '">2007 Election results for ' . $member->constituency() . '</a> <small>(From ABC)</small></li>';
-        }
-
-        if (isset($links['guardian_candidacies'])) {
-            $html .= '	<li><a href="' . $links['guardian_candidacies'] . '">Previous candidacies</a> <small>(From The Guardian)</small></li>';
-        }
-
-        if (isset($links['guardian_contactdetails'])) {
-            $html .= '	<li><a href="' . $links['guardian_contactdetails'] . '">Contact details</a> <small>(From The Guardian)</small></li>';
-        }
-
-        if (isset($links['bbc_profile_url'])) {
-            $html .= '	<li><a href="' . $links['bbc_profile_url'] . '">General information</a> <small>(From BBC News)</small></li>';
-
-        }
-
-        $bbc_name = urlencode($member->first_name()) . "%20" . urlencode($member->last_name());
-        if ($member->member_id() == -1) {
-            $bbc_name = 'Queen Elizabeth';
-        }
-        // $html .= ' <li><a href="http://catalogue.bbc.co.uk/catalogue/infax/search/' . $bbc_name . '">TV/radio appearances</a> <small>(From BBC Programme Catalogue)</small></li>';
-
-        $html .= "	</ul>
-                    </div>
-                </div> <!-- end block -->
-";
-        return $html;
+        return twfy_laravel()->make('view')->make('members.show.legacy-links', ['links' => $rows])->render();
     }
 
     /**

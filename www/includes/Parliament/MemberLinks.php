@@ -7,7 +7,7 @@ namespace OpenAustralia\TWFY\Parliament;
  */
 final class MemberLinks {
 
-    private const ELECTION_YEARS = [2022, 2019, 2016, 2013, 2010, 2007];
+    private const ELECTION_YEARS = [2025, 2022, 2019, 2016, 2013, 2010, 2007];
 
     /**
      * The links there is an address for.
