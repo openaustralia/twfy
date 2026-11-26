@@ -21,7 +21,7 @@ class HomeController extends AdminController {
               ->limit(50)
               ->get(['user_id', 'firstname', 'lastname', 'email', 'confirmed', 'registrationtime'])
               ->map(fn (User $user): array => [
-                  'name' => $user->firstname . ' ' . $user->lastname,
+                  'name' => $user->fullName(),
                   'url' => $user->confirmed ? $this->userUrl($user->user_id) : null,
                   'email' => $user->email,
                   'confirmed' => $user->confirmed ? 'Yes' : 'No',

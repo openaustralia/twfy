@@ -56,7 +56,7 @@ class AlertStats {
             $user = $users->get(strtolower($alert->email));
             $created = (string) $alert->created;
             $rows[] = [
-                'who' => $user === null ? $alert->email : $user->firstname . ' ' . $user->lastname,
+                'who' => $user === null ? $alert->email : $user->fullName(),
                 'url' => $user === null ? null : $user_url($user->user_id),
                 'description' => $describe($alert->criteria),
                 'created' => str_starts_with($created, '0000-') ? '' : $created,

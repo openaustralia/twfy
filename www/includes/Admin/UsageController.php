@@ -114,7 +114,7 @@ class UsageController extends AdminController {
         $user = $key->user;
         $reason = trim(preg_replace('/\s+/u', ' ', (string) $key->reason));
         return [
-            'name' => $user === null ? null : trim("$user->firstname $user->lastname"),
+            'name' => $user === null ? null : $user->fullName(),
             'website' => $user !== null && preg_match('#^https?://#i', (string) $user->url) ? $user->url : null,
             'email' => $user->email ?? '',
             'reason' => $reason,
