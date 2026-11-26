@@ -530,6 +530,7 @@ CREATE TABLE `users` (
   `firstname` varchar(255) NOT NULL DEFAULT '',
   `lastname` varchar(255) NOT NULL DEFAULT '',
   `email` varchar(255) NOT NULL DEFAULT '',
+  `pending_email` varchar(255) DEFAULT NULL,
   `password` varchar(102) NOT NULL DEFAULT '',
   `lastvisit` datetime NOT NULL DEFAULT '0000-01-01 00:00:00',
   `registrationtime` datetime NOT NULL DEFAULT '0000-01-01 00:00:00',
