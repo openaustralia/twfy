@@ -120,6 +120,24 @@ describe('Member::sittingList() filters', function () {
         expect(member_list_found($search))->toBe([]);
     })->with('wildcards');
 
+    describe('with names stored as entities', function () {
+        beforeEach(function () {
+            member_list_term(97004, ['last_name' => 'Gon&ccedil;alves', 'constituency' => 'Zo&euml;ville']);
+            member_list_term(97005, ['last_name' => "O'Brien", 'constituency' => 'Elsewhere']);
+        });
+
+        dataset('accented searches', [
+            'an accent in a last name' => ['gonçalves', 97004],
+            'an accent in uppercase' => ['GONÇALVES', 97004],
+            'an accent in an electorate' => ['zoëville', 97004],
+            'an apostrophe' => ["o'brien", 97005],
+        ]);
+
+        it('finds them by the plain text', function (string $search, int $person) {
+            expect(Member::sittingList(House::Representatives, MemberOrder::LastName, $search)->pluck('person_id')->all())->toBe([$person]);
+        })->with('accented searches');
+    });
+
     it('limits the list to a party', function () {
         expect(member_list_found('', 'B Party'))->toBe([97001, 97003]);
     });

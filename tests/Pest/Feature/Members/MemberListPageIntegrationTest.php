@@ -141,6 +141,14 @@ describe('GET /mps/', function () {
             expect(MemberPageStubs::get('/mps/?q=testville')->getContent())->toContain('Clear filters');
         });
 
+        describe('for a name stored with an accent', function () {
+            it('finds them by the plain text', function () {
+                Member::find(97101)->update(['last_name' => 'Gon&ccedil;alves']);
+
+                expect(MemberPageStubs::get('/mps/?q=' . urlencode('gonçalves'))->getContent())->toContain('Robin Gonçalves');
+            });
+        });
+
         describe('that matches nobody', function () {
             it('says so', function () {
                 expect(MemberPageStubs::get('/mps/?q=nobody')->getContent())->toContain('No representatives match your search.');

@@ -209,6 +209,8 @@ class Member extends Model {
     /**
      * Terms with every word of a search in the first name, last name or electorate or state.
      *
+     * Words are plain text, such as "gonçalves", and match the entities the columns store, such as "Gon&ccedil;alves".
+     *
      * @param \Illuminate\Database\Eloquent\Builder<Member> $query
      *   The query to narrow.
      * @param string $search
@@ -219,8 +221,8 @@ class Member extends Model {
      */
     public function scopeMatching(Builder $query, string $search): Builder {
         foreach (preg_split('/\s+/', trim($search), -1, PREG_SPLIT_NO_EMPTY) as $word) {
-            // A search word is not a pattern, so % and _ match themselves.
-            $like = '%' . addcslashes($word, '\\%_') . '%';
+            // The columns hold accents as entities, and a search word is not a pattern, so % and _ match themselves.
+            $like = '%' . addcslashes(StoredText::encode($word), '\\%_') . '%';
             $query->where(fn (Builder $any) => $any
               ->where('first_name', 'like', $like)
               ->orWhere('last_name', 'like', $like)
