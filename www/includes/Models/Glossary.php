@@ -12,6 +12,7 @@ use Illuminate\Support\Collection;
  * @property int $glossary_id
  * @property string|null $title
  * @property string|null $body
+ * @property string|null $contributor_name
  * @property string|null $wikipedia
  * @property string|null $created
  * @property string|null $last_modified
@@ -27,6 +28,7 @@ class Glossary extends Model {
     protected $fillable = [
         'title',
         'body',
+        'contributor_name',
         'wikipedia',
         'created',
         'last_modified',
@@ -41,7 +43,7 @@ class Glossary extends Model {
     /**
      * Visible terms a moderator approved, with who submitted them, by title and then the earliest submission.
      *
-     * Each row has glossary_id, title, body, user_id, firstname and lastname.
+     * Each row has glossary_id, title, body, contributor_name, user_id, firstname and lastname.
      *
      * @param \Illuminate\Database\Eloquent\Builder<Glossary> $query
      *   The query to narrow.
@@ -57,7 +59,7 @@ class Glossary extends Model {
           ->orderBy('glossary.title')
           ->orderBy('editqueue.submitted')
           ->orderBy('editqueue.edit_id')
-          ->select('glossary.glossary_id', 'glossary.title', 'glossary.body', 'users.user_id', 'users.firstname', 'users.lastname');
+          ->select('glossary.glossary_id', 'glossary.title', 'glossary.body', 'glossary.contributor_name', 'users.user_id', 'users.firstname', 'users.lastname');
     }
 
     /**

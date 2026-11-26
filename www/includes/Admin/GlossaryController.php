@@ -28,7 +28,7 @@ class GlossaryController extends AdminController {
                 'id' => $term->glossary_id,
                 'title' => $term->title,
                 'body_html' => self::linked($glossary, (string) $term->body),
-                'user' => ['name' => trim($term->firstname . ' ' . $term->lastname), 'url' => $this->userUrl($term->user_id)],
+                'user' => ['name' => (string) $term->contributor_name, 'url' => $this->userUrl($term->user_id)],
                 'delete_url' => $this->adminUrl('glossary.php', ['delete_confirm' => $term->glossary_id]),
             ])->all();
 
@@ -54,7 +54,7 @@ class GlossaryController extends AdminController {
                         'id' => $item->edit_id,
                         'title' => $item->title,
                         'body' => $item->body,
-                        'user' => trim($item->firstname . ' ' . $item->lastname),
+                        'user' => (string) $item->contributor_name,
                         'approve_url' => $this->adminUrl('glossary_pending.php', ['approve' => $item->edit_id]),
                         'modify_url' => $this->adminUrl('glossary_pending.php', ['modify' => $item->edit_id]),
                         'decline_url' => $this->adminUrl('glossary_pending.php', ['decline' => $item->edit_id]),

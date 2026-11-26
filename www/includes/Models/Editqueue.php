@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Model;
  *
  * @property int $edit_id
  * @property int|null $user_id
+ * @property string|null $contributor_name
  * @property int|null $edit_type
  * @property int|null $epobject_id_l
  * @property int|null $epobject_id_h
@@ -32,6 +33,7 @@ class Editqueue extends Model {
 
     protected $fillable = [
         'user_id',
+        'contributor_name',
         'edit_type',
         'epobject_id_l',
         'epobject_id_h',
@@ -47,6 +49,20 @@ class Editqueue extends Model {
         'reason',
     ];
 
+    /**
+     * Copies the submitter's name onto each new submission.
+     *
+     * The glossary credits this copy and never the account's name when it is shown, so renaming an account, or
+     * someone taking one over, can't change who a term credits.
+     */
+    protected static function booted(): void {
+        static::creating(function (Editqueue $edit): void {
+            if ($edit->contributor_name === null && $edit->user_id !== null) {
+                $edit->contributor_name = User::find($edit->user_id)?->fullName();
+            }
+        });
+    }
+
     protected $casts = [
         'approved' => 'bool',
     ];
@@ -54,7 +70,7 @@ class Editqueue extends Model {
     /**
      * Submissions nobody has decided on, newest first, with who submitted them.
      *
-     * Each row has edit_id, user_id, firstname, lastname, glossary_id, title, body and submitted.
+     * Each row has edit_id, user_id, contributor_name, firstname, lastname, glossary_id, title, body and submitted.
      *
      * @param \Illuminate\Database\Eloquent\Builder<Editqueue> $query
      *   The query to narrow.
@@ -66,7 +82,7 @@ class Editqueue extends Model {
         return $query->join('users', 'users.user_id', '=', 'editqueue.user_id')
           ->whereNull('editqueue.approved')
           ->orderByDesc('editqueue.submitted')
-          ->select('editqueue.edit_id', 'editqueue.user_id', 'users.firstname', 'users.lastname', 'editqueue.glossary_id', 'editqueue.title', 'editqueue.body', 'editqueue.submitted');
+          ->select('editqueue.edit_id', 'editqueue.user_id', 'editqueue.contributor_name', 'users.firstname', 'users.lastname', 'editqueue.glossary_id', 'editqueue.title', 'editqueue.body', 'editqueue.submitted');
     }
 
     /**
@@ -78,7 +94,9 @@ class Editqueue extends Model {
     public function approve(int $editor_id): void {
         $this->getConnection()->transaction(function () use ($editor_id) {
             $now = date('Y-m-d H:i:s');
-            $term = Glossary::create(['title' => $this->title, 'body' => $this->body, 'type' => 2, 'created' => $now, 'visible' => true]);
+            // The term gets the name copied at submission, never the account's name now, so a later rename or
+            // account takeover can't change who a published term credits.
+            $term = Glossary::create(['title' => $this->title, 'body' => $this->body, 'contributor_name' => $this->contributor_name, 'type' => 2, 'created' => $now, 'visible' => true]);
             $this->update(['glossary_id' => $term->glossary_id, 'editor_id' => $editor_id, 'approved' => true, 'decided' => $now]);
         });
     }

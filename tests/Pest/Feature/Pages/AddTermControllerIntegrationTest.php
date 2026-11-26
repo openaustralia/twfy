@@ -283,6 +283,12 @@ describe('AddTermController::index() for a submission', function () {
         expect(Editqueue::where('user_id', $this->user->user_id)->pluck('title')->all())->toBe(['point of order']);
     });
 
+    it('copies the name onto the submission', function () {
+        $this->render(fn () => addterm_controller()->index());
+
+        expect(Editqueue::where('user_id', $this->user->user_id)->value('contributor_name'))->toBe('Ada Example');
+    });
+
     it('thanks the visitor', function () {
         $html = $this->render(fn () => addterm_controller()->index());
 

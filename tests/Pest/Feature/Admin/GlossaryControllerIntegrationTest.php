@@ -55,8 +55,8 @@ beforeEach(function () {
  */
 function glossary_page_submission(string $title, string $body, ?bool $approved): Editqueue {
     $user = User::create(['firstname' => 'Ada', 'lastname' => '<Example>', 'email' => 'ada' . random_int(1000, 9999) . '@example.test']);
-    $term = $approved ? Glossary::create(['title' => $title, 'body' => $body, 'type' => 2, 'visible' => true]) : null;
-    return Editqueue::create(['user_id' => $user->user_id, 'edit_type' => 2, 'glossary_id' => $term?->glossary_id, 'title' => $title, 'body' => $body, 'submitted' => '2026-11-01 10:00:00', 'approved' => $approved]);
+    $term = $approved ? Glossary::create(['title' => $title, 'body' => $body, 'contributor_name' => $user->fullName(), 'type' => 2, 'visible' => true]) : null;
+    return Editqueue::create(['user_id' => $user->user_id, 'contributor_name' => $user->fullName(), 'edit_type' => 2, 'glossary_id' => $term?->glossary_id, 'title' => $title, 'body' => $body, 'submitted' => '2026-11-01 10:00:00', 'approved' => $approved]);
 }
 
 describe('GlossaryController::index()', function () {
@@ -186,6 +186,12 @@ describe('GlossaryController::pending()', function () {
 
         it('records who approved it', function () {
             expect(Editqueue::find($this->submission->edit_id)->editor_id)->toBe(1);
+        });
+
+        it('gives the term the name copied at submission, even if the account is renamed first', function () {
+            $term = Glossary::approved()->where('glossary.title', 'Filibuster <b>')->first();
+
+            expect($term->contributor_name)->toBe('Ada <Example>');
         });
     });
 
