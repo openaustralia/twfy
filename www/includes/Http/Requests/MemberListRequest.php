@@ -48,7 +48,9 @@ class MemberListRequest extends FormRequest {
      * The party to show, if one is asked for.
      */
     public function party(): ?string {
-        return $this->validated('party') ?: null;
+        $party = $this->validated('party');
+
+        return $party === null || $party === '' ? null : $party;
     }
 
     /**
@@ -58,7 +60,17 @@ class MemberListRequest extends FormRequest {
      *   Query parameters that are set.
      */
     public function filters(): array {
-        return array_filter(['q' => $this->search(), 'party' => $this->party()]);
+        return array_filter(['q' => $this->search(), 'party' => $this->party()], fn (?string $value): bool => $value !== null && $value !== '');
+    }
+
+    /**
+     * The sort order, for links that keep it. Last name, the default, is left out.
+     *
+     * @return array<string, string>
+     *   Query parameters that are set.
+     */
+    public function orderParameters(): array {
+        return $this->order() === MemberOrder::LastName ? [] : ['o' => $this->order()->value];
     }
 
     /**

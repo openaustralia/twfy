@@ -141,6 +141,12 @@ describe('GET /mps/', function () {
             expect(MemberPageStubs::get('/mps/?q=testville')->getContent())->toContain('Clear filters');
         });
 
+        describe('of "0"', function () {
+            it('keeps the search in the sort links', function () {
+                expect(MemberPageStubs::get('/mps/?q=0')->getContent())->toContain('href="/mps?o=f&amp;q=0"');
+            });
+        });
+
         describe('for a name stored with an accent', function () {
             it('finds them by the plain text', function () {
                 Member::find(97101)->update(['last_name' => 'Gon&ccedil;alves']);
@@ -192,9 +198,33 @@ describe('GET /mps/', function () {
         });
     });
 
+    describe('with a party that nobody sits for', function () {
+        it('keeps it in the dropdown, chosen', function () {
+            expect(MemberPageStubs::get('/mps/?party=SPK')->getContent())->toMatch('/<option value="SPK"\\s+selected>/');
+        });
+    });
+
+    describe('with no members sitting', function () {
+        it('says there are none, without blaming a search', function () {
+            Member::find(97101)->update(['left_house' => '2025-05-03']);
+
+            expect(MemberPageStubs::get('/mps/')->getContent())->toContain('There are no representatives to show.')->not->toContain('match your search');
+        });
+    });
+
     describe('with a sort and a search', function () {
         it('keeps the sort when searching again', function () {
             expect(MemberPageStubs::get('/mps/?o=p')->getContent())->toContain('<input type="hidden" name="o" value="p">');
+        });
+    });
+
+    describe('sorted by party', function () {
+        it('keeps the sort in the spreadsheet link', function () {
+            expect(MemberPageStubs::get('/mps/?o=p&q=testville')->getContent())->toContain('href="/mps?f=csv&amp;q=testville&amp;o=p"');
+        });
+
+        it('keeps the sort in the link that clears the filters', function () {
+            expect(MemberPageStubs::get('/mps/?o=p&q=testville')->getContent())->toContain('href="/mps?o=p"');
         });
     });
 

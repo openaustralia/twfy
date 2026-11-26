@@ -1,10 +1,9 @@
-@use('OpenAustralia\TWFY\Enums\MemberOrder')
 @php($field = 'box-border min-h-[44px] w-full rounded border border-solid border-slate-400 bg-white px-3 py-2 text-base !text-slate-900')
 @php($label = 'text-[13px] font-semibold !text-slate-700')
 <form action="{{ route($route, [], false) }}" method="get" role="search" aria-label="Filter {{ strtolower($house->memberTitle()) }}s" class="flex flex-wrap items-end gap-x-4 gap-y-3 border-0 border-b-2 border-solid {{ $theme->rule }} pb-4">
-@if ($order !== MemberOrder::LastName)
-<input type="hidden" name="o" value="{{ $order->value }}">
-@endif
+@foreach ($orderParameters as $name => $value)
+<input type="hidden" name="{{ $name }}" value="{{ $value }}">
+@endforeach
 <div class="flex min-w-0 flex-[2_1_220px] flex-col gap-1">
 <label for="q" class="{{ $label }}">Find by name or {{ strtolower($area) }}</label>
 <input id="q" type="search" name="q" value="{{ $search }}" maxlength="100" class="{{ $field }}">
@@ -13,6 +12,9 @@
 <label for="party" class="{{ $label }}">Party</label>
 <select id="party" name="party" class="{{ $field }}">
 <option value="">All parties</option>
+@if ($party !== null && !$parties->contains($party))
+<option value="{{ $party }}" selected>{{ $party }}</option>
+@endif
 @foreach ($parties as $each)
 <option value="{{ $each }}" @selected($each === $party)>{{ $each }}</option>
 @endforeach
@@ -24,7 +26,7 @@
 Filter
 </button>
 @if ($filters)
-<a href="{{ route($route, array_filter(['o' => $order === MemberOrder::LastName ? null : $order->value]), false) }}" class="text-base font-semibold {{ $theme->link }} !underline">Clear filters</a>
+<a href="{{ route($route, $orderParameters, false) }}" class="text-base font-semibold {{ $theme->link }} !underline">Clear filters</a>
 @endif
 </div>
 </form>

@@ -37,6 +37,12 @@
 </div>
 </li>
 @empty
-<li class="!m-0 my-6 rounded-lg bg-slate-50 p-5 text-base">No {{ strtolower($house->memberTitle()) }}s match your search. Try a different name or clear the party filter.</li>
+<li class="!m-0 my-6 rounded-lg bg-slate-50 p-5 text-base">
+@if ($filters)
+No {{ strtolower($house->memberTitle()) }}s match your search. Try a different name or clear the party filter.
+@else
+There are no {{ strtolower($house->memberTitle()) }}s to show.
+@endif
+</li>
 @endforelse
 </ul>

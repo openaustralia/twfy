@@ -10,7 +10,7 @@ use Illuminate\Support\ServiceProvider;
 class ComponentServiceProvider extends ServiceProvider {
 
     /**
-     * Registers <x-admin.cell>, <x-members.card> and the rest of resources/views/components, one folder deep.
+     * Registers <x-admin.cell>, <x-members.panel> and the rest of resources/views/components, one folder deep.
      */
     public function boot(): void {
         foreach (glob(dirname(__DIR__, 2) . '/resources/views/components/*/*.blade.php') as $file) {

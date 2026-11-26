@@ -53,6 +53,7 @@ abstract class MemberController {
             'party' => $request->party(),
             'parties' => Member::sittingParties($this->house()),
             'filters' => $request->filters(),
+            'orderParameters' => $request->orderParameters(),
         ] + $this->indexData());
     }
 
