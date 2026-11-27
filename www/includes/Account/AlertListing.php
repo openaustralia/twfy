@@ -59,6 +59,8 @@ class AlertListing {
     /**
      * One alert as a row.
      *
+     * @param \OpenAustralia\TWFY\Models\Alert $alert
+     *   The alert.
      * @param \Illuminate\Support\Collection<int, Person> $people
      *   The people in the user's alerts, keyed by person id.
      * @param array<int, array<string, int>> $months
