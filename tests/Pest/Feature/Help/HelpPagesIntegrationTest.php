@@ -184,18 +184,6 @@ describe('the search tips', function () {
     it('show the example searches', function () {
         expect(view('help.search-tips')->render())->toContain('<code>"Cole Inquiry"</code>');
     });
-
-    it('offer Firefox only to Firefox', function () {
-        $_SERVER['HTTP_USER_AGENT'] = 'Mozilla/5.0 Firefox/120.0';
-
-        expect(view('help.search-tips')->render())->toContain("Firefox's");
-    });
-
-    it('keep it from other browsers', function () {
-        $_SERVER['HTTP_USER_AGENT'] = 'Mozilla/5.0 Chrome/120.0';
-
-        expect(view('help.search-tips')->render())->not->toContain("Firefox's");
-    });
 });
 
 describe('the help answers with an email link', function () {

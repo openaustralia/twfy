@@ -17,7 +17,7 @@
         Foundation</a>.
     OpenAustralia Foundation is a public digital online library.
     We owe a great debt to a UK charity, mySociety, which built <a
-        href="http://theyworkforyou.com/">theyworkforyou.com</a> which this site is based on.
+        href="https://www.theyworkforyou.com/">theyworkforyou.com</a> which this site is based on.
 </p>
 
 <p>The Australian Hansard is
