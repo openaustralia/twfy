@@ -11,6 +11,8 @@ require_once __DIR__ . '/../../Support/AlertFixtures.php';
 require_once __DIR__ . '/../../Support/MemberFixtures.php';
 require_once __DIR__ . '/../../Support/MemberPageStubs.php';
 
+use Illuminate\Support\Facades\DB;
+use OpenAustralia\TWFY\Account\AlertListing;
 use OpenAustralia\TWFY\EmailSuppressions;
 use OpenAustralia\TWFY\Icons;
 use OpenAustralia\TWFY\Models\Hansard;
@@ -41,6 +43,31 @@ function alertspec_speech(): void {
     static $id = 97800000;
     Hansard::create(['epobject_id' => ++$id, 'gid' => "alertspec/$id", 'htype' => 12, 'speaker_id' => 97201, 'major' => 1, 'section_id' => 0, 'subsection_id' => 0, 'hpos' => 1, 'hdate' => now()->subMonth()->format('Y-m-d'), 'source_url' => '']);
 }
+
+/**
+ * How many queries listing the user's alerts takes.
+ */
+function alertspec_queries(User $user): int {
+    DB::flushQueryLog();
+    DB::enableQueryLog();
+    AlertListing::for($user);
+
+    return count(DB::getQueryLog());
+}
+
+describe('AlertListing::for()', function () {
+    it('asks the database the same however many people are in the alerts', function () {
+        AlertFixtures::alert('pat.alertspec@example.test', 'speaker:97201');
+        $one = alertspec_queries($this->user);
+
+        foreach ([97211, 97212, 97213] as $id) {
+            MemberFixtures::term($id, ['first_name' => "Person$id"]);
+            AlertFixtures::alert('pat.alertspec@example.test', "speaker:$id");
+        }
+
+        expect(alertspec_queries($this->user))->toBe($one);
+    });
+});
 
 describe('the chart on GET /account', function () {
     it('counts how often a person spoke in 12 months', function () {

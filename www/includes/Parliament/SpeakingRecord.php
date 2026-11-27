@@ -24,22 +24,51 @@ final class SpeakingRecord {
      *   Counts keyed by month as "2026-07", the earliest first. A month with none is 0.
      */
     public static function lastTwelveMonths(Person $person): array {
-        $start = Carbon::today()->startOfMonth()->subMonths(11);
-        $counts = Hansard::query()
-          ->whereIn('speaker_id', $person->terms->pluck('member_id'))
-          ->where('htype', self::SPEECH)
-          ->where('hdate', '>=', $start->toDateString())
-          ->selectRaw("DATE_FORMAT(hdate, '%Y-%m') AS month, COUNT(*) AS speeches")
-          ->groupByRaw("DATE_FORMAT(hdate, '%Y-%m')")
-          ->pluck('speeches', 'month');
+        return self::lastTwelveMonthsFor([$person])[$person->id];
+    }
 
-        $months = [];
-        foreach (range(0, 11) as $offset) {
-            $month = $start->copy()->addMonths($offset)->format('Y-m');
-            $months[$month] = (int) $counts->get($month, 0);
+    /**
+     * Speeches in each of the last twelve months for each of several people, counted in one query.
+     *
+     * @param iterable<Person> $people
+     *   The people.
+     *
+     * @return array<int, array<string, int>>
+     *   Each person's counts keyed by person id, then by month as "2026-07", the earliest first.
+     */
+    public static function lastTwelveMonthsFor(iterable $people): array {
+        $start = Carbon::today()->startOfMonth()->subMonths(11);
+
+        $personOf = [];
+        foreach ($people as $person) {
+            foreach ($person->terms as $term) {
+                $personOf[$term->member_id] = $person->id;
+            }
         }
 
-        return $months;
+        $counts = [];
+        $rows = Hansard::query()
+          ->whereIn('speaker_id', array_keys($personOf))
+          ->where('htype', self::SPEECH)
+          ->where('hdate', '>=', $start->toDateString())
+          ->selectRaw("speaker_id, DATE_FORMAT(hdate, '%Y-%m') AS month, COUNT(*) AS speeches")
+          ->groupBy('speaker_id')
+          ->groupByRaw("DATE_FORMAT(hdate, '%Y-%m')")
+          ->get();
+        foreach ($rows as $row) {
+            $id = $personOf[$row->speaker_id];
+            $counts[$id][$row->month] = ($counts[$id][$row->month] ?? 0) + (int) $row->speeches;
+        }
+
+        $result = [];
+        foreach (array_unique($personOf) as $id) {
+            foreach (range(0, 11) as $offset) {
+                $month = $start->copy()->addMonths($offset)->format('Y-m');
+                $result[$id][$month] = $counts[$id][$month] ?? 0;
+            }
+        }
+
+        return $result;
     }
 
     /**

@@ -26,14 +26,29 @@ final class Person {
      * The person with this id, if they have sat in either house.
      */
     public static function find(int $id): ?self {
+        return self::findMany([$id])->get($id);
+    }
+
+    /**
+     * The people with these ids who have sat in either house, found in one query.
+     *
+     * @param iterable<int> $ids
+     *   The person ids.
+     *
+     * @return \Illuminate\Support\Collection<int, self>
+     *   The people keyed by person id. Anyone who has never sat is left out.
+     */
+    public static function findMany(iterable $ids): Collection {
         $terms = Member::query()
-          ->where('person_id', $id)
+          ->whereIn('person_id', collect($ids)->unique()->values()->all())
           ->whereIn('house', array_column(House::cases(), 'value'))
           ->orderByDesc('left_house')
           ->orderByDesc('house')
           ->get();
 
-        return $terms->isEmpty() ? null : new self($id, $terms->toBase());
+        return $terms->groupBy('person_id')
+          ->map(fn (Collection $own, int|string $id): self => new self((int) $id, $own->values()->toBase()))
+          ->toBase();
     }
 
     /**

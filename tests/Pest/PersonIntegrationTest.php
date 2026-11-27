@@ -8,6 +8,7 @@
 require_once __DIR__ . '/../bootstrap.php';
 require_once __DIR__ . '/Support/MemberFixtures.php';
 
+use Illuminate\Support\Facades\DB;
 use OpenAustralia\TWFY\Enums\House;
 use OpenAustralia\TWFY\Models\Member;
 use OpenAustralia\TWFY\Parliament\Person;
@@ -41,6 +42,36 @@ beforeEach(function () {
     person_term(97201, ['house' => 1, 'constituency' => 'Testville', 'party' => 'First Party', 'entered_house' => '2013-09-07', 'left_house' => '2016-05-09', 'left_reason' => 'changed_party']);
     person_term(97202, ['house' => 1, 'constituency' => 'Testville', 'entered_house' => '2016-05-09', 'left_house' => '2019-04-11', 'left_reason' => 'resigned']);
     person_term(97203);
+});
+
+describe('Person::findMany()', function () {
+    beforeEach(function () {
+        person_term(97204, ['person_id' => 97210, 'first_name' => 'Lee']);
+    });
+
+    it('finds each person by id', function () {
+        expect(Person::findMany([97201, 97210])->keys()->all())->toBe([97201, 97210]);
+    });
+
+    it('leaves out an id nobody has', function () {
+        expect(Person::findMany([97201, 97299])->keys()->all())->toBe([97201]);
+    });
+
+    it('finds nobody for no ids', function () {
+        expect(Person::findMany([])->isEmpty())->toBeTrue();
+    });
+
+    it('gives each person all their terms, the latest first', function () {
+        expect(Person::findMany([97201, 97210])->get(97201)->terms->pluck('member_id')->all())->toBe([97203, 97202, 97201]);
+    });
+
+    it('asks the database once', function () {
+        DB::flushQueryLog();
+        DB::enableQueryLog();
+        Person::findMany([97201, 97210, 97299]);
+
+        expect(count(DB::getQueryLog()))->toBe(1);
+    });
 });
 
 describe('Person::find()', function () {

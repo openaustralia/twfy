@@ -9,6 +9,7 @@ require_once __DIR__ . '/../bootstrap.php';
 require_once __DIR__ . '/Support/MemberFixtures.php';
 
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 use OpenAustralia\TWFY\Models\Hansard;
 use OpenAustralia\TWFY\Models\Member;
 use OpenAustralia\TWFY\Parliament\Person;
@@ -144,5 +145,39 @@ describe('SpeakingRecord::lastTwelveMonths()', function () {
 
         expect(array_sum(by_month()))->toBe(0);
     });
-});
 
+    describe('for several people at once', function () {
+        beforeEach(function () {
+            MemberFixtures::term(97702, ['person_id' => 97702, 'first_name' => 'Casey']);
+            $this->both = [Person::find(97701), Person::find(97702)];
+        });
+
+        it('counts each person on their own', function () {
+            spoke('2026-06-02');
+            spoke('2026-06-03');
+            spoke('2026-06-03', 12, 97702);
+
+            $counts = SpeakingRecord::lastTwelveMonthsFor($this->both);
+
+            expect([$counts[97701]['2026-06'], $counts[97702]['2026-06']])->toBe([2, 1]);
+        });
+
+        it('gives twelve months to each', function () {
+            $counts = SpeakingRecord::lastTwelveMonthsFor($this->both);
+
+            expect([count($counts[97701]), count($counts[97702])])->toBe([12, 12]);
+        });
+
+        it('gives nothing for nobody', function () {
+            expect(SpeakingRecord::lastTwelveMonthsFor([]))->toBe([]);
+        });
+
+        it('asks the database once', function () {
+            DB::flushQueryLog();
+            DB::enableQueryLog();
+            SpeakingRecord::lastTwelveMonthsFor($this->both);
+
+            expect(count(DB::getQueryLog()))->toBe(1);
+        });
+    });
+});
