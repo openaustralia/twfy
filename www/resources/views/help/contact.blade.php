@@ -1,11 +1,8 @@
-<?php
+@extends('layout.legacy')
 
-/**
- * @file
- */
-?>
+@section('content')
+<x-help.page title="Contact OpenAustralia.org">
 <h2>Contact the OpenAustralia team</h2>
-<p />
 <p>
     Please tell us what you think about <strong>OpenAustralia.org</strong>
 </p>
@@ -18,5 +15,7 @@
     We seek responses to all these questions.
 </p>
 <p>The email address of OpenAustralia.org, which is run by a <strong>charity</strong>, is: <a
-        href="mailto:<?php echo str_replace('@', '&#64;', CONTACTEMAIL); ?>"><?php echo str_replace('@', '&#64;', CONTACTEMAIL); ?></a>
+        href="mailto:{!! str_replace('@', '&#64;', e(CONTACTEMAIL)) !!}">{!! str_replace('@', '&#64;', e(CONTACTEMAIL)) !!}</a>
 </p>
+</x-help.page>
+@endsection

@@ -4,7 +4,7 @@ $unconfirmed = $alerts->where('state', 'unconfirmed');
 $unsubscribed = $alerts->where('state', 'unsubscribed');
 $charted = $active->first(fn (array $alert): bool => $alert['chart'] !== null);
 @endphp
-<x-account.card aria-labelledby="alerts-heading" class="flex-[999_1_520px] !shadow-lg">
+<x-card aria-labelledby="alerts-heading" class="flex-[999_1_520px] !shadow-lg">
 <div class="mb-2 flex flex-wrap items-start justify-between gap-4">
 <div class="min-w-0 flex-[1_1_260px]">
 <h2 id="alerts-heading" class="!m-0 !block !p-0 text-2xl font-bold text-slate-900">Your email alerts</h2>
@@ -36,4 +36,4 @@ Add an alert
 <h3 class="!m-0 !mb-2 !block !p-0 text-base font-bold text-slate-900">Add another alert</h3>
 <p class="!m-0 text-[15px] leading-relaxed text-slate-700">Go to a <x-account.link href="{{ route('representatives.index', [], false) }}">Representative's</x-account.link> or <x-account.link href="{{ route('senators.index', [], false) }}">Senator's</x-account.link> page, or <x-account.link href="{{ WEBPATH }}search/">search Hansard</x-account.link>. You'll see the option to turn it into an alert. You can also <x-account.link href="{{ WEBPATH }}alert/">add an alert by hand</x-account.link>.</p>
 </div>
-</x-account.card>
+</x-card>

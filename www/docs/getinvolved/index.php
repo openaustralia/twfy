@@ -2,18 +2,7 @@
 
 /**
  * @file
+ * Handed to Laravel, which draws this page from a view (routes/web.php).
  */
 
-include_once __DIR__ . '/../../includes/easyparliament/init.php';
-
-$this_page = "getinvolved";
-
-$PAGE->page_start();
-
-$PAGE->stripe_start();
-
-include __DIR__ . '/../../includes/easyparliament/staticpages/getinvolved.php';
-
-$PAGE->stripe_end();
-
-$PAGE->page_end();
+include __DIR__ . '/../laravel.php';
