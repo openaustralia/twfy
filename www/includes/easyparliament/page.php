@@ -4,6 +4,7 @@
  * @file
  */
 
+use OpenAustralia\TWFY\Models\User as UserModel;
 use OpenAustralia\TWFY\Parliament\MemberFacts;
 use OpenAustralia\TWFY\Parliament\MemberLinks;
 use OpenAustralia\TWFY\Parliament\MemberProfile;
@@ -2390,7 +2391,7 @@ class PAGE {
                         ?>
                         <div class="row">
                             <span class="label"><label for="password">Password:</label></span>
-                            <span class="formw"><input type="password" name="password" id="password" maxlength="30" size="20"
+                            <span class="formw"><input type="password" name="password" id="password" maxlength="<?php echo UserModel::PASSWORD_MAX; ?>" size="20"
                                     class="form"></span>
                         </div>
 

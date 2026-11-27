@@ -26,6 +26,7 @@ class ResetUserPassword implements ResetsUserPasswords {
         ], [
             'password.required' => 'Please enter your new password',
             'password.min' => 'Please enter at least :min characters',
+            'password.max' => 'Please enter at most :max characters',
             'password.confirmed' => 'The two passwords did not match. Please try again.',
         ])->validate();
 

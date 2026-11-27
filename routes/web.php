@@ -37,7 +37,7 @@ Route::middleware('auth')->prefix('account')->name('account.')->group(function (
       ->middleware(['signed', 'throttle:6,1'])
       ->whereNumber('user')
       ->name('email.confirm');
-    Route::post('/email/resend', [EmailChangeController::class, 'resend'])->middleware('throttle:3,10')->name('email.resend');
+    Route::post('/email/resend', [EmailChangeController::class, 'resend'])->name('email.resend');
     Route::delete('/email', [EmailChangeController::class, 'cancel'])->name('email.cancel');
     Route::delete('/alerts/{alert}', [AccountAlertController::class, 'destroy'])->whereNumber('alert')->name('alerts.destroy');
     Route::put('/alerts/{alert}', [AccountAlertController::class, 'restore'])->whereNumber('alert')->name('alerts.restore');

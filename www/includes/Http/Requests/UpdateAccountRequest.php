@@ -51,6 +51,7 @@ class UpdateAccountRequest extends FormRequest {
             'email.email' => 'Enter an email address like name@example.com',
             'email.unique' => 'Someone else has already joined with this email address',
             'password.min' => 'Your new password needs at least :min characters',
+            'password.max' => 'Your new password can have at most :max characters',
             'password.confirmed' => "The two passwords don't match",
             'news.required' => 'Choose whether we can email you our news',
             'news.boolean' => 'Choose whether we can email you our news',

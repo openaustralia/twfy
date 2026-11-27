@@ -10,6 +10,7 @@ require_once __DIR__ . '/../../../../www/includes/utility.php';
 require_once __DIR__ . '/../../Support/AccountRequests.php';
 require_once __DIR__ . '/../../Support/MemberPageStubs.php';
 
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\URL;
 use OpenAustralia\TWFY\Account\EmailChange;
 use OpenAustralia\TWFY\Models\User;
@@ -38,6 +39,7 @@ beforeEach(function () {
 });
 
 afterEach(function () {
+    RateLimiter::clear('email-change:' . $this->user->getKey());
     unset($GLOBALS['mail_transport']);
     MemberPageStubs::restoreVisitor();
     laravel_spec_new_request();
@@ -174,13 +176,20 @@ describe('POST /account/email/resend', function () {
         expect(AccountRequests::send('POST', '/account/email/resend')->getStatusCode())->toBe(419);
     });
 
-    it('answers 429 when asked too often', function () {
-        $statuses = [];
-        foreach (range(1, 4) as $_) {
-            $statuses[] = AccountRequests::send('POST', '/account/email/resend', [], $this->session)->getStatusCode();
-        }
+    describe('when asked too often', function () {
+        beforeEach(function () {
+            foreach (range(1, 3) as $_) {
+                AccountRequests::send('POST', '/account/email/resend', [], $this->session);
+            }
+        });
 
-        expect(end($statuses))->toBe(429);
+        it('sends only what the limit allows', function () {
+            expect(count($this->sent))->toBe(2);
+        });
+
+        it('says it has not sent more', function () {
+            expect(AccountRequests::send('GET', '/account/edit', [], $this->session)->getContent())->toContain("We haven&#039;t sent it");
+        });
     });
 });
 

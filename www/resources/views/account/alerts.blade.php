@@ -21,27 +21,15 @@ Add an alert
 <p class="!mx-0 mt-5 text-[15px] text-slate-600">You don't have any alerts yet. Add one below.</p>
 @else
 <p class="!mx-0 mt-5 text-[15px] leading-relaxed text-slate-600">You have {{ $active->count() }} {{ $active->count() === 1 ? 'alert' : 'alerts' }}.</p>
-<ul class="!m-0 !mt-2 list-none !p-0">
-@foreach ($active as $alert)
-@include('account.alert', ['alert' => $alert])
-@endforeach
-</ul>
+@include('account.alert-list', ['alerts' => $active, 'class' => '!m-0 !mt-2 list-none !p-0'])
 @endif
 @if ($unconfirmed->isNotEmpty())
 <h3 class="!m-0 !mb-2 !mt-8 !block !p-0 text-base font-bold text-slate-900">Waiting for you to confirm</h3>
-<ul class="!m-0 list-none !p-0">
-@foreach ($unconfirmed as $alert)
-@include('account.alert', ['alert' => $alert])
-@endforeach
-</ul>
+@include('account.alert-list', ['alerts' => $unconfirmed, 'class' => '!m-0 list-none !p-0'])
 @endif
 @if ($unsubscribed->isNotEmpty())
 <h3 class="!m-0 !mb-2 !mt-8 !block !p-0 text-base font-bold text-slate-900">Unsubscribed</h3>
-<ul class="!m-0 list-none !p-0">
-@foreach ($unsubscribed as $alert)
-@include('account.alert', ['alert' => $alert])
-@endforeach
-</ul>
+@include('account.alert-list', ['alerts' => $unsubscribed, 'class' => '!m-0 list-none !p-0'])
 @endif
 <div id="add-alert" class="mt-7 rounded-xl border border-solid border-slate-200 bg-slate-50 p-5">
 <h3 class="!m-0 !mb-2 !block !p-0 text-base font-bold text-slate-900">Add another alert</h3>

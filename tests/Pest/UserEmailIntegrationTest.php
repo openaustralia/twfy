@@ -138,6 +138,14 @@ describe('User', function () {
             expect(User::passwordProblem(str_repeat('a', User::PASSWORD_MIN)))->toBeNull();
         });
 
+        it('is null for a password of the maximum length', function () {
+            expect(User::passwordProblem(str_repeat('a', User::PASSWORD_MAX)))->toBeNull();
+        });
+
+        it('says why a password one character too long is not allowed', function () {
+            expect(User::passwordProblem(str_repeat('a', User::PASSWORD_MAX + 1)))->toBe('Please enter at most ' . User::PASSWORD_MAX . ' characters');
+        });
+
         it('says why a password one character short is not allowed', function () {
             expect(User::passwordProblem(str_repeat('a', User::PASSWORD_MIN - 1)))->toBe('Please enter at least ' . User::PASSWORD_MIN . ' characters');
         });

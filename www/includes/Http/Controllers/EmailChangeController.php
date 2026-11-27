@@ -34,9 +34,14 @@ class EmailChangeController {
      * Emails the link to the waiting address again.
      */
     public function resend(Request $request, EmailChange $emailChange): RedirectResponse {
-        $emailChange->resend($request->user());
+        $sent = $emailChange->resend($request->user());
 
-        return redirect()->route('account.edit')->with('status', "We've sent the link again. It may take a few minutes to arrive.");
+        return redirect()->route('account.edit')->with(
+            'status',
+            $sent
+              ? "We've sent the link again. It may take a few minutes to arrive."
+              : "We haven't sent it, because you've asked for a few emails lately. Please try again in " . EmailChange::SEND_MINUTES . ' minutes.'
+        );
     }
 
     /**

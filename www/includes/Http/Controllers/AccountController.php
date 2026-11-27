@@ -67,12 +67,15 @@ class AccountController {
         }
 
         $changingEmail = strcasecmp($input['email'], $user->email) !== 0;
+        $limited = false;
         if ($changingEmail && strcasecmp($input['email'], (string) $user->pending_email) !== 0) {
-            $emailChange->request($user, $input['email']);
+            $limited = !$emailChange->request($user, $input['email']);
         }
 
         $status = 'Your details have been saved.';
-        if ($changingEmail) {
+        if ($limited) {
+            $status .= " We haven't changed your email address, because you've asked for a few emails lately. Please try again in " . EmailChange::SEND_MINUTES . ' minutes.';
+        } elseif ($changingEmail) {
             $status .= " To change your email address, follow the link we've emailed to {$input['email']}.";
         } elseif ($user->pending_email !== null) {
             // Saved with the current address back in the box: the waiting change stays until they cancel it.

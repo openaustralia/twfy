@@ -176,6 +176,8 @@ describe('GlossaryController::pending()', function () {
 
     describe('to approve one', function () {
         beforeEach(function () {
+            // The submitter renames their account after submitting and before a moderator approves.
+            User::whereKey($this->submission->user_id)->update(['firstname' => 'Renamed', 'lastname' => 'Account']);
             $_GET['approve'] = (string) $this->submission->edit_id;
             $this->render(fn () => (new GlossaryController())->pending());
         });
@@ -188,7 +190,7 @@ describe('GlossaryController::pending()', function () {
             expect(Editqueue::find($this->submission->edit_id)->editor_id)->toBe(1);
         });
 
-        it('gives the term the name copied at submission, even if the account is renamed first', function () {
+        it('gives the term the name from submission', function () {
             $term = Glossary::approved()->where('glossary.title', 'Filibuster <b>')->first();
 
             expect($term->contributor_name)->toBe('Ada <Example>');

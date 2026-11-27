@@ -3,6 +3,7 @@
 namespace OpenAustralia\TWFY\Auth;
 
 use Illuminate\Http\Request;
+use OpenAustralia\TWFY\Models\User;
 
 /**
  * The password reset pages, drawn by the legacy PAGE class, for Fortify's reset routes to return.
@@ -56,11 +57,11 @@ class PasswordPages extends LegacyPage {
                 <?php $this->error($request, 'password'); ?>
                 <div class="row">
                     <span class="label"><label for="password">New password:</label></span>
-                    <span class="formw"><input type="password" name="password" id="password" maxlength="30" size="20" class="form"></span>
+                    <span class="formw"><input type="password" name="password" id="password" maxlength="<?php echo User::PASSWORD_MAX; ?>" size="20" class="form"></span>
                 </div>
                 <div class="row">
                     <span class="label"><label for="password_confirmation">Repeat password:</label></span>
-                    <span class="formw"><input type="password" name="password_confirmation" id="password_confirmation" maxlength="30" size="20" class="form"></span>
+                    <span class="formw"><input type="password" name="password_confirmation" id="password_confirmation" maxlength="<?php echo User::PASSWORD_MAX; ?>" size="20" class="form"></span>
                 </div>
                 <div class="row">
                     <span class="label">&nbsp;</span>

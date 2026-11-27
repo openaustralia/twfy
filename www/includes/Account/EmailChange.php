@@ -2,6 +2,7 @@
 
 namespace OpenAustralia\TWFY\Account;
 
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\URL;
 use OpenAustralia\TWFY\Models\Alert;
 use OpenAustralia\TWFY\Models\User;
@@ -20,27 +21,54 @@ class EmailChange {
     public const MINUTES = 60;
 
     /**
+     * How many emails one person may ask for in SEND_MINUTES, whether by changing the address or by asking for the
+     * link again. This stops anyone using the form to send mail to addresses that aren't theirs.
+     */
+    public const SENDS = 3;
+
+    public const SEND_MINUTES = 10;
+
+    /**
      * Starts a change: remembers the new address, emails it a link, and tells the current address.
      *
      * @param \OpenAustralia\TWFY\Models\User $user
      *   The user.
      * @param string $email
      *   The new address, already checked.
+     *
+     * @return bool
+     *   False if they have asked for too many emails lately, when nothing changes.
      */
-    public function request(User $user, string $email): void {
+    public function request(User $user, string $email): bool {
+        if (!$this->mayEmail($user)) {
+            return false;
+        }
+
         $user->forceFill(['pending_email' => $email])->save();
 
         $this->sendLink($user);
         $user->sendTemplate('email_change_notice', ['NEWEMAIL' => $email, 'ACCOUNTURL' => route('account.show')]);
+
+        return true;
     }
 
     /**
      * Emails the link to the waiting address again, if there is one.
+     *
+     * @return bool
+     *   False if they have asked for too many emails lately, when nothing is sent.
      */
-    public function resend(User $user): void {
-        if ($user->pending_email !== null) {
-            $this->sendLink($user);
+    public function resend(User $user): bool {
+        if ($user->pending_email === null) {
+            return true;
         }
+        if (!$this->mayEmail($user)) {
+            return false;
+        }
+
+        $this->sendLink($user);
+
+        return true;
     }
 
     /**
@@ -110,6 +138,13 @@ class EmailChange {
         $user->sendTemplate('email_changed_notice', ['EMAIL' => $old, 'NEWEMAIL' => $user->email], $old);
 
         return true;
+    }
+
+    /**
+     * Counts one email against the person's limit, and says whether they are within it.
+     */
+    private function mayEmail(User $user): bool {
+        return RateLimiter::attempt('email-change:' . $user->getKey(), self::SENDS, fn (): bool => true, self::SEND_MINUTES * 60);
     }
 
     /**

@@ -9,6 +9,7 @@ require_once __DIR__ . '/../../../bootstrap.php';
 require_once __DIR__ . '/../../../../www/includes/utility.php';
 require_once __DIR__ . '/../../Support/AccountRequests.php';
 
+use Illuminate\Support\Facades\RateLimiter;
 use OpenAustralia\TWFY\Account\EmailChange;
 use OpenAustralia\TWFY\Models\Alert;
 use OpenAustralia\TWFY\Models\Session;
@@ -38,6 +39,7 @@ beforeEach(function () {
 });
 
 afterEach(function () {
+    RateLimiter::clear('email-change:' . $this->user->getKey());
     unset($GLOBALS['mail_transport']);
     laravel_spec_new_request();
 });
@@ -197,6 +199,41 @@ describe('EmailChange', function () {
 
                 expect($this->change->confirm($this->user, $this->hash))->toBeFalse();
             });
+        });
+    });
+
+    describe('when they have asked for too many emails', function () {
+        beforeEach(function () {
+            foreach (['a', 'b', 'c'] as $letter) {
+                $this->change->request($this->user, "$letter.changespec@example.test");
+            }
+            $this->sent = [];
+        });
+
+        it('refuses another change', function () {
+            expect($this->change->request($this->user, 'd.changespec@example.test'))->toBeFalse();
+        });
+
+        it('keeps the address that was waiting', function () {
+            $this->change->request($this->user, 'd.changespec@example.test');
+
+            expect($this->user->fresh()->pending_email)->toBe('c.changespec@example.test');
+        });
+
+        it('sends no email for a refused change', function () {
+            $this->change->request($this->user, 'd.changespec@example.test');
+
+            expect($this->sent)->toBe([]);
+        });
+
+        it('refuses to send the link again', function () {
+            expect($this->change->resend($this->user))->toBeFalse();
+        });
+
+        it('sends nothing for a refused resend', function () {
+            $this->change->resend($this->user);
+
+            expect($this->sent)->toBe([]);
         });
     });
 

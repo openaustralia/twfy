@@ -1,3 +1,6 @@
+{{-- A list of alerts, each with the button that stops it or starts it again. $class styles the list. --}}
+<ul class="{{ $class }}">
+@foreach ($alerts as $alert)
 <li class="flex flex-wrap items-center gap-x-4 gap-y-3 border-0 border-t border-solid border-slate-200 py-3.5">
 @if ($alert['photoUrl'])
 <img src="{{ $alert['photoUrl'] }}" alt="" width="40" height="40" class="h-10 w-10 shrink-0 rounded-full bg-slate-200 object-cover object-top">
@@ -32,3 +35,5 @@
 </form>
 @endif
 </li>
+@endforeach
+</ul>

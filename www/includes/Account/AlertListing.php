@@ -30,6 +30,17 @@ class AlertListing {
     }
 
     /**
+     * Whether an alert is active, waiting to be confirmed, or unsubscribed.
+     */
+    private static function state(Alert $alert): string {
+        if (!$alert->confirmed) {
+            return 'unconfirmed';
+        }
+
+        return $alert->deleted ? 'unsubscribed' : 'active';
+    }
+
+    /**
      * One alert as a row.
      *
      * @return array{id: int, state: string, isKeyword: bool, label: string, initials: string, role: string|null, photoUrl: string|null, subtitle: string, searchPath: string, confirmPath: string}
@@ -53,7 +64,7 @@ class AlertListing {
 
         return [
             'id' => $alert->alert_id,
-            'state' => !$alert->confirmed ? 'unconfirmed' : ($alert->deleted ? 'unsubscribed' : 'active'),
+            'state' => self::state($alert),
             'isKeyword' => $keywords !== '',
             'label' => $label,
             'role' => $aboutPerson ? (new MemberProfile($person))->office() : null,

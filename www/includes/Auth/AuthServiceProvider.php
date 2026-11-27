@@ -34,7 +34,7 @@ class AuthServiceProvider extends ServiceProvider {
     public function boot(): void {
         $this->app->make('url')->forceRootUrl(config('app.url'));
         // Every new password follows Laravel's password rule, set once here.
-        Password::defaults(fn (): Password => Password::min(User::PASSWORD_MIN));
+        Password::defaults(fn (): Password => Password::min(User::PASSWORD_MIN)->max(User::PASSWORD_MAX));
         Fortify::authenticateUsing(new Authenticator());
         Fortify::resetUserPasswordsUsing(ResetUserPassword::class);
         Fortify::loginView(fn (Request $request): string => $this->app->make(LoginPage::class)->render([], $request->session()->get('status')));

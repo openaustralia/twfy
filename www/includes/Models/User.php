@@ -129,12 +129,18 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     public const PASSWORD_MIN = 8;
 
     /**
+     * The most characters in a password. bcrypt ignores everything past 72 bytes, so a longer one would only look
+     * stronger than it is.
+     */
+    public const PASSWORD_MAX = 72;
+
+    /**
      * Why a new password is not allowed, or null if it is.
      *
      * Applies Laravel's password rule, so the legacy pages follow the same rule as the Laravel ones.
      */
     public static function passwordProblem(string $password): ?string {
-        $validator = Validator::make(['password' => $password], ['password' => [Password::defaults()]], ['password.min' => 'Please enter at least :min characters']);
+        $validator = Validator::make(['password' => $password], ['password' => [Password::defaults()]], ['password.min' => 'Please enter at least :min characters', 'password.max' => 'Please enter at most :max characters']);
 
         return $validator->fails() ? $validator->errors()->first('password') : null;
     }

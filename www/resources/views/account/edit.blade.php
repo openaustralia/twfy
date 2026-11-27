@@ -60,8 +60,8 @@ Cancel this change
 <legend class="float-left mb-1 w-full p-0 text-xl font-bold text-slate-900">Change your password <span class="text-base font-normal text-slate-600">(optional)</span></legend>
 <p class="clear-both !m-0 text-[15px] leading-relaxed text-slate-700">Leave these blank to keep your current password. You don't need your current password to change it, and changing it signs you out of other browsers.</p>
 <div class="flex flex-wrap gap-5">
-<x-account.field name="password" label="New password" type="password" autocomplete="new-password" :hint="'At least ' . \OpenAustralia\TWFY\Models\User::PASSWORD_MIN . ' characters.'" />
-<x-account.field name="password_confirmation" label="Type it again" type="password" autocomplete="new-password" hint="So we know it's right." />
+<x-account.field name="password" label="New password" type="password" autocomplete="new-password" :maxlength="\OpenAustralia\TWFY\Models\User::PASSWORD_MAX" :hint="'At least ' . \OpenAustralia\TWFY\Models\User::PASSWORD_MIN . ' characters.'" />
+<x-account.field name="password_confirmation" label="Type it again" type="password" autocomplete="new-password" :maxlength="\OpenAustralia\TWFY\Models\User::PASSWORD_MAX" hint="So we know it's right." />
 </div>
 </fieldset>
 

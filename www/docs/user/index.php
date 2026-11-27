@@ -553,7 +553,7 @@ function display_form($details = [], $errors = []) {
         ?>
         <div class="row">
             <span class="label"><label for="password">Password:</label></span>
-            <span class="formw"><input type="password" name="password" id="password" value="" maxlength="30" size="20"
+            <span class="formw"><input type="password" name="password" id="password" value="" maxlength="<?php echo UserModel::PASSWORD_MAX; ?>" size="20"
                     class="form"> <small>At least <?php echo UserModel::PASSWORD_MIN; ?> characters</small></span>
         </div>
 
@@ -564,7 +564,7 @@ function display_form($details = [], $errors = []) {
         ?>
         <div class="row">
             <span class="label"><label for="password2">Repeat password:</label></span>
-            <span class="formw"><input type="password" name="password2" id="password2" value="" maxlength="30" size="20"
+            <span class="formw"><input type="password" name="password2" id="password2" value="" maxlength="<?php echo UserModel::PASSWORD_MAX; ?>" size="20"
                     class="form"></span>
         </div>
 

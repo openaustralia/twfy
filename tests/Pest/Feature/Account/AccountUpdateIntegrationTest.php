@@ -10,6 +10,7 @@ require_once __DIR__ . '/../../../../www/includes/utility.php';
 require_once __DIR__ . '/../../Support/AccountRequests.php';
 require_once __DIR__ . '/../../Support/MemberPageStubs.php';
 
+use Illuminate\Support\Facades\RateLimiter;
 use OpenAustralia\TWFY\Models\Session;
 use OpenAustralia\TWFY\Models\User;
 
@@ -51,6 +52,7 @@ beforeEach(function () {
 });
 
 afterEach(function () {
+    RateLimiter::clear('email-change:' . $this->user->getKey());
     unset($GLOBALS['mail_transport']);
     MemberPageStubs::restoreVisitor();
     laravel_spec_new_request();
@@ -133,6 +135,32 @@ describe('PUT /account', function () {
         });
     });
 
+    describe('after asking for too many emails', function () {
+        beforeEach(function () {
+            foreach (['a', 'b', 'c'] as $letter) {
+                ($this->save)(['email' => "$letter.updatespec@example.test"]);
+            }
+            $this->sent = [];
+            ($this->save)(['first_name' => 'Patricia', 'email' => 'd.updatespec@example.test']);
+        });
+
+        it('still saves the other details', function () {
+            expect($this->user->fresh()->firstname)->toBe('Patricia');
+        });
+
+        it('keeps the address that was waiting', function () {
+            expect($this->user->fresh()->pending_email)->toBe('c.updatespec@example.test');
+        });
+
+        it('emails nobody', function () {
+            expect($this->sent)->toBe([]);
+        });
+
+        it('says it has not changed the address', function () {
+            expect(($this->after)())->toContain("We haven&#039;t changed your email address");
+        });
+    });
+
     describe('with the current address in other letters', function () {
         it('changes nothing', function () {
             ($this->save)(['email' => 'PAT.updatespec@example.test']);
@@ -149,6 +177,15 @@ describe('PUT /account', function () {
             ($this->save)(['email' => 'new.updatespec@example.test']);
 
             expect($this->sent)->toBe([]);
+        });
+    });
+
+    describe('with a password of the longest allowed length', function () {
+        it('saves it', function () {
+            $longest = str_repeat('a', 72);
+            ($this->save)(['password' => $longest, 'password_confirmation' => $longest]);
+
+            expect(password_verify($longest, $this->user->fresh()->password))->toBeTrue();
         });
     });
 
@@ -194,6 +231,7 @@ describe('PUT /account', function () {
             'a bad email address' => [['first_name' => 'Patricia', 'email' => 'not-an-address']],
             'a short password' => [['first_name' => 'Patricia', 'password' => 'short', 'password_confirmation' => 'short']],
             'a password one character short' => [['first_name' => 'Patricia', 'password' => 'seven77', 'password_confirmation' => 'seven77']],
+            'a password one character too long' => [['first_name' => 'Patricia', 'password' => str_repeat('a', 73), 'password_confirmation' => str_repeat('a', 73)]],
             'passwords that differ' => [['first_name' => 'Patricia', 'password' => 'new-password', 'password_confirmation' => 'other-password']],
             'no news choice' => [['first_name' => 'Patricia', 'news' => '']],
         ]);
@@ -207,6 +245,7 @@ describe('PUT /account', function () {
             'no email address' => [['email' => ''], 'Enter your email address'],
             'a bad email address' => [['email' => 'not-an-address'], 'Enter an email address like name@example.com'],
             'a short password' => [['password' => 'short', 'password_confirmation' => 'short'], 'Your new password needs at least 8 characters'],
+            'a long password' => [['password' => str_repeat('a', 73), 'password_confirmation' => str_repeat('a', 73)], 'Your new password can have at most 72 characters'],
             'passwords that differ' => [['password' => 'new-password', 'password_confirmation' => 'other'], "The two passwords don&#039;t match"],
         ]);
 
