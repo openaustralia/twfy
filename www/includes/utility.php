@@ -848,7 +848,7 @@ function unsubscribe_headers($kind, $unsubscribe_url) {
 
 /**
  * Which kind of email a template produces: 'alert' (the daily mailout),
- * 'confirmation' (an alert or account sign-up), 'password' (a reset link),
+ * 'confirmation' (an alert, account sign-up or new email address), 'password' (a reset link),
  * or 'notice' (everything else).
  */
 function mail_kind_for_template($template) {
@@ -856,6 +856,7 @@ function mail_kind_for_template($template) {
         'alert_mailout' => 'alert',
         'alert_confirmation' => 'confirmation',
         'join_confirmation' => 'confirmation',
+        'email_change_confirm' => 'confirmation',
         'password_reset' => 'password',
     ];
     return $kinds[$template] ?? 'notice';

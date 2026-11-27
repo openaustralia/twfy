@@ -29,6 +29,8 @@ $app = Application::configure(basePath: dirname(__DIR__))
   ->withMiddleware(function (Middleware $middleware): void {
         // The legacy login form has no token until every legacy form gets one (openaustralia/openaustralia#1069).
         $middleware->validateCsrfTokens(except: ['user/login']);
+        // Signed-out people sign in, then come back to the page they asked for.
+        $middleware->redirectGuestsTo(fn (Request $request): string => route('login', $request->isMethod('GET') ? ['ret' => $request->getRequestUri()] : []));
         $middleware->redirectUsersTo(fn (Request $request): string => LoginResponse::destination($request));
     })
   ->withExceptions(function (Exceptions $exceptions): void {

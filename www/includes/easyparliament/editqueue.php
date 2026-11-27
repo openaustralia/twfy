@@ -16,6 +16,7 @@
  *
  * edit_id is the unique id of the EDITQUEUE record
  * user_id is the id of the user who submitted the edit
+ * contributor_name is a copy of that user's name when they submitted it
  * edit_type is the kind of edit being made
  * epobject_id_l and epobject_id_h hold both eopbject_ids in the case of a new association, with epobject_id_l holding the single epobject_id if the edit only applies to one object. If there's a completely new object being submitted, this is left blank until the content is approved and then filled in with the new object id.
  * time_start and time_end are for associations
@@ -37,6 +38,8 @@
  *
  * Moderators approve and decline submissions in the admin section, through the Editqueue model.
  */
+
+use OpenAustralia\TWFY\Models\Editqueue as EditqueueModel;
 
 /**
  * [TODO] what happens when two things with the same name are in the editqueue?
@@ -76,24 +79,21 @@ class EDITQUEUE {
 
         global $THEUSER;
 
-        $q = parlDBQuery("INSERT INTO editqueue
-						(user_id, edit_type, title, body, submitted)
-						VALUES
-						(?, ?, ?, ?, ?);",
-            $THEUSER->user_id(), $data['edit_type'], $data['title'], $data['body'], $data['posted']);
+        $edit = EditqueueModel::create([
+            'user_id' => $THEUSER->user_id(),
+            'edit_type' => $data['edit_type'],
+            'title' => $data['title'],
+            'body' => $data['body'],
+            'submitted' => $data['posted'],
+        ]);
 
-        if ($q->success()) {
-            // Set the object variables up.
-            $this->editqueue_id = $q->insert_id();
-            $this->title = $data['title'];
-            $this->body = $data['body'];
-            $this->posted = $data['posted'];
+        // Set the object variables up.
+        $this->editqueue_id = $edit->edit_id;
+        $this->title = $data['title'];
+        $this->body = $data['body'];
+        $this->posted = $data['posted'];
 
-            return $this->editqueue_id;
-
-        } else {
-            return false;
-        }
+        return $this->editqueue_id;
     }
 
 }

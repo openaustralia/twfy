@@ -135,6 +135,8 @@ function laravel_spec_new_request(): void {
     $app->forgetInstance('auth.driver');
     $app->make('session')->forgetDrivers();
     $app->forgetInstance('session.store');
+    // The redirector keeps the session store it was made with, so a flash would go to an earlier request's.
+    $app->forgetInstance('redirect');
     $app->make('cookie')->flushQueuedCookies();
 }
 

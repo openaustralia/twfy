@@ -4,7 +4,7 @@
 <x-slot:aside>
 <p class="!m-0 flex items-center gap-1.5 text-sm">
 <a href="{{ WEBPATH . $feed }}" class="inline-flex min-h-[44px] items-center gap-1.5 {{ $theme->link }} !underline" title="XML version of this person's recent appearances">
-<x-members.icon path="M4 11a9 9 0 0 1 9 9M4 4a16 16 0 0 1 16 16M5 20a1 1 0 1 0 0-2 1 1 0 0 0 0 2z" />
+<x-icon path="M4 11a9 9 0 0 1 9 9M4 4a16 16 0 0 1 16 16M5 20a1 1 0 1 0 0-2 1 1 0 0 0 0 2z" />
 RSS feed
 </a>
 <span>(<a href="{{ WEBPATH }}help/#rss" class="{{ $theme->link }} !underline" title="An explanation of what RSS feeds are for">?</a>)</span>
@@ -30,6 +30,6 @@ RSS feed
 </ul>
 @endif
 <a href="{{ MemberUrls::speeches($person->id) }}#n4" class="box-border inline-flex min-h-[44px] items-center gap-2.5 rounded border-2 border-solid {{ $theme->outline }} px-5 py-2.5 text-base font-semibold !no-underline">More of {{ $profile->name() }}’s recent appearances
-<x-members.icon path="M5 12h14M12 5l7 7-7 7" />
+<x-icon path="M5 12h14M12 5l7 7-7 7" />
 </a>
 </x-members.section>

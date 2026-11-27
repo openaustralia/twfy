@@ -65,7 +65,7 @@ class UsersController extends AdminController {
 
             $users = UserRoles::page($page, $role)->map(fn (User $user): array => [
                 'id' => $user->user_id,
-                'name' => self::fullName($user),
+                'name' => $user->fullName(),
                 'url' => $this->userUrl($user->user_id),
                 'email' => $user->email,
                 'role' => (string) $user->status,
@@ -76,10 +76,10 @@ class UsersController extends AdminController {
 
             $changes = UserRoles::recentChanges()->map(fn (UserRoleChange $change): array => [
                 'when' => (string) $change->created_at,
-                'user' => $change->user === null ? null : ['name' => self::fullName($change->user), 'url' => $this->userUrl($change->user->user_id)],
+                'user' => $change->user === null ? null : ['name' => $change->user->fullName(), 'url' => $this->userUrl($change->user->user_id)],
                 'from' => $change->from_role,
                 'to' => $change->to_role,
-                'by' => $change->changedBy === null ? null : ['name' => self::fullName($change->changedBy), 'url' => $this->userUrl($change->changedBy->user_id)],
+                'by' => $change->changedBy === null ? null : ['name' => $change->changedBy->fullName(), 'url' => $this->userUrl($change->changedBy->user_id)],
             ])->all();
 
             $result = self::RESULTS[(string) ($_GET['result'] ?? '')] ?? null;
@@ -142,13 +142,6 @@ class UsersController extends AdminController {
      */
     private static function pageNumber(): int {
         return max(1, (int) ($_GET['page'] ?? 1));
-    }
-
-    /**
-     * A user's first and last name.
-     */
-    private static function fullName(User $user): string {
-        return trim($user->firstname . ' ' . $user->lastname);
     }
 
 }

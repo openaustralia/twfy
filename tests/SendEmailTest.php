@@ -254,6 +254,10 @@ class SendEmailTest extends TestCase {
         yield ['alert_mailout', 'alert'];
         yield ['alert_confirmation', 'confirmation'];
         yield ['join_confirmation', 'confirmation'];
+        yield ['email_change_confirm', 'confirmation'];
+        yield ['email_change_notice', 'notice'];
+        yield ['email_changed_notice', 'notice'];
+        yield ['password_changed_notice', 'notice'];
         yield ['password_reset', 'password'];
         yield ['comment_deleted', 'notice'];
         yield ['comment_deleted_blank', 'notice'];

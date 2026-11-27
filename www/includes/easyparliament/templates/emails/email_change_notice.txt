@@ -1,0 +1,14 @@
+Subject: Someone asked to change your OpenAustralia.org email address
+Hi {FIRSTNAME},
+
+We got a request to change the email address on your OpenAustralia.org account from {EMAIL} to {NEWEMAIL}.
+
+Nothing changes until the link we sent to {NEWEMAIL} is followed. Until then, we'll keep sending your alerts to {EMAIL}.
+
+If you asked for this, there is nothing more to do. If you did not, sign in to cancel the change, and choose a new password:
+
+{ACCOUNTURL}
+
+Best wishes,
+
+- The OpenAustralia.org Volunteers

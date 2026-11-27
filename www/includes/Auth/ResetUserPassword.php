@@ -3,8 +3,8 @@
 namespace OpenAustralia\TWFY\Auth;
 
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rules\Password;
 use Laravel\Fortify\Contracts\ResetsUserPasswords;
-use OpenAustralia\TWFY\Models\User;
 
 /**
  * Sets the new password when someone follows the link in their reset email.
@@ -21,16 +21,12 @@ class ResetUserPassword implements ResetsUserPasswords {
      */
     public function reset($user, array $input): void {
         Validator::make($input, [
-            'password' => ['required', 'string', 'min:6', 'confirmed'],
+            'password' => ['required', 'string', Password::defaults(), 'confirmed'],
         ], [
             'password.required' => 'Please enter your new password',
-            'password.min' => 'Please enter at least six characters',
-            'password.confirmed' => 'The two passwords did not match. Please try again.',
         ])->validate();
 
-        $user->forceFill(['password' => User::hashPassword($input['password'])])->save();
-
-        $user->signOutEverywhere();
+        $user->changePassword($input['password']);
     }
 
 }

@@ -69,15 +69,6 @@ protected function tearDown(): void {
     }
 
     /**
-     * Test email_exists with non-existent email returns false.
-     */
-    public function test_email_exists_invalid(): void {
-        $user = new USER();
-        $uniqueEmail = 'nonexistent_' . time() . '@example.com';
-        $this->assertFalse($user->email_exists($uniqueEmail));
-    }
-
-    /**
      * Test possible_statuses returns array of valid statuses.
      */
     public function test_possible_statuses(): void {

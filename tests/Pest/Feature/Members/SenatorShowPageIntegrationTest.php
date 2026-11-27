@@ -10,6 +10,7 @@ require_once __DIR__ . '/../../../../www/includes/utility.php';
 require_once __DIR__ . '/../../Support/MemberFixtures.php';
 require_once __DIR__ . '/../../Support/MemberPageStubs.php';
 
+use OpenAustralia\TWFY\Icons;
 use OpenAustralia\TWFY\Models\Alert;
 use OpenAustralia\TWFY\Models\Hansard;
 use OpenAustralia\TWFY\Models\Member;
@@ -113,6 +114,10 @@ describe('GET /senator/{name}/{state}', function () {
             expect(senator_page_get()->getContent())->toContain('action="/alert/delete/" method="post"', 'value="' . $this->alert->alert_id . '-spectoken"');
         });
 
+        it('puts a crossed bell on Unsubscribe', function () {
+            expect(senator_page_get()->getContent())->toContain('d="' . Icons::BELL_OFF . '"');
+        });
+
         describe('who unsubscribed', function () {
             it('offers the alert again', function () {
                 $this->alert->update(['deleted' => true]);
@@ -174,6 +179,10 @@ describe('GET /senator/{name}/{state}', function () {
 
     it('offers email alerts', function () {
         expect(senator_page_get()->getContent())->toContain('href="/alert/?only=1&amp;pid=97401"');
+    });
+
+    it('puts a bell on the alert button', function () {
+        expect(senator_page_get()->getContent())->toContain('d="' . Icons::BELL . '"');
     });
 
     it('starts no session', function () {

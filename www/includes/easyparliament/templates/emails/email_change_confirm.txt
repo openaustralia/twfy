@@ -1,0 +1,14 @@
+Subject: Confirm your new OpenAustralia.org email address
+Hi {FIRSTNAME},
+
+We got a request to change the email address on your OpenAustralia.org account to {NEWEMAIL}.
+
+To confirm the change, follow this link within the next {MINUTES} minutes:
+
+{CONFIRMURL}
+
+If you did not ask for this, you can ignore this email and your email address will stay as it is.
+
+Best wishes,
+
+- The OpenAustralia.org Volunteers

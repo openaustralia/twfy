@@ -4,6 +4,7 @@
  * @file
  */
 
+use OpenAustralia\TWFY\Models\User as UserModel;
 use OpenAustralia\TWFY\Parliament\MemberFacts;
 use OpenAustralia\TWFY\Parliament\MemberLinks;
 use OpenAustralia\TWFY\Parliament\MemberProfile;
@@ -668,7 +669,7 @@ class PAGE {
             $tab_class = $is_current
                 ? 'on !text-white border-0 border-b-2 border-solid ' . $underline
                 : 'border-0 border-b-2 border-solid border-transparent !text-slate-200 hover:!text-white';
-            $class = ' class="inline-block rounded px-3 py-1.5 font-semibold !no-underline ' . $tab_class . '"';
+            $class = ' class="inline-block rounded px-3 py-1.5 text-sm font-semibold !no-underline ' . $tab_class . '"';
             $aria_current = $is_current ? ' aria-current="page"' : '';
 
             $top_links[] = '<a href="' . $URL->generate() . '" title="' . $title . '"' . $class . $aria_current . '>' . $text . '</a>';
@@ -878,7 +879,7 @@ class PAGE {
                 $logoutclass = ' class="on inline-block rounded px-2 py-1 text-sm font-semibold !no-underline !text-white border-0 border-b-2 border-solid border-teal-400" aria-current="page"';
             }
 
-            $username = $THEUSER->firstname() . ' ' . $THEUSER->lastname();
+            $username = trim($THEUSER->firstname() . ' ' . $THEUSER->lastname());
 
         } else {
             // User logged out.
@@ -2390,7 +2391,7 @@ class PAGE {
                         ?>
                         <div class="row">
                             <span class="label"><label for="password">Password:</label></span>
-                            <span class="formw"><input type="password" name="password" id="password" maxlength="30" size="20"
+                            <span class="formw"><input type="password" name="password" id="password" maxlength="<?php echo UserModel::PASSWORD_MAX; ?>" size="20"
                                     class="form"></span>
                         </div>
 
@@ -2622,17 +2623,7 @@ class PAGE {
 
         $term['body'] = $GLOSSARY->glossarise($term['body'], 0, 1);
 
-        if (isset($term['user_id'])) {
-            $URL = new URL('userview');
-            $URL->insert(['u' => $term['user_id']]);
-            $user_link = $URL->generate('url');
-
-            $user_details = "\t\t\t\t<p><small>contributed by user <a href=\"" . $user_link . "\">" . $term['firstname'] . " " . $term['lastname'] . "</a></small></p>\n";
-        } else {
-            $user_details = "";
-        }
-
-        print "\t\t\t\t<p class=\"glossary-body\">" . $term['body'] . "</p>\n" . $user_details;
+        print "\t\t\t\t<p class=\"glossary-body\">" . $term['body'] . "</p>\n";
     }
 
     /**

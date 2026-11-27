@@ -25,8 +25,8 @@ uses(AdminControllerTestCase::class);
  */
 function public_glossary_term(string $title, string $body = 'A term.', string $first = 'Ada'): Glossary {
     $user = User::create(['firstname' => $first, 'lastname' => '<Example>', 'email' => 'ada' . random_int(1000, 9999) . '@example.test']);
-    $term = Glossary::create(['title' => $title, 'body' => $body, 'type' => 2, 'visible' => true]);
-    Editqueue::create(['user_id' => $user->user_id, 'edit_type' => 2, 'glossary_id' => $term->glossary_id, 'title' => $title, 'body' => $body, 'submitted' => '2026-11-01 10:00:00', 'approved' => true]);
+    $term = Glossary::create(['title' => $title, 'body' => $body, 'contributor_name' => $user->fullName(), 'type' => 2, 'visible' => true]);
+    Editqueue::create(['user_id' => $user->user_id, 'contributor_name' => $user->fullName(), 'edit_type' => 2, 'glossary_id' => $term->glossary_id, 'title' => $title, 'body' => $body, 'submitted' => '2026-11-01 10:00:00', 'approved' => true]);
     return $term;
 }
 
@@ -157,8 +157,12 @@ describe('GlossaryController::index() for a term with unsafe text', function () 
         expect($this->html)->not->toContain('<script>');
     });
 
-    it('escapes the contributor\'s name', function () {
-        expect($this->html)->toContain('&lt;img src=x onerror=alert(3)&gt; &lt;Example&gt;');
+    it('shows the saved name, escaped', function () {
+        expect($this->html)->toContain('Contributed by &lt;img src=x onerror=alert(3)&gt; &lt;Example&gt;');
+    });
+
+    it('does not link to the contributor', function () {
+        expect($this->html)->not->toContain('user/?u=')->not->toContain('/account');
     });
 });
 
@@ -268,21 +272,32 @@ describe('GlossaryController::index() for a term sent as a list', function () {
     });
 });
 
-describe('GlossaryController::index() for a term approved from two contributors', function () {
+describe('GlossaryController::index() for a term whose contributor has since renamed the account', function () {
     beforeEach(function () {
-        $term = public_glossary_term('Filibuster', 'A long speech.', 'Later');
-        $earlier = User::create(['firstname' => 'Earlier', 'lastname' => 'Example', 'email' => 'earlier' . random_int(1000, 9999) . '@example.test']);
-        Editqueue::create(['user_id' => $earlier->user_id, 'edit_type' => 2, 'glossary_id' => $term->glossary_id, 'title' => 'Filibuster', 'body' => 'A long speech.', 'submitted' => '2026-10-01 10:00:00', 'approved' => true]);
+        $term = public_glossary_term('Filibuster', 'A long speech.', 'Original');
+        User::where('user_id', Editqueue::where('glossary_id', $term->glossary_id)->value('user_id'))->update(['firstname' => 'Renamed', 'lastname' => 'Account']);
         $_GET['gl'] = (string) $term->glossary_id;
         $this->html = $this->render(fn () => (new GlossaryController())->index());
     });
 
-    it('credits the earliest submission', function () {
-        expect($this->html)->toContain('>Earlier Example</a>');
+    it('credits the name from submission', function () {
+        expect($this->html)->toContain('Contributed by Original &lt;Example&gt;');
     });
 
-    it('does not credit the later one', function () {
-        expect($this->html)->not->toContain('Later');
+    it('does not show the new account name', function () {
+        expect($this->html)->not->toContain('Renamed');
+    });
+});
+
+describe('GlossaryController::index() for a term with no copied name', function () {
+    it('shows no credit', function () {
+        $term = public_glossary_term('Filibuster');
+        $term->update(['contributor_name' => null]);
+        $_GET['gl'] = (string) $term->glossary_id;
+
+        $html = $this->render(fn () => (new GlossaryController())->index());
+
+        expect($html)->not->toContain('Contributed by');
     });
 });
 

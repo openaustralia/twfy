@@ -24,6 +24,9 @@ RewriteRule ^/U/(.*)$     /user/confirm/index.php?t=$1 [QSA]
 RewriteRule ^/user/login/?$ /laravel.php [L]
 RewriteRule ^/user/password(/.*)?$ /laravel.php [L]
 
+# Someone's own details, alerts and change of email address, which Laravel handles
+RewriteRule ^/account(/.*)?$ /laravel.php [L]
+
 # Postal delivery webhooks. Mapped to the file so a POST isn't redirected to a
 # trailing slash, which would drop its body.
 RewriteRule ^/postal/event/?$ /postal/event.php [QSA]

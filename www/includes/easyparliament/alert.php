@@ -37,26 +37,7 @@
 
 use Illuminate\Database\Capsule\Manager as DB;
 use Illuminate\Database\QueryException;
-use OpenAustralia\TWFY\EmailSuppressions;
 use OpenAustralia\TWFY\Models\Alert as AlertModel;
-
-/**
- * The notice for a signed-in person whose address is suppressed, or an empty
- * string if it isn't. Plain and neutral, with the date emails started
- * returning and how to resume. It never shows the receiving server's reply.
- */
-function alert_suppression_notice(string $email): string {
-    $suppression = EmailSuppressions::current($email);
-    if ($suppression === null) {
-        return '';
-    }
-
-    $since = date(LONGDATEFORMAT, strtotime($suppression->suppressed_at));
-    return '<p class="alert-suppression-notice">'
-        . 'Emails to this address have been returning as undeliverable since ' . htmlspecialchars($since) . ', so your alerts are paused. '
-        . 'To resume them, you can change the email address on your account, or, once the problem is fixed, '
-        . '<a href="' . WEBPATH . 'contact/">contact us</a> and we will turn them back on.</p>';
-}
 
 /**
  * CLASS:  ALERT.

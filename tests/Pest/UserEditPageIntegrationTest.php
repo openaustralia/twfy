@@ -2,13 +2,14 @@
 
 /**
  * @file
- * Page-level specs for /user/ when a signed-in user changes their details.
- * Uses a fictional person. The page runs in another process against the
+ * Page-level specs for /user/, which joins people and lets an administrator edit another user. Someone's own
+ * details are at /account/. Uses fictional people. The page runs in another process against the
  * committed database, so the row is real and removed afterwards.
  */
 
 require_once __DIR__ . '/../PageRenderingIntegrationTestCase.php';
 
+use OpenAustralia\TWFY\Models\Alert;
 use OpenAustralia\TWFY\Models\User;
 use OpenAustralia\TWFY\UserRoles;
 
@@ -18,10 +19,11 @@ const USER_EDIT_PAGE = __DIR__ . '/../../www/docs/user/index.php';
 const USER_EDIT_PAGE_LASTNAME = 'Usereditspec';
 
 afterEach(function () {
+    Alert::where('email', 'like', '%.usereditspec@example.test')->delete();
     User::where('lastname', USER_EDIT_PAGE_LASTNAME)->delete();
 });
 
-describe('/user/ submitted when signed in', function () {
+describe('/user/ for someone\'s own details', function () {
     beforeEach(function () {
         $this->hash = password_hash('Old-passw0rd', PASSWORD_DEFAULT);
         $this->bea = User::create([
@@ -34,87 +36,42 @@ describe('/user/ submitted when signed in', function () {
         $this->cookies = $this->signedInCookies($this->bea);
         $this->token = UserRoles::token($this->bea->user_id, $this->hash, 'user-edit');
         $this->form = [
-            'pg' => 'edit',
             'submitted' => 'true',
             'firstname' => 'Bea',
             'lastname' => USER_EDIT_PAGE_LASTNAME,
             'em' => 'new.usereditspec@example.test',
             'password' => 'New-passw0rd',
             'password2' => 'New-passw0rd',
-            'url' => '',
             'constituency' => '',
         ];
         $this->stored = fn (): User => User::findOrFail($this->bea->user_id);
     });
 
-    // What a link on another site, or an image tag, makes the browser send.
     describe('with a GET', function () {
-        it('answers 403', function (string $pg) {
-            $form = ['pg' => $pg] + $this->form;
-
-            expect($this->renderPage(USER_EDIT_PAGE, 'GET', $form, [], $this->cookies)['status'])->toBe(403);
+        it('redirects to the account pages', function (string $pg) {
+            expect($this->renderPage(USER_EDIT_PAGE, 'GET', ['pg' => $pg], [], $this->cookies)['status'])->toBe(301);
         })->with(['edit', 'editother', '']);
 
-        it('leaves the email alone', function (string $pg) {
-            $form = ['pg' => $pg] + $this->form;
-            $this->renderPage(USER_EDIT_PAGE, 'GET', $form, [], $this->cookies);
+        it('shows no form', function (string $pg) {
+            expect($this->renderPage(USER_EDIT_PAGE, 'GET', ['pg' => $pg], [], $this->cookies)['output'])->toBe('');
+        })->with(['edit', 'editother', '']);
+    });
+
+    describe('with a POST of the old form, and their token', function () {
+        it('redirects', function () {
+            expect($this->renderPage(USER_EDIT_PAGE, 'POST', [], ['pg' => 'edit', 'token' => $this->token] + $this->form, $this->cookies)['status'])->toBe(301);
+        });
+
+        it('leaves the email alone', function () {
+            $this->renderPage(USER_EDIT_PAGE, 'POST', [], ['pg' => 'edit', 'token' => $this->token] + $this->form, $this->cookies);
 
             expect(($this->stored)()->email)->toBe('bea.usereditspec@example.test');
-        })->with(['edit', 'editother', '']);
+        });
 
         it('leaves the password alone', function () {
-            $this->renderPage(USER_EDIT_PAGE, 'GET', $this->form, [], $this->cookies);
+            $this->renderPage(USER_EDIT_PAGE, 'POST', [], ['pg' => 'edit', 'token' => $this->token] + $this->form, $this->cookies);
 
             expect(($this->stored)()->password)->toBe($this->hash);
-        });
-
-        it('ignores a token in the URL', function () {
-            $this->renderPage(USER_EDIT_PAGE, 'GET', ['token' => $this->token] + $this->form, [], $this->cookies);
-
-            expect(($this->stored)()->email)->toBe('bea.usereditspec@example.test');
-        });
-    });
-
-    describe('with a POST and no token', function () {
-        it('answers 403', function () {
-            expect($this->renderPage(USER_EDIT_PAGE, 'POST', [], $this->form, $this->cookies)['status'])->toBe(403);
-        });
-
-        it('leaves the email alone', function () {
-            $this->renderPage(USER_EDIT_PAGE, 'POST', [], $this->form, $this->cookies);
-
-            expect(($this->stored)()->email)->toBe('bea.usereditspec@example.test');
-        });
-    });
-
-    describe('with a POST and a wrong token', function () {
-        it('leaves the email alone', function () {
-            $this->renderPage(USER_EDIT_PAGE, 'POST', [], ['token' => 'forged'] + $this->form, $this->cookies);
-
-            expect(($this->stored)()->email)->toBe('bea.usereditspec@example.test');
-        });
-    });
-
-    describe('with a POST, token not a string', function () {
-        it('runs without error', function () {
-            expect($this->renderPage(USER_EDIT_PAGE, 'POST', [], ['token' => ['forged']] + $this->form, $this->cookies)['exit'])->toBe(0);
-        });
-    });
-
-    describe('with a POST, the roles form token', function () {
-        it('leaves the email alone', function () {
-            $token = UserRoles::token($this->bea->user_id, $this->hash);
-            $this->renderPage(USER_EDIT_PAGE, 'POST', [], ['token' => $token] + $this->form, $this->cookies);
-
-            expect(($this->stored)()->email)->toBe('bea.usereditspec@example.test');
-        });
-    });
-
-    describe('with a POST and their token', function () {
-        it('changes the email', function () {
-            $this->renderPage(USER_EDIT_PAGE, 'POST', [], ['token' => $this->token] + $this->form, $this->cookies);
-
-            expect(($this->stored)()->email)->toBe('new.usereditspec@example.test');
         });
     });
 });
@@ -158,18 +115,9 @@ describe('/user/ edit forms', function () {
             'lastname' => USER_EDIT_PAGE_LASTNAME,
             'em' => 'max.changed.usereditspec@example.test',
             'status' => 'User',
-            'url' => '',
             'constituency' => '',
         ];
         $this->maxEmail = fn (): string => User::findOrFail($this->max->user_id)->email;
-    });
-
-    describe('the self-edit form', function () {
-        it('contains the token', function () {
-            $page = $this->renderPage(USER_EDIT_PAGE, 'GET', ['pg' => 'edit'], [], $this->cookies);
-
-            expect($page['output'])->toContain('name="token" value="' . ($this->tokenFor)(null) . '"');
-        });
     });
 
     describe('the other-user edit form as a Superuser', function () {
@@ -199,6 +147,43 @@ describe('/user/ edit forms', function () {
                 $this->renderPage(USER_EDIT_PAGE, 'POST', [], $post, $this->cookies);
 
                 expect(($this->maxEmail)())->toBe('max.changed.usereditspec@example.test');
+            });
+        });
+
+        describe('with an email address another user has', function () {
+            it('keeps the old email', function () {
+                $post = ['em' => 'ari.usereditspec@example.test'] + ($this->form)($this->max->user_id, ($this->tokenFor)($this->max->user_id));
+                $this->renderPage(USER_EDIT_PAGE, 'POST', [], $post, $this->cookies);
+
+                expect(($this->maxEmail)())->toBe('max.usereditspec@example.test');
+            });
+
+            it('says so', function () {
+                $post = ['em' => 'ari.usereditspec@example.test'] + ($this->form)($this->max->user_id, ($this->tokenFor)($this->max->user_id));
+
+                expect($this->renderPage(USER_EDIT_PAGE, 'POST', [], $post, $this->cookies)['output'])->toContain('Someone else has already joined with this email address');
+            });
+        });
+
+        describe('with a new email address', function () {
+            beforeEach(function () {
+                $this->maxAlert = Alert::create(['email' => 'max.usereditspec@example.test', 'criteria' => 'usereditspec', 'registrationtoken' => 'x', 'confirmed' => true]);
+                $this->bossAlert = Alert::create(['email' => 'bea.usereditspec@example.test', 'criteria' => 'usereditspec', 'registrationtoken' => 'x', 'confirmed' => true]);
+                $this->max->update(['pending_email' => 'waiting.usereditspec@example.test']);
+                $post = ($this->form)($this->max->user_id, ($this->tokenFor)($this->max->user_id));
+                $this->renderPage(USER_EDIT_PAGE, 'POST', [], $post, $this->cookies);
+            });
+
+            it('cancels a change waiting for the old one', function () {
+                expect($this->max->fresh()->pending_email)->toBeNull();
+            });
+
+            it('moves the edited user\'s alerts', function () {
+                expect($this->maxAlert->fresh()->email)->toBe('max.changed.usereditspec@example.test');
+            });
+
+            it('leaves the admin\'s alerts alone', function () {
+                expect($this->bossAlert->fresh()->email)->toBe('bea.usereditspec@example.test');
             });
         });
 

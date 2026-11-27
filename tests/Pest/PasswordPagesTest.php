@@ -123,6 +123,12 @@ describe('PasswordPages', function () {
     });
 
     describe('resetForm()', function () {
+        it('takes passwords up to the maximum', function () {
+            $html = (new PasswordPages())->resetForm(pages_spec_request('/user/password/reset/abc123'));
+
+            expect($html)->toContain('name="password" id="password" maxlength="72"');
+        });
+
         it('carries the token from the link', function () {
             $html = (new PasswordPages())->resetForm(pages_spec_request('/user/password/reset/abc123'));
 

@@ -106,6 +106,30 @@ describe('MemberProfile::heading()', function () {
     })->with('headings');
 });
 
+describe('MemberProfile::office()', function () {
+    dataset('offices', [
+        'a sitting Senator' => [2, '9999-12-31', 'Senator for Tasmania'],
+        'a sitting Representative' => [1, '9999-12-31', 'MP for Tasmania'],
+        'a former Senator' => [2, '2025-06-30', 'Former Senator for Tasmania'],
+        'a former Representative' => [1, '2025-06-30', 'Former MP for Tasmania'],
+    ]);
+
+    it('names the office and where it is for', function (int $house, string $left, string $office) {
+        profile_term(97301, ['house' => $house, 'left_house' => $left]);
+
+        expect(profile()->office())->toBe($office);
+    })->with('offices');
+
+    describe('with someone who left the House and now sits in the Senate', function () {
+        it('names the Senate', function () {
+            profile_term(97301);
+            profile_house_term();
+
+            expect(profile()->office())->toBe('Senator for Tasmania');
+        });
+    });
+});
+
 describe('MemberProfile::formerly()', function () {
     describe('with a sitting Senator', function () {
         it('is empty', function () {

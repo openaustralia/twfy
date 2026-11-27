@@ -80,6 +80,17 @@ final class MemberProfile {
     }
 
     /**
+     * Their latest office, such as "MP for Wills" or "Senator for Victoria", with "Former" first once they have left.
+     */
+    public function office(): string {
+        $term = $this->person->latest();
+        $house = House::from($term->house);
+        $office = ($house === House::Senate ? 'Senator' : 'MP') . ' for ' . $term->display_constituency;
+
+        return $this->person->sitsIn($house) ? $office : "Former $office";
+    }
+
+    /**
      * The houses they have left, such as "Former Senator", or null.
      */
     public function formerly(): ?string {

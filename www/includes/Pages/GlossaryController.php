@@ -47,8 +47,7 @@ class GlossaryController extends PageController {
                 'term' => [
                     'title' => (string) $term->title,
                     'body_html' => GlossaryBody::html((string) $term->body, (int) $term->glossary_id),
-                    'contributor' => trim($term->firstname . ' ' . $term->lastname),
-                    'contributor_url' => WEBPATH . 'user/?u=' . $term->user_id,
+                    'contributor' => (string) $term->contributor_name,
                     'search_url' => GlossaryUrls::search((string) $term->title),
                 ],
                 'previous' => ['title' => (string) $previous->title, 'url' => GlossaryUrls::term($previous->glossary_id)],

@@ -131,7 +131,6 @@ protected function tearDown(): void {
             'firstname' => 'Confirm',
             'lastname' => 'User',
             'email' => $email,
-            'emailpublic' => 0,
             'constituency' => $constituency,
             'url' => '',
             'password' => password_hash('oldpassword123', PASSWORD_DEFAULT),

@@ -41,7 +41,6 @@
  * send_confirmation_email()    Done after add()ing the user.
  * update_other_user()    Update the data of another user.
  * id_exists()            Checks if a user_id is valid.
- * email_exists()        Checks if a user exists with a certain email address.
  * is_able_to()        Is the user allowed to perform this action?
  * possible_statuses()    Return an array of the possible security statuses for users.
  * Accessor functions for each object variable (eg, user_id()  ).
@@ -53,13 +52,13 @@
  * login()                Log the user in.
  * logout()            Log the user out.
  * confirm()            With the correct token, confirms the user then logs them in.
- * update_self()        Update the user's own data in the DB.
  */
 
 require_once __DIR__ . '/../request.php';
 
 use Illuminate\Database\Capsule\Manager as DB;
 use OpenAustralia\TWFY\Auth\LoginResponse;
+use OpenAustralia\TWFY\Models\Alert as AlertModel;
 use OpenAustralia\TWFY\Models\User as UserModel;
 
 /**
@@ -81,12 +80,7 @@ class USER {
      */
     public $password = "";
     public $email = "";
-    /**
-     * Boolean - can other users see this user's email?
-     */
-    public $emailpublic = "";
     public $constituency = "";
-    public $url = "";
     /**
      * Last time the logged-in user loaded a page (GMT).
      */
@@ -118,7 +112,6 @@ class USER {
     // * Add the appropriate code to $this->add()
     // * Add the appropriate code to $this->_update()
     // * Add accessor functions way down below...
-    // * Alter THEUSER->update_self() to update with the new vars, if appropriate.
 
     /**
      * Change things in the add/edit/view user page.
@@ -144,9 +137,7 @@ class USER {
             $this->lastname = $user->lastname;
             $this->password = $user->password;
             $this->email = $user->email;
-            $this->emailpublic = $user->emailpublic == 1 ? true : false;
             $this->constituency = $user->constituency;
-            $this->url = $user->url;
             $this->lastvisit = $user->lastvisit;
             $this->registrationtime = $user->registrationtime;
             $this->registrationip = $user->registrationip;
@@ -195,16 +186,12 @@ class USER {
 
         $optin = !empty($details["optin"]) ? 1 : 0;
 
-        $emailpublic = !empty($details["emailpublic"]) ? 1 : 0;
-
         try {
             $user = UserModel::create([
                 'firstname' => $details["firstname"],
                 'lastname' => $details["lastname"],
                 'email' => $details["email"],
-                'emailpublic' => $emailpublic,
                 'constituency' => $details["constituency"],
-                'url' => $details["url"],
                 'password' => $passwordforDB,
                 'optin' => $optin,
                 'status' => $details["status"],
@@ -302,7 +289,8 @@ class USER {
         ];
 
         $merge = [
-            'FIRSTNAME' => $details['firstname'],
+            // The greeting uses the first name, or the last name for someone who gave only that.
+            'FIRSTNAME' => $details['firstname'] !== '' ? $details['firstname'] : $details['lastname'],
             'LASTNAME' => $details['lastname'],
             'CONFIRMURL' => $confirmurl
         ];
@@ -359,16 +347,6 @@ class USER {
         // Returns true if there's a user with this user_id.
 
         return UserModel::where('user_id', $user_id)->exists();
-
-    }
-
-    /**
-     *
-     */
-    public function email_exists(string $email): bool {
-        // Returns true if there's a user with this email address.
-
-        return $email !== '' && UserModel::where('email', $email)->exists();
 
     }
 
@@ -575,22 +553,8 @@ class USER {
     /**
      *
      */
-    public function emailpublic() {
-        return $this->emailpublic;
-    }
-
-    /**
-     *
-     */
     public function constituency() {
         return $this->constituency;
-    }
-
-    /**
-     *
-     */
-    public function url() {
-        return $this->url;
     }
 
     /**
@@ -680,17 +644,23 @@ class USER {
     public function _update($details) {
         // Update a user's info.
         // DO NOT call this function direct.
-        // Call either $this->update_other_user() or $this->update_self().
+        // Call $this->update_other_user().
 
         // $details is an array like that in $this->add().
         global $PAGE;
 
-        // Update email alerts if email address changed.
-        if ($this->email != $details['email']) {
-            DB::table('alerts')->where('email', $this->email)->update(['email' => $details['email']]);
+        // Update email alerts if the email address of the user being changed is different.
+        $oldEmail = UserModel::find($details["user_id"])?->email;
+        $emailChanged = $oldEmail !== null && $oldEmail != $details['email'];
+        if ($emailChanged) {
+            AlertModel::where('email', $oldEmail)->update(['email' => $details['email']]);
         }
 
         $update_data = [];
+        if ($emailChanged) {
+            // A change the person asked for was from the old address, so a link waiting for it must not work now.
+            $update_data['pending_email'] = null;
+        }
 
         if (isset($details["password"]) && $details["password"] != "") {
             // The password is being updated.
@@ -723,22 +693,16 @@ class USER {
         }
 
         // Convert internal true/false variables to MySQL BOOL 1/0 variables.
-        $emailpublic = !empty($details["emailpublic"]) ? 1 : 0;
         $optin = !empty($details["optin"]) ? 1 : 0;
 
         $update_data += [
             'firstname' => $details["firstname"],
             'lastname' => $details["lastname"],
             'email' => $details["email"],
-            'emailpublic' => $emailpublic,
             'constituency' => $details["constituency"],
-            'url' => $details["url"],
             'optin' => $optin,
         ];
 
-        // If we're returning to
-        // $this->update_self() then $THEUSER will have its variables
-        // updated if everything went well.
         try {
             UserModel::where('user_id', $details["user_id"])->update($update_data);
 
@@ -1019,52 +983,6 @@ class THEUSER extends USER {
         if (!headers_sent()) {
             setcookie(CONSTITUENCY_COOKIE, '', time() - 3600, '/', COOKIEDOMAIN);
         }
-    }
-
-    /**
-     *
-     */
-    public function update_self($details) {
-        // If the user wants to update their details, call this function.
-        // It checks that they're logged in before letting them.
-
-        // $details is an array like that in $this->add().
-
-        global $THEUSER;
-
-        if ($this->isloggedin()) {
-
-            $details["user_id"] = $this->user_id;
-
-            $newdetails = $this->_update($details);
-
-            // $newdetails will be an array of details if all went well,
-            // false otherwise.
-
-            if ($newdetails) {
-                // The user's data was updated, so we'll change the object
-                // variables accordingly.
-
-                $this->firstname = $newdetails["firstname"];
-                $this->lastname = $newdetails["lastname"];
-                $this->email = $newdetails["email"];
-                $this->emailpublic = $newdetails["emailpublic"];
-                $this->constituency = $newdetails["constituency"];
-                $this->url = $newdetails["url"];
-                $this->optin = $newdetails["optin"];
-                if (array_key_exists("password", $newdetails) && $newdetails["password"] != "") {
-                    $this->password = $newdetails["password"];
-                }
-
-                return true;
-            } else {
-                return false;
-            }
-
-        } else {
-            return false;
-        }
-
     }
 
 }

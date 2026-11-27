@@ -27,6 +27,8 @@
  * Either way, we print the forms.
  */
 
+use OpenAustralia\TWFY\Models\User as UserModel;
+
 include_once __DIR__ . '/../../includes/easyparliament/init.php';
 include_once __DIR__ . '/../../includes/easyparliament/member.php';
 
@@ -174,19 +176,8 @@ if (is_numeric(get_http_var('m'))) {
             $MEMBER = new MEMBER(['constituency' => $constituency]);
             if ($MEMBER->person_id()) {
                 if ($THEUSER->isloggedin()) {
-                    // Updates too much in the database to make one change.
-                    $details = [
-                        'firstname' => $THEUSER->firstname(),
-                        'lastname' => $THEUSER->lastname(),
-                        'email' => $THEUSER->email(),
-                        'emailpublic' => $THEUSER->emailpublic(),
-                        'postcode' => $pc,
-                        'constituency' => $constituency,
-                        'url' => $THEUSER->url(),
-                        'optin' => $THEUSER->optin()
-                    ];
-                    $success = $THEUSER->update_self($details);
-                    // TODO: Check success of database update.
+                    // Remember it on their account, so their own MP is there next time.
+                    UserModel::whereKey($THEUSER->user_id())->update(['constituency' => $constituency]);
                 } else {
                     // This will cookie the postcode.
                     $THEUSER->set_constituency_cookie($constituency);

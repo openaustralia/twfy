@@ -2,16 +2,11 @@
 
 /**
  * @file
- * The user comes to this page after clicking an 'add a comment' link.
+ * The user comes to this page after clicking an 'add a glossary item' link when they aren't logged in.
  */
-
-// In hansard, if they aren't logged in.
 
 // This page will expect a 'ret' value with the URL of the page
 // the user should return to after logging in.
-
-// And a 'type' value of 1 to indicate the user was going to enter a comment.
-// (Use other types for, say, glossary entries.)
 
 
 $this_page = "userprompt";
@@ -19,31 +14,20 @@ $this_page = "userprompt";
 include_once "../../../includes/easyparliament/init.php";
 
 
-$type = get_http_var('type');
 $returl = get_http_var('ret');
 
-if ($type == 2) {
-    // Glossary.
-    $message = "Sorry, you must be logged in to add a glossary item.";
-    $message2 = "You'll be able to add your glossary item straight after.";
+$message = "Sorry, you must be logged in to add a glossary item.";
+$message2 = "You'll be able to add your glossary item straight after.";
 
-    $URL = new URL('glossary_addterm');
-    $URL->insert(['g' => get_http_var('g')]);
-    $glossary_returl = $URL->generate();
-    $anchor = '';
-    if ($returl == '') {
-        $returl = $glossary_returl;
-    }
-
-} else {
-    // Comment.
-    $message = "Sorry, you must be logged in to post a comment.";
-    $message2 = "You'll be able to post your comment straight after.";
-    $anchor = '#addcomment';
+$URL = new URL('glossary_addterm');
+$URL->insert(['g' => get_http_var('g')]);
+$glossary_returl = $URL->generate();
+if ($returl == '') {
+    $returl = $glossary_returl;
 }
 
 $URL = new URL('userjoin');
-$URL->insert(['ret' => $returl . $anchor]);
+$URL->insert(['ret' => $returl]);
 $joinurl = $URL->generate();
 
 

@@ -202,6 +202,7 @@ CREATE TABLE `data_downloads` (
 CREATE TABLE `editqueue` (
   `edit_id` int NOT NULL AUTO_INCREMENT,
   `user_id` int DEFAULT NULL,
+  `contributor_name` varchar(511) DEFAULT NULL,
   `edit_type` int DEFAULT NULL,
   `epobject_id_l` int DEFAULT NULL,
   `epobject_id_h` int DEFAULT NULL,
@@ -284,6 +285,7 @@ CREATE TABLE `glossary` (
   `glossary_id` int NOT NULL AUTO_INCREMENT,
   `title` varchar(255) DEFAULT NULL,
   `body` text,
+  `contributor_name` varchar(511) DEFAULT NULL,
   `wikipedia` varchar(255) DEFAULT NULL,
   `created` datetime DEFAULT NULL,
   `last_modified` datetime DEFAULT NULL,
@@ -530,6 +532,7 @@ CREATE TABLE `users` (
   `firstname` varchar(255) NOT NULL DEFAULT '',
   `lastname` varchar(255) NOT NULL DEFAULT '',
   `email` varchar(255) NOT NULL DEFAULT '',
+  `pending_email` varchar(255) DEFAULT NULL,
   `password` varchar(102) NOT NULL DEFAULT '',
   `lastvisit` datetime NOT NULL DEFAULT '0000-01-01 00:00:00',
   `registrationtime` datetime NOT NULL DEFAULT '0000-01-01 00:00:00',

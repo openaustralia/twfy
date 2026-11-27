@@ -8,7 +8,7 @@
 <section id="mp" aria-labelledby="who" class="mb-6 rounded-lg {{ $theme->hero }} p-5 !text-white shadow-md md:p-8">
 @if ($history->partyNotice())
 <div class="mb-6 flex items-start gap-3 rounded-md bg-white/10 px-4 py-3 text-[15px]">
-<x-members.icon class="mt-0.5 {{ $theme->label }}" path="M17 1l4 4-4 4M3 11V9a4 4 0 0 1 4-4h14M7 23l-4-4 4-4M21 13v2a4 4 0 0 1-4 4H3" />
+<x-icon class="mt-0.5 {{ $theme->label }}" path="M17 1l4 4-4 4M3 11V9a4 4 0 0 1 4-4h14M7 23l-4-4 4-4M21 13v2a4 4 0 0 1-4 4H3" />
 <span><strong>Changed party</strong> {{ $history->partyNotice() }}</span>
 </div>
 @endif
