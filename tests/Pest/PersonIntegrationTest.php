@@ -61,7 +61,7 @@ describe('Person::findMany()', function () {
         expect(Person::findMany([])->isEmpty())->toBeTrue();
     });
 
-    it('gives each person all their terms, the latest first', function () {
+    it('gives all their terms, latest first', function () {
         expect(Person::findMany([97201, 97210])->get(97201)->terms->pluck('member_id')->all())->toBe([97203, 97202, 97201]);
     });
 

@@ -39,7 +39,7 @@ describe('HomeController::index()', function () {
         expect($this->html)->not->toContain('<script>');
     });
 
-    it('links a confirmed user to the page that edits them', function () {
+    it('links a user to their edit page', function () {
         expect($this->html)->toContain('href="' . WEBPATH . 'user/?pg=editother&amp;u=');
     });
 

@@ -79,7 +79,7 @@ describe('GET /account', function () {
             expect(($this->get)('/account')->getContent())->toContain('&lt;b&gt;Pat&lt;/b&gt;')->not->toContain('<b>Pat</b>');
         });
 
-        it('does not mention a waiting change when there is none', function () {
+        it('mentions no change when none waits', function () {
             expect(($this->get)('/account')->getContent())->not->toContain('Waiting for you to confirm');
         });
 
@@ -141,7 +141,7 @@ describe('GET /account/edit', function () {
             expect(($this->get)('/account/edit')->getContent())->not->toContain('<script>alert(1)</script>');
         });
 
-        it('offers to resend or cancel a waiting change', function () {
+        it('offers to resend or cancel', function () {
             $this->user->update(['pending_email' => 'new.pagespec@example.test']);
 
             expect(($this->get)('/account/edit')->getContent())->toContain('Send the link again')->toContain('Cancel this change');

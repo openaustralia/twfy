@@ -651,11 +651,16 @@ class USER {
 
         // Update email alerts if the email address of the user being changed is different.
         $oldEmail = UserModel::find($details["user_id"])?->email;
-        if ($oldEmail !== null && $oldEmail != $details['email']) {
+        $emailChanged = $oldEmail !== null && $oldEmail != $details['email'];
+        if ($emailChanged) {
             AlertModel::where('email', $oldEmail)->update(['email' => $details['email']]);
         }
 
         $update_data = [];
+        if ($emailChanged) {
+            // A change the person asked for was from the old address, so a link waiting for it must not work now.
+            $update_data['pending_email'] = null;
+        }
 
         if (isset($details["password"]) && $details["password"] != "") {
             // The password is being updated.

@@ -8,7 +8,7 @@
 use OpenAustralia\TWFY\Account\LegacyUserPage;
 
 describe('LegacyUserPage::destination()', function () {
-    it('sends people to the page that replaced the old one', function (string $pg, string $expected) {
+    it('sends people to the new page', function (string $pg, string $expected) {
         expect(LegacyUserPage::destination($pg))->toBe($expected);
     })->with([
         'no pg' => ['', 'account/'],

@@ -289,6 +289,14 @@ describe('AddTermController::index() for a submission', function () {
         expect(Editqueue::where('user_id', $this->user->user_id)->value('contributor_name'))->toBe('Ada Example');
     });
 
+    it('copies the longest name whole', function () {
+        $this->user->update(['firstname' => str_repeat('a', 255), 'lastname' => str_repeat('b', 255)]);
+
+        $this->render(fn () => addterm_controller()->index());
+
+        expect(strlen((string) Editqueue::where('user_id', $this->user->user_id)->value('contributor_name')))->toBe(511);
+    });
+
     it('thanks the visitor', function () {
         $html = $this->render(fn () => addterm_controller()->index());
 

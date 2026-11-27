@@ -14,8 +14,9 @@ final class AddContributorNameToGlossary extends AbstractMigration
 {
     public function up(): void
     {
-        $this->execute('ALTER TABLE editqueue ADD COLUMN contributor_name varchar(255) DEFAULT NULL AFTER user_id');
-        $this->execute('ALTER TABLE glossary ADD COLUMN contributor_name varchar(255) DEFAULT NULL AFTER body');
+        // Room for a first and a last name of 255 characters each, and the space between them.
+        $this->execute('ALTER TABLE editqueue ADD COLUMN contributor_name varchar(511) DEFAULT NULL AFTER user_id');
+        $this->execute('ALTER TABLE glossary ADD COLUMN contributor_name varchar(511) DEFAULT NULL AFTER body');
 
         // Existing rows get the name the account has now, the best record there is.
         $this->execute(

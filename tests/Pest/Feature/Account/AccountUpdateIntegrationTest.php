@@ -277,7 +277,7 @@ describe('PUT /account', function () {
             expect(($this->after)())->toContain('Someone else has already joined with this email address');
         });
 
-        it('says so for the same address in other letters', function () {
+        it('says so in other letters too', function () {
             ($this->save)(['email' => 'QUINN.updatespec@example.test']);
 
             expect($this->user->fresh()->pending_email)->toBeNull();

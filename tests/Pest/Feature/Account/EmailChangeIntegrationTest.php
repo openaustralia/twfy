@@ -65,7 +65,7 @@ describe('EmailChange', function () {
             expect($this->sent[1])->toMatchArray(['to' => 'pat.changespec@example.test']);
         });
 
-        it('keeps the link out of the notice to the current address', function () {
+        it('keeps the link out of the notice', function () {
             expect($this->sent[1]['message'])->not->toContain('/email/confirm/');
         });
 
@@ -238,7 +238,7 @@ describe('EmailChange', function () {
     });
 
     describe('resend()', function () {
-        it('emails the link to the waiting address again', function () {
+        it('emails the waiting address again', function () {
             $this->change->request($this->user, 'new.changespec@example.test');
             $this->sent = [];
 

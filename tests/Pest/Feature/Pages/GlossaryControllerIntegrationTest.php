@@ -157,7 +157,7 @@ describe('GlossaryController::index() for a term with unsafe text', function () 
         expect($this->html)->not->toContain('<script>');
     });
 
-    it('shows the contributor name saved with the term, escaped', function () {
+    it('shows the saved name, escaped', function () {
         expect($this->html)->toContain('Contributed by &lt;img src=x onerror=alert(3)&gt; &lt;Example&gt;');
     });
 
@@ -280,7 +280,7 @@ describe('GlossaryController::index() for a term whose contributor has since ren
         $this->html = $this->render(fn () => (new GlossaryController())->index());
     });
 
-    it('still credits the name copied when it was submitted', function () {
+    it('credits the name from submission', function () {
         expect($this->html)->toContain('Contributed by Original &lt;Example&gt;');
     });
 

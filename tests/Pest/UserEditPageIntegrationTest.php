@@ -169,15 +169,20 @@ describe('/user/ edit forms', function () {
             beforeEach(function () {
                 $this->maxAlert = Alert::create(['email' => 'max.usereditspec@example.test', 'criteria' => 'usereditspec', 'registrationtoken' => 'x', 'confirmed' => true]);
                 $this->bossAlert = Alert::create(['email' => 'bea.usereditspec@example.test', 'criteria' => 'usereditspec', 'registrationtoken' => 'x', 'confirmed' => true]);
+                $this->max->update(['pending_email' => 'waiting.usereditspec@example.test']);
                 $post = ($this->form)($this->max->user_id, ($this->tokenFor)($this->max->user_id));
                 $this->renderPage(USER_EDIT_PAGE, 'POST', [], $post, $this->cookies);
+            });
+
+            it('cancels a change waiting for the old one', function () {
+                expect($this->max->fresh()->pending_email)->toBeNull();
             });
 
             it('moves the edited user\'s alerts', function () {
                 expect($this->maxAlert->fresh()->email)->toBe('max.changed.usereditspec@example.test');
             });
 
-            it('leaves the administrator\'s alerts alone', function () {
+            it('leaves the admin\'s alerts alone', function () {
                 expect($this->bossAlert->fresh()->email)->toBe('bea.usereditspec@example.test');
             });
         });

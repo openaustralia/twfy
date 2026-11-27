@@ -56,7 +56,7 @@ function alertspec_queries(User $user): int {
 }
 
 describe('AlertListing::for()', function () {
-    it('asks the database the same however many people are in the alerts', function () {
+    it('does not query once per person', function () {
         AlertFixtures::alert('pat.alertspec@example.test', 'speaker:97201');
         $one = alertspec_queries($this->user);
 
@@ -70,7 +70,7 @@ describe('AlertListing::for()', function () {
 });
 
 describe('the chart on GET /account', function () {
-    it('counts how often a person spoke in 12 months', function () {
+    it('counts speeches in the last year', function () {
         alertspec_speech();
         alertspec_speech();
         AlertFixtures::alert('pat.alertspec@example.test', 'speaker:97201');
@@ -91,7 +91,7 @@ describe('the chart on GET /account', function () {
         expect(($this->page)())->toContain('The line beside each person shows how many times they spoke in Hansard each month');
     });
 
-    it('draws no chart for an alert about a word', function () {
+    it('draws no chart for a word alert', function () {
         AlertFixtures::alert('pat.alertspec@example.test', 'wellington');
 
         expect(($this->page)())->not->toContain('in 12 months');
@@ -103,7 +103,7 @@ describe('the chart on GET /account', function () {
         expect(($this->page)())->not->toContain('The line beside each person');
     });
 
-    it('draws no chart for an unsubscribed alert', function () {
+    it('draws no chart when unsubscribed', function () {
         AlertFixtures::alert('pat.alertspec@example.test', 'speaker:97201', deleted: true);
 
         expect(($this->page)())->not->toContain('in 12 months');
@@ -115,7 +115,7 @@ describe('the alerts on GET /account', function () {
         expect(($this->page)())->toContain("You don't have any alerts yet");
     });
 
-    it('lists an alert about a person by their name', function () {
+    it('names the person an alert is about', function () {
         AlertFixtures::alert('pat.alertspec@example.test', 'speaker:97201');
 
         expect(($this->page)())->toContain('Alex Alertspec')->toContain('Emails you when they speak');
@@ -141,7 +141,7 @@ describe('the alerts on GET /account', function () {
         expect(($this->page)())->toContain('Former Senator for Victoria');
     });
 
-    it('gives no office for an alert about a word', function () {
+    it('gives no office for a word alert', function () {
         AlertFixtures::alert('pat.alertspec@example.test', 'speaker:97201 wellington');
 
         expect(($this->page)())->not->toContain('MP for Test Ville');
@@ -163,14 +163,14 @@ describe('the alerts on GET /account', function () {
             expect(($this->page)())->toContain('<img src="/images/mps/97201.jpg"');
         });
 
-        it('shows no photo for an alert about a word', function () {
+        it('shows no photo for a word alert', function () {
             AlertFixtures::alert('pat.alertspec@example.test', 'speaker:97201 wellington');
 
             expect(($this->page)())->not->toContain('/images/mps/97201.jpg');
         });
     });
 
-    it('shows their initials when there is no photo', function () {
+    it('shows initials without a photo', function () {
         AlertFixtures::alert('pat.alertspec@example.test', 'speaker:97201');
 
         expect(($this->page)())->toMatch('/>\s*AA\s*</');
@@ -182,7 +182,7 @@ describe('the alerts on GET /account', function () {
         expect(($this->page)())->toContain('“wellington”')->toContain('Emails you when anyone says this in Parliament');
     });
 
-    it('lists an alert about a person and a word', function () {
+    it('lists a person and word alert', function () {
         AlertFixtures::alert('pat.alertspec@example.test', 'speaker:97201 wellington');
 
         expect(($this->page)())->toContain('Emails you when Alex Alertspec says this in Parliament');
@@ -207,7 +207,7 @@ describe('the alerts on GET /account', function () {
         expect(($this->page)())->toContain('&lt;script&gt;alert(1)&lt;/script&gt;')->not->toContain('<script>alert(1)</script>');
     });
 
-    it('escapes the words in the link to their search', function () {
+    it('escapes the words in the search link', function () {
         AlertFixtures::alert('pat.alertspec@example.test', '"><script>alert(1)</script>');
 
         expect(($this->page)())->not->toContain('"><script>alert(1)</script>');
@@ -219,19 +219,19 @@ describe('the alerts on GET /account', function () {
         expect(($this->page)())->not->toContain('secretword');
     });
 
-    it('offers to unsubscribe from an active alert', function () {
+    it('offers to unsubscribe when active', function () {
         AlertFixtures::alert('pat.alertspec@example.test', 'wellington');
 
         expect(($this->page)())->toContain('Unsubscribe');
     });
 
-    it('sets links in the colour the member pages use', function () {
+    it('colours links as the member pages do', function () {
         AlertFixtures::alert('pat.alertspec@example.test', 'wellington');
 
         expect(($this->page)())->toContain('class="!text-teal-700 !underline"');
     });
 
-    it('leaves no space between a link and the full stop', function () {
+    it('leaves no space before a full stop', function () {
         expect(($this->page)())->toContain('search Hansard</a>.');
     });
 
@@ -253,13 +253,13 @@ describe('the alerts on GET /account', function () {
         expect(($this->page)())->toContain('Subscribe again')->toContain("You don't have any alerts yet");
     });
 
-    it('lists alerts waiting to be confirmed apart', function () {
+    it('lists unconfirmed alerts apart', function () {
         AlertFixtures::alert('pat.alertspec@example.test', 'wellington', confirmed: false, token: 'abc123');
 
         expect(($this->page)())->toContain('Waiting for you to confirm')->toContain('/A/');
     });
 
-    it('says when emails to the address are bouncing', function () {
+    it('says when emails are bouncing', function () {
         EmailSuppressions::suppress('pat.alertspec@example.test', 'hard_bounce', suppressedAt: '2026-10-05 10:00:00');
 
         expect(($this->page)())->toContain('returning as undeliverable since 5 October 2026');
@@ -316,13 +316,13 @@ describe('DELETE /account/alerts/{alert}', function () {
         expect($other->fresh()->deleted)->toBeFalse();
     });
 
-    it('answers 404 for an alert nobody confirmed', function () {
+    it('404s an alert nobody confirmed', function () {
         $unconfirmed = AlertFixtures::alert('pat.alertspec@example.test', 'wellington', confirmed: false);
 
         expect(($this->unsubscribe)($unconfirmed->alert_id)->getStatusCode())->toBe(404);
     });
 
-    it('answers 404 for an alert that does not exist', function () {
+    it('404s an alert that is not there', function () {
         expect(($this->unsubscribe)(999999999)->getStatusCode())->toBe(404);
     });
 
@@ -332,7 +332,7 @@ describe('DELETE /account/alerts/{alert}', function () {
         expect($this->alert->fresh()->deleted)->toBeFalse();
     });
 
-    it('answers a visitor who is signed out with a missing CSRF token', function () {
+    it('answers 419 for a signed-out visitor', function () {
         expect(AccountRequests::send('DELETE', '/account/alerts/' . $this->alert->alert_id)->getStatusCode())->toBe(419);
     });
 });

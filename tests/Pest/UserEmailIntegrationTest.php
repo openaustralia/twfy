@@ -41,7 +41,7 @@ describe('User', function () {
             expect(User::emailTaken('nobody.mailspec@example.test'))->toBeFalse();
         });
 
-        it('is false for the address of the user it excepts', function () {
+        it('is false for the excepted user', function () {
             expect(User::emailTaken('pat.mailspec@example.test', $this->user->user_id))->toBeFalse();
         });
 
@@ -71,7 +71,7 @@ describe('User', function () {
             expect($this->sent[0]['message'])->toContain(CONTACTEMAIL);
         });
 
-        it('greets someone with only a last name by it', function () {
+        it('greets by last name when no first', function () {
             $this->user->update(['firstname' => '', 'lastname' => 'Mailspec']);
 
             $this->user->sendTemplate('email_changed_notice', ['NEWEMAIL' => 'new.mailspec@example.test']);
@@ -134,19 +134,19 @@ describe('User', function () {
     });
 
     describe('passwordProblem()', function () {
-        it('is null for a password of the minimum length', function () {
+        it('is null for a minimum-length password', function () {
             expect(User::passwordProblem(str_repeat('a', User::PASSWORD_MIN)))->toBeNull();
         });
 
-        it('is null for a password of the maximum length', function () {
+        it('is null for a maximum-length password', function () {
             expect(User::passwordProblem(str_repeat('a', User::PASSWORD_MAX)))->toBeNull();
         });
 
-        it('says why a password one character too long is not allowed', function () {
+        it('says why a password is one too long', function () {
             expect(User::passwordProblem(str_repeat('a', User::PASSWORD_MAX + 1)))->toBe('Your password can have at most ' . User::PASSWORD_MAX . ' characters');
         });
 
-        it('says why a password one character short is not allowed', function () {
+        it('says why a password is one short', function () {
             expect(User::passwordProblem(str_repeat('a', User::PASSWORD_MIN - 1)))->toBe('Your password needs at least ' . User::PASSWORD_MIN . ' characters');
         });
     });
