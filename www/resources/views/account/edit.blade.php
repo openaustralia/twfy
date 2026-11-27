@@ -1,7 +1,7 @@
 @extends('layout.legacy')
 
 @section('content')
-<div class="mx-auto max-w-[1120px] px-4 pb-12 pt-8 md:px-8">
+<x-account.page>
 <a href="{{ route('account.show', [], false) }}" class="inline-flex min-h-[44px] items-center gap-1.5 text-[15px] font-semibold">
 <x-account.icon path="M15 18l-6-6 6-6" size="16" />
 Back to your details
@@ -95,5 +95,5 @@ Cancel
 <form id="resend-email" method="post" action="{{ route('account.email.resend', [], false) }}">@csrf</form>
 <form id="cancel-email" method="post" action="{{ route('account.email.cancel', [], false) }}">@csrf @method('DELETE')</form>
 @endif
-</div>
+</x-account.page>
 @endsection

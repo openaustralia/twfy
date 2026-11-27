@@ -668,7 +668,7 @@ class PAGE {
             $tab_class = $is_current
                 ? 'on !text-white border-0 border-b-2 border-solid ' . $underline
                 : 'border-0 border-b-2 border-solid border-transparent !text-slate-200 hover:!text-white';
-            $class = ' class="inline-block rounded px-3 py-1.5 font-semibold !no-underline ' . $tab_class . '"';
+            $class = ' class="inline-block rounded px-3 py-1.5 text-sm font-semibold !no-underline ' . $tab_class . '"';
             $aria_current = $is_current ? ' aria-current="page"' : '';
 
             $top_links[] = '<a href="' . $URL->generate() . '" title="' . $title . '"' . $class . $aria_current . '>' . $text . '</a>';

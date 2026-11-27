@@ -141,7 +141,7 @@ class SKIN {
 
         // Utility classes for new/updated page layouts; built by `make tailwind-build`.
         ?>
-        <link rel="stylesheet" href="<?php echo WEBPATH; ?>style/tailwind/tailwind.css?v=22" type="text/css">
+        <link rel="stylesheet" href="<?php echo WEBPATH; ?>style/tailwind/tailwind.css?v=23" type="text/css">
         <?php
 
         // The array of stylesheets to use for this skin.
@@ -149,7 +149,7 @@ class SKIN {
 
         if (isset($skinstyles["global"]) && $skinstyles["global"] != "") {
             ?>
-            <link rel="stylesheet" href="<?php echo WEBPATH; ?>style/<?php echo $skinstyles['global']; ?>/global.css?v=6"
+            <link rel="stylesheet" href="<?php echo WEBPATH; ?>style/<?php echo $skinstyles['global']; ?>/global.css?v=7"
                 type="text/css">
             <link rel="stylesheet"
                 href="<?php echo WEBPATH; ?>style/<?php echo $skinstyles['global']; ?>/layout.css?v=4"

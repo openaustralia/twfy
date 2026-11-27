@@ -3,7 +3,7 @@ $active = $alerts->where('state', 'active');
 $unconfirmed = $alerts->where('state', 'unconfirmed');
 $unsubscribed = $alerts->where('state', 'unsubscribed');
 @endphp
-<x-account.card aria-labelledby="alerts-heading" class="flex-[999_1_520px]">
+<x-account.card aria-labelledby="alerts-heading" class="flex-[999_1_520px] !shadow-lg">
 <div class="mb-2 flex flex-wrap items-start justify-between gap-4">
 <div class="min-w-0 flex-[1_1_260px]">
 <h2 id="alerts-heading" class="!m-0 !block !p-0 text-2xl font-bold text-slate-900">Your email alerts</h2>

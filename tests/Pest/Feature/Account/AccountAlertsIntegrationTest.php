@@ -43,6 +43,61 @@ describe('the alerts on GET /account', function () {
         expect(($this->page)())->toContain('Alex Alertspec')->toContain('Emails you when they speak');
     });
 
+    it('says which office a person holds', function () {
+        AlertFixtures::alert('pat.alertspec@example.test', 'speaker:97201');
+
+        expect(($this->page)())->toContain('MP for Test Ville');
+    });
+
+    it('says which state a Senator is for', function () {
+        MemberFixtures::term(97202, ['house' => 2, 'constituency' => 'Victoria', 'first_name' => 'Sam', 'last_name' => 'Senatorspec']);
+        AlertFixtures::alert('pat.alertspec@example.test', 'speaker:97202');
+
+        expect(($this->page)())->toContain('Senator for Victoria');
+    });
+
+    it('says former for someone who has left', function () {
+        MemberFixtures::term(97203, ['house' => 2, 'constituency' => 'Victoria', 'first_name' => 'Lee', 'last_name' => 'Formerspec', 'left_house' => '2024-06-30', 'left_reason' => 'retired']);
+        AlertFixtures::alert('pat.alertspec@example.test', 'speaker:97203');
+
+        expect(($this->page)())->toContain('Former Senator for Victoria');
+    });
+
+    it('gives no office for an alert about a word', function () {
+        AlertFixtures::alert('pat.alertspec@example.test', 'speaker:97201 wellington');
+
+        expect(($this->page)())->not->toContain('MP for Test Ville');
+    });
+
+    describe('with a photo of the person', function () {
+        beforeEach(function () {
+            $this->photo = FILEIMAGEPATH . 'mps/97201.jpg';
+            file_put_contents($this->photo, 'fixture');
+        });
+
+        afterEach(function () {
+            unlink($this->photo);
+        });
+
+        it('shows the photo in the circle', function () {
+            AlertFixtures::alert('pat.alertspec@example.test', 'speaker:97201');
+
+            expect(($this->page)())->toContain('<img src="/images/mps/97201.jpg"');
+        });
+
+        it('shows no photo for an alert about a word', function () {
+            AlertFixtures::alert('pat.alertspec@example.test', 'speaker:97201 wellington');
+
+            expect(($this->page)())->not->toContain('/images/mps/97201.jpg');
+        });
+    });
+
+    it('shows their initials when there is no photo', function () {
+        AlertFixtures::alert('pat.alertspec@example.test', 'speaker:97201');
+
+        expect(($this->page)())->toMatch('/>\s*AA\s*</');
+    });
+
     it('lists an alert about a word', function () {
         AlertFixtures::alert('pat.alertspec@example.test', 'wellington');
 
