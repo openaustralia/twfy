@@ -32,17 +32,17 @@
 
 <h2 id="history">History</h2>
 
-<p>Back in 2004 Matthew Landauer and Katherine Szuminska were lucky enough to accidently find themselves at the launch
+<p>Back in 2004 Matthew Landauer and Katherine Szuminska were lucky enough to accidentally find themselves at the launch
     of
-    the UK site <a href="http://theyworkforyou.com">TheyWorkForYou.com</a> at a nerdy techno conference, NotCon 2004.
+    the UK site <a href="https://www.theyworkforyou.com/">TheyWorkForYou.com</a> at a nerdy techno conference, NotCon 2004.
     The talk
     inspired them hugely and they left with a desire to make this happen in Australia too. It took a few years, other
     people
     came on board to help and here you can see the fruits of their labour.</p>
 
-<p>The project was kick-started in November 2007 when Matthew, supported by <a href="http://www.rsp.com.au">Rising Sun
+<p>The project was kick-started in November 2007 when Matthew, supported by <a href="https://www.rsp.com.au/">Rising Sun
         Pictures</a>,
-    was given the oppurtunity to take a week of paid charity leave to develop the first, very rough, prototype of
+    was given the opportunity to take a week of paid charity leave to develop the first, very rough, prototype of
     OpenAustralia.</p>
 
 <h2>Volunteers on OpenAustralia.org</h2>

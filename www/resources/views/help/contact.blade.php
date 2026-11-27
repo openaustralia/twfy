@@ -12,7 +12,7 @@
     <li>How can we improve it? </li>
 </ul>
 <p>
-    We seek responses to all these questions.
+    We would like your answers to all these questions.
 </p>
 <p>The email address of OpenAustralia.org, which is run by a <strong>charity</strong>, is: <x-help.email />
 </p>

@@ -46,7 +46,7 @@
     aggregated traffic through the website - which pages get visited, and how many people are visiting.
     Unlike Google Analytics, which we used to run, Plausible doesn't use cookies, doesn't track you
     across other websites, and doesn't store your IP address or build any profile of you. We only track
-    usage data for one reason: to help us understand how we can make the site work better for you lot.</p>
+    usage data for one reason: to help us understand how we can make the site work better for you.</p>
 
 <h2 id="rss">What is RSS?</h2>
 <p>RSS files contain information about a list of things: diary entries, speeches, etc. and are formatted to be
@@ -54,9 +54,7 @@
     reader to store the locations of RSS feeds, and each time one is updated - with new diary entries or
     speeches - you can easily see what's new. It saves you visiting web pages on the off-chance anything new has
     appeared. Popular RSS readers are <a href="http://www.sharpreader.net/">Sharpreader</a> for Windows or <a
-        href="http://ranchero.com/netnewswire/#lite">NetNewsWire Lite</a> for Macs. <a
-        href="http://www.bloglines.com/">Bloglines</a> and <a href="http://www.google.com/reader">Google
-        Reader</a> are online RSS readers.</p>
+        href="https://netnewswire.com/">NetNewsWire</a> for Macs.</p>
 
 <h2 id="votingrecord">How is the voting record decided?</h2>
 <p>The voting record is not affected by what MPs and Senators have said, only how they

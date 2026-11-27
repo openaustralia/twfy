@@ -7,7 +7,7 @@
     job, you're very, very wrong.</p>
 
 <h2>Please be patient</h2>
-<p>Users of all ages and abilities may be contributing to OpenAustralia. Also, remember this site is run by a
+<p>People of all ages and abilities may be contributing to OpenAustralia. Also, remember this site is run by a
     charity, so please bear with us if we&rsquo;re slow to get back to you.</p>
 
 <h2>No disruptive, offensive or abusive behaviour</h2>

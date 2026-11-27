@@ -20,9 +20,5 @@
 
     <li>From a Representative or Senator's page, you have the option to search only their speeches. </li>
 
-    @if (str_contains(strtolower($_SERVER['HTTP_USER_AGENT'] ?? ''), 'firefox/'))
-    <li>You can also add OpenAustralia to <a href="http://mycroft.mozdev.org/download.html?name=openaustralia">Firefox's
-            search box</a>.</li>
-    @endif
 </ul>
 </x-prose>

@@ -20,7 +20,7 @@ $code = view('help.partials.search-box-embed', ['url' => $url])->render();
 <p><label for="embed-code">Cut and paste the code below into your webpage:</label></p>
 <textarea id="embed-code" readonly spellcheck="false" rows="14" class="!box-border block h-80 w-full rounded border border-solid border-slate-500 bg-white p-3 font-mono text-sm leading-relaxed text-slate-900">{{ $code }}</textarea>
 
-<p>Please retain the link to <a href="{{ $url }}">OpenAustralia.org</a> (Google points mean prizes). Any
+<p>Please retain the link to <a href="{{ $url }}">OpenAustralia.org</a> (it helps search engines find us). Any
     questions, just drop us a line at: <a href="{{ $url }}contact/">{{ $url }}contact/</a>
 </p>
 </x-help.page>
