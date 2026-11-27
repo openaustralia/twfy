@@ -68,21 +68,20 @@ class Editqueue extends Model {
     ];
 
     /**
-     * Submissions nobody has decided on, newest first, with who submitted them.
+     * Submissions nobody has decided on, newest first, with the name copied when they were submitted.
      *
-     * Each row has edit_id, user_id, contributor_name, firstname, lastname, glossary_id, title, body and submitted.
+     * Each row has edit_id, user_id, contributor_name, glossary_id, title, body and submitted.
      *
      * @param \Illuminate\Database\Eloquent\Builder<Editqueue> $query
      *   The query to narrow.
      *
      * @return \Illuminate\Database\Eloquent\Builder<Editqueue>
-     *   The same query, joined to the user.
+     *   The same query, narrowed to the undecided submissions.
      */
     public function scopePending(Builder $query): Builder {
-        return $query->join('users', 'users.user_id', '=', 'editqueue.user_id')
-          ->whereNull('editqueue.approved')
+        return $query->whereNull('editqueue.approved')
           ->orderByDesc('editqueue.submitted')
-          ->select('editqueue.edit_id', 'editqueue.user_id', 'editqueue.contributor_name', 'users.firstname', 'users.lastname', 'editqueue.glossary_id', 'editqueue.title', 'editqueue.body', 'editqueue.submitted');
+          ->select('editqueue.edit_id', 'editqueue.user_id', 'editqueue.contributor_name', 'editqueue.glossary_id', 'editqueue.title', 'editqueue.body', 'editqueue.submitted');
     }
 
     /**

@@ -26,7 +26,6 @@ describe('/user/?u=ID', function () {
             'firstname' => 'Max',
             'lastname' => USER_PUBLIC_PAGE_LASTNAME,
             'email' => 'max.publicpagespec@example.test',
-            'emailpublic' => true,
             'url' => 'https://max.example.test/',
             'confirmed' => true,
             'registrationtime' => date('Y-m-d H:i:s'),

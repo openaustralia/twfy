@@ -143,11 +143,11 @@ describe('User', function () {
         });
 
         it('says why a password one character too long is not allowed', function () {
-            expect(User::passwordProblem(str_repeat('a', User::PASSWORD_MAX + 1)))->toBe('Please enter at most ' . User::PASSWORD_MAX . ' characters');
+            expect(User::passwordProblem(str_repeat('a', User::PASSWORD_MAX + 1)))->toBe('Your password can have at most ' . User::PASSWORD_MAX . ' characters');
         });
 
         it('says why a password one character short is not allowed', function () {
-            expect(User::passwordProblem(str_repeat('a', User::PASSWORD_MIN - 1)))->toBe('Please enter at least ' . User::PASSWORD_MIN . ' characters');
+            expect(User::passwordProblem(str_repeat('a', User::PASSWORD_MIN - 1)))->toBe('Your password needs at least ' . User::PASSWORD_MIN . ' characters');
         });
     });
 });

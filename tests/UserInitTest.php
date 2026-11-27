@@ -23,7 +23,6 @@ class UserInitTest extends TransactionalTestCase {
             'firstname' => $firstname,
             'lastname' => $lastname,
             'email' => $email,
-            'emailpublic' => 0,
             'constituency' => '',
             'url' => '',
             'password' => password_hash('testpass', PASSWORD_DEFAULT),

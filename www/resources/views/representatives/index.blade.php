@@ -20,7 +20,7 @@
 <div class="flex flex-wrap gap-2">
 <input id="pc" type="text" name="pc" maxlength="10" inputmode="numeric" autocomplete="postal-code" placeholder="Postcode" class="box-border min-h-[44px] min-w-0 flex-[1_1_120px] rounded border border-solid border-slate-400 bg-white px-3 py-2 text-base !text-slate-900">
 <button type="submit" class="inline-flex min-h-[44px] cursor-pointer items-center gap-2 rounded border-0 bg-white px-5 py-2.5 text-base font-bold !text-slate-900">
-<x-members.icon path="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 0 1 16 0zM12 7a3 3 0 1 0 0 6 3 3 0 0 0 0-6z" />
+<x-icon path="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 0 1 16 0zM12 7a3 3 0 1 0 0 6 3 3 0 0 0 0-6z" />
 Find
 </button>
 </div>

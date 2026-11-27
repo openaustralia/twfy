@@ -120,7 +120,7 @@ class GLOSSARY {
             $this->alphabet[$letter] = [];
         }
 
-        $q = parlDBQuery("SELECT g.glossary_id, g.title, g.body, u.user_id, u.firstname, u.lastname
+        $q = parlDBQuery("SELECT g.glossary_id, g.title, g.body
 			FROM editqueue AS eq, glossary AS g, users AS u
 			WHERE g.glossary_id=eq.glossary_id AND u.user_id=eq.user_id AND g.visible=1 AND eq.approved=1
 			ORDER by g.title");
@@ -161,7 +161,7 @@ class GLOSSARY {
         $this->search_matches = [];
         $this->num_search_matches = 0;
 
-        $q = parlDBQuery("SELECT g.glossary_id, g.title, g.body, u.user_id, u.firstname, u.lastname
+        $q = parlDBQuery("SELECT g.glossary_id, g.title, g.body
 			FROM editqueue AS eq, glossary AS g, users AS u
 			WHERE g.glossary_id=eq.glossary_id AND u.user_id=eq.user_id AND g.visible=1
 				AND g.title LIKE ?

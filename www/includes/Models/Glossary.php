@@ -43,23 +43,22 @@ class Glossary extends Model {
     /**
      * Visible terms a moderator approved, with who submitted them, by title and then the earliest submission.
      *
-     * Each row has glossary_id, title, body, contributor_name, user_id, firstname and lastname.
+     * Each row has glossary_id, title, body, contributor_name and user_id.
      *
      * @param \Illuminate\Database\Eloquent\Builder<Glossary> $query
      *   The query to narrow.
      *
      * @return \Illuminate\Database\Eloquent\Builder<Glossary>
-     *   The same query, joined to the queue and the user.
+     *   The same query, joined to the queue.
      */
     public function scopeApproved(Builder $query): Builder {
         return $query->where('glossary.visible', 1)
           ->join('editqueue', 'editqueue.glossary_id', '=', 'glossary.glossary_id')
-          ->join('users', 'users.user_id', '=', 'editqueue.user_id')
           ->where('editqueue.approved', 1)
           ->orderBy('glossary.title')
           ->orderBy('editqueue.submitted')
           ->orderBy('editqueue.edit_id')
-          ->select('glossary.glossary_id', 'glossary.title', 'glossary.body', 'glossary.contributor_name', 'users.user_id', 'users.firstname', 'users.lastname');
+          ->select('glossary.glossary_id', 'glossary.title', 'glossary.body', 'glossary.contributor_name', 'editqueue.user_id');
     }
 
     /**

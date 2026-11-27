@@ -1,6 +1,7 @@
-{{-- A list of alerts, each with the button that stops it or starts it again. $class styles the list. --}}
+{{-- A list of alerts, each with the button that stops it or starts it again. --}}
 @use('OpenAustralia\TWFY\Icons')
-<ul class="{{ $class }}">
+@props(['alerts'])
+<ul {{ $attributes }}>
 @foreach ($alerts as $alert)
 <li class="flex flex-wrap items-center gap-x-4 gap-y-3 border-0 border-t border-solid border-slate-200 py-3.5">
 @if ($alert['photoUrl'])
@@ -8,7 +9,7 @@
 @else
 <div aria-hidden="true" class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full {{ $alert['isKeyword'] ? 'bg-teal-100 text-teal-800' : 'bg-slate-200 text-slate-700' }} text-sm font-semibold">
 @if ($alert['isKeyword'])
-<x-account.icon path="M20 20l-3.5-3.5M18 11a7 7 0 1 1-14 0 7 7 0 0 1 14 0Z" size="20" />
+<x-icon path="M20 20l-3.5-3.5M18 11a7 7 0 1 1-14 0 7 7 0 0 1 14 0Z" size="20" />
 @else
 {{ $alert['initials'] }}
 @endif
@@ -33,7 +34,7 @@
 @method($alert['state'] === 'active' ? 'DELETE' : 'PUT')
 {{-- The same bells as the member pages' alert buttons. --}}
 <x-account.button>
-<x-account.icon :path="$alert['state'] === 'active' ? Icons::BELL_OFF : Icons::BELL" />
+<x-icon :path="$alert['state'] === 'active' ? Icons::BELL_OFF : Icons::BELL" size="18" />
 {{ $alert['state'] === 'active' ? 'Unsubscribe' : 'Subscribe again' }}<span class="sr-only"> to alerts about {{ $alert['label'] }}</span>
 </x-account.button>
 </form>

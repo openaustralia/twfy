@@ -4,7 +4,6 @@ namespace OpenAustralia\TWFY\Account;
 
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\URL;
-use OpenAustralia\TWFY\Models\Alert;
 use OpenAustralia\TWFY\Models\User;
 
 /**
@@ -123,7 +122,7 @@ class EmailChange {
             }
 
             $old = $current->email;
-            Alert::where('email', $old)->update(['email' => $new]);
+            $current->alerts()->update(['email' => $new]);
             $current->forceFill(['email' => $new, 'pending_email' => null])->save();
 
             return $old;

@@ -244,8 +244,8 @@ describe('PUT /account', function () {
             'no name at all' => [['first_name' => '', 'last_name' => ''], 'Enter a first name or a last name'],
             'no email address' => [['email' => ''], 'Enter your email address'],
             'a bad email address' => [['email' => 'not-an-address'], 'Enter an email address like name@example.com'],
-            'a short password' => [['password' => 'short', 'password_confirmation' => 'short'], 'Your new password needs at least 8 characters'],
-            'a long password' => [['password' => str_repeat('a', 73), 'password_confirmation' => str_repeat('a', 73)], 'Your new password can have at most 72 characters'],
+            'a short password' => [['password' => 'short', 'password_confirmation' => 'short'], 'Your password needs at least 8 characters'],
+            'a long password' => [['password' => str_repeat('a', 73), 'password_confirmation' => str_repeat('a', 73)], 'Your password can have at most 72 characters'],
             'passwords that differ' => [['password' => 'new-password', 'password_confirmation' => 'other'], "The two passwords don&#039;t match"],
         ]);
 

@@ -11,7 +11,7 @@ $charted = $active->first(fn (array $alert): bool => $alert['chart'] !== null);
 <p class="!m-0 !mt-1.5 text-base leading-relaxed text-slate-600">We email you when these people speak in Parliament, or when these words come up.</p>
 </div>
 <x-account.button variant="primary" href="#add-alert">
-<x-account.icon path="M12 5v14M5 12h14" />
+<x-icon path="M12 5v14M5 12h14" size="18" />
 Add an alert
 </x-account.button>
 </div>
@@ -22,15 +22,15 @@ Add an alert
 <p class="!mx-0 mt-5 text-[15px] text-slate-600">You don't have any alerts yet. Add one below.</p>
 @else
 <p class="!mx-0 mt-5 text-[15px] leading-relaxed text-slate-600">You have {{ $active->count() }} {{ $active->count() === 1 ? 'alert' : 'alerts' }}.@if ($charted) The line beside each person shows how many times they spoke in Hansard each month, from {{ $charted['chart']['from'] }} to {{ $charted['chart']['to'] }}.@endif</p>
-@include('account.alert-list', ['alerts' => $active, 'class' => '!m-0 !mt-2 list-none !p-0'])
+<x-account.alert-list :alerts="$active" class="!m-0 !mt-2 list-none !p-0" />
 @endif
 @if ($unconfirmed->isNotEmpty())
 <h3 class="!m-0 !mb-2 !mt-8 !block !p-0 text-base font-bold text-slate-900">Waiting for you to confirm</h3>
-@include('account.alert-list', ['alerts' => $unconfirmed, 'class' => '!m-0 list-none !p-0'])
+<x-account.alert-list :alerts="$unconfirmed" class="!m-0 list-none !p-0" />
 @endif
 @if ($unsubscribed->isNotEmpty())
 <h3 class="!m-0 !mb-2 !mt-8 !block !p-0 text-base font-bold text-slate-900">Unsubscribed</h3>
-@include('account.alert-list', ['alerts' => $unsubscribed, 'class' => '!m-0 list-none !p-0'])
+<x-account.alert-list :alerts="$unsubscribed" class="!m-0 list-none !p-0" />
 @endif
 <div id="add-alert" class="mt-7 rounded-xl border border-solid border-slate-200 bg-slate-50 p-5">
 <h3 class="!m-0 !mb-2 !block !p-0 text-base font-bold text-slate-900">Add another alert</h3>

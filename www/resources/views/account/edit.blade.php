@@ -3,7 +3,7 @@
 @section('content')
 <x-account.page>
 <x-account.link href="{{ route('account.show', [], false) }}" class="inline-flex min-h-[44px] items-center gap-1.5 text-[15px] font-semibold">
-<x-account.icon path="M15 18l-6-6 6-6" size="16" />
+<x-icon path="M15 18l-6-6 6-6" size="16" />
 Back to your details
 </x-account.link>
 <h1 class="!m-0 !mb-2 !mt-2 !block !p-0 text-[clamp(28px,4vw,36px)] font-bold !leading-tight text-slate-900">Edit your details</h1>
@@ -44,11 +44,11 @@ Back to your details
 <p class="!m-0 !mt-1.5 text-[15px] leading-relaxed text-slate-700 [overflow-wrap:anywhere]">We've emailed a link to <strong>{{ $user->pending_email }}</strong>. Your email address changes when you follow it. Until then, we'll keep sending your alerts to <strong>{{ $user->email }}</strong>.</p>
 <div class="mt-3 flex flex-wrap gap-3">
 <button type="submit" form="resend-email" class="box-border inline-flex min-h-[44px] cursor-pointer items-center gap-2 rounded border border-solid border-slate-500 bg-white px-5 py-2.5 text-base font-semibold text-slate-900 hover:bg-slate-50">
-<x-account.icon path="M21 12a9 9 0 1 1-3-6.7L21 8M21 3v5h-5" />
+<x-icon path="M21 12a9 9 0 1 1-3-6.7L21 8M21 3v5h-5" size="18" />
 Send the link again
 </button>
 <button type="submit" form="cancel-email" class="box-border inline-flex min-h-[44px] cursor-pointer items-center gap-2 rounded border border-solid border-slate-500 bg-white px-5 py-2.5 text-base font-semibold text-slate-900 hover:bg-slate-50">
-<x-account.icon path="M18 6 6 18M6 6l12 12" />
+<x-icon path="M18 6 6 18M6 6l12 12" size="18" />
 Cancel this change
 </button>
 </div>
@@ -81,11 +81,11 @@ Cancel this change
 <p class="!m-0 !mb-4 text-[15px] text-slate-700">By saving, you agree to our <x-account.link href="{{ WEBPATH }}houserules/">house rules</x-account.link>.</p>
 <div class="flex flex-wrap items-center gap-x-5 gap-y-3">
 <x-account.button variant="primary">
-<x-account.icon path="M20 6 9 17l-5-5" />
+<x-icon path="M20 6 9 17l-5-5" size="18" />
 Save changes
 </x-account.button>
 <x-account.link href="{{ route('account.show', [], false) }}" class="inline-flex min-h-[44px] items-center gap-1.5 text-base font-semibold">
-<x-account.icon path="M18 6 6 18M6 6l12 12" />
+<x-icon path="M18 6 6 18M6 6l12 12" size="18" />
 Cancel
 </x-account.link>
 </div>

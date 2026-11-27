@@ -16,7 +16,7 @@
 @endif
 <div class="mt-5">
 <x-account.button :href="route('account.edit', [], false)">
-<x-account.icon path="M12 20h9M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z" />
+<x-icon path="M12 20h9M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z" size="18" />
 Edit your details
 </x-account.button>
 </div>

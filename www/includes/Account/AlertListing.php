@@ -4,6 +4,7 @@ namespace OpenAustralia\TWFY\Account;
 
 use Illuminate\Support\Collection;
 use OpenAustralia\TWFY\Models\Alert;
+use OpenAustralia\TWFY\Models\User;
 use OpenAustralia\TWFY\Parliament\MemberProfile;
 use OpenAustralia\TWFY\Parliament\Person;
 use OpenAustralia\TWFY\Parliament\SpeakingRecord;
@@ -14,17 +15,17 @@ use OpenAustralia\TWFY\Parliament\SpeakingRecord;
 class AlertListing {
 
     /**
-     * Every alert at an address, oldest first.
+     * Every alert at a user's address, oldest first.
      *
      * Each row says whether the alert is active, waiting to be confirmed, or unsubscribed, and what it looks for. An
-     * alert about a person alone also gives their office, such as "MP for Wills", their photo if there is one, and for an active alert a chart of how often
-     * they spoke in the last twelve months.
+     * alert about a person alone also gives their office, such as "MP for Wills", their photo if there is one, and for
+     * an active alert a chart of how often they spoke in the last twelve months.
      *
      * @return \Illuminate\Support\Collection<int, array{id: int, state: string, isKeyword: bool, label: string, initials: string, role: string|null, photoUrl: string|null, chart: array<string, mixed>|null, subtitle: string, searchPath: string, confirmPath: string}>
      *   One row for each alert.
      */
-    public static function for(string $email): Collection {
-        return Alert::where('email', $email)
+    public static function for(User $user): Collection {
+        return $user->alerts()
           ->orderBy('alert_id')
           ->get()
           ->map(fn (Alert $alert): array => self::row($alert))

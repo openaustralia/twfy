@@ -8,6 +8,7 @@ use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rules\Password;
@@ -52,6 +53,29 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
      */
     public static function hashPassword(string $password): string {
         return password_hash($password, PASSWORD_DEFAULT);
+    }
+
+    /**
+     * The email alerts at this user's address, which is what they belong to.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany<Alert, User>
+     *   The alerts.
+     */
+    public function alerts(): HasMany {
+        return $this->hasMany(Alert::class, 'email', 'email');
+    }
+
+    /**
+     * Saves a new password, and signs the user out everywhere else, as whoever knew the old one may still be signed in.
+     *
+     * @param string $password
+     *   The new password, as typed.
+     * @param string|null $keepSessionId
+     *   A session to keep, such as the one the user is changing their password in.
+     */
+    public function changePassword(string $password, ?string $keepSessionId = null): void {
+        $this->forceFill(['password' => self::hashPassword($password)])->save();
+        $this->signOutEverywhere($keepSessionId);
     }
 
     /**
@@ -140,7 +164,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
      * Applies Laravel's password rule, so the legacy pages follow the same rule as the Laravel ones.
      */
     public static function passwordProblem(string $password): ?string {
-        $validator = Validator::make(['password' => $password], ['password' => [Password::defaults()]], ['password.min' => 'Please enter at least :min characters', 'password.max' => 'Please enter at most :max characters']);
+        $validator = Validator::make(['password' => $password], ['password' => [Password::defaults()]]);
 
         return $validator->fails() ? $validator->errors()->first('password') : null;
     }
@@ -175,7 +199,6 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         'registrationtime',
         'registrationip',
         'status',
-        'emailpublic',
         'optin',
         'deleted',
         'constituency',
@@ -203,7 +226,6 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         'registrationtime' => 'datetime',
         'created_at'       => 'datetime',
         'updated_at'       => 'datetime',
-        'emailpublic'      => 'bool',
         'optin'            => 'bool',
         'deleted'          => 'bool',
         'confirmed'        => 'bool',

@@ -33,7 +33,7 @@ class AccountAlertController {
      * One of the signed-in user's alerts, or a 404 for anyone else's, as alerts belong to an email address.
      */
     private function own(Request $request, int $alert): Alert {
-        return Alert::where('email', $request->user()->email)->where('confirmed', true)->findOrFail($alert);
+        return $request->user()->alerts()->where('confirmed', true)->findOrFail($alert);
     }
 
 }

@@ -10,7 +10,6 @@ use OpenAustralia\TWFY\Account\AlertListing;
 use OpenAustralia\TWFY\Account\EmailChange;
 use OpenAustralia\TWFY\EmailSuppressions;
 use OpenAustralia\TWFY\Http\Requests\UpdateAccountRequest;
-use OpenAustralia\TWFY\Models\User;
 
 /**
  * Someone's own details, and the alerts they have set up.
@@ -27,7 +26,7 @@ class AccountController {
         return view('account.show', [
             'page' => 'userviewself',
             'user' => $user,
-            'alerts' => AlertListing::for($user->email),
+            'alerts' => AlertListing::for($user),
             'suppressedSince' => $suppression ? Carbon::parse($suppression->suppressed_at) : null,
         ]);
     }
@@ -53,16 +52,10 @@ class AccountController {
             'firstname' => $input['first_name'] ?? '',
             'lastname' => $input['last_name'] ?? '',
             'optin' => $input['news'],
-        ]);
+        ])->save();
 
-        $newPassword = filled($input['password'] ?? null);
-        if ($newPassword) {
-            $user->password = User::hashPassword($input['password']);
-        }
-        $user->save();
-
-        if ($newPassword) {
-            $user->signOutEverywhere($request->session()->getId());
+        if (filled($input['password'] ?? null)) {
+            $user->changePassword($input['password'], $request->session()->getId());
             $user->sendTemplate('password_changed_notice', ['RESETURL' => route('password.request')]);
         }
 
