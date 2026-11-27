@@ -1,4 +1,4 @@
-<x-account.card aria-labelledby="details-heading" class="flex-[1_1_300px]">
+<x-card aria-labelledby="details-heading" class="flex-[1_1_300px]">
 <div class="mb-5 flex items-center gap-4">
 <div aria-hidden="true" class="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-teal-100 text-lg font-bold text-teal-800">{{ mb_strtoupper(mb_substr($user->firstname, 0, 1) . mb_substr($user->lastname, 0, 1)) }}</div>
 <h2 id="details-heading" class="!m-0 !block !p-0 text-xl font-bold text-slate-900">Your account</h2>
@@ -20,4 +20,4 @@
 Edit your details
 </x-account.button>
 </div>
-</x-account.card>
+</x-card>

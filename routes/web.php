@@ -42,3 +42,13 @@ Route::middleware('auth')->prefix('account')->name('account.')->group(function (
     Route::delete('/alerts/{alert}', [AccountAlertController::class, 'destroy'])->whereNumber('alert')->name('alerts.destroy');
     Route::put('/alerts/{alert}', [AccountAlertController::class, 'restore'])->whereNumber('alert')->name('alerts.restore');
 });
+
+// The help pages. They are static words, so a route and a view each, with the legacy page key that sets the title and
+// menu.
+Route::view('/help', 'help.index', ['page' => 'help'])->name('help');
+Route::view('/help/linktous', 'help.linktous', ['page' => 'linktous'])->name('help.linktous');
+Route::view('/about', 'help.about', ['page' => 'about'])->name('about');
+Route::view('/contact', 'help.contact', ['page' => 'contact'])->name('contact');
+Route::view('/getinvolved', 'help.getinvolved', ['page' => 'getinvolved'])->name('getinvolved');
+Route::view('/houserules', 'help.houserules', ['page' => 'houserules'])->name('houserules');
+Route::view('/privacy', 'help.privacy', ['page' => 'privacy'])->name('privacy');
