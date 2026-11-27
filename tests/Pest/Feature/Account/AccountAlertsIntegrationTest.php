@@ -12,6 +12,8 @@ require_once __DIR__ . '/../../Support/MemberFixtures.php';
 require_once __DIR__ . '/../../Support/MemberPageStubs.php';
 
 use OpenAustralia\TWFY\EmailSuppressions;
+use OpenAustralia\TWFY\Icons;
+use OpenAustralia\TWFY\Models\Hansard;
 use OpenAustralia\TWFY\Models\User;
 
 uses(TransactionalTestCase::class);
@@ -30,6 +32,55 @@ beforeEach(function () {
 afterEach(function () {
     MemberPageStubs::restoreVisitor();
     laravel_spec_new_request();
+});
+
+/**
+ * Adds a speech by the fictional person, a month ago.
+ */
+function alertspec_speech(): void {
+    static $id = 97800000;
+    Hansard::create(['epobject_id' => ++$id, 'gid' => "alertspec/$id", 'htype' => 12, 'speaker_id' => 97201, 'major' => 1, 'section_id' => 0, 'subsection_id' => 0, 'hpos' => 1, 'hdate' => now()->subMonth()->format('Y-m-d'), 'source_url' => '']);
+}
+
+describe('the chart on GET /account', function () {
+    it('counts how often a person spoke in 12 months', function () {
+        alertspec_speech();
+        alertspec_speech();
+        AlertFixtures::alert('pat.alertspec@example.test', 'speaker:97201');
+
+        expect(($this->page)())->toContain('<strong class="text-base text-slate-900">2</strong> speeches in 12 months');
+    });
+
+    it('describes the chart for screen readers', function () {
+        alertspec_speech();
+        AlertFixtures::alert('pat.alertspec@example.test', 'speaker:97201');
+
+        expect(($this->page)())->toContain('role="img" aria-label="1 speech from');
+    });
+
+    it('explains the line', function () {
+        AlertFixtures::alert('pat.alertspec@example.test', 'speaker:97201');
+
+        expect(($this->page)())->toContain('The line beside each person shows how many times they spoke in Hansard each month');
+    });
+
+    it('draws no chart for an alert about a word', function () {
+        AlertFixtures::alert('pat.alertspec@example.test', 'wellington');
+
+        expect(($this->page)())->not->toContain('in 12 months');
+    });
+
+    it('does not explain a line there is not', function () {
+        AlertFixtures::alert('pat.alertspec@example.test', 'wellington');
+
+        expect(($this->page)())->not->toContain('The line beside each person');
+    });
+
+    it('draws no chart for an unsubscribed alert', function () {
+        AlertFixtures::alert('pat.alertspec@example.test', 'speaker:97201', deleted: true);
+
+        expect(($this->page)())->not->toContain('in 12 months');
+    });
 });
 
 describe('the alerts on GET /account', function () {
@@ -145,6 +196,28 @@ describe('the alerts on GET /account', function () {
         AlertFixtures::alert('pat.alertspec@example.test', 'wellington');
 
         expect(($this->page)())->toContain('Unsubscribe');
+    });
+
+    it('sets links in the colour the member pages use', function () {
+        AlertFixtures::alert('pat.alertspec@example.test', 'wellington');
+
+        expect(($this->page)())->toContain('class="!text-teal-700 !underline"');
+    });
+
+    it('leaves no space between a link and the full stop', function () {
+        expect(($this->page)())->toContain('search Hansard</a>.');
+    });
+
+    it('puts a crossed bell on Unsubscribe', function () {
+        AlertFixtures::alert('pat.alertspec@example.test', 'wellington');
+
+        expect(($this->page)())->toContain('d="' . Icons::BELL_OFF . '"');
+    });
+
+    it('puts a bell on Subscribe again', function () {
+        AlertFixtures::alert('pat.alertspec@example.test', 'wellington', deleted: true);
+
+        expect(($this->page)())->toContain('d="' . Icons::BELL . '"');
     });
 
     it('lists unsubscribed alerts apart', function () {

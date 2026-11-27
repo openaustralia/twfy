@@ -6,6 +6,7 @@ use Illuminate\Support\Collection;
 use OpenAustralia\TWFY\Models\Alert;
 use OpenAustralia\TWFY\Parliament\MemberProfile;
 use OpenAustralia\TWFY\Parliament\Person;
+use OpenAustralia\TWFY\Parliament\SpeakingRecord;
 
 /**
  * The email alerts at an address, as the account page lists them.
@@ -16,9 +17,10 @@ class AlertListing {
      * Every alert at an address, oldest first.
      *
      * Each row says whether the alert is active, waiting to be confirmed, or unsubscribed, and what it looks for. An
-     * alert about a person alone also gives their office, such as "MP for Wills", and their photo if there is one.
+     * alert about a person alone also gives their office, such as "MP for Wills", their photo if there is one, and for an active alert a chart of how often
+     * they spoke in the last twelve months.
      *
-     * @return \Illuminate\Support\Collection<int, array{id: int, state: string, isKeyword: bool, label: string, initials: string, role: string|null, photoUrl: string|null, subtitle: string, searchPath: string, confirmPath: string}>
+     * @return \Illuminate\Support\Collection<int, array{id: int, state: string, isKeyword: bool, label: string, initials: string, role: string|null, photoUrl: string|null, chart: array<string, mixed>|null, subtitle: string, searchPath: string, confirmPath: string}>
      *   One row for each alert.
      */
     public static function for(string $email): Collection {
@@ -43,7 +45,7 @@ class AlertListing {
     /**
      * One alert as a row.
      *
-     * @return array{id: int, state: string, isKeyword: bool, label: string, initials: string, role: string|null, photoUrl: string|null, subtitle: string, searchPath: string, confirmPath: string}
+     * @return array{id: int, state: string, isKeyword: bool, label: string, initials: string, role: string|null, photoUrl: string|null, chart: array<string, mixed>|null, subtitle: string, searchPath: string, confirmPath: string}
      *   The row.
      */
     private static function row(Alert $alert): array {
@@ -61,14 +63,16 @@ class AlertListing {
 
         // The office and photo are for alerts about one person, as an alert for a word is about the word.
         $aboutPerson = $person !== null && $keywords === '';
+        $state = self::state($alert);
 
         return [
             'id' => $alert->alert_id,
-            'state' => self::state($alert),
+            'state' => $state,
             'isKeyword' => $keywords !== '',
             'label' => $label,
             'role' => $aboutPerson ? (new MemberProfile($person))->office() : null,
             'photoUrl' => $aboutPerson ? $person->latest()->photo_url : null,
+            'chart' => $aboutPerson && $state === 'active' ? MonthlyChart::for(SpeakingRecord::lastTwelveMonths($person)) : null,
             'initials' => mb_strtoupper(implode('', array_map(fn (string $word): string => mb_substr($word, 0, 1), array_slice(explode(' ', $label), 0, 2)))),
             'subtitle' => $subtitle,
             'searchPath' => $alert->searchPath(),

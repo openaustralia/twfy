@@ -1,0 +1,1 @@
+{{-- A link in the colour the member pages use, which beats the legacy blue and purple. --}}@use('OpenAustralia\TWFY\Enums\House')@use('OpenAustralia\TWFY\Http\HouseTheme')<a {{ $attributes->merge(['class' => HouseTheme::for(House::Representatives)->link . ' !underline']) }}>{{ $slot }}</a>

@@ -1,4 +1,5 @@
 {{-- A list of alerts, each with the button that stops it or starts it again. $class styles the list. --}}
+@use('OpenAustralia\TWFY\Icons')
 <ul class="{{ $class }}">
 @foreach ($alerts as $alert)
 <li class="flex flex-wrap items-center gap-x-4 gap-y-3 border-0 border-t border-solid border-slate-200 py-3.5">
@@ -13,23 +14,26 @@
 @endif
 </div>
 @endif
-<div class="min-w-0 flex-[1_1_180px]">
+<div class="min-w-0 flex-[1_1_150px]">
 <p class="!m-0 !mb-0.5 text-xs font-semibold uppercase tracking-wider text-slate-600">{{ $alert['isKeyword'] ? 'Word or phrase' : 'Person' }}</p>
-<a href="{{ $alert['searchPath'] }}" class="text-base font-semibold">{{ $alert['isKeyword'] ? "“{$alert['label']}”" : $alert['label'] }}</a>
+<x-account.link href="{{ $alert['searchPath'] }}" class="text-base font-semibold">{{ $alert['isKeyword'] ? "“{$alert['label']}”" : $alert['label'] }}</x-account.link>
 @if ($alert['role'])
 <p class="!m-0 !mt-0.5 text-sm text-slate-600">{{ $alert['role'] }}</p>
 @endif
 <p class="!m-0 !mt-0.5 text-sm text-slate-600">{{ $alert['subtitle'] }}</p>
 </div>
+@if ($alert['chart'])
+<x-account.sparkline :chart="$alert['chart']" />
+@endif
 @if ($alert['state'] === 'unconfirmed')
 <x-account.button :href="$alert['confirmPath']">Confirm<span class="sr-only"> alerts about {{ $alert['label'] }}</span></x-account.button>
 @else
 <form method="post" action="{{ route($alert['state'] === 'active' ? 'account.alerts.destroy' : 'account.alerts.restore', $alert['id'], false) }}">
 @csrf
 @method($alert['state'] === 'active' ? 'DELETE' : 'PUT')
-{{-- The same icons as the member pages' Unsubscribe and "Email me whenever" buttons. --}}
+{{-- The same bells as the member pages' alert buttons. --}}
 <x-account.button>
-<x-account.icon :path="$alert['state'] === 'active' ? 'M18 6L6 18M6 6l12 12' : 'M4 4h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2zM22 6l-10 7L2 6'" />
+<x-account.icon :path="$alert['state'] === 'active' ? Icons::BELL_OFF : Icons::BELL" />
 {{ $alert['state'] === 'active' ? 'Unsubscribe' : 'Subscribe again' }}<span class="sr-only"> to alerts about {{ $alert['label'] }}</span>
 </x-account.button>
 </form>

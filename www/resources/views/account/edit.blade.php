@@ -2,10 +2,10 @@
 
 @section('content')
 <x-account.page>
-<a href="{{ route('account.show', [], false) }}" class="inline-flex min-h-[44px] items-center gap-1.5 text-[15px] font-semibold">
+<x-account.link href="{{ route('account.show', [], false) }}" class="inline-flex min-h-[44px] items-center gap-1.5 text-[15px] font-semibold">
 <x-account.icon path="M15 18l-6-6 6-6" size="16" />
 Back to your details
-</a>
+</x-account.link>
 <h1 class="!m-0 !mb-2 !mt-2 !block !p-0 text-[clamp(28px,4vw,36px)] font-bold !leading-tight text-slate-900">Edit your details</h1>
 <p class="!m-0 !mb-6 max-w-[640px] text-lg leading-relaxed text-slate-600">Change your name, email address, password and email settings. Fields marked optional can be left blank.</p>
 @if ($errors->any())
@@ -78,16 +78,16 @@ Cancel this change
 </fieldset>
 
 <div class="border-0 border-t border-solid border-slate-200 pt-6">
-<p class="!m-0 !mb-4 text-[15px] text-slate-700">By saving, you agree to our <a href="{{ WEBPATH }}houserules/">house rules</a>.</p>
+<p class="!m-0 !mb-4 text-[15px] text-slate-700">By saving, you agree to our <x-account.link href="{{ WEBPATH }}houserules/">house rules</x-account.link>.</p>
 <div class="flex flex-wrap items-center gap-x-5 gap-y-3">
 <x-account.button variant="primary">
 <x-account.icon path="M20 6 9 17l-5-5" />
 Save changes
 </x-account.button>
-<a href="{{ route('account.show', [], false) }}" class="inline-flex min-h-[44px] items-center gap-1.5 text-base font-semibold">
+<x-account.link href="{{ route('account.show', [], false) }}" class="inline-flex min-h-[44px] items-center gap-1.5 text-base font-semibold">
 <x-account.icon path="M18 6 6 18M6 6l12 12" />
 Cancel
-</a>
+</x-account.link>
 </div>
 </div>
 </form>

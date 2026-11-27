@@ -6,7 +6,7 @@ use Illuminate\Support\Carbon;
 use OpenAustralia\TWFY\Models\Hansard;
 
 /**
- * How often a person has spoken in Hansard, year by year.
+ * How often a person has spoken in Hansard, year by year and month by month.
  */
 final class SpeakingRecord {
 
@@ -16,6 +16,31 @@ final class SpeakingRecord {
     private const SPEECH = 12;
 
     private const MOST_YEARS = 9;
+
+    /**
+     * Speeches in each of the last twelve months, this month included.
+     *
+     * @return array<string, int>
+     *   Counts keyed by month as "2026-07", the earliest first. A month with none is 0.
+     */
+    public static function lastTwelveMonths(Person $person): array {
+        $start = Carbon::today()->startOfMonth()->subMonths(11);
+        $counts = Hansard::query()
+          ->whereIn('speaker_id', $person->terms->pluck('member_id'))
+          ->where('htype', self::SPEECH)
+          ->where('hdate', '>=', $start->toDateString())
+          ->selectRaw("DATE_FORMAT(hdate, '%Y-%m') AS month, COUNT(*) AS speeches")
+          ->groupByRaw("DATE_FORMAT(hdate, '%Y-%m')")
+          ->pluck('speeches', 'month');
+
+        $months = [];
+        foreach (range(0, 11) as $offset) {
+            $month = $start->copy()->addMonths($offset)->format('Y-m');
+            $months[$month] = (int) $counts->get($month, 0);
+        }
+
+        return $months;
+    }
 
     /**
      * Contributions in each of the last nine years, from the first with any. It ends this year for someone sitting, and

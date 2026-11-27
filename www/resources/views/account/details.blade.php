@@ -12,7 +12,7 @@
 @endif
 </dl>
 @if ($user->pending_email)
-<p class="!mx-0 mt-5 text-[15px] leading-relaxed text-slate-700 [overflow-wrap:anywhere]">Waiting for you to confirm your new email address, <strong>{{ $user->pending_email }}</strong>. <a href="{{ route('account.edit', [], false) }}">See what to do</a>.</p>
+<p class="!mx-0 mt-5 text-[15px] leading-relaxed text-slate-700 [overflow-wrap:anywhere]">Waiting for you to confirm your new email address, <strong>{{ $user->pending_email }}</strong>. <x-account.link href="{{ route('account.edit', [], false) }}">See what to do</x-account.link>.</p>
 @endif
 <div class="mt-5">
 <x-account.button :href="route('account.edit', [], false)">

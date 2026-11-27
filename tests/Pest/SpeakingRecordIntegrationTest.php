@@ -17,11 +17,11 @@ use OpenAustralia\TWFY\Parliament\SpeakingRecord;
 uses(TransactionalTestCase::class);
 
 /**
- * Adds a contribution by the fictional person's term.
+ * Adds a contribution by the fictional person's term, or by another speaker.
  */
-function spoke(string $date, int $htype = 12): void {
+function spoke(string $date, int $htype = 12, int $speaker = 97701): void {
     static $id = 97700000;
-    Hansard::create(['epobject_id' => ++$id, 'gid' => "spec/$id", 'htype' => $htype, 'speaker_id' => 97701, 'major' => 1, 'section_id' => 0, 'subsection_id' => 0, 'hpos' => 1, 'hdate' => $date, 'source_url' => '']);
+    Hansard::create(['epobject_id' => ++$id, 'gid' => "spec/$id", 'htype' => $htype, 'speaker_id' => $speaker, 'major' => 1, 'section_id' => 0, 'subsection_id' => 0, 'hpos' => 1, 'hdate' => $date, 'source_url' => '']);
 }
 
 /**
@@ -95,3 +95,54 @@ describe('SpeakingRecord::for()', function () {
         });
     });
 });
+
+describe('SpeakingRecord::lastTwelveMonths()', function () {
+    /**
+     * The fictional person's counts for the last twelve months.
+     *
+     * @return array<string, int>
+     *   Counts keyed by month.
+     */
+    function by_month(): array {
+        return SpeakingRecord::lastTwelveMonths(Person::find(97701));
+    }
+
+    it('gives twelve months, this one last', function () {
+        expect(array_keys(by_month()))->toBe(['2025-08', '2025-09', '2025-10', '2025-11', '2025-12', '2026-01', '2026-02', '2026-03', '2026-04', '2026-05', '2026-06', '2026-07']);
+    });
+
+    it('counts the speeches in each month', function () {
+        spoke('2026-06-02');
+        spoke('2026-06-20');
+        spoke('2026-07-01');
+
+        expect(by_month())->toMatchArray(['2026-05' => 0, '2026-06' => 2, '2026-07' => 1]);
+    });
+
+    it('counts the first month of the twelve', function () {
+        spoke('2025-08-01');
+
+        expect(by_month()['2025-08'])->toBe(1);
+    });
+
+    it('leaves out earlier months', function () {
+        spoke('2025-07-31');
+
+        expect(array_sum(by_month()))->toBe(0);
+    });
+
+    it('counts speeches and nothing else', function () {
+        spoke('2026-06-02');
+        spoke('2026-06-02', 10);
+
+        expect(by_month()['2026-06'])->toBe(1);
+    });
+
+    it('counts only that person', function () {
+        MemberFixtures::term(97702, ['person_id' => 97702, 'first_name' => 'Casey']);
+        spoke('2026-06-02', 12, 97702);
+
+        expect(array_sum(by_month()))->toBe(0);
+    });
+});
+
