@@ -197,3 +197,9 @@ describe('the search tips', function () {
         expect(view('help.search-tips')->render())->not->toContain("Firefox's");
     });
 });
+
+describe('the help answers with an email link', function () {
+    it('use the contact address', function () {
+        expect(help_get('/help')->getContent())->toContain('mailto:contact&#64;example.test')->and(substr_count(help_get('/help')->getContent(), 'mailto:'))->toBe(2);
+    });
+});

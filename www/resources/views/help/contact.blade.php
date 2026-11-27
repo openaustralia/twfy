@@ -14,8 +14,7 @@
 <p>
     We seek responses to all these questions.
 </p>
-<p>The email address of OpenAustralia.org, which is run by a <strong>charity</strong>, is: <a
-        href="mailto:{!! str_replace('@', '&#64;', e(CONTACTEMAIL)) !!}">{!! str_replace('@', '&#64;', e(CONTACTEMAIL)) !!}</a>
+<p>The email address of OpenAustralia.org, which is run by a <strong>charity</strong>, is: <x-help.email />
 </p>
 </x-help.page>
 @endsection

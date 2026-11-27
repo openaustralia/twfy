@@ -89,9 +89,8 @@
     Use OpenAustralia as a gateway, rather than a simple place to find a number
     measuring competence.</p>
 
-<p>If you have other suggestions for useful metrics, send them to the <a
-        href="mailto:contact&#64;openaustralia.org">usual
-        address</a>. We have a few ideas ourselves to keep you on your toes.</p>
+<p>If you have other suggestions for useful metrics, send them to the <x-help.email>usual
+        address</x-help.email>. We have a few ideas ourselves to keep you on your toes.</p>
 
 <h2 id="api">Do you have the data as a spreadsheet file, XML or in an API?</h2>
 <p>Yes. If you just need a spreadsheet of
@@ -100,7 +99,7 @@
     data, <a href="/api">we have that too</a>. We also give you <a href="https://data.openaustralia.org.au">direct
         access to the XML data</a> which gets loaded into our database.</p>
 
-<p>Please <a href="mailto:contact&#64;openaustralia.org">mail us</a> if you want help
+<p>Please <x-help.email>mail us</x-help.email> if you want help
     working out how to use the data, or want to hire us to make something specific
     for you.</p>
 

@@ -2,7 +2,6 @@
 <div {{ $attributes->class([
     'text-base leading-[1.75] text-slate-800 [&>:first-child:not([class])]:!mt-0',
     '[&_h2]:!mx-0 [&_h2]:!mb-3 [&_h2]:!mt-10 [&_h2]:!block [&_h2]:!p-0 [&_h2]:!text-2xl [&_h2]:!font-bold [&_h2]:!leading-tight [&_h2]:!text-slate-900 [&_h2:first-child]:!mt-0',
-    '[&_h3]:!mx-0 [&_h3]:!mb-2 [&_h3]:!mt-8 [&_h3]:!block [&_h3]:!p-0 [&_h3]:!text-xl [&_h3]:!font-bold [&_h3]:!leading-tight [&_h3]:!text-slate-900',
     '[&_p:not([class])]:!my-4 [&_p:not([class])]:!text-base [&_p:not([class])]:!leading-[1.75]',
     '[&_ul:not([class])]:!my-4 [&_ul:not([class])]:!list-disc [&_ul:not([class])]:!pl-6',
     '[&_nav>ul:not([class]):first-child]:!mt-0',
