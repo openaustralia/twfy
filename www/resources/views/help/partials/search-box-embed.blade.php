@@ -5,12 +5,12 @@
   <form action='{{ $url }}mp/' method='get' style='margin: 0; padding: 5px 0 0 0;' title='Find out about your Representative'>
     <label for='pc' style='display: block; font-size: small; font-weight: bold; margin: 0 0 9px 0;'>Find out more about your Representative</label>
     <input id='pc' maxlength='20' name='pc' size='8' style='width: 12em; border: solid 1px #AE967F;' title='Enter your Australian postcode here' type='text' value='Your Postcode'>
-    <input id='Submit1' name='Submit1' style='border: solid 0px #AE967F; background-color: #AE967F; color: #ffffff; font-weight: bold; text-transform: uppercase;' tabindex='2' title='Submit search' type='submit' value='Go'>
+    <input id='Submit1' name='Submit1' style='border: solid 0px #AE967F; background-color: #AE967F; color: #ffffff; font-weight: bold; text-transform: uppercase;' title='Submit search' type='submit' value='Go'>
   </form>
   <form action='{{ $url }}search/' method='get' style='margin: 0; padding: 5px 0 0 0;' title='Search Parliament'>
     <label for='s' style='display: block; font-size: small; font-weight: bold; margin: 0 0 2px 0;'>Search Parliament</label>
-    <input id='s' maxlength='100' name='s' size='15' style='width: 12em; border: solid 1px #AE967F;' tabindex='3' title="Type what you're looking for" type='text' value='Your Search'>
-    <input id='Submit2' name='Submit2' style='border: solid 0px #AE967F; background-color: #AE967F; color: #ffffff; font-weight: bold; text-transform: uppercase;' tabindex='4' title='Submit search' type='submit' value='Go'>
+    <input id='s' maxlength='100' name='s' size='15' style='width: 12em; border: solid 1px #AE967F;' title="Type what you're looking for" type='text' value='Your Search'>
+    <input id='Submit2' name='Submit2' style='border: solid 0px #AE967F; background-color: #AE967F; color: #ffffff; font-weight: bold; text-transform: uppercase;' title='Submit search' type='submit' value='Go'>
     <br>
   </form>
 </div>
