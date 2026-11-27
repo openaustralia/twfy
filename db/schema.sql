@@ -547,8 +547,8 @@ CREATE TABLE `users` (
   `updated_at` datetime DEFAULT NULL,
   `remember_token` varchar(100) DEFAULT NULL,
   PRIMARY KEY (`user_id`),
-  UNIQUE KEY `api_key` (`api_key`),
-  KEY `email` (`email`)
+  UNIQUE KEY `email` (`email`),
+  UNIQUE KEY `api_key` (`api_key`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
